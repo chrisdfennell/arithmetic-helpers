@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arithmetic Helpers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFE9; --surface:#F8F9F5; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C;
+    --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#131817; --surface:#1B2220; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131817; --surface:#1B2220; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    line-height:1.55;-webkit-font-smoothing:antialiased}
+  .page{max-width:960px;margin:0 auto;padding:40px 16px 72px}
+  .eyebrow{font-family:"IBM Plex Mono",Consolas,monospace;font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:"Archivo","Helvetica Neue",Arial,sans-serif;font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 .3em}
+  .lede{color:var(--ink-2);max-width:52ch;margin:0 0 32px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+  a.card{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;
+    background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--c);
+    border-radius:6px 14px 14px 6px;box-shadow:var(--shadow);padding:18px 20px 20px}
+  a.card:hover{border-color:var(--c)}
+  a.card:focus-visible{outline:2.5px solid var(--c);outline-offset:3px}
+  .sign{font-family:"IBM Plex Mono",Consolas,monospace;font-size:30px;font-weight:600;color:var(--c);line-height:1}
+  .card h2{font-family:"Archivo","Helvetica Neue",Arial,sans-serif;font-stretch:112%;font-weight:700;font-size:19px;margin:0}
+  .card p{margin:0;font-size:14.5px;color:var(--ink-2)}
+</style>
+<div class="page">
+  <div class="eyebrow">Arithmetic, worked out</div>
+  <h1>Arithmetic Helpers</h1>
+  <p class="lede">Type in a problem and see every step written out, the way it's done on paper,
+    with tape diagrams and area models alongside. Works with whole numbers, decimals and fractions.</p>
+  <div class="cards">
+    <a class="card" href="addition.html" style="--c:var(--add)">
+      <span class="sign">+</span><h2>The Carry Column</h2>
+      <p>Addition: line up the decimal points or find a common denominator, and watch every carry.</p>
+    </a>
+    <a class="card" href="subtraction.html" style="--c:var(--sub)">
+      <span class="sign">&minus;</span><h2>The Borrow Bank</h2>
+      <p>Subtraction: every borrow crossed out and written above, so you can see where the ten came from.</p>
+    </a>
+    <a class="card" href="multiplication.html" style="--c:var(--mul)">
+      <span class="sign">&times;</span><h2>The Product Ladder</h2>
+      <p>Multiplication: one rung per digit, partial products stacked and added, then the decimal point.</p>
+    </a>
+    <a class="card" href="division.html" style="--c:var(--div)">
+      <span class="sign">&divide;</span><h2>The Division House</h2>
+      <p>Long division: divide, multiply, subtract, bring down, with remainders, decimals or fractions.</p>
+    </a>
+  </div>
+</div>
+</html>

@@ -1,0 +1,1086 @@
+<title>The Carry Column</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E2E6DD;
+    --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
+    --key:#0D7361;   --key-bg:#D5EAE4;  --key-line:#4FAE99;   /* addition: carries */
+    --alt:#265AA5;   --alt-bg:#DEE8F6;                        /* the sum line */
+    --warm:#A85A0C;  --warm-bg:#F7E7D4;                       /* place value / notes */
+    --focus:#0D7361;
+    --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#131817; --surface:#1B2220; --surface-2:#28322F;
+      --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+      --key:#4FCCB0;  --key-bg:#0F3129;  --key-line:#2C7B69;
+      --alt:#8CB1EC;  --alt-bg:#1A2740;
+      --warm:#F2A85C; --warm-bg:#3A2A16;
+      --focus:#4FCCB0;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131817; --surface:#1B2220; --surface-2:#28322F;
+    --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+    --key:#4FCCB0;  --key-bg:#0F3129;  --key-line:#2C7B69;
+    --alt:#8CB1EC;  --alt-bg:#1A2740;
+    --warm:#F2A85C; --warm-bg:#3A2A16;
+    --focus:#4FCCB0;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:48ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:20px 22px 18px;display:flex;flex-direction:column;gap:16px}
+  .modes{display:flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
+    color:var(--ink-2);padding:8px 18px;border-radius:7px;cursor:pointer}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+
+  .entry{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-height:74px}
+  .entry.hide{display:none}
+  .plus{font-family:var(--f-mono);font-size:clamp(24px,4.4vw,30px);color:var(--key);font-weight:600}
+  .dec-in{font-family:var(--f-mono);font-size:clamp(24px,4.4vw,30px);font-weight:600;
+    font-variant-numeric:tabular-nums;color:var(--ink);background:transparent;border:0;
+    border-bottom:2.5px solid var(--rule);padding:1px 4px 4px;width:7ch;outline:none}
+  .dec-in:focus{border-bottom-color:var(--focus)}
+  .addend{display:flex;align-items:center;gap:6px}
+  .drop{background:transparent;border:0;color:var(--ink-3);cursor:pointer;font-size:15px;
+    line-height:1;padding:4px 2px}
+  .drop:hover{color:var(--key)}
+  .more{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px dashed var(--rule);color:var(--ink-2);border-radius:8px;padding:7px 13px;cursor:pointer}
+  .more:hover{border-color:var(--key-line);color:var(--key)}
+  .more[hidden]{display:none}
+
+  /* mixed-number input */
+  .mixfield{display:flex;align-items:center;gap:7px}
+  .mixfield .whole{font-family:var(--f-mono);font-size:clamp(24px,4.4vw,30px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;border-bottom:2.5px solid var(--rule);
+    width:3ch;text-align:center;padding:1px 2px 4px;outline:none}
+  .mixfield .whole:focus{border-bottom-color:var(--focus)}
+  .stackfield{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .stackfield input{font-family:var(--f-mono);font-size:clamp(17px,3.2vw,21px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;width:3.2ch;text-align:center;padding:1px;outline:none}
+  .stackfield input:focus{background:var(--key-bg);border-radius:4px}
+  .stackfield .fbar{height:2.5px;width:3.4ch;background:var(--ink);border-radius:2px}
+  .fieldcap{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3);width:100%;margin-bottom:-4px}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    border-top:1px dashed var(--rule);padding-top:14px}
+  .examples .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+  .chip{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
+  .practice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+
+  select:focus-visible,button:focus-visible,input:focus-visible{
+    outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
+    padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px}
+  .answer .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .answer .v{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink);line-height:1.1;display:flex;align-items:center;gap:.35ch}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .answer.masked .v{color:var(--ink-3)}
+  .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+
+  .board{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:22px;align-items:start}
+  @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{font-family:var(--f-mono);font-size:13px;font-weight:600;background:var(--surface-2);
+    border:0;color:var(--ink);border-radius:7px;width:30px;height:28px;cursor:pointer}
+  .stepper button:disabled{color:var(--ink-3);cursor:not-allowed}
+  .stepper button:hover:not(:disabled){background:var(--key-bg);color:var(--key)}
+  .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
+    text-align:center;font-variant-numeric:tabular-nums}
+  .stepper[hidden]{display:none}
+
+  /* ---- the column stack ---- */
+  .work-scroll{overflow-x:auto;padding:22px 18px 26px}
+  .stack{display:grid;justify-content:center;font-family:var(--f-mono);font-weight:500;
+    font-size:clamp(19px,4.2vw,27px);line-height:1.4;font-variant-numeric:tabular-nums;
+    --cell:1.6ch;--pt:.8ch;min-width:max-content;margin:0 auto;position:relative}
+  .stack .cel{text-align:center}
+  .stack .plabel{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--f-body);
+    font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+    white-space:nowrap;justify-self:center;align-self:end;padding-bottom:5px;line-height:1}
+  .stack .plabel.on{color:var(--key)}
+  .stack .spine{justify-self:center;width:0;border-left:1.5px dashed var(--key-line);opacity:.55}
+  .stack .carry{font-size:.55em;color:var(--key);font-weight:600;align-self:end;line-height:1.6}
+  .stack .term{color:var(--ink)}
+  .stack .term.pad{color:var(--ink-3)}
+  .stack .op{color:var(--key);font-weight:600}
+  .stack .sumline{height:2.5px;background:var(--ink);border-radius:2px;align-self:center;margin:4px 0 5px}
+  .stack .sum{color:var(--alt);font-weight:600}
+  .stack .live{box-shadow:0 0 0 2.5px var(--key-line);border-radius:5px;background:var(--key-bg)}
+  .stack [data-step].veil{opacity:0}
+  @media (prefers-reduced-motion:no-preference){.stack [data-step]{transition:opacity .2s ease}}
+
+  /* ---- fraction chain ---- */
+  .chain{padding:20px 18px 24px;display:flex;flex-direction:column;gap:2px;overflow-x:auto}
+  .crow{display:grid;grid-template-columns:1.6ch minmax(0,1fr);gap:0 10px;align-items:center;
+    padding:9px 0;border-bottom:1px dashed var(--rule)}
+  .crow:last-child{border-bottom:0}
+  .crow .eq{font-family:var(--f-mono);font-size:clamp(19px,3.6vw,24px);color:var(--key);font-weight:600}
+  .crow .expr{display:flex;align-items:center;gap:.5ch;flex-wrap:wrap;
+    font-family:var(--f-mono);font-size:clamp(19px,3.6vw,24px);color:var(--ink);font-weight:600}
+  .crow.result .expr{color:var(--key)}
+  .crow.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.crow{transition:opacity .2s ease}}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+    line-height:1.08;margin:0 .1ch}
+  .fr .nu{padding:0 .25ch}
+  .fr .de{padding:0 .25ch;border-top:2.5px solid currentColor;margin-top:1px}
+  .mx{margin-right:.25ch}
+  .op-s{color:var(--key);padding:0 .2ch}
+  .cancel{position:relative;color:var(--ink-3)}
+  .cancel::after{content:"";position:absolute;left:-8%;right:-8%;top:50%;height:2px;
+    background:var(--warm);transform:rotate(-14deg)}
+
+  /* ---- bar model ---- */
+  .bars{padding:4px 18px 20px;display:flex;flex-direction:column;gap:12px}
+  .barrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .barrow .cap{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:9ch;
+    font-variant-numeric:tabular-nums}
+  .bar{display:flex;border:1.5px solid var(--ink-3);border-radius:5px;overflow:hidden;
+    height:30px;flex:1 1 150px;min-width:110px;max-width:340px}
+  .bar span{flex:1;border-right:1px solid var(--ink-3)}
+  .bar span:last-child{border-right:0}
+  .bar span.a{background:var(--key-line)}
+  .bar span.b{background:var(--warm)}
+  .bar span.tot{background:var(--key)}
+
+  /* ---- area model ---- */
+  .areawrap{padding:14px 18px 18px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
+  .areawrap.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.areawrap{transition:opacity .2s ease}}
+  .am-scroll{overflow-x:auto;padding-bottom:2px}
+  .am{display:grid;width:100%;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .am .hd{font-size:13px;font-weight:600;text-align:center;padding:0 6px 6px;white-space:nowrap;align-self:end}
+  .am .hd.side{align-self:center;text-align:right;padding:0 10px 0 0}
+  .am .cell{display:flex;align-items:center;justify-content:center;padding:0 8px;white-space:nowrap;
+    font-size:14px;font-weight:600;color:var(--ink)}
+  .fgrids{display:flex;flex-wrap:wrap;gap:14px 16px;align-items:center}
+  .fgout{display:flex;gap:14px 16px;align-items:center}
+  .fgrids .op{font-family:var(--f-mono);font-size:22px;font-weight:600;color:var(--ink-3)}
+  .fg{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .fg .g{display:grid;border:2px solid var(--ink-2);border-radius:4px;overflow:hidden;width:132px;aspect-ratio:1.15}
+  .fg .g span{border-right:1px solid var(--ink-3);border-bottom:1px solid var(--ink-3)}
+  .fg .cap{font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--ink-2);text-align:center;min-height:1.2em}
+  .fg .g span.a{background:var(--key-line)}
+  .fg .g span.b{background:var(--warm)}
+  /* ---- tape diagram ---- */
+  .tapewrap{padding:14px 18px 18px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
+  .tapewrap.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.tapewrap{transition:opacity .2s ease}}
+  .tapecap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .tapecap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .tapecap .lead{font-family:var(--f-body);color:var(--ink)}
+  .tape-scroll{overflow-x:auto;padding-bottom:2px}
+  .tape{display:grid;width:100%;align-items:center;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .tape .t-lbl{text-align:center;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;padding:0 4px}
+  .tape .t-lbl.ans{color:var(--alt)}
+  .tape .t-lbl.under{color:var(--ink-2);font-weight:400;font-size:12px}
+  .tape .brk{height:8px;border:2px solid var(--ink-3);border-bottom:0;border-radius:5px 5px 0 0;margin:2px 1px 4px}
+  .tape .brk.down{border-top:0;border-bottom:2px solid var(--ink-3);border-radius:0 0 5px 5px;margin:4px 1px 2px}
+  .tape .seg{height:40px;display:flex;align-items:center;justify-content:center;padding:0 7px;
+    white-space:nowrap;font-size:14px;font-weight:600;margin-left:-2px;
+    background:var(--key-bg);color:var(--key);border:2px solid var(--key-line)}
+  .tape .seg.first{margin-left:0}
+  .tape .seg.b{background:var(--warm-bg);color:var(--warm);border-color:var(--warm)}
+  .tape .seg.ans{background:var(--alt-bg);color:var(--alt);border-color:var(--alt)}
+  .tape .seg.gap{background:transparent;color:var(--ink-3);border-style:dashed;border-color:var(--key-line);
+    font-size:20px;letter-spacing:.1em}
+
+  .legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:12px 18px;border-top:1px dashed var(--rule)}
+  .legend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .legend i{width:11px;height:11px;border-radius:3px;display:block;flex:none}
+  .sw-k{background:var(--key)} .sw-a{background:var(--alt)} .sw-w{background:var(--warm)}
+  .sw-l{background:var(--key-line)}
+
+  .log{padding:6px 0 10px;margin:0;list-style:none}
+  .log > li{padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;align-items:start}
+  .log > li:last-child{border-bottom:0}
+  .log > li.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.log > li{transition:opacity .2s ease}}
+  .log .n{grid-column:1;grid-row:1 / span 99;font-family:var(--f-mono);font-size:11px;font-weight:600;
+    color:var(--ink-3);background:var(--surface-2);border-radius:7px;padding:3px 7px;
+    letter-spacing:.04em;white-space:nowrap}
+  .log .line{grid-column:2;display:flex;gap:9px;align-items:baseline;font-size:14.5px}
+  .log .tag{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;flex:none;min-width:7.6ch;text-align:center}
+  .tag-p{background:var(--warm-bg);color:var(--warm)}
+  .tag-a{background:var(--key-bg);color:var(--key)}
+  .tag-c{background:var(--alt-bg);color:var(--alt)}
+  .log .txt{color:var(--ink-2)}
+  .log .txt b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .log .aside{grid-column:2;margin-top:7px;font-size:13.5px;color:var(--ink);background:var(--warm-bg);
+    border-left:3px solid var(--warm);border-radius:4px 8px 8px 4px;padding:8px 12px}
+  .closer{padding:14px 18px;font-size:14px;color:var(--ink-2);background:var(--surface-2)}
+  .closer b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .closer .ok{color:var(--key);font-weight:600}
+
+  .footnote{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote .print{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
+  .footnote a{color:var(--ink-2)}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#F0F2EE;
+      --ink:#111; --ink-2:#3A403C; --ink-3:#6B736F; --rule:#A6AEA3;
+      --key:#0D7361;  --key-bg:#D5EAE4;  --key-line:#3E9E89;
+      --alt:#1F4E93;  --alt-bg:#DEE8F6;
+      --warm:#A85A0C; --warm-bg:#F7E7D4;
+      --shadow:none;
+    }
+
+    @page{margin:13mm 11mm}
+    /* print the fills that carry meaning, not just the text */
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.examples,.modes,.footnote,.stepper,.drop,.more,#statusLine{display:none !important}
+
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px}
+    .eyebrow{font-size:9px}
+    .tagline{display:none}
+
+    .problem{border:0;box-shadow:none;padding:0;gap:0;break-after:avoid}
+    .entry,.equation{min-height:0;gap:9px}
+    .dec-in,.num-field input,.mixfield .whole{font-size:20px;border-bottom-color:var(--ink);
+      width:auto !important;min-width:2.5ch}
+    .stackfield input{font-size:15px}
+    .num-field > label,.fieldcap,.numfield > label{font-size:8.5px}
+
+    .answer{padding:8px 12px;gap:5px 16px;break-after:avoid;break-inside:avoid}
+    .answer .v{font-size:22px}
+    .answer .facts{margin-left:0;flex-basis:100%}
+    .answer .fact{font-size:11px}
+
+    /* work beside the words, each sized to what it holds */
+    .board{display:flex;gap:12px;align-items:flex-start}
+    .board > .panel:first-of-type{flex:0 1 auto;min-width:0}
+    .board > .panel:last-of-type{flex:1 1 230px;min-width:0}
+    .panel{box-shadow:none;border:1px solid var(--rule);break-inside:auto}
+    .panel-head{padding:6px 10px}
+    .panel-head h2{font-size:12.5px}
+
+    .work-scroll{padding:13px 8px 15px;overflow:visible}
+    .tape-scroll{overflow:visible}
+    .areawrap{padding:8px 10px 10px;gap:6px;break-inside:avoid}
+    .am .cell{font-size:11px} .am .hd{font-size:10.5px}
+    .fg .g{width:96px}
+    .tapewrap{padding:8px 10px 10px;gap:6px;break-inside:avoid}
+    .tapecap{font-size:10.5px}
+    .tape .seg{height:28px;font-size:11px}
+    .tape .t-lbl{font-size:10.5px}
+    .chain{padding:13px 10px 14px;overflow:visible}
+    .crow{padding:7px 0}
+
+    .legend{padding:7px 10px;gap:4px 13px}
+    .legend div{font-size:10px}
+    .legend i{border:.5px solid var(--ink)}
+
+    .log{padding:2px 0 4px}
+    .log > li{padding:7px 10px;break-inside:avoid}
+    .log .n{font-size:9.5px;padding:2px 5px}
+    .log .line{font-size:11px;gap:7px}
+    .log .tag{font-size:8.5px;min-width:7.2ch;padding:1px 4px}
+    .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
+    .closer{font-size:11px;padding:8px 10px}
+    .stack{font-size:17px}
+    .bars{padding:2px 10px 14px;gap:9px}
+    .bar{height:22px;flex-basis:120px;min-width:90px}
+    .barrow .cap{font-size:11px;min-width:8ch}
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Adding, worked out</div>
+      <h1>The Carry <em>Column</em></h1>
+      <p class="tagline">Line up the decimal points, or find a common denominator &mdash; then watch
+        every carry and every renamed fraction get written down.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem">
+    <div class="modes" role="group" aria-label="What kind of numbers">
+      <button type="button" data-mode="dec" aria-pressed="true">Decimals</button>
+      <button type="button" data-mode="frac" aria-pressed="false">Fractions</button>
+    </div>
+
+    <div class="entry" id="decEntry"></div>
+
+    <div class="entry hide" id="fracEntry">
+      <div class="mixfield">
+        <span class="fieldcap">First</span>
+        <input class="whole" id="w1" type="text" inputmode="numeric" value="2" aria-label="First whole number">
+        <div class="stackfield">
+          <input id="n1" type="text" inputmode="numeric" value="3" aria-label="First numerator">
+          <div class="fbar"></div>
+          <input id="d1" type="text" inputmode="numeric" value="4" aria-label="First denominator">
+        </div>
+      </div>
+      <span class="plus">+</span>
+      <div class="mixfield">
+        <span class="fieldcap">Second</span>
+        <input class="whole" id="w2" type="text" inputmode="numeric" value="1" aria-label="Second whole number">
+        <div class="stackfield">
+          <input id="n2" type="text" inputmode="numeric" value="5" aria-label="Second numerator">
+          <div class="fbar"></div>
+          <input id="d2" type="text" inputmode="numeric" value="6" aria-label="Second denominator">
+        </div>
+      </div>
+    </div>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips"></span>
+      <span class="practice">
+        <div class="modes" role="group" aria-label="Practice mode">
+          <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
+          <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+        </div>
+      </span>
+    </div>
+  </section>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <div class="board" id="board">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The work</h2>
+        <div class="stepper" id="stepper" hidden>
+          <button type="button" id="prevBtn" aria-label="Previous step">&larr;</button>
+          <span class="count" id="stepCount"></span>
+          <button type="button" id="nextBtn" aria-label="Next step">&rarr;</button>
+        </div>
+      </div>
+      <div id="workHost"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Say it out loud</h2></div>
+      <ol class="log" id="log"></ol>
+      <div class="closer" id="closer"></div>
+    </section>
+  </div>
+
+  <div class="footnote">
+    <button class="print" type="button" id="printBtn">Print this work</button>
+    <span>Right to left, one column at a time. If a column makes 10 or more, the extra ten moves next door.</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var lastDec = null;
+  var S = { mode:"dec", dec:["25.4","3.75"], frac:[[2,3,4],[1,5,6]], stepMode:false, step:1 };
+
+  /* ===================== number helpers ===================== */
+  function parseNum(raw){
+    var s = String(raw).trim().replace(/[,\s_]/g,"");
+    if (s === "" || !/^\d*\.?\d*$/.test(s) || !/\d/.test(s)) return null;
+    var p = s.split("."), i = (p[0]||"").replace(/^0+(?=\d)/,"") || "0", f = (p[1]||"");
+    return { i:i, f:f };
+  }
+  function numStr(n){ return n.f ? n.i + "." + n.f.replace(/0+$/,"") : n.i; }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function commas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+  function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a||1; }
+  function lcm(a,b){ return a/gcd(a,b)*b; }
+  function placeName(e){
+    var pos=["ones","tens","hundreds","thousands","ten thousands","hundred thousands","millions"];
+    var neg=["tenths","hundredths","thousandths","ten-thousandths","hundred-thousandths"];
+    return e>=0 ? (pos[e]||"big place") : (neg[-e-1]||"tiny place");
+  }
+
+  /* ===================== decimal addition ===================== */
+  function addDecimals(nums){
+    var maxF = 0, maxI = 1;
+    nums.forEach(function(n){ maxF = Math.max(maxF, n.f.length); maxI = Math.max(maxI, n.i.length); });
+    var intCols = maxI + 1;                                  // one spare for a final carry
+    var L = intCols + maxF;
+    var rows = nums.map(function(n){
+      var i = n.i, f = n.f;
+      while (i.length < intCols) i = " " + i;                // spaces stay blank on the page
+      while (f.length < maxF) f += "0";                      // padded zeros are shown, greyed
+      return { chars:(i+f).split(""), padFrom: intCols + n.f.length };
+    });
+    var out = new Array(L), steps = [], carry = 0;
+    for (var k = L - 1; k >= 0; k--){
+      var parts = [], total = carry;
+      for (var r = 0; r < rows.length; r++){
+        var c = rows[r].chars[k];
+        var v = (c === " ") ? 0 : Number(c);
+        parts.push({ v:v, blank: c === " " });
+        total += v;
+      }
+      var digit = total % 10, cOut = Math.floor(total / 10);
+      out[k] = String(digit);
+      steps.push({ k:k, exp: intCols - 1 - k, parts:parts, carryIn:carry, total:total,
+                   digit:digit, carryOut:cOut, last:(k === 0) });
+      carry = cOut;
+    }
+    return { rows:rows, out:out, steps:steps, intCols:intCols, maxF:maxF, L:L };
+  }
+
+  /* ===================== fraction arithmetic ===================== */
+  function toImproper(m){ return { n: m[0]*m[2] + m[1], d: m[2] }; }
+  function simplify(f){ var g = gcd(f.n, f.d); return { n:f.n/g, d:f.d/g, by:g }; }
+  function toMixed(f){
+    var w = Math.trunc(f.n / f.d), r = Math.abs(f.n % f.d);
+    return { w:w, n:r, d:f.d };
+  }
+  function fracHTML(n, d, cls){
+    return '<span class="fr ' + (cls||"") + '"><span class="nu">' + esc(n) +
+           '</span><span class="de">' + esc(d) + "</span></span>";
+  }
+  function mixedHTML(w, n, d){
+    if (n === 0) return '<span class="mx">' + esc(w) + "</span>";
+    if (w === 0) return fracHTML(n, d);
+    return '<span class="mx">' + esc(w) + "</span>" + fracHTML(n, d);
+  }
+  function termHTML(m){                       // m = [whole, num, den] as typed
+    if (m[1] === 0) return '<span class="mx">' + m[0] + "</span>";
+    return mixedHTML(m[0], m[1], m[2]);
+  }
+
+  /* ===================== render: decimals ===================== */
+  function renderDecimals(){
+    var nums = S.dec.map(parseNum);
+    if (nums.some(function(n){ return !n; }))
+      return fail("Type a number in every box &mdash; digits and at most one decimal point.");
+    if (nums.some(function(n){ return (n.i + n.f).length > 12; }))
+      return fail("Keep each number to 12 digits or fewer so the columns stay readable.");
+
+    var A = addDecimals(nums);
+    lastDec = A;
+    var host = $("workHost");
+    host.innerHTML = '<div class="work-scroll"><div class="stack" id="stack"></div></div>';
+    var st = $("stack");
+
+    var hasPoint = A.maxF > 0;
+    var colOf = function(k){ return 2 + k + (hasPoint && k >= A.intCols ? 1 : 0); };
+    var pointCol = 2 + A.intCols;
+    var lastCol = colOf(A.L - 1);
+
+    var tracks = ["auto"];                                    // col 1: the + sign
+    for (var t = 0; t < A.L + (hasPoint ? 1 : 0); t++)
+      tracks.push(hasPoint && (2 + t) === pointCol ? "var(--pt)" : "var(--cell)");
+    st.style.gridTemplateColumns = tracks.join(" ");
+
+    var frag = document.createDocumentFragment();
+    function put(row, col, text, cls, step){
+      var e = document.createElement("div");
+      e.className = "cel " + (cls||"");
+      e.style.gridRow = row; e.style.gridColumn = col;
+      if (text !== null) e.textContent = text;
+      if (step !== undefined) e.setAttribute("data-step", step);
+      frag.appendChild(e); return e;
+    }
+    var ROW_LABEL = 1, ROW_CARRY = 2, ROW_FIRST = 3;
+    var ROW_LINE = ROW_FIRST + A.rows.length;
+    var ROW_SUM = ROW_LINE + 1;
+
+    /* place-value names, read bottom-to-top */
+    for (var k = 0; k < A.L; k++){
+      var e = document.createElement("div");
+      e.className = "plabel"; e.textContent = placeName(A.intCols - 1 - k);
+      e.style.gridRow = ROW_LABEL; e.style.gridColumn = colOf(k);
+      e.setAttribute("data-place", k);
+      frag.appendChild(e);
+    }
+    /* the dashed spine that keeps the decimal points honest */
+    if (hasPoint){
+      var sp = document.createElement("div");
+      sp.className = "spine";
+      sp.style.gridRow = ROW_CARRY + " / " + (ROW_SUM + 1);
+      sp.style.gridColumn = pointCol;
+      frag.appendChild(sp);
+    }
+
+    A.steps.forEach(function(s, idx){
+      if (s.carryOut > 0 && s.k > 0)
+        put(ROW_CARRY, colOf(s.k - 1), String(s.carryOut), "carry", idx);
+    });
+
+    A.rows.forEach(function(r, ri){
+      var row = ROW_FIRST + ri;
+      if (ri === A.rows.length - 1) put(row, 1, "+", "op");
+      for (var k = 0; k < A.L; k++){
+        var c = r.chars[k];
+        if (c === " ") continue;
+        put(row, colOf(k), c, "term" + (k >= r.padFrom ? " pad" : ""));
+      }
+      if (hasPoint) put(row, pointCol, ".", "term");
+    });
+
+    var line = document.createElement("div");
+    line.className = "sumline";
+    line.style.gridRow = ROW_LINE; line.style.gridColumn = "1 / " + (lastCol + 1);
+    frag.appendChild(line);
+
+    var lead = A.out[0] === "0";
+    for (var k2 = 0; k2 < A.L; k2++){
+      if (lead && k2 === 0) continue;
+      var sIdx = -1;
+      A.steps.forEach(function(s, idx){ if (s.k === k2) sIdx = idx; });
+      put(ROW_SUM, colOf(k2), A.out[k2], "sum", sIdx >= 0 ? sIdx : undefined);
+    }
+    if (hasPoint) put(ROW_SUM, pointCol, ".", "sum");
+    st.appendChild(frag);
+
+    /* answer */
+    var whole = A.out.slice(0, A.intCols).join("").replace(/^0+(?=\d)/,"");
+    var frac = A.out.slice(A.intCols).join("");
+    var total = frac ? whole + "." + frac : whole;
+    var shown = numStr(parseNum(total));
+
+    var facts = [];
+    var est = nums.reduce(function(a,n){ return a + Math.round(Number(numStr(n))); }, 0);
+    facts.push("Rounded estimate: " + nums.map(function(n){ return Math.round(Number(numStr(n))); }).join(" + ")
+      + " = <b>" + est + "</b>");
+    if (A.maxF > 0){
+      var pads = nums.filter(function(n){ return n.f.length < A.maxF; }).length;
+      if (pads) facts.push("Added zeros so every number has <b>" + A.maxF +
+        "</b> decimal place" + (A.maxF > 1 ? "s" : "") + ".");
+    }
+    band('<span class="k">Sum</span><span class="v">' + esc(commas(shown)) + "</span>", facts, "answer");
+
+    /* words */
+    var items = [], pads = nums.filter(function(n){ return n.f.length < A.maxF; });
+    if (A.maxF > 0){
+      items.push({ n:"Set&nbsp;up", lines:[["p","Line up",
+        "Stack the numbers so the decimal points sit in one straight line — that’s the dashed line "
+        + "on the left. Every digit lands in its own place-value column."]],
+        aside: pads.length
+          ? "One number is shorter, so fill the empty places with <b>0</b>. "
+            + esc(numStr(pads[0])) + " becomes <b>"
+            + esc(pads[0].i + "." + (pads[0].f + new Array(A.maxF - pads[0].f.length + 1).join("0")))
+            + "</b>. A zero on the end of a decimal never changes its value."
+          : null });
+    }
+    A.steps.forEach(function(s, idx){
+      var vals = s.parts.filter(function(p){ return !p.blank; }).map(function(p){ return p.v; });
+      var sum = vals.join(" + ") + (s.carryIn ? " + " + s.carryIn + " carried" : "");
+      var lines = [["p","Column", "The <b>" + placeName(s.exp) + "</b> column."]];
+      lines.push(["a","Add", sum + " = <b>" + s.total + "</b>."]);
+      var aside = null;
+      if (s.carryOut > 0){
+        lines.push(["c","Carry", "<b>" + s.total + "</b> is too big for one column, so write the "
+          + "<b>" + s.digit + "</b> here and carry the <b>" + s.carryOut + "</b> to the "
+          + placeName(s.exp + 1) + "."]);
+        aside = "That carried <b>" + s.carryOut + "</b> isn’t really a " + s.carryOut + " — it’s "
+              + s.carryOut + " " + placeName(s.exp + 1) + ". Ten of anything trades up for one of "
+              + "the next thing over.";
+      } else {
+        lines.push(["c","Write", "Write <b>" + s.digit + "</b> under the line. Nothing to carry."]);
+      }
+      items.push({ n:"Step&nbsp;" + (idx+1), lines:lines, aside:aside, step:idx });
+    });
+    writeLog(items);
+
+    var exact = nums.reduce(function(a,n){ return a + Number(numStr(n)); }, 0);
+    var ok = Math.abs(exact - Number(total)) < 1e-9;
+    $("closer").innerHTML = "<b>Check:</b> the estimate was <b>" + est + "</b> and the answer is <b>"
+      + esc(shown) + "</b> — close enough to be believable"
+      + (ok ? ' <span class="ok">✓</span>' : "") + ".";
+
+    $("legend").innerHTML =
+      '<div><i class="sw-k"></i> Carried tens</div>' +
+      '<div><i class="sw-a"></i> The sum</div>' +
+      '<div><i class="sw-w"></i> Place-value names</div>';
+    /* the parts laid end to end make the whole */
+    if (Number(shown) > 0){
+      mountTape("Lay the parts end to end and measure the whole tape: "
+        + nums.map(function(n){ return "<b>" + esc(commaNum(numStr(n))) + "</b>"; }).join(" + ")
+        + " = <b>" + esc(commaNum(shown)) + "</b>.", {
+        total: esc(commaNum(shown)), totalCls: "ans",
+        segs: nums.map(function(n, i){
+          return { w: Number(numStr(n)), html: esc(commaNum(numStr(n))), cls: i % 2 ? "b" : "" };
+        })
+      });
+    }
+    return A.steps.length;
+  }
+
+  /* ===================== render: fractions ===================== */
+  function renderFractions(){
+    var m1 = S.frac[0], m2 = S.frac[1];
+    if ([m1,m2].some(function(m){ return !isFinite(m[0])||!isFinite(m[1])||!isFinite(m[2]); }))
+      return fail("Fill in every box. Use 0 for the whole number if you only want a fraction.");
+    if (m1[2] === 0 || m2[2] === 0)
+      return fail("A denominator can’t be 0 — you can’t cut something into zero pieces.");
+    if (m1[2] > 999 || m2[2] > 999 || m1[1] > 9999 || m2[1] > 9999)
+      return fail("Keep the numbers small enough to work with by hand (denominators under 1000).");
+
+    var a = toImproper(m1), b = toImproper(m2);
+    var L = lcm(a.d, b.d);
+    var fa = L / a.d, fb = L / b.d;
+    var sum = { n: a.n*fa + b.n*fb, d: L };
+    var simp = simplify(sum);
+    var mixed = toMixed(simp);
+
+    var mixedIn = (m1[0] !== 0 || m2[0] !== 0);
+    var needsMixedOut = (simp.n >= simp.d && simp.d !== 1);
+
+    /* every chain line gets exactly one entry in the log, so the two stay in lockstep */
+    var rows = [], items = [];
+    function step(html, eq, lines, aside, result){
+      items.push({ n:"Step&nbsp;" + (rows.length + 1), step:rows.length, lines:lines, aside:aside||null });
+      rows.push({ eq:eq, html:html, result:!!result });
+    }
+
+    step(termHTML(m1) + '<span class="op-s">+</span>' + termHTML(m2), "",
+      [["p","Look","You can only add fractions when the pieces are the same size — same denominator. "
+        + "Here they’re <b>" + a.d + "ths</b> and <b>" + b.d + "ths</b>."]],
+      a.d === b.d ? "These already match, so you can add them straight away." : null);
+
+    if (mixedIn){
+      step(fracHTML(a.n,a.d) + '<span class="op-s">+</span>' + fracHTML(b.n,b.d), "=",
+        [["a","Convert","<b>" + m1[0] + " " + m1[1] + "/" + m1[2] + "</b> means <b>" + m1[0] + " × "
+          + m1[2] + " + " + m1[1] + " = " + a.n + "</b> pieces, so <b>" + a.n + "/" + a.d
+          + "</b>. The other becomes <b>" + b.n + "/" + b.d + "</b>."]],
+        "Improper fractions are easier to add than mixed numbers. You turn it back at the end.");
+    }
+    if (a.d !== b.d){
+      step(fracHTML(a.n*fa,L) + '<span class="op-s">+</span>' + fracHTML(b.n*fb,L), "=",
+        [["p","Find LCD","Multiples of <b>" + a.d + "</b>: " + multiples(a.d,L)
+          + ". Multiples of <b>" + b.d + "</b>: " + multiples(b.d,L)
+          + ". The smallest one they share is <b>" + L + "</b>."],
+         ["a","Rename","<b>" + a.n + "/" + a.d + "</b> × <b>" + fa + "/" + fa + "</b> = <b>"
+          + (a.n*fa) + "/" + L + "</b>, and <b>" + b.n + "/" + b.d + "</b> × <b>" + fb + "/" + fb
+          + "</b> = <b>" + (b.n*fb) + "/" + L + "</b>."]],
+        "Multiplying the top and bottom by the same number doesn’t change the value — it just cuts "
+        + "the same amount into more, smaller pieces.");
+    }
+    step(fracHTML(sum.n, L), "=",
+      [["a","Add","<b>" + (a.n*fa) + " + " + (b.n*fb) + " = " + sum.n + "</b> pieces, each one a <b>"
+        + L + "th</b>. So <b>" + sum.n + "/" + L + "</b>."]],
+      "The denominator stays <b>" + L + "</b>. You’re counting pieces, not resizing them.",
+      simp.by === 1 && !needsMixedOut);
+
+    if (simp.by > 1){
+      step(fracHTML(simp.n, simp.d), "=",
+        [["c","Simplify","<b>" + sum.n + "</b> and <b>" + L + "</b> both divide by <b>" + simp.by
+          + "</b>, giving <b>" + simp.n + "/" + simp.d + "</b>."]], null, !needsMixedOut);
+    }
+    if (needsMixedOut){
+      step(mixedHTML(mixed.w, mixed.n, mixed.d), "=",
+        [["c","Mixed","<b>" + simp.n + " ÷ " + simp.d + " = " + mixed.w + "</b> remainder <b>"
+          + mixed.n + "</b>, so <b>" + mixed.w + " " + mixed.n + "/" + mixed.d + "</b>."]], null, true);
+    }
+
+    /* chain + bar model */
+    lastDec = null;
+    var host = $("workHost");
+    var html = '<div class="chain">';
+    rows.forEach(function(r, i){
+      html += '<div class="crow' + (r.result ? " result" : "") + '" data-step="' + i + '">'
+            + '<span class="eq">' + r.eq + '</span><span class="expr">' + r.html + "</span></div>";
+    });
+    html += "</div>";
+    // bars only earn their space when the pieces are countable at a glance
+    var maxWhole = Math.max(Math.floor(a.n*fa/L), Math.floor(b.n*fb/L), Math.floor(sum.n/L));
+    var showBars = L <= 16 && maxWhole <= 4;
+    if (showBars){
+      html += '<div class="bars">' + barRow(a.n*fa, L, "a", termHTML(m1))
+            + barRow(b.n*fb, L, "b", termHTML(m2))
+            + barRow(sum.n, L, "tot", needsMixedOut
+                ? mixedHTML(mixed.w, mixed.n, mixed.d) : fracHTML(simp.n, simp.d)) + "</div>";
+    }
+    host.innerHTML = html;
+
+    /* area model: cut one fraction into columns and the other into rows, so both land on the
+       same size of piece. Only drawn for two plain proper fractions with different bottoms. */
+    var n1 = m1[1], d1 = m1[2], n2 = m2[1], d2 = m2[2];
+    if (!mixedIn && n1 > 0 && n2 > 0 && n1 < d1 && n2 < d2 && d1 !== d2 && d1 <= 12 && d2 <= 12
+        && d1 * d2 <= 60){
+      var P = d1 * d2, A1 = n1 * d2, B1 = n2 * d1, N = A1 + B1;
+      var outs = "";
+      for (var k = 0; k * P < N; k++){
+        outs += fGrid(d1, d2, function(c, r, i){
+          var at = k * P + i; return at < A1 ? "a" : (at < N ? "b" : "");
+        }, k === 0 ? N + "/" + P : "");
+      }
+      var simpTxt = needsMixedOut ? mixed.w + " " + mixed.n + "/" + mixed.d : simp.n + "/" + simp.d;
+      mountArea("Cut <b>" + n1 + "/" + d1 + "</b> into columns and <b>" + n2 + "/" + d2 + "</b> into rows. "
+        + "Put both sets of cuts on each square and every piece is the same size: <b>1/" + P + "</b>. "
+        + "The first covers <b>" + A1 + "</b> pieces and the second <b>" + B1 + "</b>, so slide them "
+        + "together: <b>" + N + "/" + P + "</b>"
+        + (simpTxt !== N + "/" + P ? ", which is <b>" + simpTxt + "</b>" : "") + "."
+        + (N > P ? " That’s more than one whole square, so it spills into a second." : "")
+        + (P !== L ? " (Cutting both ways always works. The steps above found a smaller common "
+                     + "denominator, <b>" + L + "</b> — either gives the same answer.)" : ""),
+        '<div class="fgrids">'
+        + fGrid(d1, d2, function(c){ return c < n1 ? "a" : ""; }, n1 + "/" + d1 + " = " + A1 + "/" + P)
+        + '<span class="op">+</span>'
+        + fGrid(d1, d2, function(c, r){ return r < n2 ? "b" : ""; }, n2 + "/" + d2 + " = " + B1 + "/" + P)
+        + '<span class="fgout"><span class="op">=</span>' + outs + "</span></div>");
+    }
+
+    var final = (simp.n >= simp.d && simp.d !== 1)
+      ? mixedHTML(mixed.w, mixed.n, mixed.d) : fracHTML(simp.n, simp.d);
+    var dec = (simp.n / simp.d);
+    band('<span class="k">Sum</span><span class="v">' + final + "</span>", [
+      "As a decimal: <b>" + trimNum(dec) + "</b>",
+      "Common denominator used: <b>" + L + "</b>"
+    ], "answer");
+
+    writeLog(items);
+
+    var d1 = a.n/a.d, d2 = b.n/b.d;
+    $("closer").innerHTML = "<b>Check with decimals:</b> " + trimNum(d1) + " + " + trimNum(d2)
+      + " = <b>" + trimNum(d1+d2) + "</b>, and our answer is <b>" + trimNum(dec) + "</b>"
+      + (Math.abs(d1+d2-dec) < 1e-9 ? ' <span class="ok">✓</span>' : "") + ".";
+
+    $("legend").innerHTML = showBars
+      ? '<div><i class="sw-l"></i> First fraction</div>' +
+        '<div><i class="sw-w"></i> Second fraction</div>' +
+        '<div><i class="sw-k"></i> The sum</div>' +
+        '<div>Every bar is cut into ' + L + ' equal pieces</div>'
+      : '<div>' + (L > 16
+          ? 'Cut into <b style="color:var(--key)">' + L + '</b> pieces — too fine to draw clearly.'
+          : 'This one runs past 4 whole bars, too wide to draw here.')
+        + ' The chain above is the whole story.</div>';
+    return rows.length;
+  }
+
+  // one full bar per whole, then a partial bar for what's left over
+  function barRow(filled, total, cls, cap){
+    var wholes = Math.floor(filled / total), rest = filled % total, bars = "", s, i;
+    for (var b = 0; b < wholes; b++){
+      s = "";
+      for (i = 0; i < total; i++) s += '<span class="' + cls + '"></span>';
+      bars += '<div class="bar">' + s + "</div>";
+    }
+    if (rest > 0 || wholes === 0){
+      s = "";
+      for (i = 0; i < total; i++) s += "<span" + (i < rest ? ' class="' + cls + '"' : "") + "></span>";
+      bars += '<div class="bar">' + s + "</div>";
+    }
+    return '<div class="barrow"><span class="cap">' + cap + "</span>" + bars + "</div>";
+  }
+  function multiples(d, upto){
+    var out = [];
+    for (var i = 1; i * d <= upto; i++) out.push(i*d === upto ? "<b>" + i*d + "</b>" : String(i*d));
+    if (out.length > 8) out = out.slice(-8);
+    return out.join(", ");
+  }
+  function trimNum(x){
+    if (!isFinite(x)) return "?";
+    var s = x.toFixed(6).replace(/0+$/,"").replace(/\.$/,"");
+    return (Math.abs(x - Number(s)) > 1e-9 ? s + "…" : s);
+  }
+
+  /* one square, cut into cols × rows; cls(col, row, index) picks each piece's shading */
+  function fGrid(cols, rows, cls, cap){
+    var s = "";
+    for (var i = 0; i < cols * rows; i++){
+      var c = cls(i % cols, Math.floor(i / cols), i);
+      s += "<span" + (c ? ' class="' + c + '"' : "") + "></span>";
+    }
+    return '<div class="fg"><div class="g" style="grid-template-columns:repeat(' + cols + ',1fr)">'
+         + s + '</div><div class="cap">' + (cap || "") + "</div></div>";
+  }
+  function mountArea(cap, inner){
+    $("workHost").insertAdjacentHTML("beforeend",
+      '<div class="areawrap"><div class="tapecap"><b class="lead">Area model.</b> ' + cap + "</div>"
+      + inner + "</div>");
+  }
+
+  /* ===================== tape diagram ===================== */
+  /* o = { total, totalCls, segs:[{w, html, cls}], unders:[{from, to, label}] }
+     Box widths follow the values; a box never shrinks below its own label. */
+  function commaNum(s){ var p = String(s).split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g,","); return p.join("."); }
+  function mountTape(cap, o){
+    var cols = o.segs.map(function(s){
+      return "minmax(max-content," + Math.max(s.w, 0.001).toFixed(4) + "fr)";
+    }).join(" ");
+    var html = '<div class="t-lbl ' + (o.totalCls || "") + '" style="grid-row:1;grid-column:1/-1">'
+             + o.total + '</div><div class="brk" style="grid-row:2;grid-column:1/-1"></div>';
+    o.segs.forEach(function(s, i){
+      html += '<div class="seg ' + (s.cls || "") + (i === 0 ? " first" : "")
+            + '" style="grid-row:3;grid-column:' + (i + 1) + '">' + s.html + "</div>";
+    });
+    (o.unders || []).forEach(function(u){
+      var c = u.from + "/" + (u.to + 1);
+      html += '<div class="brk down" style="grid-row:4;grid-column:' + c + '"></div>'
+            + '<div class="t-lbl under" style="grid-row:5;grid-column:' + c + '">' + u.label + "</div>";
+    });
+    $("workHost").insertAdjacentHTML("beforeend",
+      '<div class="tapewrap"><div class="tapecap"><b class="lead">Tape diagram.</b> ' + cap + "</div>"
+      + '<div class="tape-scroll"><div class="tape" aria-hidden="true" style="grid-template-columns:'
+      + cols + '">' + html + "</div></div></div>");
+  }
+
+  /* ===================== shared shell ===================== */
+  function band(inner, facts, cls){
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = cls;
+    el.innerHTML = inner + '<div class="facts">' +
+      facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    $("board").parentNode.insertBefore(el, $("board"));
+  }
+  function writeLog(items){
+    var html = "";
+    items.forEach(function(it){
+      html += "<li" + (it.step !== undefined ? ' data-step="' + it.step + '"' : "") + '>'
+            + '<span class="n">' + it.n + "</span>";
+      it.lines.forEach(function(l){
+        html += '<div class="line"><span class="tag tag-' + l[0] + '">' + l[1]
+              + '</span><span class="txt">' + l[2] + "</span></div>";
+      });
+      if (it.aside) html += '<div class="aside">' + it.aside + "</div>";
+      html += "</li>";
+    });
+    $("log").innerHTML = html;
+  }
+  function fail(msg){
+    $("workHost").innerHTML = "";
+    $("log").innerHTML = ""; $("closer").textContent = ""; $("legend").innerHTML = "";
+    $("stepper").hidden = true;
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "notice"; el.innerHTML = msg;
+    $("board").parentNode.insertBefore(el, $("board"));
+    $("statusLine").textContent = el.textContent;
+    return 0;
+  }
+
+  function render(){
+    var total = (S.mode === "dec") ? renderDecimals() : renderFractions();
+    if (!total){ return; }
+    if (S.step > total) S.step = total;
+    if (S.step < 1) S.step = 1;
+    $("stepper").hidden = !S.stepMode;
+    if (S.stepMode){
+      $("stepCount").textContent = S.step + " of " + total;
+      $("prevBtn").disabled = S.step <= 1;
+      $("nextBtn").disabled = S.step >= total;
+    }
+    veil(total);
+    $("statusLine").textContent = "";
+  }
+  function veil(total){
+    var f = function(el){
+      var s = Number(el.getAttribute("data-step"));
+      el.classList.toggle("veil", S.stepMode && s >= S.step);
+    };
+    Array.prototype.forEach.call(document.querySelectorAll("[data-step]"), f);
+    var b = document.querySelector(".answer");
+    if (b) b.classList.toggle("masked", S.stepMode && S.step < total);
+    $("closer").style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+    Array.prototype.forEach.call(document.querySelectorAll(".plabel"), function(el){
+      el.classList.remove("on");
+    });
+    if (S.stepMode && S.mode === "dec" && lastDec && lastDec.steps[S.step - 1]){
+      var k = lastDec.steps[S.step - 1].k;
+      var lab = document.querySelector('.plabel[data-place="' + k + '"]');
+      if (lab) lab.classList.add("on");
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".tapewrap, .areawrap"), function(el){
+      el.classList.toggle("veil", S.stepMode && S.step < total);
+    });
+  }
+
+  /* ===================== decimal entry (2–4 addends) ===================== */
+  function buildDecEntry(){
+    var host = $("decEntry");
+    host.innerHTML = "";
+    S.dec.forEach(function(v, i){
+      if (i > 0){
+        var p = document.createElement("span"); p.className = "plus"; p.textContent = "+";
+        host.appendChild(p);
+      }
+      var wrap = document.createElement("span"); wrap.className = "addend";
+      var inp = document.createElement("input");
+      inp.className = "dec-in"; inp.type = "text"; inp.inputMode = "decimal";
+      inp.value = v; inp.setAttribute("aria-label", "Number " + (i+1));
+      inp.addEventListener("input", function(){
+        S.dec[i] = inp.value;
+        inp.style.width = Math.max(4, Math.min(14, inp.value.length + 1)) + "ch";
+        render(); save();
+      });
+      inp.style.width = Math.max(4, Math.min(14, v.length + 1)) + "ch";
+      wrap.appendChild(inp);
+      if (S.dec.length > 2){
+        var x = document.createElement("button");
+        x.className = "drop"; x.type = "button"; x.innerHTML = "&times;";
+        x.setAttribute("aria-label", "Remove number " + (i+1));
+        x.addEventListener("click", function(){
+          S.dec.splice(i,1); S.step = 1; buildDecEntry(); render(); save();
+        });
+        wrap.appendChild(x);
+      }
+      host.appendChild(wrap);
+    });
+    var more = document.createElement("button");
+    more.className = "more"; more.type = "button"; more.textContent = "+ another number";
+    if (S.dec.length >= 4) more.hidden = true;
+    more.addEventListener("click", function(){
+      S.dec.push("1.5"); S.step = 1; buildDecEntry(); render(); save();
+    });
+    host.appendChild(more);
+  }
+
+  /* ===================== wiring ===================== */
+  ["w1","n1","d1","w2","n2","d2"].forEach(function(id, idx){
+    $(id).addEventListener("input", function(e){
+      var v = e.target.value.replace(/[^\d]/g,"");
+      e.target.value = v;
+      S.frac[Math.floor(idx/3)][idx%3] = v === "" ? 0 : Number(v);
+      S.step = 1; render(); save();
+    });
+  });
+  function setMode(m){
+    S.mode = m; S.step = 1;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === m));
+    });
+    $("decEntry").classList.toggle("hide", m !== "dec");
+    $("fracEntry").classList.toggle("hide", m !== "frac");
+    buildChips();
+    render(); save();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
+    b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
+  });
+
+  var EX = {
+    dec: [["25.4","3.75"], ["8.6","4.9"], ["0.75","0.4"], ["12","3.08","5.5"], ["1.25","2.5","0.75"]],
+    frac:[[[0,1,2],[0,1,3]], [[0,3,4],[0,5,6]], [[2,3,4],[1,5,6]], [[0,2,5],[0,1,5]], [[1,1,2],[2,2,3]]]
+  };
+  function label(m){ return m[0] ? m[0] + " " + m[1] + "/" + m[2] : m[1] + "/" + m[2]; }
+  function buildChips(){
+    var host = $("chips"); host.innerHTML = "";
+    EX[S.mode].forEach(function(ex){
+      var b = document.createElement("button");
+      b.className = "chip"; b.type = "button";
+      b.textContent = S.mode === "dec" ? ex.join(" + ") : ex.map(label).join(" + ");
+      b.addEventListener("click", function(){
+        S.step = 1;
+        if (S.mode === "dec"){ S.dec = ex.slice(); buildDecEntry(); }
+        else {
+          S.frac = [ex[0].slice(), ex[1].slice()];
+          ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
+            $(id).value = S.frac[Math.floor(i/3)][i%3];
+          });
+        }
+        render(); save();
+      });
+      host.appendChild(b);
+    });
+  }
+
+  function setStepMode(on){
+    S.stepMode = on; S.step = 1;
+    $("allBtn").setAttribute("aria-pressed", String(!on));
+    $("stepBtn").setAttribute("aria-pressed", String(on));
+    render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
+  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
+  $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+  document.addEventListener("keydown", function(e){
+    if (!S.stepMode || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
+    if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
+    if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    paint(); save();
+  });
+
+  function save(){
+    try{ localStorage.setItem("carry-column", JSON.stringify({
+      mode:S.mode, dec:S.dec, frac:S.frac, stepMode:S.stepMode,
+      theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
+  }
+  function load(){
+    try{
+      var v = JSON.parse(localStorage.getItem("carry-column") || "null");
+      if (!v) return;
+      if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
+      if (v.mode === "dec" || v.mode === "frac") S.mode = v.mode;
+      if (Array.isArray(v.dec) && v.dec.length >= 2 && v.dec.length <= 4) S.dec = v.dec;
+      if (Array.isArray(v.frac) && v.frac.length === 2) S.frac = v.frac;
+      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+    }catch(e){}
+  }
+
+  load();
+  ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
+    $(id).value = S.frac[Math.floor(i/3)][i%3];
+  });
+  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
+  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  buildDecEntry();
+  paint();
+  setMode(S.mode);
+})();
+</script>

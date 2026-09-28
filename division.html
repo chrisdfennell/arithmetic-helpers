@@ -1,0 +1,1714 @@
+<title>The Division House</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFE9;
+    --surface:#F8F9F5;
+    --surface-2:#E2E6DD;
+    --ink:#19211D;
+    --ink-2:#4B5651;
+    --ink-3:#7C8781;
+    --rule:#C9D0C6;
+    --amber:#A85A0C;   --amber-bg:#F7E7D4;  --amber-line:#D89A57;
+    --blue:#265AA5;    --blue-bg:#DEE8F6;   --blue-line:#7BA3DA;
+    --green:#0F6E58;   --green-bg:#D6EBE3;  --green-line:#5CB49C;
+    --focus:#265AA5;
+    --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
+
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#131817;
+      --surface:#1B2220;
+      --surface-2:#28322F;
+      --ink:#E7EBE4;
+      --ink-2:#A3AEA7;
+      --ink-3:#77837D;
+      --rule:#38423F;
+      --amber:#F2A85C;  --amber-bg:#3A2A16;  --amber-line:#8C6224;
+      --blue:#8CB1EC;   --blue-bg:#1A2740;   --blue-line:#3F5F96;
+      --green:#57CBAB;  --green-bg:#123129;  --green-line:#2C7361;
+      --focus:#8CB1EC;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131817;
+    --surface:#1B2220;
+    --surface-2:#28322F;
+    --ink:#E7EBE4;
+    --ink-2:#A3AEA7;
+    --ink-3:#77837D;
+    --rule:#38423F;
+    --amber:#F2A85C;  --amber-bg:#3A2A16;  --amber-line:#8C6224;
+    --blue:#8CB1EC;   --blue-bg:#1A2740;   --blue-line:#3F5F96;
+    --green:#57CBAB;  --green-bg:#123129;  --green-line:#2C7361;
+    --focus:#8CB1EC;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--f-body);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:26px}
+
+  /* ---------- masthead ---------- */
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{
+    font-family:var(--f-mono);font-size:11.5px;font-weight:600;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  }
+  h1{
+    font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;
+    margin:.16em 0 0;text-wrap:balance;
+  }
+  h1 .div-sign{color:var(--amber)}
+  .tagline{color:var(--ink-2);max-width:46ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{
+    font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap;
+  }
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  /* ---------- problem bar ---------- */
+  .problem{
+    background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:22px 22px 18px;
+    display:flex;flex-direction:column;gap:18px;
+  }
+  .equation{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-family:var(--f-mono)}
+  .num-field{display:flex;flex-direction:column;gap:5px}
+  .num-field > label{
+    font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);
+  }
+  .num-field input{
+    font-family:var(--f-mono);font-size:clamp(26px,5vw,34px);font-weight:600;
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);background:transparent;border:0;border-bottom:2.5px solid var(--rule);
+    padding:1px 4px 4px;width:6ch;min-width:3ch;outline:none;
+  }
+  .num-field input:focus{border-bottom-color:var(--focus)}
+  .num-field input::placeholder{color:var(--ink-3);opacity:.6}
+  .obelus{
+    font-size:clamp(26px,5vw,34px);color:var(--amber);font-weight:600;
+    align-self:flex-end;padding-bottom:2px;
+  }
+  .swap-btn{
+    align-self:flex-end;margin-bottom:4px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-3);border-radius:8px;width:30px;height:30px;cursor:pointer;
+    font-size:14px;line-height:1;
+  }
+  .swap-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .controls{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end;
+    border-top:1px dashed var(--rule);padding-top:16px}
+  .ctl{display:flex;flex-direction:column;gap:7px}
+  .ctl > span{
+    font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);
+  }
+  .segmented{display:flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
+  .segmented button{
+    font-family:var(--f-body);font-size:13.5px;font-weight:500;
+    border:0;background:transparent;color:var(--ink-2);
+    padding:7px 14px;border-radius:7px;cursor:pointer;white-space:nowrap;
+  }
+  .segmented button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .segmented button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  select.places{
+    font-family:var(--f-body);font-size:13.5px;color:var(--ink);background:var(--surface-2);
+    border:1px solid transparent;border-radius:9px;padding:8px 10px;cursor:pointer;
+  }
+  select.places:focus-visible, .segmented button:focus-visible, .theme-btn:focus-visible,
+  .swap-btn:focus-visible, .chip:focus-visible, .ghost:focus-visible, input:focus-visible{
+    outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px;
+  }
+  .ctl[hidden],.ctl.places-ctl[hidden]{display:none}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .examples .lbl{
+    font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px;
+  }
+  .chip{
+    font-family:var(--f-mono);font-size:13px;font-weight:400;
+    background:transparent;border:1px solid var(--rule);color:var(--ink-2);
+    border-radius:999px;padding:5px 12px;cursor:pointer;
+  }
+  .chip:hover{border-color:var(--amber-line);color:var(--ink);background:var(--amber-bg)}
+
+  /* ---------- answer band ---------- */
+  .answer{
+    border-left:5px solid var(--amber);background:var(--amber-bg);
+    border-radius:6px 12px 12px 6px;padding:16px 20px;
+    display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 26px;
+  }
+  .answer .k{
+    font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--amber);align-self:center;
+  }
+  .answer .v{
+    font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink);line-height:1.15;
+    word-break:break-all;
+  }
+  .answer .v .r-mark{color:var(--green)}
+  .answer .v .rep{text-decoration:overline;text-decoration-thickness:2px}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .answer .fact .rep{text-decoration:overline;text-decoration-thickness:1.5px}
+  .answer.masked .v{color:var(--ink-3)}
+
+  .notice{
+    border-left:5px solid var(--blue);background:var(--blue-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px;
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  }
+  .notice b{font-weight:600}
+  .ghost{
+    font-family:var(--f-body);font-size:13.5px;font-weight:600;
+    background:transparent;border:1.5px solid var(--blue);color:var(--blue);
+    border-radius:8px;padding:6px 13px;cursor:pointer;
+  }
+  .ghost:hover{background:var(--blue);color:var(--surface)}
+
+  /* ---------- two column body ---------- */
+  .board{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:start}
+  @media (max-width:860px){ .board{grid-template-columns:minmax(0,1fr)} }
+
+  .panel{
+    background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+  .panel-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--rule);
+  }
+  .panel-head h2{
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;
+    font-size:15px;letter-spacing:.02em;margin:0;
+  }
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{
+    font-family:var(--f-mono);font-size:13px;font-weight:600;
+    background:var(--surface-2);border:0;color:var(--ink);border-radius:7px;
+    width:30px;height:28px;cursor:pointer;
+  }
+  .stepper button:disabled{color:var(--ink-3);cursor:not-allowed}
+  .stepper button:hover:not(:disabled){background:var(--amber-bg);color:var(--amber)}
+  .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);
+    min-width:7.5ch;text-align:center;font-variant-numeric:tabular-nums}
+  .stepper[hidden]{display:none}
+
+  /* ---------- fraction entry ---------- */
+  .equation.hide{display:none}
+  .mixfield{display:flex;align-items:center;gap:7px}
+  .mixfield .whole{font-family:var(--f-mono);font-size:clamp(26px,5vw,34px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;border-bottom:2.5px solid var(--rule);
+    width:3ch;text-align:center;padding:1px 2px 4px;outline:none}
+  .mixfield .whole:focus{border-bottom-color:var(--focus)}
+  .stackfield{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .stackfield input{font-family:var(--f-mono);font-size:clamp(18px,3.4vw,23px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;width:3.2ch;text-align:center;padding:1px;outline:none}
+  .stackfield input:focus{background:var(--amber-bg);border-radius:4px}
+  .stackfield .fbar{height:2.5px;width:3.4ch;background:var(--ink);border-radius:2px}
+  .fieldcap{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);width:100%;margin-bottom:-2px}
+
+  /* ---------- fraction chain ---------- */
+  .chain{padding:20px 18px 22px;display:flex;flex-direction:column;gap:2px;overflow-x:auto}
+  .chain[hidden]{display:none}
+  .crow{display:grid;grid-template-columns:1.6ch minmax(0,1fr);gap:0 10px;align-items:center;
+    padding:10px 0;border-bottom:1px dashed var(--rule)}
+  .crow:last-child{border-bottom:0}
+  .crow .eq{font-family:var(--f-mono);font-size:clamp(19px,3.6vw,24px);color:var(--amber);font-weight:600}
+  .crow .expr{display:flex;align-items:center;gap:.5ch;flex-wrap:wrap;
+    font-family:var(--f-mono);font-size:clamp(19px,3.6vw,24px);color:var(--ink);font-weight:600}
+  .crow.result .expr{color:var(--amber)}
+  .crow.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.crow{transition:opacity .2s ease}}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+    line-height:1.08;margin:0 .1ch}
+  .fr .nu,.fr .de{display:flex;flex-direction:column;align-items:center;line-height:1.05;padding:0 .3ch}
+  .fr .de{border-top:2.5px solid currentColor;margin-top:1px}
+  .fr .mini{font-size:.52em;color:var(--green);font-weight:600;line-height:1.1}
+  .fr .was{text-decoration:line-through;text-decoration-thickness:2px;
+    text-decoration-color:var(--green);color:var(--ink-3)}
+  .mx{margin-right:.25ch}
+  .op-s{color:var(--amber);padding:0 .2ch}
+  .flipped{outline:2px dashed var(--green-line);outline-offset:3px;border-radius:4px}
+
+  /* ---------- how many fit inside ---------- */
+  .fitwrap{padding:2px 18px 20px;display:flex;flex-direction:column;gap:11px}
+  .fitwrap[hidden]{display:none}
+  .fitcap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .fitcap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .fitbar{display:flex;flex-wrap:wrap;gap:7px;align-items:flex-end}
+  .chunk{display:flex;flex-direction:column;align-items:center;gap:3px}
+  .chunk .cells{display:flex;border:1.5px solid var(--ink-3);border-radius:4px;overflow:hidden}
+  .chunk .cells span{width:18px;height:26px;border-right:1px solid var(--ink-3)}
+  .chunk .cells span:last-child{border-right:0}
+  .chunk.full .cells span{background:var(--green-line)}
+  .chunk.part .cells span{background:transparent}
+  .chunk.part .cells span.on{background:var(--amber-line)}
+  .chunk .tag{font-family:var(--f-mono);font-size:11px;font-weight:600}
+  .chunk.full .tag{color:var(--green)}
+  .chunk.part .tag{color:var(--amber)}
+
+  /* ---------- area model (partial quotients) ---------- */
+  .am-scroll{overflow-x:auto;padding-bottom:2px}
+  .am{display:grid;width:100%;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .am .hd{font-size:13px;font-weight:600;text-align:center;padding:0 6px 6px;white-space:nowrap;
+    align-self:end;color:var(--amber)}
+  .am .hd.side{align-self:center;text-align:right;padding:0 10px 0 0;color:var(--ink)}
+  .am .cell{height:64px;display:flex;align-items:center;justify-content:center;padding:0 8px;
+    white-space:nowrap;font-size:14px;font-weight:600;
+    background:var(--blue-bg);color:var(--blue);box-shadow:inset 0 0 0 1px var(--blue-line)}
+  .am .cell.left{background:var(--green-bg);color:var(--green);box-shadow:inset 0 0 0 1px var(--green-line);
+    font-size:12.5px}
+
+  /* ---------- tape diagram (whole numbers & decimals) ---------- */
+  .fitwrap.tapemode{border-top:1px dashed var(--rule);padding-top:16px}
+  .fitwrap.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){ .fitwrap{transition:opacity .22s ease} }
+  .fitcap .rep,.tape .rep{text-decoration:overline;text-decoration-thickness:1.5px}
+  .tape-scroll{overflow-x:auto;padding-bottom:2px}
+  .tape{display:grid;width:100%;align-items:center;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .tape .t-lbl{text-align:center;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;
+    padding:0 4px}
+  .tape .t-lbl.under{color:var(--ink-2);font-weight:400;font-size:12px}
+  .tape .brk{height:8px;border:2px solid var(--ink-3);border-bottom:0;border-radius:5px 5px 0 0;
+    margin:2px 1px 4px}
+  .tape .brk.down{border-top:0;border-bottom:2px solid var(--ink-3);border-radius:0 0 5px 5px;
+    margin:4px 1px 2px}
+  .tape .seg{height:40px;display:flex;align-items:center;justify-content:center;
+    padding:0 7px;white-space:nowrap;font-size:14px;font-weight:600;
+    background:var(--amber-bg);color:var(--amber);
+    border:2px solid var(--amber-line);border-right:0}
+  .tape .seg.end{border-right:2px solid var(--amber-line)}
+  .tape .seg.gap{background:transparent;color:var(--ink-3);border-top-style:dashed;border-bottom-style:dashed;
+    font-size:20px;letter-spacing:.1em}
+  .tape .seg.ghost{background:transparent;border:2px dashed var(--ink-3);border-left:0}
+  .tape .seg.left{background:var(--green-bg);color:var(--green);border:2px solid var(--green-line);
+    border-left-width:0;font-size:12.5px;padding:0 5px}
+  .tape .seg.left.solo{border-left-width:2px}
+
+  /* ---------- moving the decimal point ---------- */
+  .shiftstep{margin:16px 18px 0;background:var(--amber-bg);border-left:4px solid var(--amber);
+    border-radius:4px 10px 10px 4px;padding:12px 15px;display:flex;flex-direction:column;gap:9px}
+  .shiftstep[hidden]{display:none}
+  .shiftstep .cap{font-size:13px;color:var(--ink);line-height:1.5}
+  .shiftstep .cap b{font-weight:600}
+  .shiftstep .digits{font-family:var(--f-mono);font-size:clamp(17px,3.4vw,21px);font-weight:600;
+    display:flex;align-items:center;flex-wrap:wrap;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .shiftstep .digits span{padding:0 .5px}
+  .shiftstep .digits .added{color:var(--amber);text-decoration:underline dotted;
+    text-underline-offset:3px;text-decoration-thickness:2px}
+  .shiftstep .digits .pt{color:var(--amber)}
+  .shiftstep .digits .sym{color:var(--ink-3);padding:0 .6ch;font-weight:400}
+  .shiftstep .digits .arrow{color:var(--amber);padding:0 .8ch;font-weight:400}
+
+  /* ---------- the worksheet grid ---------- */
+  .work-scroll{overflow-x:auto;padding:26px 18px 30px}
+  .work{
+    display:grid;justify-content:center;align-items:center;
+    font-family:var(--f-mono);font-weight:500;
+    font-size:clamp(19px,4.4vw,27px);line-height:1.42;
+    font-variant-numeric:tabular-nums;
+    --cell:1.55ch; --pt:0.72ch;
+    min-width:max-content;margin:0 auto;
+  }
+  .work .cel{text-align:center}
+  .work .divisor{text-align:right;padding-right:.42ch;font-weight:600;color:var(--ink);white-space:nowrap}
+  .work .bracket{
+    align-self:stretch;height:100%;
+    border-left:2.5px solid var(--ink);
+    border-top-left-radius:11px 100%;
+  }
+  .work .vinculum{align-self:end;height:2.5px;background:var(--ink);border-radius:2px}
+  .work .quot{color:var(--amber);font-weight:600}
+  .work .dend{color:var(--ink)}
+  .work .dend.added{color:var(--ink-3)}
+  .work .sub{color:var(--blue);font-weight:600}
+  .work .rule{height:2.5px;background:var(--blue-line);border-radius:2px;margin:3px 0 4px;opacity:.85}
+  .work .diff{color:var(--green);font-weight:600}
+  .work .brought{color:var(--ink);font-weight:600}
+  .work .brought.added{color:var(--ink-3)}
+  .work .rbadge{
+    font-size:.62em;font-weight:600;color:var(--green);white-space:nowrap;
+    padding-left:1ch;letter-spacing:.02em;
+  }
+  .work .final{
+    box-shadow:0 0 0 2.5px var(--green-line);border-radius:5px;background:var(--green-bg);
+  }
+  .work .ptmark{color:var(--amber);font-weight:600}
+  .work .dend .ptmark{color:var(--ink)}
+  .work [data-step].veil{opacity:0}
+  @media (prefers-reduced-motion:no-preference){
+    .work [data-step]{transition:opacity .22s ease}
+  }
+
+  /* ---------- legend ---------- */
+  .legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:12px 18px;border-top:1px dashed var(--rule)}
+  .legend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .legend i{width:11px;height:11px;border-radius:3px;display:block;flex:none}
+  .legend .sw-a{background:var(--amber)} .legend .sw-b{background:var(--blue)} .legend .sw-c{background:var(--green)}
+
+  /* ---------- step log ---------- */
+  .log{padding:6px 0 10px;margin:0;list-style:none;counter-reset:st}
+  .log > li{
+    padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;align-items:start;
+  }
+  .log > li:last-child{border-bottom:0}
+  .log > li.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){ .log > li{transition:opacity .22s ease} }
+  .log .n{
+    grid-column:1;grid-row:1 / span 99;
+    font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--ink-3);
+    background:var(--surface-2);border-radius:7px;padding:3px 7px;letter-spacing:.04em;
+    white-space:nowrap;
+  }
+  .log .line{grid-column:2;display:flex;gap:9px;align-items:baseline;font-size:14.5px}
+  .log .tag{
+    font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;flex:none;
+    min-width:8.4ch;text-align:center;
+  }
+  .tag-d{background:var(--amber-bg);color:var(--amber)}
+  .tag-m{background:var(--blue-bg);color:var(--blue)}
+  .tag-s{background:var(--blue-bg);color:var(--blue)}
+  .tag-b{background:var(--green-bg);color:var(--green)}
+  .log .txt{color:var(--ink-2)}
+  .log .txt b{font-family:var(--f-mono);font-weight:600;color:var(--ink);
+    font-variant-numeric:tabular-nums}
+  .log .aside{
+    grid-column:2;margin-top:7px;font-size:13.5px;color:var(--ink);
+    background:var(--amber-bg);border-left:3px solid var(--amber-line);
+    border-radius:4px 8px 8px 4px;padding:8px 12px;
+  }
+  .log .aside b{font-weight:600}
+  .closer{padding:14px 18px;font-size:14px;color:var(--ink-2);background:var(--surface-2)}
+  .closer b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .closer .ok{color:var(--green);font-weight:600}
+
+  .footnote{
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+    font-size:13px;color:var(--ink-3);
+  }
+  .footnote .print{
+    font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer;
+  }
+  .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#F0F2EE;
+      --ink:#111; --ink-2:#3A403C; --ink-3:#6B736F; --rule:#A6AEA3;
+      --amber:#A85A0C; --amber-bg:#F6E6D2; --amber-line:#C98A47;
+      --blue:#1F4E93;  --blue-bg:#DDE7F5;  --blue-line:#6E97D0;
+      --green:#0C6350; --green-bg:#D7EBE3; --green-line:#4FA88F;
+      --shadow:none;
+    }
+
+    @page{margin:13mm 11mm}
+    /* print the fills that carry meaning, not just the text */
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.examples,.controls,.footnote,.stepper,.swap-btn,#statusLine{display:none !important}
+
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px}
+    .eyebrow{font-size:9px}
+    .tagline{display:none}
+
+    .problem{border:0;box-shadow:none;padding:0;gap:0;break-after:avoid}
+    .entry,.equation{min-height:0;gap:9px}
+    .dec-in,.num-field input,.mixfield .whole{font-size:20px;border-bottom-color:var(--ink);
+      width:auto !important;min-width:2.5ch}
+    .stackfield input{font-size:15px}
+    .num-field > label,.fieldcap,.numfield > label{font-size:8.5px}
+
+    .answer{padding:8px 12px;gap:5px 16px;break-after:avoid;break-inside:avoid}
+    .answer .v{font-size:22px}
+    .answer .facts{margin-left:0;flex-basis:100%}
+    .answer .fact{font-size:11px}
+
+    /* work beside the words, each sized to what it holds */
+    .board{display:flex;gap:12px;align-items:flex-start}
+    .board > .panel:first-of-type{flex:0 1 auto;min-width:0}
+    .board > .panel:last-of-type{flex:1 1 230px;min-width:0}
+    .panel{box-shadow:none;border:1px solid var(--rule);break-inside:auto}
+    .panel-head{padding:6px 10px}
+    .panel-head h2{font-size:12.5px}
+
+    .work-scroll{padding:13px 8px 15px;overflow:visible}
+    .chain{padding:13px 10px 14px;overflow:visible}
+    .crow{padding:7px 0}
+
+    .legend{padding:7px 10px;gap:4px 13px}
+    .legend div{font-size:10px}
+    .legend i{border:.5px solid var(--ink)}
+
+    .log{padding:2px 0 4px}
+    .log > li{padding:7px 10px;break-inside:avoid}
+    .log .n{font-size:9.5px;padding:2px 5px}
+    .log .line{font-size:11px;gap:7px}
+    .log .tag{font-size:8.5px;min-width:7.2ch;padding:1px 4px}
+    .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
+    .closer{font-size:11px;padding:8px 10px}
+    .work{font-size:17px}
+    .work .final{outline:2px solid var(--green-line);box-shadow:none}
+    .fitwrap{padding:2px 10px 13px;gap:8px;break-inside:avoid}
+    .fitcap{font-size:10.5px}
+    .chunk .cells span{width:14px;height:20px}
+    .chunk .tag{font-size:9.5px}
+    .tape-scroll{overflow:visible}
+    .am-scroll{overflow:visible}
+    .am .cell{height:40px;font-size:11px} .am .hd{font-size:10.5px}
+    .tape .seg{height:28px;font-size:11px}
+    .tape .t-lbl{font-size:10.5px}
+    .shiftstep{margin:11px 10px 0;padding:9px 12px;gap:6px;break-inside:avoid}
+    .shiftstep .cap{font-size:10.5px}
+    .shiftstep .digits{font-size:15px}
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Long division, worked out</div>
+      <h1>The Division <span class="div-sign">House</span></h1>
+      <p class="tagline">Remainders, long decimals, or fractions &mdash; with every multiply,
+        subtract, bring-down and flip written out the way your teacher wants it.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem">
+    <div class="segmented" id="numsSwitch" role="group" aria-label="What kind of numbers"
+         style="align-self:flex-start">
+      <button type="button" data-nums="dec" aria-pressed="true">Decimals</button>
+      <button type="button" data-nums="frac" aria-pressed="false">Fractions</button>
+    </div>
+
+    <div class="equation" id="decEntry">
+      <div class="num-field">
+        <label for="dividend">Dividend &mdash; the big number</label>
+        <input id="dividend" type="text" inputmode="decimal" autocomplete="off"
+               spellcheck="false" value="619" aria-describedby="statusLine">
+      </div>
+      <div class="obelus" aria-hidden="true">&divide;</div>
+      <div class="num-field">
+        <label for="divisor">Divisor &mdash; what you divide by</label>
+        <input id="divisor" type="text" inputmode="decimal" autocomplete="off"
+               spellcheck="false" value="5">
+      </div>
+      <button class="swap-btn" id="swapBtn" type="button" title="Swap the two numbers"
+              aria-label="Swap the two numbers">&#8646;</button>
+    </div>
+
+    <div class="equation hide" id="fracEntry">
+      <div class="mixfield">
+        <span class="fieldcap">Dividend</span>
+        <input class="whole" id="w1" type="text" inputmode="numeric" value="0" aria-label="First whole number">
+        <div class="stackfield">
+          <input id="n1" type="text" inputmode="numeric" value="3" aria-label="First numerator">
+          <div class="fbar"></div>
+          <input id="d1" type="text" inputmode="numeric" value="4" aria-label="First denominator">
+        </div>
+      </div>
+      <div class="obelus" aria-hidden="true">&divide;</div>
+      <div class="mixfield">
+        <span class="fieldcap">Divisor</span>
+        <input class="whole" id="w2" type="text" inputmode="numeric" value="0" aria-label="Second whole number">
+        <div class="stackfield">
+          <input id="n2" type="text" inputmode="numeric" value="1" aria-label="Second numerator">
+          <div class="fbar"></div>
+          <input id="d2" type="text" inputmode="numeric" value="2" aria-label="Second denominator">
+        </div>
+      </div>
+    </div>
+
+    <div class="controls" id="decControls">
+      <div class="ctl" id="answerAsCtl">
+        <span>Answer as</span>
+        <div class="segmented" role="group" aria-label="Answer format">
+          <button type="button" data-mode="remainder" aria-pressed="true">Quotient &amp; remainder</button>
+          <button type="button" data-mode="decimal" aria-pressed="false">Decimal</button>
+        </div>
+      </div>
+      <div class="ctl places-ctl" id="placesCtl" hidden>
+        <span>Stop after</span>
+        <select class="places" id="places" aria-label="Maximum decimal places">
+          <option value="3">3 decimal places</option>
+          <option value="6" selected>6 decimal places</option>
+          <option value="9">9 decimal places</option>
+          <option value="12">12 decimal places</option>
+        </select>
+      </div>
+      <div class="ctl">
+        <span>Practice</span>
+        <div class="segmented" role="group" aria-label="Step-through mode">
+          <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
+          <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips"></span>
+    </div>
+  </section>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <div class="board" id="board">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The work</h2>
+        <div class="stepper" id="stepperWork" hidden>
+          <button type="button" id="prevBtn" aria-label="Previous step">&larr;</button>
+          <span class="count" id="stepCount">1 of 3</span>
+          <button type="button" id="nextBtn" aria-label="Next step">&rarr;</button>
+        </div>
+      </div>
+      <div class="shiftstep" id="shiftstep" hidden></div>
+      <div class="work-scroll" id="workScroll">
+        <div class="work" id="work" role="img" aria-label="Long division worked out"></div>
+      </div>
+      <div class="chain" id="chain" hidden></div>
+      <div class="fitwrap" id="fitwrap" hidden></div>
+      <div class="fitwrap tapemode" id="areawrap" hidden></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Say it out loud</h2></div>
+      <ol class="log" id="log"></ol>
+      <div class="closer" id="closer"></div>
+    </section>
+  </div>
+
+  <div class="footnote">
+    <button class="print" type="button" id="printBtn">Print this work</button>
+    <span>D&#8202;&middot;&#8202;M&#8202;&middot;&#8202;S&#8202;&middot;&#8202;B &mdash;
+      Divide, Multiply, Subtract, Bring down. Then do it again.</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================== state ============================== */
+  var S = { nums:"dec", dividend:"619", divisor:"5", mode:"remainder", places:6,
+            frac:[[0,3,4],[0,1,2]], stepMode:false, step:0 };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var elDividend = $("dividend"), elDivisor = $("divisor"), elWork = $("work"),
+      elLog = $("log"), elCloser = $("closer"), elStatus = $("statusLine"),
+      elBoard = $("board"), elStepper = $("stepperWork"), elCount = $("stepCount"),
+      elPlacesCtl = $("placesCtl");
+
+  /* ============================== number helpers ============================== */
+
+  // "12.50" -> {i:"12", f:"5"};  null when it isn't a plain non-negative number
+  function parseNum(raw){
+    var s = String(raw).trim().replace(/[,\s_]/g, "");
+    if (s === "" || !/^\d*\.?\d*$/.test(s) || !/\d/.test(s)) return null;
+    var parts = s.split("."), i = parts[0] || "", f = parts[1] || "";
+    i = i.replace(/^0+(?=\d)/, "") || "0";
+    f = f.replace(/0+$/, "");
+    return { i:i, f:f };
+  }
+  function isZero(n){ return n.i === "0" && n.f === ""; }
+  function numStr(n){ return n.f ? n.i + "." + n.f : n.i; }
+  // move the decimal point k places to the right
+  function shiftRight(n, k){
+    var f = n.f;
+    while (f.length < k) f += "0";
+    var i = (n.i + f.slice(0, k)).replace(/^0+(?=\d)/, "") || "0";
+    return { i:i, f:f.slice(k) };
+  }
+  function trimDec(s){
+    if (s.indexOf(".") < 0) return s;
+    s = s.replace(/0+$/, "").replace(/\.$/, "");
+    return s === "" ? "0" : s;
+  }
+  function mulDec(a, b){                       // exact, via BigInt
+    var A = BigInt(a.i + a.f), B = BigInt(b.i + b.f), fl = a.f.length + b.f.length;
+    var p = (A * B).toString();
+    while (p.length < fl + 1) p = "0" + p;
+    return trimDec(fl ? p.slice(0, p.length - fl) + "." + p.slice(p.length - fl) : p);
+  }
+  function gcd(a, b){ while (b) { var t = a % b; a = b; b = t; } return a; }
+  function commas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+  /* ============================== the algorithm ============================== */
+  /*
+     Walks the dividend's digits left to right, exactly like pencil and paper.
+     At each column: cur = leftover*10 + next digit, q = how many divisors fit,
+     leftover = cur - q*divisor.  A "step" is only recorded once the quotient has
+     actually started, so we never draw the leading zeros nobody writes down.
+  */
+  function divide(digits, pointIdx, D, mode, places){
+    var dg = digits.slice(), origLen = dg.length, quo = [], steps = [];
+    var rem = 0, started = false, i = 0, seen = {}, repeat = null, capped = false;
+    var maxIdx = pointIdx + places, HARD = 44;
+
+    while (true){
+      if (i >= dg.length){
+        if (mode === "remainder") break;
+        if (rem === 0) break;
+        if (i >= maxIdx || i >= HARD){ capped = true; break; }
+        // A leftover we've seen before means the digits repeat forever. Note where the
+        // cycle starts, then keep dividing anyway so the pattern is visible on the page.
+        if (!Object.prototype.hasOwnProperty.call(seen, rem)) seen[rem] = i;
+        else if (!repeat) repeat = { start: seen[rem], end: i };
+        dg.push("0");
+      }
+      var d = +dg[i], cur = rem * 10 + d, q = Math.floor(cur / D), sub = q * D;
+      var next = cur - sub;
+      quo[i] = q;
+      if (q > 0) started = true;
+      if (started) steps.push({ i:i, cur:cur, q:q, sub:sub, rem:next });
+      rem = next;
+      i++;
+    }
+
+    return {
+      dg:dg, origLen:origLen, pointIdx:pointIdx, D:D, quo:quo, steps:steps,
+      rem:rem, repeat:repeat, capped:capped,
+      hasPoint: dg.length > pointIdx,
+      firstW: steps.length ? steps[0].i : null
+    };
+  }
+
+  function quotientStart(r){
+    var start = Math.min(r.firstW === null ? Infinity : r.firstW, r.pointIdx - 1);
+    return isFinite(start) ? start : r.pointIdx - 1;
+  }
+  // every digit we actually worked out, e.g. "0.333333"
+  function quotientText(r){
+    var out = "";
+    for (var i = quotientStart(r); i < r.dg.length; i++){
+      if (i === r.pointIdx && r.hasPoint) out += ".";
+      out += String(r.quo[i] || 0);
+    }
+    return { text:out };
+  }
+  // the same value in proper repeating notation, e.g. 0.3 with a bar over the 3
+  function barNotation(r){
+    if (!r.repeat) return null;
+    var head = "", rep = "";
+    for (var i = quotientStart(r); i < r.repeat.end; i++){
+      if (i === r.pointIdx && r.hasPoint) head += ".";
+      if (i >= r.repeat.start) rep += String(r.quo[i] || 0);
+      else head += String(r.quo[i] || 0);
+    }
+    return esc(head) + '<span class="rep">' + esc(rep) + "</span>";
+  }
+  function bgcd(a, b){ while (b) { var t = a % b; a = b; b = t; } return a; }
+  // dividend/divisor as a fully reduced fraction
+  function fractionOf(dvd, dvs){
+    var k = Math.max(dvd.f.length, dvs.f.length);
+    var a = BigInt(shiftRight(dvd, k).i), b = BigInt(shiftRight(dvs, k).i);
+    var g = bgcd(a, b) || 1n;
+    return (a / g).toString() + "/" + (b / g).toString();
+  }
+  function esc(s){
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  /* ============================== drawing the worksheet ============================== */
+
+  var C_DIVISOR = 1, C_BRACKET = 2, C_GUTTER = 3, C_FIRST = 4;
+
+  function build(r, divisorLabel, mode){
+    var colOf = function(i){ return C_FIRST + i + (r.hasPoint && i >= r.pointIdx ? 1 : 0); };
+    var pointCol = C_FIRST + r.pointIdx;
+    var lastCol = colOf(r.dg.length - 1);
+    var rCol = lastCol + 1;
+
+    // column track sizes
+    var tracks = ["auto", "0.62em", "var(--cell)"];
+    var slots = r.dg.length + (r.hasPoint ? 1 : 0);
+    for (var k = 0; k < slots; k++){
+      tracks.push(r.hasPoint && (C_FIRST + k) === pointCol ? "var(--pt)" : "var(--cell)");
+    }
+    tracks.push("auto");
+
+    elWork.innerHTML = "";
+    elWork.style.gridTemplateColumns = tracks.join(" ");
+
+    var frag = document.createDocumentFragment();
+    function put(row, col, text, cls, step){
+      var el = document.createElement("div");
+      el.className = "cel " + (cls || "");
+      el.style.gridRow = row;
+      el.style.gridColumn = col;
+      if (text !== null) el.textContent = text;
+      if (step !== undefined) el.setAttribute("data-step", step);
+      frag.appendChild(el);
+      return el;
+    }
+    function bar(row, from, to, cls, step){
+      var el = document.createElement("div");
+      el.className = cls;
+      el.style.gridRow = row;
+      el.style.gridColumn = from + " / " + (to + 1);
+      if (step !== undefined) el.setAttribute("data-step", step);
+      frag.appendChild(el);
+      return el;
+    }
+
+    /* row 1 — the quotient sitting on top of the bar */
+    var startQ = quotientStart(r);
+    for (var i = startQ; i < r.dg.length; i++){
+      var stepOfDigit = -1;
+      for (var s = 0; s < r.steps.length; s++) if (r.steps[s].i === i) stepOfDigit = s;
+      put(1, colOf(i), String(r.quo[i] || 0), "quot", stepOfDigit >= 0 ? stepOfDigit : undefined);
+    }
+    if (r.hasPoint) put(1, pointCol, ".", "quot ptmark");
+    bar(1, C_BRACKET, lastCol, "vinculum");
+
+    /* row 2 — divisor, bracket, dividend */
+    put(2, C_DIVISOR, divisorLabel, "divisor");
+    bar(2, C_BRACKET, C_BRACKET, "bracket");
+    for (var j = 0; j < r.dg.length; j++){
+      put(2, colOf(j), r.dg[j], "dend" + (j >= r.origLen ? " added" : ""));
+    }
+    if (r.hasPoint) put(2, pointCol, ".", "dend ptmark");
+
+    /* one block of three rows per step */
+    var row = 3, workRow = 2;          // the dividend row is the first working row
+    for (var t = 0; t < r.steps.length; t++){
+      var st = r.steps[t], c = colOf(st.i);
+      var nxt = st.i + 1, hasNext = nxt < r.dg.length;
+      var isLast = (t === r.steps.length - 1);
+
+      /* a quotient digit of 0 has nothing to subtract — you just bring the next digit
+         down beside what's already there, on the same line */
+      if (st.q === 0){
+        if (hasNext)
+          put(workRow, colOf(nxt), r.dg[nxt], "brought" + (nxt >= r.origLen ? " added" : ""), t);
+        if (mode === "remainder" && isLast && st.rem > 0)
+          put(workRow, rCol, "R " + st.rem, "rbadge", t);
+        continue;
+      }
+
+      var subStr = String(st.sub), subLen = subStr.length;
+      var subStartDigit = st.i - (subLen - 1);
+      var subStartCol = subStartDigit < 0 ? C_GUTTER + 1 : colOf(subStartDigit);
+      var minusCol = Math.max(C_GUTTER, subStartCol - 1);
+
+      put(row, minusCol, "−", "sub", t);
+      for (var m = 0; m < subLen; m++){
+        var di = subStartDigit + m;
+        put(row, di < 0 ? C_GUTTER + 1 + m : colOf(di), subStr[m], "sub", t);
+      }
+      bar(row + 1, minusCol, c, "rule", t);
+
+      /* a leftover of 0 isn't written down when another digit comes down beside it */
+      if (st.rem > 0 || !hasNext){
+        var remStr = String(st.rem), remStartDigit = st.i - (remStr.length - 1);
+        for (var n = 0; n < remStr.length; n++){
+          var ri = remStartDigit + n;
+          var cls = "diff" + (isLast && mode === "remainder" && st.rem > 0 ? " final" : "");
+          put(row + 2, ri < 0 ? C_GUTTER + 1 + n : colOf(ri), remStr[n], cls, t);
+        }
+      }
+      if (hasNext)
+        put(row + 2, colOf(nxt), r.dg[nxt], "brought" + (nxt >= r.origLen ? " added" : ""), t);
+      if (mode === "remainder" && isLast && st.rem > 0)
+        put(row + 2, rCol, "R " + st.rem, "rbadge", t);
+      workRow = row + 2;
+      row += 3;
+    }
+
+    /* dividend smaller than divisor: nothing to subtract, the whole thing is left over */
+    if (r.steps.length === 0 && mode === "remainder"){
+      put(2, rCol, "R " + r.rem, "rbadge");
+    }
+
+    elWork.appendChild(frag);
+    return { totalSteps: r.steps.length };
+  }
+
+  /* ============================== the plain-English log ============================== */
+
+  function words(r, mode, D){
+    var out = [];
+    for (var t = 0; t < r.steps.length; t++){
+      var st = r.steps[t], lines = [];
+      if (st.q === 0){
+        lines.push(["d", "Divide", "<b>" + D + "</b> doesn’t fit into <b>" + st.cur
+          + "</b> even once, so write <b>0</b> in the answer. There’s nothing to subtract here."]);
+      } else {
+        lines.push(["d", "Divide", "How many <b>" + D + "</b>s fit into <b>" + st.cur + "</b>? <b>"
+          + st.q + "</b>. Write it above the " + ordinalCol(st.i, r) + "."]);
+        lines.push(["m", "Multiply", "<b>" + st.q + " × " + D + " = " + st.sub + "</b>. Write that underneath."]);
+        lines.push(["s", "Subtract", "<b>" + st.cur + " − " + st.sub + " = " + st.rem + "</b>."]);
+      }
+
+      var nx = st.i + 1, aside = null;
+      if (nx < r.dg.length){
+        var added = nx >= r.origLen;
+        lines.push(["b", "Bring down", "Bring down the <b>" + r.dg[nx] + "</b>"
+          + (added ? " (a zero we added on the end)" : "")
+          + " to make <b>" + (st.rem * 10 + Number(r.dg[nx])) + "</b>."]);
+        if (nx === r.pointIdx && r.hasPoint){
+          aside = "You just crossed the decimal point. Put a decimal point in your answer too — "
+                + "straight up above the one in the dividend — before you write the next digit.";
+        }
+        if (added && nx === r.origLen){
+          aside = (aside ? aside + " " : "")
+                + "There were no digits left to bring down, so add a <b>0</b> on the end of the dividend. "
+                + "It doesn’t change the value — 619 is the same as 619.0.";
+        }
+      } else {
+        lines.push(["b", "Bring down", st.rem === 0
+          ? "Nothing left to bring down, and nothing left over. Done."
+          : "Nothing left to bring down. <b>" + st.rem + "</b> is what’s left over."]);
+      }
+      if (r.repeat && st.i === r.repeat.end){
+        var incoming = (st.cur - Number(r.dg[st.i])) / 10;
+        aside = (aside ? aside + " " : "")
+              + "Look closely: you started this step with a leftover of <b>" + incoming
+              + "</b> — the exact same leftover as a few steps back. Once a leftover comes around "
+              + "again, you’ll get the same digits over and over forever. That’s a "
+              + "<b>repeating decimal</b>.";
+      }
+      out.push({ lines: lines, aside: aside });
+    }
+    return out;
+  }
+
+  function ordinalCol(i, r){
+    if (i >= r.pointIdx) return "digit you just brought down";
+    var fromRight = r.pointIdx - 1 - i;
+    var names = ["ones", "tens", "hundreds", "thousands", "ten-thousands", "hundred-thousands"];
+    return names[fromRight] ? names[fromRight] + " place" : "next digit";
+  }
+
+  /* ============================== fractions ============================== */
+
+  function gcdN(a, b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a||1; }
+  function lcmN(a, b){ return a / gcdN(a,b) * b; }
+  function toImproper(m){ return { n: m[0]*m[2] + m[1], d: m[2] }; }
+  function frHTML(n, d){
+    return '<span class="fr"><span class="nu"><span>' + esc(n) + '</span></span>'
+         + '<span class="de"><span>' + esc(d) + "</span></span></span>";
+  }
+  function frCancel(n, nWas, d, dWas){
+    var nu = nWas !== null ? '<span class="mini">' + n + '</span><span class="was">' + nWas + "</span>"
+                           : "<span>" + n + "</span>";
+    var de = dWas !== null ? '<span class="was">' + dWas + '</span><span class="mini">' + d + "</span>"
+                           : "<span>" + d + "</span>";
+    return '<span class="fr"><span class="nu">' + nu + '</span><span class="de">' + de + "</span></span>";
+  }
+  function mixHTML(w, n, d){
+    if (n === 0) return '<span class="mx">' + esc(w) + "</span>";
+    if (w === 0) return frHTML(n, d);
+    return '<span class="mx">' + esc(w) + "</span>" + frHTML(n, d);
+  }
+  function termHTML(m){
+    if (m[1] === 0) return '<span class="mx">' + m[0] + "</span>";
+    return mixHTML(m[0], m[1], m[2]);
+  }
+  function decOf(x){
+    var s = x.toFixed(6).replace(/0+$/,"").replace(/\.$/,"");
+    return (Math.abs(x - Number(s)) > 1e-9 ? s + "…" : s);
+  }
+
+  function renderFractions(){
+    var m1 = S.frac[0], m2 = S.frac[1];
+    if ([m1,m2].some(function(m){ return m.some(function(v){ return !isFinite(v); }); }))
+      return fail("Fill in every box. Use 0 for the whole number if you only want a fraction.");
+    if (m1[2] === 0 || m2[2] === 0)
+      return fail("A denominator can’t be 0 — you can’t cut something into zero pieces.");
+    if (m1[2] > 999 || m2[2] > 999 || m1[1] > 9999 || m2[1] > 9999)
+      return fail("Keep the numbers small enough to work by hand (denominators under 1000).");
+
+    var a = toImproper(m1), b = toImproper(m2);
+    if (b.n === 0)
+      return fail("You can’t divide by zero. Flipping <b>0</b> would put a <b>0</b> on the bottom, "
+                + "and nothing can be divided into zero-sized pieces.");
+
+    $("shiftstep").hidden = true;
+    $("workScroll").hidden = true;
+    $("chain").hidden = false;
+
+    var recip = { n: b.d, d: b.n };                     // keep, change, flip
+    var g1 = gcdN(a.n, recip.d), g2 = gcdN(recip.n, a.d);
+    var an = a.n/g1, ad = a.d/g2, rn = recip.n/g2, rd = recip.d/g1;
+    var prod = { n: an*rn, d: ad*rd };
+    var g3 = gcdN(prod.n, prod.d);
+    var simp = { n: prod.n/g3, d: prod.d/g3, by:g3 };
+    var w = Math.floor(simp.n/simp.d), rest = simp.n % simp.d;
+    var mixedIn = (m1[0] !== 0 || m2[0] !== 0);
+    var canCancel = (g1 > 1 || g2 > 1);
+    var needsMixedOut = (simp.n >= simp.d && simp.d !== 1);
+    var wholeOut = (simp.d === 1);
+
+    var rows = [], items = [];
+    function step(html, eq, lines, aside, result){
+      items.push({ n:"Step&nbsp;" + (rows.length + 1), step:rows.length, lines:lines, aside:aside||null });
+      rows.push({ eq:eq, html:html, result:!!result });
+    }
+
+    step(termHTML(m1) + '<span class="op-s">÷</span>' + termHTML(m2), "",
+      [["d","Ask","Dividing asks <em>how many of these fit inside that</em> — the same question as <b>"
+        + "619 ÷ 5</b>, just with fraction-sized pieces."]],
+      "You never divide fractions directly. You turn it into a multiplication instead.");
+
+    if (mixedIn){
+      step(frHTML(a.n,a.d) + '<span class="op-s">÷</span>' + frHTML(b.n,b.d), "=",
+        [["s","Convert","<b>" + m1[0] + " " + m1[1] + "/" + m1[2] + "</b> is <b>" + m1[0] + " × "
+          + m1[2] + " + " + m1[1] + " = " + a.n + "</b> pieces, so <b>" + a.n + "/" + a.d
+          + "</b>. The other becomes <b>" + b.n + "/" + b.d + "</b>."]],
+        "You must do this before flipping — flipping a mixed number is meaningless.");
+    }
+
+    step(frHTML(a.n,a.d) + '<span class="op-s">×</span>'
+       + '<span class="flipped">' + frHTML(recip.n, recip.d) + "</span>", "=",
+      [["d","Keep","Keep the first fraction exactly as it is: <b>" + a.n + "/" + a.d + "</b>."],
+       ["m","Change","Change the <b>÷</b> into a <b>×</b>."],
+       ["b","Flip","Flip the second one upside down: <b>" + b.n + "/" + b.d + "</b> becomes <b>"
+        + recip.n + "/" + recip.d + "</b>."]],
+      "Why it works: dividing by <b>" + b.n + "/" + b.d + "</b> is the same as asking how many "
+      + "<b>" + b.n + "/" + b.d + "</b>-sized pieces fit in — and that’s multiplying by its flip. "
+      + "Teachers call it <b>keep, change, flip</b>.");
+
+    if (canCancel){
+      step(frCancel(an, g1 > 1 ? a.n : null, ad, g2 > 1 ? a.d : null)
+         + '<span class="op-s">×</span>'
+         + frCancel(rn, g2 > 1 ? recip.n : null, rd, g1 > 1 ? recip.d : null), "=",
+        [["b","Cancel", cancelWords(a, recip, g1, g2)]],
+        "Cancel diagonally before you multiply and the numbers stay small.");
+    }
+
+    step(frHTML(prod.n, prod.d), "=",
+      [["m","Multiply","Straight across. Tops: <b>" + an + " × " + rn + " = " + prod.n
+        + "</b>. Bottoms: <b>" + ad + " × " + rd + " = " + prod.d + "</b>."]],
+      null, simp.by === 1 && !needsMixedOut && !wholeOut);
+
+    if (simp.by > 1){
+      step(frHTML(simp.n, simp.d), "=",
+        [["b","Simplify","<b>" + prod.n + "</b> and <b>" + prod.d + "</b> both divide by <b>"
+          + simp.by + "</b>, giving <b>" + simp.n + "/" + simp.d + "</b>."]],
+        null, !needsMixedOut && !wholeOut);
+    }
+    if (wholeOut){
+      step('<span class="mx">' + simp.n + "</span>", "=",
+        [["b","Whole","A bottom number of <b>1</b> just means whole things — <b>" + simp.n + "/1</b> "
+          + "is <b>" + simp.n + "</b>. It fits in exactly, with nothing left over."]], null, true);
+    }
+    if (needsMixedOut){
+      step(mixHTML(w, rest, simp.d), "=",
+        [["b","Mixed","<b>" + simp.n + " ÷ " + simp.d + " = " + w + "</b> remainder <b>" + rest
+          + "</b>, so <b>" + w + " " + rest + "/" + simp.d + "</b>."]], null, true);
+    }
+
+    $("chain").innerHTML = rows.map(function(r, i){
+      return '<div class="crow' + (r.result ? " result" : "") + '" data-step="' + i + '">'
+           + '<span class="eq">' + r.eq + '</span><span class="expr">' + r.html + "</span></div>";
+    }).join("");
+
+    /* how many of the divisor actually fit inside the dividend */
+    var L = lcmN(a.d, b.d), aP = a.n * (L/a.d), bP = b.n * (L/b.d);
+    var full = Math.floor(aP / bP), left = aP % bP;
+    var fw = $("fitwrap");
+    fw.classList.remove("tapemode");
+    var showFit = aP >= bP && aP <= 48 && bP <= 24 && L <= 24;
+    if (!showFit){ fw.hidden = true; }
+    else {
+      fw.hidden = false;
+      var bars = "";
+      for (var k = 0; k < full; k++){
+        bars += '<div class="chunk full"><div class="cells">'
+              + new Array(bP + 1).join("<span></span>")
+              + '</div><span class="tag">' + (k+1) + "</span></div>";
+      }
+      if (left > 0){
+        var cells = "";
+        for (var j = 0; j < bP; j++) cells += "<span" + (j < left ? ' class="on"' : "") + "></span>";
+        bars += '<div class="chunk part"><div class="cells">' + cells
+              + '</div><span class="tag">' + left + "/" + bP + "</span></div>";
+      }
+      fw.innerHTML = '<div class="fitcap">How many <b>' + fracText(m2) + '</b>s fit inside <b>'
+        + fracText(m1) + "</b>? " + (left === 0
+            ? "Exactly <b>" + full + "</b>."
+            : "<b>" + full + "</b> whole one" + (full === 1 ? "" : "s")
+              + ", and then only <b>" + left + "</b> of the <b>" + bP
+              + "</b> pieces the next one needs — that’s <b>" + left + "/" + bP + "</b> of another.")
+        + " So the answer is <b>" + (needsMixedOut ? w + " " + rest + "/" + simp.d
+            : (simp.d === 1 ? simp.n : simp.n + "/" + simp.d)) + "</b>."
+        + "</div><div class='fitbar'>" + bars + "</div>";
+    }
+
+    var final = needsMixedOut ? mixHTML(w, rest, simp.d)
+              : (simp.d === 1 ? '<span class="mx">' + simp.n + "</span>" : frHTML(simp.n, simp.d));
+    var dec = simp.n / simp.d;
+    band('<span class="k">Answer</span><span class="v">' + final + "</span>", [
+      "As a decimal: <b>" + decOf(dec) + "</b>",
+      canCancel ? "Cross-cancelled before multiplying." : "Nothing to cancel — straight across."
+    ]);
+    writeLog(items);
+
+    var d1 = a.n/a.d, d2 = b.n/b.d;
+    elCloser.innerHTML = "<b>Check by multiplying back:</b> " + decOf(dec) + " × " + decOf(d2)
+      + " = <b>" + decOf(dec * d2) + "</b>"
+      + (Math.abs(dec*d2 - d1) < 1e-9
+          ? ' <span class="ok">✓ back to ' + fracText(m1) + "</span>" : "") + ".";
+
+    $("legend").innerHTML = showFit
+      ? '<div><i class="sw-c"></i> One whole ' + fracText(m2) + '</div>' +
+        '<div><i class="sw-a"></i> Part of another</div>' +
+        '<div>Every box is one <b>1/' + L + '</b></div>'
+      : '<div>' + (aP < bP
+          ? "<b>" + fracText(m2) + "</b> is bigger than <b>" + fracText(m1)
+            + "</b>, so not even one fits — there’s nothing to draw."
+          : "Too many pieces to draw clearly.")
+        + ' The chain above is the whole story.</div>';
+    return rows.length;
+  }
+
+  function fracText(m){
+    if (m[1] === 0) return String(m[0]);
+    return (m[0] ? m[0] + " " : "") + m[1] + "/" + m[2];
+  }
+  function cancelWords(a, r, g1, g2){
+    var parts = [];
+    if (g1 > 1) parts.push("<b>" + a.n + "</b> and <b>" + r.d + "</b> both divide by <b>" + g1
+      + "</b> → <b>" + (a.n/g1) + "</b> and <b>" + (r.d/g1) + "</b>");
+    if (g2 > 1) parts.push("<b>" + r.n + "</b> and <b>" + a.d + "</b> both divide by <b>" + g2
+      + "</b> → <b>" + (r.n/g2) + "</b> and <b>" + (a.d/g2) + "</b>");
+    return "Look diagonally, top of one against bottom of the other: " + parts.join(", and ") + ".";
+  }
+
+  /* ============================== render ============================== */
+
+  function render(){
+    if (S.nums === "frac"){
+      var ftotal = renderFractions();
+      if (!ftotal) return;
+      if (S.step > ftotal) S.step = ftotal;
+      if (S.step < 1) S.step = 1;
+      elStepper.hidden = !S.stepMode;
+      if (S.stepMode){
+        elCount.textContent = S.step + " of " + ftotal;
+        $("prevBtn").disabled = S.step <= 1;
+        $("nextBtn").disabled = S.step >= ftotal;
+      }
+      applyVeil(ftotal);
+      setStatus("");
+      return;
+    }
+    $("workScroll").hidden = false;
+    $("chain").hidden = true;
+    $("fitwrap").hidden = true;
+    $("areawrap").hidden = true;
+    $("legend").innerHTML =
+      '<div><i class="sw-a"></i> Answer on top</div>' +
+      '<div><i class="sw-b"></i> Multiply &amp; subtract</div>' +
+      '<div><i class="sw-c"></i> What’s left over</div>';
+    renderDecimals();
+  }
+
+  function renderDecimals(){
+    var dvd = parseNum(S.dividend), dvs = parseNum(S.divisor);
+
+    if (!dvd || !dvs) return fail("Type a number in both boxes — digits and one decimal point.");
+    if (isZero(dvs)) return fail("You can’t divide by zero. Every other number works!");
+    if ((dvd.i + dvd.f).length > 15 || (dvs.i + dvs.f).length > 9){
+      return fail("That’s a lot of digits. Keep the dividend under 15 digits and the divisor under 9.");
+    }
+    if (S.mode === "remainder" && (dvd.f || dvs.f)){
+      return fail("Remainders are for whole numbers. Switch to <b>Decimal</b> to divide "
+        + esc(numStr(dvd)) + " by " + esc(numStr(dvs)) + ".", true);
+    }
+
+    // Step 0: slide the decimal point until the divisor is a whole number.
+    var shift = dvs.f.length;
+    var sDvd = shiftRight(dvd, shift), sDvs = shiftRight(dvs, shift);
+    var D = Number(sDvs.i);
+
+    var digits = (sDvd.i + sDvd.f).split(""), pointIdx = sDvd.i.length;
+    var r = divide(digits, pointIdx, D, S.mode, S.places);
+
+    /* show where the decimal points went, so the numbers under the bar are never a surprise */
+    var ss = $("shiftstep");
+    if (shift === 0){
+      ss.hidden = true;
+    } else {
+      ss.hidden = false;
+      var padF = dvd.f;
+      while (padF.length < shift) padF += "0";
+      var padded = dvd.i + "." + padF;
+      var addedFrom = dvd.f.length < padF.length ? (dvd.i.length + 1 + dvd.f.length) : -1;
+      var glyphs = function(str, from){
+        return str.split("").map(function(ch, i){
+          var cls = ch === "." ? "pt" : (from >= 0 && i >= from ? "added" : "");
+          return "<span" + (cls ? ' class="' + cls + '"' : "") + ">" + ch + "</span>";
+        }).join("");
+      };
+      var zeros = padF.length - dvd.f.length;
+      ss.innerHTML = '<div class="cap"><b>' + esc(numStr(dvs)) + "</b> isn’t a whole number, and you "
+        + "can only divide by a whole number in the house. "
+        + (zeros > 0
+            ? "First add <b>" + zeros + "</b> zero" + (zeros > 1 ? "s" : "") + " to <b>"
+              + esc(numStr(dvd)) + "</b> so it has <b>" + shift + "</b> decimal places — that doesn’t "
+              + "change its value. Then slide "
+            : "Slide ")
+        + "the point <b>" + shift + "</b> place" + (shift > 1 ? "s" : "") + " right in <em>both</em> "
+        + "numbers.</div>"
+        + '<div class="digits">' + glyphs(padded, addedFrom)
+        + '<span class="sym">÷</span>' + glyphs(numStr(dvs), -1)
+        + '<span class="arrow">→</span>' + glyphs(commas(sDvs.i === "0" ? "0" : numStr(sDvd)), -1)
+        + '<span class="sym">÷</span>' + glyphs(commas(sDvs.i), -1) + "</div>";
+    }
+
+    var info = build(r, commas(sDvs.i), S.mode);
+    var total = info.totalSteps;
+    if (S.step > total) S.step = total;
+    if (S.step < 1) S.step = 1;
+
+    /* ---- answer band ---- */
+    var qt = quotientText(r);
+    var band = document.createElement("div");
+    band.className = "answer";
+    var head = '<span class="k">Answer</span>';
+    var value, facts = [];
+
+    if (S.mode === "remainder"){
+      var qInt = r.steps.length ? qt.text : "0";
+      value = '<span class="v">' + esc(commas(qInt)) +
+              (r.rem > 0 ? ' <span class="r-mark">R ' + r.rem + "</span>" : "") + "</span>";
+      facts.push("<b>" + esc(commas(qInt)) + "</b> groups of <b>" + esc(commas(sDvs.i)) + "</b>"
+        + (r.rem > 0 ? ", with <b>" + r.rem + "</b> left over" : ", exactly"));
+      if (r.rem > 0){
+        var g = gcd(r.rem, D), frac = (r.rem / g) + "/" + (D / g);
+        facts.push(qInt === "0"
+          ? "As a fraction: <b>" + frac + "</b>"
+          : "As a mixed number: <b>" + esc(commas(qInt)) + " " + frac + "</b>");
+        var dec = divide(digits.slice(), pointIdx, D, "decimal", 6);
+        var db = barNotation(dec);
+        facts.push("As a decimal: <b>" +
+          (db || esc(quotientText(dec).text) + (dec.capped ? "…" : "")) + "</b>");
+      }
+    } else {
+      value = '<span class="v">' + esc(qt.text) + (r.capped ? "…" : "") + "</span>";
+      if (r.repeat){
+        facts.push("Written exactly: <b>" + barNotation(r) +
+          "</b> — the bar means those digits repeat forever.");
+        facts.push("As a fraction: <b>" + esc(fractionOf(dvd, dvs)) + "</b>");
+      } else if (r.capped){
+        facts.push("Stopped after " + S.places + " decimal places — there’s still a remainder of <b>"
+          + r.rem + "</b>.");
+      } else {
+        facts.push("It divides evenly — no remainder at all.");
+      }
+      if (shift > 0){
+        facts.push("Moved the point <b>" + shift + "</b> place" + (shift > 1 ? "s" : "")
+          + " right in both numbers first.");
+      }
+    }
+    band.innerHTML = head + value + '<div class="facts">' +
+      facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    mountBand(band);
+
+    /* ---- step log ---- */
+    elLog.innerHTML = "";
+    var pre = [];
+    if (shift > 0){
+      pre.push({
+        n: "Set&nbsp;up",
+        lines: [["d", "Move it", "<b>" + esc(numStr(dvs)) + "</b> isn’t a whole number, and you can only "
+          + "divide by whole numbers in the house. Slide the decimal point <b>" + shift + "</b> place"
+          + (shift > 1 ? "s" : "") + " to the right in <em>both</em> numbers: <b>" + esc(numStr(dvd))
+          + " ÷ " + esc(numStr(dvs)) + "</b> becomes <b>" + esc(numStr(sDvd)) + " ÷ "
+          + esc(sDvs.i) + "</b>."]],
+        aside: "Moving the point the same amount in both numbers doesn’t change the answer — "
+             + "it’s the same as multiplying the top and bottom of a fraction by 10."
+      });
+    }
+
+    var w = words(r, S.mode, D);
+    if (r.steps.length === 0){
+      pre.push({
+        n: "Only&nbsp;step",
+        lines: [["d", "Divide", "<b>" + D + "</b> is bigger than <b>" + esc(numStr(sDvd))
+          + "</b>, so it fits <b>0</b> times. The quotient is <b>0</b> and the whole "
+          + "<b>" + esc(numStr(sDvd)) + "</b> is the remainder."]],
+        aside: S.mode === "remainder"
+          ? "Want to keep going? Switch to <b>Decimal</b> and we’ll add zeros and divide further."
+          : null
+      });
+    }
+
+    var frag = document.createDocumentFragment();
+    pre.forEach(function(p){ frag.appendChild(logItem(p.n, p.lines, p.aside, undefined)); });
+    w.forEach(function(p, idx){
+      frag.appendChild(logItem("Step&nbsp;" + (idx + 1), p.lines, p.aside, idx));
+    });
+    elLog.appendChild(frag);
+
+    tapeDiagram(dvd, dvs, D, r, qt);
+    areaModel(r, D, sDvd, shift, qt);
+
+    /* ---- the check ---- */
+    elCloser.innerHTML = checkLine(r, dvd, dvs, sDvd, sDvs, qt, D);
+
+    /* ---- step-through ---- */
+    elStepper.hidden = !S.stepMode || total === 0;
+    if (S.stepMode && total > 0){
+      elCount.textContent = S.step + " of " + total;
+      $("prevBtn").disabled = S.step <= 1;
+      $("nextBtn").disabled = S.step >= total;
+    }
+    applyVeil(total);
+    setStatus("");
+  }
+
+  function logItem(n, lines, aside, step){
+    var li = document.createElement("li");
+    if (step !== undefined) li.setAttribute("data-step", step);
+    var html = '<span class="n">' + n + "</span>";
+    lines.forEach(function(l){
+      html += '<div class="line"><span class="tag tag-' + l[0] + '">' + l[1] +
+              '</span><span class="txt">' + l[2] + "</span></div>";
+    });
+    if (aside) html += '<div class="aside">' + aside + "</div>";
+    li.innerHTML = html;
+    return li;
+  }
+
+  function checkLine(r, dvd, dvs, sDvd, sDvs, qt, D){
+    if (S.mode === "remainder"){
+      if (r.steps.length === 0){
+        return "<b>Check:</b> 0 × " + esc(commas(sDvs.i)) + " + " + r.rem + " = " +
+               esc(commas(numStr(dvd))) + ' <span class="ok">✓</span>';
+      }
+      var q = BigInt(qt.text || "0"), Db = BigInt(sDvs.i), rb = BigInt(r.rem);
+      var prod = q * Db, sum = prod + rb;
+      var ok = sum.toString() === (sDvd.i + sDvd.f).replace(/^0+(?=\d)/, "");
+      return "<b>Check:</b> " + esc(commas(qt.text)) + " × " + esc(commas(sDvs.i)) + " = " +
+             esc(commas(prod.toString())) + ", and " + esc(commas(prod.toString())) + " + " + r.rem +
+             " = " + esc(commas(sum.toString())) +
+             (ok ? ' <span class="ok">✓ matches the dividend</span>' : "");
+    }
+    if (r.repeat || r.capped){
+      return "<b>No clean check here</b> — this decimal never ends, so multiplying back would "
+           + "always be a hair off. That’s the sign the answer really belongs as a fraction: <b>"
+           + esc(fractionOf(dvd, dvs)) + "</b>.";
+    }
+    var qn = parseNum(qt.text) || { i:"0", f:"" };
+    var back = mulDec(qn, dvs), want = trimDec(numStr(dvd));
+    return "<b>Check:</b> " + esc(commas(qt.text)) + " × " + esc(numStr(dvs)) + " = " + esc(back) +
+           (back === want ? ' <span class="ok">✓ matches the dividend</span>' : "");
+  }
+
+  /* ============================== tape diagram ============================== */
+  /*
+     Two ways to picture a ÷ b, and we draw whichever needs fewer boxes:
+       sharing   — b equal parts, each part is the answer   (small whole divisors)
+       grouping  — how many b-sized pieces fit in a          (everything else)
+     Long runs of groups are drawn as a few boxes, a "…", and the last one.
+  */
+  function commaNum(s){ var p = s.split("."); p[0] = commas(p[0]); return p.join("."); }
+  function scaledStr(n, k){                    // BigInt n ÷ 10^k, as a tidy decimal
+    var s = n.toString();
+    if (!k) return s;
+    while (s.length < k + 1) s = "0" + s;
+    return trimDec(s.slice(0, s.length - k) + "." + s.slice(s.length - k));
+  }
+
+  function tapeDiagram(dvd, dvs, D, r, qt){
+    var fw = $("fitwrap");
+    if (isZero(dvd)){ fw.hidden = true; return; }
+
+    var remMode = S.mode === "remainder";
+    var k = Math.max(dvd.f.length, dvs.f.length);
+    var A = BigInt(shiftRight(dvd, k).i), B = BigInt(shiftRight(dvs, k).i);
+    var Q = A / B, R = A % B;
+    var total = esc(commaNum(numStr(dvd))), per = esc(commaNum(numStr(dvs)));
+    var answer = remMode ? esc(commas(qt.text))
+                         : (barNotation(r) || esc(qt.text) + (r.capped ? "…" : ""));
+
+    var segs = [], span = 0, topSpan = 0, under = "", cap;
+    var sharing = !dvs.f && D <= 12 && (Q > 0n || !remMode);
+
+    if (sharing){
+      for (var i = 0; i < D; i++) segs.push({ w:1, html:answer, cls:"" });
+      span = D;
+      under = D === 1 ? "1 part" : D + " equal parts";
+      if (remMode && r.rem > 0)
+        segs.push({ w: r.rem / Number(qt.text), html:"R " + r.rem, cls:"left" });
+      cap = "Share <b>" + total + "</b> out into <b>" + D + "</b> equal part" + (D === 1 ? "" : "s")
+          + ". Each part " + (remMode ? "gets" : "is") + " <b>" + answer + "</b>"
+          + (remMode && r.rem > 0
+              ? ", and <b>" + r.rem + "</b> is left over — not enough to give every part one more."
+              : (remMode ? ", with nothing left over." : "."));
+    } else {
+      var many = Q > 12n, drawn = many ? 4 : Number(Q);
+      for (var j = 0; j < drawn; j++){
+        var isGap = many && j === 3;
+        if (isGap) segs.push({ w:1, html:"…", cls:"gap" });
+        segs.push({ w:1, html:per, cls:"" });
+      }
+      span = segs.length;
+      var qStr = commas(Q.toString());
+      under = Q > 0n ? qStr + " group" + (Q === 1n ? "" : "s") + " of " + per : "";
+      var lv = esc(commaNum(scaledStr(R, k)));
+      if (R > 0n)
+        segs.push({ w: Number(R) / Number(B), html:(remMode ? "R " : "") + lv, cls:"left" + (Q === 0n ? " solo" : "") });
+      var g = bgcd(R, B) || 1n, part = (R / g) + "/" + (B / g);
+      if (Q === 0n){                 // outline the rest of one group so the shortfall shows
+        segs.push({ w: Number(B - R) / Number(B), html:"", cls:"ghost" });
+        topSpan = 1; span = 2; under = "one " + per;
+      }
+      cap = Q === 0n
+        ? "Not even one <b>" + per + "</b> fits in <b>" + total + "</b>. All of <b>" + total
+          + "</b> is left over — that’s <b>" + part + "</b> of one " + per + "."
+        : "How many <b>" + per + "</b>s fit in <b>" + total + "</b>? <b>" + qStr + "</b>"
+          + (R > 0n ? ", with <b>" + lv + "</b> left over — that’s <b>" + part + "</b> of another "
+                      + per + "." : " exactly, with nothing left over.");
+      if (!remMode && R > 0n) cap += " So the answer is <b>" + answer + "</b>.";
+    }
+
+    var cols = segs.map(function(s){
+      return "minmax(max-content," + Math.max(s.w, 0.001).toFixed(4) + "fr)";
+    }).join(" ");
+    var top = topSpan ? "1/" + (topSpan + 1) : "1/-1";
+    var html = '<div class="t-lbl" style="grid-row:1;grid-column:' + top + '">' + total + "</div>"
+             + '<div class="brk" style="grid-row:2;grid-column:' + top + '"></div>';
+    segs.forEach(function(s, i){
+      var end = (i === span - 1 && segs.length === span && !s.cls) ? " end" : "";
+      html += '<div class="seg ' + s.cls + end + '" style="grid-row:3;grid-column:' + (i + 1) + '">'
+            + s.html + "</div>";
+    });
+    if (under){
+      html += '<div class="brk down" style="grid-row:4;grid-column:1/' + (span + 1) + '"></div>'
+            + '<div class="t-lbl under" style="grid-row:5;grid-column:1/' + (span + 1) + '">'
+            + under + "</div>";
+    }
+
+    fw.hidden = false;
+    fw.classList.add("tapemode");
+    fw.innerHTML = '<div class="fitcap"><b style="font-family:var(--f-body)">Tape diagram.</b> ' + cap
+      + '</div><div class="tape-scroll"><div class="tape" aria-hidden="true" style="grid-template-columns:'
+      + cols + '">' + html + "</div></div>";
+  }
+
+  /* ============================== area model ============================== */
+  /*
+     Partial quotients: a rectangle as tall as the divisor, built from chunks you know.
+     Each quotient digit is one chunk — its width is the digit in its place, its area is
+     what got subtracted in that step.
+  */
+  function amFmt(d, e){                        // digit(s) d times 10^e, as a tidy decimal
+    var t = String(d);
+    if (e >= 0) return t + new Array(e + 1).join("0");
+    var k = -e;
+    while (t.length <= k) t = "0" + t;
+    return (t.slice(0, t.length - k) + "." + t.slice(t.length - k)).replace(/0+$/, "").replace(/\.$/, "");
+  }
+
+  function areaModel(r, D, sDvd, shift, qt){
+    var el = $("areawrap");
+    var pieces = r.steps.filter(function(st){ return st.q > 0; }).map(function(st){
+      var e = r.pointIdx - 1 - st.i;
+      return { q: amFmt(st.q, e), a: amFmt(st.sub, e) };
+    });
+    if (!pieces.length || pieces.length > 8){ el.hidden = true; return; }
+
+    var remMode = S.mode === "remainder", last = r.steps[r.steps.length - 1];
+    var left = r.rem > 0 ? amFmt(r.rem, r.pointIdx - 1 - last.i) : null;
+    var dS = commas(String(D));
+
+    var cols = ["auto"], html = '<div class="hd side" style="grid-row:2;grid-column:1">' + dS + "</div>";
+    pieces.forEach(function(p, i){
+      cols.push("minmax(max-content," + Number(p.q).toFixed(6) + "fr)");
+      html += '<div class="hd" style="grid-row:1;grid-column:' + (i + 2) + '">' + esc(commaNum(p.q)) + "</div>"
+            + '<div class="cell" style="grid-row:2;grid-column:' + (i + 2) + '">' + esc(commaNum(p.a)) + "</div>";
+    });
+    if (left){
+      var c = pieces.length + 2;
+      cols.push("minmax(max-content," + (Number(left) / D).toFixed(6) + "fr)");
+      html += '<div class="hd" style="grid-row:1;grid-column:' + c + '">' + (remMode ? "" : "…") + "</div>"
+            + '<div class="cell left" style="grid-row:2;grid-column:' + c + '">'
+            + (remMode ? "R " : "") + esc(commaNum(left)) + "</div>";
+    }
+
+    var total = esc(commaNum(numStr(sDvd)));
+    var answer = esc(commas(qt.text)) + (left && !remMode ? "…" : "");
+    var cap = (shift ? "After moving the point, this is <b>" + total + " ÷ " + dS + "</b>. " : "")
+      + "Build a rectangle <b>" + dS + "</b> tall that covers an area of <b>" + total + "</b>, "
+      + "using chunks you can multiply in your head: "
+      + pieces.map(function(p){ return dS + " × " + esc(commaNum(p.q)) + " = " + esc(commaNum(p.a)); }).join(", ")
+      + ". The widths along the top add up to the answer: "
+      + pieces.map(function(p){ return esc(commaNum(p.q)); }).join(" + ") + " = <b>" + answer + "</b>"
+      + (!left ? "."
+         : remMode ? ", with <b>" + left + "</b> left over that’s too small for another whole row."
+         : ", and there’s still a sliver of <b>" + esc(left) + "</b> uncovered — the decimal keeps going.");
+
+    el.hidden = false;
+    el.innerHTML = '<div class="fitcap"><b style="font-family:var(--f-body)">Area model.</b> ' + cap
+      + '</div><div class="am-scroll"><div class="am" aria-hidden="true" style="grid-template-columns:'
+      + cols.join(" ") + '">' + html + "</div></div>";
+  }
+
+  function band(inner, facts){
+    var el = document.createElement("div");
+    el.className = "answer";
+    el.innerHTML = inner + '<div class="facts">' +
+      facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    mountBand(el);
+  }
+  function writeLog(items){
+    elLog.innerHTML = "";
+    var frag = document.createDocumentFragment();
+    items.forEach(function(it){ frag.appendChild(logItem(it.n, it.lines, it.aside, it.step)); });
+    elLog.appendChild(frag);
+  }
+
+  function mountBand(band){
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    elBoard.parentNode.insertBefore(band, elBoard);
+  }
+
+  function fail(msg, offerSwitch){
+    var ss = $("shiftstep"); if (ss) ss.hidden = true;
+    $("chain").hidden = true; $("fitwrap").hidden = true; $("areawrap").hidden = true;
+    $("legend").innerHTML = "";
+    elWork.innerHTML = "";
+    elLog.innerHTML = "";
+    elCloser.textContent = "";
+    elStepper.hidden = true;
+    var n = document.createElement("div");
+    n.className = "notice";
+    n.innerHTML = "<span>" + msg + "</span>";
+    if (offerSwitch){
+      var b = document.createElement("button");
+      b.className = "ghost";
+      b.type = "button";
+      b.textContent = "Switch to decimal";
+      b.addEventListener("click", function(){ setMode("decimal"); });
+      n.appendChild(b);
+    }
+    mountBand(n);
+    setStatus(n.textContent);
+  }
+
+  function setStatus(t){ elStatus.textContent = t; }
+
+  function applyVeil(total){
+    var hide = function(el){
+      var s = Number(el.getAttribute("data-step"));
+      var on = S.stepMode && s >= S.step;
+      el.classList.toggle("veil", on);
+    };
+    Array.prototype.forEach.call(
+      document.querySelectorAll("#work [data-step], #chain [data-step]"), hide);
+    Array.prototype.forEach.call(elLog.querySelectorAll("[data-step]"), hide);
+    var band = document.querySelector(".answer");
+    if (band) band.classList.toggle("masked", S.stepMode && S.step < total);
+    $("fitwrap").classList.toggle("veil", S.stepMode && S.step < total);
+    $("areawrap").classList.toggle("veil", S.stepMode && S.step < total);
+    elCloser.style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+  }
+
+  /* ============================== wiring ============================== */
+
+  function sizeInput(el){
+    el.style.width = Math.max(3, Math.min(16, el.value.length + 1)) + "ch";
+  }
+  function onInput(){
+    S.dividend = elDividend.value;
+    S.divisor = elDivisor.value;
+    sizeInput(elDividend); sizeInput(elDivisor);
+    S.step = 1;
+    render();
+    save();
+  }
+  elDividend.addEventListener("input", onInput);
+  elDivisor.addEventListener("input", onInput);
+
+  function setMode(m){
+    S.mode = m;
+    S.step = 1;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === m));
+    });
+    elPlacesCtl.hidden = (m !== "decimal");
+    render();
+    save();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
+    b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
+  });
+
+  $("places").addEventListener("change", function(e){
+    S.places = Number(e.target.value); S.step = 1; render(); save();
+  });
+
+  function setStepMode(on){
+    S.stepMode = on;
+    S.step = 1;
+    $("allBtn").setAttribute("aria-pressed", String(!on));
+    $("stepBtn").setAttribute("aria-pressed", String(on));
+    render();
+    save();
+  }
+  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
+  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
+  $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
+
+  $("swapBtn").addEventListener("click", function(){
+    var a = elDividend.value; elDividend.value = elDivisor.value; elDivisor.value = a;
+    onInput();
+  });
+
+  ["w1","n1","d1","w2","n2","d2"].forEach(function(id, idx){
+    $(id).addEventListener("input", function(e){
+      var v = e.target.value.replace(/[^\d]/g, "");
+      e.target.value = v;
+      S.frac[Math.floor(idx/3)][idx%3] = v === "" ? 0 : Number(v);
+      S.step = 1; render(); save();
+    });
+  });
+
+  function setNums(n){
+    S.nums = n; S.step = 1;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-nums]"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-nums") === n));
+    });
+    $("decEntry").classList.toggle("hide", n !== "dec");
+    $("fracEntry").classList.toggle("hide", n !== "frac");
+    $("answerAsCtl").hidden = (n !== "dec");
+    $("placesCtl").hidden = (n !== "dec" || S.mode !== "decimal");
+    buildChips();
+    render(); save();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-nums]"), function(b){
+    b.addEventListener("click", function(){ setNums(b.getAttribute("data-nums")); });
+  });
+
+  var EX = {
+    dec: [["619","5","remainder"], ["847","12","remainder"], ["3","8","decimal"],
+          ["1","3","decimal"], ["12.5","0.4","decimal"], ["45.6","8","decimal"]],
+    frac:[[[0,3,4],[0,1,2]], [[0,3,4],[0,1,8]], [[0,2,3],[0,1,6]],
+          [[2,3,4],[0,1,2]], [[0,5,6],[0,2,3]], [[1,1,2],[3,0,1]]]
+  };
+  function buildChips(){
+    var host = $("chips"); host.innerHTML = "";
+    EX[S.nums].forEach(function(ex){
+      var b = document.createElement("button");
+      b.className = "chip"; b.type = "button";
+      b.textContent = S.nums === "dec" ? ex[0] + " ÷ " + ex[1]
+                                       : fracText(ex[0]) + " ÷ " + fracText(ex[1]);
+      b.addEventListener("click", function(){
+        S.step = 1;
+        if (S.nums === "dec"){
+          elDividend.value = ex[0]; elDivisor.value = ex[1];
+          S.dividend = ex[0]; S.divisor = ex[1];
+          sizeInput(elDividend); sizeInput(elDivisor);
+          setMode(ex[2]);
+        } else {
+          S.frac = [ex[0].slice(), ex[1].slice()];
+          ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
+            $(id).value = S.frac[Math.floor(i/3)][i%3];
+          });
+          render(); save();
+        }
+      });
+      host.appendChild(b);
+    });
+  }
+
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+
+  document.addEventListener("keydown", function(e){
+    if (!S.stepMode) return;
+    if (document.activeElement && document.activeElement.tagName === "INPUT") return;
+    if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
+    if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+
+  /* theme toggle */
+  var themeBtn = $("themeBtn");
+  function currentDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    if (t) return t === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paintThemeBtn(){ themeBtn.textContent = currentDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", currentDark() ? "light" : "dark");
+    paintThemeBtn();
+    save();
+  });
+
+  /* remember the last problem on this device */
+  function save(){
+    try{
+      localStorage.setItem("division-house", JSON.stringify({
+        nums:S.nums, frac:S.frac,
+        dividend:S.dividend, divisor:S.divisor, mode:S.mode, places:S.places,
+        theme:document.documentElement.getAttribute("data-theme") || ""
+      }));
+    }catch(e){}
+  }
+  function load(){
+    try{
+      var raw = localStorage.getItem("division-house");
+      if (!raw) return;
+      var v = JSON.parse(raw);
+      if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
+      if (typeof v.dividend === "string" && v.dividend) elDividend.value = v.dividend;
+      if (typeof v.divisor === "string" && v.divisor) elDivisor.value = v.divisor;
+      S.dividend = elDividend.value;
+      S.divisor = elDivisor.value;
+      if (v.mode === "decimal" || v.mode === "remainder") S.mode = v.mode;
+      if ([3,6,9,12].indexOf(Number(v.places)) >= 0) S.places = Number(v.places);
+      if (v.nums === "dec" || v.nums === "frac") S.nums = v.nums;
+      if (Array.isArray(v.frac) && v.frac.length === 2) S.frac = v.frac;
+    }catch(e){}
+  }
+
+  load();
+  $("places").value = String(S.places);
+  sizeInput(elDividend); sizeInput(elDivisor);
+  ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
+    $(id).value = S.frac[Math.floor(i/3)][i%3];
+  });
+  paintThemeBtn();
+  setMode(S.mode);
+  setNums(S.nums);
+})();
+</script>

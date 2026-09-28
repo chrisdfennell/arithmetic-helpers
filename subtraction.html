@@ -1,0 +1,1117 @@
+<title>The Borrow Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EFEDE9; --surface:#F9F8F5; --surface-2:#E6E2DC;
+    --ink:#1F1B19; --ink-2:#544D49; --ink-3:#867D78; --rule:#D0C9C2;
+    --key:#A8412A;   --key-bg:#F6E0D8;  --key-line:#D08768;   /* subtraction: the regroup */
+    --alt:#265AA5;   --alt-bg:#DEE8F6;                        /* the difference */
+    --warm:#7A6410;  --warm-bg:#F1EBCE;                       /* place value / notes */
+    --focus:#A8412A;
+    --shadow:0 1px 0 rgba(31,27,25,.05), 0 14px 30px -20px rgba(31,27,25,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#171413; --surface:#211D1B; --surface-2:#2F2926;
+      --ink:#EDE8E4; --ink-2:#ADA49F; --ink-3:#807771; --rule:#403936;
+      --key:#F0906E;  --key-bg:#3B1D14;  --key-line:#8E4A31;
+      --alt:#8CB1EC;  --alt-bg:#1A2740;
+      --warm:#DCC65F; --warm-bg:#332C10;
+      --focus:#F0906E;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#171413; --surface:#211D1B; --surface-2:#2F2926;
+    --ink:#EDE8E4; --ink-2:#ADA49F; --ink-3:#807771; --rule:#403936;
+    --key:#F0906E;  --key-bg:#3B1D14;  --key-line:#8E4A31;
+    --alt:#8CB1EC;  --alt-bg:#1A2740;
+    --warm:#DCC65F; --warm-bg:#332C10;
+    --focus:#F0906E;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:48ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:20px 22px 18px;display:flex;flex-direction:column;gap:16px}
+  .modes{display:flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
+    color:var(--ink-2);padding:8px 18px;border-radius:7px;cursor:pointer}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+
+  .entry{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:74px}
+  .entry.hide{display:none}
+  .minus{font-family:var(--f-mono);font-size:clamp(24px,4.4vw,30px);color:var(--key);font-weight:600}
+  .numfield{display:flex;flex-direction:column;gap:4px}
+  .numfield > label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .dec-in{font-family:var(--f-mono);font-size:clamp(24px,4.4vw,30px);font-weight:600;
+    font-variant-numeric:tabular-nums;color:var(--ink);background:transparent;border:0;
+    border-bottom:2.5px solid var(--rule);padding:1px 4px 4px;width:7ch;outline:none}
+  .dec-in:focus{border-bottom-color:var(--focus)}
+  .swap{align-self:flex-end;margin-bottom:4px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-3);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:14px;line-height:1}
+  .swap:hover{color:var(--key);border-color:var(--key-line)}
+
+  .mixfield{display:flex;align-items:center;gap:7px}
+  .mixfield .whole{font-family:var(--f-mono);font-size:clamp(24px,4.4vw,30px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;border-bottom:2.5px solid var(--rule);
+    width:3ch;text-align:center;padding:1px 2px 4px;outline:none}
+  .mixfield .whole:focus{border-bottom-color:var(--focus)}
+  .stackfield{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .stackfield input{font-family:var(--f-mono);font-size:clamp(17px,3.2vw,21px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;width:3.2ch;text-align:center;padding:1px;outline:none}
+  .stackfield input:focus{background:var(--key-bg);border-radius:4px}
+  .stackfield .fbar{height:2.5px;width:3.4ch;background:var(--ink);border-radius:2px}
+  .fieldcap{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3);width:100%;margin-bottom:-4px}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    border-top:1px dashed var(--rule);padding-top:14px}
+  .examples .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+  .chip{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
+  .practice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+  button:focus-visible,input:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
+    padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px}
+  .answer .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .answer .v{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink);line-height:1.1;display:flex;align-items:center;gap:.35ch}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .answer.masked .v{color:var(--ink-3)}
+  .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+
+  .board{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:22px;align-items:start}
+  @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{font-family:var(--f-mono);font-size:13px;font-weight:600;background:var(--surface-2);
+    border:0;color:var(--ink);border-radius:7px;width:30px;height:28px;cursor:pointer}
+  .stepper button:disabled{color:var(--ink-3);cursor:not-allowed}
+  .stepper button:hover:not(:disabled){background:var(--key-bg);color:var(--key)}
+  .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
+    text-align:center;font-variant-numeric:tabular-nums}
+  .stepper[hidden]{display:none}
+
+  /* ---- the column stack ---- */
+  .work-scroll{overflow-x:auto;padding:22px 18px 26px}
+  .stack{display:grid;justify-content:center;font-family:var(--f-mono);font-weight:500;
+    font-size:clamp(19px,4.2vw,27px);line-height:1.4;font-variant-numeric:tabular-nums;
+    --cell:1.7ch;--pt:.8ch;min-width:max-content;margin:0 auto}
+  .stack .cel{text-align:center}
+  .stack .plabel{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--f-body);
+    font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+    white-space:nowrap;justify-self:center;align-self:end;padding-bottom:5px;line-height:1}
+  .stack .plabel.on{color:var(--key)}
+  .stack .spine{justify-self:center;width:0;border-left:1.5px dashed var(--key-line);opacity:.55}
+  .stack .regroup{font-size:.58em;color:var(--key);font-weight:600;align-self:end;line-height:1.5}
+  .stack .term{color:var(--ink)}
+  .stack .term.pad{color:var(--ink-3)}
+  .stack .term.struck{color:var(--ink-3);text-decoration:line-through;
+    text-decoration-color:var(--key);text-decoration-thickness:2px}
+  .stack .op{color:var(--key);font-weight:600}
+  .stack .diffline{height:2.5px;background:var(--ink);border-radius:2px;align-self:center;margin:4px 0 5px}
+  .stack .diff{color:var(--alt);font-weight:600}
+  .stack [data-step].veil{opacity:0}
+  @media (prefers-reduced-motion:no-preference){.stack [data-step]{transition:opacity .2s ease}}
+
+  /* ---- fraction chain ---- */
+  .chain{padding:20px 18px 24px;display:flex;flex-direction:column;gap:2px;overflow-x:auto}
+  .crow{display:grid;grid-template-columns:1.6ch minmax(0,1fr);gap:0 10px;align-items:center;
+    padding:9px 0;border-bottom:1px dashed var(--rule)}
+  .crow:last-child{border-bottom:0}
+  .crow .eq{font-family:var(--f-mono);font-size:clamp(19px,3.6vw,24px);color:var(--key);font-weight:600}
+  .crow .expr{display:flex;align-items:center;gap:.5ch;flex-wrap:wrap;
+    font-family:var(--f-mono);font-size:clamp(19px,3.6vw,24px);color:var(--ink);font-weight:600}
+  .crow.result .expr{color:var(--key)}
+  .crow.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.crow{transition:opacity .2s ease}}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+    line-height:1.08;margin:0 .1ch}
+  .fr .nu{padding:0 .25ch}
+  .fr .de{padding:0 .25ch;border-top:2.5px solid currentColor;margin-top:1px}
+  .mx{margin-right:.25ch}
+  .op-s{color:var(--key);padding:0 .2ch}
+
+  /* ---- bar model ---- */
+  .bars{padding:4px 18px 20px;display:flex;flex-direction:column;gap:12px}
+  .barrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .barrow .cap{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:9ch}
+  .bar{display:flex;border:1.5px solid var(--ink-3);border-radius:5px;overflow:hidden;
+    height:30px;flex:1 1 200px;min-width:150px;max-width:400px}
+  .bar span{flex:1;border-right:1px solid var(--ink-3)}
+  .bar span:last-child{border-right:0}
+  .bar span.have{background:var(--key-line)}
+  .bar span.gone{background:repeating-linear-gradient(45deg,var(--key) 0 4px,transparent 4px 8px);
+    opacity:.75}
+  .bar span.left{background:var(--alt)}
+
+  /* ---- area model ---- */
+  .areawrap{padding:14px 18px 18px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
+  .areawrap.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.areawrap{transition:opacity .2s ease}}
+  .am-scroll{overflow-x:auto;padding-bottom:2px}
+  .am{display:grid;width:100%;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .am .hd{font-size:13px;font-weight:600;text-align:center;padding:0 6px 6px;white-space:nowrap;align-self:end}
+  .am .hd.side{align-self:center;text-align:right;padding:0 10px 0 0}
+  .am .cell{display:flex;align-items:center;justify-content:center;padding:0 8px;white-space:nowrap;
+    font-size:14px;font-weight:600;color:var(--ink)}
+  .fgrids{display:flex;flex-wrap:wrap;gap:14px 16px;align-items:center}
+  .fgout{display:flex;gap:14px 16px;align-items:center}
+  .fgrids .op{font-family:var(--f-mono);font-size:22px;font-weight:600;color:var(--ink-3)}
+  .fg{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .fg .g{display:grid;border:2px solid var(--ink-2);border-radius:4px;overflow:hidden;width:132px;aspect-ratio:1.15}
+  .fg .g span{border-right:1px solid var(--ink-3);border-bottom:1px solid var(--ink-3)}
+  .fg .cap{font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--ink-2);text-align:center;min-height:1.2em}
+  .fg .g span.have{background:var(--key-line)}
+  .fg .g span.gone{background:repeating-linear-gradient(45deg,var(--key) 0 4px,transparent 4px 8px)}
+  .fg .g span.left{background:var(--alt)}
+  /* ---- tape diagram ---- */
+  .tapewrap{padding:14px 18px 18px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
+  .tapewrap.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.tapewrap{transition:opacity .2s ease}}
+  .tapecap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .tapecap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .tapecap .lead{font-family:var(--f-body);color:var(--ink)}
+  .tape-scroll{overflow-x:auto;padding-bottom:2px}
+  .tape{display:grid;width:100%;align-items:center;
+    font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+  .tape .t-lbl{text-align:center;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;padding:0 4px}
+  .tape .t-lbl.ans{color:var(--alt)}
+  .tape .t-lbl.under{color:var(--ink-2);font-weight:400;font-size:12px}
+  .tape .brk{height:8px;border:2px solid var(--ink-3);border-bottom:0;border-radius:5px 5px 0 0;margin:2px 1px 4px}
+  .tape .brk.down{border-top:0;border-bottom:2px solid var(--ink-3);border-radius:0 0 5px 5px;margin:4px 1px 2px}
+  .tape .seg{height:40px;display:flex;align-items:center;justify-content:center;padding:0 7px;
+    white-space:nowrap;font-size:14px;font-weight:600;margin-left:-2px;
+    background:var(--key-bg);color:var(--key);border:2px solid var(--key-line)}
+  .tape .seg.first{margin-left:0}
+  .tape .seg.b{background:var(--warm-bg);color:var(--warm);border-color:var(--warm)}
+  .tape .seg.ans{background:var(--alt-bg);color:var(--alt);border-color:var(--alt)}
+  .tape .seg.gap{background:transparent;color:var(--ink-3);border-style:dashed;border-color:var(--key-line);
+    font-size:20px;letter-spacing:.1em}
+
+  .legend{display:flex;flex-wrap:wrap;gap:6px 20px;padding:12px 18px;border-top:1px dashed var(--rule)}
+  .legend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .legend i{width:11px;height:11px;border-radius:3px;display:block;flex:none}
+  .sw-k{background:var(--key)} .sw-a{background:var(--alt)} .sw-l{background:var(--key-line)}
+  .sw-g{background:repeating-linear-gradient(45deg,var(--key) 0 3px,transparent 3px 6px)}
+
+  .log{padding:6px 0 10px;margin:0;list-style:none}
+  .log > li{padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;align-items:start}
+  .log > li:last-child{border-bottom:0}
+  .log > li.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.log > li{transition:opacity .2s ease}}
+  .log .n{grid-column:1;grid-row:1 / span 99;font-family:var(--f-mono);font-size:11px;font-weight:600;
+    color:var(--ink-3);background:var(--surface-2);border-radius:7px;padding:3px 7px;
+    letter-spacing:.04em;white-space:nowrap}
+  .log .line{grid-column:2;display:flex;gap:9px;align-items:baseline;font-size:14.5px}
+  .log .tag{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;flex:none;min-width:7.6ch;text-align:center}
+  .tag-p{background:var(--warm-bg);color:var(--warm)}
+  .tag-b{background:var(--key-bg);color:var(--key)}
+  .tag-c{background:var(--alt-bg);color:var(--alt)}
+  .log .txt{color:var(--ink-2)}
+  .log .txt b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .log .aside{grid-column:2;margin-top:7px;font-size:13.5px;color:var(--ink);background:var(--warm-bg);
+    border-left:3px solid var(--warm);border-radius:4px 8px 8px 4px;padding:8px 12px}
+  .closer{padding:14px 18px;font-size:14px;color:var(--ink-2);background:var(--surface-2)}
+  .closer b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .closer .ok{color:var(--key);font-weight:600}
+
+  .footnote{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote .print{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#F2F0ED;
+      --ink:#111; --ink-2:#3D3835; --ink-3:#6E6763; --rule:#B0A9A2;
+      --key:#A8412A;  --key-bg:#F6E0D8;  --key-line:#C2765A;
+      --alt:#1F4E93;  --alt-bg:#DEE8F6;
+      --warm:#6E5A0E; --warm-bg:#F1EBCE;
+      --shadow:none;
+    }
+
+    @page{margin:13mm 11mm}
+    /* print the fills that carry meaning, not just the text */
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.examples,.modes,.footnote,.stepper,.swap,#statusLine{display:none !important}
+
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px}
+    .eyebrow{font-size:9px}
+    .tagline{display:none}
+
+    .problem{border:0;box-shadow:none;padding:0;gap:0;break-after:avoid}
+    .entry,.equation{min-height:0;gap:9px}
+    .dec-in,.num-field input,.mixfield .whole{font-size:20px;border-bottom-color:var(--ink);
+      width:auto !important;min-width:2.5ch}
+    .stackfield input{font-size:15px}
+    .num-field > label,.fieldcap,.numfield > label{font-size:8.5px}
+
+    .answer{padding:8px 12px;gap:5px 16px;break-after:avoid;break-inside:avoid}
+    .answer .v{font-size:22px}
+    .answer .facts{margin-left:0;flex-basis:100%}
+    .answer .fact{font-size:11px}
+
+    /* work beside the words, each sized to what it holds */
+    .board{display:flex;gap:12px;align-items:flex-start}
+    .board > .panel:first-of-type{flex:0 1 auto;min-width:0}
+    .board > .panel:last-of-type{flex:1 1 230px;min-width:0}
+    .panel{box-shadow:none;border:1px solid var(--rule);break-inside:auto}
+    .panel-head{padding:6px 10px}
+    .panel-head h2{font-size:12.5px}
+
+    .work-scroll{padding:13px 8px 15px;overflow:visible}
+    .tape-scroll{overflow:visible}
+    .areawrap{padding:8px 10px 10px;gap:6px;break-inside:avoid}
+    .am .cell{font-size:11px} .am .hd{font-size:10.5px}
+    .fg .g{width:96px}
+    .tapewrap{padding:8px 10px 10px;gap:6px;break-inside:avoid}
+    .tapecap{font-size:10.5px}
+    .tape .seg{height:28px;font-size:11px}
+    .tape .t-lbl{font-size:10.5px}
+    .chain{padding:13px 10px 14px;overflow:visible}
+    .crow{padding:7px 0}
+
+    .legend{padding:7px 10px;gap:4px 13px}
+    .legend div{font-size:10px}
+    .legend i{border:.5px solid var(--ink)}
+
+    .log{padding:2px 0 4px}
+    .log > li{padding:7px 10px;break-inside:avoid}
+    .log .n{font-size:9.5px;padding:2px 5px}
+    .log .line{font-size:11px;gap:7px}
+    .log .tag{font-size:8.5px;min-width:7.2ch;padding:1px 4px}
+    .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
+    .closer{font-size:11px;padding:8px 10px}
+    .stack{font-size:17px}
+    .bars{padding:2px 10px 14px;gap:9px}
+    .bar{height:22px;flex-basis:120px;min-width:90px}
+    .barrow .cap{font-size:11px;min-width:8ch}
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Subtracting, worked out</div>
+      <h1>The Borrow <em>Bank</em></h1>
+      <p class="tagline">When a column comes up short, you borrow from next door. Every trade gets
+        crossed out and written above, so you can see exactly where the ten came from.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem">
+    <div class="modes" role="group" aria-label="What kind of numbers">
+      <button type="button" data-mode="dec" aria-pressed="true">Decimals</button>
+      <button type="button" data-mode="frac" aria-pressed="false">Fractions</button>
+    </div>
+
+    <div class="entry" id="decEntry">
+      <div class="numfield">
+        <label for="aIn">Start with</label>
+        <input class="dec-in" id="aIn" type="text" inputmode="decimal" value="25.4" autocomplete="off">
+      </div>
+      <span class="minus">&minus;</span>
+      <div class="numfield">
+        <label for="bIn">Take away</label>
+        <input class="dec-in" id="bIn" type="text" inputmode="decimal" value="3.75" autocomplete="off">
+      </div>
+      <button class="swap" id="swapBtn" type="button" aria-label="Swap the two numbers"
+              title="Swap the two numbers">&#8646;</button>
+    </div>
+
+    <div class="entry hide" id="fracEntry">
+      <div class="mixfield">
+        <span class="fieldcap">Start with</span>
+        <input class="whole" id="w1" type="text" inputmode="numeric" value="3" aria-label="First whole number">
+        <div class="stackfield">
+          <input id="n1" type="text" inputmode="numeric" value="1" aria-label="First numerator">
+          <div class="fbar"></div>
+          <input id="d1" type="text" inputmode="numeric" value="4" aria-label="First denominator">
+        </div>
+      </div>
+      <span class="minus">&minus;</span>
+      <div class="mixfield">
+        <span class="fieldcap">Take away</span>
+        <input class="whole" id="w2" type="text" inputmode="numeric" value="1" aria-label="Second whole number">
+        <div class="stackfield">
+          <input id="n2" type="text" inputmode="numeric" value="2" aria-label="Second numerator">
+          <div class="fbar"></div>
+          <input id="d2" type="text" inputmode="numeric" value="3" aria-label="Second denominator">
+        </div>
+      </div>
+    </div>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips"></span>
+      <span class="practice">
+        <div class="modes" role="group" aria-label="Practice mode">
+          <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
+          <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+        </div>
+      </span>
+    </div>
+  </section>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <div class="board" id="board">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The work</h2>
+        <div class="stepper" id="stepper" hidden>
+          <button type="button" id="prevBtn" aria-label="Previous step">&larr;</button>
+          <span class="count" id="stepCount"></span>
+          <button type="button" id="nextBtn" aria-label="Next step">&rarr;</button>
+        </div>
+      </div>
+      <div id="workHost"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Say it out loud</h2></div>
+      <ol class="log" id="log"></ol>
+      <div class="closer" id="closer"></div>
+    </section>
+  </div>
+
+  <div class="footnote">
+    <button class="print" type="button" id="printBtn">Print this work</button>
+    <span>Borrowing isn&rsquo;t cheating &mdash; one ten is worth ten ones, so you&rsquo;re trading, not taking.</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var lastDec = null;
+  var S = { mode:"dec", a:"25.4", b:"3.75", frac:[[3,1,4],[1,2,3]], stepMode:false, step:1 };
+
+  /* ===================== helpers ===================== */
+  function parseNum(raw){
+    var s = String(raw).trim().replace(/[,\s_]/g,"");
+    if (s === "" || !/^\d*\.?\d*$/.test(s) || !/\d/.test(s)) return null;
+    var p = s.split("."), i = (p[0]||"").replace(/^0+(?=\d)/,"") || "0", f = (p[1]||"");
+    return { i:i, f:f };
+  }
+  function numStr(n){ var f = n.f.replace(/0+$/,""); return f ? n.i + "." + f : n.i; }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function commas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+  function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a||1; }
+  function lcm(a,b){ return a/gcd(a,b)*b; }
+  function placeName(e){
+    var pos=["ones","tens","hundreds","thousands","ten thousands","hundred thousands","millions"];
+    var neg=["tenths","hundredths","thousandths","ten-thousandths","hundred-thousandths"];
+    return e>=0 ? (pos[e]||"big place") : (neg[-e-1]||"tiny place");
+  }
+  function cmp(x, y){                                   // compare two parsed numbers
+    var mi = Math.max(x.i.length, y.i.length), mf = Math.max(x.f.length, y.f.length);
+    var pad = function(n){
+      var i = n.i, f = n.f;
+      while (i.length < mi) i = "0" + i;
+      while (f.length < mf) f += "0";
+      return i + f;
+    };
+    var A = pad(x), B = pad(y);
+    return A === B ? 0 : (A > B ? 1 : -1);
+  }
+
+  /* ===================== decimal subtraction ===================== */
+  function subDecimals(top, bot){
+    var maxF = Math.max(top.f.length, bot.f.length);
+    var maxI = Math.max(top.i.length, bot.i.length);
+    var L = maxI + maxF;
+    var lay = function(n){
+      var i = n.i, f = n.f;
+      while (i.length < maxI) i = "0" + i;
+      while (f.length < maxF) f += "0";
+      return { chars:(i+f).split(""), padFrom: maxI + n.f.length, leadTo: maxI - n.i.length };
+    };
+    var T = lay(top), B = lay(bot);
+    var work = T.chars.map(Number), orig = work.slice();
+    var out = new Array(L), steps = [];
+
+    for (var k = L - 1; k >= 0; k--){
+      var need = Number(B.chars[k]), borrowed = null;
+      if (work[k] < need){
+        var j = k - 1, through = [];
+        while (j >= 0 && work[j] === 0){ through.push(j); j--; }
+        if (j >= 0){
+          work[j] -= 1;
+          through.forEach(function(t){ work[t] = 9; });
+          work[k] += 10;
+          borrowed = { from:j, through:through };
+        }
+      }
+      out[k] = String(work[k] - need);
+      steps.push({ k:k, exp: maxI - 1 - k, top: work[k], bot: need,
+                   diff: work[k] - need, borrowed: borrowed });
+    }
+    return { T:T, B:B, work:work, orig:orig, out:out, steps:steps, maxI:maxI, maxF:maxF, L:L };
+  }
+
+  /* ===================== fraction helpers ===================== */
+  function toImproper(m){ return { n: m[0]*m[2] + m[1], d: m[2] }; }
+  function simplify(f){ var g = gcd(f.n, f.d); return { n:f.n/g, d:f.d/g, by:g }; }
+  function fracHTML(n, d){
+    return '<span class="fr"><span class="nu">' + esc(n) + '</span><span class="de">'
+         + esc(d) + "</span></span>";
+  }
+  function signedFrac(n, d){
+    return (n < 0 ? '<span class="op-s">&minus;</span>' : "") + fracHTML(Math.abs(n), d);
+  }
+  function mixedHTML(w, n, d, neg){
+    var body = (n === 0) ? '<span class="mx">' + esc(w) + "</span>"
+             : (w === 0 ? fracHTML(n,d) : '<span class="mx">' + esc(w) + "</span>" + fracHTML(n,d));
+    return (neg ? '<span class="op-s">&minus;</span>' : "") + body;
+  }
+  function termHTML(m){
+    if (m[1] === 0) return '<span class="mx">' + m[0] + "</span>";
+    return mixedHTML(m[0], m[1], m[2], false);
+  }
+  function trimNum(x){
+    if (!isFinite(x)) return "?";
+    var s = x.toFixed(6).replace(/0+$/,"").replace(/\.$/,"");
+    if (Math.abs(x - Number(s)) > 1e-9) s += "…";
+    return s.replace(/^-/, "−");
+  }
+  function multiples(d, upto){
+    var out = [];
+    for (var i = 1; i * d <= upto; i++) out.push(i*d === upto ? "<b>" + i*d + "</b>" : String(i*d));
+    if (out.length > 8) out = out.slice(-8);
+    return out.join(", ");
+  }
+
+  /* ===================== render: decimals ===================== */
+  function renderDecimals(){
+    var a = parseNum(S.a), b = parseNum(S.b);
+    if (!a || !b) return fail("Type a number in both boxes — digits and at most one decimal point.");
+    if ((a.i+a.f).length > 12 || (b.i+b.f).length > 12)
+      return fail("Keep each number to 12 digits or fewer so the columns stay readable.");
+
+    var flipped = cmp(a, b) < 0;
+    var top = flipped ? b : a, bot = flipped ? a : b;
+    var A = subDecimals(top, bot);
+    lastDec = A;
+
+    var host = $("workHost");
+    host.innerHTML = '<div class="work-scroll"><div class="stack" id="stack"></div></div>';
+    var st = $("stack");
+
+    var hasPoint = A.maxF > 0;
+    var colOf = function(k){ return 2 + k + (hasPoint && k >= A.maxI ? 1 : 0); };
+    var pointCol = 2 + A.maxI;
+    var lastCol = colOf(A.L - 1);
+
+    var tracks = ["auto"];
+    for (var t = 0; t < A.L + (hasPoint ? 1 : 0); t++)
+      tracks.push(hasPoint && (2 + t) === pointCol ? "var(--pt)" : "var(--cell)");
+    st.style.gridTemplateColumns = tracks.join(" ");
+
+    var frag = document.createDocumentFragment();
+    function put(row, col, text, cls, step){
+      var e = document.createElement("div");
+      e.className = "cel " + (cls||"");
+      e.style.gridRow = row; e.style.gridColumn = col;
+      if (text !== null) e.textContent = text;
+      if (step !== undefined) e.setAttribute("data-step", step);
+      frag.appendChild(e); return e;
+    }
+    var ROW_LABEL = 1, ROW_REGROUP = 2, ROW_TOP = 3, ROW_BOT = 4, ROW_LINE = 5, ROW_DIFF = 6;
+
+    for (var k = 0; k < A.L; k++){
+      var e = document.createElement("div");
+      e.className = "plabel"; e.textContent = placeName(A.maxI - 1 - k);
+      e.style.gridRow = ROW_LABEL; e.style.gridColumn = colOf(k);
+      e.setAttribute("data-place", k);
+      frag.appendChild(e);
+    }
+    if (hasPoint){
+      var sp = document.createElement("div");
+      sp.className = "spine";
+      sp.style.gridRow = ROW_REGROUP + " / " + (ROW_DIFF + 1);
+      sp.style.gridColumn = pointCol;
+      frag.appendChild(sp);
+    }
+
+    /* which step first changed each column, so the crossings reveal in order */
+    var changedAt = {};
+    A.steps.forEach(function(s, idx){
+      if (!s.borrowed) return;
+      if (changedAt[s.k] === undefined) changedAt[s.k] = idx;
+      if (changedAt[s.borrowed.from] === undefined) changedAt[s.borrowed.from] = idx;
+      s.borrowed.through.forEach(function(t){
+        if (changedAt[t] === undefined) changedAt[t] = idx;
+      });
+    });
+
+    for (var k2 = 0; k2 < A.L; k2++){
+      var changed = A.work[k2] !== A.orig[k2];
+      var blankTop = k2 < A.T.leadTo;
+      if (changed && !blankTop)
+        put(ROW_REGROUP, colOf(k2), String(A.work[k2]), "regroup", changedAt[k2]);
+      if (!blankTop)
+        put(ROW_TOP, colOf(k2), A.T.chars[k2],
+            "term" + (k2 >= A.T.padFrom ? " pad" : "") + (changed ? " struck" : ""),
+            changed ? changedAt[k2] : undefined);
+      if (k2 >= A.B.leadTo)
+        put(ROW_BOT, colOf(k2), A.B.chars[k2], "term" + (k2 >= A.B.padFrom ? " pad" : ""));
+    }
+    if (hasPoint){ put(ROW_TOP, pointCol, ".", "term"); put(ROW_BOT, pointCol, ".", "term"); }
+    put(ROW_BOT, 1, "−", "op");
+
+    var line = document.createElement("div");
+    line.className = "diffline";
+    line.style.gridRow = ROW_LINE; line.style.gridColumn = "1 / " + (lastCol + 1);
+    frag.appendChild(line);
+
+    /* leading zeros of the answer aren't written down */
+    var firstSig = 0;
+    while (firstSig < A.maxI - 1 && A.out[firstSig] === "0") firstSig++;
+    for (var k3 = firstSig; k3 < A.L; k3++){
+      var sIdx = -1;
+      A.steps.forEach(function(s, idx){ if (s.k === k3) sIdx = idx; });
+      put(ROW_DIFF, colOf(k3), A.out[k3], "diff", sIdx >= 0 ? sIdx : undefined);
+    }
+    if (hasPoint) put(ROW_DIFF, pointCol, ".", "diff");
+    if (flipped) put(ROW_DIFF, colOf(firstSig) - 1, "−", "diff");
+    st.appendChild(frag);
+
+    /* answer */
+    var whole = A.out.slice(0, A.maxI).join("").replace(/^0+(?=\d)/,"");
+    var fracPart = A.out.slice(A.maxI).join("");
+    var raw = fracPart ? whole + "." + fracPart : whole;
+    var shown = (flipped ? "−" : "") + numStr(parseNum(raw));
+
+    var facts = [];
+    var borrows = A.steps.filter(function(s){ return s.borrowed; }).length;
+    facts.push(borrows === 0 ? "No borrowing needed — every column had enough."
+      : "Borrowed <b>" + borrows + "</b> time" + (borrows > 1 ? "s" : "") + ".");
+    if (A.maxF > 0 && top.f.length !== bot.f.length)
+      facts.push("Added zeros so both have <b>" + A.maxF + "</b> decimal place"
+        + (A.maxF > 1 ? "s" : "") + ".");
+    if (flipped)
+      facts.push("<b>" + esc(numStr(b)) + "</b> is bigger, so the answer is negative.");
+    band('<span class="k">Difference</span><span class="v">' + esc(commas(shown)) + "</span>",
+         facts, "answer");
+
+    /* words */
+    var items = [];
+    if (flipped){
+      items.push({ n:"Set&nbsp;up", lines:[["p","Flip it",
+        "<b>" + esc(numStr(b)) + "</b> is bigger than <b>" + esc(numStr(a))
+        + "</b>, so the answer will be below zero. Subtract the smaller from the bigger — <b>"
+        + esc(numStr(top)) + " − " + esc(numStr(bot))
+        + "</b> — then put a minus sign on the result."]],
+        aside:"Think of a thermometer: going down past zero doesn’t change how far you travelled, "
+            + "it just changes which side of zero you land on." });
+    }
+    if (A.maxF > 0 && top.f.length !== bot.f.length){
+      var shortOne = top.f.length < bot.f.length ? top : bot;
+      items.push({ n:"Set&nbsp;up", lines:[["p","Line up",
+        "Stack them so the decimal points line up — the dashed line. Fill the empty places with <b>0</b>, "
+        + "so <b>" + esc(numStr(shortOne)) + "</b> becomes <b>"
+        + esc(shortOne.i + "." + (shortOne.f + new Array(A.maxF - shortOne.f.length + 1).join("0")))
+        + "</b>."]],
+        aside:"You need a digit in every column before you can start trading between them." });
+    }
+    A.steps.forEach(function(s, idx){
+      var lines = [["p","Column","The <b>" + placeName(s.exp) + "</b> column."]];
+      var aside = null;
+      if (s.borrowed){
+        var origTop = A.orig[s.k];
+        if (s.borrowed.through.length === 0){
+          lines.push(["b","Borrow","You can’t take <b>" + s.bot + "</b> from <b>" + origTop
+            + "</b>. Borrow one from the <b>" + placeName(s.exp + 1) + "</b>: that column drops to <b>"
+            + A.work[s.borrowed.from] + "</b> and this one becomes <b>" + s.top + "</b>."]);
+        } else {
+          var names = s.borrowed.through.map(function(t){ return placeName(A.maxI - 1 - t); });
+          lines.push(["b","Borrow","You can’t take <b>" + s.bot + "</b> from <b>" + origTop
+            + "</b>, and the " + names.join(" and ") + " column"
+            + (names.length > 1 ? "s are" : " is") + " <b>0</b> — nothing to lend. Keep going left to the <b>"
+            + placeName(A.maxI - 1 - s.borrowed.from) + "</b>: it drops to <b>"
+            + A.work[s.borrowed.from] + "</b>, each <b>0</b> along the way becomes <b>9</b>, "
+            + "and this column becomes <b>" + s.top + "</b>."]);
+          aside = "A zero can’t lend, so it borrows too. Each one takes ten from its left neighbour, "
+                + "keeps nine, and passes one along — that’s why they all turn into 9s.";
+        }
+      }
+      lines.push(["c","Subtract","<b>" + s.top + " − " + s.bot + " = " + s.diff + "</b>."]);
+      items.push({ n:"Step&nbsp;" + (idx+1), lines:lines, aside:aside, step:idx });
+    });
+    writeLog(items);
+
+    var back = Number(raw) + Number(numStr(bot));
+    var want = Number(numStr(top));
+    $("closer").innerHTML = "<b>Check by adding it back:</b> " + esc(numStr(parseNum(raw)))
+      + " + " + esc(numStr(bot)) + " = <b>" + trimNum(back) + "</b>"
+      + (Math.abs(back - want) < 1e-9
+          ? ' <span class="ok">✓ back to ' + (flipped ? "the bigger number" : "what you started with")
+            + '</span>'
+          : " — should be " + esc(numStr(top))) + ".";
+
+    $("legend").innerHTML =
+      '<div><i class="sw-k"></i> Traded / crossed out</div>' +
+      '<div><i class="sw-a"></i> The difference</div>' +
+      '<div>Struck-through digits were swapped for the smaller value above them</div>';
+    /* the whole tape, split into what's taken away and what's left */
+    var tv = numStr(top), bv = numStr(bot), dv = numStr(parseNum(raw));
+    if (Number(tv) > 0){
+      var tsegs = [], unders = [];
+      if (Number(bv) > 0){
+        tsegs.push({ w: Number(bv), html: esc(commaNum(bv)), cls: "b" });
+        unders.push({ from: 1, to: 1, label: flipped ? "you have" : "take away" });
+      }
+      if (Number(dv) > 0){
+        tsegs.push({ w: Number(dv), html: esc(commaNum(dv)), cls: "ans" });
+        unders.push({ from: tsegs.length, to: tsegs.length, label: flipped ? "short by" : "what’s left" });
+      }
+      mountTape(flipped
+        ? "<b>" + esc(commaNum(tv)) + "</b> is the longer tape. <b>" + esc(commaNum(bv))
+          + "</b> only covers part of it, and the gap is <b>" + esc(commaNum(dv))
+          + "</b> — so you land that far below zero: <b>" + esc(shown) + "</b>."
+        : "Start with the whole tape, <b>" + esc(commaNum(tv)) + "</b>. Take away <b>"
+          + esc(commaNum(bv)) + "</b> and <b>" + esc(commaNum(dv)) + "</b> is left.",
+        { total: esc(commaNum(tv)), segs: tsegs, unders: unders });
+    }
+    return A.steps.length;
+  }
+
+  /* ===================== render: fractions ===================== */
+  function renderFractions(){
+    var m1 = S.frac[0], m2 = S.frac[1];
+    if ([m1,m2].some(function(m){ return m.some(function(v){ return !isFinite(v); }); }))
+      return fail("Fill in every box. Use 0 for the whole number if you only want a fraction.");
+    if (m1[2] === 0 || m2[2] === 0)
+      return fail("A denominator can’t be 0 — you can’t cut something into zero pieces.");
+    if (m1[2] > 999 || m2[2] > 999 || m1[1] > 9999 || m2[1] > 9999)
+      return fail("Keep the numbers small enough to work by hand (denominators under 1000).");
+
+    lastDec = null;
+    var a = toImproper(m1), b = toImproper(m2);
+    var L = lcm(a.d, b.d), fa = L / a.d, fb = L / b.d;
+    var an = a.n * fa, bn = b.n * fb;
+    var diff = { n: an - bn, d: L };
+    var neg = diff.n < 0;
+    var simp = simplify({ n: Math.abs(diff.n), d: L });
+    var w = Math.floor(simp.n / simp.d), rest = simp.n % simp.d;
+    var mixedIn = (m1[0] !== 0 || m2[0] !== 0);
+    var needsMixedOut = (simp.n >= simp.d && simp.d !== 1);
+
+    var rows = [], items = [];
+    function step(html, eq, lines, aside, result){
+      items.push({ n:"Step&nbsp;" + (rows.length + 1), step:rows.length, lines:lines, aside:aside||null });
+      rows.push({ eq:eq, html:html, result:!!result });
+    }
+
+    step(termHTML(m1) + '<span class="op-s">&minus;</span>' + termHTML(m2), "",
+      [["p","Look","You can only take away pieces of the same size — the same denominator. "
+        + "Here they’re <b>" + a.d + "ths</b> and <b>" + b.d + "ths</b>."]],
+      a.d === b.d ? "These already match, so you can subtract straight away." : null);
+
+    if (mixedIn){
+      step(fracHTML(a.n,a.d) + '<span class="op-s">&minus;</span>' + fracHTML(b.n,b.d), "=",
+        [["b","Convert","<b>" + m1[0] + " " + m1[1] + "/" + m1[2] + "</b> is <b>" + m1[0] + " × "
+          + m1[2] + " + " + m1[1] + " = " + a.n + "</b> pieces, so <b>" + a.n + "/" + a.d
+          + "</b>. The other becomes <b>" + b.n + "/" + b.d + "</b>."]],
+        "Turning mixed numbers into improper fractions saves you from borrowing a whole later on.");
+    }
+    if (a.d !== b.d){
+      step(fracHTML(an,L) + '<span class="op-s">&minus;</span>' + fracHTML(bn,L), "=",
+        [["p","Find LCD","Multiples of <b>" + a.d + "</b>: " + multiples(a.d,L)
+          + ". Multiples of <b>" + b.d + "</b>: " + multiples(b.d,L)
+          + ". The smallest one they share is <b>" + L + "</b>."],
+         ["b","Rename","<b>" + a.n + "/" + a.d + "</b> × <b>" + fa + "/" + fa + "</b> = <b>"
+          + an + "/" + L + "</b>, and <b>" + b.n + "/" + b.d + "</b> × <b>" + fb + "/" + fb
+          + "</b> = <b>" + bn + "/" + L + "</b>."]],
+        "Same value, smaller pieces. Now both are counted in " + L + "ths, so they can be compared.");
+    }
+    step(signedFrac(diff.n, L), "=",
+      [["b","Subtract","<b>" + an + " − " + bn + " = " + diff.n + "</b> pieces, each a <b>"
+        + L + "th</b>. So <b>" + (neg ? "−" : "") + Math.abs(diff.n) + "/" + L + "</b>."]],
+      neg ? "You took away more than you had, so the answer drops below zero. The denominator "
+            + "still stays <b>" + L + "</b>."
+          : "The denominator stays <b>" + L + "</b>. You’re counting pieces, not resizing them.",
+      simp.by === 1 && !needsMixedOut);
+
+    if (simp.by > 1){
+      step(mixedHTML(0, simp.n, simp.d, neg).replace(/^$/,""), "=",
+        [["c","Simplify","<b>" + Math.abs(diff.n) + "</b> and <b>" + L + "</b> both divide by <b>"
+          + simp.by + "</b>, giving <b>" + (neg?"−":"") + simp.n + "/" + simp.d + "</b>."]],
+        null, !needsMixedOut);
+    }
+    if (needsMixedOut){
+      step(mixedHTML(w, rest, simp.d, neg), "=",
+        [["c","Mixed","<b>" + simp.n + " ÷ " + simp.d + " = " + w + "</b> remainder <b>" + rest
+          + "</b>, so <b>" + (neg?"−":"") + w + " " + rest + "/" + simp.d + "</b>."]], null, true);
+    }
+
+    var host = $("workHost");
+    var html = '<div class="chain">';
+    rows.forEach(function(r, i){
+      html += '<div class="crow' + (r.result ? " result" : "") + '" data-step="' + i + '">'
+            + '<span class="eq">' + r.eq + '</span><span class="expr">' + r.html + "</span></div>";
+    });
+    html += "</div>";
+
+    /* the bar model only tells the truth when nothing spills past one whole */
+    var showBars = !neg && L <= 16 && an <= L && bn <= L;
+    if (showBars){
+      html += '<div class="bars">'
+            + barHave(an, L, termHTML(m1))
+            + barTake(an, bn, L, termHTML(m2))
+            + barLeft(an - bn, L, needsMixedOut ? mixedHTML(w, rest, simp.d, false)
+                                                : fracHTML(simp.n, simp.d))
+            + "</div>";
+    }
+    host.innerHTML = html;
+
+    /* area model: cut one fraction into columns and the other into rows, so both land on the
+       same size of piece. Only drawn for two plain proper fractions with different bottoms. */
+    var n1 = m1[1], d1 = m1[2], n2 = m2[1], d2 = m2[2];
+    if (!mixedIn && !neg && n1 > 0 && n2 > 0 && n1 < d1 && n2 < d2 && d1 !== d2 && d1 <= 12 && d2 <= 12
+        && d1 * d2 <= 60){
+      var P = d1 * d2, A1 = n1 * d2, B1 = n2 * d1, keep = A1 - B1;
+      var simpTxt = simp.n === 0 ? "0" : simp.n + "/" + simp.d;
+      mountArea("Cut <b>" + n1 + "/" + d1 + "</b> into columns and <b>" + n2 + "/" + d2 + "</b> into rows. "
+        + "Put both sets of cuts on each square and every piece is the same size: <b>1/" + P + "</b>. "
+        + "You start with <b>" + A1 + "</b> pieces and take away <b>" + B1 + "</b>, leaving <b>"
+        + keep + "/" + P + "</b>" + (simpTxt !== keep + "/" + P ? ", which is <b>" + simpTxt + "</b>" : "") + "."
+        + (P !== L ? " (Cutting both ways always works. The steps above found a smaller common "
+                     + "denominator, <b>" + L + "</b> — either gives the same answer.)" : ""),
+        '<div class="fgrids">'
+        + fGrid(d1, d2, function(c){ return c < n1 ? "have" : ""; }, n1 + "/" + d1 + " = " + A1 + "/" + P)
+        + '<span class="op">−</span>'
+        + fGrid(d1, d2, function(c, r){ return r < n2 ? "gone" : ""; }, n2 + "/" + d2 + " = " + B1 + "/" + P)
+        + '<span class="fgout"><span class="op">=</span>'
+        + fGrid(d1, d2, function(c, r, i){ return i < keep ? "left" : (i < A1 ? "gone" : ""); },
+                keep + "/" + P)
+        + "</span></div>");
+    }
+
+    var final = needsMixedOut ? mixedHTML(w, rest, simp.d, neg)
+              : (simp.n === 0 ? '<span class="mx">0</span>' : mixedHTML(0, simp.n, simp.d, neg));
+    var dec = (neg ? -1 : 1) * simp.n / simp.d;
+    band('<span class="k">Difference</span><span class="v">' + final + "</span>", [
+      "As a decimal: <b>" + trimNum(dec) + "</b>",
+      "Common denominator used: <b>" + L + "</b>"
+    ], "answer");
+    writeLog(items);
+
+    var d1 = a.n/a.d, d2 = b.n/b.d;
+    $("closer").innerHTML = "<b>Check by adding it back:</b> " + trimNum(dec) + " + " + trimNum(d2)
+      + " = <b>" + trimNum(dec + d2) + "</b>"
+      + (Math.abs(dec + d2 - d1) < 1e-9
+          ? ' <span class="ok">✓ that’s what you started with</span>'
+          : "") + ".";
+
+    $("legend").innerHTML = showBars
+      ? '<div><i class="sw-l"></i> What you had</div>' +
+        '<div><i class="sw-g"></i> Taken away</div>' +
+        '<div><i class="sw-a"></i> What’s left</div>'
+      : '<div>' + (neg ? "The answer goes below zero, so there are no bars to shade."
+          : (L > 16 ? "Cut into " + L + " pieces — too fine to draw clearly."
+                    : "This one runs past a whole bar, too wide to draw here."))
+        + ' The chain above is the whole story.</div>';
+    return rows.length;
+  }
+
+  function cells(total, fn){
+    var s = "";
+    for (var i = 0; i < total; i++){ var c = fn(i); s += "<span" + (c ? ' class="'+c+'"' : "") + "></span>"; }
+    return s;
+  }
+  function barHave(n, L, cap){
+    return '<div class="barrow"><span class="cap">' + cap + '</span><div class="bar">'
+         + cells(L, function(i){ return i < n ? "have" : ""; }) + "</div></div>";
+  }
+  function barTake(n, take, L, cap){
+    return '<div class="barrow"><span class="cap">take ' + cap + '</span><div class="bar">'
+         + cells(L, function(i){ return i < n - take ? "have" : (i < n ? "gone" : ""); })
+         + "</div></div>";
+  }
+  function barLeft(n, L, cap){
+    return '<div class="barrow"><span class="cap">' + cap + '</span><div class="bar">'
+         + cells(L, function(i){ return i < n ? "left" : ""; }) + "</div></div>";
+  }
+
+  /* one square, cut into cols × rows; cls(col, row, index) picks each piece's shading */
+  function fGrid(cols, rows, cls, cap){
+    var s = "";
+    for (var i = 0; i < cols * rows; i++){
+      var c = cls(i % cols, Math.floor(i / cols), i);
+      s += "<span" + (c ? ' class="' + c + '"' : "") + "></span>";
+    }
+    return '<div class="fg"><div class="g" style="grid-template-columns:repeat(' + cols + ',1fr)">'
+         + s + '</div><div class="cap">' + (cap || "") + "</div></div>";
+  }
+  function mountArea(cap, inner){
+    $("workHost").insertAdjacentHTML("beforeend",
+      '<div class="areawrap"><div class="tapecap"><b class="lead">Area model.</b> ' + cap + "</div>"
+      + inner + "</div>");
+  }
+
+  /* ===================== tape diagram ===================== */
+  /* o = { total, totalCls, segs:[{w, html, cls}], unders:[{from, to, label}] }
+     Box widths follow the values; a box never shrinks below its own label. */
+  function commaNum(s){ var p = String(s).split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g,","); return p.join("."); }
+  function mountTape(cap, o){
+    var cols = o.segs.map(function(s){
+      return "minmax(max-content," + Math.max(s.w, 0.001).toFixed(4) + "fr)";
+    }).join(" ");
+    var html = '<div class="t-lbl ' + (o.totalCls || "") + '" style="grid-row:1;grid-column:1/-1">'
+             + o.total + '</div><div class="brk" style="grid-row:2;grid-column:1/-1"></div>';
+    o.segs.forEach(function(s, i){
+      html += '<div class="seg ' + (s.cls || "") + (i === 0 ? " first" : "")
+            + '" style="grid-row:3;grid-column:' + (i + 1) + '">' + s.html + "</div>";
+    });
+    (o.unders || []).forEach(function(u){
+      var c = u.from + "/" + (u.to + 1);
+      html += '<div class="brk down" style="grid-row:4;grid-column:' + c + '"></div>'
+            + '<div class="t-lbl under" style="grid-row:5;grid-column:' + c + '">' + u.label + "</div>";
+    });
+    $("workHost").insertAdjacentHTML("beforeend",
+      '<div class="tapewrap"><div class="tapecap"><b class="lead">Tape diagram.</b> ' + cap + "</div>"
+      + '<div class="tape-scroll"><div class="tape" aria-hidden="true" style="grid-template-columns:'
+      + cols + '">' + html + "</div></div></div>");
+  }
+
+  /* ===================== shared shell ===================== */
+  function band(inner, facts, cls){
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = cls;
+    el.innerHTML = inner + '<div class="facts">' +
+      facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    $("board").parentNode.insertBefore(el, $("board"));
+  }
+  function writeLog(items){
+    var html = "";
+    items.forEach(function(it){
+      html += "<li" + (it.step !== undefined ? ' data-step="' + it.step + '"' : "") + '>'
+            + '<span class="n">' + it.n + "</span>";
+      it.lines.forEach(function(l){
+        html += '<div class="line"><span class="tag tag-' + l[0] + '">' + l[1]
+              + '</span><span class="txt">' + l[2] + "</span></div>";
+      });
+      if (it.aside) html += '<div class="aside">' + it.aside + "</div>";
+      html += "</li>";
+    });
+    $("log").innerHTML = html;
+  }
+  function fail(msg){
+    $("workHost").innerHTML = ""; $("log").innerHTML = "";
+    $("closer").textContent = ""; $("legend").innerHTML = ""; $("stepper").hidden = true;
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "notice"; el.innerHTML = msg;
+    $("board").parentNode.insertBefore(el, $("board"));
+    $("statusLine").textContent = el.textContent;
+    return 0;
+  }
+  function render(){
+    var total = (S.mode === "dec") ? renderDecimals() : renderFractions();
+    if (!total) return;
+    if (S.step > total) S.step = total;
+    if (S.step < 1) S.step = 1;
+    $("stepper").hidden = !S.stepMode;
+    if (S.stepMode){
+      $("stepCount").textContent = S.step + " of " + total;
+      $("prevBtn").disabled = S.step <= 1;
+      $("nextBtn").disabled = S.step >= total;
+    }
+    veil(total);
+    $("statusLine").textContent = "";
+  }
+  function veil(total){
+    Array.prototype.forEach.call(document.querySelectorAll("[data-step]"), function(el){
+      var s = Number(el.getAttribute("data-step"));
+      el.classList.toggle("veil", S.stepMode && s >= S.step);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".plabel"), function(el){
+      el.classList.remove("on");
+    });
+    if (S.stepMode && S.mode === "dec" && lastDec && lastDec.steps[S.step - 1]){
+      var lab = document.querySelector('.plabel[data-place="' + lastDec.steps[S.step-1].k + '"]');
+      if (lab) lab.classList.add("on");
+    }
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.classList.toggle("masked", S.stepMode && S.step < total);
+    $("closer").style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+    Array.prototype.forEach.call(document.querySelectorAll(".tapewrap, .areawrap"), function(el){
+      el.classList.toggle("veil", S.stepMode && S.step < total);
+    });
+  }
+
+  /* ===================== wiring ===================== */
+  function sizeIn(el){ el.style.width = Math.max(4, Math.min(14, el.value.length + 1)) + "ch"; }
+  ["aIn","bIn"].forEach(function(id, i){
+    $(id).addEventListener("input", function(e){
+      S[i === 0 ? "a" : "b"] = e.target.value;
+      sizeIn(e.target); S.step = 1; render(); save();
+    });
+  });
+  $("swapBtn").addEventListener("click", function(){
+    var t = S.a; S.a = S.b; S.b = t;
+    $("aIn").value = S.a; $("bIn").value = S.b;
+    sizeIn($("aIn")); sizeIn($("bIn"));
+    S.step = 1; render(); save();
+  });
+  ["w1","n1","d1","w2","n2","d2"].forEach(function(id, idx){
+    $(id).addEventListener("input", function(e){
+      var v = e.target.value.replace(/[^\d]/g,"");
+      e.target.value = v;
+      S.frac[Math.floor(idx/3)][idx%3] = v === "" ? 0 : Number(v);
+      S.step = 1; render(); save();
+    });
+  });
+
+  function setMode(m){
+    S.mode = m; S.step = 1;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === m));
+    });
+    $("decEntry").classList.toggle("hide", m !== "dec");
+    $("fracEntry").classList.toggle("hide", m !== "frac");
+    buildChips(); render(); save();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
+    b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
+  });
+
+  var EX = {
+    dec: [["25.4","3.75"], ["500","137"], ["8.2","5.65"], ["10","0.4"], ["3.6","7.25"]],
+    frac:[[[0,3,4],[0,1,2]], [[0,5,6],[0,1,4]], [[3,1,4],[1,2,3]], [[0,1,3],[0,2,3]], [[2,0,1],[0,5,8]]]
+  };
+  function label(m){
+    if (m[1] === 0) return String(m[0]);
+    return (m[0] ? m[0] + " " : "") + m[1] + "/" + m[2];
+  }
+  function buildChips(){
+    var host = $("chips"); host.innerHTML = "";
+    EX[S.mode].forEach(function(ex){
+      var btn = document.createElement("button");
+      btn.className = "chip"; btn.type = "button";
+      btn.textContent = S.mode === "dec" ? ex.join(" − ") : ex.map(label).join(" − ");
+      btn.addEventListener("click", function(){
+        S.step = 1;
+        if (S.mode === "dec"){
+          S.a = ex[0]; S.b = ex[1];
+          $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn"));
+        } else {
+          S.frac = [ex[0].slice(), ex[1].slice()];
+          ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
+            $(id).value = S.frac[Math.floor(i/3)][i%3];
+          });
+        }
+        render(); save();
+      });
+      host.appendChild(btn);
+    });
+  }
+
+  function setStepMode(on){
+    S.stepMode = on; S.step = 1;
+    $("allBtn").setAttribute("aria-pressed", String(!on));
+    $("stepBtn").setAttribute("aria-pressed", String(on));
+    render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
+  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
+  $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+  document.addEventListener("keydown", function(e){
+    if (!S.stepMode || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
+    if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
+    if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    paint(); save();
+  });
+
+  function save(){
+    try{ localStorage.setItem("borrow-bank", JSON.stringify({
+      mode:S.mode, a:S.a, b:S.b, frac:S.frac, stepMode:S.stepMode,
+      theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
+  }
+  function load(){
+    try{
+      var v = JSON.parse(localStorage.getItem("borrow-bank") || "null");
+      if (!v) return;
+      if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
+      if (v.mode === "dec" || v.mode === "frac") S.mode = v.mode;
+      if (typeof v.a === "string" && v.a) S.a = v.a;
+      if (typeof v.b === "string" && v.b) S.b = v.b;
+      if (Array.isArray(v.frac) && v.frac.length === 2) S.frac = v.frac;
+      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+    }catch(e){}
+  }
+
+  load();
+  $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn"));
+  ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
+    $(id).value = S.frac[Math.floor(i/3)][i%3];
+  });
+  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
+  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  paint();
+  setMode(S.mode);
+})();
+</script>
