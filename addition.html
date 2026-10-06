@@ -200,7 +200,12 @@
   .am .cell{display:flex;align-items:center;justify-content:center;padding:0 8px;white-space:nowrap;
     font-size:14px;font-weight:600;color:var(--ink)}
   .fgrids{display:flex;flex-wrap:wrap;gap:14px 16px;align-items:center}
-  .fgout{display:flex;gap:14px 16px;align-items:center}
+  .fgout{display:flex;flex-wrap:wrap;gap:14px 16px;align-items:center}
+  .fgset{display:flex;flex-direction:column;align-items:center;gap:6px;max-width:100%}
+  .fgset .sq{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+  .fgset .fg .g{width:96px}
+  .fgset .fg .cap{display:none}
+  .fgset > .cap{font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--ink-2);text-align:center}
   .fgrids .op{font-family:var(--f-mono);font-size:22px;font-weight:600;color:var(--ink-3)}
   .fg{display:flex;flex-direction:column;align-items:center;gap:6px}
   .fg .g{display:grid;border:2px solid var(--ink-2);border-radius:4px;overflow:hidden;width:132px;aspect-ratio:1.15}
@@ -208,6 +213,12 @@
   .fg .cap{font-family:var(--f-mono);font-size:12.5px;font-weight:600;color:var(--ink-2);text-align:center;min-height:1.2em}
   .fg .g span.a{background:var(--key-line)}
   .fg .g span.b{background:var(--warm)}
+  .am .cell.r0{background:var(--key-bg);color:var(--key);box-shadow:inset 0 0 0 1px var(--key-line)}
+  .am .cell.r1{background:var(--warm-bg);color:var(--warm);box-shadow:inset 0 0 0 1px var(--warm)}
+  .am .cell.tot{background:var(--alt-bg);color:var(--alt);box-shadow:inset 0 0 0 1.5px var(--alt)}
+  .am .cell.zero{color:var(--ink-3);font-weight:400;box-shadow:inset 0 0 0 1px var(--rule)}
+  .am .hd.place{color:var(--warm);font-family:var(--f-body);font-size:12px}
+  .areanote{font-size:13px;color:var(--ink-3)}
   /* ---- tape diagram ---- */
   .tapewrap{padding:14px 18px 18px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
   .tapewrap.veil{opacity:.16}
@@ -435,7 +446,7 @@
     var p = s.split("."), i = (p[0]||"").replace(/^0+(?=\d)/,"") || "0", f = (p[1]||"");
     return { i:i, f:f };
   }
-  function numStr(n){ return n.f ? n.i + "." + n.f.replace(/0+$/,"") : n.i; }
+  function numStr(n){ var f = n.f.replace(/0+$/,""); return f ? n.i + "." + f : n.i; }
   function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function commas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g,","); }
   function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a||1; }
@@ -653,7 +664,59 @@
         })
       });
     }
+    /* area model: break every number into place-value boxes, add down each column */
+    var places = {};
+    nums.forEach(function(n){
+      for (var e = n.i.length - 1; e >= -n.f.length; e--) if (digitAt(n, e)) places[e] = true;
+    });
+    var pcols = Object.keys(places).map(Number).sort(function(x, y){ return y - x; });
+    if (pcols.length && pcols.length <= 8){
+      var amHtml = "", colTot = [], parts = [], spill = false, R = nums.length + 2;
+      pcols.forEach(function(e, c){
+        colTot[c] = 0;
+        amHtml += '<div class="hd place" style="grid-row:1;grid-column:' + (c + 2) + '">' + placeName(e) + "</div>";
+      });
+      nums.forEach(function(n, r){
+        amHtml += '<div class="hd side" style="grid-row:' + (r + 2) + ';grid-column:1">' + esc(commaNum(numStr(n))) + "</div>";
+        pcols.forEach(function(e, c){
+          var d = digitAt(n, e);
+          colTot[c] += d;
+          amHtml += amCell(r + 2, c + 2, d ? commaNum(amFmt(d, e)) : "0", d ? "r" + (r % 2) : "zero");
+        });
+      });
+      amHtml += '<div class="hd side" style="grid-row:' + R + ';grid-column:1">total</div>';
+      pcols.forEach(function(e, c){
+        var v = colTot[c] ? commaNum(amFmt(colTot[c], e)) : "0";
+        if (colTot[c]) parts.push(v);
+        if (colTot[c] >= 10) spill = true;
+        amHtml += amCell(R, c + 2, v, colTot[c] ? "tot" : "zero");
+      });
+      mountArea("Break each number into place-value boxes, one column per place. "
+        + (parts.length > 1
+            ? "Add down each column, then add the column totals: " + parts.join(" + ") + " = <b>"
+            : "Add down the column: <b>") + esc(commaNum(shown)) + "</b>."
+        + (spill ? " A column total of ten or more is a carry waiting to happen — it spills into the next place." : ""),
+        '<div class="am-scroll"><div class="am" aria-hidden="true" style="gap:3px;grid-template-columns:auto repeat('
+        + pcols.length + ',minmax(max-content,1fr));grid-template-rows:auto repeat(' + (nums.length + 1)
+        + ',44px)">' + amHtml + "</div></div>");
+    }
     return A.steps.length;
+  }
+  // the digit of n sitting in the 10^e place
+  function digitAt(n, e){
+    var k = e >= 0 ? n.i.length - 1 - e : -e - 1, s = e >= 0 ? n.i : n.f;
+    return k >= 0 && k < s.length ? Number(s[k]) : 0;
+  }
+  /* digit(s) d in place 10^e, as a tidy decimal string: amFmt(12, -1) -> "1.2" */
+  function amFmt(d, e){
+    var t = String(d);
+    if (e >= 0) return t + new Array(e + 1).join("0");
+    var k = -e;
+    while (t.length <= k) t = "0" + t;
+    return (t.slice(0, t.length - k) + "." + t.slice(t.length - k)).replace(/0+$/, "").replace(/\.$/, "");
+  }
+  function amCell(row, col, text, cls){
+    return '<div class="cell ' + cls + '" style="grid-row:' + row + ";grid-column:" + col + '">' + esc(text) + "</div>";
   }
 
   /* ===================== render: fractions ===================== */
@@ -769,6 +832,46 @@
         + '<span class="op">+</span>'
         + fGrid(d1, d2, function(c, r){ return r < n2 ? "b" : ""; }, n2 + "/" + d2 + " = " + B1 + "/" + P)
         + '<span class="fgout"><span class="op">=</span>' + outs + "</span></div>");
+    } else {
+      /* otherwise every square is cut into L pieces, and each number takes as many squares as it needs */
+      var A2 = a.n * fa, B2 = b.n * fb, cut = cutOf(L);
+      var squares = Math.ceil(A2 / L) + Math.ceil(B2 / L) + Math.ceil((A2 + B2) / L);
+      if (A2 + B2 > 0 && L <= 48 && cut.cols <= 12 && squares <= 10){
+        var sumTxt = fracTxt(simp.n, simp.d);
+        mountArea("Cut every square into <b>" + L + "</b> equal pieces, so each piece is <b>1/" + L + "</b>. "
+          + "<b>" + mText(m1) + "</b> fills <b>" + pieces(A2) + "</b> and <b>" + mText(m2) + "</b> fills <b>"
+          + pieces(B2) + "</b>. Slide them together: <b>" + (A2 + B2) + "/" + L + "</b>"
+          + (sumTxt !== (A2 + B2) + "/" + L ? ", which is <b>" + sumTxt + "</b>" : "") + "."
+          + (A2 + B2 > L ? " Every full square is one whole." : ""),
+          '<div class="fgrids">'
+          + pieceSquares(A2, L, cut, function(i){ return i < A2 ? "a" : ""; }, A2 + "/" + L)
+          + '<span class="op">+</span>'
+          + pieceSquares(B2, L, cut, function(i){ return i < B2 ? "b" : ""; }, B2 + "/" + L)
+          + '<span class="fgout"><span class="op">=</span>'
+          + pieceSquares(A2 + B2, L, cut, function(i){ return i < A2 ? "a" : (i < A2 + B2 ? "b" : ""); },
+                         (A2 + B2) + "/" + L)
+          + "</span></div>");
+      } else {
+        mountArea('<span class="areanote">Cut into ' + L + " pieces across " + squares
+          + " squares — too many to draw clearly. The chain above is the whole story.</span>", "");
+      }
+    }
+
+    /* tape diagram: the two amounts laid end to end */
+    if (a.n + b.n > 0){
+      var tsegs = [], tunders = [];
+      if (a.n > 0){
+        tsegs.push({ w: a.n / a.d, html: esc(mText(m1)) });
+        tunders.push({ from: 1, to: 1, label: (a.n * fa) + "/" + L });
+      }
+      if (b.n > 0){
+        tsegs.push({ w: b.n / b.d, html: esc(mText(m2)), cls: "b" });
+        tunders.push({ from: tsegs.length, to: tsegs.length, label: (b.n * fb) + "/" + L });
+      }
+      mountTape("Lay <b>" + esc(mText(m1)) + "</b> and <b>" + esc(mText(m2)) + "</b> end to end. "
+        + "The whole tape is <b>" + fracTxt(simp.n, simp.d) + "</b>"
+        + (a.d !== b.d ? " — measured underneath in pieces of <b>1/" + L + "</b>, so the pieces match." : "."),
+        { total: esc(fracTxt(simp.n, simp.d)), totalCls: "ans", segs: tsegs, unders: tunders });
     }
 
     var final = (simp.n >= simp.d && simp.d !== 1)
@@ -786,15 +889,11 @@
       + " = <b>" + trimNum(d1+d2) + "</b>, and our answer is <b>" + trimNum(dec) + "</b>"
       + (Math.abs(d1+d2-dec) < 1e-9 ? ' <span class="ok">✓</span>' : "") + ".";
 
-    $("legend").innerHTML = showBars
-      ? '<div><i class="sw-l"></i> First fraction</div>' +
-        '<div><i class="sw-w"></i> Second fraction</div>' +
-        '<div><i class="sw-k"></i> The sum</div>' +
-        '<div>Every bar is cut into ' + L + ' equal pieces</div>'
-      : '<div>' + (L > 16
-          ? 'Cut into <b style="color:var(--key)">' + L + '</b> pieces — too fine to draw clearly.'
-          : 'This one runs past 4 whole bars, too wide to draw here.')
-        + ' The chain above is the whole story.</div>';
+    $("legend").innerHTML =
+      '<div><i class="sw-l"></i> First fraction</div>' +
+      '<div><i class="sw-w"></i> Second fraction</div>' +
+      (showBars ? '<div><i class="sw-k"></i> The sum</div>' +
+                  '<div>Every bar is cut into ' + L + ' equal pieces</div>' : "");
     return rows.length;
   }
 
@@ -834,6 +933,30 @@
     }
     return '<div class="fg"><div class="g" style="grid-template-columns:repeat(' + cols + ',1fr)">'
          + s + '</div><div class="cap">' + (cap || "") + "</div></div>";
+  }
+  /* the squarest way to cut a square into L pieces */
+  function cutOf(L){
+    var r = 1;
+    for (var x = 1; x * x <= L; x++) if (L % x === 0) r = x;
+    return { cols: L / r, rows: r };
+  }
+  /* enough squares of L pieces to hold `count` of them; cls(i) shades piece i across all squares */
+  function pieceSquares(count, L, cut, cls, cap){
+    var out = "", n = Math.max(1, Math.ceil(count / L));
+    for (var k = 0; k < n; k++){
+      out += fGrid(cut.cols, cut.rows, function(c, r, i){ return cls(k * L + i); }, "");
+    }
+    return '<div class="fgset"><div class="sq">' + out + '</div><div class="cap">' + cap + "</div></div>";
+  }
+  function fracTxt(n, d){                     // 7/4 -> "1 3/4"
+    var w = Math.floor(n / d), r = n % d;
+    if (r === 0) return String(w);
+    return (w ? w + " " : "") + r + "/" + d;
+  }
+  function pieces(n){ return n + (n === 1 ? " piece" : " pieces"); }
+  function mText(m){                          // a mixed number as typed
+    if (m[1] === 0) return String(m[0]);
+    return (m[0] ? m[0] + " " : "") + m[1] + "/" + m[2];
   }
   function mountArea(cap, inner){
     $("workHost").insertAdjacentHTML("beforeend",

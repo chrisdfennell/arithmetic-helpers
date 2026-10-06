@@ -13,7 +13,7 @@ Every page also has:
 
 - a plain-English explanation of each step
 - a **One step at a time** mode for practice
-- **tape diagrams** and **area models** where they fit the problem
+- a **tape diagram** and an **area model** for both decimals and fractions
 - light and dark themes, and a print layout
 
 Each page is one self-contained HTML file with no build step. Open it in a browser, or use the live site:

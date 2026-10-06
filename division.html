@@ -259,17 +259,6 @@
   .fitwrap[hidden]{display:none}
   .fitcap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
   .fitcap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
-  .fitbar{display:flex;flex-wrap:wrap;gap:7px;align-items:flex-end}
-  .chunk{display:flex;flex-direction:column;align-items:center;gap:3px}
-  .chunk .cells{display:flex;border:1.5px solid var(--ink-3);border-radius:4px;overflow:hidden}
-  .chunk .cells span{width:18px;height:26px;border-right:1px solid var(--ink-3)}
-  .chunk .cells span:last-child{border-right:0}
-  .chunk.full .cells span{background:var(--green-line)}
-  .chunk.part .cells span{background:transparent}
-  .chunk.part .cells span.on{background:var(--amber-line)}
-  .chunk .tag{font-family:var(--f-mono);font-size:11px;font-weight:600}
-  .chunk.full .tag{color:var(--green)}
-  .chunk.part .tag{color:var(--amber)}
 
   /* ---------- area model (partial quotients) ---------- */
   .am-scroll{overflow-x:auto;padding-bottom:2px}
@@ -309,6 +298,15 @@
   .tape .seg.left{background:var(--green-bg);color:var(--green);border:2px solid var(--green-line);
     border-left-width:0;font-size:12.5px;padding:0 5px}
   .tape .seg.left.solo{border-left-width:2px}
+
+  /* ---------- fraction area model (squares cut into pieces) ---------- */
+  .fgset{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+  .fg .g{display:grid;border:2px solid var(--ink-2);border-radius:4px;overflow:hidden;width:110px;aspect-ratio:1.15}
+  .fg .g span{border-right:1px solid var(--ink-3);border-bottom:1px solid var(--ink-3)}
+  .fg .g span.g0{background:var(--amber-line)}
+  .fg .g span.g1{background:var(--blue-line)}
+  .fg .g span.part{background:var(--green-line)}
+  .areanote{font-size:13px;color:var(--ink-3)}
 
   /* ---------- moving the decimal point ---------- */
   .shiftstep{margin:16px 18px 0;background:var(--amber-bg);border-left:4px solid var(--amber);
@@ -480,9 +478,7 @@
     .work .final{outline:2px solid var(--green-line);box-shadow:none}
     .fitwrap{padding:2px 10px 13px;gap:8px;break-inside:avoid}
     .fitcap{font-size:10.5px}
-    .chunk .cells span{width:14px;height:20px}
-    .chunk .tag{font-size:9.5px}
-    .tape-scroll{overflow:visible}
+        .tape-scroll{overflow:visible}
     .am-scroll{overflow:visible}
     .am .cell{height:40px;font-size:11px} .am .hd{font-size:10.5px}
     .tape .seg{height:28px;font-size:11px}
@@ -1037,37 +1033,12 @@
            + '<span class="eq">' + r.eq + '</span><span class="expr">' + r.html + "</span></div>";
     }).join("");
 
-    /* how many of the divisor actually fit inside the dividend */
+    /* tape diagram and area model: how many of the divisor fit inside the dividend */
     var L = lcmN(a.d, b.d), aP = a.n * (L/a.d), bP = b.n * (L/b.d);
     var full = Math.floor(aP / bP), left = aP % bP;
-    var fw = $("fitwrap");
-    fw.classList.remove("tapemode");
-    var showFit = aP >= bP && aP <= 48 && bP <= 24 && L <= 24;
-    if (!showFit){ fw.hidden = true; }
-    else {
-      fw.hidden = false;
-      var bars = "";
-      for (var k = 0; k < full; k++){
-        bars += '<div class="chunk full"><div class="cells">'
-              + new Array(bP + 1).join("<span></span>")
-              + '</div><span class="tag">' + (k+1) + "</span></div>";
-      }
-      if (left > 0){
-        var cells = "";
-        for (var j = 0; j < bP; j++) cells += "<span" + (j < left ? ' class="on"' : "") + "></span>";
-        bars += '<div class="chunk part"><div class="cells">' + cells
-              + '</div><span class="tag">' + left + "/" + bP + "</span></div>";
-      }
-      fw.innerHTML = '<div class="fitcap">How many <b>' + fracText(m2) + '</b>s fit inside <b>'
-        + fracText(m1) + "</b>? " + (left === 0
-            ? "Exactly <b>" + full + "</b>."
-            : "<b>" + full + "</b> whole one" + (full === 1 ? "" : "s")
-              + ", and then only <b>" + left + "</b> of the <b>" + bP
-              + "</b> pieces the next one needs — that’s <b>" + left + "/" + bP + "</b> of another.")
-        + " So the answer is <b>" + (needsMixedOut ? w + " " + rest + "/" + simp.d
-            : (simp.d === 1 ? simp.n : simp.n + "/" + simp.d)) + "</b>."
-        + "</div><div class='fitbar'>" + bars + "</div>";
-    }
+    var ansTxt = needsMixedOut ? w + " " + rest + "/" + simp.d : (simp.d === 1 ? String(simp.n) : simp.n + "/" + simp.d);
+    fracTape(m1, m2, L, aP, bP, full, left, ansTxt);
+    fracArea(m1, m2, L, aP, bP, full, left, ansTxt);
 
     var final = needsMixedOut ? mixHTML(w, rest, simp.d)
               : (simp.d === 1 ? '<span class="mx">' + simp.n + "</span>" : frHTML(simp.n, simp.d));
@@ -1084,15 +1055,9 @@
       + (Math.abs(dec*d2 - d1) < 1e-9
           ? ' <span class="ok">✓ back to ' + fracText(m1) + "</span>" : "") + ".";
 
-    $("legend").innerHTML = showFit
-      ? '<div><i class="sw-c"></i> One whole ' + fracText(m2) + '</div>' +
-        '<div><i class="sw-a"></i> Part of another</div>' +
-        '<div>Every box is one <b>1/' + L + '</b></div>'
-      : '<div>' + (aP < bP
-          ? "<b>" + fracText(m2) + "</b> is bigger than <b>" + fracText(m1)
-            + "</b>, so not even one fits — there’s nothing to draw."
-          : "Too many pieces to draw clearly.")
-        + ' The chain above is the whole story.</div>';
+    $("legend").innerHTML =
+      '<div><i class="sw-a"></i> Whole groups of ' + fracText(m2) + '</div>' +
+      '<div><i class="sw-c"></i> Left over — part of another group</div>';
     return rows.length;
   }
 
@@ -1100,6 +1065,81 @@
     if (m[1] === 0) return String(m[0]);
     return (m[0] ? m[0] + " " : "") + m[1] + "/" + m[2];
   }
+  function redText(n, d){                     // n/d reduced, as a mixed number
+    var g = gcdN(n, d); n /= g; d /= g;
+    var wh = Math.floor(n / d), r = n % d;
+    return r === 0 ? String(wh) : (wh ? wh + " " : "") + r + "/" + d;
+  }
+
+  /* the fraction version of the grouping tape below: how many divisors fit in the dividend */
+  function fracTape(m1, m2, L, aP, bP, full, left, ansTxt){
+    var fw = $("fitwrap");
+    if (aP === 0){ fw.hidden = true; return; }
+    var total = esc(fracText(m1)), per = esc(fracText(m2));
+    var segs = [], many = full > 12, drawn = many ? 4 : full, topSpan = 0, under;
+    for (var j = 0; j < drawn; j++){
+      if (many && j === 3) segs.push({ w:1, html:"…", cls:"gap" });
+      segs.push({ w:1, html:per, cls:"" });
+    }
+    var span = segs.length;
+    under = full > 0 ? full + " group" + (full === 1 ? "" : "s") + " of " + per : "";
+    if (left > 0) segs.push({ w: left / bP, html: esc(redText(left, L)), cls: "left" + (full === 0 ? " solo" : "") });
+    if (full === 0){
+      segs.push({ w: (bP - left) / bP, html:"", cls:"ghost" });
+      topSpan = 1; span = 2; under = "one " + per;
+    }
+    var cap = full === 0
+      ? "Not even one <b>" + per + "</b> fits in <b>" + total + "</b>. It covers <b>" + esc(redText(left, bP))
+        + "</b> of one " + per + ", so the answer is <b>" + esc(ansTxt) + "</b>."
+      : "How many <b>" + per + "</b>s fit in <b>" + total + "</b>? <b>" + full + "</b>"
+        + (left > 0 ? ", with <b>" + esc(redText(left, L)) + "</b> left over — that’s <b>" + esc(redText(left, bP))
+                      + "</b> of another " + per + ". So the answer is <b>" + esc(ansTxt) + "</b>."
+                    : " exactly, with nothing left over.")
+        + (many ? " (Too many to draw them all — the dashed box stands for the ones in the middle.)" : "");
+    drawTape(segs, span, topSpan, total, under, cap);
+  }
+
+  /* area model: squares cut into L pieces; the dividend's pieces are grouped one divisor at a time */
+  function fracArea(m1, m2, L, aP, bP, full, left, ansTxt){
+    var el = $("areawrap");
+    if (aP === 0){ el.hidden = true; return; }
+    var r = 1;
+    for (var x = 1; x * x <= L; x++) if (L % x === 0) r = x;
+    var cols = L / r, squares = Math.ceil(aP / L);
+    el.hidden = false;
+    el.classList.add("tapemode");
+    if (L > 48 || cols > 12 || squares > 8){
+      el.innerHTML = '<div class="fitcap"><b style="font-family:var(--f-body)">Area model.</b> '
+        + '<span class="areanote">Cut into ' + L + " pieces across " + squares
+        + " square" + (squares === 1 ? "" : "s") + " — too many to draw clearly. The tape diagram tells the same story.</span></div>";
+      return;
+    }
+    var html = "";
+    for (var k = 0; k < squares; k++){
+      var cells = "";
+      for (var i = 0; i < L; i++){
+        var at = k * L + i, g = Math.floor(at / bP);
+        var c = at >= aP ? "" : (g < full ? "g" + (g % 2) : "part");
+        cells += "<span" + (c ? ' class="' + c + '"' : "") + "></span>";
+      }
+      html += '<div class="fg"><div class="g" style="grid-template-columns:repeat(' + cols + ',1fr)">'
+            + cells + "</div></div>";
+    }
+    var p1 = esc(fracText(m1)), p2 = esc(fracText(m2));
+    el.innerHTML = '<div class="fitcap"><b style="font-family:var(--f-body)">Area model.</b> '
+      + "Cut every square into <b>" + L + "</b> equal pieces. <b>" + p1 + "</b> covers <b>" + aP
+      + "</b> of them and one <b>" + p2 + "</b> is <b>" + bP + "</b>. Count off the shaded pieces <b>"
+      + bP + "</b> at a time" + (full > 1 ? " (the colours take turns)" : "") + ": "
+      + (full === 0
+          ? "not even one group fills up — only <b>" + left + "</b> of the <b>" + bP + "</b> pieces, which is <b>"
+            + esc(redText(left, bP)) + "</b> of a group"
+          : "<b>" + full + "</b> whole group" + (full === 1 ? "" : "s")
+            + (left > 0 ? ", plus <b>" + left + "</b> of the <b>" + bP + "</b> pieces the next one needs — <b>"
+                          + esc(redText(left, bP)) + "</b> of a group" : ""))
+      + ". So the answer is <b>" + esc(ansTxt) + "</b>.</div>"
+      + '<div class="fgset" aria-hidden="true">' + html + "</div>";
+  }
+
   function cancelWords(a, r, g1, g2){
     var parts = [];
     if (g1 > 1) parts.push("<b>" + a.n + "</b> and <b>" + r.d + "</b> both divide by <b>" + g1
@@ -1399,6 +1439,11 @@
       if (!remMode && R > 0n) cap += " So the answer is <b>" + answer + "</b>.";
     }
 
+    drawTape(segs, span, topSpan, total, under, cap);
+  }
+
+  function drawTape(segs, span, topSpan, total, under, cap){
+    var fw = $("fitwrap");
     var cols = segs.map(function(s){
       return "minmax(max-content," + Math.max(s.w, 0.001).toFixed(4) + "fr)";
     }).join(" ");
@@ -1443,7 +1488,14 @@
       var e = r.pointIdx - 1 - st.i;
       return { q: amFmt(st.q, e), a: amFmt(st.sub, e) };
     });
-    if (!pieces.length || pieces.length > 8){ el.hidden = true; return; }
+    if (!pieces.length || pieces.length > 8){
+      el.hidden = false;
+      el.innerHTML = '<div class="fitcap"><b style="font-family:var(--f-body)">Area model.</b> <span class="areanote">'
+        + (pieces.length ? "This one needs more than 8 chunks — too many to draw clearly. The tape diagram tells the same story."
+                         : "Nothing fits even once, so there’s no rectangle to build — it’s all left over.")
+        + "</span></div>";
+      return;
+    }
 
     var remMode = S.mode === "remainder", last = r.steps[r.steps.length - 1];
     var left = r.rem > 0 ? amFmt(r.rem, r.pointIdx - 1 - last.i) : null;

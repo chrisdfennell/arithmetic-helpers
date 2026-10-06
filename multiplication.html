@@ -186,6 +186,8 @@
   .grid div.ca{background:var(--key-line);opacity:.5}
   .grid div.cb{background:var(--warm);opacity:.42}
   .grid div.both{background:var(--key);opacity:1}
+  .grid div.ux{border-right:2.5px solid var(--ink)}
+  .grid div.uy{border-bottom:2.5px solid var(--ink)}
   .area .say{font-size:13.5px;color:var(--ink-2);max-width:30ch}
   .area .say b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
 
@@ -227,6 +229,7 @@
     white-space:nowrap;font-size:14px;font-weight:600;margin-left:-2px;
     background:var(--key-bg);color:var(--key);border:2px solid var(--key-line)}
   .tape .seg.first{margin-left:0}
+  .tape .seg.ghost{background:transparent;border-style:dashed;border-color:var(--ink-3)}
   .tape .seg.b{background:var(--warm-bg);color:var(--warm);border-color:var(--warm)}
   .tape .seg.ans{background:var(--alt-bg);color:var(--alt);border-color:var(--alt)}
   .tape .seg.gap{background:transparent;color:var(--ink-3);border-style:dashed;border-color:var(--key-line);
@@ -691,27 +694,19 @@
       '<div><i class="sw-k"></i> One rung per digit</div>' +
       '<div><i class="sw-a"></i> The product</div>' +
       '<div><i class="sw-w"></i> Counting decimal places</div>';
-    /* equal groups end to end — needs a whole number to count the groups */
-    var aW = !a.f, bW = !b.f, cnt = null, box = null;
+    /* equal groups end to end — a whole number counts the groups if there is one */
+    var aW = !a.f, bW = !b.f, cnt, box;
     if (aW && bW){ if (Number(a.i) < Number(b.i)){ cnt = a; box = b; } else { cnt = b; box = a; } }
-    else if (bW){ cnt = b; box = a; }
     else if (aW){ cnt = a; box = b; }
-    if (cnt && Number(cnt.i) > 0 && Number(shown) > 0){
-      var n = Number(cnt.i), many = n > 12, bx = esc(commaNum(numStr(box))), tsegs = [];
-      for (var g = 0; g < (many ? 4 : n); g++){
-        if (many && g === 3) tsegs.push({ w: 1, html: "…", cls: "gap" });
-        tsegs.push({ w: 1, html: bx });
-      }
-      var groups = commaNum(cnt.i) + " group" + (n === 1 ? "" : "s") + " of " + bx;
-      mountTape("<b>" + esc(numStr(a)) + " × " + esc(numStr(b)) + "</b> is <b>" + groups
-        + "</b>, laid end to end. The whole tape is <b>" + esc(commas(shown)) + "</b>."
-        + (many ? " (Too many to draw them all — the dashed box stands for the ones in the middle.)" : ""),
-        { total: esc(commas(shown)), totalCls: "ans", segs: tsegs,
-          unders: [{ from: 1, to: tsegs.length, label: groups }] });
+    else { cnt = b; box = a; }
+    if (Number(numStr(cnt)) > 0 && Number(numStr(box)) > 0){
+      var part = cnt.f ? placePoint((BigInt(cnt.f) * BigInt(box.i + box.f)).toString(), cnt.f.length + box.f.length) : "";
+      groupTape(esc(numStr(a)) + " × " + esc(numStr(b)), Number(cnt.i), cnt.f ? Number("0." + cnt.f) : 0,
+        cnt.f ? "0." + cnt.f : "", esc(commaNum(numStr(box))), esc(commaNum(part)), esc(commas(shown)));
     }
     /* area model: split both factors by place value; every box is one small product */
     var pa = placeParts(a), pb = placeParts(b);
-    if (pa.length && pb.length && pa.length * pb.length >= 2 && pa.length <= 6 && pb.length <= 5){
+    if (pa.length && pb.length && pa.length <= 6 && pb.length <= 5){
       var maxB = Math.max.apply(null, pb.map(function(p){ return Number(p.s); }));
       var rowsH = pb.map(function(p){ return Math.round(Math.max(40, 110 * Number(p.s) / maxB)) + "px"; });
       var amHtml = "", terms = [];
@@ -736,7 +731,8 @@
       };
       mountArea("Split each number by place value: " + split(a, pa) + " along the top, and "
         + split(b, pb) + " down the side. Each box is one easy multiplication — its width times its "
-        + "height. Add up every box: " + terms.join(" + ") + " = <b>" + esc(commas(shown)) + "</b>.",
+        + "height. " + (terms.length > 1 ? "Add up every box: " + terms.join(" + ") + " = <b>"
+                                         : "That one box is <b>") + esc(commas(shown)) + "</b>.",
         '<div class="am-scroll"><div class="am" aria-hidden="true" style="grid-template-columns:auto '
         + pa.map(function(p){ return "minmax(max-content," + Number(p.s).toFixed(4) + "fr)"; }).join(" ")
         + ";grid-template-rows:auto " + rowsH.join(" ") + '">' + amHtml + "</div></div>");
@@ -822,27 +818,44 @@
     });
     html += "</div>";
 
-    /* the area model only reads correctly for two proper fractions */
-    var showArea = !mixedIn && a.n <= a.d && b.n <= b.d && a.d <= 12 && b.d <= 12
-                   && a.n > 0 && b.n > 0;
+    /* area model: each whole is a square cut a.d across and b.d down; bigger factors take more squares */
+    var ux = Math.max(1, Math.ceil(a.n / a.d)), uy = Math.max(1, Math.ceil(b.n / b.d));
+    var gc = ux * a.d, gr = uy * b.d, P = a.d * b.d, hit = a.n * b.n;
+    var showArea = a.n > 0 && b.n > 0 && gc <= 36 && gr <= 36 && gc * gr <= 900;
     if (showArea){
       var cells = "";
-      for (var r2 = 0; r2 < b.d; r2++){
-        for (var c2 = 0; c2 < a.d; c2++){
+      for (var r2 = 0; r2 < gr; r2++){
+        for (var c2 = 0; c2 < gc; c2++){
           var inA = c2 < a.n, inB = r2 < b.n;
-          cells += "<div" + (inA && inB ? ' class="both"' : inA ? ' class="ca"' : inB ? ' class="cb"' : "")
-                 + "></div>";
+          var cl = (inA && inB ? "both" : inA ? "ca" : inB ? "cb" : "")
+                 + ((c2 + 1) % a.d === 0 && c2 + 1 < gc ? " ux" : "")
+                 + ((r2 + 1) % b.d === 0 && r2 + 1 < gr ? " uy" : "");
+          cells += "<div" + (cl.trim() ? ' class="' + cl.trim() + '"' : "") + "></div>";
         }
       }
-      html += '<div class="area"><div class="grid" style="grid-template-columns:repeat('
-            + a.d + ',1fr)" role="img" aria-label="Area model showing ' + (a.n*b.n) + ' of '
-            + (a.d*b.d) + ' squares double-shaded">' + cells + "</div>"
-            + '<div class="say">The whole square is <b>1</b>. Shading <b>' + a.n + "/" + a.d
-            + '</b> one way and <b>' + b.n + "/" + b.d + '</b> the other, the overlap is <b>'
-            + (a.n*b.n) + "</b> squares out of <b>" + (a.d*b.d) + "</b> — which is exactly <b>"
-            + (a.n*b.n) + "/" + (a.d*b.d) + "</b>.</div></div>";
+      var unitW = ux * uy > 1 ? 150 : 280;
+      var say = ux * uy === 1
+        ? 'The whole square is <b>1</b>. Shading <b>' + a.n + "/" + a.d + '</b> one way and <b>' + b.n + "/" + b.d
+          + '</b> the other, the overlap is <b>' + hit + "</b> squares out of <b>" + P + "</b> — which is exactly <b>"
+          + hit + "/" + P + "</b>."
+        : "Each square with a thick border is <b>1</b> whole, cut into <b>" + a.d + " × " + b.d + " = " + P
+          + "</b> small boxes. Shade <b>" + mText(m1) + "</b> across and <b>" + mText(m2) + "</b> down — the overlap is <b>"
+          + a.n + " × " + b.n + " = " + hit + "</b> boxes. At <b>" + P + "</b> boxes per whole, that’s <b>" + hit + "/" + P
+          + "</b>" + (fracTxt(simp.n, simp.d) !== hit + "/" + P ? ", or <b>" + fracTxt(simp.n, simp.d) + "</b>" : "") + ".";
+      html += '<div class="area"><div class="grid" style="grid-template-columns:repeat(' + gc + ",1fr);width:min("
+            + (unitW * ux) + "px,100%);aspect-ratio:" + (1.15 * ux / uy).toFixed(3) + '" role="img" aria-label="Area model showing '
+            + hit + " boxes double-shaded, " + P + ' boxes to a whole">' + cells + "</div>"
+            + '<div class="say">' + say + "</div></div>";
     }
     host.innerHTML = html;
+
+    /* tape diagram: the first factor counts groups of the second */
+    if (a.n > 0 && b.n > 0){
+      var pg = gcd(a.n % a.d * b.n, P);
+      groupTape(esc(mText(m1)) + " × " + esc(mText(m2)), Math.floor(a.n / a.d), (a.n % a.d) / a.d,
+        (a.n % a.d) + "/" + a.d, esc(mText(m2)), esc(fracTxt((a.n % a.d) * b.n / pg, P / pg)),
+        esc(fracTxt(simp.n, simp.d)));
+    }
 
     var final = needsMixedOut ? mixedHTML(w, rest, simp.d) : fracHTML(simp.n, simp.d);
     var dec = simp.n / simp.d;
@@ -861,8 +874,8 @@
       ? '<div><i class="sw-l"></i> ' + a.n + "/" + a.d + ' across</div>' +
         '<div><i class="sw-w"></i> ' + b.n + "/" + b.d + ' down</div>' +
         '<div><i class="sw-k"></i> The overlap — that’s the answer</div>'
-      : '<div>' + (mixedIn ? "Mixed numbers don’t fit in one square, so there’s no picture here."
-          : "Denominators over 12 make too many squares to see clearly.")
+      : '<div>' + (a.n === 0 || b.n === 0 ? "Times zero leaves nothing to shade."
+          : "Too many squares to draw clearly.")
         + ' The chain above is the whole story.</div>';
     return rows.length;
   }
@@ -915,12 +928,46 @@
   /* o = { total, totalCls, segs:[{w, html, cls}], unders:[{from, to, label}] }
      Box widths follow the values; a box never shrinks below its own label. */
   function commaNum(s){ var p = String(s).split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g,","); return p.join("."); }
+  /* expr is `full` whole groups of bx plus `frac` (0–1, named fracLbl) of one more, worth partTxt */
+  function groupTape(expr, full, frac, fracLbl, bx, partTxt, total){
+    var many = full > 12, tsegs = [], unders = [];
+    for (var g = 0; g < (many ? 4 : full); g++){
+      if (many && g === 3) tsegs.push({ w: 1, html: "…", cls: "gap" });
+      tsegs.push({ w: 1, html: bx });
+    }
+    var span = tsegs.length;
+    var groups = full ? commaNum(String(full)) + " group" + (full === 1 ? "" : "s") + " of " + bx : "";
+    if (full) unders.push({ from: 1, to: span, label: groups });
+    if (frac > 0){
+      tsegs.push({ w: frac, html: partTxt, cls: "b" });
+      unders.push({ from: span + 1, to: span + 1, label: fracLbl + " of " + (full ? "another" : "a group") });
+      if (!full) tsegs.push({ w: 1 - frac, html: "", cls: "ghost" });
+    }
+    var cap = !full
+      ? "<b>" + expr + "</b> means <b>" + fracLbl + "</b> of one group of <b>" + bx + "</b>. The dashed box is one "
+        + "whole group; the shaded part of it is <b>" + total + "</b>."
+      : "<b>" + expr + "</b> is <b>" + groups + "</b>"
+        + (frac > 0 ? " and <b>" + fracLbl + "</b> of another (that part is <b>" + partTxt + "</b>)" : "")
+        + ", laid end to end. The whole tape is <b>" + total + "</b>."
+        + (many ? " (Too many to draw them all — the dashed box stands for the ones in the middle.)" : "");
+    mountTape(cap, { total: total, totalCls: "ans", segs: tsegs, unders: unders, topCols: full ? "" : "1/2" });
+  }
+  function fracTxt(n, d){                     // 7/4 -> "1 3/4"
+    var w = Math.floor(n / d), r = n % d;
+    if (r === 0) return String(w);
+    return (w ? w + " " : "") + r + "/" + d;
+  }
+  function mText(m){                          // a mixed number as typed
+    if (m[1] === 0) return String(m[0]);
+    return (m[0] ? m[0] + " " : "") + m[1] + "/" + m[2];
+  }
   function mountTape(cap, o){
     var cols = o.segs.map(function(s){
       return "minmax(max-content," + Math.max(s.w, 0.001).toFixed(4) + "fr)";
     }).join(" ");
-    var html = '<div class="t-lbl ' + (o.totalCls || "") + '" style="grid-row:1;grid-column:1/-1">'
-             + o.total + '</div><div class="brk" style="grid-row:2;grid-column:1/-1"></div>';
+    var top = o.topCols || "1/-1";
+    var html = '<div class="t-lbl ' + (o.totalCls || "") + '" style="grid-row:1;grid-column:' + top + '">'
+             + o.total + '</div><div class="brk" style="grid-row:2;grid-column:' + top + '"></div>';
     o.segs.forEach(function(s, i){
       html += '<div class="seg ' + (s.cls || "") + (i === 0 ? " first" : "")
             + '" style="grid-row:3;grid-column:' + (i + 1) + '">' + s.html + "</div>";
