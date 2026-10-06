@@ -358,6 +358,10 @@
   }
   .work .ptmark{color:var(--amber);font-weight:600}
   .work .dend .ptmark{color:var(--ink)}
+  .work .dropline{justify-self:center;align-self:stretch;width:0;position:relative;
+    border-left:2px dashed var(--ink-3);margin:2px 0 9px;opacity:.85}
+  .work .dropline::after{content:"";position:absolute;left:-6px;bottom:-9px;
+    border:5px solid transparent;border-top:8px solid var(--ink-3);border-bottom:0}
   .work [data-step].veil{opacity:0}
   @media (prefers-reduced-motion:no-preference){
     .work [data-step]{transition:opacity .22s ease}
@@ -780,6 +784,17 @@
       return el;
     }
 
+    /* a dashed arrow from the dividend digit down to where it gets brought down */
+    function drop(toRow, col, step){
+      if (toRow <= 3) return;
+      var el = document.createElement("div");
+      el.className = "dropline";
+      el.style.gridRow = "3 / " + toRow;
+      el.style.gridColumn = col;
+      el.setAttribute("data-step", step);
+      frag.appendChild(el);
+    }
+
     /* row 1 — the quotient sitting on top of the bar */
     var startQ = quotientStart(r);
     for (var i = startQ; i < r.dg.length; i++){
@@ -808,8 +823,10 @@
       /* a quotient digit of 0 has nothing to subtract — you just bring the next digit
          down beside what's already there, on the same line */
       if (st.q === 0){
-        if (hasNext)
+        if (hasNext && workRow > 2){
           put(workRow, colOf(nxt), r.dg[nxt], "brought" + (nxt >= r.origLen ? " added" : ""), t);
+          drop(workRow, colOf(nxt), t);
+        }
         if (mode === "remainder" && isLast && st.rem > 0)
           put(workRow, rCol, "R " + st.rem, "rbadge", t);
         continue;
@@ -836,8 +853,10 @@
           put(row + 2, ri < 0 ? C_GUTTER + 1 + n : colOf(ri), remStr[n], cls, t);
         }
       }
-      if (hasNext)
+      if (hasNext){
         put(row + 2, colOf(nxt), r.dg[nxt], "brought" + (nxt >= r.origLen ? " added" : ""), t);
+        drop(row + 2, colOf(nxt), t);
+      }
       if (mode === "remainder" && isLast && st.rem > 0)
         put(row + 2, rCol, "R " + st.rem, "rbadge", t);
       workRow = row + 2;
@@ -1174,7 +1193,8 @@
     $("legend").innerHTML =
       '<div><i class="sw-a"></i> Answer on top</div>' +
       '<div><i class="sw-b"></i> Multiply &amp; subtract</div>' +
-      '<div><i class="sw-c"></i> What’s left over</div>';
+      '<div><i class="sw-c"></i> What’s left over</div>' +
+      '<div><span style="color:var(--ink-3);font-weight:600">↓</span> Brought down</div>';
     renderDecimals();
   }
 
