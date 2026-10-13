@@ -9,19 +9,19 @@
 <style>
   :root{
     --paper:#EDEFE9; --surface:#F8F9F5; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C;
     --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
       --paper:#131817; --surface:#1B2220; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     }
   }
   :root[data-theme="dark"]{
     --paper:#131817; --surface:#1B2220; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
   }
   *{box-sizing:border-box}
@@ -64,6 +64,11 @@
     <a class="card" href="division.html" style="--c:var(--div)">
       <span class="sign">&divide;</span><h2>The Division House</h2>
       <p>Long division: divide, multiply, subtract, bring down, with remainders, decimals or fractions.</p>
+    </a>
+    <a class="card" href="pemdas.html" style="--c:var(--ord);grid-column:1 / -1">
+      <span class="sign">( )</span><h2>The Order Stack</h2>
+      <p>Order of operations (PEMDAS): long problems with all four operations, parentheses and exponents,
+        worked one operation at a time &mdash; or let it make a problem for you to practise.</p>
     </a>
   </div>
 </div>

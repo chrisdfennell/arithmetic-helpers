@@ -1,0 +1,1243 @@
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Order Stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EBEEF1; --surface:#F7F9FA; --surface-2:#DFE4E9;
+    --ink:#172029; --ink-2:#4A5560; --ink-3:#7A8590; --rule:#C5CDD5;
+    --key:#1F5E8C;   --key-bg:#DCE8F2;  --key-line:#7FA7CC;   /* parentheses, and the page itself */
+    --e:#9A5410;     --e-bg:#F6E5D2;                          /* exponents */
+    --m:#544696;     --m-bg:#E3E0F4;                          /* multiply and divide */
+    --a:#0D7361;     --a-bg:#D4EAE7;                          /* add and subtract */
+    --warm:#9A5410;  --warm-bg:#F6E5D2;                       /* notes */
+    --focus:#1F5E8C;
+    --shadow:0 1px 0 rgba(23,32,41,.05), 0 14px 30px -20px rgba(23,32,41,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#12161A; --surface:#1A2026; --surface-2:#262E36;
+      --ink:#E5E9EC; --ink-2:#A0AAB3; --ink-3:#75808A; --rule:#36404A;
+      --key:#7DB8E8;  --key-bg:#142838;  --key-line:#3F6A8F;
+      --e:#E8A45C;    --e-bg:#37270F;
+      --m:#A99BF0;    --m-bg:#241E46;
+      --a:#4FCCB0;    --a-bg:#0F2F2C;
+      --warm:#E8A45C; --warm-bg:#37270F;
+      --focus:#7DB8E8;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12161A; --surface:#1A2026; --surface-2:#262E36;
+    --ink:#E5E9EC; --ink-2:#A0AAB3; --ink-3:#75808A; --rule:#36404A;
+    --key:#7DB8E8;  --key-bg:#142838;  --key-line:#3F6A8F;
+    --e:#E8A45C;    --e-bg:#37270F;
+    --m:#A99BF0;    --m-bg:#241E46;
+    --a:#4FCCB0;    --a-bg:#0F2F2C;
+    --warm:#E8A45C; --warm-bg:#37270F;
+    --focus:#7DB8E8;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .eyebrow a{color:inherit}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:52ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:20px 22px 18px;display:flex;flex-direction:column;gap:16px}
+  .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
+    color:var(--ink-2);padding:8px 16px;border-radius:7px;cursor:pointer}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  .modes.small button{font-size:13px;padding:6px 12px}
+
+  .entry{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap}
+  .numfield{display:flex;flex-direction:column;gap:4px;flex:1 1 420px;min-width:0}
+  .numfield > label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .expr-in{font-family:var(--f-mono);font-size:clamp(20px,3.6vw,27px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;width:100%;
+    border-bottom:2.5px solid var(--rule);padding:1px 4px 5px;outline:none}
+  .expr-in:focus{border-bottom-color:var(--focus)}
+  .keys{display:flex;gap:5px;flex-wrap:wrap}
+  .keys button{font-family:var(--f-mono);font-size:16px;font-weight:600;min-width:38px;height:36px;
+    background:var(--surface-2);color:var(--ink);border:0;border-radius:8px;cursor:pointer;padding:0 8px}
+  .keys button:hover{background:var(--key-bg);color:var(--key)}
+  .hint{margin:-6px 0 0;font-size:13px;color:var(--ink-3)}
+  .hint code{font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);background:var(--surface-2);
+    border-radius:4px;padding:0 4px}
+
+  /* ---- the problem maker ---- */
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--key);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;
+    padding:4px 15px 15px}
+  @media (max-width:620px){.maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px}}
+  .maker-body .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .toggles{display:flex;gap:6px;flex-wrap:wrap}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px}
+  .tog b{font-family:var(--f-mono);font-weight:600;font-size:15px;line-height:1}
+  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .tog[aria-pressed="true"] b{color:var(--key)}
+  .tog:hover{border-color:var(--key-line)}
+  .maker-go{grid-column:1 / -1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+  .go:hover{filter:brightness(1.08)}
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    border-top:1px dashed var(--rule);padding-top:14px}
+  .examples .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+  .chip{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer}
+  .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
+  .practice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+  .practice .lbl2{font-size:12.5px;color:var(--ink-3)}
+  button:focus-visible,input:focus-visible,summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
+    padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px}
+  .answer .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .answer .v{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink);line-height:1.1;display:flex;align-items:center;gap:.35ch}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .answer.masked .v{color:var(--ink-3)}
+  .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .notice b{font-family:var(--f-mono)}
+
+  .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
+  @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{font-family:var(--f-mono);font-size:13px;font-weight:600;background:var(--surface-2);
+    border:0;color:var(--ink);border-radius:7px;width:30px;height:28px;cursor:pointer}
+  .stepper button:disabled{color:var(--ink-3);cursor:not-allowed}
+  .stepper button:hover:not(:disabled){background:var(--key-bg);color:var(--key)}
+  .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
+    text-align:center;font-variant-numeric:tabular-nums}
+  .stepper[hidden]{display:none}
+
+  /* colour by kind of operation */
+  .c-p{--c:var(--key);--cb:var(--key-bg)}
+  .c-e{--c:var(--e);--cb:var(--e-bg)}
+  .c-m{--c:var(--m);--cb:var(--m-bg)}
+  .c-a{--c:var(--a);--cb:var(--a-bg)}
+
+  /* ---- the chain of rewrites ---- */
+  .chain-scroll{overflow-x:auto}
+  .chain{padding:16px 18px 18px;display:flex;flex-direction:column;min-width:max-content}
+  .crow{display:grid;grid-template-columns:1.6ch max-content auto;gap:0 12px;align-items:center;
+    padding:9px 0;border-bottom:1px dashed var(--rule)}
+  .crow:last-child{border-bottom:0}
+  .crow .eq{font-family:var(--f-mono);font-size:clamp(18px,3.2vw,23px);color:var(--ink-3);font-weight:600}
+  .crow.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.crow{transition:opacity .2s ease}}
+  .expr{display:flex;align-items:center;white-space:nowrap;font-family:var(--f-mono);
+    font-size:clamp(18px,3.2vw,23px);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
+    min-height:1.9em}
+  .expr span{display:inline-flex;align-items:center}
+  .crow.result .expr{color:var(--key);font-size:clamp(21px,3.8vw,27px)}
+  .expr .op-s{padding:0 .38ch;color:var(--ink-2)}
+  .expr .pg{color:var(--key);font-weight:500}
+  .expr .sx{align-self:flex-start;font-size:.62em;margin-top:-.15em;margin-left:.05ch}
+  .expr .hl{background:var(--cb);color:var(--c);border-radius:7px;padding:.08em .3ch;
+    box-shadow:inset 0 0 0 2px var(--c)}
+  .expr .hl .op-s,.expr .hl .pg{color:inherit}
+  .expr .fresh{color:var(--c);box-shadow:inset 0 -3px 0 var(--c);border-radius:2px}
+  .crow .next{display:flex;gap:4px;align-items:center}
+  .badge{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;
+    padding:2px 7px;border-radius:999px;background:var(--cb);color:var(--c);white-space:nowrap}
+  .fr{display:inline-flex !important;flex-direction:column;align-items:center;vertical-align:middle;
+    line-height:1.05;margin:0 .1ch;font-size:.82em}
+  .fr > span{display:block !important;padding:0 .25ch;text-align:center}
+  .fr .de{border-top:2px solid currentColor;margin-top:1px}
+
+  /* ---- expression tree ---- */
+  .treewrap{padding:14px 18px 18px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
+  .tapecap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .tapecap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .tapecap .lead{font-family:var(--f-body);color:var(--ink)}
+  .tree-scroll{overflow-x:auto;padding-bottom:2px}
+  .tree{display:block;margin:0 auto}
+  .tree text{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums}
+  .tree .edge{stroke:var(--ink-3);stroke-width:1.6}
+  .tree .leaf{fill:var(--ink);font-size:15px}
+  .tree .node circle.o{fill:var(--cb);stroke:var(--c);stroke-width:2}
+  .tree .node text.sym{fill:var(--c);font-size:17px}
+  .tree .node circle.b{fill:var(--ink-2)}
+  .tree .node text.bn{fill:var(--surface);font-size:10px}
+  .tree .val rect{fill:var(--surface);stroke:var(--c);stroke-width:1.5}
+  .tree .val text{fill:var(--c);font-size:12.5px}
+  .tree [data-step].veil{opacity:0}
+  @media (prefers-reduced-motion:no-preference){.tree [data-step]{transition:opacity .2s ease}}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 18px;border-top:1px dashed var(--rule)}
+  .legend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .legend .badge{min-width:3.4ch;text-align:center}
+  .legend .then{color:var(--ink-3);font-family:var(--f-mono)}
+
+  .log{padding:6px 0 10px;margin:0;list-style:none}
+  .log > li{padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 12px;align-items:start}
+  .log .line + .line{margin-top:6px}
+  .log > li:last-child{border-bottom:0}
+  .log > li.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.log > li{transition:opacity .2s ease}}
+  .log .n{grid-column:1;grid-row:1 / span 99;font-family:var(--f-mono);font-size:11px;font-weight:600;
+    color:var(--ink-3);background:var(--surface-2);border-radius:7px;padding:3px 7px;
+    letter-spacing:.04em;white-space:nowrap}
+  .log .line{grid-column:2;display:flex;gap:9px;align-items:baseline;font-size:14.5px}
+  .log .tag{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;flex:none;min-width:8.2ch;text-align:center;
+    background:var(--cb);color:var(--c)}
+  .log .txt{color:var(--ink-2)}
+  .log .txt b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .log .txt .fr{font-size:.9em;vertical-align:middle}
+  .log .txt .op-s{padding:0 .3ch}
+  .log .txt .sx{vertical-align:super;font-size:.7em}
+  .log .aside{grid-column:2;margin-top:4px;font-size:13.5px;color:var(--ink);background:var(--warm-bg);
+    border-left:3px solid var(--warm);border-radius:4px 8px 8px 4px;padding:8px 12px}
+  .log .aside b{font-family:var(--f-mono);font-weight:600}
+  .closer{padding:14px 18px;font-size:14px;color:var(--ink-2);background:var(--surface-2)}
+  .closer b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .closer .ok{color:var(--a);font-weight:600}
+
+  .footnote{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote a{color:var(--ink-2)}
+  .footnote .print{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#EEF1F4;
+      --ink:#111; --ink-2:#3A434C; --ink-3:#6A747E; --rule:#A8B0B8;
+      --key:#1F5E8C;  --key-bg:#DCE8F2;  --key-line:#7FA7CC;
+      --e:#9A5410;    --e-bg:#F6E5D2;
+      --m:#544696;    --m-bg:#E3E0F4;
+      --a:#0D7361;    --a-bg:#D4EAE7;
+      --warm:#9A5410; --warm-bg:#F6E5D2;
+      --shadow:none;
+    }
+    @page{margin:13mm 11mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,#statusLine{display:none !important}
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px}
+    .eyebrow{font-size:9px}
+    .tagline{display:none}
+    .problem{border:0;box-shadow:none;padding:0;gap:0;break-after:avoid}
+    .expr-in{font-size:18px;border-bottom-color:var(--ink)}
+    .numfield > label{font-size:8.5px}
+    .answer{padding:8px 12px;gap:5px 16px;break-after:avoid;break-inside:avoid}
+    .answer .v{font-size:22px}
+    .answer .facts{margin-left:0;flex-basis:100%}
+    .answer .fact{font-size:11px}
+    .board{display:flex;gap:12px;align-items:flex-start}
+    .board > .panel:first-of-type{flex:0 1 auto;min-width:0}
+    .board > .panel:last-of-type{flex:1 1 230px;min-width:0}
+    .panel{box-shadow:none;border:1px solid var(--rule);break-inside:auto}
+    .panel-head{padding:6px 10px}
+    .panel-head h2{font-size:12.5px}
+    .chain-scroll,.tree-scroll{overflow:visible}
+    .chain{padding:8px 10px 10px}
+    .crow{padding:5px 0;break-inside:avoid}
+    .expr,.crow .eq{font-size:15px}
+    .crow.result .expr{font-size:17px}
+    .treewrap{padding:8px 10px 10px;gap:6px;break-inside:avoid}
+    .tapecap{font-size:10.5px}
+    .tree{max-width:100%;height:auto}
+    .legend{padding:7px 10px;gap:4px 13px}
+    .legend div{font-size:10px}
+    .log{padding:2px 0 4px}
+    .log > li{padding:7px 10px;break-inside:avoid}
+    .log .n{font-size:9.5px;padding:2px 5px}
+    .log .line{font-size:11px;gap:7px}
+    .log .tag{font-size:8.5px;min-width:7.2ch;padding:1px 4px}
+    .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
+    .closer{font-size:11px;padding:8px 10px}
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow"><a href="index.html">Arithmetic Helpers</a> &middot; Order of operations, worked out</div>
+      <h1>The Order <em>Stack</em></h1>
+      <p class="tagline">Long problems, one operation at a time. Parentheses first, then exponents, then
+        &times; and &divide; left to right, then + and &minus; left to right. Same rule as BODMAS and BEDMAS.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem">
+    <div class="entry">
+      <div class="numfield">
+        <label for="exprIn">Your problem</label>
+        <input class="expr-in" id="exprIn" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+               value="20 − 12 ÷ 4 × 2 + 1">
+      </div>
+      <div class="keys" id="keys" aria-label="Insert a symbol">
+        <button type="button" data-k=" + ">+</button>
+        <button type="button" data-k=" − ">&minus;</button>
+        <button type="button" data-k=" × ">&times;</button>
+        <button type="button" data-k=" ÷ ">&divide;</button>
+        <button type="button" data-k="(">(</button>
+        <button type="button" data-k=")">)</button>
+        <button type="button" data-k="²" aria-label="Squared">x&sup2;</button>
+        <button type="button" data-k="^" aria-label="Power">x<sup>n</sup></button>
+      </div>
+    </div>
+    <p class="hint">Type <code>*</code> or <code>x</code> for &times;, <code>/</code> for &divide;,
+      <code>^</code> for a power. <code>[ ]</code> and <code>{ }</code> work as parentheses.</p>
+
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body">
+        <span class="lbl">Operations</span>
+        <div class="toggles" id="opsT">
+          <button type="button" class="tog" data-op="+"><b>+</b> Add</button>
+          <button type="button" class="tog" data-op="−"><b>&minus;</b> Subtract</button>
+          <button type="button" class="tog" data-op="×"><b>&times;</b> Multiply</button>
+          <button type="button" class="tog" data-op="÷"><b>&divide;</b> Divide</button>
+        </div>
+        <span class="lbl">Extras</span>
+        <div class="toggles">
+          <button type="button" class="tog" id="parT"><b>( )</b> Parentheses</button>
+          <button type="button" class="tog" id="expT"><b>x&sup2;</b> Exponents</button>
+          <button type="button" class="tog" id="decT"><b>.5</b> Decimals</button>
+          <button type="button" class="tog" id="niceT"><b>&check;</b> No negatives or remainders</button>
+        </div>
+        <span class="lbl">Length</span>
+        <div class="modes small" id="lenT" role="group" aria-label="How many operations"></div>
+        <span class="lbl">Numbers</span>
+        <div class="modes small" id="maxT" role="group" aria-label="How big the numbers get"></div>
+        <div class="maker-go">
+          <button type="button" class="go" id="genBtn">New problem</button>
+          <span class="msg" id="genMsg"></span>
+        </div>
+      </div>
+    </details>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips"></span>
+      <span class="practice">
+        <span class="lbl2">Show fractions as</span>
+        <div class="modes small" role="group" aria-label="How to show answers that aren't whole">
+          <button type="button" id="asFrac" aria-pressed="true">Fractions</button>
+          <button type="button" id="asDec" aria-pressed="false">Decimals</button>
+        </div>
+        <div class="modes" role="group" aria-label="Practice mode">
+          <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
+          <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+        </div>
+      </span>
+    </div>
+  </section>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <div class="board" id="board">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The work</h2>
+        <div class="stepper" id="stepper" hidden>
+          <button type="button" id="prevBtn" aria-label="Previous step">&larr;</button>
+          <span class="count" id="stepCount"></span>
+          <button type="button" id="nextBtn" aria-label="Next step">&rarr;</button>
+        </div>
+      </div>
+      <div id="workHost"></div>
+      <div class="legend" id="legend">
+        <div><span class="badge c-p">P</span> Parentheses</div><span class="then">&rarr;</span>
+        <div><span class="badge c-e">E</span> Exponents</div><span class="then">&rarr;</span>
+        <div><span class="badge c-m">M D</span> &times; &divide; left to right</div><span class="then">&rarr;</span>
+        <div><span class="badge c-a">A S</span> + &minus; left to right</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Say it out loud</h2></div>
+      <ol class="log" id="log"></ol>
+      <div class="closer" id="closer"></div>
+    </section>
+  </div>
+
+  <div class="footnote">
+    <button class="print" type="button" id="printBtn">Print this work</button>
+    <span>One operation per line, nothing skipped. Stuck on one of the steps? Work it on
+      <a href="addition.html">+</a>, <a href="subtraction.html">&minus;</a>,
+      <a href="multiplication.html">&times;</a> or <a href="division.html">&divide;</a>.</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var S = { expr:"20 − 12 ÷ 4 × 2 + 1", as:"frac", stepMode:false, step:1,
+            gen:{ ops:["+","−","×","÷"], par:true, exp:false, dec:false, nice:true, len:5, max:20 } };
+  var HASDEC = false;            // did the typed problem use decimals? then terminating results stay decimals
+  var MAX_OPS = 24;
+
+  /* ===================== helpers ===================== */
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function commas(s){
+    var p = String(s).split(".");
+    return p[0].replace(/\B(?=(\d{3})+(?!\d))/g,",") + (p.length > 1 ? "." + p[1] : "");
+  }
+  function UserErr(msg){ this.user = msg; }
+
+  /* ===================== exact fractions ===================== */
+  function bgcd(a, b){ if (a < 0n) a = -a; while (b){ var t = a % b; a = b; b = t; } return a || 1n; }
+  function R(n, d){
+    n = BigInt(n); d = (d === undefined) ? 1n : BigInt(d);
+    if (d < 0n){ n = -n; d = -d; }
+    var g = bgcd(n, d);
+    if (g > 1n){ n /= g; d /= g; }
+    return { n:n, d:d };
+  }
+  function tooBig(r){ return (r.n < 0n ? -r.n : r.n).toString().length > 30 || r.d.toString().length > 30; }
+  function isTermD(d){ while (d % 2n === 0n) d /= 2n; while (d % 5n === 0n) d /= 5n; return d === 1n; }
+  function apply(op, a, b){
+    switch (op){
+      case "+": return R(a.n*b.d + b.n*a.d, a.d*b.d);
+      case "−": return R(a.n*b.d - b.n*a.d, a.d*b.d);
+      case "×": return R(a.n*b.n, a.d*b.d);
+      case "÷":
+        if (b.n === 0n) throw new UserErr("zero");
+        return R(a.n*b.d, a.d*b.n);
+      case "^":
+        if (b.d !== 1n) throw new UserErr("Powers have to be whole numbers here — <b>"
+          + numText(a) + "<sup>" + numText(b) + "</sup></b> isn’t one I can work by hand.");
+        var k = b.n < 0n ? -b.n : b.n;
+        if (k > 20n) throw new UserErr("A power of <b>" + numText(b) + "</b> is too big to write out. Keep powers to 20 or less.");
+        if (a.n === 0n && b.n <= 0n) throw new UserErr("<b>0<sup>" + numText(b) + "</sup></b> isn’t defined — try a different power.");
+        return b.n < 0n ? R(a.d ** k, a.n ** k) : R(a.n ** k, a.d ** k);
+      case "neg": return R(-a.n, a.d);
+    }
+  }
+
+  /* ===================== showing numbers ===================== */
+  function decStr(a, d){                       // a ≥ 0; exact if it ends, else 4 places and "…"
+    var places = isTermD(d) ? 30 : 4, ip = a / d, rem = a % d, ds = "";
+    for (var k = 0; k < places && rem !== 0n; k++){ rem *= 10n; ds += (rem / d).toString(); rem %= d; }
+    var approx = rem !== 0n;
+    if (approx){
+      rem *= 10n;
+      if (rem / d >= 5n){
+        var all = (BigInt(ip.toString() + ds) + 1n).toString();
+        while (all.length < ds.length + 1) all = "0" + all;
+        ip = BigInt(all.slice(0, all.length - ds.length)); ds = all.slice(all.length - ds.length);
+      }
+      ds = ds.replace(/0+$/,"");
+    }
+    return commas(ip.toString()) + (ds ? "." + ds : "") + (approx ? "…" : "");
+  }
+  function frHTML(n, d){
+    return '<span class="fr"><span class="nu">' + esc(commas(n)) + '</span><span class="de">' + esc(commas(d)) + "</span></span>";
+  }
+  // a value as {text, html, neg, frac}
+  function numParts(v){
+    var neg = v.n < 0n, a = neg ? -v.n : v.n, txt, html = null, frac = false;
+    if (v.d === 1n) txt = commas(a.toString());
+    else if (S.as === "dec" || (HASDEC && isTermD(v.d))) txt = decStr(a, v.d);
+    else { frac = true; txt = a + "/" + v.d; html = frHTML(a.toString(), v.d.toString()); }
+    return { neg:neg, frac:frac, text:(neg ? "−" : "") + txt,
+             html:(neg ? "<span>−</span>" : "") + (html || esc(txt)) };
+  }
+  function nodeParts(n){                       // typed numbers keep the way they were typed
+    if (n.raw) return { neg:n.v.n < 0n, frac:false, text:n.raw, html:esc(n.raw) };
+    return numParts(n.v);
+  }
+  function numText(v){ return numParts(v).text; }
+  // operand for a sentence: negatives (and fractions under a power) get parentheses
+  function opnd(n, base){
+    var p = nodeParts(n);
+    return (p.neg || (base && p.frac)) ? "(" + p.html + ")" : p.html;
+  }
+
+  /* ===================== reading the problem ===================== */
+  var SUP = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9"};
+  var OPS = {"+":"+","-":"−","−":"−","–":"−","—":"−","*":"×","×":"×","x":"×","X":"×","·":"×","∙":"×","⋅":"×",
+             "/":"÷","÷":"÷",":":"÷","^":"^"};
+  function lex(src){
+    var s = String(src), out = [], i = 0, m;
+    while (i < s.length){
+      var c = s[i], rest = s.slice(i);
+      if (/\s/.test(c)){ i++; continue; }
+      if ((m = /^\d{1,3}(?:,\d{3})+(?:\.\d*)?/.exec(rest)) || (m = /^(?:\d+(?:\.\d*)?|\.\d+)/.exec(rest))){
+        out.push({ k:"num", s:m[0].replace(/,/g,"") }); i += m[0].length; continue;
+      }
+      if (SUP[c]){
+        var d = "";
+        while (i < s.length && SUP[s[i]]){ d += SUP[s[i]]; i++; }
+        out.push({ k:"op", s:"^" }); out.push({ k:"num", s:d }); continue;
+      }
+      if (rest.slice(0,2) === "**"){ out.push({ k:"op", s:"^" }); i += 2; continue; }
+      if (OPS[c]){ out.push({ k:"op", s:OPS[c] }); i++; continue; }
+      if ("([{".indexOf(c) >= 0){ out.push({ k:"(" }); i++; continue; }
+      if (")]}".indexOf(c) >= 0){ out.push({ k:")" }); i++; continue; }
+      throw new UserErr("I don’t know the symbol <b>" + esc(c) + "</b>. Use digits, + − × ÷, ^ for powers, and parentheses.");
+    }
+    return out;
+  }
+  function tokText(t){ return t.k === "num" ? t.s : t.k === "op" ? t.s : t.k; }
+
+  /* flat = treat × ÷ + − as one level, straight left to right (the classic mistake) */
+  function parse(src, flat){
+    var tk = lex(src), p = 0, uid = 0, dec = false;
+    if (!tk.length) throw new UserErr("Type a problem, like <b>3 + 4 × 2</b>.");
+    function peek(){ return tk[p]; }
+    function isOp(t, list){ return t && t.k === "op" && list.indexOf(t.s) >= 0; }
+    function bin(op, a, b, imp){ return { t:"bin", id:++uid, op:op, a:a, b:b, imp:!!imp }; }
+    function implicitNext(){
+      var t = peek();
+      return t && (t.k === "(" || (t.k === "num" && tk[p-1] && tk[p-1].k === ")"));
+    }
+    function expr(){
+      var left = flat ? unary() : term();
+      for (;;){
+        if (isOp(peek(), flat ? ["+","−","×","÷"] : ["+","−"])){
+          var op = tk[p++].s; left = bin(op, left, flat ? unary() : term());
+        } else if (flat && implicitNext()){
+          left = bin("×", left, unary(), true);
+        } else return left;
+      }
+    }
+    function term(){
+      var left = unary();
+      for (;;){
+        if (isOp(peek(), ["×","÷"])){ var op = tk[p++].s; left = bin(op, left, unary()); }
+        else if (implicitNext()) left = bin("×", left, unary(), true);
+        else return left;
+      }
+    }
+    function unary(){
+      if (isOp(peek(), ["−","+"])){
+        var sign = tk[p++].s, a = unary();
+        if (sign === "+") return a;
+        if (a.t === "num" && a.raw && a.v.n > 0n) return { t:"num", id:++uid, v:R(-a.v.n, a.v.d), raw:"−" + a.raw };
+        return { t:"neg", id:++uid, a:a };
+      }
+      return power();
+    }
+    function power(){
+      var b = primary();
+      if (isOp(peek(), ["^"])){ p++; return bin("^", b, unary()); }
+      return b;
+    }
+    function primary(){
+      var t = peek(), prev = tk[p-1];
+      if (!t){
+        throw new UserErr(prev ? "The problem ends with <b>" + esc(tokText(prev)) + "</b> — what comes after it?"
+                               : "Type a problem, like <b>3 + 4 × 2</b>.");
+      }
+      if (t.k === "num"){
+        p++;
+        var q = t.s.split("."), ip = (q[0] || "").replace(/^0+(?=\d)/,"") || "0", fp = (q[1] || "").replace(/0+$/,"");
+        if ((ip + fp).length > 12) throw new UserErr("<b>" + esc(t.s) + "</b> is a lot of digits. Keep each number under 13 digits.");
+        if (fp) dec = true;
+        return { t:"num", id:++uid, v:R(BigInt(ip + fp), 10n ** BigInt(fp.length)), raw:commas(fp ? ip + "." + fp : ip) };
+      }
+      if (t.k === "("){
+        p++;
+        if (peek() && peek().k === ")") throw new UserErr("There’s an empty pair of parentheses <b>( )</b> — put something inside.");
+        var inner = expr();
+        if (!peek() || peek().k !== ")") throw new UserErr(peek()
+          ? "Something’s missing before <b>" + esc(tokText(peek())) + "</b>."
+          : "A <b>(</b> is never closed — add a <b>)</b>.");
+        p++;
+        if (inner.t === "num" || inner.t === "par") return inner;      // (5) is just 5; ((x)) is just (x)
+        return { t:"par", id:++uid, a:inner };
+      }
+      if (t.k === ")") throw new UserErr(prev && prev.k !== "(" && prev.k !== "op"
+        ? "There’s a <b>)</b> with no <b>(</b> to match it."
+        : "Something’s missing before <b>)</b>.");
+      throw new UserErr(prev
+        ? "<b>" + esc(t.s) + "</b> right after <b>" + esc(tokText(prev)) + "</b> — there’s a number missing between them."
+        : "The problem starts with <b>" + esc(t.s) + "</b> — what comes before it?");
+    }
+    var root = expr();
+    if (p < tk.length){
+      var t = tk[p];
+      if (t.k === ")") throw new UserErr("There’s a <b>)</b> with no <b>(</b> to match it.");
+      throw new UserErr("Two numbers in a row — <b>" + esc(tokText(tk[p-1])) + " " + esc(tokText(t))
+        + "</b> — with nothing between them. Did you mean to put an operation there?");
+    }
+    var count = 0;
+    (function walk(n){ if (n.t === "num") return; if (n.t !== "par") count++; walk(n.a); if (n.b) walk(n.b); })(root);
+    if (count > MAX_OPS) throw new UserErr("That’s " + count + " operations! Keep it to " + MAX_OPS + " or fewer so the work fits.");
+    return { tree:root, dec:dec, ops:count };
+  }
+
+  /* ===================== solving, one operation at a time ===================== */
+  function clsOf(n){ return n.t === "neg" ? "m" : n.op === "^" ? "e" : (n.op === "+" || n.op === "−") ? "a" : "m"; }
+  function hasPar(n){ return n.t !== "num" && (n.t === "par" || hasPar(n.a) || (n.b ? hasPar(n.b) : false)); }
+  function firstInner(n){                      // leftmost parentheses with nothing in parentheses inside
+    if (n.t === "num") return null;
+    if (n.t === "par") return hasPar(n.a) ? firstInner(n.a) : n;
+    return firstInner(n.a) || (n.b ? firstInner(n.b) : null);
+  }
+  function replaceId(n, id, nn){
+    if (n.id === id) return nn;
+    if (n.t === "num") return n;
+    var c = {}; for (var k in n) c[k] = n[k];
+    c.a = replaceId(n.a, id, nn);
+    if (n.b) c.b = replaceId(n.b, id, nn);
+    return c;
+  }
+  function parentOf(n, id){
+    if (n.t === "num") return null;
+    if (n.a.id === id || (n.b && n.b.id === id)) return n;
+    return parentOf(n.a, id) || (n.b ? parentOf(n.b, id) : null);
+  }
+  function reducible(n){ return n.a.t === "num" && (n.t === "neg" || n.b.t === "num"); }
+  function inorder(n, out){
+    if (n.t === "num") return out;
+    if (n.t === "neg"){ out.push(n); return inorder(n.a, out); }
+    inorder(n.a, out); out.push(n); if (n.b) inorder(n.b, out);
+    return out;
+  }
+  function solve(root){
+    var t = root, steps = [], trees = [root];
+    while (t.t !== "num"){
+      var g = firstInner(t), content = g ? g.a : t;
+      var ops = inorder(content, []), red = ops.filter(reducible);
+      var cls = red.some(function(o){ return clsOf(o) === "e"; }) ? "e"
+              : red.some(function(o){ return clsOf(o) === "m"; }) ? "m" : "a";
+      var pick = red.filter(function(o){ return clsOf(o) === cls; })[0];
+      var v;
+      try { v = apply(pick.t === "neg" ? "neg" : pick.op, pick.a.v, pick.b ? pick.b.v : null); }
+      catch (e){
+        if (e.user === "zero") throw new UserErr("Step " + (steps.length + 1) + " asks for <b>" + opnd(pick.a)
+          + " ÷ 0</b> — and you can’t divide by zero. Change the problem so nothing divides by 0.");
+        throw e;
+      }
+      if (tooBig(v)) throw new UserErr("The numbers get too big to work by hand by step " + (steps.length + 1)
+        + ". Try smaller numbers or smaller powers.");
+      var counts = { e:0, m:0, a:0 };
+      ops.forEach(function(o){ counts[clsOf(o)]++; });
+      var dropped = !!g && g.a === pick;
+      var nn = { t:"num", id:pick.id, v:v };
+      steps.push({ pick:pick, cls:cls, group:g, ops:ops, counts:counts, value:v, dropped:dropped,
+                   parent:parentOf(t, pick.id), tree:t });
+      t = replaceId(t, dropped ? g.id : pick.id, nn);
+      trees.push(t);
+    }
+    return { steps:steps, trees:trees, value:t.v };
+  }
+  function evalTree(n){
+    if (n.t === "num") return n.v;
+    if (n.t === "par") return evalTree(n.a);
+    if (n.t === "neg") return apply("neg", evalTree(n.a));
+    return apply(n.op, evalTree(n.a), evalTree(n.b));
+  }
+
+  /* ===================== drawing an expression ===================== */
+  // o = { hl:id to box, hlCls, fresh:id to underline, freshCls, first, base }
+  function H(n, o, first, base){
+    var s;
+    if (n.t === "num"){
+      var p = nodeParts(n);
+      s = p.html;
+      if ((p.neg && (!first || base)) || (base && p.frac)) s = '<span class="pg">(</span>' + s + '<span class="pg">)</span>';
+    } else if (n.t === "par"){
+      s = '<span class="pg">(</span>' + H(n.a, o, true, false) + '<span class="pg">)</span>';
+    } else if (n.t === "neg"){
+      s = '<span class="op-s" style="padding-right:0">−</span>' + H(n.a, o, false, false);
+      if (base) s = '<span class="pg">(</span>' + s + '<span class="pg">)</span>';
+    } else if (n.op === "^"){
+      s = H(n.a, o, first, true) + '<span class="sx">' + H(n.b, o, true, false) + "</span>";
+    } else {
+      var sym = (n.imp && (n.a.t === "par" || n.b.t === "par")) ? "" : '<span class="op-s">' + n.op + "</span>";
+      s = H(n.a, o, first, false) + sym + H(n.b, o, false, false);
+    }
+    if (n.id === o.hl) s = '<span class="hl c-' + o.hlCls + '">' + s + "</span>";
+    if (n.id === o.fresh) s = '<span class="fresh c-' + o.freshCls + '">' + s + "</span>";
+    return s;
+  }
+  function plain(n){ return H(n, {}, true, false); }
+  var LETTER = { "+":"A", "−":"S", "×":"M", "÷":"D", "^":"E" };
+  var VERB = { "+":"Add", "−":"Subtract", "×":"Multiply", "÷":"Divide", "^":"Exponent" };
+
+  /* ===================== the expression tree ===================== */
+  function treeSVG(root, info){
+    var nodes = [], edges = [], X = 8, maxD = 0, LV = 76, TOP = 50;
+    function skip(n){ return n.t === "par" ? skip(n.a) : n; }
+    function lay(n, depth){
+      n = skip(n);
+      var me = { n:n, depth:depth };
+      maxD = Math.max(maxD, depth);
+      if (n.t === "num"){
+        me.label = nodeParts(n).text;
+        var w = Math.max(50, me.label.length * 9.4 + 18);
+        me.x = X + w / 2; X += w + 6;
+      } else {
+        var kids = [lay(n.a, depth + 1)];
+        if (n.b) kids.push(lay(n.b, depth + 1));
+        var inf = info[n.id];
+        me.val = inf ? numText(inf.value) : "";
+        me.x = (kids[0].x + kids[kids.length - 1].x) / 2;
+        kids.forEach(function(k){ edges.push([me, k]); });
+      }
+      me.y = TOP + depth * LV;
+      nodes.push(me);
+      return me;
+    }
+    lay(root, 0);
+    var W = Math.ceil(X + 8), Hh = TOP + maxD * LV + 26;
+    var out = "";
+    edges.forEach(function(e){
+      var a = e[0], b = e[1];
+      out += '<line class="edge" x1="' + a.x.toFixed(1) + '" y1="' + (a.y + 18) + '" x2="' + b.x.toFixed(1)
+           + '" y2="' + (b.y - (b.n.t === "num" ? 13 : 18)) + '"/>';
+    });
+    nodes.forEach(function(me){
+      var n = me.n;
+      if (n.t === "num"){
+        out += '<text class="leaf" x="' + me.x.toFixed(1) + '" y="' + (me.y + 5) + '" text-anchor="middle">'
+             + esc(me.label) + "</text>";
+        return;
+      }
+      var inf = info[n.id], cls = clsOf(n), sym = n.t === "neg" ? "−" : n.op === "^" ? "xⁿ" : n.op;
+      out += '<g class="node c-' + cls + '"><circle class="o" cx="' + me.x.toFixed(1) + '" cy="' + me.y + '" r="18"/>'
+           + '<text class="sym" x="' + me.x.toFixed(1) + '" y="' + (me.y + 6) + '" text-anchor="middle">' + sym + "</text>"
+           + '<circle class="b" cx="' + (me.x + 15).toFixed(1) + '" cy="' + (me.y + 14) + '" r="8"/>'
+           + '<text class="bn" x="' + (me.x + 15).toFixed(1) + '" y="' + (me.y + 17.5) + '" text-anchor="middle">'
+           + (inf.step + 1) + "</text></g>";
+      var pw = Math.max(30, me.val.length * 8 + 14);
+      var px = Math.min(Math.max(me.x, pw / 2 + 2), W - pw / 2 - 2);
+      out += '<g class="val c-' + cls + '" data-step="' + inf.step + '">'
+           + '<rect x="' + (px - pw / 2).toFixed(1) + '" y="' + (me.y - 44) + '" width="' + pw.toFixed(1)
+           + '" height="21" rx="10.5"/>'
+           + '<text x="' + px.toFixed(1) + '" y="' + (me.y - 29) + '" text-anchor="middle">' + esc(me.val) + "</text></g>";
+    });
+    return '<svg class="tree" width="' + W + '" height="' + Hh + '" viewBox="0 0 ' + W + " " + Hh
+         + '" role="img" aria-label="Expression tree: each operation above the two numbers it works on">' + out + "</svg>";
+  }
+
+  /* ===================== the words for each step ===================== */
+  function powWords(st){
+    var a = st.pick.a, k = Number(st.pick.b.v.n), base = opnd(a, true), pk = Math.abs(k);
+    var head = "<b>" + base + "<sup>" + esc(numText(st.pick.b.v)) + "</sup></b>";
+    if (k === 0) return head + " — anything (except 0) to the power 0 is <b>1</b>.";
+    if (k === 1) return head + " — a power of 1 leaves it alone: <b>" + numParts(st.value).html + "</b>.";
+    var rep = pk <= 6 ? new Array(pk + 1).join(base + " × ").slice(0, -3) : pk + " " + base + "s multiplied together";
+    if (k < 0) return head + " — a negative power means one over: <b>1 ÷ (" + rep + ") = " + numParts(st.value).html + "</b>.";
+    return head + " means <b>" + rep + " = " + numParts(st.value).html + "</b>.";
+  }
+  function doText(st){
+    var n = st.pick, v = numParts(st.value);
+    if (n.t === "neg") return "The minus out front means “the opposite of”: <b>−" + opnd(n.a) + " = " + v.html + "</b>.";
+    if (n.op === "^") return powWords(st);
+    var s = "<b>" + nodeParts(n.a).html + " " + n.op + " " + opnd(n.b) + " = " + v.html + "</b>.";
+    if (n.op === "÷" && st.value.d !== 1n && n.a.v.d === 1n && n.b.v.d === 1n)
+      s += v.frac ? " It doesn’t come out even, so it stays a fraction." : "";
+    return s;
+  }
+  function whyText(st, isFirstInGroup){
+    var c = st.counts, inPar = !!st.group, here = inPar ? " in here" : "", s = "";
+    if (st.cls === "e"){
+      if (c.m || c.a) s = "Exponents come before × ÷ + −.";
+      else if (c.e > 1) s = "Powers first.";
+    } else if (st.cls === "m"){
+      if (st.pick.t === "neg") s = c.a ? "Taking the opposite is multiplying by −1, so it goes before + and −." : "";
+      else {
+        if (c.a) s = "× and ÷ come before + and −.";
+        if (c.m > 1) s += (s ? " " : "") + "Of the × and ÷" + here + ", this is the first from the left.";
+      }
+    } else {
+      if (c.a > 1) s = "Only + and − are left" + here + ", so go left to right.";
+    }
+    if (!s && !inPar && st.ops.length === 1) s = "Only one operation left.";
+    if (!s && inPar && st.ops.length === 1 && !isFirstInGroup) s = "Last one inside the parentheses.";
+    return s;
+  }
+
+  /* ===================== render ===================== */
+  var lastSteps = 0;
+  function render(){
+    var total = draw();
+    if (!total) return;
+    lastSteps = total;
+    if (S.step > total) S.step = total;
+    if (S.step < 1) S.step = 1;
+    $("stepper").hidden = !S.stepMode;
+    if (S.stepMode){
+      $("stepCount").textContent = S.step + " of " + total;
+      $("prevBtn").disabled = S.step <= 1;
+      $("nextBtn").disabled = S.step >= total;
+    }
+    veil(total);
+    $("statusLine").textContent = "";
+  }
+
+  function draw(){
+    var parsed, sol;
+    try {
+      parsed = parse(S.expr);
+      HASDEC = parsed.dec;
+      sol = solve(parsed.tree);
+    } catch (e){
+      if (e && e.user) return fail(e.user);
+      throw e;
+    }
+    if (!sol.steps.length)
+      return fail("That’s already just one number — nothing to work out. Try something like <b>3 + 4 × 2</b>.");
+
+    var steps = sol.steps, n = steps.length, info = {};
+    steps.forEach(function(st, i){ info[st.pick.id] = { step:i, value:st.value }; });
+
+    /* --- the chain: one line per rewrite --- */
+    var html = '<div class="chain-scroll"><div class="chain">';
+    sol.trees.forEach(function(t, i){
+      var st = steps[i], pv = steps[i - 1];
+      var o = { hl: st ? st.pick.id : null, hlCls: st ? st.cls : "",
+                fresh: pv ? pv.pick.id : null, freshCls: pv ? pv.cls : "" };
+      var next = "";
+      if (st){
+        next = '<span class="next">' + (st.group ? '<span class="badge c-p">P</span>' : "")
+             + '<span class="badge c-' + st.cls + '">' + (st.pick.t === "neg" ? "−( )" : LETTER[st.pick.op]) + "</span></span>";
+      }
+      html += '<div class="crow' + (i === n ? " result" : "") + '"' + (i ? ' data-step="' + (i - 1) + '"' : "") + ">"
+            + '<span class="eq">' + (i ? "=" : "") + '</span><span class="expr">' + H(t, o, true, false) + "</span>"
+            + next + "</div>";
+    });
+    html += "</div></div>";
+
+    /* --- the tree --- */
+    html += '<div class="treewrap"><div class="tapecap"><b class="lead">Expression tree.</b> Every operation sits '
+          + "above the two things it works on. A node can only be worked out once everything under it is a plain "
+          + "number — that’s all the order of operations really is. The little number on each node is the step "
+          + "where it gets done" + (S.stepMode ? ", and its answer appears above it as you go." : "; its answer is above it.")
+          + (hasPar(parsed.tree) ? " Parentheses don’t get a node of their own: they just decide what hangs under what." : "")
+          + '</div><div class="tree-scroll">' + treeSVG(parsed.tree, info) + "</div></div>";
+    $("workHost").innerHTML = html;
+
+    /* --- the words --- */
+    var items = [], seen = {}, lastGroup = null;
+    steps.forEach(function(st, i){
+      var lines = [], aside = null, g = st.group;
+      var firstInGroup = g && g.id !== lastGroup;
+      if (g){
+        lines.push(["p", "Parens", firstInGroup
+          ? "Start inside the " + (hasParAround(st.tree, g.id) ? "innermost " : "") + "parentheses: <b>" + plain(g) + "</b>."
+          : "Still inside the parentheses."]);
+      }
+      lastGroup = g ? g.id : null;
+      var why = whyText(st, firstInGroup);
+      var tagWord = st.pick.t === "neg" ? "Opposite" : VERB[st.pick.op];
+      lines.push([st.cls, tagWord, (why ? why + " " : "") + doText(st)
+        + (st.dropped ? " The parentheses are done, so they drop away." : "")]);
+
+      var p = st.pick;
+      if (!seen.md && p.op === "÷" && st.ops.some(function(o){ return o.op === "×" && !o.imp; })){
+        seen.md = true;
+        aside = "÷ before ×? Here, yes. × and ÷ are partners: whichever comes first, reading left to right, "
+              + "goes first. The M before the D in PEMDAS is just how the word is spelled.";
+      } else if (!seen.as && p.op === "−" && st.ops.some(function(o){ return o.op === "+"; })){
+        seen.as = true;
+        aside = "− before +? Here, yes. + and − are partners too, so go left to right. "
+              + "<b>10 − 3 + 2</b> is <b>9</b>, not 5.";
+      } else if (!seen.neg && p.op === "^" && st.parent && st.parent.t === "neg"){
+        seen.neg = true;
+        aside = "The minus sign waits its turn: <b>−3²</b> means “the opposite of 3²”, which is <b>−9</b>. "
+              + "To square −3 you’d write <b>(−3)²</b> = 9.";
+      }
+      items.push({ n:"Step&nbsp;" + (i + 1), step:i, lines:lines, aside:aside });
+    });
+    writeLog(items);
+
+    /* --- answer --- */
+    var fin = numParts(sol.value), facts = [];
+    var by = { e:0, m:0, a:0 }, inP = 0;
+    steps.forEach(function(st){ by[st.cls]++; if (st.group) inP++; });
+    var parts = [];
+    if (by.e) parts.push(by.e + " power" + (by.e === 1 ? "" : "s"));
+    if (by.m) parts.push(by.m + " multiply or divide");
+    if (by.a) parts.push(by.a + " add or subtract");
+    facts.push("<b>" + n + "</b> step" + (n === 1 ? "" : "s") + ": " + parts.join(", ")
+      + (inP ? " &mdash; " + inP + " of them inside parentheses" : "") + ".");
+    if (sol.value.d !== 1n){
+      var abs = sol.value.n < 0n ? -sol.value.n : sol.value.n, sg = sol.value.n < 0n ? "−" : "";
+      if (fin.frac){
+        facts.push("As a decimal: <b>" + sg + decStr(abs, sol.value.d) + "</b>");
+        if (abs > sol.value.d) facts.push("As a mixed number: <b>" + sg + (abs / sol.value.d) + " " + (abs % sol.value.d)
+          + "/" + sol.value.d + "</b>");
+      } else {
+        facts.push("As a fraction: <b>" + sg + abs + "/" + sol.value.d + "</b>");
+      }
+    }
+    if (impAnywhere(parsed.tree))
+      facts.push("Heads up: a number stuck to parentheses after ÷, like <b>6 ÷ 2(1 + 2)</b>, is famously argued about. "
+        + "Here it’s read the standard way, left to right: (6 ÷ 2) × (1 + 2).");
+    band('<span class="k">Answer</span><span class="v">' + fin.html + "</span>", facts, "answer");
+
+    /* --- why order matters --- */
+    var ltr = null;
+    try { ltr = evalTree(parse(S.expr, true).tree); } catch (e){ ltr = null; }
+    var mixed = by.m > 0 && by.a > 0;
+    var closer;
+    if (ltr && (ltr.n !== sol.value.n || ltr.d !== sol.value.d)){
+      closer = "<b>Why the order matters:</b> if you just went straight left to right through the × ÷ + −, "
+        + "you’d get <b>" + esc(numText(ltr)) + "</b> instead of <b>" + esc(fin.text) + "</b>.";
+    } else if (mixed){
+      closer = "<b>Lucky one:</b> going straight left to right happens to give <b>" + esc(fin.text)
+        + "</b> here too. That’s luck, not a rule — change one number and it usually breaks.";
+    } else {
+      closer = "<b>Check:</b> the answer is <b>" + esc(fin.text) + '</b> <span class="ok">✓</span>'
+        + (by.m + by.a > 1 ? " Every operation here is the same kind, so left to right is exactly the rule."
+                           : " There was only one way to go.");
+    }
+    $("closer").innerHTML = closer;
+    return n;
+  }
+  function hasParAround(root, id){              // is parentheses `id` inside other parentheses?
+    var found = false;
+    (function walk(n, inside){
+      if (n.t === "num" || found) return;
+      if (n.id === id){ found = inside; return; }
+      walk(n.a, inside || n.t === "par"); if (n.b) walk(n.b, inside || n.t === "par");
+    })(root, false);
+    return found;
+  }
+  function impAnywhere(n){
+    if (n.t === "num") return false;
+    if (n.t === "bin" && n.imp){
+      var l = n.a; while (l.t === "bin" && l.imp) l = l.a;
+      if (l.t === "bin" && l.op === "÷") return true;
+    }
+    return impAnywhere(n.a) || (n.b ? impAnywhere(n.b) : false);
+  }
+
+  /* ===================== shared shell ===================== */
+  function band(inner, facts, cls){
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = cls;
+    el.innerHTML = inner + '<div class="facts">' +
+      facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    $("board").parentNode.insertBefore(el, $("board"));
+  }
+  function writeLog(items){
+    var html = "";
+    items.forEach(function(it){
+      html += "<li" + (it.step !== undefined ? ' data-step="' + it.step + '"' : "") + ">"
+            + '<span class="n">' + it.n + "</span>";
+      it.lines.forEach(function(l){
+        html += '<div class="line"><span class="tag c-' + l[0] + '">' + l[1]
+              + '</span><span class="txt">' + l[2] + "</span></div>";
+      });
+      if (it.aside) html += '<div class="aside">' + it.aside + "</div>";
+      html += "</li>";
+    });
+    $("log").innerHTML = html;
+  }
+  function fail(msg){
+    $("workHost").innerHTML = ""; $("log").innerHTML = "";
+    $("closer").textContent = ""; $("stepper").hidden = true;
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "notice"; el.innerHTML = msg;
+    $("board").parentNode.insertBefore(el, $("board"));
+    $("statusLine").textContent = el.textContent;
+    return 0;
+  }
+  function veil(total){
+    Array.prototype.forEach.call(document.querySelectorAll("[data-step]"), function(el){
+      var s = Number(el.getAttribute("data-step"));
+      el.classList.toggle("veil", S.stepMode && s >= S.step);
+    });
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.classList.toggle("masked", S.stepMode && S.step < total);
+    $("closer").style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+  }
+
+  /* ===================== making problems ===================== */
+  function rint(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pickOf(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  function shuffle(a){
+    for (var i = a.length - 1; i > 0; i--){ var j = rint(0, i), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function decimalOf(max){
+    return Math.random() < .5 ? String(rint(1, max * 10) / 10)
+                              : String(rint(0, Math.max(1, Math.floor(max / 2))) + pickOf([.25, .5, .75]));
+  }
+  function candidate(G){
+    var L = G.len, ops = G.ops, seq = shuffle(ops.slice()).slice(0, L);
+    while (seq.length < L) seq.push(pickOf(ops));
+    seq = shuffle(seq);
+    var small = Math.min(12, G.max), terms = [];
+    for (var i = 0; i <= L; i++){
+      var prev = seq[i - 1], v;
+      if (prev === "÷") v = String(rint(2, Math.min(small, 9)));
+      else if (prev === "×") v = String(rint(2, small));
+      else v = (G.dec && Math.random() < .45) ? decimalOf(G.max) : String(rint(1, G.max));
+      terms.push(v);
+    }
+    // a dividend that starts its own run gets made a multiple of its divisor, so ÷ comes out even more often
+    for (var j = 1; j <= L; j++){
+      if (seq[j - 1] === "÷" && seq[j - 2] !== "×" && seq[j - 2] !== "÷" && Math.random() < .85){
+        var dv = Number(terms[j]);
+        terms[j - 1] = String(dv * rint(1, Math.max(2, Math.floor(G.max / dv) + 2)));
+      }
+    }
+    var sup = {};
+    if (G.exp){
+      var k = L >= 6 ? 2 : 1;
+      for (var e = 0; e < k; e++){
+        var at = rint(0, L), cube = Math.random() < .3;
+        terms[at] = String(cube ? rint(2, 4) : rint(2, Math.min(9, Math.max(3, G.max))));
+        sup[at] = cube ? "³" : "²";
+      }
+    }
+    var gs = [];
+    if (G.par && L >= 2){
+      var want = (L >= 5 && Math.random() < .5) ? 2 : 1, tries = 0;
+      while (gs.length < want && tries++ < 40){
+        var a = rint(0, L - 1), b = rint(a + 1, Math.min(L, a + 3));
+        if (a === 0 && b === L) continue;
+        var ok = gs.every(function(g){
+          var same = a === g.i && b === g.j;
+          return !same && (b < g.i || a > g.j || (a >= g.i && b <= g.j) || (a <= g.i && b >= g.j));
+        });
+        if (ok) gs.push({ i:a, j:b, sq: G.exp && Math.random() < .25 });
+      }
+    }
+    function build(list){
+      var pre = terms.map(function(){ return ""; }), post = terms.map(function(){ return ""; });
+      list.slice().sort(function(x, y){ return (y.j - y.i) - (x.j - x.i); }).forEach(function(g){ pre[g.i] += "("; });
+      list.slice().sort(function(x, y){ return (x.j - x.i) - (y.j - y.i); }).forEach(function(g){ post[g.j] += ")" + (g.sq ? "²" : ""); });
+      var s = "";
+      for (var t = 0; t <= L; t++){
+        if (t) s += " " + seq[t - 1] + " ";
+        s += pre[t] + terms[t] + (sup[t] || "") + post[t];
+      }
+      return s;
+    }
+    // the same problem with each pair of parentheses taken out in turn
+    var without = gs.map(function(g){ return build(gs.filter(function(h){ return h !== g; })); });
+    return { str:build(gs), without:without };
+  }
+  function niceEnough(sol, G){
+    return sol.steps.every(function(st){
+      var v = st.value;
+      if (v.n < 0n) return false;
+      if (G.dec ? (1000n % v.d !== 0n) : v.d !== 1n) return false;
+      return (v.n / v.d) <= 10000n;
+    });
+  }
+  function makeProblem(){
+    var G = S.gen, keepDec = HASDEC, fallback = null;
+    for (var tries = 0; tries < 6000; tries++){
+      var c = candidate(G), sol;
+      try { sol = solve(parse(c.str).tree); } catch (e){ continue; }
+      var big = sol.steps.some(function(st){ var v = st.value; return (v.n < 0n ? -v.n : v.n) / v.d > 100000n; });
+      if (big) continue;
+      if (!fallback) fallback = c.str;
+      if (G.nice && !niceEnough(sol, G)) continue;
+      if (tries < 4000 && c.without.some(function(w){   // every pair of parentheses should change something
+        try { var v = evalTree(parse(w).tree); return v.n === sol.value.n && v.d === sol.value.d; }
+        catch (e){ return false; }                      // taking them out broke it, so they matter
+      })) continue;
+      HASDEC = keepDec;
+      return { str:c.str, exact:true };
+    }
+    HASDEC = keepDec;
+    return fallback ? { str:fallback, exact:false } : null;
+  }
+
+  /* ===================== wiring ===================== */
+  var inp = $("exprIn");
+  inp.addEventListener("input", function(){ S.expr = inp.value; S.step = 1; render(); save(); });
+  Array.prototype.forEach.call(document.querySelectorAll("#keys button"), function(b){
+    b.addEventListener("click", function(){
+      var k = b.getAttribute("data-k"), st = inp.selectionStart, en = inp.selectionEnd;
+      if (typeof st !== "number"){ st = en = inp.value.length; }
+      inp.value = inp.value.slice(0, st) + k + inp.value.slice(en);
+      inp.focus();
+      inp.setSelectionRange(st + k.length, st + k.length);
+      S.expr = inp.value; S.step = 1; render(); save();
+    });
+  });
+
+  var EX = ["3 + 4 × 2", "(3 + 4) × 2", "20 − 12 ÷ 4 × 2 + 1", "48 ÷ 6 × 2 − (7 − 3) + 5²",
+            "2 × (3 + 5)² − 18 ÷ 3", "[12 − (2 + 4) × 2] ÷ 3 + 7", "10 − 3 + 2", "−3² + (−3)²",
+            "1.5 × 4 − 2.25 ÷ 0.5", "7 ÷ 3 + 2 × 5 ÷ 6"];
+  (function buildChips(){
+    var host = $("chips");
+    EX.forEach(function(ex){
+      var btn = document.createElement("button");
+      btn.className = "chip"; btn.type = "button"; btn.textContent = ex;
+      btn.addEventListener("click", function(){ setExpr(ex); });
+      host.appendChild(btn);
+    });
+  })();
+  function setExpr(s){ S.expr = s; inp.value = s; S.step = 1; render(); save(); }
+
+  /* the maker's controls */
+  function paintGen(){
+    var G = S.gen;
+    Array.prototype.forEach.call(document.querySelectorAll("#opsT .tog"), function(b){
+      b.setAttribute("aria-pressed", String(G.ops.indexOf(b.getAttribute("data-op")) >= 0));
+    });
+    $("parT").setAttribute("aria-pressed", String(G.par));
+    $("expT").setAttribute("aria-pressed", String(G.exp));
+    $("decT").setAttribute("aria-pressed", String(G.dec));
+    $("niceT").setAttribute("aria-pressed", String(G.nice));
+    Array.prototype.forEach.call(document.querySelectorAll("#lenT button"), function(b){
+      b.setAttribute("aria-pressed", String(Number(b.getAttribute("data-v")) === G.len));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#maxT button"), function(b){
+      b.setAttribute("aria-pressed", String(Number(b.getAttribute("data-v")) === G.max));
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#opsT .tog"), function(b){
+    b.addEventListener("click", function(){
+      var op = b.getAttribute("data-op"), i = S.gen.ops.indexOf(op);
+      if (i >= 0){ if (S.gen.ops.length > 1) S.gen.ops.splice(i, 1); }
+      else S.gen.ops.push(op);
+      S.gen.ops.sort(function(x, y){ return "+−×÷".indexOf(x) - "+−×÷".indexOf(y); });
+      paintGen(); save();
+    });
+  });
+  [["parT","par"],["expT","exp"],["decT","dec"],["niceT","nice"]].forEach(function(p){
+    $(p[0]).addEventListener("click", function(){ S.gen[p[1]] = !S.gen[p[1]]; paintGen(); save(); });
+  });
+  function segs(host, values, label, key){
+    values.forEach(function(v){
+      var b = document.createElement("button");
+      b.type = "button"; b.setAttribute("data-v", v); b.textContent = label(v);
+      b.addEventListener("click", function(){ S.gen[key] = v; paintGen(); save(); });
+      $(host).appendChild(b);
+    });
+  }
+  segs("lenT", [3,4,5,6,8,10], function(v){ return v + " ops"; }, "len");
+  segs("maxT", [10,20,50,100], function(v){ return "up to " + v; }, "max");
+  $("genBtn").addEventListener("click", function(){
+    var r = makeProblem();
+    if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+    $("genMsg").textContent = r.exact ? "" : "Couldn’t keep everything whole with those settings, so this one has a "
+      + "fraction or a negative in it. Fewer ÷ makes it easier.";
+    setExpr(r.str);
+  });
+
+  function setAs(v){
+    S.as = v;
+    $("asFrac").setAttribute("aria-pressed", String(v === "frac"));
+    $("asDec").setAttribute("aria-pressed", String(v === "dec"));
+    render(); save();
+  }
+  $("asFrac").addEventListener("click", function(){ setAs("frac"); });
+  $("asDec").addEventListener("click", function(){ setAs("dec"); });
+
+  function setStepMode(on){
+    S.stepMode = on; S.step = 1;
+    $("allBtn").setAttribute("aria-pressed", String(!on));
+    $("stepBtn").setAttribute("aria-pressed", String(on));
+    render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
+  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
+  $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+  document.addEventListener("keydown", function(e){
+    if (!S.stepMode || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
+    if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
+    if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    paint(); save();
+  });
+  $("maker").addEventListener("toggle", save);
+
+  function save(){
+    try{ localStorage.setItem("order-stack", JSON.stringify({
+      expr:S.expr, as:S.as, stepMode:S.stepMode, gen:S.gen, maker:$("maker").open,
+      theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
+  }
+  function load(){
+    try{
+      var v = JSON.parse(localStorage.getItem("order-stack") || "null");
+      if (!v) return;
+      if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
+      if (typeof v.expr === "string" && v.expr) S.expr = v.expr;
+      if (v.as === "frac" || v.as === "dec") S.as = v.as;
+      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+      if (v.gen && Array.isArray(v.gen.ops) && v.gen.ops.length){
+        var g = v.gen, ok = ["+","−","×","÷"];
+        S.gen.ops = g.ops.filter(function(o){ return ok.indexOf(o) >= 0; });
+        if (!S.gen.ops.length) S.gen.ops = ok.slice();
+        ["par","exp","dec","nice"].forEach(function(k){ if (typeof g[k] === "boolean") S.gen[k] = g[k]; });
+        if ([3,4,5,6,8,10].indexOf(g.len) >= 0) S.gen.len = g.len;
+        if ([10,20,50,100].indexOf(g.max) >= 0) S.gen.max = g.max;
+      }
+      if (v.maker) $("maker").open = true;
+    }catch(e){}
+  }
+
+  load();
+  inp.value = S.expr;
+  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
+  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  $("asFrac").setAttribute("aria-pressed", String(S.as === "frac"));
+  $("asDec").setAttribute("aria-pressed", String(S.as === "dec"));
+  paint(); paintGen(); render();
+})();
+</script>
