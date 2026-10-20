@@ -19,5 +19,5 @@ Every page also has:
 - a picture of the problem: **tape diagrams** and **area models** on the arithmetic pages, an **expression tree** for the order of operations, balance scales, number lines and graphs for algebra, and shapes drawn to scale for geometry
 - light and dark themes, and a print layout
 
-Each page is one self-contained HTML file with no build step. Open it in a browser, or use the live site:
+Each page is one self-contained HTML file with no build step. A shared `nav.js` adds the bar across the top of every page (back to the home page, and a link to each of the others); to add a page, add it to the list in that file. Open it in a browser, or use the live site:
 <https://chrisdfennell.github.io/arithmetic-helpers/>
