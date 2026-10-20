@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Division House</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -121,7 +122,8 @@
     font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
     text-transform:uppercase;color:var(--ink-3);
   }
-  .segmented{display:flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
+  .segmented{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px}
+  @media (max-width:420px){ .segmented button{padding:7px 10px;font-size:13px} }
   .segmented button{
     font-family:var(--f-body);font-size:13.5px;font-weight:500;
     border:0;background:transparent;color:var(--ink-2);
