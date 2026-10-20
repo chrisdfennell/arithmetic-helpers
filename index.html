@@ -3,88 +3,528 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Arithmetic Helpers</title>
+<meta name="description" content="Type in a math problem and see every step written out the way it's done on paper: addition, subtraction, multiplication, long division, order of operations, algebra and geometry.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
   :root{
-    --paper:#EDEFE9; --surface:#F8F9F5; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
+    --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
+    --grid:rgba(25,33,29,.06);
     --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17;
     --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
+    --shadow-up:0 1px 0 rgba(25,33,29,.05), 0 24px 40px -22px rgba(25,33,29,.55);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --paper:#131817; --surface:#1B2220; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+      --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+      --grid:rgba(231,235,228,.05);
       --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+      --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
     }
   }
   :root[data-theme="dark"]{
-    --paper:#131817; --surface:#1B2220; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+    --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+    --grid:rgba(231,235,228,.05);
     --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
   }
+
   *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;
     line-height:1.55;-webkit-font-smoothing:antialiased}
-  .page{max-width:960px;margin:0 auto;padding:40px 16px 72px}
-  .eyebrow{font-family:"IBM Plex Mono",Consolas,monospace;font-size:11.5px;font-weight:600;letter-spacing:.16em;
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+  @media (max-width:520px){.wrap{padding:0 16px}}
+
+  /* the seven page colours, the site's signature */
+  .stripe{display:flex;height:6px}
+  .stripe i{flex:1}
+  .c-add{--c:var(--add)} .c-sub{--c:var(--sub)} .c-mul{--c:var(--mul)} .c-div{--c:var(--div)}
+  .c-ord{--c:var(--ord)} .c-alg{--c:var(--alg)} .c-geo{--c:var(--geo)}
+  .stripe i{background:var(--c)}
+
+  /* ---- top bar ---- */
+  .top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-display);font-stretch:112%;
+    font-weight:800;font-size:17px;letter-spacing:-.01em}
+  .mark{display:grid;grid-template-columns:repeat(4,7px);grid-auto-rows:7px;gap:2px}
+  .mark i{border-radius:2px;background:var(--c)}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+  :focus-visible{outline:2.5px solid var(--ord);outline-offset:3px}
+
+  /* ---- hero ---- */
+  .hero{position:relative;padding:40px 0 64px}
+  .hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:26px 26px;
+    -webkit-mask-image:radial-gradient(ellipse 75% 85% at 70% 40%, #000 30%, transparent 75%);
+            mask-image:radial-gradient(ellipse 75% 85% at 70% 40%, #000 30%, transparent 75%)}
+  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:48px;align-items:center}
+  @media (max-width:900px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:36px} h1{font-size:clamp(42px,10vw,72px)}}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
     text-transform:uppercase;color:var(--ink-3)}
-  h1{font-family:"Archivo","Helvetica Neue",Arial,sans-serif;font-stretch:118%;font-weight:800;
-    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 .3em}
-  .lede{color:var(--ink-2);max-width:52ch;margin:0 0 32px}
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
-  a.card{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;
-    background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--c);
-    border-radius:6px 14px 14px 6px;box-shadow:var(--shadow);padding:18px 20px 20px}
-  a.card:hover{border-color:var(--c)}
-  a.card:focus-visible{outline:2.5px solid var(--c);outline-offset:3px}
-  .sign{font-family:"IBM Plex Mono",Consolas,monospace;font-size:30px;font-weight:600;color:var(--c);line-height:1}
-  .card h2{font-family:"Archivo","Helvetica Neue",Arial,sans-serif;font-stretch:112%;font-weight:700;font-size:19px;margin:0}
+  h1{font-family:var(--f-display);font-stretch:120%;font-weight:800;
+    font-size:clamp(42px,5.7vw,78px);line-height:.94;letter-spacing:-.03em;margin:.22em 0 .32em;text-wrap:balance}
+  h1 .soft{color:var(--ink-3)}
+  h1 .u{background:linear-gradient(90deg,var(--add),var(--sub),var(--mul),var(--div),var(--ord),var(--alg),var(--geo));
+    background-size:100% .12em;background-repeat:no-repeat;background-position:0 92%;padding-bottom:.04em}
+  .lede{color:var(--ink-2);font-size:18px;max-width:46ch;margin:0 0 28px}
+  .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;text-decoration:none;
+    border-radius:10px;padding:11px 18px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
+  .btn:hover{border-color:var(--ink-3)}
+  .btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .btn.primary:hover{filter:brightness(1.15)}
+
+  /* the worked example that plays itself */
+  .demo{background:var(--surface);border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow-up);overflow:hidden}
+  .demo-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:12px 14px 12px 16px;border-bottom:1px solid var(--rule)}
+  .tabs{display:flex;background:var(--surface-2);border-radius:9px;padding:3px;gap:3px}
+  .tabs button{font-family:var(--f-body);font-size:13px;font-weight:500;border:0;background:transparent;color:var(--ink-2);
+    padding:6px 12px;border-radius:6px;cursor:pointer}
+  .tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .pause{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.06em;color:var(--ink-2);
+    background:transparent;border:1px solid var(--rule);border-radius:999px;padding:5px 11px;cursor:pointer}
+  .pause:hover{color:var(--ink);border-color:var(--ink-3)}
+  .demo-body{padding:20px 20px 6px;min-height:254px}
+  .dl{display:grid;grid-template-columns:1.6ch auto;gap:0 12px;align-items:center;padding:7px 0;
+    font-family:var(--f-mono);font-weight:600;font-size:clamp(18px,2.6vw,23px);font-variant-numeric:tabular-nums;
+    border-bottom:1px dashed var(--rule);white-space:nowrap}
+  .dl:last-child{border-bottom:0}
+  .dl .eq{color:var(--ink-3)}
+  .dl.past{color:var(--ink-3)}
+  .dl.past .hl{background:transparent;box-shadow:none;color:inherit}
+  .dl.done .expr{color:var(--c)}
+  .dl i{font-family:Georgia,"Times New Roman",serif;font-size:1.08em}
+  .hl{color:var(--hc);background:color-mix(in srgb, var(--hc) 14%, transparent);box-shadow:inset 0 0 0 2px var(--hc);
+    border-radius:7px;padding:.04em .32ch}
+  .hl-m{--hc:var(--mul)} .hl-a{--hc:var(--add)} .hl-alg{--hc:var(--alg)}
+  @media (prefers-reduced-motion:no-preference){
+    .dl.now{animation:rise .35s ease both}
+    @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  }
+  .say{margin:0 20px;padding:12px 14px;border-radius:10px;background:var(--surface-2);font-size:14.5px;color:var(--ink-2);min-height:4.4em}
+  .say b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .demo-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 20px 16px}
+  .dots{display:flex;gap:5px}
+  .dots i{width:7px;height:7px;border-radius:50%;background:var(--rule)}
+  .dots i.on{background:var(--c)}
+  .demo-foot a{font-size:14px;font-weight:600;color:var(--c);text-decoration:none}
+  .demo-foot a:hover{text-decoration:underline}
+
+  /* ---- sections ---- */
+  section.group{padding:26px 0 30px}
+  .group-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .group-head h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(24px,3.4vw,32px);
+    letter-spacing:-.015em;margin:0}
+  .group-head p{margin:0;color:var(--ink-3);font-size:15px}
+  .num{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.1em}
+
+  .cards{display:grid;gap:18px;grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:560px){
+    .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .cards .art{height:104px} .cards .art svg{width:min(170px,92%);height:auto}
+    .cards .body{padding:12px 13px 14px;gap:5px} .cards h3{font-size:16.5px} .cards p{font-size:13px}
+    .kind{font-size:10px;letter-spacing:.08em}
+  }
+  .cards.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:700px){.cards.two{grid-template-columns:minmax(0,1fr)}}
+
+  a.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--surface);
+    border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
+  a.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-up);border-color:var(--c)}
+  @media (prefers-reduced-motion:reduce){a.card{transition:none} a.card:hover{transform:none}}
+  a.card:focus-visible{outline-color:var(--c)}
+  .art{display:flex;align-items:center;justify-content:center;height:132px;
+    background:color-mix(in srgb, var(--c) 9%, var(--surface));border-bottom:1px solid color-mix(in srgb, var(--c) 22%, var(--rule))}
+  .art svg{width:200px;height:110px;overflow:visible}
+  .art text{font-family:var(--f-mono);font-weight:600;font-size:17px;fill:var(--ink);font-variant-numeric:tabular-nums}
+  .art .k{fill:var(--c)}
+  .art .sm{font-size:11.5px}
+  .art .mu{fill:var(--ink-3)}
+  .art .ln{stroke:var(--ink);stroke-width:2;stroke-linecap:round;fill:none}
+  .art .lk{stroke:var(--c);stroke-width:2;stroke-linecap:round;fill:none}
+  .art .fk{fill:color-mix(in srgb, var(--c) 16%, transparent);stroke:var(--c);stroke-width:2}
+  .art .var{font-family:Georgia,"Times New Roman",serif;font-style:italic}
+  .body{display:flex;flex-direction:column;gap:7px;padding:16px 18px 18px;flex:1}
+  .kind{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:11px;font-weight:600;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--c)}
+  .kind b{font-size:16px;letter-spacing:0;line-height:1}
+  .card h3{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:20px;letter-spacing:-.005em;margin:0}
   .card p{margin:0;font-size:14.5px;color:var(--ink-2)}
-  .section{font-family:"IBM Plex Mono",Consolas,monospace;font-size:11.5px;font-weight:600;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--ink-3);margin:36px 0 14px}
+  .go{margin-top:auto;padding-top:8px;font-size:13.5px;font-weight:600;color:var(--c)}
+  .go span{display:inline-block;transition:transform .18s ease}
+  a.card:hover .go span{transform:translateX(4px)}
+
+  /* the wide card for the order of operations */
+  a.card.wide{flex-direction:row}
+  a.card.wide .art{width:min(42%,380px);height:auto;min-height:190px;flex:none;
+    border-bottom:0;border-right:1px solid color-mix(in srgb, var(--c) 22%, var(--rule))}
+  a.card.wide .art svg{width:260px;height:142px}
+  a.card.wide .body{padding:22px 26px 24px;gap:9px}
+  a.card.wide h3{font-size:24px}
+  .ticks{display:flex;flex-wrap:wrap;gap:6px 8px;margin:4px 0 0;padding:0;list-style:none}
+  .ticks li{font-size:13px;color:var(--ink-2);background:var(--surface-2);border-radius:999px;padding:3px 10px}
+  @media (max-width:700px){
+    a.card.wide{flex-direction:column}
+    a.card.wide .art{width:auto;min-height:0;height:150px;border-right:0;border-bottom:1px solid color-mix(in srgb, var(--c) 22%, var(--rule))}
+    a.card.wide .art svg{width:220px;height:120px}
+  }
+
+  /* ---- what every page does ---- */
+  .every{margin:34px 0 10px;background:var(--surface);border:1px solid var(--rule);border-radius:18px;box-shadow:var(--shadow);
+    padding:28px 28px 30px}
+  .every h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(22px,3vw,28px);margin:0 0 4px}
+  .every > p{margin:0 0 22px;color:var(--ink-3)}
+  .feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 28px}
+  @media (max-width:860px){.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:540px){.feats{grid-template-columns:minmax(0,1fr)}.every{padding:22px 18px 24px}}
+  .feat{display:grid;grid-template-columns:38px minmax(0,1fr);gap:2px 12px}
+  .feat .ic{grid-row:1 / span 2;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--c);background:color-mix(in srgb, var(--c) 13%, transparent)}
+  .feat h3{margin:0;font-size:15.5px;font-weight:600}
+  .feat p{margin:0;font-size:14px;color:var(--ink-2)}
+
+  footer{padding:36px 0 46px;color:var(--ink-3);font-size:13.5px}
+  footer .row{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;align-items:center}
+  footer a{color:var(--ink-2)}
+  footer .stripe{height:4px;border-radius:2px;overflow:hidden;margin-bottom:22px}
 </style>
-<div class="page">
-  <div class="eyebrow">Arithmetic, worked out</div>
-  <h1>Arithmetic Helpers</h1>
-  <p class="lede">Type in a problem and see every step written out, the way it's done on paper,
-    with tape diagrams and area models alongside. Works with whole numbers, decimals and fractions.</p>
-  <div class="cards">
-    <a class="card" href="addition.html" style="--c:var(--add)">
-      <span class="sign">+</span><h2>The Carry Column</h2>
-      <p>Addition: line up the decimal points or find a common denominator, and watch every carry.</p>
+
+<div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-geo"></i></div>
+
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="index.html">
+      <span class="mark" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-geo"></i></span>
+      Arithmetic Helpers
     </a>
-    <a class="card" href="subtraction.html" style="--c:var(--sub)">
-      <span class="sign">&minus;</span><h2>The Borrow Bank</h2>
-      <p>Subtraction: every borrow crossed out and written above, so you can see where the ten came from.</p>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Free &middot; no sign-up &middot; nothing to install</div>
+        <h1>Every step, <span class="u">written out.</span></h1>
+        <p class="lede">Type in a math problem and watch it get worked the way it’s done on paper, one move at a time,
+          with the reason for each move and a picture beside it. From carrying the one to solving for <i>x</i>.</p>
+        <div class="cta">
+          <a class="btn primary" href="#helpers">Pick a helper <span aria-hidden="true">↓</span></a>
+          <a class="btn" href="pemdas.html">Try a long problem</a>
+        </div>
+      </div>
+
+      <div class="demo c-ord" id="demo" aria-label="A worked example">
+        <div class="demo-head">
+          <div class="tabs" role="group" aria-label="Which example">
+            <button type="button" data-demo="ord" aria-pressed="true">Order of operations</button>
+            <button type="button" data-demo="alg" aria-pressed="false">Algebra</button>
+          </div>
+          <button type="button" class="pause" id="pauseBtn">Pause</button>
+        </div>
+        <div class="demo-body" id="demoBody"></div>
+        <p class="say" id="demoSay"></p>
+        <div class="demo-foot">
+          <span class="dots" id="demoDots" aria-hidden="true"></span>
+          <a id="demoLink" href="pemdas.html">Work your own <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="helpers"></div>
+
+  <section class="group" aria-labelledby="g1">
+    <div class="group-head"><span class="num">01</span><h2 id="g1">The four operations</h2>
+      <p>Whole numbers, decimals and fractions, on paper.</p></div>
+    <div class="cards">
+      <a class="card c-add" href="addition.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <text class="k sm" x="110" y="20" text-anchor="middle">1</text>
+            <text x="110" y="42" text-anchor="middle">4</text><text x="128" y="42" text-anchor="middle">7</text>
+            <text class="mu" x="86" y="64" text-anchor="middle">+</text>
+            <text x="110" y="64" text-anchor="middle">3</text><text x="128" y="64" text-anchor="middle">8</text>
+            <line class="ln" x1="78" y1="73" x2="140" y2="73"/>
+            <text class="k" x="110" y="96" text-anchor="middle">8</text><text class="k" x="128" y="96" text-anchor="middle">5</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>+</b> Addition</span>
+          <h3>The Carry Column</h3>
+          <p>Line up the decimal points or find a common denominator, and watch every carry.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="card c-sub" href="subtraction.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <text class="k sm" x="110" y="20" text-anchor="middle">4</text><text class="k sm" x="130" y="20" text-anchor="middle">12</text>
+            <text x="110" y="42" text-anchor="middle">5</text><text x="128" y="42" text-anchor="middle">2</text>
+            <line class="lk" x1="102" y1="45" x2="118" y2="29"/><line class="lk" x1="120" y1="45" x2="136" y2="29"/>
+            <text class="mu" x="86" y="64" text-anchor="middle">−</text>
+            <text x="110" y="64" text-anchor="middle">1</text><text x="128" y="64" text-anchor="middle">7</text>
+            <line class="ln" x1="78" y1="73" x2="140" y2="73"/>
+            <text class="k" x="110" y="96" text-anchor="middle">3</text><text class="k" x="128" y="96" text-anchor="middle">5</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>−</b> Subtraction</span>
+          <h3>The Borrow Bank</h3>
+          <p>Every borrow crossed out and written above, so you can see where the ten came from.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="card c-mul" href="multiplication.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <text x="118" y="16" text-anchor="middle">2</text><text x="134" y="16" text-anchor="middle">3</text>
+            <text class="mu" x="86" y="35" text-anchor="middle">×</text>
+            <text x="118" y="35" text-anchor="middle">1</text><text x="134" y="35" text-anchor="middle">4</text>
+            <line class="ln" x1="78" y1="43" x2="144" y2="43"/>
+            <text class="k" x="118" y="61" text-anchor="middle">9</text><text class="k" x="134" y="61" text-anchor="middle">2</text>
+            <text class="k" x="102" y="79" text-anchor="middle">2</text><text class="k" x="118" y="79" text-anchor="middle">3</text><text class="k" x="134" y="79" text-anchor="middle">0</text>
+            <line class="lk" x1="78" y1="87" x2="144" y2="87"/>
+            <text x="102" y="105" text-anchor="middle">3</text><text x="118" y="105" text-anchor="middle">2</text><text x="134" y="105" text-anchor="middle">2</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>×</b> Multiplication</span>
+          <h3>The Product Ladder</h3>
+          <p>One rung per digit, partial products stacked and added, then the decimal point.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="card c-div" href="division.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <text class="k" x="118" y="24" text-anchor="middle">1</text><text class="k" x="134" y="24" text-anchor="middle">3</text>
+            <line class="ln" x1="96" y1="32" x2="148" y2="32"/>
+            <path class="ln" d="M96 32 Q105 47 96 62"/>
+            <text x="80" y="54" text-anchor="middle">4</text>
+            <text x="118" y="54" text-anchor="middle">5</text><text x="134" y="54" text-anchor="middle">2</text>
+            <text class="mu" x="104" y="76" text-anchor="middle">−</text><text class="mu" x="118" y="76" text-anchor="middle">4</text>
+            <line class="lk" x1="134" y1="60" x2="134" y2="84" stroke-dasharray="3 3"/>
+            <line class="ln" x1="108" y1="83" x2="128" y2="83"/>
+            <text x="118" y="102" text-anchor="middle">1</text><text x="134" y="102" text-anchor="middle">2</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>÷</b> Division</span>
+          <h3>The Division House</h3>
+          <p>Divide, multiply, subtract, bring down. Remainders, decimals or fractions.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="group" aria-labelledby="g2">
+    <div class="group-head"><span class="num">02</span><h2 id="g2">Put them together</h2>
+      <p>Long problems with every operation at once.</p></div>
+    <a class="card wide c-ord" href="pemdas.html">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 260 142">
+          <text x="30" y="34">3 + </text>
+          <rect class="fk" x="70" y="14" width="66" height="28" rx="7"/>
+          <text class="k" x="78" y="34">4 × 2</text>
+          <text class="mu" x="146" y="34">÷ 2</text>
+          <text class="mu" x="10" y="80">=</text>
+          <text x="30" y="80">3 + </text>
+          <rect class="fk" x="70" y="60" width="66" height="28" rx="7"/>
+          <text class="k" x="78" y="80">8 ÷ 2</text>
+          <text class="mu" x="10" y="126">=</text>
+          <text class="k" x="30" y="126">7</text>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="kind"><b>( )</b> Order of operations</span>
+        <h3>The Order Stack</h3>
+        <p>PEMDAS, one operation at a time: parentheses, exponents, then × and ÷, then + and −, with the reason
+          each one goes next. An expression tree shows why, and a problem maker builds practice problems with
+          the operations you choose.</p>
+        <ul class="ticks"><li>+ − × ÷</li><li>parentheses</li><li>exponents</li><li>up to 24 operations</li><li>make me a problem</li></ul>
+        <span class="go">Open <span aria-hidden="true">→</span></span>
+      </div>
     </a>
-    <a class="card" href="multiplication.html" style="--c:var(--mul)">
-      <span class="sign">&times;</span><h2>The Product Ladder</h2>
-      <p>Multiplication: one rung per digit, partial products stacked and added, then the decimal point.</p>
-    </a>
-    <a class="card" href="division.html" style="--c:var(--div)">
-      <span class="sign">&divide;</span><h2>The Division House</h2>
-      <p>Long division: divide, multiply, subtract, bring down, with remainders, decimals or fractions.</p>
-    </a>
-    <a class="card" href="pemdas.html" style="--c:var(--ord);grid-column:1 / -1">
-      <span class="sign">( )</span><h2>The Order Stack</h2>
-      <p>Order of operations (PEMDAS): long problems with all four operations, parentheses and exponents,
-        worked one operation at a time &mdash; or let it make a problem for you to practise.</p>
-    </a>
-  </div>
-  <h2 class="section">Beyond arithmetic</h2>
-  <div class="cards">
-    <a class="card" href="algebra.html" style="--c:var(--alg)">
-      <span class="sign"><i>x</i></span><h2>The Balance Scale</h2>
-      <p>Algebra: simplify expressions, solve equations and inequalities, and solve systems of two equations,
-        doing the same thing to both sides every step.</p>
-    </a>
-    <a class="card" href="geometry.html" style="--c:var(--geo)">
-      <span class="sign">&#9651;</span><h2>The Shape Shop</h2>
-      <p>Geometry: area and perimeter, volume and surface area, the Pythagorean theorem and missing angles,
-        each shape drawn to scale.</p>
-    </a>
-  </div>
+  </section>
+
+  <section class="group" aria-labelledby="g3">
+    <div class="group-head"><span class="num">03</span><h2 id="g3">Beyond arithmetic</h2>
+      <p>The same step-by-step, for letters and shapes.</p></div>
+    <div class="cards two">
+      <a class="card c-alg" href="algebra.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <path class="ln" d="M100 24 V98 M80 100 H120"/>
+            <polygon points="94,24 106,24 100,14" fill="var(--ink)"/>
+            <line class="ln" x1="26" y1="24" x2="174" y2="24" stroke-width="2.5"/>
+            <path class="ln" d="M46 24 L16 60 M46 24 L76 60 M154 24 L124 60 M154 24 L184 60" stroke-width="1.4"/>
+            <path class="fk" d="M10 60 H82 Q76 86 46 86 Q16 86 10 60 Z"/>
+            <path class="fk" d="M118 60 H190 Q184 86 154 86 Q124 86 118 60 Z"/>
+            <text class="k" x="46" y="76" text-anchor="middle" style="font-size:14px"><tspan class="var">2x</tspan> + 3</text>
+            <text class="k" x="154" y="76" text-anchor="middle" style="font-size:14px">11</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b><i>x</i></b> Algebra</span>
+          <h3>The Balance Scale</h3>
+          <p>Simplify expressions, solve equations and inequalities, and solve systems of two equations,
+            doing the same thing to both sides every step.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="card c-geo" href="geometry.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <g transform="translate(100 52) scale(1.12) translate(-96 -49)">
+            <rect x="46" y="34" width="30" height="30" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <rect x="76" y="64" width="40" height="40" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <polygon class="fk" points="76,34 116,64 146,24 106,-6"/>
+            <polygon points="76,34 116,64 76,64" fill="var(--surface)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+            <path class="ln" d="M76 56 H84 V64" stroke-width="1.5"/>
+            <text class="sm mu" x="61" y="53" text-anchor="middle">9</text>
+            <text class="sm mu" x="96" y="88" text-anchor="middle">16</text>
+            <text class="sm k" x="111" y="33" text-anchor="middle">25</text>
+            </g>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>△</b> Geometry</span>
+          <h3>The Shape Shop</h3>
+          <p>Area and perimeter, volume and surface area, the Pythagorean theorem and missing angles,
+            each shape drawn to scale.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="every" aria-labelledby="g4">
+    <h2 id="g4">On every page</h2>
+    <p>The same tools, whichever helper you open.</p>
+    <div class="feats">
+      <div class="feat c-add"><span class="ic" aria-hidden="true">“ ”</span><h3>Say it out loud</h3>
+        <p>Every step in plain words, including <em>why</em> it comes next.</p></div>
+      <div class="feat c-sub"><span class="ic" aria-hidden="true">1→2</span><h3>One step at a time</h3>
+        <p>Practice mode hides what’s coming, so you can try each step before you see it.</p></div>
+      <div class="feat c-mul"><span class="ic" aria-hidden="true">▦</span><h3>A picture of it</h3>
+        <p>Tape diagrams, area models, expression trees, balance scales, graphs and shapes to scale.</p></div>
+      <div class="feat c-div"><span class="ic" aria-hidden="true">½</span><h3>Fractions and decimals</h3>
+        <p>Every answer that isn’t a whole number is shown both ways.</p></div>
+      <div class="feat c-ord"><span class="ic" aria-hidden="true">?</span><h3>Make me a problem</h3>
+        <p>Practice problems built to your choices on the Order Stack, Balance Scale and Shape Shop.</p></div>
+      <div class="feat c-alg"><span class="ic" aria-hidden="true">✓</span><h3>A check at the end</h3>
+        <p>Each answer is checked another way, like multiplying back or plugging it in.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-geo"></i></div>
+    <div class="row">
+      <span>Arithmetic Helpers &middot; light and dark themes, and a print layout on every page.</span>
+      <a href="https://github.com/chrisdfennell/arithmetic-helpers">Source on GitHub</a>
+    </div>
+  </footer>
 </div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---- the worked example ---- */
+  var DEMOS = {
+    ord:{ c:"c-ord", eq:true, link:"pemdas.html", lines:[
+      { h:'20 − <span class="hl hl-m">12 ÷ 4</span> × 2 + 1',
+        say:"× and ÷ come before + and −. Start with the first one from the left: <b>12 ÷ 4 = 3</b>." },
+      { h:'20 − <span class="hl hl-m">3 × 2</span> + 1', say:"Still × before −: <b>3 × 2 = 6</b>." },
+      { h:'<span class="hl hl-a">20 − 6</span> + 1', say:"Only + and − are left, so go left to right: <b>20 − 6 = 14</b>." },
+      { h:'<span class="hl hl-a">14 + 1</span>', say:"Last one: <b>14 + 1 = 15</b>." },
+      { h:'15', done:true, say:"The answer is <b>15</b>. Going straight left to right would give <b>5</b>, which is why the order matters." }
+    ]},
+    alg:{ c:"c-alg", eq:false, link:"algebra.html", lines:[
+      { h:'5<i>x</i> − 4 = <span class="hl hl-alg">2<i>x</i></span> + 8',
+        say:"Get the <i>x</i>’s on one side: subtract <b>2x</b> from both sides." },
+      { h:'3<i>x</i> <span class="hl hl-alg">− 4</span> = 8', say:"Undo the <b>− 4</b>: add <b>4</b> to both sides." },
+      { h:'<span class="hl hl-alg">3</span><i>x</i> = 12', say:"Undo the <b>× 3</b>: divide both sides by <b>3</b>." },
+      { h:'<i>x</i> = 4', done:true, say:"<b>x = 4</b>. Check it: 5(4) − 4 = <b>16</b> and 2(4) + 8 = <b>16</b> ✓" }
+    ]}
+  };
+  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var cur = "ord", step = still ? DEMOS.ord.lines.length - 1 : 0, paused = still, timer = null;
+
+  function draw(){
+    var d = DEMOS[cur], html = "";
+    for (var i = 0; i <= step; i++){
+      var L = d.lines[i];
+      html += '<div class="dl' + (i < step ? " past" : " now") + (L.done && i === step ? " done" : "") + '">'
+            + '<span class="eq">' + (d.eq && i ? "=" : "") + '</span><span class="expr">' + L.h + "</span></div>";
+    }
+    $("demoBody").innerHTML = html;
+    $("demoSay").innerHTML = d.lines[step].say;
+    $("demoDots").innerHTML = d.lines.map(function(_, i){ return "<i" + (i <= step ? ' class="on"' : "") + "></i>"; }).join("");
+    $("demo").className = "demo " + d.c;
+    $("demoLink").href = d.link;
+    Array.prototype.forEach.call(document.querySelectorAll("[data-demo]"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-demo") === cur));
+    });
+    $("pauseBtn").textContent = paused ? "Play" : "Pause";
+  }
+  function tick(){
+    clearTimeout(timer);
+    if (paused) return;
+    var d = DEMOS[cur], last = step >= d.lines.length - 1;
+    timer = setTimeout(function(){
+      if (last){ cur = cur === "ord" ? "alg" : "ord"; step = 0; }
+      else step++;
+      draw(); tick();
+    }, last ? 4200 : 2300);
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-demo]"), function(b){
+    b.addEventListener("click", function(){
+      cur = b.getAttribute("data-demo");
+      step = paused ? DEMOS[cur].lines.length - 1 : 0;
+      draw(); tick();
+    });
+  });
+  $("pauseBtn").addEventListener("click", function(){
+    paused = !paused;
+    if (!paused && step >= DEMOS[cur].lines.length - 1) step = 0;
+    draw(); tick();
+  });
+  draw(); tick();
+
+  /* ---- theme ---- */
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  try { var t = localStorage.getItem("helpers-home"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e){}
+  themeBtn.addEventListener("click", function(){
+    var next = isDark() ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("helpers-home", next); } catch (e){}
+    paint();
+  });
+  paint();
+})();
+</script>
 </html>
