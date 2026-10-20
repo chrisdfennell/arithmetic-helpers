@@ -243,7 +243,8 @@
 
   .log{padding:6px 0 10px;margin:0;list-style:none}
   .log > li{padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
-    display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;align-items:start}
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 12px;align-items:start}
+  .log .line + .line{margin-top:3px}
   .log > li:last-child{border-bottom:0}
   .log > li.veil{opacity:.16}
   @media (prefers-reduced-motion:no-preference){.log > li{transition:opacity .2s ease}}
@@ -629,6 +630,8 @@
     facts.push("Rough size check: about <b>" + ra + " × " + rb + " = " + (ra*rb) + "</b>");
     facts.push(multi ? "Added <b>" + P.partials.length + "</b> partial products."
                      : "One rung — the second factor is a single digit.");
+    var ff = fracFact(shown);
+    if (ff) facts.push(ff);
     band('<span class="k">Product</span><span class="v">' + esc(commas(shown)) + "</span>", facts, "answer");
 
     /* --- words --- */
@@ -984,6 +987,18 @@
   }
 
   /* ===================== shared shell ===================== */
+  /* a decimal answer as a fraction: "3.75" -> 375/100 = 15/4 = 3 3/4 */
+  function fracFact(s){
+    var m = /^(−|-)?(\d+)\.(\d+)$/.exec(String(s).replace(/,/g, ""));
+    if (!m) return null;
+    var n0 = BigInt(m[2] + m[3]), d0 = BigInt("1" + m[3].replace(/./g, "0")), a = n0, b = d0;
+    while (b){ var t = a % b; a = b; b = t; }
+    var n = n0 / a, d = d0 / a, sg = m[1] ? "−" : "", w = n / d, parts = [];
+    if (a > BigInt(1)) parts.push(sg + n0 + "/" + d0);
+    parts.push(sg + n + "/" + d);
+    if (w > BigInt(0)) parts.push(sg + w + " " + (n % d) + "/" + d);
+    return "As a fraction: <b>" + parts.join(" = ") + "</b>";
+  }
   function band(inner, facts, cls){
     var old = document.querySelector(".answer, .notice");
     if (old) old.parentNode.removeChild(old);

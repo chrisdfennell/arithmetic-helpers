@@ -1583,8 +1583,16 @@
         facts.push("Exact, in terms of π: <b>" + ex + "</b>" + us);
         facts.push("Rounded to 2 decimal places. With π ≈ 3.14 it’s <b>≈ " + t3 + "</b>" + us);
       }
+      // the number in front of π shown as a decimal (20.25π)? give its fraction too (81/4 π)
+      if (x.d !== 1n && !x.ap && !valParts(x).frac)
+        facts.push("Exact, as a fraction: <b>" + valParts(x, true).h + "</b>" + us);
     } else if (isTermD(v.d) && places(v.d) <= 4){
       main = (v.ap ? "≈ " : "") + vH(v) + u;
+      if (v.d !== 1n && !v.ap){
+        var fa = v.n < 0n ? -v.n : v.n, fs = v.n < 0n ? "−" : "";
+        facts.push("As a fraction: <b>" + fs + frHTML(fa.toString(), v.d.toString())
+          + (fa > v.d ? " = " + fs + (fa / v.d) + " " + frHTML((fa % v.d).toString(), v.d.toString()) : "") + "</b>" + us);
+      }
     } else {
       main = "≈ " + esc(roundRat(v.n, v.d, 2)) + u;
       if (!isTermD(v.d)){

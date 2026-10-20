@@ -577,6 +577,7 @@
     return commas(ip.toString()) + (ds ? "." + ds : "") + (approx ? "…" : "");
   }
   function decOf(v){ return (v.n < 0n ? "−" : "") + decStr(v.n < 0n ? -v.n : v.n, v.d); }
+  function fracOf(v){ var a = v.n < 0n ? -v.n : v.n; return (v.n < 0n ? "−" : "") + (v.d === 1n ? a.toString() : a + "/" + v.d); }
   function frHTML(n, d){
     return '<span class="fr"><span class="nu">' + n + '</span><span class="de">' + d + "</span></span>";
   }
@@ -1983,7 +1984,11 @@
     if (res.kind === "one"){
       ans = "<span>(</span>" + nH(res.x) + '<span class="op-s" style="padding-left:0">,</span>' + nH(res.y) + "<span>)</span>";
       facts.unshift(vH("x") + " = <b>" + nH(res.x) + "</b> and " + vH("y") + " = <b>" + nH(res.y) + "</b> — the point where the lines cross");
-      if (!isInt(res.x) || !isInt(res.y)) facts.push("As decimals: <b>(" + decOf(res.x) + ", " + decOf(res.y) + ")</b>");
+      if (!isInt(res.x) || !isInt(res.y)){
+        // whichever form the answer is shown in, give the other one too
+        if (numParts(res.x).frac || numParts(res.y).frac) facts.push("As decimals: <b>(" + decOf(res.x) + ", " + decOf(res.y) + ")</b>");
+        else facts.push("As fractions: <b>(" + fracOf(res.x) + ", " + fracOf(res.y) + ")</b>");
+      }
     } else if (res.kind === "all"){
       ans = '<span class="word">Infinitely many solutions</span>';
       facts.unshift("Both equations are the <strong>same line</strong> — every point on it works.");

@@ -377,8 +377,9 @@
   .log{padding:6px 0 10px;margin:0;list-style:none;counter-reset:st}
   .log > li{
     padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
-    display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 12px;align-items:start;
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 12px;align-items:start;
   }
+  .log .line + .line{margin-top:3px}
   .log > li:last-child{border-bottom:0}
   .log > li.veil{opacity:.16}
   @media (prefers-reduced-motion:no-preference){ .log > li{transition:opacity .22s ease} }
@@ -555,6 +556,7 @@
         <span>Answer as</span>
         <div class="segmented" role="group" aria-label="Answer format">
           <button type="button" data-mode="remainder" aria-pressed="true">Quotient &amp; remainder</button>
+          <button type="button" data-mode="fraction" aria-pressed="false">Fraction</button>
           <button type="button" data-mode="decimal" aria-pressed="false">Decimal</button>
         </div>
       </div>
@@ -731,6 +733,11 @@
     return esc(head) + '<span class="rep">' + esc(rep) + "</span>";
   }
   function bgcd(a, b){ while (b) { var t = a % b; a = b; b = t; } return a; }
+  // the reduced fraction, plus its mixed number when it's more than 1: "125/4 = 31 1/4"
+  function fractionMixed(dvd, dvs){
+    var f = fractionOf(dvd, dvs), p = f.split("/"), n = BigInt(p[0]), d = BigInt(p[1]);
+    return n > d && d > BigInt(1) ? f + " = " + (n / d) + " " + (n % d) + "/" + d : f;
+  }
   // dividend/divisor as a fully reduced fraction
   function fractionOf(dvd, dvs){
     var k = Math.max(dvd.f.length, dvs.f.length);
@@ -1206,8 +1213,9 @@
     if ((dvd.i + dvd.f).length > 15 || (dvs.i + dvs.f).length > 9){
       return fail("That’s a lot of digits. Keep the dividend under 15 digits and the divisor under 9.");
     }
-    if (S.mode === "remainder" && (dvd.f || dvs.f)){
-      return fail("Remainders are for whole numbers. Switch to <b>Decimal</b> to divide "
+    if (S.mode !== "decimal" && (dvd.f || dvs.f)){
+      return fail((S.mode === "fraction" ? "Fraction answers" : "Remainders")
+        + " are for whole numbers. Switch to <b>Decimal</b> to divide "
         + esc(numStr(dvd)) + " by " + esc(numStr(dvs)) + ".", true);
     }
 
@@ -1217,7 +1225,8 @@
     var D = Number(sDvs.i);
 
     var digits = (sDvd.i + sDvd.f).split(""), pointIdx = sDvd.i.length;
-    var r = divide(digits, pointIdx, D, S.mode, S.places);
+    var wm = S.mode === "fraction" ? "remainder" : S.mode;   // a fraction answer is the same long division, then one more step
+    var r = divide(digits, pointIdx, D, wm, S.places);
 
     /* show where the decimal points went, so the numbers under the bar are never a surprise */
     var ss = $("shiftstep");
@@ -1251,7 +1260,7 @@
         + '<span class="sym">÷</span>' + glyphs(commas(sDvs.i), -1) + "</div>";
     }
 
-    var info = build(r, commas(sDvs.i), S.mode);
+    var info = build(r, commas(sDvs.i), wm);
     var total = info.totalSteps;
     if (S.step > total) S.step = total;
     if (S.step < 1) S.step = 1;
@@ -1263,7 +1272,20 @@
     var head = '<span class="k">Answer</span>';
     var value, facts = [];
 
-    if (S.mode === "remainder"){
+    if (S.mode === "fraction"){
+      var qF = r.steps.length ? qt.text : "0", gF = r.rem > 0 ? gcd(r.rem, D) : 1;
+      value = '<span class="v">' + (r.rem === 0 ? esc(commas(qF))
+        : (qF !== "0" ? esc(commas(qF)) + " " : "") + '<span class="r-mark">' + frHTML(r.rem / gF, D / gF) + "</span>") + "</span>";
+      if (r.rem > 0){
+        facts.push("<b>" + esc(commas(qF)) + " R " + r.rem + "</b>: the <b>" + r.rem + "</b> left over is <b>"
+          + r.rem + "/" + D + "</b> of another " + esc(commas(sDvs.i))
+          + (gF > 1 ? ", which simplifies to <b>" + (r.rem / gF) + "/" + (D / gF) + "</b>" : "") + ".");
+        var decF = divide(digits.slice(), pointIdx, D, "decimal", 6);
+        facts.push("As a decimal: <b>" + (barNotation(decF) || esc(quotientText(decF).text) + (decF.capped ? "…" : "")) + "</b>");
+      } else {
+        facts.push("It divides evenly — no remainder, so no fraction needed.");
+      }
+    } else if (S.mode === "remainder"){
       var qInt = r.steps.length ? qt.text : "0";
       value = '<span class="v">' + esc(commas(qInt)) +
               (r.rem > 0 ? ' <span class="r-mark">R ' + r.rem + "</span>" : "") + "</span>";
@@ -1284,12 +1306,14 @@
       if (r.repeat){
         facts.push("Written exactly: <b>" + barNotation(r) +
           "</b> — the bar means those digits repeat forever.");
-        facts.push("As a fraction: <b>" + esc(fractionOf(dvd, dvs)) + "</b>");
+        facts.push("As a fraction: <b>" + esc(fractionMixed(dvd, dvs)) + "</b>");
       } else if (r.capped){
         facts.push("Stopped after " + S.places + " decimal places — there’s still a remainder of <b>"
           + r.rem + "</b>.");
+        facts.push("As a fraction: <b>" + esc(fractionMixed(dvd, dvs)) + "</b>");
       } else {
         facts.push("It divides evenly — no remainder at all.");
+        if (/\./.test(qt.text)) facts.push("As a fraction: <b>" + esc(fractionMixed(dvd, dvs)) + "</b>");
       }
       if (shift > 0){
         facts.push("Moved the point <b>" + shift + "</b> place" + (shift > 1 ? "s" : "")
@@ -1316,7 +1340,7 @@
       });
     }
 
-    var w = words(r, S.mode, D);
+    var w = words(r, wm, D);
     if (r.steps.length === 0){
       pre.push({
         n: "Only&nbsp;step",
@@ -1334,6 +1358,20 @@
     w.forEach(function(p, idx){
       frag.appendChild(logItem("Step&nbsp;" + (idx + 1), p.lines, p.aside, idx));
     });
+    if (S.mode === "fraction" && r.rem > 0){
+      var gL = gcd(r.rem, D), qL = r.steps.length ? qt.text : "0";
+      var fLines = [["b", "Fraction", "The <b>" + r.rem + "</b> left over still has to be shared into <b>" + esc(commas(sDvs.i))
+        + "</b>, so it’s <b>" + r.rem + "/" + D + "</b> of one more. Write the remainder over the divisor: <b>"
+        + (qL !== "0" ? esc(commas(qL)) + " " : "") + r.rem + "/" + D + "</b>."]];
+      fLines.push(gL > 1
+        ? ["b", "Simplify", "<b>" + r.rem + "</b> and <b>" + D + "</b> both divide by <b>" + gL + "</b>: <b>"
+            + r.rem + "/" + D + " = " + (r.rem / gL) + "/" + (D / gL) + "</b>."]
+        : ["b", "Simplify", "<b>" + r.rem + "</b> and <b>" + D + "</b> share no factor bigger than 1, so <b>"
+            + r.rem + "/" + D + "</b> is already in simplest form."]);
+      frag.appendChild(logItem("Last&nbsp;step", fLines,
+        "The remainder becomes the top of the fraction and the divisor becomes the bottom — "
+        + "that’s all a remainder is: part of one more group.", w.length ? w.length - 1 : undefined));
+    }
     elLog.appendChild(frag);
 
     tapeDiagram(dvd, dvs, D, r, qt);
@@ -1367,7 +1405,7 @@
   }
 
   function checkLine(r, dvd, dvs, sDvd, sDvs, qt, D){
-    if (S.mode === "remainder"){
+    if (S.mode !== "decimal"){
       if (r.steps.length === 0){
         return "<b>Check:</b> 0 × " + esc(commas(sDvs.i)) + " + " + r.rem + " = " +
                esc(commas(numStr(dvd))) + ' <span class="ok">✓</span>';
@@ -1410,7 +1448,7 @@
     var fw = $("fitwrap");
     if (isZero(dvd)){ fw.hidden = true; return; }
 
-    var remMode = S.mode === "remainder";
+    var remMode = S.mode !== "decimal";
     var k = Math.max(dvd.f.length, dvs.f.length);
     var A = BigInt(shiftRight(dvd, k).i), B = BigInt(shiftRight(dvs, k).i);
     var Q = A / B, R = A % B;
@@ -1517,7 +1555,7 @@
       return;
     }
 
-    var remMode = S.mode === "remainder", last = r.steps[r.steps.length - 1];
+    var remMode = S.mode !== "decimal", last = r.steps[r.steps.length - 1];
     var left = r.rem > 0 ? amFmt(r.rem, r.pointIdx - 1 - last.i) : null;
     var dS = commas(String(D));
 
@@ -1692,7 +1730,7 @@
   });
 
   var EX = {
-    dec: [["619","5","remainder"], ["847","12","remainder"], ["3","8","decimal"],
+    dec: [["619","5","remainder"], ["847","12","remainder"], ["350","8","fraction"], ["3","8","decimal"],
           ["1","3","decimal"], ["12.5","0.4","decimal"], ["45.6","8","decimal"]],
     frac:[[[0,3,4],[0,1,2]], [[0,3,4],[0,1,8]], [[0,2,3],[0,1,6]],
           [[2,3,4],[0,1,2]], [[0,5,6],[0,2,3]], [[1,1,2],[3,0,1]]]
@@ -1766,7 +1804,7 @@
       if (typeof v.divisor === "string" && v.divisor) elDivisor.value = v.divisor;
       S.dividend = elDividend.value;
       S.divisor = elDivisor.value;
-      if (v.mode === "decimal" || v.mode === "remainder") S.mode = v.mode;
+      if (v.mode === "decimal" || v.mode === "remainder" || v.mode === "fraction") S.mode = v.mode;
       if ([3,6,9,12].indexOf(Number(v.places)) >= 0) S.places = Number(v.places);
       if (v.nums === "dec" || v.nums === "frac") S.nums = v.nums;
       if (Array.isArray(v.frac) && v.frac.length === 2) S.frac = v.frac;
