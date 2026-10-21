@@ -192,7 +192,7 @@
   .cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
   @media (max-width:1000px){.cards.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media (max-width:700px){.cards.three{grid-template-columns:minmax(0,1fr)}}
-  .cards + .cards{margin-top:18px}
+  .cards + .cards, a.card.wide + .cards, .cards + a.card.wide{margin-top:18px}
   .install{font-family:var(--f-body);font-size:14px;font-weight:600;background:transparent;color:var(--ink-2);
     border:1px solid var(--rule);border-radius:999px;padding:4px 12px;cursor:pointer;margin-left:6px}
   .install:hover{color:var(--ink);border-color:var(--ink-3)}
