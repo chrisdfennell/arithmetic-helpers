@@ -93,12 +93,15 @@
     box-shadow:var(--shadow);padding:22px 22px 18px;
     display:flex;flex-direction:column;gap:18px;
   }
-  .equation{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-family:var(--f-mono)}
+  .equation{display:flex;align-items:center;gap:14px 20px;flex-wrap:wrap;font-family:var(--f-mono)}
   .num-field{display:flex;flex-direction:column;gap:5px}
   .num-field > label{
     font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
     text-transform:uppercase;color:var(--ink-3);
   }
+  /* the plain-words hint sits under the label, so each column is only as wide as its number */
+  .num-field > label .what{display:block;margin-top:2px;font-family:var(--f-body);font-size:12px;font-weight:400;
+    letter-spacing:0;text-transform:none;color:var(--ink-3)}
   .num-field input{
     font-family:var(--f-mono);font-size:clamp(26px,5vw,34px);font-weight:600;
     font-variant-numeric:tabular-nums;
@@ -340,11 +343,10 @@
   }
   .work .cel{text-align:center}
   .work .divisor{text-align:right;padding-right:.42ch;font-weight:600;color:var(--ink);white-space:nowrap}
-  .work .bracket{
-    align-self:stretch;height:100%;
-    border-left:2.5px solid var(--ink);
-    border-top-left-radius:11px 100%;
-  }
+  /* the ")" of the house: one bold curve that starts where the bar starts and bows outwards */
+  .work .bracket{align-self:stretch;position:relative}
+  .work .bracket svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}   /* fills the row without making it taller */
+  .work .bracket path{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
   .work .vinculum{align-self:end;height:2.5px;background:var(--ink);border-radius:2px}
   .work .quot{color:var(--amber);font-weight:600}
   .work .dend{color:var(--ink)}
@@ -578,13 +580,13 @@
 
     <div class="equation" id="decEntry">
       <div class="num-field">
-        <label for="dividend">Dividend &mdash; the big number</label>
+        <label for="dividend">Dividend <span class="what">the big number</span></label>
         <input id="dividend" type="text" inputmode="decimal" autocomplete="off"
                spellcheck="false" value="619" aria-describedby="statusLine">
       </div>
       <div class="obelus" aria-hidden="true">&divide;</div>
       <div class="num-field">
-        <label for="divisor">Divisor &mdash; what you divide by</label>
+        <label for="divisor">Divisor <span class="what">what you divide by</span></label>
         <input id="divisor" type="text" inputmode="decimal" autocomplete="off"
                spellcheck="false" value="5">
       </div>
@@ -967,7 +969,8 @@
 
     /* row 2 — divisor, bracket, dividend */
     put(2, C_DIVISOR, divisorLabel, "divisor");
-    bar(2, C_BRACKET, C_BRACKET, "bracket");
+    bar(2, C_BRACKET, C_BRACKET, "bracket").innerHTML =
+      '<svg viewBox="0 0 10 100" preserveAspectRatio="none" aria-hidden="true"><path d="M1.25 0 Q 13 50 1.25 100"/></svg>';
     for (var j = 0; j < r.dg.length; j++){
       put(2, colOf(j), r.dg[j], "dend" + (j >= r.origLen ? " added" : ""));
     }
