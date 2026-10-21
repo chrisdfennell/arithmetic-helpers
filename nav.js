@@ -7,13 +7,18 @@
     { href:"subtraction.html",    sign:"−", name:"Subtract", title:"The Borrow Bank",    c:"sub" },
     { href:"multiplication.html", sign:"×", name:"Multiply", title:"The Product Ladder", c:"mul" },
     { href:"division.html",       sign:"÷", name:"Divide",   title:"The Division House", c:"div" },
+    { href:"fractions.html",      sign:"½", name:"Fractions", title:"The Fraction Bar",  c:"fra" },
+    { href:"percents.html",       sign:"%",      name:"Percents", title:"The Hundred Grid",   c:"pct" },
+    { href:"factors.html",        sign:"⋔", name:"Factors",  title:"The Factor Tree",    c:"fac" },
+    { href:"integers.html",       sign:"±", name:"Integers", title:"The Number Line",    c:"int" },
     { href:"pemdas.html",         sign:"( )",    name:"Order",    title:"The Order Stack",    c:"ord" },
     { href:"algebra.html",        sign:"x",      name:"Algebra",  title:"The Balance Scale",  c:"alg", italic:true },
-    { href:"geometry.html",       sign:"△", name:"Geometry", title:"The Shape Shop",     c:"geo" }
+    { href:"geometry.html",       sign:"△", name:"Geometry", title:"The Shape Shop",     c:"geo" },
+    { href:"worksheet.html",      sign:"▤", name:"Worksheets", title:"The Worksheet Maker", c:"wks" }
   ];
 
-  var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;";
-  var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;";
+  var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-wks:var(--ink-2);";
+  var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-wks:var(--ink-2);";
   var CSS =
     ":root{" + LIGHT + "}" +
     "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + DARK + "}}" +

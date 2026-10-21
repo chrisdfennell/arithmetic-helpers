@@ -1,0 +1,804 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Self Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFEC; --surface:#F8F9F7; --surface-2:#E2E6E2; --ink:#18201C; --ink-2:#4A5550; --ink-3:#7B8681; --rule:#C8CFCA;
+    --pass:#0D7361; --pass-bg:#D4EAE7; --fail:#A8412A; --fail-bg:#F4DDD5; --skip:#7B8681; --run:#1F5E8C;
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#121615; --surface:#1A201E; --surface-2:#262E2B; --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
+      --pass:#4FCCB0; --pass-bg:#0F2F2C; --fail:#F08A6E; --fail-bg:#3A1E16; --skip:#76817C; --run:#7DB8E8;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121615; --surface:#1A201E; --surface-2:#262E2B; --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
+    --pass:#4FCCB0; --pass-bg:#0F2F2C; --fail:#F08A6E; --fail-bg:#3A1E16; --skip:#76817C; --run:#7DB8E8;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+  .page{max-width:1100px;margin:0 auto;padding:28px 20px 60px;display:flex;flex-direction:column;gap:20px}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  .eyebrow a{color:inherit}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(30px,5vw,44px);line-height:1;margin:.15em 0 .2em}
+  p{margin:0;color:var(--ink-2);max-width:72ch}
+  .bar{display:flex;gap:10px 16px;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--rule);
+    border-radius:12px;padding:12px 14px}
+  .go{font-family:var(--f-body);font-weight:600;font-size:15px;background:var(--ink);color:var(--paper);border:0;border-radius:9px;
+    padding:9px 18px;cursor:pointer}
+  .go:disabled{opacity:.5;cursor:default}
+  .ghost{font-family:var(--f-body);font-weight:600;font-size:14px;background:transparent;color:var(--ink);border:1px solid var(--rule);
+    border-radius:9px;padding:8px 14px;cursor:pointer}
+  .modes{display:flex;background:var(--surface-2);border-radius:9px;padding:3px;gap:3px}
+  .modes button{font-family:var(--f-body);font-size:13px;border:0;background:transparent;color:var(--ink-2);padding:6px 12px;border-radius:6px;cursor:pointer}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .summary{font-family:var(--f-mono);font-size:14px;font-weight:600}
+  .summary .p{color:var(--pass)} .summary .f{color:var(--fail)}
+  .warn{background:var(--fail-bg);color:var(--ink);border-left:4px solid var(--fail);border-radius:4px 10px 10px 4px;padding:12px 16px}
+  table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--rule);border-radius:12px;overflow:hidden;font-size:14px}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);background:var(--surface-2)}
+  td.n{font-family:var(--f-mono);white-space:nowrap}
+  td a{color:var(--run);font-weight:600}
+  .ok{color:var(--pass);font-weight:600} .bad{color:var(--fail);font-weight:600} .na{color:var(--skip)} .busy{color:var(--run)}
+  .scroll{overflow-x:auto}
+  details.fails{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:10px 14px}
+  details.fails summary{cursor:pointer;font-weight:600}
+  .fail-list{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+  .fail-list li{background:var(--fail-bg);border-radius:8px;padding:8px 12px;font-size:13.5px}
+  .fail-list b{font-family:var(--f-mono)}
+  .fail-list code{font-family:var(--f-mono);font-size:12.5px;word-break:break-all}
+  .fail-list a{color:var(--run)}
+  .pick{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13.5px;color:var(--ink-2)}
+  .pick label{display:inline-flex;gap:5px;align-items:center}
+  #frames iframe{position:absolute;left:-12000px;top:0;width:1100px;height:900px;border:0}
+</style>
+
+<div class="page">
+  <div>
+    <div class="eyebrow"><a href="index.html">Arithmetic Helpers</a> &middot; for checking the site</div>
+    <h1>Self test</h1>
+    <p>Runs every helper page and checks it gets the right answers. It opens each page in a hidden frame and checks
+      five things: the page loads with all its parts; a list of problems with known answers; <b>Check my answer</b>
+      accepts right answers, catches wrong ones and asks for simplifying; problems from each page’s problem maker,
+      re-worked here by separate code; and that each made problem opens from its link with the same answer.
+      Your saved settings on each page are put back when it finishes.</p>
+  </div>
+
+  <div class="warn" id="fileWarn" hidden>This page is open as a file, so the browser won’t let it look inside the other pages.
+    Open it from the website, or start a local server in the folder (for example <code>python -m http.server</code>)
+    and open <code>http://localhost:8000/tests.html</code>.</div>
+
+  <div class="bar">
+    <button class="go" id="runBtn" type="button">Run all tests</button>
+    <div class="modes" role="group" aria-label="How many made problems">
+      <button type="button" data-depth="quick" aria-pressed="true">Quick</button>
+      <button type="button" data-depth="thorough" aria-pressed="false">Thorough</button>
+    </div>
+    <span class="summary" id="summary"></span>
+  </div>
+  <div class="pick" id="pick"></div>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Page</th><th>Loads</th><th>Known answers</th><th>Check my answer</th><th>Made problems</th><th>Links</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <details class="fails" id="failBox" hidden><summary id="failHead">Failures</summary><ul class="fail-list" id="fails"></ul></details>
+  <div id="frames" aria-hidden="true"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+  /* ===================== exact fractions ===================== */
+  function gcd(a, b){ if (a < 0n) a = -a; if (b < 0n) b = -b; while (b){ var t = a % b; a = b; b = t; } return a || 1n; }
+  function R(n, d){
+    n = BigInt(n); d = d === undefined ? 1n : BigInt(d);
+    if (d === 0n) throw new Error("divide by zero");
+    if (d < 0n){ n = -n; d = -d; }
+    var g = gcd(n, d); return { n:n / g, d:d / g };
+  }
+  function add(a, b){ return R(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function sub(a, b){ return R(a.n * b.d - b.n * a.d, a.d * b.d); }
+  function mul(a, b){ return R(a.n * b.n, a.d * b.d); }
+  function div(a, b){ return R(a.n * b.d, a.d * b.n); }
+  function eq(a, b){ return a.n === b.n && a.d === b.d; }
+  function cmp(a, b){ var x = a.n * b.d, y = b.n * a.d; return x < y ? -1 : x > y ? 1 : 0; }
+  function abs(a){ return a.n < 0n ? R(-a.n, a.d) : a; }
+  function pow(a, k){
+    if (k.d !== 1n) throw new Error("fractional power");
+    var e = k.n < 0n ? -k.n : k.n, out = R(1);
+    for (var i = 0n; i < e; i++) out = mul(out, a);
+    return k.n < 0n ? div(R(1), out) : out;
+  }
+  function F(a){ return Number(a.n) / Number(a.d); }
+  function txt(a){ return a.d === 1n ? a.n.toString() : a.n + "/" + a.d; }
+  // "2 3/4", "-7/12", "0.375", "12", "1,250"
+  function num(s){
+    s = String(s).trim().replace(/[−–]/g, "-").replace(/,/g, "");
+    var m;
+    if ((m = /^(-?)(\d+)\s+(\d+)\/(\d+)$/.exec(s))){ var w = R(BigInt(m[2])), f = R(BigInt(m[3]), BigInt(m[4])); var t = add(w, f); return m[1] ? R(-t.n, t.d) : t; }
+    if ((m = /^(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/.exec(s))) return div(num(m[1]), num(m[2]));
+    if ((m = /^(-?)(\d*)\.(\d+)$/.exec(s))){ var v = R(BigInt((m[2] || "0") + m[3]), 10n ** BigInt(m[3].length)); return m[1] ? R(-v.n, v.d) : v; }
+    if (/^-?\d+$/.test(s)) return R(BigInt(s));
+    return null;
+  }
+  // a repeating decimal written 0.1(6)
+  function repeating(s){
+    var m = /^(-?)(\d*)\.(\d*)\((\d+)\)$/.exec(s.trim());
+    if (!m) return null;
+    var ip = m[2] || "0", a = m[3], r = m[4];
+    var whole = BigInt(ip + a + r) - BigInt(ip + a);
+    var den = (10n ** BigInt(a.length + r.length)) - (10n ** BigInt(a.length));
+    var v = R(whole, den);
+    return m[1] ? R(-v.n, v.d) : v;
+  }
+
+  /* ===================== an expression evaluator, separate from the pages ===================== */
+  function evaluate(src, env, times){
+    var s = String(src).replace(/[−–]/g, "-").replace(/[×·∙⋅]/g, "*").replace(/[÷:]/g, "/").replace(/[\[{]/g, "(").replace(/[\]}]/g, ")")
+      .replace(/\*\*/g, "^").replace(/²/g, "^2").replace(/³/g, "^3").replace(/(\d),(?=\d{3}\b)/g, "$1");
+    if (times) s = s.replace(/(\d|\))\s*[xX]\s*(?=[\d(.])/g, "$1*");
+    var tk = [], i = 0, m;
+    while (i < s.length){
+      var rest = s.slice(i);
+      if ((m = /^\s+/.exec(rest))){ i += m[0].length; continue; }
+      if ((m = /^(\d+(\.\d*)?|\.\d+)/.exec(rest))){ tk.push({ k:"n", v:num(m[0]) }); i += m[0].length; continue; }
+      if ((m = /^[a-zA-Z]/.exec(rest))){ tk.push({ k:"v", s:m[0] }); i++; continue; }
+      if ("+-*/^()|".indexOf(rest[0]) >= 0){ tk.push({ k:rest[0] }); i++; continue; }
+      throw new Error("can't read " + rest[0]);
+    }
+    var p = 0;
+    function peek(){ return tk[p]; }
+    function expr(){
+      var a = term();
+      while (peek() && (peek().k === "+" || peek().k === "-")){ var o = tk[p++].k, b = term(); a = o === "+" ? add(a, b) : sub(a, b); }
+      return a;
+    }
+    function term(){
+      var a = unary();
+      for (;;){
+        var t = peek();
+        if (t && (t.k === "*" || t.k === "/")){ p++; var b = unary(); a = t.k === "*" ? mul(a, b) : div(a, b); }
+        else if (t && (t.k === "(" || t.k === "v" || (t.k === "n" && tk[p-1] && (tk[p-1].k === ")" || tk[p-1].k === "v")))) a = mul(a, unary());
+        else return a;
+      }
+    }
+    function unary(){
+      if (peek() && peek().k === "-"){ p++; var a = unary(); return R(-a.n, a.d); }
+      if (peek() && peek().k === "+"){ p++; return unary(); }
+      var b = primary();
+      if (peek() && peek().k === "^"){ p++; return pow(b, unary()); }
+      return b;
+    }
+    function primary(){
+      var t = tk[p++];
+      if (!t) throw new Error("ends early");
+      if (t.k === "n") return t.v;
+      if (t.k === "v"){ if (!env || !(t.s in env)) throw new Error("unknown " + t.s); return env[t.s]; }
+      if (t.k === "("){ var a = expr(); if (!tk[p] || tk[p].k !== ")") throw new Error("missing )"); p++; return a; }
+      if (t.k === "|"){ var b = expr(); if (!tk[p] || tk[p].k !== "|") throw new Error("missing |"); p++; return abs(b); }
+      throw new Error("unexpected " + t.k);
+    }
+    var out = expr();
+    if (p < tk.length) throw new Error("left over");
+    return out;
+  }
+
+  /* ===================== reading numbers out of answer text ===================== */
+  var SUPS = { "⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9" };
+  function tokens(text){
+    var s = String(text).replace(/[−–]/g, "-").replace(/(\d),(?=\d{3}(?!\d))/g, "$1")
+      .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, function(x){ return "^" + x.split("").map(function(c){ return SUPS[c]; }).join(""); })
+      .replace(/\$/g, "");
+    var out = [], re = /(-?\d+(?:\.\d+)?)\s+(\d+)\/(\d+)(?![\d.])|(-?\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)|(-?\d*\.?\d*)\s*√\s*\(?(\d+(?:\.\d+)?)\)?|(-?\d*\.\d+|-?\d+)([̅…]*)/g, m;
+    while ((m = re.exec(s))){
+      var t = null, after = s.slice(re.lastIndex);
+      if (m[1] !== undefined){ t = { exact:num(m[1] + " " + m[2] + "/" + m[3]) }; }
+      else if (m[4] !== undefined){ t = { exact:num(m[4] + "/" + m[5]) }; }
+      else if (m[7] !== undefined){
+        var c = m[6] === "" || m[6] === undefined ? 1 : m[6] === "-" ? -1 : Number(m[6]);
+        t = { f:c * Math.sqrt(Number(m[7])), approx:true, tol:1e-6 };
+      } else if (m[8] !== undefined){
+        if (m[8] === "-" || m[8] === "") continue;
+        var rep = m[9] && m[9].length;
+        var dec = (m[8].split(".")[1] || "").length;
+        t = rep ? { f:Number(m[8]), approx:true, tol:Math.pow(10, -dec) * 1.01 } : { exact:num(m[8]) };
+        if (/^\s*\^/.test(after)) t.base = true;       // the base of a power, not a value on its own
+        if (/^\s*≈/.test(after) || /≈\s*$/.test(s.slice(Math.max(0, m.index - 3), m.index))) t.rounded = dec;
+      }
+      if (!t) continue;
+      if (t.exact) t.f = F(t.exact);
+      if (/^\s*π/.test(after)){ t.f *= Math.PI; t.pi = true; t.exact = null; t.approx = true; t.tol = 1e-6; }
+      if (/≈\s*$/.test(s.slice(Math.max(0, m.index - 3), m.index)) && !t.pi){
+        var d2 = (m[8] || "").split(".")[1]; t.approx = true; t.tol = Math.pow(10, -((d2 || "").length)) * 0.51 + 1e-9;
+      }
+      out.push(t);
+    }
+    return out;
+  }
+  // does a value (exact fraction, or a float with tolerance) appear among the tokens?
+  function has(toks, want, tol){
+    return toks.some(function(t){
+      if (want.exact && t.exact && !t.approx) return eq(want.exact, t.exact);
+      var w = want.exact ? F(want.exact) : want.f;
+      var allowed = Math.max(tol || 0, t.tol || 0, t.rounded !== undefined ? Math.pow(10, -t.rounded) * 0.51 : 0);
+      if (t.exact && !t.approx && !tol && want.exact === undefined && !want.loose) allowed = Math.max(allowed, 1e-9);
+      if (want.loose) allowed = Math.max(allowed, Math.abs(w) * want.loose);
+      return Math.abs(t.f - w) <= allowed + 1e-9;
+    });
+  }
+  var X = function(v){ return { exact: typeof v === "string" ? num(v) : v }; };
+  var Fl = function(v, loose){ return { f:v, loose:loose || 0.003 }; };
+
+  /* ===================== the pages ===================== */
+  var PAGES = [
+    { page:"addition.html", name:"The Carry Column" }, { page:"subtraction.html", name:"The Borrow Bank" },
+    { page:"multiplication.html", name:"The Product Ladder" }, { page:"division.html", name:"The Division House" },
+    { page:"fractions.html", name:"The Fraction Bar" }, { page:"percents.html", name:"The Hundred Grid" },
+    { page:"factors.html", name:"The Factor Tree" }, { page:"integers.html", name:"The Number Line" },
+    { page:"pemdas.html", name:"The Order Stack" }, { page:"algebra.html", name:"The Balance Scale" },
+    { page:"geometry.html", name:"The Shape Shop" }
+  ];
+
+  /* problems with known answers: open the link, and every value must show in the answer */
+  var KNOWN = {
+    "addition.html":[ ["q=47%2B38",["85"]], ["q=25.4%2B3.75",["29.15"]], ["q=2 3/4%2B1 5/6",["55/12"]], ["q=999%2B1%2B1",["1001"]] ],
+    "subtraction.html":[ ["q=52-17",["35"]], ["q=25.4-3.75",["21.65"]], ["q=5003-1278",["3725"]], ["q=3 1/2-1 2/3",["11/6"]], ["q=17-52",["-35"]] ],
+    "multiplication.html":[ ["q=23*14",["322"]], ["q=2.4*1.3",["3.12"]], ["q=2/3*3/4",["1/2"]], ["q=2 1/2*3/4",["15/8"]] ],
+    "division.html":[ ["q=847%C3%B712&ans=remainder",["70","7"]], ["q=350%C3%B78&ans=fraction",["175/4"]],
+                      ["q=12.5%C3%B70.4&ans=decimal",["31.25"]], ["q=1%C3%B73&ans=decimal",[{ f:1/3, loose:0.001 }]], ["q=3/4%C3%B71/2",["3/2"]] ],
+    "fractions.html":[ ["mode=simplify&q=18/24",["3/4"]], ["mode=convert&q=7/4",["1.75"]], ["mode=equiv&q=3/4%3D%3F/20",["15"]],
+                       ["mode=compare&q=3/4,5/8,2/3",["3/4","5/8","2/3"]] ],
+    "percents.html":[ ["q=15%25 of 80",["12"]], ["q=18 is what %25 of 72",["25"]], ["q=15 is 20%25 of what",["75"]], ["q=80 to 92",["15"]],
+                      ["q=20%25 off 45",["9","36"]], ["q=tax 8%25 on 45",["3.6","48.6"]], ["q=interest 500 at 4%25 for 3 years",["60","560"]] ],
+    "factors.html":[ ["q=gcf 12 18",["6","36"]], ["q=lcm of 4 and 6",["12"]], ["q=factors of 36",["1","2","3","4","6","9","12","18","36"]],
+                     ["q=is 91 prime",["~composite"]], ["mode=gcf&q=12,18,30",["6","180"]] ],
+    "integers.html":[ ["q=-5%2B3",["-2"]], ["q=-7-(-2)",["-5"]], ["q=-4*3",["-12"]], ["q=-12%C3%B7-3",["4"]], ["q=%7C-7%7C",["7"]] ],
+    "pemdas.html":[ ["q=" + encodeURIComponent("20 − 12 ÷ 4 × 2 + 1"),["15"]], ["q=" + encodeURIComponent("2 × (3 + 5)² − 18 ÷ 3"),["122"]],
+                    ["q=" + encodeURIComponent("−3² + (−3)²"),["0"]], ["q=" + encodeURIComponent("6 ÷ 2(1 + 2)"),["9"]],
+                    ["q=" + encodeURIComponent("7 ÷ 3 + 2 × 5 ÷ 6"),["4"]] ],
+    "algebra.html":[ ["mode=solve&q=" + encodeURIComponent("5x - 4 = 2x + 8"),["4"]], ["mode=solve&q=" + encodeURIComponent("3(x - 2) = 12"),["6"]],
+                     ["mode=solve&q=" + encodeURIComponent("x/4 + 1 = 3"),["8"]], ["mode=ineq&q=" + encodeURIComponent("-3x + 4 > 19"),["-5"]],
+                     ["mode=sys&q=" + encodeURIComponent("3x + 2y = 16;2x - y = 1"),["18/7","29/7"]],
+                     ["mode=sys&q=" + encodeURIComponent("y = 3x - 2;2x + y = 13"),["3","7"]] ],
+    "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"]], ["mode=area&shape=circle&r=5&rd=r&pi=calc",[Fl(78.54),Fl(31.42)]],
+                      ["mode=vol&shape=box&l=8&w=3&h=5",["120","158"]], ["mode=right&shape=hyp&a=3&b=4",["5"]],
+                      ["mode=right&shape=leg&a=5&c=13",["12"]], ["mode=angle&shape=tri&a=50&b=60",["70"]],
+                      ["mode=angle&shape=poly&n=6",["720","120","60"]] ]
+  };
+
+  /* Check my answer: [link, what to type, expected verdict] */
+  var CHECKS = {
+    "addition.html":[ ["q=2 3/4%2B1 5/6",["55/12"],"right"], ["q=2 3/4%2B1 5/6",["4 7/12"],"right"], ["q=2 3/4%2B1 5/6",["4 14/24"],"simplify"], ["q=2 3/4%2B1 5/6",["3 8/10"],"wrong"] ],
+    "subtraction.html":[ ["q=52-17",["35"],"right"], ["q=52-17",["45"],"wrong"] ],
+    "multiplication.html":[ ["q=23*14",["322"],"right"], ["q=23*14",["115"],"wrong"], ["q=2.4*1.3",["3.12"],"right"] ],
+    "division.html":[ ["q=847%C3%B712&ans=remainder",["70","7"],"right"], ["q=847%C3%B712&ans=remainder",["70","17"],"wrong"],
+                      ["q=350%C3%B78&ans=fraction",["43 3/4"],"right"], ["q=350%C3%B78&ans=fraction",["43 6/8"],"simplify"] ],
+    "fractions.html":[ ["mode=simplify&q=18/24",["3/4"],"right"], ["mode=simplify&q=18/24",["9/12"],"simplify"], ["mode=simplify&q=18/24",["4/3"],"wrong"] ],
+    "percents.html":[ ["q=15%25 of 80",["12"],"right"], ["q=15%25 of 80",["1200"],"wrong"] ],
+    "factors.html":[ ["q=gcf 12 18",["6","36"],"right"], ["q=gcf 12 18",["36","6"],"wrong"], ["q=prime factorization 360",["2^3 × 3^2 × 5"],"right"] ],
+    "integers.html":[ ["q=-7-(-2)",["-5"],"right"], ["q=-7-(-2)",["-9"],"wrong"] ],
+    "pemdas.html":[ ["q=" + encodeURIComponent("20 − 12 ÷ 4 × 2 + 1"),["15"],"right"], ["q=" + encodeURIComponent("20 − 12 ÷ 4 × 2 + 1"),["30/2"],"right"],
+                    ["q=" + encodeURIComponent("20 − 12 ÷ 4 × 2 + 1"),["5"],"wrong"] ],
+    "algebra.html":[ ["mode=solve&q=" + encodeURIComponent("5x - 4 = 2x + 8"),["x = 4"],"right"], ["mode=solve&q=" + encodeURIComponent("5x - 4 = 2x + 8"),["-4"],"wrong"],
+                     ["mode=ineq&q=" + encodeURIComponent("-3x + 4 > 19"),["x < -5"],"right"], ["mode=ineq&q=" + encodeURIComponent("-3x + 4 > 19"),["x > -5"],"wrong"],
+                     ["mode=simplify&q=" + encodeURIComponent("3(x + 2) - x"),["2x + 6"],"right"], ["mode=simplify&q=" + encodeURIComponent("3(x + 2) - x"),["3x + 6 - x"],"simplify"] ],
+    "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"],"right"], ["mode=area&shape=rect&l=8&w=5",["26","40"],"wrong"],
+                      ["mode=area&shape=circle&r=5&rd=r",["25π","10π"],"right"] ]
+  };
+
+  /* ===================== working out made problems here, independently ===================== */
+  function P(params){ var u = new URLSearchParams(params), o = {}; u.forEach(function(v, k){ o[k] = v; }); return o; }
+  function need(toks, list){
+    var miss = list.filter(function(w){ return !has(toks, w); });
+    return miss.length ? { ok:false, msg:"expected " + miss.map(show).join(", ") } : { ok:true };
+  }
+  function show(w){ return w.exact ? txt(w.exact) : (Math.round(w.f * 10000) / 10000).toString(); }
+  function splitOp(q, re){
+    var i = -1, m, r = new RegExp(re, "g");
+    while ((m = r.exec(q))){ if (m.index > 0 && /[\d)\s]/.test(q[m.index - 1])) { i = m.index; break; } }
+    if (i < 0) return null;
+    return [q.slice(0, i).trim(), q.slice(i + 1).trim()];
+  }
+  function cents(x){ return Math.round(x * 100 + 1e-9) / 100; }
+  function isPrime(n){ if (n < 2) return false; for (var i = 2; i * i <= n; i++) if (n % i === 0) return false; return true; }
+  function gcdN(a, b){ while (b){ var t = a % b; a = b; b = t; } return a; }
+
+  var ORACLE = {
+    "addition.html":function(p, a){
+      var terms = P(p).q.split("+").map(num);
+      return need(a, [X(terms.reduce(add))]);
+    },
+    "subtraction.html":function(p, a){
+      var t = splitOp(P(p).q.replace(/−/g, "-"), "-"); return need(a, [X(sub(num(t[0]), num(t[1])))]);
+    },
+    "multiplication.html":function(p, a){
+      var q = P(p).q, t = q.split(/[*×xX·]/); return need(a, [X(mul(num(t[0]), num(t[1])))]);
+    },
+    "division.html":function(p, a, ansText){
+      var o = P(p), q = o.q, t = /[÷:]/.test(q) ? q.split(/[÷:]/) : q.split("/");
+      var x = num(t[0]), y = num(t[1]), ans = o.ans || (x.d === 1n && y.d === 1n ? "remainder" : "decimal");
+      if (ans === "remainder" && x.d === 1n && y.d === 1n && !/[\/]/.test(t[0] + t[1])){
+        var vals = a.filter(function(k){ return k.exact; });
+        if (vals.length < 1) return { ok:false, msg:"no quotient found" };
+        var qq = vals[0].exact, rr = vals[1] ? vals[1].exact : R(0);
+        if (!/R/.test(ansText)) rr = R(0);
+        var okq = eq(add(mul(qq, y), rr), x) && cmp(rr, R(0)) >= 0 && cmp(rr, y) < 0;
+        return okq ? { ok:true } : { ok:false, msg:"quotient × divisor + remainder ≠ dividend" };
+      }
+      return need(a, [X(div(x, y))]);
+    },
+    "pemdas.html":function(p, a){ return need(a, [X(evaluate(P(p).q, null, true))]); },
+    "integers.html":function(p, a){
+      var q = P(p).q;
+      if (/,/.test(q)){
+        var vals = q.split(",").map(function(s){ return evaluate(s, null, true); }).sort(cmp);
+        var got = a.filter(function(t){ return t.exact; }).map(function(t){ return t.exact; }).slice(0, vals.length);
+        var asc = got.length === vals.length && got.every(function(v, i){ return eq(v, vals[i]); });
+        var desc = got.length === vals.length && got.every(function(v, i){ return eq(v, vals[vals.length - 1 - i]); });
+        return asc || desc ? { ok:true } : { ok:false, msg:"expected the order " + vals.map(txt).join(", ") };
+      }
+      q = q.replace(/^\s*abs\s*/i, "");
+      return need(a, [X(evaluate(q, null, true))]);
+    },
+    "algebra.html":function(p, a, ansText){
+      var o = P(p), q = o.q, mode = o.mode || (/;/.test(q) ? "sys" : /[<>≤≥]/.test(q) ? "ineq" : /=/.test(q) ? "solve" : "simplify");
+      var letters = (q.match(/[a-z]/gi) || []).filter(function(v, i, arr){ return arr.indexOf(v) === i; });
+      var nums = a.filter(function(t){ return t.exact; });
+      var A = String(ansText).replace(/[−–]/g, "-");
+      function env(vals){ var e = {}; letters.forEach(function(L, i){ e[L] = vals[i]; }); return e; }
+      if (mode === "solve"){
+        var s = q.split("="), f = function(v){ return sub(evaluate(s[0], env([v])), evaluate(s[1], env([v]))); };
+        if (/no solution|none/i.test(A)) return !eq(f(R(0)), R(0)) && eq(f(R(0)), f(R(7))) ? { ok:true } : { ok:false, msg:"says no solution" };
+        if (/every|all|infinit/i.test(A)) return eq(f(R(0)), R(0)) && eq(f(R(7)), R(0)) ? { ok:true } : { ok:false, msg:"says every number" };
+        var v = nums.filter(function(t){ return !t.base; }).pop();
+        if (!v) return { ok:false, msg:"no value found" };
+        return eq(f(v.exact), R(0)) ? { ok:true } : { ok:false, msg:txt(v.exact) + " doesn't make both sides equal" };
+      }
+      if (mode === "ineq"){
+        var rel = /<=|>=|≤|≥|<|>/.exec(q)[0], sides = q.split(/<=|>=|≤|≥|<|>/);
+        var holds = function(v){
+          var c = cmp(evaluate(sides[0], env([v])), evaluate(sides[1], env([v])));
+          return rel === "<" ? c < 0 : rel === ">" ? c > 0 : rel === "<=" || rel === "≤" ? c <= 0 : c >= 0;
+        };
+        if (/no |none|never/i.test(A)) return !holds(R(0)) && !holds(R(1000)) && !holds(R(-1000)) ? { ok:true } : { ok:false, msg:"says never true" };
+        if (/all|every|always|∞\)$/i.test(A) && !nums.length) return holds(R(0)) && holds(R(1000)) && holds(R(-1000)) ? { ok:true } : { ok:false, msg:"says always true" };
+        var m = /(<=|>=|≤|≥|<|>)/.exec(A), b = nums[nums.length - 1];
+        if (!m || !b) return { ok:false, msg:"can't read the answer" };
+        var ar = m[1], before = A.indexOf(m[1]) > A.search(/[a-z]/i);
+        if (!before) ar = { "<":">", ">":"<", "≤":"≥", "≥":"≤", "<=":">=", ">=":"<=" }[ar];
+        var up = ar === ">" || ar === "≥" || ar === ">=", incl = /=|≤|≥/.test(ar);
+        var inside = holds(add(b.exact, R(up ? 1 : -1))), outside = holds(add(b.exact, R(up ? -1 : 1))), at = holds(b.exact);
+        return inside && !outside && at === incl ? { ok:true } : { ok:false, msg:"the answer’s direction or end point is off" };
+      }
+      if (mode === "sys"){
+        var eqs = q.split(";");
+        if (/no solution|none|parallel/i.test(A) || /infinit|same line|every/i.test(A)) return { skip:true };
+        if (nums.length < 2) return { ok:false, msg:"no point found" };
+        var pt = [nums[nums.length - 2].exact, nums[nums.length - 1].exact];
+        var lx = letters.slice().sort();                 // x then y
+        var e = {}; e[lx[0]] = pt[0]; e[lx[1]] = pt[1];
+        var good = eqs.every(function(E){ var t = E.split("="); return eq(evaluate(t[0], e), evaluate(t[1], e)); });
+        return good ? { ok:true } : { ok:false, msg:"(" + txt(pt[0]) + ", " + txt(pt[1]) + ") doesn't fit both equations" };
+      }
+      // simplify: the answer must equal the problem at a few points
+      var expr = A.replace(/^.*=\s*/, "");
+      var pts = [[R(2), R(3)], [R(-5, 2), R(7)], [R(11), R(-4, 3)]];
+      var same = pts.every(function(v){
+        var e2 = {}; letters.forEach(function(L, i){ e2[L] = v[i % 2]; });
+        return eq(evaluate(q, e2), evaluate(expr, e2));
+      });
+      return same ? { ok:true } : { ok:false, msg:"the simplified answer isn’t equal to the problem" };
+    },
+    "percents.html":function(p, a){
+      var o = P(p), m = o.mode, f = function(k){ return Number(String(o[k]).replace(/[$,]/g, "")); };
+      if (!m || o.q) return { skip:true };
+      if (m === "of") return need(a, [Fl(f("p") * f("n") / 100, 0.0006)]);
+      if (m === "what") return need(a, [Fl(f("part") / f("whole") * 100, 0.002)]);
+      if (m === "whole") return need(a, [Fl(f("part") * 100 / f("p"), 0.0006)]);
+      if (m === "change") return need(a, [Fl(Math.abs(f("to") - f("from")) / f("from") * 100, 0.002)]);
+      if (m === "money"){
+        if (o.kind === "interest"){
+          var years = o.years !== undefined ? f("years") : f("months") / 12, I = f("principal") * f("p") / 100 * years;
+          return need(a, [Fl(cents(I), 0.0001), Fl(cents(f("principal") + I), 0.0001)]);
+        }
+        var amt = cents(f("p") * f("price") / 100), fin = o.kind === "discount" ? f("price") - amt : f("price") + amt;
+        return need(a, [Fl(amt, 0.0001), Fl(cents(fin), 0.0001)]);
+      }
+      return { skip:true };
+    },
+    "factors.html":function(p, a, ansText){
+      var o = P(p), q = String(o.q || ""), list = q.split(",").map(function(s){ return parseInt(s.replace(/\D/g, ""), 10); });
+      var mode = o.mode || (list.length > 1 ? "gcf" : "prime"), n = list[0];
+      if (mode === "factors"){
+        var d = []; for (var i = 1; i <= n; i++) if (n % i === 0) d.push(i);
+        var miss = d.filter(function(x){ return !has(a, X(String(x))); });
+        return miss.length ? { ok:false, msg:"missing factors " + miss.join(", ") } : { ok:true };
+      }
+      if (mode === "prime"){
+        var right = String(ansText).split("=").pop().replace(/(\d),(?=\d{3})/g, "$1").replace(/[^\d×x*·]/g, " ").trim().split(/\s*[×x*·]\s*|\s+/).filter(Boolean).map(Number);
+        var prod = right.reduce(function(x, y){ return x * y; }, 1);
+        return prod === n && right.every(isPrime) ? { ok:true } : { ok:false, msg:"the prime factors don’t multiply to " + n };
+      }
+      if (mode === "test"){
+        var says = /composite/i.test(ansText) ? "c" : /neither/i.test(ansText) ? "n" : /prime/i.test(ansText) ? "p" : "?";
+        var want = n < 2 ? "n" : isPrime(n) ? "p" : "c";
+        return says === want ? { ok:true } : { ok:false, msg:"prime/composite is wrong" };
+      }
+      if (mode === "gcf"){
+        var g = list.reduce(gcdN), l = list.reduce(function(x, y){ return x / gcdN(x, y) * y; });
+        return need(a, [X(String(g)), X(String(l))]);
+      }
+      return { skip:true };
+    },
+    "fractions.html":function(p, a, ansText){
+      var o = P(p), q = String(o.q || ""), mode = o.mode;
+      if (mode === "simplify"){
+        var v = num(q); if (!v) return { skip:true };
+        return need(a, [X(v)]);
+      }
+      if (mode === "convert"){
+        var s = q.trim(), val = /%$/.test(s) ? div(num(s.slice(0, -1)), R(100)) : repeating(s) || num(s);
+        if (!val) return { skip:true };
+        return has(a, X(val)) || has(a, X(mul(val, R(100)))) ? { ok:true } : { ok:false, msg:"expected " + txt(val) };
+      }
+      if (mode === "equiv"){
+        var m = /^(\?|\d+)\/(\?|\d+)=(\?|\d+)\/(\?|\d+)$/.exec(q.replace(/\s+/g, ""));
+        if (!m) return { skip:true };
+        var parts = m.slice(1, 5), k = parts.indexOf("?"), n0 = parts.map(Number), miss;
+        if (k === 0) miss = div(mul(R(n0[1]), R(n0[2])), R(n0[3]));
+        else if (k === 1) miss = div(mul(R(n0[0]), R(n0[3])), R(n0[2]));
+        else if (k === 2) miss = div(mul(R(n0[0]), R(n0[3])), R(n0[1]));
+        else miss = div(mul(R(n0[1]), R(n0[2])), R(n0[0]));
+        return need(a, [X(miss)]);
+      }
+      if (mode === "compare"){
+        var vals = q.split(",").map(function(x){ return num(x.trim()); });
+        if (vals.some(function(v){ return !v; })) return { skip:true };
+        var miss2 = vals.filter(function(v){ return !has(a, X(v)); });
+        if (miss2.length) return { ok:false, msg:"missing " + miss2.map(txt).join(", ") };
+        // in the answer, the values should come out in order
+        var seen = [];
+        a.forEach(function(t){ vals.forEach(function(v){ if (has([t], X(v)) && !seen.some(function(s){ return eq(s, v); })) seen.push(v); }); });
+        var asc = seen.every(function(v, i){ return !i || cmp(seen[i - 1], v) <= 0; });
+        var desc = seen.every(function(v, i){ return !i || cmp(seen[i - 1], v) >= 0; });
+        return asc || desc ? { ok:true } : { ok:false, msg:"not in order: " + seen.map(txt).join(", ") };
+      }
+      return { skip:true };
+    },
+    "geometry.html":function(p, a, ansText){
+      var o = P(p), g = function(k){ var v = num(o[k] || ""); return v ? F(v) : NaN; };
+      var r = o.rd === "d" ? g("r") / 2 : g("r"), pi = Math.PI, sq = function(x){ return x * x; };
+      var want = [];
+      switch ((o.mode || "") + ":" + (o.shape || "")){
+        case "area:rect": want = [g("l") * g("w"), 2 * (g("l") + g("w"))]; break;
+        case "area:square": want = [sq(g("s")), 4 * g("s")]; break;
+        case "area:tri": want = [g("b") * g("h") / 2]; if (o.s1 && o.s2) want.push(g("b") + g("s1") + g("s2")); break;
+        case "area:para": want = [g("b") * g("h")]; if (o.s) want.push(2 * (g("b") + g("s"))); break;
+        case "area:trap": want = [(g("a") + g("b")) / 2 * g("h")]; if (o.c && o.d) want.push(g("a") + g("b") + g("c") + g("d")); break;
+        case "area:circle": want = [pi * sq(r), 2 * pi * r]; break;
+        case "area:lshape": want = [g("W") * g("H") - g("w") * g("h"), 2 * (g("W") + g("H"))]; break;
+        case "vol:box": want = [g("l") * g("w") * g("h"), 2 * (g("l") * g("w") + g("l") * g("h") + g("w") * g("h"))]; break;
+        case "vol:cube": want = [Math.pow(g("s"), 3), 6 * sq(g("s"))]; break;
+        case "vol:cyl": want = [pi * sq(r) * g("h"), 2 * pi * sq(r) + 2 * pi * r * g("h")]; break;
+        case "vol:cone": want = [pi * sq(r) * g("h") / 3]; break;
+        case "vol:sphere": want = [4 / 3 * pi * Math.pow(r, 3), 4 * pi * sq(r)]; break;
+        case "vol:tprism": want = [g("b") * g("h") / 2 * g("l")]; break;
+        case "vol:pyr": want = [sq(g("s")) * g("h") / 3]; break;
+        case "right:hyp": want = [Math.sqrt(sq(g("a")) + sq(g("b")))]; break;
+        case "right:leg": want = [Math.sqrt(sq(g("c")) - sq(g("a")))]; break;
+        case "right:check":
+          var s3 = [g("a"), g("b"), g("c")].sort(function(x, y){ return x - y; }), right = Math.abs(sq(s3[0]) + sq(s3[1]) - sq(s3[2])) < 1e-9;
+          return (/\bno\b|not/i.test(ansText) ? !right : right) ? { ok:true } : { ok:false, msg:"right triangle yes/no is wrong" };
+        case "angle:tri": want = [180 - g("a") - g("b")]; break;
+        case "angle:line": want = [180 - String(o.a).split(",").reduce(function(x, y){ return x + Number(y); }, 0)]; break;
+        case "angle:comp": want = [90 - g("a")]; break;
+        case "angle:point": want = [360 - String(o.a).split(",").reduce(function(x, y){ return x + Number(y); }, 0)]; break;
+        case "angle:vert": want = [g("a"), 180 - g("a")]; break;
+        case "angle:par": want = [g("a"), 180 - g("a")]; break;
+        case "angle:poly": var n = g("n"); want = [(n - 2) * 180, (n - 2) * 180 / n, 360 / n]; break;
+        default: return { skip:true };
+      }
+      if (want.some(isNaN)) return { skip:true };
+      return need(a, want.map(function(w){ return Fl(w, 0.004); }));
+    }
+  };
+
+  /* ===================== running pages in hidden frames ===================== */
+  var frameBox = $("frames");
+  function load(src){
+    return new Promise(function(ok, bad){
+      var f = document.createElement("iframe");
+      var t = setTimeout(function(){ cleanup(); bad(new Error("didn’t load")); }, 20000);
+      var errs = [];
+      function cleanup(){ clearTimeout(t); }
+      f.onload = function(){
+        cleanup();
+        try { f.contentWindow.addEventListener("error", function(e){ errs.push(e.message); }); } catch (e){}
+        setTimeout(function(){ ok({ f:f, errs:errs }); }, 350);
+      };
+      f.src = src;
+      frameBox.appendChild(f);
+    });
+  }
+  function drop(fr){ if (fr && fr.f && fr.f.parentNode) fr.f.parentNode.removeChild(fr.f); }
+  function docOf(fr){ return fr.f.contentDocument; }
+
+  // the answer area as plain text, with stacked fractions turned back into a/b
+  // mainOnly: just the answer values (.v), not the supporting facts beside them
+  function answerText(doc, mainOnly){
+    var parts = doc.querySelectorAll(mainOnly ? ".answer .v" : ".answer");
+    if (mainOnly && !parts.length) parts = doc.querySelectorAll(".answer");
+    if (!parts.length) return "";
+    // the frame is thrown away afterwards, so it's fine to rewrite its answer area in place
+    return [].map.call(parts, function(el){
+      [].forEach.call(el.querySelectorAll("svg, script, style"), function(x){ x.remove(); });
+      [].forEach.call(el.querySelectorAll(".fr, .frac, .fraction"), function(fr){
+        var nu = fr.querySelector(".nu, .num, .top"), de = fr.querySelector(".de, .den, .bot, .bottom");
+        if (!nu || !de){ var kids = fr.children; if (kids.length === 2){ nu = kids[0]; de = kids[1]; } }
+        if (nu && de){
+          var t = doc.createElement("span"), whole = "";
+          // a whole number right before the fraction, in the same box, makes a mixed number (4 7/12)
+          var prev = fr.previousSibling;
+          while (prev && prev.nodeType === 3 && !prev.textContent.trim()) prev = prev.previousSibling;
+          if (prev && /^\s*[−-]?\d+\s*$/.test(prev.textContent)){ whole = prev.textContent.trim() + " "; prev.parentNode.removeChild(prev); }
+          t.textContent = " " + whole + nu.textContent.trim() + "/" + de.textContent.trim() + " ";
+          fr.parentNode.replaceChild(t, fr);
+        }
+      });
+      [].forEach.call(el.querySelectorAll("sup"), function(s){ s.textContent = "^" + s.textContent; });
+      // innerText follows the layout, so separate boxes don't run together ("Answer" "12" → "Answer 12")
+      return el.innerText || el.textContent;
+    }).join(" | ").replace(/\s*\n\s*/g, " | ").replace(/([−–-])\s*\|\s*(?=\d)/g, "$1").replace(/[ \t ]+/g, " ");   // separate lines stay apart, so "15" and "3/4" can't read as 15 3/4
+  }
+
+  /* talking to a helper the way the worksheet maker does */
+  var waiting = {}, seq = 0;
+  window.addEventListener("message", function(e){
+    var d = e.data; if (!d || !d.id || !waiting[d.id]) return;
+    var w = waiting[d.id]; if (d.type !== w.want) return;
+    clearTimeout(w.t); delete waiting[d.id]; w.ok(d);
+  });
+  function ask(fr, msg, want){
+    return new Promise(function(ok, bad){
+      var id = "t" + (++seq);
+      msg.id = id;
+      waiting[id] = { want:want, ok:ok, t:setTimeout(function(){ delete waiting[id]; bad(new Error("no reply to " + msg.type)); }, 10000) };
+      fr.f.contentWindow.postMessage(msg, "*");
+    });
+  }
+
+  /* ===================== the tests ===================== */
+  var depth = "quick", fails = [], totals = { pass:0, fail:0 };
+  function cell(page, col, html){ var c = document.querySelector('[data-page="' + page + '"] [data-col="' + col + '"]'); if (c) c.innerHTML = html; }
+  function score(page, col, p, f, extra){
+    cell(page, col, (f ? '<span class="bad">' + p + " / " + (p + f) + "</span>" : '<span class="ok">' + p + " / " + (p + f) + "</span>")
+      + (extra ? ' <span class="na">' + extra + "</span>" : ""));
+  }
+  function fail(page, what, detail, link){
+    totals.fail++;
+    fails.push({ page:page, what:what, detail:detail, link:link });
+    $("failBox").hidden = false; $("failBox").open = true;
+    $("failHead").textContent = fails.length + " failure" + (fails.length === 1 ? "" : "s");
+    var li = document.createElement("li");
+    li.innerHTML = "<b>" + esc(page) + "</b> · " + esc(what) + " — " + esc(detail)
+      + (link ? ' <a href="' + esc(link) + '" target="_blank" rel="noopener">open it</a>' : "");
+    $("fails").appendChild(li);
+    summary();
+  }
+  function pass(){ totals.pass++; summary(); }
+  function summary(){
+    $("summary").innerHTML = '<span class="p">' + totals.pass + " passed</span> · <span class=\"" + (totals.fail ? "f" : "p") + '">'
+      + totals.fail + " failed</span>";
+  }
+  function withPractice(params, mode){ return params + (params ? "&" : "") + "practice=" + mode; }
+
+  function smoke(T){
+    return load(T.page + "?practice=all").then(function(fr){
+      var d = docOf(fr), probs = [];
+      if (!d) throw new Error("can’t look inside");
+      if (/404|not found/i.test(d.title)) { drop(fr); return "missing"; }
+      if (!d.querySelector(".sitenav")) probs.push("no nav bar");
+      var btns = [].map.call(d.querySelectorAll("button"), function(b){ return b.textContent.trim(); });
+      ["Show all work", "One step at a time", "Check my answer", "Copy link"].forEach(function(t){
+        if (!btns.some(function(b){ return b.indexOf(t) === 0; })) probs.push("no “" + t + "” button");
+      });
+      if (!d.querySelector(".answer, .notice")) probs.push("no answer shown");
+      if (fr.errs.length) probs.push("script error: " + fr.errs[0]);
+      drop(fr);
+      if (probs.length){ fail(T.page, "loads", probs.join("; "), T.page); score(T.page, "load", 0, 1); }
+      else { pass(); score(T.page, "load", 1, 0); }
+      return "ok";
+    });
+  }
+
+  function known(T){
+    var list = KNOWN[T.page] || [], p = 0, f = 0;
+    return list.reduce(function(chain, c){
+      return chain.then(function(){
+        var link = T.page + "?" + withPractice(c[0], "all");
+        return load(link).then(function(fr){
+          var text = answerText(docOf(fr), true), toks = tokens(text);
+          var miss = c[1].filter(function(w){
+            if (typeof w === "string" && w.charAt(0) === "~") return text.toLowerCase().indexOf(w.slice(1)) < 0;   // a word to find
+            return !has(toks, typeof w === "string" ? X(w) : w);
+          });
+          drop(fr);
+          if (!text){ f++; fail(T.page, "known answer", "no answer shown for " + decodeURIComponent(c[0]), link); }
+          else if (miss.length){ f++; fail(T.page, "known answer", decodeURIComponent(c[0]) + ": expected " + miss.map(function(w){ return typeof w === "string" ? w : show(w); }).join(", ") + ", page shows “" + text.slice(0, 160) + "”", link); }
+          else { p++; pass(); }
+          score(T.page, "known", p, f);
+        }, function(e){ f++; fail(T.page, "known answer", e.message, link); });
+      });
+    }, Promise.resolve());
+  }
+
+  function verdict(msg){
+    if (/simplif|not simplified/i.test(msg)) return "simplify";
+    if (/not quite|try again|isn.t right|wrong/i.test(msg)) return "wrong";
+    if (/✓|correct/i.test(msg)) return "right";
+    return "unclear";
+  }
+  function checks(T){
+    var list = CHECKS[T.page] || [], p = 0, f = 0;
+    return list.reduce(function(chain, c){
+      return chain.then(function(){
+        var link = T.page + "?" + withPractice(c[0], "check");
+        return load(link).then(function(fr){
+          var d = docOf(fr), btn = [].filter.call(d.querySelectorAll("button"), function(b){ return b.textContent.trim() === "Check" && b.offsetParent; })[0];
+          if (!btn){ drop(fr); f++; fail(T.page, "check my answer", "no Check button in check mode", link); score(T.page, "check", p, f); return; }
+          var box = btn.closest("form, section, .ckbox, .try") || btn.parentElement.parentElement;
+          var inputs = [].filter.call(box.querySelectorAll("input"), function(i){ return i.offsetParent && i.type !== "hidden" && i.type !== "checkbox"; });
+          var vals = c[1].slice();
+          if (inputs.length === 1 && vals.length > 1) vals = [vals.join(c[0].indexOf("ans=remainder") >= 0 ? " R " : ", ")];
+          inputs.forEach(function(inp, i){ inp.value = vals[i] !== undefined ? vals[i] : ""; inp.dispatchEvent(new Event("input", { bubbles:true })); });
+          btn.click();
+          return new Promise(function(ok){ setTimeout(ok, 120); }).then(function(){
+            var live = box.querySelector("[aria-live]") || d.querySelector("[aria-live]:not(#statusLine)");
+            var msg = live ? live.textContent.replace(/\s+/g, " ").trim() : "";
+            var got = verdict(msg);
+            drop(fr);
+            if (got === c[2]){ p++; pass(); }
+            else { f++; fail(T.page, "check my answer", "typed “" + c[1].join(" | ") + "”, expected " + c[2] + ", got " + got + (msg ? " (“" + msg.slice(0, 120) + "”)" : ""), link); }
+            score(T.page, "check", p, f);
+          });
+        }, function(e){ f++; fail(T.page, "check my answer", e.message, link); });
+      });
+    }, Promise.resolve());
+  }
+
+  function made(T){
+    var per = depth === "quick" ? 3 : 8, oracle = ORACLE[T.page];
+    var stats = { p:0, f:0, skip:0, lp:0, lf:0 };
+    return load(T.page).then(function(fr){
+      return ask(fr, { type:"helper:options" }, "helper:optionsSchema").then(function(sch){
+        var opts = sch.options || [], sets = [{}];
+        var modeOpt = opts.filter(function(o){ return o.key === "mode"; })[0];
+        if (modeOpt) sets = (modeOpt.values || []).filter(function(v){ return v.v !== "mix" && v.v !== "any"; }).map(function(v){ return { mode:v.v }; });
+        if (depth === "thorough"){
+          opts.forEach(function(o){
+            if (o.key === "mode" || o.type !== "choice") return;
+            (o.values || []).forEach(function(v){
+              var base = {}; if (modeOpt){ var ms = o.modes || o.appliesTo || o.forMode; base.mode = ms ? [].concat(ms)[0] : modeOpt["default"]; }
+              base[o.key] = v.v; sets.push(base);
+            });
+          });
+        }
+        var all = [];
+        return sets.reduce(function(chain, s){
+          return chain.then(function(){
+            return ask(fr, { type:"helper:make", count:per, options:s }, "helper:made").then(function(d){
+              (d.problems || []).forEach(function(pr){ all.push({ pr:pr, opts:s }); });
+            }, function(e){ stats.f++; fail(T.page, "made problems", "options " + JSON.stringify(s) + ": " + e.message); });
+          });
+        }, Promise.resolve()).then(function(){ drop(fr); return all; });
+      });
+    }).then(function(all){
+      // re-work each one here
+      all.forEach(function(it){
+        var pr = it.pr, link = T.page + "?" + pr.params;
+        if (!oracle){ stats.skip++; return; }
+        var res;
+        try { res = oracle(pr.params, tokens(pr.answer || ""), pr.answer || ""); }
+        catch (e){ res = { ok:false, msg:"couldn’t re-work it here (" + e.message + ")" }; }
+        if (res.skip) stats.skip++;
+        else if (res.ok){ stats.p++; pass(); }
+        else { stats.f++; fail(T.page, "made problem", "“" + (pr.text || pr.params) + "” → page says “" + pr.answer + "”: " + res.msg, link); }
+      });
+      score(T.page, "made", stats.p, stats.f, stats.skip ? stats.skip + " not re-worked" : "");
+      // and open each one from its link
+      var sample = depth === "quick" ? all.filter(function(_, i){ return i % 2 === 0; }) : all;
+      return sample.reduce(function(chain, it){
+        return chain.then(function(){
+          var link = T.page + "?" + withPractice(it.pr.params, "all");
+          return load(link).then(function(fr){
+            var text = answerText(docOf(fr)), want = tokens(it.pr.answer || ""), got = tokens(text);
+            drop(fr);
+            var miss = want.filter(function(w){ return !w.base && !has(got, w.exact && !w.approx ? { exact:w.exact } : { f:w.f, loose:0.002 }); });
+            var words = !want.length && it.pr.answer ? String(it.pr.answer).toLowerCase().split(/\W+/).filter(function(x){ return x.length > 3; }) : [];
+            var missWord = words.filter(function(w){ return text.toLowerCase().indexOf(w) < 0; });
+            // an expression answer (14x − 17) is easier to compare as text with the spaces taken out
+            var squash = function(x){ return String(x).replace(/[\s|]/g, "").replace(/[−–]/g, "-").toLowerCase(); };
+            if ((miss.length || missWord.length) && it.pr.answer && squash(text).indexOf(squash(it.pr.answer)) >= 0){ miss = []; missWord = []; }
+            if (!text){ stats.lf++; fail(T.page, "link", "nothing shown for " + decodeURIComponent(it.pr.params), link); }
+            else if (miss.length || missWord.length){ stats.lf++; fail(T.page, "link", "the link shows “" + text.slice(0, 140) + "”, the problem maker said “" + it.pr.answer + "”", link); }
+            else { stats.lp++; pass(); }
+            score(T.page, "links", stats.lp, stats.lf);
+          }, function(e){ stats.lf++; fail(T.page, "link", e.message, link); });
+        });
+      }, Promise.resolve());
+    }, function(e){ fail(T.page, "made problems", e.message); cell(T.page, "made", '<span class="bad">no reply</span>'); });
+  }
+
+  /* ===================== running everything ===================== */
+  var chosen = {};
+  PAGES.forEach(function(T){ chosen[T.page] = true; });
+  function rows(){
+    $("rows").innerHTML = PAGES.map(function(T){
+      return '<tr data-page="' + T.page + '"><td><a href="' + T.page + '">' + esc(T.name) + '</a><br><span class="na">' + T.page + "</span></td>"
+        + ["load", "known", "check", "made", "links"].map(function(c){ return '<td class="n" data-col="' + c + '"><span class="na">—</span></td>'; }).join("") + "</tr>";
+    }).join("");
+    $("pick").innerHTML = PAGES.map(function(T){
+      return '<label><input type="checkbox" data-pick="' + T.page + '"' + (chosen[T.page] ? " checked" : "") + "> " + esc(T.name) + "</label>";
+    }).join("");
+    [].forEach.call(document.querySelectorAll("[data-pick]"), function(c){
+      c.addEventListener("change", function(){ chosen[c.getAttribute("data-pick")] = c.checked; });
+    });
+  }
+  function saveStore(){ var o = {}; try { for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); o[k] = localStorage.getItem(k); } } catch (e){} return o; }
+  function restoreStore(o){
+    try {
+      var now = []; for (var i = 0; i < localStorage.length; i++) now.push(localStorage.key(i));
+      now.forEach(function(k){ if (!(k in o)) localStorage.removeItem(k); });
+      Object.keys(o).forEach(function(k){ localStorage.setItem(k, o[k]); });
+    } catch (e){}
+  }
+  function run(){
+    $("runBtn").disabled = true; $("runBtn").textContent = "Running…";
+    fails = []; totals = { pass:0, fail:0 }; $("fails").innerHTML = ""; $("failBox").hidden = true; summary();
+    rows();
+    var store = saveStore();
+    var list = PAGES.filter(function(T){ return chosen[T.page]; });
+    return list.reduce(function(chain, T){
+      return chain.then(function(){
+        ["load", "known", "check", "made", "links"].forEach(function(c){ cell(T.page, c, '<span class="busy">…</span>'); });
+        return smoke(T).then(function(state){
+          if (state === "missing"){ ["load", "known", "check", "made", "links"].forEach(function(c){ cell(T.page, c, '<span class="na">page not found</span>'); }); return; }
+          return known(T).then(function(){ return checks(T); }).then(function(){ return made(T); });
+        }, function(e){ fail(T.page, "loads", e.message, T.page); cell(T.page, "load", '<span class="bad">failed</span>'); });
+      });
+    }, Promise.resolve()).then(function(){
+      restoreStore(store);
+      $("runBtn").disabled = false; $("runBtn").textContent = "Run all tests again";
+      document.title = (totals.fail ? "✗ " : "✓ ") + "Self Test";
+      window.__testsDone = { pass:totals.pass, fail:totals.fail, fails:fails };
+    });
+  }
+
+  if (location.protocol === "file:") $("fileWarn").hidden = false;
+  [].forEach.call(document.querySelectorAll("[data-depth]"), function(b){
+    b.addEventListener("click", function(){
+      depth = b.getAttribute("data-depth");
+      [].forEach.call(document.querySelectorAll("[data-depth]"), function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+    });
+  });
+  $("runBtn").addEventListener("click", run);
+  rows(); summary();
+  if (/[?&]depth=thorough/.test(location.search)) document.querySelector('[data-depth="thorough"]').click();
+  if (/[?&]run=1/.test(location.search)) run();
+  window.__selfTest = { tokens:tokens, evaluate:evaluate, has:has, num:num };
+})();
+</script>
