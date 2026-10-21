@@ -1,0 +1,1867 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Flash Cards</title>
+<meta name="description" content="Times tables, division, addition and subtraction facts, squares, cubes, fraction–decimal–percent pairs and math words, as flash cards. Flip them, quiz yourself, race the clock, or let Learn bring back the ones you miss.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arithmetic Helpers">
+<meta property="og:title" content="The Flash Cards · Arithmetic Helpers">
+<meta property="og:description" content="Times tables, division, addition and subtraction facts, squares, cubes, fraction–decimal–percent pairs and math words, as flash cards. Flip them, quiz yourself, race the clock, or let Learn bring back the ones you miss.">
+<meta property="og:url" content="https://chrisdfennell.github.io/arithmetic-helpers/flashcards.html">
+<meta property="og:image" content="https://chrisdfennell.github.io/arithmetic-helpers/icons/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
+<meta name="twitter:card" content="summary_large_image">
+<script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EFECE9; --surface:#FAF8F6; --surface-2:#E6E0DA;
+    --ink:#231A15; --ink-2:#5A4D45; --ink-3:#85776E; --rule:#D5CBC3;
+    --key:#C2410C;   --key-bg:#FBE4D6;  --key-line:#EFA27A;   /* the page itself */
+    --a:#3D7A1C;     --a-bg:#E0EED5;                          /* right, mastered */
+    --l:#9A6206;     --l-bg:#FBEBC4;                          /* still learning */
+    --r:#B42318;     --r-bg:#F9DEDA;                          /* not yet */
+    --card:#FFFFFF;
+    --focus:#C2410C;
+    --shadow:0 1px 0 rgba(35,26,21,.05), 0 14px 30px -20px rgba(35,26,21,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#161210; --surface:#1F1916; --surface-2:#2C241F;
+      --ink:#F0E8E3; --ink-2:#B5A69C; --ink-3:#8A7C73; --rule:#41362F;
+      --key:#FB923C;  --key-bg:#3B210F;  --key-line:#9A4E1F;
+      --a:#9AD46A;    --a-bg:#1E2D12;
+      --l:#F2C14E;    --l-bg:#3A2D0D;
+      --r:#F28B7E;    --r-bg:#3D1A15;
+      --card:#26201C;
+      --focus:#FB923C;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#161210; --surface:#1F1916; --surface-2:#2C241F;
+    --ink:#F0E8E3; --ink-2:#B5A69C; --ink-3:#8A7C73; --rule:#41362F;
+    --key:#FB923C;  --key-bg:#3B210F;  --key-line:#9A4E1F;
+    --a:#9AD46A;    --a-bg:#1E2D12;
+    --l:#F2C14E;    --l-bg:#3A2D0D;
+    --r:#F28B7E;    --r-bg:#3D1A15;
+    --card:#26201C;
+    --focus:#FB923C;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased}
+  .page{max-width:1180px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
+  @media (max-width:520px){.page{padding:22px 16px 60px;gap:20px}}
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(34px,6.4vw,54px);line-height:.98;
+    letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:60ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;background:var(--surface);color:var(--ink-2);
+    border:1px solid var(--rule);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+  button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+
+  .layout{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:24px;align-items:start}
+  @media (max-width:960px){.layout{grid-template-columns:minmax(0,1fr)}}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);min-width:0}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:16px;margin:0}
+  .count{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--key);background:var(--key-bg);border-radius:999px;padding:3px 10px}
+
+  /* ---- picking the deck ---- */
+  .picker details > summary{cursor:pointer;list-style:none}
+  .picker details > summary::-webkit-details-marker{display:none}
+  .picker details > summary h2::before{content:"−";font-family:var(--f-mono);color:var(--key);display:inline-block;width:1.2ch;margin-right:6px}
+  .picker details:not([open]) > summary h2::before{content:"+"}
+  .picker details:not([open]) > summary{border-bottom:0}
+  .blk{padding:14px 18px;border-bottom:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
+  .blk:last-child{border-bottom:0}
+  .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+  .row{display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center}
+  .note{font-size:13px;color:var(--ink-3);margin:0}
+  .deck-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px}
+  .dk{display:flex;align-items:center;gap:9px;text-align:left;font-family:var(--f-body);font-size:14px;font-weight:500;color:var(--ink-2);
+    background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:9px 10px;cursor:pointer;min-height:44px}
+  .dk b{font-family:var(--f-mono);font-weight:600;font-size:15px;min-width:1.9em;text-align:center;color:var(--ink-3)}
+  .dk:hover{border-color:var(--key-line)}
+  .dk[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .dk[aria-pressed="true"] b{color:var(--key)}
+  .tables{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+  .tb{font-family:var(--f-mono);font-size:15px;font-weight:600;min-height:42px;background:var(--paper);border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:9px;cursor:pointer;padding:0}
+  .tb[aria-pressed="true"]{background:var(--key);border-color:var(--key);color:var(--surface)}
+  .mini{font-family:var(--f-body);font-size:12.5px;font-weight:600;background:transparent;border:1px solid var(--rule);color:var(--ink-2);
+    border-radius:999px;padding:5px 11px;cursor:pointer;min-height:32px}
+  .mini:hover{color:var(--ink);border-color:var(--ink-3)}
+  .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:13.5px;font-weight:500;border:0;background:transparent;color:var(--ink-2);
+    padding:7px 12px;border-radius:7px;cursor:pointer;min-height:36px}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);border:1px solid var(--rule);color:var(--ink-2);
+    border-radius:999px;padding:7px 13px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;align-self:flex-start;min-height:38px;text-align:left}
+  .tog::before{content:"";width:14px;height:14px;border-radius:4px;border:1.5px solid var(--ink-3);flex:none}
+  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .tog[aria-pressed="true"]::before{background:var(--key);border-color:var(--key);box-shadow:inset 0 0 0 2px var(--key-bg)}
+  select{font-family:var(--f-body);font-size:14.5px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;
+    padding:8px 10px;min-width:0;max-width:100%;min-height:40px}
+
+  /* ---- the ways to practise ---- */
+  .play{display:flex;flex-direction:column;min-width:0}
+  .tabs{display:flex;flex-wrap:wrap;gap:4px;padding:10px 12px;border-bottom:1px solid var(--rule)}
+  .tabs [role="tab"]{font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--ink-2);background:transparent;border:1px solid transparent;
+    border-radius:10px;padding:9px 15px;cursor:pointer;min-height:44px;flex:1 1 auto}
+  .tabs [role="tab"]:hover{color:var(--ink);background:var(--paper)}
+  .tabs [role="tab"][aria-selected="true"]{color:var(--ink);background:var(--key-bg);border-color:var(--key)}
+  .tabs [role="tab"] small{display:block;font-weight:400;font-size:11.5px;color:var(--ink-3);line-height:1.2}
+  .tabpanel{padding:20px 22px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  @media (max-width:520px){.tabpanel{padding:16px 14px 18px}.tabs{padding:8px}.tabs [role="tab"]{padding:8px 8px;font-size:14px}}
+  .empty{padding:30px 16px;text-align:center;color:var(--ink-3);border:1.5px dashed var(--rule);border-radius:14px}
+
+  /* the flip card */
+  .stage{perspective:1400px;display:flex;justify-content:center}
+  .fc{position:relative;width:100%;max-width:560px;height:clamp(240px,44vw,330px);cursor:pointer;touch-action:pan-y;
+    -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;outline:none;border-radius:18px}
+  .fc-in{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.3,.75,.3,1)}
+  .fc.flipped .fc-in{transform:rotateY(180deg)}
+  .fc.still .fc-in{transition:none}
+  .fc.enter{animation:fcIn .26s ease-out}
+  @keyframes fcIn{from{opacity:0;transform:translateX(var(--dx,26px))}to{opacity:1;transform:none}}
+  .face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:18px;border:1px solid var(--rule);
+    background:var(--card);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;padding:30px 22px 34px;text-align:center;overflow:hidden}
+  .face.front{border-top:7px solid var(--key)}
+  .face.back{transform:rotateY(180deg);background:var(--key-bg);border-color:var(--key-line)}
+  .fc:focus-visible .face{outline:3px solid var(--focus);outline-offset:3px}
+  .fc .corner{position:absolute;top:10px;left:14px;font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .fc .badge{position:absolute;top:9px;right:12px}
+  .fc .foot{position:absolute;bottom:10px;left:0;right:0;font-size:12px;color:var(--ink-3)}
+  .bigq{font-family:var(--f-mono);font-weight:600;font-size:clamp(42px,9.5vw,80px);line-height:1.1;letter-spacing:-.02em;overflow-wrap:anywhere}
+  .bigq.long{font-family:var(--f-body);font-weight:500;font-size:clamp(17px,2.6vw,21px);line-height:1.4;letter-spacing:0;max-width:34ch}
+  .bigq.word{font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:clamp(30px,6vw,48px)}
+  .bigq.mid{font-size:clamp(34px,7vw,58px)}
+  .subq{font-size:15px;color:var(--ink-2);font-weight:500}
+  .full{font-family:var(--f-mono);font-size:15px;color:var(--ink-2)}
+  .fc-tip{margin:0;font-size:14.5px;color:var(--ink-2);max-width:46ch;line-height:1.45}
+  .pic svg{display:block;max-height:76px;max-width:100%;height:auto}
+  .pic small{display:block;font-size:11.5px;color:var(--ink-3)}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.02;font-size:.78em;margin:0 .06em}
+  .fr .nu{padding:0 .14em}
+  .fr .de{padding:0 .14em;border-top:.065em solid currentColor}
+  .tag{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;padding:2px 8px;
+    border:1px solid var(--rule);color:var(--ink-3);background:var(--surface)}
+  .tag.learning{color:var(--l);border-color:var(--l);background:var(--l-bg)}
+  .tag.mastered{color:var(--a);border-color:var(--a);background:var(--a-bg)}
+
+  .navrow{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:560px;width:100%;margin:0 auto}
+  .navrow .pos{font-family:var(--f-mono);font-size:13px;color:var(--ink-3);text-align:center}
+  .btn{font-family:var(--f-body);font-size:15px;font-weight:600;border-radius:11px;padding:10px 16px;cursor:pointer;min-height:46px;
+    border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
+  .btn:hover{border-color:var(--ink-3)}
+  .btn:disabled{opacity:.45;cursor:default}
+  .btn kbd{font-family:var(--f-mono);font-size:11px;font-weight:600;border:1px solid currentColor;border-radius:4px;padding:0 5px;margin-left:6px;opacity:.6}
+  @media (hover:none){.btn kbd{display:none}}
+  .go{background:var(--key);border-color:var(--key);color:var(--surface)}
+  .go:hover{filter:brightness(1.08);border-color:var(--key)}
+  .gradrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:560px;width:100%;margin:0 auto}
+  .yes{background:var(--a-bg);border-color:var(--a)}
+  .notyet{background:var(--l-bg);border-color:var(--l)}
+  .keys-note{margin:0 auto;font-size:12.5px;color:var(--ink-3);text-align:center;max-width:560px}
+
+  /* typed answers: quiz, speed round, learn */
+  .qcard{position:relative;border-radius:18px;border:1px solid var(--rule);border-top:7px solid var(--key);background:var(--card);
+    box-shadow:var(--shadow);padding:30px 18px 24px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+    min-height:190px;justify-content:center;overflow:hidden;max-width:560px;width:100%;margin:0 auto}
+  .qcard .corner{position:absolute;top:9px;left:14px;font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+  .qcard .badge{position:absolute;top:8px;right:12px}
+  .qcard.ok{border-color:var(--a);border-top-color:var(--a)}
+  .qcard.bad{border-color:var(--r);border-top-color:var(--r)}
+  .qcard.pop{animation:pop .3s ease-out}
+  @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+  .tbar{position:absolute;left:0;bottom:0;height:5px;background:var(--key);width:100%;transform-origin:left center}
+  .ansrow{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;justify-content:center;max-width:560px;width:100%;margin:0 auto}
+  .ansfield{display:flex;flex-direction:column;gap:4px;flex:1 1 200px;min-width:0;max-width:340px}
+  .ansfield label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+  .ans-in{font-family:var(--f-mono);font-size:26px;font-weight:600;color:var(--ink);background:var(--paper);border:1.5px solid var(--rule);
+    border-radius:11px;padding:7px 12px;width:100%;min-width:0;min-height:52px}
+  .ans-in:focus{border-color:var(--focus);outline:none;box-shadow:0 0 0 3px var(--key-bg)}
+  .ans-in:disabled{opacity:.6}
+  .fb{min-height:1.6em;font-size:15.5px;color:var(--ink-2);text-align:center;max-width:560px;margin:0 auto;width:100%}
+  .fb .ok{color:var(--a);font-weight:700}
+  .fb .bad{color:var(--r);font-weight:700}
+  .fb .form{color:var(--l);font-weight:700}
+  .fb b{font-family:var(--f-mono)}
+  .fb .tipline{display:block;margin-top:4px;font-size:14px;color:var(--ink-2)}
+  .scorebar{display:flex;gap:8px 18px;flex-wrap:wrap;justify-content:center;align-items:center;font-size:14px;color:var(--ink-2)}
+  .scorebar b{font-family:var(--f-mono);color:var(--ink)}
+  .optrow{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;justify-content:center;font-size:13.5px;color:var(--ink-3)}
+  .clock{font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--ink-2);display:flex;align-items:center;gap:10px;justify-content:center}
+  .clock b{font-size:30px;color:var(--ink);min-width:2.6ch;text-align:right}
+  .clock.low b{color:var(--r)}
+  .meter{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;max-width:560px;width:100%;margin:0 auto}
+  .meter i{display:block;height:100%;width:0;background:var(--a);border-radius:999px;transition:width .3s ease}
+  .shelf{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;max-width:560px;width:100%;margin:0 auto}
+  .box{border:1px solid var(--rule);border-radius:10px;background:var(--paper);padding:6px 4px;text-align:center;min-width:0}
+  .box b{display:block;font-family:var(--f-mono);font-size:19px;line-height:1.2}
+  .box span{display:block;font-size:11px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .box.l{border-color:var(--l);background:var(--l-bg)}
+  .box.m{border-color:var(--a);background:var(--a-bg)}
+  .box.now{box-shadow:0 0 0 2px var(--key)}
+  .done-msg{text-align:center;font-size:16px;color:var(--ink)}
+  .done-msg b{font-family:var(--f-mono)}
+  .best{color:var(--a);font-weight:700}
+
+  /* ---- mastery chart ---- */
+  .chart-body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:20px}
+  .legend{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink-2)}
+  .legend i{display:inline-block;width:13px;height:13px;border-radius:4px;border:1px solid var(--rule);background:var(--surface-2);vertical-align:-2px;margin-right:5px}
+  .legend i.l{background:var(--l-bg);border-color:var(--l)}
+  .legend i.m{background:var(--a-bg);border-color:var(--a)}
+  .chart-sec h3{font-family:var(--f-display);font-stretch:110%;font-size:14.5px;margin:0 0 8px;font-weight:700}
+  .chart-sec h3 small{font-family:var(--f-body);font-weight:400;color:var(--ink-3);font-size:13px;margin-left:6px}
+  .grid{display:grid;gap:3px;grid-template-columns:1.9em repeat(var(--n),minmax(0,1fr));max-width:600px}
+  .grid .h{font-family:var(--f-mono);font-size:clamp(9px,2.3vw,12px);font-weight:600;color:var(--ink-3);display:flex;align-items:center;justify-content:center;min-width:0}
+  .grid .h.on{color:var(--key)}
+  .cell{aspect-ratio:1;border-radius:5px;border:1px solid var(--rule);background:var(--surface-2);font-family:var(--f-mono);
+    font-size:clamp(8.5px,2.2vw,12px);font-weight:600;color:var(--ink);padding:0;cursor:pointer;min-width:0;overflow:hidden;line-height:1}
+  .cell:hover{border-color:var(--key)}
+  .cell.learning,.chip.learning{background:var(--l-bg);border-color:var(--l)}
+  .cell.mastered,.chip.mastered{background:var(--a-bg);border-color:var(--a)}
+  .cell.off,.chip.off{opacity:.38}
+  .cell.blank{visibility:hidden}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--ink);border:1px solid var(--rule);background:var(--surface-2);
+    border-radius:999px;padding:6px 11px;cursor:pointer;min-height:36px}
+  .chip:hover{border-color:var(--key)}
+  .chip.wordchip{font-family:var(--f-body);font-weight:500}
+
+  .footnote{display:flex;gap:10px 12px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote .btn{font-size:13.5px;min-height:40px;padding:7px 13px}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  @media (prefers-reduced-motion:reduce){
+    .fc-in{transition:none}
+    .fc.enter,.qcard.pop{animation:none}
+    .meter i{transition:none}
+  }
+
+  /* ---- the cut-out cards (print only) ---- */
+  .print-sheets{display:none}
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#eee; --ink:#111; --ink-2:#333; --ink-3:#666; --rule:#999;
+      --key:#C2410C; --key-bg:#FBE4D6; --key-line:#EFA27A; --card:#fff;
+    }
+    @page{size:letter;margin:0.4in}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff}
+    .page{max-width:none;padding:0;gap:0;display:block;zoom:1 !important}
+    .page > *:not(.print-sheets){display:none !important}
+    .print-sheets{display:block}
+    .psheet{break-after:page;page-break-after:always}
+    .psheet:last-child{break-after:auto;page-break-after:auto}
+    .psheet h2{font-family:var(--f-display);font-size:11pt;font-weight:700;margin:0 0 .08in;color:#444;display:flex;justify-content:space-between}
+    .psheet h2 span{font-weight:400;font-family:var(--f-body)}
+    .pgrid{display:grid;grid-template-columns:repeat(3,2.5in);grid-auto-rows:2.35in;border-top:1px dashed #888;border-left:1px dashed #888;width:7.5in}
+    .pc{border-right:1px dashed #888;border-bottom:1px dashed #888;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:.18in;position:relative;overflow:hidden;gap:.06in}
+    .pc .pt{position:absolute;top:.08in;left:.1in;font-family:var(--f-mono);font-size:6.5pt;letter-spacing:.1em;text-transform:uppercase;color:#888}
+    .pc .pq{font-family:var(--f-mono);font-weight:600;font-size:28pt;line-height:1.1;color:#111}
+    .pc .pq.long{font-family:var(--f-body);font-weight:500;font-size:10pt;line-height:1.35}
+    .pc .pq.word{font-family:var(--f-display);font-weight:800;font-size:17pt}
+    .pc .ps{font-size:9.5pt;color:#444}
+    .pc .ptip{font-size:7.5pt;color:#444;line-height:1.3}
+    .pc.back{background:#fff}
+    .pc.back .pq{color:#7A2A06}
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Math facts, practised</div>
+      <h1>The Flash <em>Cards</em></h1>
+      <p class="tagline">Pick the facts you want to know by heart. Flip the cards to study, type answers in a quiz, race the clock,
+        or let Learn bring back the ones you miss until you know them all.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <div class="layout">
+    <section class="panel picker" aria-label="Pick the deck">
+      <details id="pickBox" open>
+        <summary class="panel-head"><h2>Pick the deck</h2><span class="count" id="deckCount">0 cards</span></summary>
+        <div class="blk">
+          <span class="lbl" id="whichL">Which facts</span>
+          <div class="deck-list" id="deckList" role="group" aria-labelledby="whichL"></div>
+          <p class="note">Pick one or more. Picking more than one mixes them into one deck.</p>
+        </div>
+        <div class="blk" id="optTimes">
+          <span class="lbl" id="tabL">Which tables</span>
+          <div class="tables" id="tables" role="group" aria-labelledby="tabL"></div>
+          <div class="row">
+            <button type="button" class="mini" data-tset="1-12">All</button>
+            <button type="button" class="mini" data-tset="2-5">2–5</button>
+            <button type="button" class="mini" data-tset="6-9">6–9</button>
+            <button type="button" class="mini" data-tset="10-12">10–12</button>
+            <button type="button" class="mini" data-tset="">None</button>
+          </div>
+          <div class="row"><span class="lbl">Facts up to</span><div class="modes" id="maxSeg"></div></div>
+          <button type="button" class="tog" id="turnT">Both ways round: 7 × 6 as well as 6 × 7</button>
+        </div>
+        <div class="blk" id="optAdd">
+          <div class="row"><span class="lbl">Numbers within</span><div class="modes" id="withinSeg"></div></div>
+        </div>
+        <div class="blk" id="optSq">
+          <div class="row"><span class="lbl">Squares and roots up to</span><div class="modes" id="sqSeg"></div></div>
+        </div>
+        <div class="blk" id="optFdp">
+          <span class="lbl">Fractions, decimals &amp; percents: which way</span>
+          <div class="modes" id="waySeg"></div>
+        </div>
+        <div class="blk" id="optWords">
+          <label class="row"><span class="lbl">Math words about</span><select id="wtSel"></select></label>
+        </div>
+        <div class="blk">
+          <div class="row"><span class="lbl">Order</span><div class="modes" id="orderSeg"></div>
+            <button type="button" class="mini" id="reshuffle">Shuffle again</button></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel play" aria-label="Practise">
+      <div class="tabs" role="tablist" aria-label="Ways to practise" id="tabs">
+        <button type="button" role="tab" id="tab-study" aria-controls="panel-study" data-mode="study">Study<small>flip the cards</small></button>
+        <button type="button" role="tab" id="tab-quiz" aria-controls="panel-quiz" data-mode="quiz">Quiz<small>type the answer</small></button>
+        <button type="button" role="tab" id="tab-speed" aria-controls="panel-speed" data-mode="speed">Speed round<small>race the clock</small></button>
+        <button type="button" role="tab" id="tab-learn" aria-controls="panel-learn" data-mode="learn">Learn<small>missed ones come back</small></button>
+      </div>
+
+      <!-- Study -->
+      <div class="tabpanel" role="tabpanel" id="panel-study" aria-labelledby="tab-study">
+        <div class="empty" id="sEmpty" hidden>Pick some facts to practise first.</div>
+        <div id="sMain">
+          <div class="stage">
+            <div class="fc" id="sCard" tabindex="0" role="button" aria-describedby="sHelp">
+              <div class="fc-in">
+                <div class="face front">
+                  <span class="corner" id="sTag"></span><span class="badge" id="sBadge"></span>
+                  <div class="bigq" id="sQ"></div>
+                  <div class="subq" id="sSub"></div>
+                  <span class="foot" aria-hidden="true">Tap to flip</span>
+                </div>
+                <div class="face back" aria-hidden="true">
+                  <div class="bigq" id="sA"></div>
+                  <div class="full" id="sFull"></div>
+                  <div class="pic" id="sPic"></div>
+                  <p class="fc-tip" id="sTip"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <span class="sr-only" id="sHelp">Press Space or Enter to flip the card. Left and right arrows move between cards.</span>
+          <div class="sr-only" id="sSay" aria-live="polite"></div>
+        </div>
+        <div class="navrow" id="sNav">
+          <button type="button" class="btn" id="sPrev" aria-label="Previous card">← Back</button>
+          <span class="pos" id="sPos"></span>
+          <button type="button" class="btn" id="sNext" aria-label="Next card">Next →</button>
+        </div>
+        <div class="gradrow" id="sGrade">
+          <button type="button" class="btn yes" id="sYes">I knew it<kbd>1</kbd></button>
+          <button type="button" class="btn notyet" id="sNo">Not yet<kbd>2</kbd></button>
+        </div>
+        <p class="keys-note" id="sKeys">Space or Enter flips the card · ← → move · on a phone, tap to flip and swipe to move.
+          “I knew it” and “Not yet” go into your record and move on.</p>
+      </div>
+
+      <!-- Quiz -->
+      <div class="tabpanel" role="tabpanel" id="panel-quiz" aria-labelledby="tab-quiz" hidden>
+        <div class="empty" id="qEmpty" hidden>Pick some facts to practise first.</div>
+        <div class="qcard" id="qCard">
+          <span class="corner" id="qTag"></span><span class="badge" id="qBadge"></span>
+          <div class="bigq" id="qQ"></div>
+          <div class="subq" id="qSub"></div>
+          <i class="tbar" id="qBar" hidden></i>
+        </div>
+        <form class="ansrow" id="qForm" autocomplete="off">
+          <div class="ansfield"><label for="qIn">Your answer</label>
+            <input class="ans-in" id="qIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go"></div>
+          <button type="submit" class="btn go" id="qGo">Check</button>
+        </form>
+        <div class="fb" id="qFb" role="status" aria-live="polite"></div>
+        <div class="scorebar" id="qScore"></div>
+        <div class="optrow" id="qOpts">
+          <span>Time for each card</span><div class="modes" id="timerSeg"></div>
+          <button type="button" class="mini" id="qReset">Start over</button>
+        </div>
+      </div>
+
+      <!-- Speed round -->
+      <div class="tabpanel" role="tabpanel" id="panel-speed" aria-labelledby="tab-speed" hidden>
+        <div class="empty" id="pEmpty" hidden>Pick some facts to practise first.</div>
+        <div class="optrow"><span>How long</span><div class="modes" id="secsSeg"></div></div>
+        <div class="clock" id="pClock"><b id="pTime">60</b><span>seconds</span><span>·</span><span><b id="pRight" style="font-size:22px">0</b> right</span></div>
+        <div class="meter" aria-hidden="true"><i id="pMeter" style="background:var(--key);width:100%"></i></div>
+        <div class="qcard" id="pCard">
+          <span class="corner" id="pTag"></span>
+          <div class="bigq" id="pQ"></div>
+          <div class="subq" id="pSub"></div>
+        </div>
+        <form class="ansrow" id="pForm" autocomplete="off">
+          <div class="ansfield"><label for="pIn">Your answer</label>
+            <input class="ans-in" id="pIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go"></div>
+          <button type="submit" class="btn go" id="pGo">Start</button>
+        </form>
+        <div class="fb" id="pFb" role="status" aria-live="polite"></div>
+        <p class="keys-note">Right answers go through on their own. Press Enter to check a wrong one, or Enter on an empty box to skip.</p>
+      </div>
+
+      <!-- Learn -->
+      <div class="tabpanel" role="tabpanel" id="panel-learn" aria-labelledby="tab-learn" hidden>
+        <div class="empty" id="lEmpty" hidden>Pick some facts to practise first.</div>
+        <div class="shelf" id="lShelf" aria-label="Boxes"></div>
+        <div class="meter" aria-hidden="true"><i id="lMeter"></i></div>
+        <div class="done-msg" id="lMastered" aria-live="polite"></div>
+        <div class="qcard" id="lCard">
+          <span class="corner" id="lTag"></span><span class="badge" id="lBadge"></span>
+          <div class="bigq" id="lQ"></div>
+          <div class="subq" id="lSub"></div>
+        </div>
+        <form class="ansrow" id="lForm" autocomplete="off">
+          <div class="ansfield"><label for="lIn">Your answer</label>
+            <input class="ans-in" id="lIn" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go"></div>
+          <button type="submit" class="btn go" id="lGo">Check</button>
+          <button type="button" class="btn" id="lShow">Show me</button>
+        </form>
+        <div class="fb" id="lFb" role="status" aria-live="polite"></div>
+        <p class="keys-note">Every card lives in a box. Get it right and it moves up a box and comes back less often.
+          Miss it and it goes back to box 1 and comes back soon. Boxes 4 and 5 count as mastered.</p>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel mastery" aria-labelledby="chartH">
+    <div class="panel-head"><h2 id="chartH">Mastery chart</h2>
+      <div class="legend"><span><i></i>New</span><span><i class="l"></i>Learning</span><span><i class="m"></i>Mastered</span>
+        <span id="chartCounts"></span></div></div>
+    <div class="chart-body">
+      <p class="note">Each square is one fact, coloured by how well you know it. Tap one to practise it now.
+        Faded squares aren’t in the deck you picked.</p>
+      <div id="chart"></div>
+    </div>
+  </section>
+
+  <footer class="footnote">
+    <button type="button" class="btn" id="copyBtn">Copy link to this deck</button>
+    <button type="button" class="btn" id="printBtn">Print cut-out cards</button>
+    <button type="button" class="btn" id="clearBtn">Clear my record</button>
+    <span id="footMsg" role="status" aria-live="polite"></span>
+  </footer>
+
+  <div class="print-sheets" id="printSheets" aria-hidden="true"></div>
+</div>
+
+<script>
+/* ===================== URL parameters =====================
+   flashcards.html?deck=times,div&t=6,7,8&max=10&turn=1&order=in&within=20&sq=12&way=both&wt=&mode=study&secs=60&timer=0&card=m:7:8
+     deck    one or more of times div add sub sq rt cu fdp words (comma list)
+     t       the times tables, 0–12 (comma list or ranges: t=2-5,10) — for times and div
+     max     10 | 12 — facts go up to × 10 or × 12
+     turn    1 | 0 — also the turned-around fact (7 × 6 as well as 6 × 7; 42 ÷ 7 as well as 42 ÷ 6)
+     order   in | mix
+     within  10 | 20 | 100 — addition and subtraction facts
+     sq      10 | 12 | 15 | 20 — squares and square roots up to this number squared (cubes are always 1³–10³)
+     way     to (fraction → decimal and percent) | from (decimal and percent → fraction) | both
+     wt      a glossary topic for the math words, e.g. wt=fractions-decimals (empty = every topic)
+     mode    study | quiz | speed | learn
+     secs    30 | 60 | 120 — speed round length;  timer  0 | 5 | 10 | 20 — seconds for each quiz card (0 = no timer)
+     card    one fact, asked first (Quiz or Learn) or shown first (Study). Ids: m:7:8 (7 × 8), d:42:6 (42 ÷ 6), a:8:5 (8 + 5),
+             s:13:5 (13 − 5), sq:7 (7²), rt:7 (√49), cu:4 (4³), f:3/4:fd|fp|df|pf (¾ as a decimal | as a percent |
+             0.75 as a fraction | 75% as a fraction), w:<glossary id> (a math word).
+   A link with deck= names the whole deck: its other deck settings default when left out (t=6,7,8, max=10, turn=1,
+   order=in, within=20, sq=12, way=both, wt=); mode, secs and timer keep what this browser saved. The address bar follows the deck and the mode
+   (history.replaceState; never the theme; card is dropped once it has been shown).
+
+   Record: localStorage["flash-cards"] = { v:1, f:{ <card id>:{ b:box 1–5, r:rights, w:misses, s:streak, n:due step, t:time } },
+     step:answers so far (the Learn clock), best:{ "<deck query>|<secs>":best speed score }, s:settings, theme }
+   A card is new with no record, mastered in box 4 or 5, learning otherwise. Right: up a box (a new card starts in box 2);
+   miss: back to box 1. A card is due again GAP[box] answers later (2, 5, 12, 30, 80).
+
+   Every answer in Quiz, Speed round and Learn is reported as helper:checked (a CustomEvent on document, and a
+   postMessage to the parent in a frame): { page:"flashcards.html", params:"deck=…&card=<id>&mode=quiz", verdict, firstTry, hinted:false, text }.
+   embed=1 (a practice set): just the one card, Quiz only, retries allowed, nothing saved, height posted as helper:height.
+
+   Worksheet API — another page can load this one in a (hidden) iframe and postMessage it:
+     {type:"helper:options", id}              → {type:"helper:optionsSchema", id, page:"flashcards.html", title, options:[…]}
+     {type:"helper:make", id, count, options} → {type:"helper:made", id, page:"flashcards.html", problems:[{text, html, params, answer, answerHtml}]}
+   Option keys: mode (the deck: times div add sub sq rt cu fdp words; "deck" works too, also as a comma list),
+     tables (1-12 2-5 6-9 10-12 2-9 or one table; "t" works too), maxFactor (10 12), turn (toggle), within (10 20 100),
+     upTo (10 12 15 20), way (to from both), topic (glossary topic slug).
+   Making problems never changes this page: not its deck, its record or what it saved. */
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var KEY = "flash-cards";
+  var PAGE = "flashcards.html";
+
+  /* ===================== numbers ===================== */
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while (b){ var t = a % b; a = b; b = t; } return a || 1; }
+  var INL = {
+    fr:"display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;font-size:.85em;margin:0 .1em",
+    nu:"display:block;padding:0 .2em;text-align:center",
+    de:"display:block;padding:0 .2em;text-align:center;border-top:1.5px solid currentColor"
+  };
+  function frHtml(n, d, inline){
+    if (inline) return '<span style="' + INL.fr + '"><span style="' + INL.nu + '">' + n + '</span><span style="' + INL.de + '">' + d + "</span></span>";
+    return '<span class="fr"><span class="nu">' + n + '</span><span class="de">' + d + "</span></span>";
+  }
+  var GLYPH = { "1/2":"½", "1/3":"⅓", "2/3":"⅔", "1/4":"¼", "3/4":"¾", "1/5":"⅕", "2/5":"⅖", "3/5":"⅗", "4/5":"⅘",
+                "1/8":"⅛", "3/8":"⅜", "5/8":"⅝", "7/8":"⅞" };
+  var VULGAR = { "⅙":"1/6", "⅚":"5/6", "⅒":"1/10" };
+  Object.keys(GLYPH).forEach(function(k){ VULGAR[GLYPH[k]] = k; });
+  function terminates(d){ while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1; }
+  function decStr(n, d){
+    if (terminates(d)) return String(+(n / d).toFixed(8));
+    var dg = Math.floor(n * 10 / d) % 10;            // thirds: one digit that repeats forever
+    return "0." + dg + dg + dg + "…";
+  }
+  function pctStr(n, d){
+    if (terminates(d)) return String(+(n * 100 / d).toFixed(6)) + "%";
+    var w = Math.floor(n * 100 / d), r = n * 100 - w * d, g = gcd(r, d), k = (r / g) + "/" + (d / g);
+    return w + (GLYPH[k] || " " + k) + "%";
+  }
+
+  /* ===================== reading an answer ===================== */
+  function normText(s){
+    s = String(s == null ? "" : s).replace(/[\u2212\u2013\u2014]/g, "-").replace(/[\u2044\u2215÷]/g, "/")
+      .replace(/\u00a0/g, " ").trim().toLowerCase();
+    s = s.replace(/(\d)?\s*([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞⅒])/g, function(m, dg, g){ return (dg ? dg + " " : "") + VULGAR[g]; });
+    s = s.replace(/(\d),(?=\d{3}(?:\D|$))/g, "$1");
+    s = s.replace(/\s*\/\s*/g, "/").replace(/\s+/g, " ");
+    return s;
+  }
+  // a number as typed: whole, decimal (repeating marks allowed), fraction, mixed number, with or without %
+  function parseNum(raw){
+    var s = normText(raw), pct = false, rep = false, grp = null, m;
+    if (!s) return null;
+    s = s.replace(/\s*(%|percent|per cent)$/, function(){ pct = true; return ""; });
+    s = s.replace(/\u0305/g, function(){ rep = true; return ""; });
+    s = s.replace(/\s*(\.\.\.+|…|repeating|recurring|repeats|repeat|rep)$/, function(){ rep = true; return ""; });
+    s = s.replace(/\((\d+)\)$/, function(_, g){ grp = g; rep = true; return ""; });
+    s = s.replace(/\s*(%|percent|per cent)$/, function(){ pct = true; return ""; });
+    var out = { v:NaN, frac:false, mixed:false, dec:false, pct:pct, rep:false, places:0, n:0, d:1 };
+    if ((m = /^(-?)(\d+) (\d+)\/(\d+)$/.exec(s))){
+      if (+m[4] === 0) return null;
+      out.frac = out.mixed = true; out.n = +m[2] * +m[4] + +m[3]; out.d = +m[4];
+      out.v = (m[1] ? -1 : 1) * out.n / out.d;
+    } else if ((m = /^(-?\d+)\/(\d+)$/.exec(s))){
+      if (+m[2] === 0) return null;
+      out.frac = true; out.n = +m[1]; out.d = +m[2]; out.v = out.n / out.d;
+    } else if ((m = /^(-?)(\d*)(?:\.(\d*))?$/.exec(s)) && (m[2] || m[3] || grp)){
+      var whole = m[2] || "0", digits = m[3] || "";
+      out.dec = s.indexOf(".") >= 0;
+      out.places = digits.length + (grp ? grp.length : 0);
+      if (rep && out.dec && (grp || digits)){
+        var g = grp || digits.slice(-1);
+        if (grp) digits += grp;
+        while (digits.length < 14) digits += g;
+        out.rep = true;
+      }
+      out.v = (m[1] ? -1 : 1) * parseFloat(whole + "." + (digits || "0"));
+    } else return null;
+    return isFinite(out.v) ? out : null;
+  }
+  function close(a, b, tol){ return Math.abs(a - b) <= (tol || 1e-9); }
+  // a repeating decimal written to some places: rounded (0.67) or cut off (0.66) both count
+  function nearly(v, t, places){
+    var k = Math.pow(10, places);
+    return Math.abs(v - Math.round(t * k) / k) < 1e-9 || Math.abs(v - Math.floor(t * k + 1e-9) / k) < 1e-9;
+  }
+  function normWord(s){
+    s = String(s || "").toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, " ").trim().replace(/^(the|a|an) /, "");
+    s = s.replace(/ /g, "");
+    return s.length > 3 ? s.replace(/s$/, "") : s;
+  }
+  /* → {empty} | {form, note} (the right amount in the wrong form: not counted, try again) | {ok, note} */
+  function check(card, raw){
+    var s = normText(raw);
+    if (!s) return { empty:true };
+    if (card.kind === "word"){
+      var w = normWord(s), hit = (card.answers || []).some(function(a){ return normWord(a) === w; });
+      return { ok:hit };
+    }
+    var p = parseNum(s), t = card.v;
+    if (!p) return { form:true, note:card.kind === "frac" ? "Type a fraction, like 3/4." : "Type a number, like " + (card.kind === "pct" ? "25%." : card.kind === "dec" ? "0.25." : "12.") };
+    if (card.kind === "num") return { ok:close(p.v, t) };
+    if (card.kind === "dec"){
+      if (p.pct) return close(p.v / 100, t) ? { form:true, note:"That’s the percent. A decimal has no % sign: divide by 100." } : { ok:false };
+      if (p.frac) return close(p.v, t) ? { form:true, note:"That’s the same amount as a fraction. Now write it as a decimal." } : { ok:false };
+      if (close(p.v, t)) return { ok:true };
+      if (card.rep){
+        if (p.rep && close(p.v, t, 1e-6)) return { ok:true };
+        if (p.places >= 2 && nearly(p.v, t, p.places)) return { ok:true, note:"Close enough: the digits really go on forever, " + card.ans + "." };
+      }
+      if (!p.dec && close(p.v, t * 100)) return { form:true, note:"That’s the percent. As a decimal, divide it by 100." };
+      return { ok:false };
+    }
+    if (card.kind === "pct"){
+      var T = t * 100;
+      if (p.frac && !p.mixed && !p.pct && close(p.v, t)) return { form:true, note:"That’s the fraction. A percent is out of 100: what is it out of 100?" };
+      if (!p.pct && p.dec && close(p.v, t) && !close(p.v, T)) return { form:true, note:"That’s the decimal. Multiply it by 100 for the percent." };
+      if (close(p.v, T)) return { ok:true };
+      if (card.rep){
+        if ((p.rep || p.mixed) && close(p.v, T, 1e-6)) return { ok:true };
+        if (p.places >= 1 && nearly(p.v, T, p.places)) return { ok:true, note:"Close enough: exactly, it is " + card.ans + "." };
+      }
+      return { ok:false };
+    }
+    if (card.kind === "frac"){
+      if (p.frac && !p.pct){
+        if (!close(p.v, t)) return { ok:false };
+        var g = gcd(p.n, p.d);
+        return { ok:true, note:g > 1 || p.mixed ? "Right! In simplest form that’s " + card.ans + "." : "" };
+      }
+      if ((p.pct && close(p.v, t * 100)) || (!p.pct && close(p.v, t)))
+        return { form:true, note:"Same amount, but write it as a fraction, like 3/4." };
+      if (!p.pct && close(p.v, t * 100)) return { form:true, note:"That’s the percent. Write it as a fraction: out of 100, then simplify." };
+      return { ok:false };
+    }
+    return { ok:false };
+  }
+
+  /* ===================== strategy tips ===================== */
+  function timesTip(a, b){
+    var P = a * b, pri = [0, 1, 10, 2, 5, 11, 4, 9, 3, 8, 6, 12, 7];
+    var ka = pri.indexOf(a), kb = pri.indexOf(b);
+    if (ka < 0) ka = 99;
+    if (kb < 0) kb = 99;
+    if (ka === 99 && kb === 99) return a + " × " + b + " = " + P + ".";
+    var first = ka <= kb, k = first ? a : b, n = first ? b : a, whole = a + " × " + b;
+    function ex(v){ return first ? v + " × " + n : n + " × " + v; }
+    switch (k){
+      case 0:  return "Anything times 0 is 0: zero groups of something is nothing at all.";
+      case 1:  return "Times 1 doesn’t change a number: one group of " + n + " is " + n + ".";
+      case 10: return "Times 10 puts a 0 on the end: " + n + " → " + P + ".";
+      case 2:  return "Times 2 is a double: " + n + " + " + n + " = " + P + ".";
+      case 5:  return whole + " is half of " + ex(10) + ": " + (10 * n) + " ÷ 2 = " + P + ".";
+      case 11: return n <= 9 ? "Times 11 with a one-digit number: write the digit twice. " + whole + " = " + P + "."
+                             : whole + " = " + ex(10) + " plus one more " + n + ": " + (10 * n) + " + " + n + " = " + P + ".";
+      case 4:  return whole + " = " + ex(2) + " doubled: " + (2 * n) + " + " + (2 * n) + " = " + P + ".";
+      case 9:  return whole + " = " + ex(10) + " take away one " + n + ": " + (10 * n) + " − " + n + " = " + P + ".";
+      case 3:  return whole + " = " + ex(2) + " plus one more " + n + ": " + (2 * n) + " + " + n + " = " + P + ".";
+      case 8:  return whole + " = " + ex(4) + " doubled: " + (4 * n) + " + " + (4 * n) + " = " + P + ".";
+      case 6:  return whole + " = " + ex(5) + " plus one more " + n + ": " + (5 * n) + " + " + n + " = " + P + ".";
+      case 12: return whole + " = " + ex(10) + " plus " + ex(2) + ": " + (10 * n) + " + " + (2 * n) + " = " + P + ".";
+      case 7:  return whole + " = " + ex(5) + " plus " + ex(2) + ": " + (5 * n) + " + " + (2 * n) + " = " + P + ".";
+    }
+    return whole + " = " + P + ".";
+  }
+  function divTip(p, a, q){
+    if (a === 1) return "Dividing by 1 leaves a number the same: " + p + " ÷ 1 = " + p + ".";
+    if (p === a) return "Any number divided by itself is 1.";
+    if (p === 0) return "0 shared into any number of groups is 0 in each.";
+    return "Think of the times fact: " + a + " × ? = " + p + ". " + a + " × " + q + " = " + p + ", so " + p + " ÷ " + a + " = " + q + ".";
+  }
+  function addTip(x, y){
+    var s = x + y, big = Math.max(x, y), small = Math.min(x, y);
+    if (small === 0) return "Adding 0 changes nothing: " + x + " + " + y + " = " + s + ".";
+    if (x % 10 === 0 && y % 10 === 0) return "Count in tens: " + (x / 10) + " tens + " + (y / 10) + " tens = " + (s / 10) + " tens, which is " + s + ".";
+    if (x === y) return "A double: " + x + " + " + x + " = " + s + ".";
+    if (big <= 10 && big - small === 1) return "A near double: " + small + " + " + small + " = " + (2 * small) + ", and one more is " + s + ".";
+    if (big === 10) return "10 and " + small + " more is 1 ten and " + small + " ones: " + s + ".";
+    if (big <= 10 && (x === 9 || y === 9)){
+      var o = x === 9 ? y : x;
+      if (o >= 2) return "Adding 9: add 10, then take 1 away. " + o + " + 10 = " + (o + 10) + ", and 1 less is " + s + ".";
+    }
+    if (small <= 2) return "Count on " + small + " from " + big + ": " + (small === 1 ? s : (big + 1) + ", " + s) + ".";
+    if (big < 10 && s > 10){ var k = 10 - big; return "Make a ten: " + big + " + " + k + " = 10, then " + (small - k) + " more is " + s + "."; }
+    if (s <= 10) return "Start at " + big + " and count on " + small + ". " + x + " and " + y + " are a pair that makes " + s + ".";
+    var next = Math.ceil((big + 1) / 10) * 10, kk = next - big;
+    if (big >= 10 && small > kk) return "Make the next ten: " + big + " + " + kk + " = " + next + ", then " + (small - kk) + " more is " + s + ".";
+    return "Start at " + big + " and count on " + small + ": " + s + ".";
+  }
+  function subTip(x, y){
+    var z = x - y, down = x % 10;
+    if (y === 0) return "Taking away 0 leaves " + x + ".";
+    if (y === x) return "Anything take away itself leaves 0.";
+    if (x % 10 === 0 && y % 10 === 0) return "Count in tens: " + (x / 10) + " tens − " + (y / 10) + " tens = " + (z / 10) + " tens, which is " + z + ".";
+    if (y === 10 && x < 20) return x + " is 1 ten and " + down + " ones. Take away the ten and " + z + " is left.";
+    if (y === 9 && x >= 10) return "Take away 10, then give 1 back: " + x + " − 10 = " + (x - 10) + ", and 1 more is " + z + ".";
+    if (y <= 2) return "Count back " + y + " from " + x + ": " + (y === 1 ? z : (x - 1) + ", " + z) + ".";
+    if (x > 10 && y < 10 && down > 0 && y > down) return "Go back to the ten first: " + x + " − " + down + " = " + (x - down) + ", then take " + (y - down) + " more to get " + z + ".";
+    return "Think addition: " + y + " + ? = " + x + ". " + y + " + " + z + " = " + x + ", so the answer is " + z + ".";
+  }
+  function fdpTip(n, d, way){
+    var f = n + "/" + d, dec = decStr(n, d), pct = pctStr(n, d), rep = !terminates(d), dg = Math.floor(n * 10 / d) % 10;
+    var h = 100 % d === 0 ? n * 100 / d : null, word = n === 1 ? "One third" : "Two thirds";
+    if (way === "fd"){
+      if (rep) return "A fraction is a division: " + n + " ÷ " + d + " = " + dec + " The " + dg + "s go on forever.";
+      if (d === 8) return n === 1 ? "1/8 is half of 1/4: half of 0.25 is 0.125." : "1/8 = 0.125, so " + f + " = " + n + " × 0.125 = " + dec + ".";
+      if (d === 10) return "Tenths: " + f + " is " + n + " tenth" + (n > 1 ? "s" : "") + ", " + dec + ".";
+      return "Make it out of 100: " + f + " = " + h + "/100 = " + dec + ".";
+    }
+    if (way === "fp"){
+      if (rep) return "Percent means out of 100. " + word + " of 100 is " + pct.replace("%", "") + ", so " + f + " = " + pct + ".";
+      if (d === 8) return n === 1 ? "1/8 is half of 1/4: half of 25% is 12.5%." : "1/8 = 12.5%, so " + f + " = " + n + " × 12.5% = " + pct + ".";
+      return "Percent means out of 100: " + f + " = " + h + "/100 = " + pct + ".";
+    }
+    if (way === "df"){
+      if (rep) return dec + " is " + n + " ÷ " + d + ": " + word.toLowerCase() + ".";
+      var places = (dec.split(".")[1] || "").length, top = Math.round(n / d * Math.pow(10, places)), bot = Math.pow(10, places);
+      if (top === n && bot === d) return dec + " is " + n + " tenth" + (n > 1 ? "s" : "") + ": " + f + ".";
+      return "Read the decimal as a fraction: " + dec + " = " + top + "/" + bot + ", then simplify to " + f + ".";
+    }
+    if (rep) return pct + " is " + word.toLowerCase() + " of 100, so it is " + f + ".";
+    var pv = n * 100 / d;
+    if (pv % 1) return "Percent means out of 100: " + pct + " = " + pv + "/100 = " + (pv * 10) + "/1000, which simplifies to " + f + ".";
+    return "Percent means out of 100: " + pct + " = " + pv + "/100" + (gcd(pv, 100) > 1 ? ", which simplifies to " + f : "") + ".";
+  }
+
+  /* ===================== the cards ===================== */
+  var DECKS = [
+    { k:"times", sign:"×",  name:"Times tables" },
+    { k:"div",   sign:"÷",  name:"Division facts" },
+    { k:"add",   sign:"+",  name:"Addition facts" },
+    { k:"sub",   sign:"−",  name:"Subtraction facts" },
+    { k:"sq",    sign:"x²", name:"Squares" },
+    { k:"rt",    sign:"√",  name:"Square roots" },
+    { k:"cu",    sign:"x³", name:"Cubes" },
+    { k:"fdp",   sign:"½",  name:"Fractions, decimals & percents" },
+    { k:"words", sign:"Aa", name:"Math words" }
+  ];
+  var DNAME = {};
+  DECKS.forEach(function(d){ DNAME[d.k] = d.name; });
+  var DKEYS = DECKS.map(function(d){ return d.k; });
+  var FDP = [[1,2],[1,4],[3,4],[1,3],[2,3],[1,5],[2,5],[3,5],[4,5],[1,8],[3,8],[5,8],[7,8],[1,10],[3,10],[7,10],[9,10],[1,20],[1,100]];
+  var FDPOK = {};
+  FDP.forEach(function(x){ FDPOK[x[0] + "/" + x[1]] = true; });
+  var WAYNAME = { fd:"as a decimal", fp:"as a percent", df:"as a fraction", pf:"as a fraction" };
+
+  function glossary(){ var G = window.HelperGlossary; return G && G.terms && G.terms.length && typeof G.byId === "function" ? G : null; }
+  function slug(t){ return String(t).toLowerCase().replace(/&/g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
+  function rxEsc(s){ return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+  function mask(text, names){
+    names.slice().sort(function(a, b){ return b.length - a.length; }).forEach(function(nm){
+      if (nm.length < 2) return;
+      text = text.replace(new RegExp("(^|[^A-Za-z])" + rxEsc(nm) + "(?=$|[^A-Za-z])", "gi"), "$1_____");
+    });
+    return text;
+  }
+  function arrayPic(rows, cols, cap){
+    if (rows < 1 || cols < 1 || rows > 10 || cols > 10 || rows * cols > 40) return "";
+    var g = 14, w = cols * g, h = rows * g, dots = "";
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++)
+      dots += '<circle cx="' + (c * g + 7) + '" cy="' + (r * g + 7) + '" r="5"/>';
+    return '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" fill="var(--key)" aria-hidden="true">' + dots + "</svg>"
+      + "<small>" + esc(cap) + "</small>";
+  }
+  function numCard(id, deck, text, v, tip){
+    return { id:id, deck:deck, text:text, front:esc(text), sub:"", ask:null, askSub:"", ans:String(v), back:esc(String(v)),
+             full:esc(text + " = " + v), kind:"num", v:v, tip:tip || "", pic:"", im:"numeric" };
+  }
+  var CACHE = {};
+  function card(id){
+    id = String(id || "");
+    if (CACHE.hasOwnProperty(id)) return CACHE[id];
+    var c = null;
+    try { c = makeCard(id); } catch (e){ c = null; }
+    if (c && c.deck !== "words") CACHE[id] = c;   // words wait for the glossary
+    return c;
+  }
+  function makeCard(id){
+    var m, c;
+    if ((m = /^m:(\d{1,2}):(\d{1,2})$/.exec(id))){
+      var a = +m[1], b = +m[2];
+      if (a > 20 || b > 20) return null;
+      c = numCard(id, "times", a + " × " + b, a * b, timesTip(a, b));
+      c.pic = arrayPic(a, b, a + " rows of " + b);
+      return c;
+    }
+    if ((m = /^d:(\d{1,3}):(\d{1,2})$/.exec(id))){
+      var p = +m[1], dv = +m[2];
+      if (dv < 1 || p % dv || p / dv > 20) return null;
+      var q = p / dv;
+      c = numCard(id, "div", p + " ÷ " + dv, q, divTip(p, dv, q));
+      c.pic = arrayPic(dv, q, p + " dots in " + dv + " rows: " + q + " in each row");
+      return c;
+    }
+    if ((m = /^a:(\d{1,3}):(\d{1,3})$/.exec(id))){
+      var x = +m[1], y = +m[2];
+      if (x > 100 || y > 100) return null;
+      return numCard(id, "add", x + " + " + y, x + y, addTip(x, y));
+    }
+    if ((m = /^s:(\d{1,3}):(\d{1,3})$/.exec(id))){
+      var X = +m[1], Y = +m[2];
+      if (Y > X || X > 200) return null;
+      return numCard(id, "sub", X + " − " + Y, X - Y, subTip(X, Y));
+    }
+    if ((m = /^(sq|rt|cu):(\d{1,2})$/.exec(id))){
+      var k = m[1], nn = +m[2];
+      if (nn > 30 || (k === "cu" && nn > 12)) return null;
+      if (k === "sq") return numCard(id, "sq", nn + "²", nn * nn, nn + "² means " + nn + " × " + nn + " = " + (nn * nn) + ".");
+      if (k === "cu") return numCard(id, "cu", nn + "³", nn * nn * nn,
+        nn + "³ means " + nn + " × " + nn + " × " + nn + ": " + nn + " × " + nn + " = " + (nn * nn) + ", then × " + nn + " = " + (nn * nn * nn) + ".");
+      c = numCard(id, "rt", "√" + (nn * nn), nn, "√" + (nn * nn) + " asks: what number times itself makes " + (nn * nn) + "? "
+        + nn + " × " + nn + " = " + (nn * nn) + ".");
+      return c;
+    }
+    if ((m = /^f:(\d{1,3})\/(\d{1,3}):(fd|fp|df|pf)$/.exec(id))){
+      var fn = +m[1], fd = +m[2], way = m[3];
+      if (!FDPOK[fn + "/" + fd]) return null;
+      var dec = decStr(fn, fd), pct = pctStr(fn, fd), fr = frHtml(fn, fd), fs = fn + "/" + fd;
+      c = { id:id, deck:"fdp", way:way, n:fn, d:fd, sub:WAYNAME[way], ask:null, askSub:"", v:fn / fd, rep:!terminates(fd),
+            tip:fdpTip(fn, fd, way), pic:"", full:fr + " = " + esc(dec) + " = " + esc(pct) };
+      if (way === "fd"){ c.text = fs + " as a decimal"; c.front = fr; c.ans = dec; c.back = esc(dec); c.kind = "dec"; c.im = "decimal"; }
+      if (way === "fp"){ c.text = fs + " as a percent"; c.front = fr; c.ans = pct; c.back = esc(pct); c.kind = "pct"; c.im = "decimal"; }
+      if (way === "df"){ c.text = dec + " as a fraction"; c.front = esc(dec); c.ans = fs; c.back = fr; c.kind = "frac"; c.im = "text"; }
+      if (way === "pf"){ c.text = pct + " as a fraction"; c.front = esc(pct); c.ans = fs; c.back = fr; c.kind = "frac"; c.im = "text"; }
+      return c;
+    }
+    if ((m = /^w:([a-z0-9-]{1,60})$/.exec(id))){
+      var G = glossary(), t = G && G.byId(m[1]);
+      if (!t) return null;
+      var names = [t.term].concat(t.aliases || []);
+      return { id:id, deck:"words", text:"Math word: " + t.term, front:esc(t.term), sub:"What does it mean?",
+               ask:esc(mask(t.short, names)), askSub:"Which math word means this?", ans:t.term, back:esc(t.short),
+               full:"", kind:"word", answers:names, tip:t.example ? "For example: " + t.example : "", pic:"", im:"text", word:true };
+    }
+    return null;
+  }
+
+  /* ===================== building a deck ===================== */
+  function rng(seed){
+    var s = seed >>> 0;
+    return function(){
+      s = (s + 0x6D2B79F5) >>> 0;
+      var t = s;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function shuffle(list, rand){
+    var a = list.slice();
+    rand = rand || Math.random;
+    for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(rand() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  var ADD100 = (function(){
+    var out = [], seen = {}, r = rng(100), guard = 0;
+    for (var a = 1; a <= 9; a++) for (var b = 1; a + b <= 10; b++) out.push([10 * a, 10 * b]);
+    while (out.length < 85 && guard++ < 5000){
+      var t = 1 + Math.floor(r() * 8), u = 1 + Math.floor(r() * 9), y = 2 + Math.floor(r() * 8), x = 10 * t + u;
+      if (u + y < 10 || x + y > 100 || seen[x + ":" + y]) continue;
+      seen[x + ":" + y] = 1; out.push([x, y]);
+    }
+    return out;
+  })();
+  function addPairs(w){
+    var out = [], a, b;
+    if (w === 10){ for (a = 0; a <= 10; a++) for (b = 0; a + b <= 10; b++) out.push([a, b]); }
+    else if (w === 20){ for (a = 0; a <= 10; a++) for (b = 0; b <= 10; b++) out.push([a, b]); }
+    else out = ADD100.slice();
+    return out;
+  }
+  function subPairs(w){
+    if (w === 10){ var out = []; for (var x = 0; x <= 10; x++) for (var y = 0; y <= x; y++) out.push([x, y]); return out; }
+    return addPairs(w).map(function(p){ return [p[0] + p[1], p[1]]; });
+  }
+  function wordIds(wt){
+    var G = glossary();
+    if (!G) return [];
+    return G.terms.filter(function(t){ return !wt || slug(t.topic) === wt; }).map(function(t){ return "w:" + t.id; });
+  }
+  // the deck, in order: every card id. Pure.
+  function deckIds(cfg){
+    var out = [], seen = {}, T = cfg.t.slice().sort(function(a, b){ return a - b; });
+    function push(id){ if (!seen[id]){ seen[id] = 1; out.push(id); } }
+    function has(k){ return cfg.decks.indexOf(k) >= 0; }
+    var b, n;
+    if (has("times")) T.forEach(function(a){
+      for (b = 1; b <= cfg.max; b++) push("m:" + a + ":" + b);
+      if (cfg.turn) for (b = 1; b <= cfg.max; b++) if (b !== a) push("m:" + b + ":" + a);
+    });
+    if (has("div")) T.forEach(function(a){
+      if (a < 1) return;
+      for (b = 1; b <= cfg.max; b++) push("d:" + (a * b) + ":" + a);
+      if (cfg.turn) for (b = 1; b <= cfg.max; b++) if (b !== a) push("d:" + (a * b) + ":" + b);
+    });
+    if (has("add")) addPairs(cfg.within).forEach(function(p){ push("a:" + p[0] + ":" + p[1]); });
+    if (has("sub")) subPairs(cfg.within).forEach(function(p){ push("s:" + p[0] + ":" + p[1]); });
+    if (has("sq")) for (n = 1; n <= cfg.sq; n++) push("sq:" + n);
+    if (has("rt")) for (n = 1; n <= cfg.sq; n++) push("rt:" + n);
+    if (has("cu")) for (n = 1; n <= 10; n++) push("cu:" + n);
+    if (has("fdp")) FDP.forEach(function(x){
+      var f = x[0] + "/" + x[1];
+      if (cfg.way !== "from"){ push("f:" + f + ":fd"); push("f:" + f + ":fp"); }
+      if (cfg.way !== "to"){ push("f:" + f + ":df"); push("f:" + f + ":pf"); }
+    });
+    if (has("words")) wordIds(cfg.wt).forEach(push);
+    return out;
+  }
+  function parseTables(v){
+    var out = [];
+    String(v == null ? "" : v).split(/[,\s]+/).forEach(function(part){
+      var m = /^(\d{1,2})(?:-(\d{1,2}))?$/.exec(part);
+      if (!m) return;
+      var a = +m[1], b = m[2] === undefined ? a : +m[2];
+      for (var i = Math.min(a, b); i <= Math.max(a, b); i++) if (i <= 12 && out.indexOf(i) < 0) out.push(i);
+    });
+    return out.sort(function(a, b){ return a - b; });
+  }
+  // the deck part of a link; withOrder adds order=mix
+  function deckQuery(cfg, withOrder){
+    function has(k){ return cfg.decks.indexOf(k) >= 0; }
+    var q = "deck=" + cfg.decks.join(",");
+    if (has("times") || has("div")){
+      q += "&t=" + cfg.t.join(",");
+      if (cfg.max !== 10) q += "&max=" + cfg.max;
+      if (!cfg.turn) q += "&turn=0";
+    }
+    if ((has("add") || has("sub")) && cfg.within !== 20) q += "&within=" + cfg.within;
+    if ((has("sq") || has("rt")) && cfg.sq !== 12) q += "&sq=" + cfg.sq;
+    if (has("fdp") && cfg.way !== "both") q += "&way=" + cfg.way;
+    if (has("words") && cfg.wt) q += "&wt=" + cfg.wt;
+    if (withOrder && cfg.order === "mix") q += "&order=mix";
+    return q;
+  }
+  // a link that opens one card in Quiz: the smallest deck it belongs to
+  function cardParams(id){
+    var c = card(id), m;
+    if (!c) return "card=" + id + "&mode=quiz";
+    var q = "deck=" + c.deck;
+    if ((m = /^m:(\d+):(\d+)$/.exec(id))) q += "&t=" + m[1] + (+m[2] > 10 ? "&max=12" : "");
+    else if ((m = /^d:(\d+):(\d+)$/.exec(id))) q += "&t=" + m[2] + (+m[1] / +m[2] > 10 ? "&max=12" : "");
+    else if ((m = /^[as]:(\d+):(\d+)$/.exec(id))){
+      var x = +m[1], y = +m[2], top = c.deck === "add" ? x + y : x;
+      if (top > 20 || (c.deck === "add" && (x > 10 || y > 10))) q += "&within=100";
+      else if (top <= 10) q += "&within=10";
+    }
+    else if ((m = /^(sq|rt):(\d+)$/.exec(id))){ var n = +m[2]; q += n > 15 ? "&sq=20" : n > 12 ? "&sq=15" : n > 10 ? "" : "&sq=10"; }
+    else if (c.deck === "fdp") q += "&way=" + (c.way === "fd" || c.way === "fp" ? "to" : "from");
+    return q + "&card=" + id + "&mode=quiz";
+  }
+
+  /* ===================== settings and the record ===================== */
+  var S = { decks:["times"], t:[6,7,8], max:10, turn:true, order:"in", within:20, sq:12, way:"both", wt:"",
+            mode:"study", secs:60, timer:0 };
+  var R = { v:1, f:{}, step:0, best:{} };
+  var GAP = [0, 2, 5, 12, 30, 80];
+  var MODES = ["study", "quiz", "speed", "learn"];
+  function status(id){ var x = R.f[id]; if (!x || !x.b) return "new"; return x.b >= 4 ? "mastered" : "learning"; }
+  function grade(id, right){
+    var x = R.f[id] || (R.f[id] = { b:0, r:0, w:0, s:0, n:0 });
+    R.step++;
+    if (right){ x.r++; x.s++; x.b = x.b ? Math.min(5, x.b + 1) : 2; }
+    else { x.w++; x.s = 0; x.b = 1; }
+    x.n = R.step + GAP[x.b];
+    x.t = Date.now();
+    save();
+    chartSoon();
+  }
+  // Learn: the card to ask next. Due cards first (lowest box, most overdue); then a new card while few are in play;
+  // otherwise the one due soonest. Never the same card twice in a row unless it is the only one. Pure.
+  function pickNext(ids, f, step, last){
+    if (!ids.length) return null;
+    var due = [], fresh = [], open = 0, soon = null;
+    ids.forEach(function(id){
+      var x = f[id];
+      if (!x || !x.b){ if (id !== last) fresh.push(id); return; }
+      if (x.b <= 3) open++;
+      if (id === last) return;
+      if (x.n <= step) due.push(id);
+      if (!soon || x.n < f[soon].n || (x.n === f[soon].n && x.b < f[soon].b)) soon = id;
+    });
+    due.sort(function(a, b){ return f[a].b - f[b].b || f[a].n - f[b].n; });
+    if (due.length) return due[0];
+    if (fresh.length && open < 6) return fresh[0];
+    return soon || fresh[0] || ids[0];
+  }
+
+  function save(){
+    if (EMBED) return;
+    try {
+      localStorage.setItem(KEY, JSON.stringify({ v:1, f:R.f, step:R.step, best:R.best,
+        s:{ decks:S.decks, t:S.t, max:S.max, turn:S.turn, order:S.order, within:S.within, sq:S.sq, way:S.way, wt:S.wt,
+            mode:S.mode, secs:S.secs, timer:S.timer, pick:$("pickBox").open },
+        theme:document.documentElement.getAttribute("data-theme") || "" }));
+    } catch (e){}
+  }
+  function cleanSettings(s, into){
+    if (!s || typeof s !== "object") return;
+    if (Array.isArray(s.decks)){ var d = s.decks.filter(function(k){ return DKEYS.indexOf(k) >= 0; }); into.decks = d; }
+    if (Array.isArray(s.t)) into.t = parseTables(s.t.join(","));
+    if (s.max === 10 || s.max === 12) into.max = s.max;
+    if (typeof s.turn === "boolean") into.turn = s.turn;
+    if (s.order === "in" || s.order === "mix") into.order = s.order;
+    if ([10, 20, 100].indexOf(s.within) >= 0) into.within = s.within;
+    if ([10, 12, 15, 20].indexOf(s.sq) >= 0) into.sq = s.sq;
+    if (["to", "from", "both"].indexOf(s.way) >= 0) into.way = s.way;
+    if (typeof s.wt === "string" && /^[a-z0-9-]{0,40}$/.test(s.wt)) into.wt = s.wt;
+    if (MODES.indexOf(s.mode) >= 0) into.mode = s.mode;
+    if ([30, 60, 120].indexOf(s.secs) >= 0) into.secs = s.secs;
+    if ([0, 5, 10, 20].indexOf(s.timer) >= 0) into.timer = s.timer;
+  }
+  var savedPick = null;
+  function load(){
+    try {
+      var v = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (!v || typeof v !== "object") return;
+      if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
+      if (v.f && typeof v.f === "object") Object.keys(v.f).forEach(function(id){
+        var x = v.f[id];
+        if (!x || typeof x !== "object" || id.length > 80) return;
+        R.f[id] = { b:Math.max(0, Math.min(5, x.b | 0)), r:x.r | 0, w:x.w | 0, s:x.s | 0, n:+x.n || 0, t:+x.t || 0 };
+      });
+      if (typeof v.step === "number" && v.step >= 0) R.step = Math.floor(v.step);
+      if (v.best && typeof v.best === "object") Object.keys(v.best).forEach(function(k){ if (typeof v.best[k] === "number") R.best[k] = v.best[k]; });
+      cleanSettings(v.s, S);
+      if (v.s && typeof v.s.pick === "boolean") savedPick = v.s.pick;
+    } catch (e){}
+  }
+
+  /* ===================== links ===================== */
+  var FOCUS = null;          // card=… from the link
+  function readURL(){
+    var P;
+    try { P = new URLSearchParams(location.search); } catch (e){ return; }
+    var v;
+    if ((v = P.get("deck")) !== null){
+      var d = v.split(/[,\s]+/).filter(function(k){ return DKEYS.indexOf(k) >= 0; });
+      if (d.length){
+        // a link names its whole deck: whatever it leaves out is the default, not this browser's last deck
+        S.decks = DKEYS.filter(function(k){ return d.indexOf(k) >= 0; });
+        S.t = [6, 7, 8]; S.max = 10; S.turn = true; S.order = "in"; S.within = 20; S.sq = 12; S.way = "both"; S.wt = "";
+      }
+    }
+    if ((v = P.get("t")) !== null) S.t = parseTables(v);
+    if ((v = P.get("max")) === "10" || v === "12") S.max = +v;
+    if ((v = P.get("turn")) === "0" || v === "1") S.turn = v === "1";
+    if ((v = P.get("order")) === "in" || v === "mix") S.order = v;
+    if ((v = P.get("within")) && [10, 20, 100].indexOf(+v) >= 0) S.within = +v;
+    if ((v = P.get("sq")) && [10, 12, 15, 20].indexOf(+v) >= 0) S.sq = +v;
+    if ((v = P.get("way")) && ["to", "from", "both"].indexOf(v) >= 0) S.way = v;
+    if ((v = P.get("wt")) !== null && /^[a-z0-9-]{0,40}$/.test(v)) S.wt = v;
+    if ((v = P.get("mode")) && MODES.indexOf(v) >= 0) S.mode = v;
+    if ((v = P.get("secs")) && [30, 60, 120].indexOf(+v) >= 0) S.secs = +v;
+    if ((v = P.get("timer")) !== null && [0, 5, 10, 20].indexOf(+v) >= 0) S.timer = +v;
+    if ((v = P.get("card")) && /^[a-z]{1,2}:[a-z0-9:\/-]{1,64}$/.test(v)) FOCUS = v;
+  }
+  function urlQuery(){
+    return "?" + deckQuery(S, true) + "&mode=" + S.mode + (S.mode === "speed" && S.secs !== 60 ? "&secs=" + S.secs : "")
+      + (S.mode === "quiz" && S.timer ? "&timer=" + S.timer : "");
+  }
+  function syncURL(){
+    if (EMBED) return;
+    try {
+      var qs = urlQuery();
+      if (location.search !== qs) history.replaceState(history.state, "", location.pathname + qs + location.hash);
+    } catch (e){}
+  }
+
+  /* ===================== reporting answers ===================== */
+  function report(c, right, firstTry){
+    var d = { page:PAGE, params:cardParams(c.id), verdict:right ? "right" : "wrong", firstTry:firstTry !== false, hinted:false,
+              text:String(c.text).slice(0, 120) };
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+
+  /* ===================== the deck on screen ===================== */
+  var IDS = [], ORDER = [], SEED = (Math.random() * 4294967296) >>> 0;
+  function inDeck(id){ return IDS.indexOf(id) >= 0; }
+  function rebuild(keepPlace){
+    IDS = deckIds(S).filter(function(id){ return !!card(id); });
+    ORDER = S.order === "mix" ? shuffle(IDS, rng(SEED)) : IDS.slice();
+    if (!keepPlace){
+      ST.i = 0; ST.extra = null;
+      QZ.i = 0; QZ.pend = null; QZ.right = 0; QZ.n = 0; QZ.streak = 0; QZ.round = 0;
+      LN.last = null; LN.card = null;
+      speedStop(true);
+    }
+    paintPicker();
+    showMode();
+    drawChart();
+    syncURL();
+    save();
+  }
+  function badge(id){
+    var s = status(id);
+    return '<span class="tag ' + s + '">' + (s === "new" ? "New" : s === "learning" ? "Learning" : "Mastered ✓") + "</span>";
+  }
+  function fillAsk(c, q, sub, tag, bdg){
+    var typed = c.ask != null;
+    q.className = "bigq" + (typed && c.word ? " long" : c.word ? " word" : c.deck === "fdp" ? " mid" : "");
+    q.innerHTML = typed ? c.ask : c.front;
+    sub.textContent = typed ? c.askSub : c.sub;
+    tag.textContent = DNAME[c.deck];
+    if (bdg) bdg.innerHTML = badge(c.id);
+  }
+  function setInput(inp, c){
+    inp.setAttribute("inputmode", c ? c.im : "text");
+    inp.placeholder = !c ? "" : c.kind === "word" ? "the word" : c.kind === "frac" ? "like 3/4" : c.kind === "pct" ? "like 25%" : c.kind === "dec" ? "like 0.25" : "";
+  }
+  var userActed = false;
+  function focusIn(inp){ if (userActed && !EMBED) try { inp.focus({ preventScroll:true }); } catch (e){ inp.focus(); } }
+
+  /* ===================== Study ===================== */
+  var ST = { i:0, flipped:false, extra:null };
+  function stCard(){ return ST.extra ? card(ST.extra) : ORDER.length ? card(ORDER[ST.i % ORDER.length]) : null; }
+  function studyShow(dir){
+    var c = stCard(), el = $("sCard"), none = !c;
+    $("sEmpty").hidden = !none; $("sMain").hidden = none; $("sNav").hidden = none; $("sGrade").hidden = none; $("sKeys").hidden = none;
+    if (none) return;
+    el.classList.add("still");
+    el.classList.remove("flipped");
+    ST.flipped = false;
+    void el.offsetWidth;
+    $("sTag").textContent = DNAME[c.deck];
+    $("sBadge").innerHTML = badge(c.id);
+    $("sQ").className = "bigq" + (c.word ? " word" : c.deck === "fdp" ? " mid" : "");
+    $("sQ").innerHTML = c.front;
+    $("sSub").textContent = c.sub;
+    $("sA").className = "bigq" + (c.word ? " long" : c.deck === "fdp" ? " mid" : "");
+    $("sA").innerHTML = c.back;
+    $("sFull").innerHTML = c.full;
+    $("sFull").hidden = !c.full;
+    $("sPic").innerHTML = c.pic;
+    $("sTip").textContent = c.tip;
+    $("sSay").textContent = "";
+    el.querySelector(".front").setAttribute("aria-hidden", "false");
+    el.querySelector(".back").setAttribute("aria-hidden", "true");
+    el.setAttribute("aria-label", "Card: " + c.text.replace(/^Math word: /, "") + (c.sub ? ", " + c.sub : "") + ". Press Space to flip.");
+    $("sPos").textContent = ST.extra ? "A card from the chart" : "Card " + (ST.i % ORDER.length + 1) + " of " + ORDER.length;
+    setTimeout(function(){ el.classList.remove("still"); }, 20);
+    if (dir){
+      el.style.setProperty("--dx", (dir > 0 ? 26 : -26) + "px");
+      el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter");
+    }
+  }
+  function studyFlip(){
+    var c = stCard();
+    if (!c) return;
+    ST.flipped = !ST.flipped;
+    $("sCard").classList.toggle("flipped", ST.flipped);
+    $("sCard").querySelector(".front").setAttribute("aria-hidden", String(ST.flipped));
+    $("sCard").querySelector(".back").setAttribute("aria-hidden", String(!ST.flipped));
+    $("sSay").textContent = ST.flipped ? "Answer: " + c.ans + ". " + c.tip : "";
+  }
+  function studyMove(d){
+    if (!ORDER.length) return;
+    if (ST.extra){ ST.extra = null; } else ST.i = (ST.i + d + ORDER.length) % ORDER.length;
+    studyShow(d);
+  }
+  function studyGrade(right){
+    var c = stCard();
+    if (!c) return;
+    grade(c.id, right);
+    studyMove(1);
+  }
+  (function(){
+    var el = $("sCard"), sx = 0, sy = 0, down = false, swiped = false, dx = 0;
+    el.addEventListener("pointerdown", function(e){ down = true; swiped = false; sx = e.clientX; sy = e.clientY; dx = 0; });
+    el.addEventListener("pointermove", function(e){
+      if (!down) return;
+      dx = e.clientX - sx;
+      if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(e.clientY - sy)) el.style.transform = "translateX(" + dx * 0.5 + "px) rotate(" + dx / 40 + "deg)";
+    });
+    function up(e){
+      if (!down) return;
+      down = false;
+      el.style.transform = "";
+      var ddx = e.clientX - sx, ddy = e.clientY - sy;
+      if (Math.abs(ddx) > 50 && Math.abs(ddx) > 1.5 * Math.abs(ddy)){ swiped = true; userActed = true; studyMove(ddx < 0 ? 1 : -1); }
+    }
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", function(){ down = false; el.style.transform = ""; });
+    el.addEventListener("click", function(){ if (swiped){ swiped = false; return; } userActed = true; studyFlip(); });
+    el.addEventListener("keydown", function(e){
+      if (e.key === " " || e.key === "Enter"){ e.preventDefault(); e.stopPropagation(); studyFlip(); }
+    });
+  })();
+  $("sPrev").addEventListener("click", function(){ studyMove(-1); });
+  $("sNext").addEventListener("click", function(){ studyMove(1); });
+  $("sYes").addEventListener("click", function(){ studyGrade(true); });
+  $("sNo").addEventListener("click", function(){ studyGrade(false); });
+
+  /* ===================== Quiz ===================== */
+  var QZ = { i:0, pend:null, card:null, done:false, right:0, n:0, streak:0, round:0, deadline:0, tick:null, tries:0 };
+  function quizLoad(){
+    clearInterval(QZ.tick); QZ.tick = null;
+    var none = !ORDER.length && !QZ.pend;
+    $("qEmpty").hidden = !none;
+    ["qCard", "qForm", "qFb", "qScore", "qOpts"].forEach(function(k){ $(k).hidden = none; });
+    if (EMBED) $("qOpts").hidden = true;
+    if (none){ QZ.card = null; return; }
+    var c = QZ.pend ? card(QZ.pend) : card(ORDER[QZ.i % ORDER.length]);
+    QZ.card = c; QZ.done = false; QZ.tries = 0;
+    fillAsk(c, $("qQ"), $("qSub"), $("qTag"), $("qBadge"));
+    $("qCard").className = "qcard";
+    var inp = $("qIn");
+    inp.value = ""; inp.disabled = false; setInput(inp, c);
+    $("qGo").textContent = "Check";
+    $("qFb").innerHTML = QZ.roundMsg || "";
+    QZ.roundMsg = "";
+    paintQuizScore();
+    var bar = $("qBar");
+    bar.hidden = !S.timer || EMBED;
+    if (S.timer && !EMBED){
+      QZ.deadline = Date.now() + S.timer * 1000;
+      bar.style.transform = "scaleX(1)";
+      QZ.tick = setInterval(function(){
+        var left = QZ.deadline - Date.now();
+        bar.style.transform = "scaleX(" + Math.max(0, left / (S.timer * 1000)) + ")";
+        if (left <= 0){ clearInterval(QZ.tick); QZ.tick = null; if (!QZ.done) quizMark(false, "Time’s up!"); }
+      }, 100);
+    }
+    focusIn(inp);
+  }
+  function paintQuizScore(){
+    $("qScore").innerHTML = EMBED ? "" : "<span><b>" + QZ.right + "</b> right of <b>" + QZ.n + "</b></span>"
+      + (QZ.streak > 1 ? "<span>Streak <b>" + QZ.streak + "</b></span>" : "")
+      + (QZ.pend ? "" : "<span>Card " + ((QZ.i % Math.max(1, ORDER.length)) + 1) + " of " + ORDER.length + "</span>");
+  }
+  function tipLine(c){ return c.tip ? '<span class="tipline">' + esc(c.tip) + "</span>" : ""; }
+  function quizMark(right, why, note){
+    var c = QZ.card;
+    clearInterval(QZ.tick); QZ.tick = null;
+    var first = QZ.tries === 0;
+    QZ.tries++;
+    if (!EMBED || first) grade(c.id, right);
+    report(c, right, first);
+    if (first){ QZ.n++; if (right){ QZ.right++; QZ.streak++; } else QZ.streak = 0; }
+    $("qCard").className = "qcard pop " + (right ? "ok" : "bad");
+    var ans = c.kind === "word" ? "<b>" + esc(c.ans) + "</b>" : "<b>" + esc(c.ans) + "</b>";
+    $("qFb").innerHTML = right
+      ? '<span class="ok">✓ Right!</span> ' + (note ? esc(note) : c.kind === "word" ? "It’s " + ans + "." : esc(c.text.replace(/ as an? .*$/, "")) + (c.deck === "fdp" ? " " + esc(c.sub) + " is " : " = ") + ans + ".")
+      : '<span class="bad">' + (why ? esc(why) : "Not quite.") + "</span> " + (EMBED ? "Have another go." : "The answer is " + ans + "." + tipLine(c));
+    if (EMBED && !right){ $("qBadge").innerHTML = ""; return; }      // a practice set: try again
+    QZ.done = true;
+    if (EMBED){ $("qIn").disabled = true; $("qGo").hidden = true; return; }
+    $("qGo").textContent = "Next →";
+    paintQuizScore();
+  }
+  function quizNext(){
+    if (QZ.pend) QZ.pend = null;
+    else {
+      QZ.i++;
+      if (ORDER.length && QZ.i % ORDER.length === 0){
+        QZ.round++;
+        QZ.roundMsg = "That was every card in the deck. Round " + QZ.round + ": <b>" + QZ.right + "</b> right of <b>" + QZ.n + "</b>. Going round again.";
+        if (S.order === "mix"){ SEED = (SEED * 7 + 13) >>> 0; ORDER = shuffle(IDS, rng(SEED)); }
+      }
+    }
+    quizLoad();
+  }
+  $("qForm").addEventListener("submit", function(e){
+    e.preventDefault(); userActed = true;
+    if (!QZ.card) return;
+    if (QZ.done){ quizNext(); return; }
+    var r = check(QZ.card, $("qIn").value);
+    if (r.empty){ $("qFb").innerHTML = "Type your answer, then press Enter."; return; }
+    if (r.form){ $("qFb").innerHTML = '<span class="form">Almost.</span> ' + esc(r.note); return; }
+    if (!r.ok && EMBED) $("qIn").select();
+    quizMark(r.ok, "", r.note);
+  });
+  $("qReset").addEventListener("click", function(){ QZ.i = 0; QZ.right = 0; QZ.n = 0; QZ.streak = 0; QZ.round = 0; QZ.pend = null; quizLoad(); });
+
+  /* ===================== Speed round ===================== */
+  var SP = { on:false, over:false, end:0, right:0, wrong:0, card:null, pool:[], pi:0, tick:null, last:null };
+  function bestKey(){ return deckQuery(S, false) + "|" + S.secs; }
+  function speedDraw(){
+    if (!SP.pool.length || SP.pi >= SP.pool.length){ SP.pool = shuffle(IDS); SP.pi = 0; if (SP.pool.length > 1 && SP.pool[0] === SP.last) SP.pool.push(SP.pool.shift()); }
+    var c = card(SP.pool[SP.pi++]);
+    SP.card = c; SP.last = c.id;
+    fillAsk(c, $("pQ"), $("pSub"), $("pTag"));
+    setInput($("pIn"), c);
+    $("pIn").value = "";
+  }
+  function speedPaint(){
+    var none = !IDS.length;
+    $("pEmpty").hidden = !none;
+    ["pClock", "pCard", "pForm", "pFb"].forEach(function(k){ $(k).hidden = none; });
+    if (none) return;
+    var left = SP.on ? Math.max(0, SP.end - Date.now()) : SP.over ? 0 : S.secs * 1000;
+    $("pTime").textContent = String(Math.ceil(left / 1000));
+    $("pClock").classList.toggle("low", SP.on && left <= 5000);
+    $("pMeter").style.width = (left / (S.secs * 1000) * 100) + "%";
+    $("pRight").textContent = String(SP.right);
+    $("pGo").textContent = SP.on ? "Check" : SP.over ? "Go again" : "Start";
+    $("pIn").disabled = !SP.on;
+    if (!SP.on && !SP.over){
+      $("pQ").className = "bigq mid"; $("pQ").textContent = "Ready?"; $("pSub").textContent = "";
+      $("pTag").textContent = IDS.length + " cards";
+      var b = R.best[bestKey()];
+      $("pFb").innerHTML = "As many as you can in " + S.secs + " seconds." + (b ? " Your best for this deck: <b>" + b + "</b>." : "");
+    }
+  }
+  function speedStart(){
+    if (!IDS.length) return;
+    SP.on = true; SP.over = false; SP.right = 0; SP.wrong = 0; SP.pool = []; SP.pi = 0;
+    SP.end = Date.now() + S.secs * 1000;
+    speedDraw();
+    $("pFb").innerHTML = "Go!";
+    speedPaint();
+    clearInterval(SP.tick);
+    SP.tick = setInterval(function(){ if (Date.now() >= SP.end) speedFinish(); else speedPaint(); }, 100);
+    $("pIn").focus();
+  }
+  function speedFinish(){
+    clearInterval(SP.tick); SP.tick = null;
+    if (!SP.on) return;
+    SP.on = false; SP.over = true;
+    var k = bestKey(), old = R.best[k] || 0, isBest = SP.right > old;
+    if (isBest){ R.best[k] = SP.right; save(); }
+    speedPaint();
+    $("pQ").className = "bigq mid"; $("pQ").textContent = SP.right + " right"; $("pSub").textContent = SP.wrong ? SP.wrong + " not yet" : "";
+    $("pFb").innerHTML = "Time’s up! You got <b>" + SP.right + "</b> right in " + S.secs + " seconds. "
+      + (isBest ? '<span class="best">A new best for this deck!</span>' : "Your best for this deck is <b>" + old + "</b>.");
+    try { $("pGo").focus(); } catch (e){}
+  }
+  function speedStop(quiet){
+    clearInterval(SP.tick); SP.tick = null; SP.on = false; SP.over = false;
+    if (!quiet) speedPaint();
+  }
+  function speedAnswer(c, right){
+    grade(c.id, right); report(c, right, true);
+    if (right) SP.right++; else SP.wrong++;
+    var card_ = $("pCard");
+    card_.className = "qcard pop " + (right ? "ok" : "bad");
+    setTimeout(function(){ card_.className = "qcard"; }, 260);
+    $("pFb").innerHTML = right ? '<span class="ok">✓</span> ' + esc(c.text.replace(/^Math word: /, "")) + " → <b>" + esc(c.ans) + "</b>"
+                               : '<span class="bad">Not yet:</span> ' + esc(c.text.replace(/^Math word: /, "")) + " → <b>" + esc(c.ans) + "</b>";
+    speedDraw(); speedPaint();
+  }
+  $("pIn").addEventListener("input", function(){
+    if (!SP.on || !SP.card) return;
+    var r = check(SP.card, $("pIn").value);
+    if (r.ok && !r.note) speedAnswer(SP.card, true);
+  });
+  $("pForm").addEventListener("submit", function(e){
+    e.preventDefault(); userActed = true;
+    if (!SP.on){ speedStart(); return; }
+    if (Date.now() >= SP.end){ speedFinish(); return; }
+    var r = check(SP.card, $("pIn").value);
+    if (r.empty){ $("pFb").innerHTML = "Skipped: " + esc(SP.card.text.replace(/^Math word: /, "")) + " → <b>" + esc(SP.card.ans) + "</b>"; speedDraw(); return; }
+    if (r.form){ $("pFb").innerHTML = '<span class="form">Almost.</span> ' + esc(r.note); return; }
+    speedAnswer(SP.card, r.ok);
+  });
+
+  /* ===================== Learn ===================== */
+  var LN = { card:null, done:false, last:null };
+  function learnPaint(){
+    var n = IDS.length, counts = [0, 0, 0, 0, 0, 0], mastered = 0;
+    IDS.forEach(function(id){ var x = R.f[id], b = x ? x.b : 0; counts[b]++; if (b >= 4) mastered++; });
+    var cur = LN.card && R.f[LN.card.id] ? R.f[LN.card.id].b : 0;
+    $("lShelf").innerHTML = counts.map(function(k, b){
+      return '<div class="box' + (b >= 4 ? " m" : b ? " l" : "") + (LN.card && !LN.done && b === cur ? " now" : "") + '"><b>' + k + "</b><span>"
+        + (b ? "Box " + b : "New") + "</span></div>";
+    }).join("");
+    $("lMeter").style.width = (n ? mastered / n * 100 : 0) + "%";
+    $("lMastered").innerHTML = "<b>" + mastered + "</b> of <b>" + n + "</b> mastered"
+      + (n && mastered === n ? " — every card in this deck! Keep going to keep them fresh, or pick a bigger deck." : "");
+  }
+  function learnLoad(){
+    var none = !IDS.length && !LN.pendFocus;
+    $("lEmpty").hidden = !none;
+    ["lShelf", "lCard", "lForm", "lFb", "lMastered"].forEach(function(k){ $(k).hidden = none; });
+    if (none){ LN.card = null; return; }
+    var id = LN.pendFocus || pickNext(ORDER, R.f, R.step, LN.last);
+    LN.pendFocus = null;
+    var c = card(id);
+    LN.card = c; LN.done = false;
+    fillAsk(c, $("lQ"), $("lSub"), $("lTag"), $("lBadge"));
+    var x = R.f[c.id];
+    if (x && x.b) $("lBadge").innerHTML = '<span class="tag ' + status(c.id) + '">Box ' + x.b + "</span>";
+    $("lCard").className = "qcard";
+    var inp = $("lIn"); inp.value = ""; inp.disabled = false; setInput(inp, c);
+    $("lGo").textContent = "Check"; $("lShow").hidden = false;
+    $("lFb").innerHTML = "";
+    learnPaint();
+    focusIn(inp);
+  }
+  function learnMark(right, note, shown){
+    var c = LN.card, before = R.f[c.id] ? R.f[c.id].b : 0;
+    grade(c.id, right); report(c, right, true);
+    LN.done = true; LN.last = c.id;
+    var after = R.f[c.id].b;
+    $("lCard").className = "qcard pop " + (right ? "ok" : "bad");
+    $("lFb").innerHTML = right
+      ? '<span class="ok">✓ Right!</span> ' + (note ? esc(note) + " " : "") + (after >= 4 && before < 4 ? "Mastered — it moves to box " + after + "." : "Up to box " + after + ": it comes back later.")
+      : '<span class="bad">' + (shown ? "Here it is:" : "Not quite.") + "</span> The answer is <b>" + esc(c.ans) + "</b>. Back to box 1: it comes back soon." + tipLine(c);
+    $("lIn").disabled = true;
+    $("lGo").textContent = "Next →"; $("lShow").hidden = true;
+    learnPaint();
+    try { $("lGo").focus({ preventScroll:true }); } catch (e){}
+  }
+  $("lForm").addEventListener("submit", function(e){
+    e.preventDefault(); userActed = true;
+    if (!LN.card) return;
+    if (LN.done){ learnLoad(); return; }
+    var r = check(LN.card, $("lIn").value);
+    if (r.empty){ $("lFb").innerHTML = "Type your answer, or press Show me."; return; }
+    if (r.form){ $("lFb").innerHTML = '<span class="form">Almost.</span> ' + esc(r.note); return; }
+    learnMark(r.ok, r.note);
+  });
+  $("lShow").addEventListener("click", function(){ userActed = true; if (LN.card && !LN.done) learnMark(false, "", true); });
+
+  /* ===================== tabs ===================== */
+  var tabs = [].slice.call(document.querySelectorAll('[role="tab"]'));
+  function showMode(){
+    tabs.forEach(function(t){
+      var on = t.getAttribute("data-mode") === S.mode;
+      t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1;
+      $("panel-" + t.getAttribute("data-mode")).hidden = !on;
+    });
+    if (S.mode !== "speed" && SP.on) speedStop(true);
+    if (S.mode !== "quiz"){ clearInterval(QZ.tick); QZ.tick = null; }
+    if (S.mode === "study") studyShow();
+    else if (S.mode === "quiz") quizLoad();
+    else if (S.mode === "speed"){ if (!SP.on && !SP.over) speedPaint(); else speedPaint(); }
+    else learnLoad();
+  }
+  function setMode(m, focusTab){
+    if (MODES.indexOf(m) < 0) return;
+    if (S.mode === m && !focusTab) return;
+    S.mode = m;
+    if (m === "speed") SP.over = false;
+    showMode(); syncURL(); save();
+    if (focusTab) $("tab-" + m).focus();
+  }
+  tabs.forEach(function(t){
+    t.addEventListener("click", function(){ userActed = true; setMode(t.getAttribute("data-mode")); });
+    t.addEventListener("keydown", function(e){
+      var i = MODES.indexOf(S.mode), j = -1;
+      if (e.key === "ArrowRight") j = (i + 1) % 4;
+      else if (e.key === "ArrowLeft") j = (i + 3) % 4;
+      else if (e.key === "Home") j = 0;
+      else if (e.key === "End") j = 3;
+      if (j < 0) return;
+      e.preventDefault(); e.stopPropagation();
+      setMode(MODES[j], true);
+    });
+  });
+  // the whole page: Space/Enter flip and arrows move in Study; 1 and 2 grade a flipped card
+  document.addEventListener("keydown", function(e){
+    if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+    var t = e.target, tag = t && t.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
+    if (S.mode !== "study" || EMBED || !stCard()) return;
+    if (t && t.closest && (t.closest(".picker") || t.closest(".mastery") || t.closest(".sitenav") || t.closest(".footnote") || t.closest('[role="tablist"]'))) return;
+    var onBtn = tag === "BUTTON" || tag === "A" || tag === "SUMMARY";
+    if ((e.key === " " || e.key === "Enter") && !onBtn){ e.preventDefault(); userActed = true; studyFlip(); }
+    else if (e.key === "ArrowRight"){ e.preventDefault(); studyMove(1); }
+    else if (e.key === "ArrowLeft"){ e.preventDefault(); studyMove(-1); }
+    else if (e.key === "1" && ST.flipped){ e.preventDefault(); studyGrade(true); }
+    else if (e.key === "2" && ST.flipped){ e.preventDefault(); studyGrade(false); }
+  });
+
+  /* ===================== the picker ===================== */
+  function segs(host, values, label, get, set){
+    host.innerHTML = "";
+    values.forEach(function(v){
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = label(v);
+      b.setAttribute("aria-pressed", String(get() === v));
+      b.addEventListener("click", function(){ set(v); segs(host, values, label, get, set); });
+      host.appendChild(b);
+    });
+  }
+  function buildPicker(){
+    var G = glossary();
+    $("deckList").innerHTML = DECKS.map(function(d){
+      return '<button type="button" class="dk" data-deck="' + d.k + '"' + (d.k === "words" && !G ? " hidden" : "") + '><b aria-hidden="true">'
+        + esc(d.sign) + "</b>" + esc(d.name) + "</button>";
+    }).join("");
+    $("tables").innerHTML = "";
+    for (var i = 0; i <= 12; i++){
+      $("tables").insertAdjacentHTML("beforeend", '<button type="button" class="tb" data-t="' + i + '" aria-label="The ' + i + ' times table">' + i + "</button>");
+    }
+    segs($("maxSeg"), [10, 12], function(v){ return "× " + v; }, function(){ return S.max; }, function(v){ S.max = v; rebuild(); });
+    segs($("withinSeg"), [10, 20, 100], String, function(){ return S.within; }, function(v){ S.within = v; rebuild(); });
+    segs($("sqSeg"), [10, 12, 15, 20], function(v){ return v + "²"; }, function(){ return S.sq; }, function(v){ S.sq = v; rebuild(); });
+    segs($("waySeg"), ["to", "from", "both"], function(v){ return { to:"½ → 0.5 and 50%", from:"0.5 and 50% → ½", both:"Both ways" }[v]; },
+         function(){ return S.way; }, function(v){ S.way = v; rebuild(); });
+    segs($("orderSeg"), ["in", "mix"], function(v){ return v === "in" ? "In order" : "Mixed up"; }, function(){ return S.order; },
+         function(v){ S.order = v; rebuild(); });
+    segs($("timerSeg"), [0, 5, 10, 20], function(v){ return v ? v + " s" : "No timer"; }, function(){ return S.timer; },
+         function(v){ S.timer = v; syncURL(); save(); if (S.mode === "quiz" && !QZ.done) quizLoad(); });
+    segs($("secsSeg"), [30, 60, 120], function(v){ return v + " s"; }, function(){ return S.secs; },
+         function(v){ S.secs = v; speedStop(); syncURL(); save(); });
+    fillTopics();
+  }
+  function fillTopics(){
+    var G = glossary(), sel = $("wtSel");
+    var list = G && G.topics ? G.topics : [];
+    sel.innerHTML = '<option value="">Every topic</option>' + list.map(function(t){
+      return '<option value="' + slug(t) + '">' + esc(t) + "</option>";
+    }).join("");
+    sel.value = S.wt;
+    if (sel.value !== S.wt) sel.value = "";
+  }
+  $("wtSel").addEventListener("change", function(){ S.wt = $("wtSel").value; rebuild(); });
+  $("deckList").addEventListener("click", function(e){
+    var b = e.target.closest("[data-deck]");
+    if (!b) return;
+    var k = b.getAttribute("data-deck"), i = S.decks.indexOf(k);
+    if (i >= 0) S.decks.splice(i, 1); else S.decks.push(k);
+    S.decks = DKEYS.filter(function(d){ return S.decks.indexOf(d) >= 0; });
+    rebuild();
+  });
+  $("tables").addEventListener("click", function(e){
+    var b = e.target.closest("[data-t]");
+    if (!b) return;
+    var n = +b.getAttribute("data-t"), i = S.t.indexOf(n);
+    if (i >= 0) S.t.splice(i, 1); else S.t.push(n);
+    S.t.sort(function(a, c){ return a - c; });
+    rebuild();
+  });
+  [].forEach.call(document.querySelectorAll("[data-tset]"), function(b){
+    b.addEventListener("click", function(){ S.t = parseTables(b.getAttribute("data-tset")); rebuild(); });
+  });
+  $("turnT").addEventListener("click", function(){ S.turn = !S.turn; rebuild(); });
+  $("reshuffle").addEventListener("click", function(){ SEED = (Math.random() * 4294967296) >>> 0; rebuild(); });
+  $("pickBox").addEventListener("toggle", save);
+  function paintPicker(){
+    function has(k){ return S.decks.indexOf(k) >= 0; }
+    [].forEach.call($("deckList").children, function(b){ b.setAttribute("aria-pressed", String(has(b.getAttribute("data-deck")))); });
+    [].forEach.call($("tables").children, function(b){ b.setAttribute("aria-pressed", String(S.t.indexOf(+b.getAttribute("data-t")) >= 0)); });
+    $("optTimes").hidden = !(has("times") || has("div"));
+    $("optAdd").hidden = !(has("add") || has("sub"));
+    $("optSq").hidden = !(has("sq") || has("rt"));
+    $("optFdp").hidden = !has("fdp");
+    $("optWords").hidden = !has("words") || !glossary();
+    $("turnT").setAttribute("aria-pressed", String(S.turn));
+    $("reshuffle").hidden = S.order !== "mix";
+    $("deckCount").textContent = IDS.length + (IDS.length === 1 ? " card" : " cards");
+    [["maxSeg", S.max], ["withinSeg", S.within], ["sqSeg", S.sq], ["orderSeg", S.order], ["timerSeg", S.timer], ["secsSeg", S.secs]].forEach(function(p){
+      [].forEach.call($(p[0]).children, function(b, i){
+        var vals = { maxSeg:[10, 12], withinSeg:[10, 20, 100], sqSeg:[10, 12, 15, 20], orderSeg:["in", "mix"], timerSeg:[0, 5, 10, 20], secsSeg:[30, 60, 120] }[p[0]];
+        b.setAttribute("aria-pressed", String(vals[i] === p[1]));
+      });
+    });
+    [].forEach.call($("waySeg").children, function(b, i){ b.setAttribute("aria-pressed", String(["to", "from", "both"][i] === S.way)); });
+  }
+
+  /* ===================== mastery chart ===================== */
+  var chartTimer = null;
+  function chartSoon(){ clearTimeout(chartTimer); chartTimer = setTimeout(drawChart, 30); }
+  function cellBtn(id, label, text, cls){
+    var s = status(id);
+    return '<button type="button" class="' + cls + " " + s + (inDeck(id) ? "" : " off") + '" data-id="' + esc(id) + '" aria-label="'
+      + esc(label + ": " + (s === "new" ? "new" : s)) + '" title="' + esc(label) + '">' + text + "</button>";
+  }
+  function timesGrid(kind){
+    var lo = S.t.indexOf(0) >= 0 && kind === "times" ? 0 : 1, n = 12 - lo + 1, h = '<div class="grid" style="--n:' + n + '">';
+    h += '<span class="h">' + (kind === "times" ? "×" : "÷") + "</span>";
+    for (var c = lo; c <= 12; c++) h += '<span class="h">' + c + "</span>";
+    for (var r = lo; r <= 12; r++){
+      h += '<span class="h' + (S.t.indexOf(r) >= 0 ? " on" : "") + '">' + r + "</span>";
+      for (c = lo; c <= 12; c++){
+        var id = kind === "times" ? "m:" + r + ":" + c : "d:" + (r * c) + ":" + r;
+        var label = kind === "times" ? r + " × " + c : (r * c) + " ÷ " + r;
+        var shown = status(id) === "mastered" ? String(kind === "times" ? r * c : c) : "";
+        h += cellBtn(id, label, shown, "cell");
+      }
+    }
+    return h + "</div>";
+  }
+  function addGrid(){
+    var h = '<div class="grid" style="--n:11"><span class="h">+</span>';
+    for (var c = 0; c <= 10; c++) h += '<span class="h">' + c + "</span>";
+    for (var r = 0; r <= 10; r++){
+      h += '<span class="h">' + r + "</span>";
+      for (c = 0; c <= 10; c++){
+        if (S.within === 10 && r + c > 10){ h += '<span class="cell blank"></span>'; continue; }
+        var id = "a:" + r + ":" + c;
+        h += cellBtn(id, r + " + " + c, status(id) === "mastered" ? String(r + c) : "", "cell");
+      }
+    }
+    return h + "</div>";
+  }
+  function chipLabel(c){
+    if (c.deck === "fdp") return c.way === "fd" || c.way === "fp" ? esc(GLYPH[c.n + "/" + c.d] || c.n + "/" + c.d) + " → " + (c.way === "fd" ? "decimal" : "%")
+      : esc(c.way === "df" ? decStr(c.n, c.d) : pctStr(c.n, c.d)) + " → fraction";
+    if (c.deck === "words") return esc(c.ans);
+    return esc(c.text);
+  }
+  function drawChart(){
+    var host = $("chart"), html = "", cnt = { "new":0, learning:0, mastered:0 };
+    IDS.forEach(function(id){ cnt[status(id)]++; });
+    $("chartCounts").textContent = IDS.length ? "· this deck: " + cnt["new"] + " new, " + cnt.learning + " learning, " + cnt.mastered + " mastered" : "";
+    if (!S.decks.length){ host.innerHTML = '<p class="note">Pick a deck to see its chart.</p>'; return; }
+    S.decks.forEach(function(k){
+      var body;
+      if (k === "times" || k === "div") body = timesGrid(k);
+      else if (k === "add" && S.within !== 100) body = addGrid();
+      else {
+        var ids = deckIds({ decks:[k], t:S.t, max:S.max, turn:S.turn, within:S.within, sq:S.sq, way:S.way, wt:S.wt });
+        if (!ids.length){ return; }
+        body = '<div class="chips">' + ids.map(function(id){ var c = card(id); return c ? cellBtn(id, c.text, chipLabel(c), "chip" + (k === "words" ? " wordchip" : "")) : ""; }).join("") + "</div>";
+      }
+      html += '<div class="chart-sec"><h3>' + esc(DNAME[k]) + (k === "div" ? "<small>rows: divide by · columns: the answer</small>" : k === "times" ? "<small>tap a square to practise it</small>" : "") + "</h3>" + body + "</div>";
+    });
+    host.innerHTML = html;
+  }
+  $("chart").addEventListener("click", function(e){
+    var b = e.target.closest("[data-id]");
+    if (b){ userActed = true; practise(b.getAttribute("data-id")); }
+  });
+  function practise(id){
+    if (!card(id)) return;
+    if (S.mode === "study"){ ST.extra = id; showMode(); }
+    else { S.mode = "quiz"; QZ.pend = id; showMode(); syncURL(); save(); }
+    var play = document.querySelector(".play");
+    try { play.scrollIntoView({ behavior:matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start" }); } catch (e){}
+    setTimeout(function(){ if (S.mode === "study") $("sCard").focus({ preventScroll:true }); else $("qIn").focus({ preventScroll:true }); }, 30);
+  }
+
+  /* ===================== printing ===================== */
+  var PRINT_MAX = 144;
+  function printCell(c, back){
+    if (!c) return '<div class="pc"></div>';
+    if (!back) return '<div class="pc"><span class="pt">' + esc(DNAME[c.deck]) + '</span><div class="pq' + (c.word ? " word" : "") + '">'
+      + c.front + "</div>" + (c.sub && !c.word ? '<div class="ps">' + esc(c.sub) + "</div>" : "") + "</div>";
+    return '<div class="pc back"><div class="pq' + (c.word ? " long" : "") + '">' + c.back + "</div>"
+      + (c.full && c.kind !== "num" ? '<div class="ps">' + c.full + "</div>" : "")
+      + (c.tip ? '<div class="ptip">' + esc(c.tip) + "</div>" : "") + "</div>";
+  }
+  function buildPrint(){
+    var ids = IDS.slice(0, PRINT_MAX), html = "", per = 12, cols = 3, sheets = Math.ceil(ids.length / per);
+    for (var s = 0; s < sheets; s++){
+      var grp = ids.slice(s * per, s * per + per).map(card), front = "", back = "";
+      while (grp.length < per) grp.push(null);
+      for (var i = 0; i < per; i++) front += printCell(grp[i], false);
+      for (var r = 0; r < per / cols; r++) for (var k = cols - 1; k >= 0; k--) back += printCell(grp[r * cols + k], true);
+      var head = "The Flash Cards · " + esc(S.decks.map(function(k){ return DNAME[k]; }).join(", "));
+      html += '<section class="psheet"><h2>' + head + "<span>Sheet " + (s + 1) + " of " + sheets + ": fronts — cut on the dashed lines</span></h2><div class=\"pgrid\">" + front + "</div></section>"
+            + '<section class="psheet"><h2>' + head + "<span>Sheet " + (s + 1) + " of " + sheets + ": backs (print double-sided, flip on the long edge)</span></h2><div class=\"pgrid\">" + back + "</div></section>";
+    }
+    $("printSheets").innerHTML = html;
+    return { cards:ids.length, pages:sheets * 2, capped:IDS.length > PRINT_MAX };
+  }
+  window.addEventListener("beforeprint", buildPrint);
+  $("printBtn").addEventListener("click", function(){
+    if (!IDS.length){ $("footMsg").textContent = "Pick some facts first."; return; }
+    var r = buildPrint();
+    $("footMsg").textContent = r.cards + " cards on " + r.pages + " pages" + (r.capped ? " (the first " + PRINT_MAX + " cards)" : "") + ".";
+    window.print();
+  });
+
+  /* ===================== footer ===================== */
+  $("copyBtn").addEventListener("click", function(){
+    syncURL();
+    var url = location.href, msg = $("footMsg");
+    function old(){
+      var ok = false, ta = document.createElement("textarea");
+      ta.value = url; ta.style.cssText = "position:fixed;left:-9999px;top:0"; document.body.appendChild(ta);
+      try { ta.select(); ok = document.execCommand("copy"); } catch (e){ ok = false; }
+      ta.remove();
+      msg.textContent = ok ? "Link copied ✓" : "Couldn’t copy. The link is in the address bar.";
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(function(){ msg.textContent = "Link copied ✓"; }, old); return; }
+    } catch (e){}
+    old();
+  });
+  $("clearBtn").addEventListener("click", function(){
+    if (!window.confirm("Forget every card you’ve practised on this device, and your best speed scores?")) return;
+    R.f = {}; R.step = 0; R.best = {};
+    save(); rebuild(true);
+    $("footMsg").textContent = "Your record is cleared.";
+  });
+
+  /* ===================== theme ===================== */
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark"); paint(); save();
+  });
+
+  /* ===================== worksheet API (postMessage) ===================== */
+  var YN = [{ v:true, label:"Yes" }, { v:false, label:"No" }];
+  function apiOptions(){
+    var G = glossary(), decks = DECKS.filter(function(d){ return d.k !== "words" || G; });
+    var tv = [["1-12", "All of 1–12"], ["2-5", "2 to 5"], ["6-9", "6 to 9"], ["10-12", "10 to 12"], ["2-9", "2 to 9"]];
+    for (var i = 1; i <= 12; i++) tv.push([String(i), "Only the " + i + "s"]);
+    var opts = [
+      { key:"mode", label:"Which facts", type:"choice", "default":"times", values:decks.map(function(d){ return { v:d.k, label:d.sign + "  " + d.name }; }) },
+      { key:"tables", label:"Which tables", type:"choice", "default":"1-12", modes:["times", "div"], values:tv.map(function(p){ return { v:p[0], label:p[1] }; }) },
+      { key:"maxFactor", label:"Facts up to", type:"choice", "default":10, modes:["times", "div"], values:[{ v:10, label:"× 10" }, { v:12, label:"× 12" }] },
+      { key:"turn", label:"Both ways round (7 × 6 and 6 × 7)", type:"toggle", "default":true, modes:["times", "div"], values:YN },
+      { key:"within", label:"Numbers within", type:"choice", "default":20, modes:["add", "sub"], values:[10, 20, 100].map(function(v){ return { v:v, label:String(v) }; }) },
+      { key:"upTo", label:"Up to", type:"choice", "default":12, modes:["sq", "rt"], values:[10, 12, 15, 20].map(function(v){ return { v:v, label:v + "²" }; }) },
+      { key:"way", label:"Which way", type:"choice", "default":"both", modes:["fdp"],
+        values:[{ v:"to", label:"Fraction → decimal and percent" }, { v:"from", label:"Decimal and percent → fraction" }, { v:"both", label:"Both ways" }] }
+    ];
+    if (G) opts.push({ key:"topic", label:"Topic", type:"choice", "default":"", modes:["words"],
+      values:[{ v:"", label:"Every topic" }].concat((G.topics || []).map(function(t){ return { v:slug(t), label:t }; })) });
+    return opts;
+  }
+  function apiConfig(o){
+    o = (o && typeof o === "object") ? o : {};
+    function pick(keys){ for (var i = 0; i < keys.length; i++) if (o[keys[i]] !== undefined && o[keys[i]] !== null && o[keys[i]] !== "") return o[keys[i]]; return undefined; }
+    function tog(v, d){ if (v === undefined) return d; return v === true || v === 1 || /^(true|1|on|yes)$/i.test(String(v)); }
+    function ch(v, list, d){ for (var i = 0; i < list.length; i++) if (String(list[i]) === String(v)) return list[i]; return d; }
+    var dk = String(pick(["mode", "deck", "decks"]) || "times").split(/[,\s]+/).filter(function(k){ return DKEYS.indexOf(k) >= 0; });
+    if (!dk.length) dk = ["times"];
+    var tb = pick(["tables", "t"]), t = parseTables(Array.isArray(tb) ? tb.join(",") : tb === undefined ? "1-12" : tb);
+    if (!t.length) t = parseTables("1-12");
+    var wt = pick(["topic", "wt"]);
+    return { decks:DKEYS.filter(function(k){ return dk.indexOf(k) >= 0; }), t:t, max:ch(pick(["maxFactor", "max"]), [10, 12], 10),
+             turn:tog(pick(["turn"]), true), within:ch(pick(["within"]), [10, 20, 100], 20), sq:ch(pick(["upTo", "sq"]), [10, 12, 15, 20], 12),
+             way:ch(pick(["way"]), ["to", "from", "both"], "both"), wt:typeof wt === "string" && /^[a-z0-9-]{0,40}$/.test(wt) ? wt : "", order:"in" };
+  }
+  function apiProblem(c){
+    var html, answerHtml;
+    if (c.deck === "fdp"){
+      var f = frHtml(c.n, c.d, true);
+      html = (c.way === "fd" || c.way === "fp" ? "Write " + f + " " + esc(c.sub) : "Write " + c.front + " " + esc(c.sub));
+      answerHtml = c.kind === "frac" ? f : esc(c.ans);
+      return { text:"Write " + c.text, html:html, params:cardParams(c.id), answer:c.ans, answerHtml:answerHtml };
+    }
+    if (c.deck === "words"){
+      var q = "Which math word means: “" + c.ask.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&") + "”";
+      return { text:q, html:esc(q), params:cardParams(c.id), answer:c.ans, answerHtml:esc(c.ans) };
+    }
+    return { text:c.text, html:esc(c.text) + " =", params:cardParams(c.id), answer:c.ans, answerHtml:esc(c.ans) };
+  }
+  function apiMake(count, o){
+    var cfg = apiConfig(o), n = Math.floor(Number(count));
+    if (!(n >= 1)) n = 10;
+    n = Math.min(n, 100);
+    var ids = deckIds(cfg).filter(function(id){ return !!card(id); }), out = [];
+    if (!ids.length) return out;
+    var pool = [];
+    while (out.length < n){
+      if (!pool.length) pool = shuffle(ids);
+      out.push(apiProblem(card(pool.pop())));
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    var to = ev.source || window.parent;
+    function send(msg){ try { to.postMessage(msg, "*"); } catch (e){} }
+    if (d.type === "helper:options"){
+      whenGlossary(function(){
+        send({ type:"helper:optionsSchema", id:d.id, page:PAGE, title:"The Flash Cards", options:JSON.parse(JSON.stringify(apiOptions())) });
+      });
+    } else if (d.type === "helper:make"){
+      whenGlossary(function(){
+        var probs;
+        try { probs = apiMake(d.count, d.options); } catch (e){ probs = []; }
+        send({ type:"helper:made", id:d.id, page:PAGE, problems:probs });
+      });
+    }
+  });
+
+  /* ===================== the glossary (for Math words) ===================== */
+  var glWait = [], glDone = !!glossary(), glTries = 0;
+  function whenGlossary(fn){ if (glDone) fn(); else glWait.push(fn); }
+  (function poll(){
+    if (glossary() || glTries++ > 60){
+      glDone = true;
+      var w = glWait; glWait = [];
+      w.forEach(function(fn){ try { fn(); } catch (e){} });
+      return;
+    }
+    setTimeout(poll, 100);
+  })();
+
+  /* ===================== embedded in a practice set ===================== */
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .picker,html.embed .tabs,html.embed .mastery,html.embed .footnote{display:none !important}"
+      + "html.embed .layout{display:block}html.embed .play{box-shadow:none}";
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  /* ===================== start ===================== */
+  window.FlashCards = { card:card, deckIds:deckIds, check:check, parseNum:parseNum, pickNext:pickNext, grade:grade, status:status,
+    cardParams:cardParams, deckQuery:deckQuery, apiMake:apiMake, apiOptions:apiOptions, timesTip:timesTip, GAP:GAP,
+    state:function(){ return { S:S, R:R, IDS:IDS, ORDER:ORDER, ST:ST, QZ:QZ, SP:SP, LN:LN }; }, rebuild:rebuild, practise:practise,
+    setMode:setMode, speedFinish:speedFinish, buildPrint:buildPrint };
+
+  if (!EMBED) load();
+  readURL();
+  if (EMBED){
+    embedSetup();
+    S.mode = "quiz";
+  }
+  if (!EMBED && savedPick === false) $("pickBox").open = false;
+  else if (!EMBED && savedPick === null && window.innerWidth < 700 && /[?&]deck=/.test(location.search)) $("pickBox").open = false;
+  paint();
+  buildPicker();
+  function startDeck(){
+    if (EMBED && FOCUS && card(FOCUS)){
+      IDS = [FOCUS]; ORDER = [FOCUS];
+      paintPicker(); showMode();
+      return;
+    }
+    if (FOCUS && card(FOCUS)){
+      if (S.mode === "study") ST.extra = FOCUS;
+      else if (S.mode === "quiz") QZ.pend = FOCUS;
+      else if (S.mode === "learn") LN.pendFocus = FOCUS;
+    }
+    rebuild(true);
+  }
+  var wantsWords = S.decks.indexOf("words") >= 0 || (FOCUS && /^w:/.test(FOCUS));
+  if (wantsWords && !glossary()){
+    // the word list comes with nav.js; show the rest now and the words once it's here
+    if (!EMBED) rebuild(true);
+    whenGlossary(function(){
+      buildPicker();
+      if (!glossary()){
+        S.decks = S.decks.filter(function(k){ return k !== "words"; });
+        if (!S.decks.length) S.decks = ["times"];
+      }
+      startDeck();
+    });
+  } else {
+    startDeck();
+    whenGlossary(function(){ if (glossary()){ buildPicker(); paintPicker(); } });
+  }
+})();
+</script>

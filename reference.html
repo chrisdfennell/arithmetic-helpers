@@ -1,0 +1,1524 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reference Sheets</title>
+<meta name="description" content="Twelve one-page reference sheets to print and keep: the times table, squares and roots, fractions, decimals and percents, place value, divisibility, order of operations, geometry formulas, angles, units, algebra, integers and statistics.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arithmetic Helpers">
+<meta property="og:title" content="Reference Sheets · Arithmetic Helpers">
+<meta property="og:description" content="Twelve one-page reference sheets to print and keep: the times table, squares and roots, fractions, decimals and percents, place value, divisibility, order of operations, geometry formulas, angles, units, algebra, integers and statistics.">
+<meta property="og:url" content="https://chrisdfennell.github.io/arithmetic-helpers/reference.html">
+<meta property="og:image" content="https://chrisdfennell.github.io/arithmetic-helpers/icons/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
+<meta name="twitter:card" content="summary_large_image">
+<script src="nav.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFEC; --surface:#F8F9F7; --surface-2:#E2E6E2;
+    --ink:#18201C; --ink-2:#4A5550; --ink-3:#7B8681; --rule:#C8CFCA;
+    --key:#475569; --key-bg:#E2E8F0; --key-line:#94A3B8;
+    --focus:#475569;
+    --stage:#D9DEDA;
+    --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
+    --paper-shadow:0 1px 2px rgba(0,0,0,.12), 0 18px 36px -22px rgba(0,0,0,.55);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
+      --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
+      --key:#CBD5E1; --key-bg:#243041; --key-line:#64748B;
+      --focus:#CBD5E1;
+      --stage:#0C0F0E;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+      --paper-shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 40px -20px rgba(0,0,0,.95);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
+    --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
+    --key:#CBD5E1; --key-bg:#243041; --key-line:#64748B;
+    --focus:#CBD5E1;
+    --stage:#0C0F0E;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    --paper-shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 40px -20px rgba(0,0,0,.95);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
+    -webkit-font-smoothing:antialiased}
+  .page{max-width:1180px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:22px}
+  @media (max-width:560px){.page{padding:22px 16px 56px}}
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(34px,6.4vw,54px);line-height:.98;
+    letter-spacing:-.02em;margin:.16em 0 0}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:60ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;background:var(--surface);color:var(--ink-2);
+    border:1px solid var(--rule);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+  button:focus-visible,input:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+  [hidden]{display:none !important}
+  .sr{position:absolute !important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0;margin:-1px}
+
+  /* ---- buttons ---- */
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);border:0;border-radius:9px;
+    padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .go:hover{filter:brightness(1.1)}
+  .go:disabled{opacity:.45;cursor:default;filter:none}
+  .ghost{font-family:var(--f-body);font-size:14px;font-weight:600;background:transparent;color:var(--ink);border:1px solid var(--rule);
+    border-radius:9px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .ghost:hover{border-color:var(--ink-3)}
+  .ghost[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key)}
+
+  /* ---- the picker: a card per sheet ---- */
+  .toolbar{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);
+    padding:14px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+  @media (min-width:700px) and (min-height:600px){.toolbar{position:sticky;top:8px;z-index:4}}
+  .toolbar h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:17px;margin:0;flex:1 1 auto}
+  .tb-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .status{flex:1 1 100%;margin:0;font-size:13.5px;color:var(--ink-3)}
+  .cards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:18px}
+  .card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;
+    overflow:hidden;transition:border-color .15s ease, box-shadow .15s ease}
+  .card.on{border-color:var(--key);box-shadow:0 0 0 2px var(--key), var(--shadow)}
+  .thumb{display:block;position:relative;aspect-ratio:816 / 1056;overflow:hidden;background:var(--stage);border-bottom:1px solid var(--rule)}
+  .thumb .mini{position:absolute;left:8%;top:5%;width:84%;aspect-ratio:816 / 1056;box-shadow:var(--paper-shadow);background:#fff;overflow:hidden}
+  .thumb .mini .sheet{transform:scale(var(--ts,.3));transform-origin:0 0;pointer-events:none}
+  .thumb:hover .mini{box-shadow:0 0 0 2px var(--key), var(--paper-shadow)}
+  .c-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .c-top{display:flex;align-items:baseline;gap:8px}
+  .c-no{font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--ink-3);letter-spacing:.08em}
+  .card h3{font-family:var(--f-display);font-stretch:110%;font-weight:700;font-size:17.5px;line-height:1.2;margin:0}
+  .card h3 a{color:inherit;text-decoration:none}
+  .card h3 a:hover{text-decoration:underline;text-underline-offset:.15em;text-decoration-thickness:1px}
+  .card p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.45;flex:1}
+  .pick{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:600;cursor:pointer;padding:7px 10px;margin:0 -4px;
+    border-radius:9px;background:var(--paper);border:1px solid var(--rule)}
+  .pick input{width:18px;height:18px;margin:0;accent-color:var(--key);flex:none;cursor:pointer}
+  .pick.sub{font-weight:500;font-size:13px;background:transparent;border-style:dashed}
+  .c-links{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13.5px}
+  .c-links a{color:var(--ink-2);text-underline-offset:.15em}
+  .c-links a:hover{color:var(--ink)}
+
+  /* ---- the viewer: one sheet full size ---- */
+  .viewer{display:flex;flex-direction:column;gap:14px}
+  .vbar{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);padding:12px 16px;
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+  .vbar h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:19px;margin:0;flex:1 1 220px;min-width:0}
+  .vbar h2 small{display:block;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+  .vbar h2:focus{outline:none}
+  .vbar .row{display:flex;flex-wrap:wrap;gap:8px}
+  .stage{background:var(--stage);border-radius:14px;padding:22px;overflow-x:auto}
+  @media (max-width:560px){.stage{padding:12px;border-radius:10px}}
+  .frame{width:calc(816px * var(--vs,1));height:calc(1056px * var(--vs,1));margin:0 auto;position:relative;
+    box-shadow:var(--paper-shadow);background:#fff}
+  .frame .sheet{transform:scale(var(--vs,1));transform-origin:0 0;display:none}
+  .frame .sheet.cur{display:flex}
+  .hint{margin:0;font-size:13px;color:var(--ink-3);text-align:center}
+  .footnote{font-size:13.5px;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:14px;margin:0}
+  .footnote a{color:var(--ink-2)}
+  .checking .frame{width:auto;height:auto;box-shadow:none;background:none;display:flex;flex-direction:column;gap:20px;align-items:center}
+  .checking .frame .sheet{display:flex;transform:none}
+  .checking .sheet.over{outline:4px solid #d00}
+
+  /* =====================================================================
+     THE SHEETS: always black on white, laid out at letter size (8.5 × 11 in = 816 × 1056 px)
+     ===================================================================== */
+  .sheet{width:816px;height:1056px;flex:none;background:#fff;color:#111;padding:40px 48px 28px;flex-direction:column;
+    font-family:var(--f-body);font-size:12.5px;line-height:1.42;overflow:hidden;position:relative;text-align:left;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .thumb .sheet{display:flex}
+  .sheet *{box-sizing:border-box}
+  .sheet p{margin:0}
+  .sheet ul{margin:0;padding:0 0 0 1.1em}
+  .sheet li{margin:0 0 3px}
+  .sheet li::marker{color:#777}
+  .sheet b,.sheet strong{font-weight:600}
+  .sheet table{border-collapse:collapse}
+  .sheet sup{font-size:.7em;line-height:0;vertical-align:.58em}
+  .sheet sub{font-size:.7em;line-height:0;vertical-align:-.28em}
+  .sheet var{font-family:"Cambria Math",Cambria,Georgia,"Times New Roman",serif;font-style:italic;font-size:1.1em;letter-spacing:.01em}
+  .sheet svg{display:block;overflow:visible;max-width:100%;height:auto}
+  .sheet svg text{font-family:var(--f-mono);font-size:11px;fill:#111}
+  .sheet svg text.v{font-family:"Cambria Math",Cambria,Georgia,"Times New Roman",serif;font-style:italic;font-size:14px}
+  .sheet svg text.b{font-weight:600}
+  .sheet svg text.sm{font-size:9.5px;fill:#444}
+  .sheet svg text.lg{font-size:13px;font-weight:600}
+  .sheet svg text.bd{font-family:var(--f-body);font-size:11px}
+  .sheet svg text.hal{paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round}
+  .sheet svg .s{fill:none;stroke:#111;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+  .sheet svg .s2{fill:none;stroke:#111;stroke-width:2.4;stroke-linecap:round}
+  .sheet svg .th{fill:none;stroke:#111;stroke-width:1}
+  .sheet svg .d{fill:none;stroke:#111;stroke-width:1.1;stroke-dasharray:4 3}
+  .sheet svg .g{fill:none;stroke:#d2d2d2;stroke-width:1}
+  .sheet svg .t1{fill:#f0f0f0} .sheet svg .t2{fill:#e2e2e2} .sheet svg .t3{fill:#cdcdcd}
+  .sheet svg .k{fill:#111} .sheet svg .w{fill:#fff}
+
+  .sh-head{flex:none;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:2.5px solid #111;
+    padding-bottom:9px;margin-bottom:15px}
+  .sh-kick{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#666}
+  .sh-head > div{flex:none}
+  .sh-title{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:30px;line-height:1;letter-spacing:-.015em;margin:4px 0 0;color:#111;white-space:nowrap}
+  .sh-sub{flex:0 1 auto;min-width:0;font-size:11.5px;color:#444;text-align:right;max-width:44ch;line-height:1.35}
+  .sh-body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:13px}
+  .sh-foot{flex:none;display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:8.5px;letter-spacing:.05em;
+    color:#777;border-top:1px solid #bbb;padding-top:6px;margin-top:12px}
+  .sh-h{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:14px;line-height:1.15;margin:0 0 7px;color:#111}
+  .sh-h small{font-family:var(--f-body);font-stretch:100%;font-weight:400;font-size:11px;color:#555;margin-left:6px}
+  .bx{border:1.3px solid #111;border-radius:7px;padding:10px 12px;min-width:0}
+  .bx.lt{border-color:#c4c4c4}
+  .bx.fl{background:#f2f2f2;border-color:#f2f2f2}
+  .cols{display:grid;gap:12px;min-width:0}
+  .c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .c4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .note{font-size:11px;color:#444;line-height:1.4}
+  .mono{font-family:var(--f-mono)}
+  .ex{font-family:var(--f-mono);font-size:11.5px}
+  .gy{color:#777}
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.02;font-size:.8em;margin:0 .08em;
+    font-family:inherit}
+  .fr > span:first-child{border-bottom:1px solid currentColor;padding:0 .18em 1px}
+  .fr > span:last-child{padding:1px .18em 0}
+  .rep{display:inline-block;border-top:1.3px solid currentColor;line-height:1.05;padding-top:1px}
+  .tag{display:inline-block;font-family:var(--f-mono);font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    color:#555;border:1px solid #bbb;border-radius:4px;padding:0 4px;line-height:1.5;vertical-align:1px}
+  .ok{font-weight:700}
+  .no{color:#666}
+
+  /* 1 · times table */
+  .tt{width:100%;table-layout:fixed;font-family:var(--f-mono)}
+  .tt th,.tt td{height:52px;text-align:center;vertical-align:middle;border:1px solid #c6c6c6;font-size:17px;font-weight:600;padding:0}
+  .tt thead th,.tt tbody th{background:#1d1d1d;color:#fff;font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:18px;border-color:#1d1d1d}
+  .tt thead th:first-child{font-size:21px;background:#000}
+  .tt td.sq{background:#d6d6d6;font-weight:600}
+  .tt.blank td.sq{background:#eeeeee}
+  .tt tr:nth-child(5n) td{border-bottom-color:#8a8a8a}
+  .tt td:nth-child(5n+1){border-right-color:#8a8a8a}
+  .swatch{display:inline-block;width:12px;height:12px;background:#d6d6d6;border:1px solid #aaa;vertical-align:-2px;margin-right:4px}
+  .lines-row{display:flex;gap:28px;font-size:13px;color:#333;align-items:flex-end;flex-wrap:wrap}
+  .lines-row span{display:inline-flex;gap:8px;align-items:flex-end}
+  .lines-row i{display:inline-block;border-bottom:1px solid #333;width:170px;height:1em}
+  .lines-row i.sh{width:80px}
+
+  /* tables of facts */
+  .ft{width:100%;font-family:var(--f-mono);font-size:12px}
+  .ft td,.ft th{padding:1.5px 4px;text-align:left;white-space:nowrap;border-bottom:1px solid #e4e4e4;line-height:1.42}
+  .ft tr:last-child td{border-bottom:0}
+  .ft th{font-family:var(--f-body);font-size:10.5px;font-weight:600;color:#555;border-bottom:1.3px solid #111}
+  .ft .r{text-align:right}
+  .ft .c{text-align:center}
+  .ft .em{font-weight:600}
+  .ft .gy{color:#666}
+
+  /* 3 · fractions */
+  .eqv{width:100%;font-family:var(--f-mono);font-size:12px}
+  .eqv th{font-family:var(--f-display);font-stretch:110%;font-size:12px;font-weight:700;text-align:left;padding:5px 3px 3px;border-bottom:1.3px solid #111}
+  .eqv td{padding:1px 3px;border-bottom:1px solid #e6e6e6;height:22px;vertical-align:middle;white-space:nowrap}
+  .eqv td:nth-child(2),.eqv td:nth-child(3){text-align:right}
+  .eqv tr.same td{color:#8a8a8a}
+  .eqv .fr{font-size:.92em}
+
+  /* 4 · place value */
+  .pv{width:720px;table-layout:fixed;font-size:11px}
+  .pv th,.pv td{border:1px solid #bdbdbd;text-align:center;vertical-align:middle;padding:6px 2px;line-height:1.25}
+  .pv .per th{background:#1d1d1d;color:#fff;font-family:var(--f-display);font-stretch:110%;font-weight:700;font-size:11.5px;letter-spacing:.02em;border-color:#1d1d1d}
+  .pv .nm th{background:#e8e8e8;font-weight:600;font-size:9.8px;height:40px;letter-spacing:-.01em}
+  .pv td.lab,.pv th.lab{text-align:left;font-family:var(--f-mono);font-size:8.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#555;
+    background:#fff;padding-left:5px}
+  .pv .per th.lab{background:#fff;border-color:#fff #bdbdbd #bdbdbd #fff}
+  .pv td.pt,.pv th.pt{border-left-color:#fff;border-right-color:#fff;font-weight:800;font-size:20px;background:#fff !important;padding:0}
+  .pv .per th.pt{border-color:#fff}
+  .pv .val td{font-family:var(--f-mono);font-size:10.5px}
+  .pv .dig td{font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:32px;height:58px;background:#f2f2f2}
+  .pv .dig td.zero{color:#888}
+  .pv .dig td.lab{font-family:var(--f-mono);font-stretch:100%;font-size:8.5px;font-weight:600;background:#fff;height:auto}
+  .pv .dv td{font-family:var(--f-mono);font-size:10px}
+
+  /* 5 · divisibility */
+  .dcard{display:grid;grid-template-columns:54px minmax(0,1fr);gap:4px 12px;align-items:start}
+  .dno{grid-row:span 2;width:54px;height:54px;border-radius:50%;background:#1d1d1d;color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:27px}
+  .drule{font-size:13px;line-height:1.35}
+  .drule b{font-weight:700}
+  .dex{grid-column:1 / -1;font-family:var(--f-mono);font-size:11.5px;display:flex;flex-direction:column;gap:3px;border-top:1px dashed #c4c4c4;padding-top:7px;margin-top:4px}
+  .dex u{text-decoration:none;background:#dcdcdc;padding:0 1px;border-radius:2px}
+  .yes::before{content:"✓";font-weight:700;margin-right:6px}
+  .nope{color:#555}
+  .nope::before{content:"✗";font-weight:700;margin-right:6px}
+  .chk{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px}
+  .chk div{border:1px solid #c4c4c4;border-radius:6px;padding:5px 4px;text-align:center;font-size:10px;line-height:1.3;color:#444}
+  .chk div b{display:block;font-family:var(--f-display);font-weight:800;font-size:17px;color:#111}
+  .chk div.y{background:#ececec;border-color:#111}
+
+  /* 6 · order of operations */
+  .ladder{display:flex;flex-direction:column;gap:7px}
+  .rung{display:grid;grid-template-columns:60px minmax(0,1fr);gap:0 11px;align-items:center;border:1.3px solid #111;border-radius:8px;padding:8px 10px}
+  .rung .L{font-family:var(--f-display);font-stretch:115%;font-weight:800;font-size:25px;line-height:1;text-align:center;white-space:nowrap}
+  .rung .L small{display:block;font-size:10px;font-weight:700;letter-spacing:.06em;color:#555}
+  .rung b{font-size:13.5px;font-weight:700}
+  .rung span.n{display:block;font-size:11px;color:#444;line-height:1.35}
+  .rung.pair{background:#f0f0f0}
+  .steps{display:flex;flex-direction:column}
+  .step{display:grid;grid-template-columns:24px minmax(0,1fr) 150px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px dashed #c8c8c8}
+  .step:last-child{border-bottom:0}
+  .step .sn{font-family:var(--f-mono);font-size:10px;font-weight:600;color:#fff;background:#1d1d1d;border-radius:50%;width:20px;height:20px;
+    display:flex;align-items:center;justify-content:center}
+  .step .e{font-family:var(--f-mono);font-size:17px;font-weight:600;white-space:nowrap}
+  .step .why{font-size:11px;color:#444;line-height:1.3}
+  .hl{background:#dadada;border-bottom:2px solid #111;padding:1px 2px;border-radius:2px}
+  .bigeq{font-family:var(--f-mono);font-size:19px;font-weight:600;white-space:nowrap}
+  .strike{text-decoration:line-through;text-decoration-thickness:1.5px;color:#777}
+
+  /* 7 · geometry */
+  .gcell{border:1px solid #c4c4c4;border-radius:7px;padding:8px 10px 9px;display:flex;flex-direction:column;gap:4px;min-width:0}
+  .gcell h4{margin:0;font-family:var(--f-display);font-stretch:110%;font-weight:700;font-size:13px;line-height:1.15}
+  .gcell svg{width:100%;height:auto;margin:2px 0}
+  .fm{font-size:12.5px;line-height:1.5;white-space:nowrap}
+  .fm .lb{display:inline-block;min-width:1.6em;font-weight:600}
+  .gcell .note{font-size:10.5px;white-space:normal}
+  .gcell.wide{flex-direction:row;gap:12px;align-items:center}
+  .gsec{display:flex;align-items:baseline;gap:10px;margin:0 0 -4px}
+  .gsec h3{margin:0;font-family:var(--f-display);font-stretch:115%;font-weight:800;font-size:14.5px}
+  .gsec span{font-size:11px;color:#555}
+
+  /* 9 · units */
+  .stair{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0;align-items:end}
+  .stair div{border:1.3px solid #111;border-right-width:0;text-align:center;padding:4px 2px 5px;background:#fff;line-height:1.2}
+  .stair div:last-child{border-right-width:1.3px}
+  .stair b{display:block;font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:14px}
+  .stair span{display:block;font-family:var(--f-mono);font-size:10.5px}
+  .stair em{display:block;font-style:normal;font-size:9.5px;color:#555}
+  .stair .base{background:#e6e6e6}
+  .ut{width:100%;font-size:12px}
+  .ut td{padding:1px 4px;border-bottom:1px solid #e4e4e4;white-space:nowrap;vertical-align:baseline;line-height:1.35}
+  .ut tr:last-child td{border-bottom:0}
+  .ut td:first-child{font-family:var(--f-mono);text-align:right;width:1%}
+  .ut td.eq{width:1%;text-align:center;color:#555;font-family:var(--f-mono)}
+  .ut td.rhs{font-family:var(--f-mono)}
+  .ut td.nt{font-size:10.5px;color:#666;white-space:normal;text-align:right}
+  .ut tr.sub td{font-family:var(--f-display);font-stretch:110%;font-weight:700;font-size:11.5px;text-align:left;padding-top:5px;border-bottom:1.2px solid #111;color:#111}
+
+  /* 10 · algebra */
+  .pt2{width:100%;font-size:12px}
+  .pt2 th{font-family:var(--f-body);font-size:10.5px;font-weight:600;color:#555;text-align:left;border-bottom:1.3px solid #111;padding:2px 6px}
+  .pt2 td{padding:2px 6px;border-bottom:1px solid #e2e2e2;vertical-align:middle;white-space:nowrap;line-height:1.35}
+  .pt2 tr:last-child td{border-bottom:0}
+  .pt2 td:first-child{font-weight:600;font-size:12.5px}
+  .pt2 td.x{font-family:var(--f-mono);font-size:11.5px;color:#333}
+  .solve{font-family:var(--f-mono);font-size:12.5px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:1px 14px;align-items:baseline}
+  .solve .w{font-family:var(--f-body);font-size:10.5px;color:#555}
+
+  /* 11 · integers */
+  .sgn{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .sgn div{border:1.3px solid #111;border-radius:7px;text-align:center;padding:6px 4px;font-family:var(--f-mono);font-size:15px;font-weight:600}
+  .sgn div.n{background:#e4e4e4}
+  .sgn small{display:block;font-family:var(--f-body);font-size:10px;font-weight:400;color:#444}
+  .nlb{display:grid;grid-template-columns:200px minmax(0,1fr);gap:4px 14px;align-items:center}
+  .nlb .lbx > b{display:block;font-family:var(--f-mono);font-size:15px}
+  .nlb .lbx span{font-size:11px;color:#444;line-height:1.35;display:block}
+
+  /* 12 · statistics */
+  .data{display:flex;gap:6px;flex-wrap:wrap}
+  .data{gap:5px;flex-wrap:nowrap}
+  .data span{font-family:var(--f-mono);font-weight:600;font-size:13.5px;border:1.3px solid #111;border-radius:6px;min-width:0;flex:1;text-align:center;padding:2px 0}
+  .data.sorted span{background:#efefef;border-color:#efefef}
+  .data.sorted span.mid{background:#111;color:#fff;border-color:#111}
+  .meas{display:flex;flex-direction:column;gap:3px}
+  .meas h4{margin:0;font-family:var(--f-display);font-stretch:110%;font-weight:800;font-size:14px}
+  .meas .ex{font-size:11.5px}
+  .meas .ans{font-family:var(--f-mono);font-weight:600;font-size:15px;margin-top:auto}
+
+  /* ===================== printing ===================== */
+  @media print{
+    @page{size:letter;margin:0}
+    html,body{background:#fff !important;margin:0;padding:0}
+    .page{max-width:none;padding:0;margin:0;gap:0;display:block;zoom:1 !important}
+    .sitenav,.masthead,.picker,.vbar,.hint,.footnote,.noscript,.ht-bar,.ht-search,.ht-menu,.ht-exit{display:none !important}
+    .viewer,.viewer[hidden]{display:block !important}
+    .stage{background:none;padding:0;border-radius:0;overflow:visible}
+    .frame{width:auto;height:auto;box-shadow:none;background:none;margin:0}
+    .frame .sheet,.frame .sheet.cur{display:none;transform:none !important}
+    .frame .sheet.p-on{display:flex !important;height:11in;break-after:page;page-break-after:always;break-inside:avoid}
+    .frame .sheet.p-on.p-last{break-after:auto;page-break-after:auto}
+  }
+</style>
+
+<div class="page" id="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Print and keep</div>
+      <h1>Reference <em>Sheets</em></h1>
+      <p class="tagline">Twelve one-page sheets with the facts and formulas worth keeping in a binder: the times table, fractions and
+        decimals, geometry formulas, the sign rules and more. Pick the ones you want and print them, or open any sheet full size.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="picker" id="picker" aria-labelledby="pickH">
+    <div class="toolbar">
+      <h2 id="pickH">Pick which to print</h2>
+      <div class="tb-actions">
+        <button type="button" class="ghost" id="allBtn">Pick all</button>
+        <button type="button" class="ghost" id="noneBtn">Clear</button>
+        <button type="button" class="go" id="printSel">Print selected</button>
+        <button type="button" class="ghost" id="printAll">Print all 12</button>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </div>
+    <ul class="cards" id="cards" style="margin-top:18px"></ul>
+  </section>
+
+  <section class="viewer" id="viewer" aria-labelledby="viewH" hidden>
+    <div class="vbar">
+      <a class="ghost" href="#" id="backLink"><span aria-hidden="true">←</span> All sheets</a>
+      <h2 id="viewH" tabindex="-1"><small id="viewNo"></small><span id="viewT"></span></h2>
+      <div class="row">
+        <a class="ghost" id="prevLink" href="#"><span aria-hidden="true">‹</span> <span class="sr">Previous sheet: </span><span id="prevT">Previous</span></a>
+        <a class="ghost" id="nextLink" href="#"><span class="sr">Next sheet: </span><span id="nextT">Next</span> <span aria-hidden="true">›</span></a>
+      </div>
+      <div class="row">
+        <button type="button" class="ghost" id="fitBtn" aria-pressed="false" title="Show the sheet at its real size">Actual size</button>
+        <button type="button" class="go" id="printOne">Print this sheet</button>
+        <a class="ghost" id="practise" href="index.html">Practise this <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+    <div class="stage" id="stage"><div class="frame" id="frame"></div></div>
+    <p class="hint" id="hint">The printed sheet is black on white and fills one letter-size page. Use ‹ and › (or the arrow keys) to flip through.</p>
+  </section>
+
+  <p class="noscript" id="noscript">The sheets are drawn by the page’s script. If you can read this, the script didn’t run.</p>
+
+  <p class="footnote">Every sheet prints on one letter-size page (8.5 × 11 in) with no browser headers. If your printer adds a
+    margin, choose “Fit to page” or scale 100%. A link like <code>reference.html?print=times,geometry</code> opens with those sheets
+    picked; <code>reference.html#times</code> opens one sheet. <a href="index.html">Back to all the helpers</a>.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var MINUS = "−";
+
+  /* ===================== little builders ===================== */
+  function commas(n){
+    var s = String(n), neg = s.charAt(0) === "-";
+    if (neg) s = s.slice(1);
+    var p = s.split(".");
+    return (neg ? MINUS : "") + p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (p.length > 1 ? "." + p[1] : "");
+  }
+  function sgn(n){ return n < 0 ? MINUS + Math.abs(n) : String(n); }
+  function par(n){ return n < 0 ? "(" + MINUS + Math.abs(n) + ")" : String(n); }
+  function fr(n, d){ return '<span class="fr"><span>' + n + "</span><span>" + d + "</span></span>"; }
+  // tiny math markup: {x} → italic variable, ^2 or ^(m+n) → superscript, _1 → subscript
+  function m(s){
+    return s.replace(/\{([^}]+)\}/g, "<var>$1</var>")
+            .replace(/\^\(([^)]+)\)/g, "<sup>$1</sup>")
+            .replace(/\^([^\s<(),.;]+)/g, "<sup>$1</sup>")
+            .replace(/_\(([^)]+)\)/g, "<sub>$1</sub>")
+            .replace(/_(\d)/g, "<sub>$1</sub>");
+  }
+  function svg(w, h, label, inner){
+    return '<svg viewBox="0 0 ' + w + " " + h + '" width="' + w + '" height="' + h + '" role="img" aria-label="' + label + '">' + inner + "</svg>";
+  }
+  function T(x, y, s, cls, anchor){
+    return '<text x="' + r1(x) + '" y="' + r1(y) + '"' + (cls ? ' class="' + cls + '"' : "") + (anchor ? ' text-anchor="' + anchor + '"' : "") + ">" + s + "</text>";
+  }
+  function r1(x){ return Math.round(x * 10) / 10; }
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while (b){ var t = a % b; a = b; b = t; } return a; }
+  // a point at an angle (degrees, counter-clockwise from the right) on a circle, in screen coordinates
+  function P(cx, cy, r, deg){ var a = deg * Math.PI / 180; return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; }
+  function arcPath(cx, cy, r, a0, a1){
+    var p0 = P(cx, cy, r, a0), p1 = P(cx, cy, r, a1), large = (a1 - a0) > 180 ? 1 : 0;
+    return "M" + r1(p0[0]) + " " + r1(p0[1]) + " A" + r + " " + r + " 0 " + large + " 0 " + r1(p1[0]) + " " + r1(p1[1]);
+  }
+  function ray(cx, cy, len, deg, cls){
+    var p = P(cx, cy, len, deg);
+    return '<line class="' + (cls || "s") + '" x1="' + r1(cx) + '" y1="' + r1(cy) + '" x2="' + r1(p[0]) + '" y2="' + r1(p[1]) + '"/>';
+  }
+  function ln(x1, y1, x2, y2, cls){
+    return '<line class="' + (cls || "s") + '" x1="' + r1(x1) + '" y1="' + r1(y1) + '" x2="' + r1(x2) + '" y2="' + r1(y2) + '"/>';
+  }
+  function rightMark(cx, cy, a0, size){
+    var s = size || 8, p1 = P(cx, cy, s, a0), p3 = P(cx, cy, s, a0 + 90);
+    var p2 = [p1[0] + p3[0] - cx, p1[1] + p3[1] - cy];
+    return '<path class="th" d="M' + r1(p1[0]) + " " + r1(p1[1]) + " L" + r1(p2[0]) + " " + r1(p2[1]) + " L" + r1(p3[0]) + " " + r1(p3[1]) + '"/>';
+  }
+  // an arrowhead at (x, y), pointing along (dx, dy)
+  function head(x, y, dx, dy, size){
+    var L = Math.sqrt(dx * dx + dy * dy) || 1, ux = dx / L, uy = dy / L, s = size || 7;
+    var bx = x - ux * s, by = y - uy * s;
+    return '<path class="k" d="M' + r1(x) + " " + r1(y) + " L" + r1(bx - uy * s * .5) + " " + r1(by + ux * s * .5) + " L" + r1(bx + uy * s * .5) + " " + r1(by - ux * s * .5) + ' Z"/>';
+  }
+  function box(title, inner, cls, sub){
+    return '<div class="bx' + (cls ? " " + cls : "") + '"><h3 class="sh-h">' + title + (sub ? " <small>" + sub + "</small>" : "") + "</h3>" + inner + "</div>";
+  }
+
+  /* ===================== the sheets ===================== */
+  var SHEETS = [
+    { id:"times", no:"01", title:"Multiplication Table", short:"Times table",
+      sub:"Every fact from 1 × 1 to 12 × 12. Find a row and a column; the product is where they meet.",
+      blurb:"The 12 × 12 grid with the square numbers shaded on the diagonal, and the patterns that make the facts easier.",
+      href:"multiplication.html", hname:"The Product Ladder" },
+    { id:"times-blank", no:"01", title:"Multiplication Table to Fill In", short:"Blank times table", parent:"times",
+      sub:"Fill in every product. Start with the facts you know, then use turn-arounds: 3 × 8 is the same as 8 × 3.",
+      blurb:"An empty 12 × 12 grid to fill in.", href:"multiplication.html", hname:"The Product Ladder" },
+    { id:"powers", no:"02", title:"Squares, Cubes & Roots", short:"Squares & roots",
+      sub:"Squaring and square roots undo each other: 7² = 49 and √49 = 7.",
+      blurb:"Squares 1–20, cubes 1–10 and their roots, plus √2 ≈ 1.414 and the other roots to three decimal places.",
+      href:"factors.html", hname:"The Factor Tree" },
+    { id:"fractions", no:"03", title:"Fractions, Decimals & Percents", short:"Fractions, decimals, percents",
+      sub:'One amount, three ways. A bar over digits means they repeat forever: 0.<span class="rep">3</span> = 0.333…',
+      blurb:"Halves to twelfths as decimals and percents, repeating decimals with a bar, and a fraction wall.",
+      href:"fractions.html?mode=convert&q=3%2F8", hname:"The Fraction Bar" },
+    { id:"place-value", no:"04", title:"Place Value", short:"Place value",
+      sub:"Each place is worth 10 times the place to its right. One number, read every way.",
+      blurb:"Millions to thousandths, with one number written in words, in expanded form and rounded to each place.",
+      href:"addition.html", hname:"The Carry Column" },
+    { id:"divisibility", no:"05", title:"Divisibility Rules", short:"Divisibility",
+      sub:"Tell whether a number divides evenly, with no remainder, without doing the division.",
+      blurb:"Quick tests for 2, 3, 4, 5, 6, 8, 9, 10 and 11, each with an example that passes and one that doesn’t.",
+      href:"factors.html?mode=div&q=1260", hname:"The Factor Tree" },
+    { id:"order", no:"06", title:"Order of Operations", short:"Order of operations",
+      sub:"Everyone works a problem in the same order, so everyone gets the same answer.",
+      blurb:"PEMDAS and BODMAS, a worked example one step at a time, and the left-to-right partners rule.",
+      href:"pemdas.html?q=" + encodeURIComponent("4 + 2 × (7 − 3)^2 ÷ 8 − 1"), hname:"The Order Stack" },
+    { id:"geometry", no:"07", title:"Geometry Formulas", short:"Geometry formulas",
+      sub:"Area, perimeter, volume and surface area. Every height is measured at a right angle to the base.",
+      blurb:"Area and perimeter of six flat shapes, volume and surface area of seven solids, each drawn and labelled, and Pythagoras.",
+      href:"geometry.html?mode=area", hname:"The Shape Shop" },
+    { id:"angles", no:"08", title:"Angle Facts", short:"Angle facts",
+      sub:"The rules that find a missing angle without a protractor.",
+      blurb:"Angles on a line, around a point and in a triangle, polygon angle sums, and the angle pairs on parallel lines.",
+      href:"geometry.html?mode=angle&shape=par&a=65&pos=2", hname:"The Shape Shop" },
+    { id:"units", no:"09", title:"Units & Conversions", short:"Units & conversions",
+      sub:"Metric and customary units, time and temperature. = means exact; ≈ means rounded.",
+      blurb:"Metric and customary length, mass and capacity, time, temperature, and metric ↔ customary.",
+      href:"ratios.html?mode=rate", hname:"The Ratio Table" },
+    { id:"algebra", no:"10", title:"Algebra Rules", short:"Algebra rules",
+      sub:"The properties, exponent laws and line equations that algebra is built on.",
+      blurb:"Number properties, exponent laws, slope and the three forms of a line, and the steps for solving an equation.",
+      href:"algebra.html?mode=solve&q=" + encodeURIComponent("5(x − 1) + 2 = 2x + 9"), hname:"The Balance Scale" },
+    { id:"integers", no:"11", title:"Integer Rules", short:"Integer rules",
+      sub:"Positive and negative whole numbers: the sign rules for +&nbsp;−&nbsp;×&nbsp;÷, on the number line.",
+      blurb:"The sign rules for adding, subtracting, multiplying and dividing, drawn on number lines, with zero pairs.",
+      href:"integers.html?q=" + encodeURIComponent("5 − 8"), hname:"The Number Line" },
+    { id:"stats", no:"12", title:"Statistics", short:"Statistics",
+      sub:"One data set, summed up every way: its center, its spread and its box plot.",
+      blurb:"Mean, median, mode, range, quartiles, IQR and MAD for one data set, with a labelled dot plot and box plot.",
+      href:"stats.html?mode=box&q=8,3,6,9,2,8,5,7,4,8", hname:"The Dot Plot" }
+  ];
+  var BY = {}; SHEETS.forEach(function(s){ BY[s.id] = s; });
+  var MAIN = SHEETS.filter(function(s){ return !s.parent; });
+  var ALIAS = { "times-table":"times", multiplication:"times", "times-table-blank":"times-blank", blank:"times-blank",
+    squares:"powers", roots:"powers", "square-roots":"powers", fdp:"fractions", decimals:"fractions", percents:"fractions",
+    place:"place-value", placevalue:"place-value", divisible:"divisibility", pemdas:"order", bodmas:"order", "order-of-operations":"order",
+    formulas:"geometry", angle:"angles", conversions:"units", algebra:"algebra", integer:"integers", statistics:"stats", stat:"stats" };
+  function norm(id){ id = String(id || "").toLowerCase().replace(/^sheet-/, "").trim(); return BY[id] ? id : (ALIAS[id] || ""); }
+
+  function frame(s, body){
+    return '<article class="sheet" id="sheet-' + s.id + '" data-id="' + s.id + '" aria-label="' + s.title + '">' +
+      '<header class="sh-head"><div><div class="sh-kick">Reference sheet ' + s.no + (s.parent ? " · blank" : "") + "</div>" +
+      '<h2 class="sh-title">' + s.title + "</h2></div>" + '<p class="sh-sub">' + s.sub + "</p></header>" +
+      '<div class="sh-body">' + body + "</div>" +
+      '<footer class="sh-foot"><span>Arithmetic Helpers · Reference Sheets</span><span>chrisdfennell.github.io/arithmetic-helpers/reference.html#' + s.id + "</span></footer></article>";
+  }
+
+  /* ---------- 1 · multiplication table ---------- */
+  function timesTable(blank){
+    var h = '<table class="tt' + (blank ? " blank" : "") + '"><caption class="sr">Multiplication table from 1 to 12' + (blank ? ", blank" : "") +
+            '</caption><thead><tr><th scope="col" aria-label="times">×</th>';
+    for (var c = 1; c <= 12; c++) h += '<th scope="col">' + c + "</th>";
+    h += "</tr></thead><tbody>";
+    for (var r = 1; r <= 12; r++){
+      h += '<tr><th scope="row">' + r + "</th>";
+      for (c = 1; c <= 12; c++) h += "<td" + (r === c ? ' class="sq"' : "") + ">" + (blank ? "" : r * c) + "</td>";
+      h += "</tr>";
+    }
+    return h + "</tbody></table>";
+  }
+  function sTimes(){
+    var sq = []; for (var i = 1; i <= 12; i++) sq.push(i * i);
+    return timesTable(false) +
+      '<div class="cols c4">' +
+        box('<span class="swatch" aria-hidden="true"></span>Square numbers',
+          '<p class="note">A number times itself sits on the shaded diagonal: ' + sq.join(", ") + ".</p>", "lt") +
+        box("Turn-around facts", '<p class="note"><b>7 × 8 = 8 × 7 = 56.</b> The table is the same on both sides of the diagonal, so there are only 78 different facts to learn, not 144.</p>', "lt") +
+        box("Patterns that help", '<p class="note">×2: double it<br>×5: ends in 0 or 5<br>×9: digits add to 9 (9 × 1 to 9 × 10)<br>×10: put a 0 on the end<br>×11: the digit twice (11 × 1 to 11 × 9)<br>×12: ×10 plus ×2</p>', "lt") +
+        box("Read it backwards", '<p class="note"><b>56 ÷ 8 = ?</b> Go along the 8 row to 56, then straight up to the top: 7. So 56 ÷ 8 = 7, because 8 × 7 = 56.</p>', "lt") +
+      "</div>";
+  }
+  function sTimesBlank(){
+    return '<div class="lines-row"><span>Name <i></i></span><span>Date <i class="sh"></i></span><span>Time <i class="sh"></i></span><span>Right <i class="sh"></i> / 144</span></div>' +
+      timesTable(true) +
+      '<div class="cols c3">' +
+        box("Start easy", '<p class="note">Fill the 1, 2, 5 and 10 rows first. Then the 11s (up to 11 × 9 the digit is just written twice).</p>', "lt") +
+        box("Copy across the diagonal", '<p class="note">Every fact has a turn-around: once 4 × 9 = 36 is in, 9 × 4 = 36 goes on the other side of the shaded diagonal.</p>', "lt") +
+        box("Check yourself", '<p class="note">The shaded squares should read 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144. Each row goes up by its own number.</p>', "lt") +
+      "</div>";
+  }
+
+  /* ---------- 2 · squares, cubes and roots ---------- */
+  function sPowers(){
+    function rows(a, b, pow, sign){
+      var h = '<table class="ft"><tr><th>' + (pow === 2 ? "square" : "cube") + '</th><th class="r">value</th><th style="padding-left:12px">' + (pow === 2 ? "square root" : "cube root") + "</th></tr>";
+      for (var n = a; n <= b; n++){
+        var v = Math.pow(n, pow);
+        h += "<tr><td>" + n + "<sup>" + pow + '</sup></td><td class="r em">' + commas(v) + '</td><td class="gy" style="padding-left:12px">' + sign + v + " = " + n + "</td></tr>";
+      }
+      return h + "</table>";
+    }
+    var odd = [2, 3, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20], rt = '<div class="cols c4" style="gap:0 16px">';
+    odd.forEach(function(k){
+      rt += '<div class="ex" style="font-size:12.5px;border-bottom:1px solid #e4e4e4;padding:2px 0 1px">√' + k + " ≈ <b>" + Math.sqrt(k).toFixed(3) + "</b></div>";
+    });
+    rt += "</div>";
+
+    // the roots on a number line from 0 to 5
+    var X = function(v){ return 18 + v * 136; }, nl = ln(10, 46, 712, 46);
+    for (var t = 0; t <= 5; t++){
+      nl += ln(X(t), 38, X(t), 54, "s2") + T(X(t), 69, String(t), "lg", "middle") + (t > 0 ? T(X(t), 81, "= √" + (t * t), "sm", "middle") : "");
+      if (t < 5) for (var q = 1; q < 10; q++) nl += ln(X(t + q / 10), 43, X(t + q / 10), 49, "th");
+    }
+    [2, 3, 5, 8, 10, 15, 20].forEach(function(k, i){
+      var x = X(Math.sqrt(k)), up = i % 2 ? 11 : 24;
+      nl += '<circle class="k" cx="' + r1(x) + '" cy="46" r="3.6"/>' + ln(x, 42, x, up + 3, "th") + T(x, up, "√" + k, "b", "middle");
+    });
+    var nlSvg = svg(720, 84, "A number line from 0 to 5 with the square roots of 2, 3, 5, 8, 10, 15 and 20 marked between the whole numbers.", nl);
+
+    // a 4 by 4 square of 16 and a 3 by 3 by 3 cube of 27, drawn in isometric view
+    var cs = 13, ox = 66, oy = 46, cx = Math.cos(Math.PI / 6) * cs, cyy = Math.sin(Math.PI / 6) * cs, cube = "";
+    function iso(x, y, z){ return [ox + (x - y) * cx, oy + (x + y) * cyy - z * cs]; }
+    function poly(pts, cls){ return '<path class="' + cls + '" d="M' + pts.map(function(p){ return r1(p[0]) + " " + r1(p[1]); }).join(" L") + ' Z"/>'; }
+    function seg(a, b){ return ln(a[0], a[1], b[0], b[1], "th"); }
+    cube += poly([iso(0,0,3), iso(3,0,3), iso(3,3,3), iso(0,3,3)], "t1");
+    cube += poly([iso(3,0,0), iso(3,3,0), iso(3,3,3), iso(3,0,3)], "t3");
+    cube += poly([iso(0,3,0), iso(3,3,0), iso(3,3,3), iso(0,3,3)], "t2");
+    for (var g = 0; g <= 3; g++){
+      cube += seg(iso(g,0,3), iso(g,3,3)) + seg(iso(0,g,3), iso(3,g,3));
+      cube += seg(iso(3,g,0), iso(3,g,3)) + seg(iso(3,0,g), iso(3,3,g));
+      cube += seg(iso(g,3,0), iso(g,3,3)) + seg(iso(0,3,g), iso(3,3,g));
+    }
+    var sqr = '<rect class="t1" x="160" y="12" width="56" height="56"/>';
+    for (var i = 1; i < 4; i++) sqr += ln(160 + i * 14, 12, 160 + i * 14, 68, "th") + ln(160, 12 + i * 14, 216, 12 + i * 14, "th");
+    sqr += '<rect class="s" x="160" y="12" width="56" height="56"/>';
+    var pics = svg(240, 104, "A 4 by 4 square made of 16 small squares, and a 3 by 3 by 3 cube made of 27 small cubes.",
+      sqr + T(188, 88, "4² = 16", "b", "middle") + cube + T(66, 100, "3³ = 27", "b", "middle"));
+
+    var p2a = "", p2b = "", p10 = "";
+    for (var e = 0; e <= 10; e++){
+      var r = "<tr><td>2<sup>" + e + '</sup></td><td class="r em">' + commas(Math.pow(2, e)) + "</td></tr>";
+      if (e <= 5) p2a += r; else p2b += r;
+    }
+    for (e = 0; e <= 6; e++) p10 += "<tr><td>10<sup>" + e + '</sup></td><td class="r em">' + commas(Math.pow(10, e)) + "</td></tr>";
+
+    return box("Squares and cubes", '<div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr);gap:22px">' +
+          rows(1, 10, 2, "√") + rows(11, 20, 2, "√") + rows(1, 10, 3, "∛") + "</div>", "", "n² = n × n, and n³ = n × n × n") +
+      box("Square roots that aren’t whole numbers", rt + '<div style="margin-top:8px">' + nlSvg + "</div>", "", "rounded to 3 decimal places; ≈ means “about”") +
+      '<div class="cols" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,.8fr)">' +
+        box("Estimating a square root",
+          '<p class="note" style="font-size:11.5px"><b>√50 is between 7 and 8,</b> because 7² = 49 and 8² = 64, and 50 is between them. ' +
+          "50 is much closer to 49, so √50 is just over 7 (√50 ≈ 7.071).</p>" + '<div style="margin-top:8px;display:flex;justify-content:center">' + pics + "</div>", "lt") +
+        box("Powers of 2", '<div class="cols c2" style="gap:14px;align-items:start"><table class="ft">' + p2a + '</table><table class="ft">' + p2b + "</table></div>" +
+          '<p class="note" style="margin-top:6px">Each one doubles the one before.</p>', "lt") +
+        box("Powers of 10", '<table class="ft">' + p10 + "</table>" +
+          '<p class="note" style="margin-top:6px">10<sup>6</sup> is 1 with 6 zeros.</p>', "lt") +
+      "</div>" +
+      box("Remember", '<div class="cols c2" style="gap:4px 20px"><ul class="note" style="font-size:11.5px">' +
+          "<li>6<sup>2</sup> means 6 × 6 = 36, not 6 × 2.</li><li>(" + MINUS + "5)<sup>2</sup> = 25, but " + MINUS + "5<sup>2</sup> = " + MINUS + "(5 × 5) = " + MINUS + "25.</li>" +
+          "<li>Any number to the power 0 is 1 (except 0): 2<sup>0</sup> = 1.</li></ul>" +
+          '<ul class="note" style="font-size:11.5px"><li>49 has two square roots, 7 and ' + MINUS + "7. The √ sign means the positive one: √49 = 7.</li>" +
+          "<li>“Squared” is the area of a square; “cubed” is the volume of a cube.</li></ul></div>", "fl");
+  }
+
+  /* ---------- 3 · fractions, decimals and percents ---------- */
+  // the decimal for n/d (0 < n < d), with the repeating part under a bar
+  function decParts(n, d){
+    var digits = [], seen = {}, r = n % d;
+    while (r !== 0 && seen[r] === undefined){ seen[r] = digits.length; r *= 10; digits.push(Math.floor(r / d)); r = r % d; }
+    if (r === 0) return { fix:digits.join(""), rep:"" };
+    return { fix:digits.slice(0, seen[r]).join(""), rep:digits.slice(seen[r]).join("") };
+  }
+  function decHTML(n, d){
+    var p = decParts(n, d);
+    return "0." + p.fix + (p.rep ? '<span class="rep">' + p.rep + "</span>" : "");
+  }
+  function pctHTML(n, d){
+    var top = 100 * n, whole = Math.floor(top / d), rem = top % d;
+    if (!rem) return whole + "%";
+    var g = gcd(rem, d), dd = d / g, t = dd;
+    while (t % 2 === 0) t /= 2;
+    while (t % 5 === 0) t /= 5;
+    if (t === 1) return String(top / d) + "%";
+    return whole + fr(rem / g, dd) + "%";
+  }
+  function sFractions(){
+    var rows = [1, 2, 3, 4, 5, 6, 8, 10, 12], names = { 1:"1 whole", 2:"halves", 3:"thirds", 4:"quarters", 5:"fifths", 6:"sixths", 8:"eighths", 10:"tenths", 12:"twelfths" };
+    var x0 = 64, W = 656, rh = 20, cells = "", labels = "", fills = ["#e2e2e2", "#f0f0f0"];
+    rows.forEach(function(d, i){
+      var y = i * (rh + 3);
+      labels += T(0, y + 14, names[d], "bd");
+      for (var k = 0; k < d; k++){
+        var x = x0 + W * k / d, w = W / d;
+        cells += '<rect class="' + (i % 2 ? "t1" : "t2") + '" x="' + r1(x) + '" y="' + y + '" width="' + r1(w) + '" height="' + rh + '"/>' +
+                 '<rect class="th" x="' + r1(x) + '" y="' + y + '" width="' + r1(w) + '" height="' + rh + '"/>';
+        var lab = d === 1 ? "1" : "1/" + d, lw = lab.length * (d >= 10 ? 5.8 : 6.6) + 6;
+        labels += '<rect x="' + r1(x + w / 2 - lw / 2) + '" y="' + (y + 3) + '" width="' + r1(lw) + '" height="' + (rh - 6) + '" style="fill:' + fills[i % 2] + '"/>' +
+                  T(x + w / 2, y + 14, lab, d >= 10 ? "sm" : "", "middle");
+      }
+    });
+    var H = rows.length * (rh + 3) - 3;
+    // the dashed lines go over the cells but under the labels, so they never cross a number
+    var wall = cells + ln(x0 + W / 2, rh + 1, x0 + W / 2, H + 6, "d") + ln(x0 + W / 3, 2 * (rh + 3) - 2, x0 + W / 3, H + 6, "d") + labels +
+      T(x0 + W / 2 + 4, H + 15, "1/2 = 2/4 = 3/6 = 4/8 = 5/10 = 6/12", "sm") + T(x0 + W / 3 - 4, H + 15, "1/3 = 2/6 = 4/12", "sm", "end");
+    var wallSvg = svg(720, H + 18, "A fraction wall: one whole, then rows cut into halves, thirds, quarters, fifths, sixths, eighths, tenths and twelfths, lined up so equal fractions line up.", wall);
+
+    function group(d, name){
+      var h = '<table class="eqv"><tr><th colspan="3">' + name + "</th></tr>";
+      for (var k = 1; k < d; k++){
+        var g = gcd(k, d), simp = g > 1;
+        h += "<tr" + (simp ? ' class="same"' : "") + "><td>" + fr(k, d) + (simp ? ' <span style="font-size:10px">= ' + fr(k / g, d / g) + "</span>" : "") +
+             "</td><td>" + decHTML(k, d) + "</td><td>" + pctHTML(k, d) + "</td></tr>";
+      }
+      return h + "</table>";
+    }
+    var table = '<div class="cols c4" style="gap:0 16px;align-items:start">' +
+      "<div>" + group(2, "Halves") + group(3, "Thirds") + group(4, "Quarters") + group(5, "Fifths") + "</div>" +
+      "<div>" + group(6, "Sixths") + group(8, "Eighths") + "</div>" +
+      "<div>" + group(10, "Tenths") +
+        '<table class="eqv" style="margin-top:6px"><tr><th colspan="3">A few more</th></tr>' +
+        "<tr><td>" + fr(1, 9) + "</td><td>" + decHTML(1, 9) + "</td><td>" + pctHTML(1, 9) + "</td></tr>" +
+        "<tr><td>" + fr(1, 11) + "</td><td>" + decHTML(1, 11) + "</td><td>" + pctHTML(1, 11) + "</td></tr>" +
+        '<tr><td colspan="3">' + fr(1, 7) + " = " + decHTML(1, 7) + "</td></tr></table></div>" +
+      "<div>" + group(12, "Twelfths") + "</div></div>";
+
+    return box("The fraction wall", wallSvg, "lt", "rows of the same length; equal fractions line up") +
+      '<div><h3 class="sh-h">Equivalents <small>fraction · decimal · percent. Grey rows simplify to a fraction listed earlier.</small></h3>' + table + "</div>" +
+      '<div class="cols c3">' +
+        box("Fraction → percent", '<p class="ex" style="line-height:1.7">' + fr(3, 8) + " = 3 ÷ 8 = 0.375<br>0.375 × 100 = 37.5%</p>" +
+          '<p class="note">Divide the top by the bottom; then move the decimal point 2 places right for a percent.</p>', "") +
+        box("Percent → fraction", '<p class="ex" style="line-height:1.7">45% = 45 ÷ 100 = 0.45<br>0.45 = ' + fr(45, 100) + " = " + fr(9, 20) + "</p>" +
+          '<p class="note">Move the point 2 places left; then write the decimal over its place value and simplify.</p>', "") +
+        box("Benchmarks", '<p class="ex" style="line-height:1.75">' + fr(1, 100) + " = 0.01 = 1%<br>" + fr(1, 1) + " = 1 = 100%<br>" + fr(3, 2) + " = 1.5 = 150%</p>" +
+          '<p class="note">Percent means “out of 100”. More than 100% is more than one whole.</p>', "") +
+      "</div>";
+  }
+
+  /* ---------- 4 · place value ---------- */
+  function sPlace(){
+    var names = ["Millions", "Hundred thousands", "Ten thousands", "Thousands", "Hundreds", "Tens", "Ones", ".", "Tenths", "Hundredths", "Thousandths"];
+    var vals = ["1,000,000", "100,000", "10,000", "1,000", "100", "10", "1", "", "0.1", "0.01", "0.001"];
+    var fracs = ["", "", "", "", "", "", "", "", fr(1, 10), fr(1, 100), fr(1, "1,000")];
+    var pows = [6, 5, 4, 3, 2, 1, 0, null, -1, -2, -3];
+    var digits = ["4", "0", "3", "6", "5", "1", "2", ".", "7", "0", "8"];
+    var dv = ["4,000,000", "0", "30,000", "6,000", "500", "10", "2", "", "0.7", "0", "0.008"];
+    var colg = '<colgroup><col style="width:70px">';
+    for (var i = 0; i < 11; i++) colg += '<col style="width:' + (i === 7 ? 20 : 63) + 'px">';
+    colg += "</colgroup>";
+    function row(cls, label, cells, isTh){
+      var tag = isTh ? "th" : "td", h = '<tr class="' + cls + '"><' + tag + ' class="lab"' + (isTh ? ' scope="row"' : "") + ">" + label + "</" + tag + ">";
+      cells.forEach(function(c, i){
+        var z = cls === "dig" && c === "0" ? ' class="zero"' : "";
+        h += i === 7 ? "<" + tag + ' class="pt">' + (cls === "dig" ? "." : "") + "</" + tag + ">" : "<" + tag + z + ">" + c + "</" + tag + ">";
+      });
+      return h + "</tr>";
+    }
+    var tbl = '<table class="pv">' + colg +
+      '<thead><tr class="per"><th class="lab"></th><th>Millions</th><th colspan="3">Thousands</th><th colspan="3">Ones</th><th class="pt"></th><th colspan="3">Parts of one</th></tr>' +
+      row("nm", "Place", names, true) + "</thead><tbody>" +
+      row("val", "Value", vals.map(function(v, i){ return v + (fracs[i] ? "<br>" + fracs[i] : ""); })) +
+      row("val", "Power of 10", pows.map(function(p){ return p === null ? "" : "10<sup>" + (p < 0 ? MINUS + (-p) : p) + "</sup>"; })) +
+      row("dig", "Example", digits) +
+      row("dv", "Digit’s value", dv) +
+      "</tbody></table>";
+
+    // ×10 arrows over the columns: each place is ten times the one to its right
+    var centers = [];
+    for (i = 0; i < 11; i++) if (i !== 7) centers.push(70 + (i < 7 ? 63 * i : 63 * 7 + 20 + 63 * (i - 8)) + 31.5);
+    var arr = "";
+    for (i = 0; i < centers.length - 1; i++){
+      var a = centers[i + 1] - 6, b = centers[i] + 6, mid = (a + b) / 2;
+      arr += '<path class="th" d="M' + r1(a) + " 30 Q" + r1(mid) + " 6 " + r1(b) + ' 30"/>' + head(b, 30, b - mid, 24, 6) + T(mid, 14, "×10", "sm", "middle");
+    }
+    var arrSvg = svg(720, 32, "Curved arrows from each place to the place on its left, each labelled times 10.", arr);
+    var arr2 = "";
+    for (i = 0; i < centers.length - 1; i++){
+      var a2 = centers[i] + 6, b2 = centers[i + 1] - 6, mid2 = (a2 + b2) / 2;
+      arr2 += '<path class="th" d="M' + r1(a2) + " 2 Q" + r1(mid2) + " 26 " + r1(b2) + ' 2"/>' + head(b2, 2, b2 - mid2, -24, 6) + T(mid2, 28, "÷10", "sm", "middle");
+    }
+    var arrSvg2 = svg(720, 32, "Curved arrows from each place to the place on its right, each labelled divided by 10.", arr2);
+
+    var rnd = [["ten thousand", "4,040,000"], ["thousand", "4,037,000"], ["hundred", "4,036,500"], ["ten", "4,036,510"], ["one (whole number)", "4,036,513"],
+               ["tenth", "4,036,512.7"], ["hundredth", "4,036,512.71"]];
+    var rt = '<table class="ft">';
+    rnd.forEach(function(r){ rt += "<tr><td style=\"font-family:var(--f-body)\">nearest " + r[0] + '</td><td class="r em">' + r[1] + "</td></tr>"; });
+    rt += "</table>";
+
+    return '<div style="display:flex;flex-direction:column;gap:0">' + arrSvg + tbl + arrSvg2 + "</div>" +
+      box("Read it in words", '<p style="font-size:15px;line-height:1.45"><b class="mono" style="font-size:16px">4,036,512.708</b> is ' +
+        "“four million, thirty-six thousand, five hundred twelve <b>and</b> seven hundred eight thousandths”.</p>", "") +
+      box("Expanded form", '<p class="ex" style="font-size:12.5px;line-height:1.8">4,000,000 + 30,000 + 6,000 + 500 + 10 + 2 + 0.7 + 0.008<br>' +
+        "= 4 × 10<sup>6</sup> + 3 × 10<sup>4</sup> + 6 × 10<sup>3</sup> + 5 × 10<sup>2</sup> + 1 × 10<sup>1</sup> + 2 × 10<sup>0</sup> + 7 × 10<sup>" + MINUS + "1</sup> + 8 × 10<sup>" + MINUS + "3</sup></p>", "lt") +
+      box("Decimals are fractions", '<p class="ex" style="font-size:13px;line-height:1.9">0.7 = ' + fr(7, 10) + " &nbsp;·&nbsp; 0.08 = " + fr(8, 100) + " = " + fr(2, 25) +
+        " &nbsp;·&nbsp; 0.708 = " + fr(708, "1,000") + " = " + fr(177, 250) + " &nbsp;·&nbsp; 4.5 = 4" + fr(5, 10) + " = 4" + fr(1, 2) + "</p>" +
+        '<p class="note">The last decimal place gives the denominator: tenths over 10, hundredths over 100, thousandths over 1,000. Then simplify.</p>', "lt") +
+      '<div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1.25fr)">' +
+        box("Rounding 4,036,512.708", rt + '<p class="note" style="margin-top:6px">Look at the digit just to the right: 5 or more rounds up, 4 or less rounds down.</p>', "lt") +
+        box("Tips", '<ul class="note" style="font-size:11.5px">' +
+          "<li><b>Commas</b> split a number into groups of three, called periods: 4<b>,</b>036<b>,</b>512.</li>" +
+          "<li><b>Say “and”</b> only for the decimal point: 2.5 is “two and five tenths”.</li>" +
+          "<li><b>Zero holds a place.</b> There are no hundred thousands in 4,036,512, so a 0 goes there.</li>" +
+          "<li><b>Name a decimal by its last place:</b> 0.06 is six hundredths; 15.025 is fifteen and twenty-five thousandths.</li>" +
+          "<li><b>Compare decimals</b> place by place from the left: 0.5 &gt; 0.45, because 5 tenths beat 4 tenths (0.50 vs 0.45).</li>" +
+          "<li><b>× 10</b> moves every digit one place left: 3.47 × 10 = 34.7. <b>÷ 10</b> moves them right: 3.47 ÷ 10 = 0.347.</li></ul>", "lt") +
+      "</div>";
+  }
+
+  /* ---------- 5 · divisibility ---------- */
+  function sDivisibility(){
+    var R = [
+      [2, "if the <b>last digit is even</b>: 0, 2, 4, 6 or 8.", "3,74<u>8</u> → ends in 8", "3,74<u>5</u> → ends in 5, which is odd"],
+      [3, "if the <b>sum of the digits</b> is divisible by 3.", "2,571 → 2 + 5 + 7 + 1 = 15, and 15 ÷ 3 = 5", "2,572 → 2 + 5 + 7 + 2 = 16, not a multiple of 3"],
+      [4, "if the <b>last two digits</b> make a number divisible by 4.", "7,3<u>16</u> → 16 ÷ 4 = 4", "7,3<u>18</u> → 18 ÷ 4 = 4 R 2"],
+      [5, "if the <b>last digit is 0 or 5</b>.", "4,03<u>5</u> → ends in 5", "4,03<u>7</u> → ends in 7"],
+      [6, "if it is divisible by <b>both 2 and 3</b>: even, and its digits add to a multiple of 3.", "1,254 → even, and 1 + 2 + 5 + 4 = 12", "1,252 → even, but 1 + 2 + 5 + 2 = 10"],
+      [8, "if the <b>last three digits</b> make a number divisible by 8.", "5,<u>128</u> → 128 ÷ 8 = 16", "5,<u>132</u> → 132 ÷ 8 = 16 R 4"],
+      [9, "if the <b>sum of the digits</b> is divisible by 9.", "6,543 → 6 + 5 + 4 + 3 = 18, and 18 ÷ 9 = 2", "6,542 → 6 + 5 + 4 + 2 = 17"],
+      [10, "if the <b>last digit is 0</b>.", "8,19<u>0</u> → ends in 0", "8,19<u>5</u> → ends in 5"],
+      [11, "if, going left to right, you <b>subtract and add the digits in turn</b> and get 0 or a multiple of 11.", "9,174 → 9 − 1 + 7 − 4 = 11", "9,175 → 9 − 1 + 7 − 5 = 10"]
+    ];
+    var cards = '<div class="cols c3" style="gap:12px">';
+    R.forEach(function(r){
+      cards += '<div class="bx dcard"><div class="dno" aria-hidden="true">' + r[0] + '</div><p class="drule"><b>Divisible by ' + r[0] + "</b> " + r[1] + "</p>" +
+        '<div class="dex"><span class="yes">' + r[2].replace(/−/g, MINUS) + '</span><span class="nope">' + r[3].replace(/−/g, MINUS) + "</span></div></div>";
+    });
+    cards += "</div>";
+    var N = 1260, why = { 2:"ends in 0", 3:"1+2+6+0 = 9", 4:"60 ÷ 4 = 15", 5:"ends in 0", 6:"by 2 and 3", 8:"260 ÷ 8 = 32 R 4", 9:"digits add to 9", 10:"ends in 0", 11:"1−2+6−0 = 5" };
+    var chk = '<div class="chk">';
+    [2, 3, 4, 5, 6, 8, 9, 10, 11].forEach(function(d){
+      var y = N % d === 0;
+      chk += '<div class="' + (y ? "y" : "n") + '"><b>' + d + "</b>" + (y ? "✓ yes" : "✗ no") + "<br>" + why[d].replace(/−/g, MINUS) + "</div>";
+    });
+    chk += "</div>";
+    return cards +
+      box("Test one number: 1,260", chk + '<p class="note" style="margin-top:8px">1,260 is divisible by 2, 3, 4, 5, 6, 9 and 10, so it is also divisible by 12 (3 and 4), 15 (3 and 5), 18 (2 and 9) and 20 (4 and 5).</p>', "") +
+      '<div class="cols c3">' +
+        box("Why bother?", '<p class="note">To simplify a fraction fast: in ' + fr("1,254", "2,571") + " both numbers pass the test for 3, so divide the top and bottom by 3. Handy for factor trees and spotting primes too.</p>", "lt") +
+        box("Mix the rules", '<p class="note">Divisible by two numbers with no common factor (other than 1) means divisible by their product: by 3 and 4 means by 12. But by 2 and 4 doesn’t mean by 8 (12 isn’t).</p>', "lt") +
+        box("What about 7?", '<p class="note">There’s no quick rule worth remembering for 7. Just divide: 868 ÷ 7 = 124, so 868 is divisible by 7.</p>', "lt") +
+      "</div>";
+  }
+
+  /* ---------- 6 · order of operations ---------- */
+  function sOrder(){
+    var ladder = '<div class="ladder">' +
+      '<div class="rung"><div class="L">P<small>B</small></div><div><b>Parentheses</b> (Brackets)<span class="n">and other grouping: [ ], { }, a fraction bar, the inside of √</span></div></div>' +
+      '<div class="rung"><div class="L">E<small>O</small></div><div><b>Exponents</b> (Orders)<span class="n">powers and roots: 4<sup>2</sup>, √9</span></div></div>' +
+      '<div class="rung pair"><div class="L">M D<small>D M</small></div><div><b>Multiply &amp; Divide</b><span class="n">partners: whichever comes first, left to right</span></div></div>' +
+      '<div class="rung pair"><div class="L">A S<small>A S</small></div><div><b>Add &amp; Subtract</b><span class="n">partners: whichever comes first, left to right</span></div></div>' +
+      '<p class="note" style="margin-top:2px">Top letter: <b>PEMDAS</b> (“Please Excuse My Dear Aunt Sally”). Small letter: <b>BODMAS</b>. Same order, different names.</p></div>';
+    function st(n, e, why){
+      return '<div class="step"><span class="sn">' + n + '</span><span class="e">' + e.replace(/−/g, MINUS) + '</span><span class="why">' + why + "</span></div>";
+    }
+    var steps = '<div class="steps">' +
+      st("", '4 + 2 × <span class="hl">(7 − 3)</span><sup>2</sup> ÷ 8 − 1', "<b>P</b> first: the parentheses. 7 − 3 = 4".replace(/−/g, MINUS)) +
+      st(2, '4 + 2 × <span class="hl">4<sup>2</sup></span> ÷ 8 − 1', "<b>E</b>: the exponent. 4<sup>2</sup> = 4 × 4 = 16") +
+      st(3, '4 + <span class="hl">2 × 16</span> ÷ 8 − 1', "<b>M D</b>, left to right: × comes first. 2 × 16 = 32") +
+      st(4, '4 + <span class="hl">32 ÷ 8</span> − 1', "<b>M D</b> again: 32 ÷ 8 = 4") +
+      st(5, '<span class="hl">4 + 4</span> − 1', "<b>A S</b>, left to right: + comes first. 4 + 4 = 8") +
+      st(6, '<span class="hl">8 − 1</span>', ("<b>A S</b> again: 8 − 1 = 7").replace(/−/g, MINUS)) +
+      st("✓", "= 7", "<b>The answer is 7.</b>") + "</div>";
+    steps = steps.replace('<span class="sn"></span>', '<span class="sn">1</span>');
+
+    return '<div class="cols" style="grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr);gap:18px">' +
+        '<div><h3 class="sh-h">The order</h3>' + ladder + "</div>" +
+        '<div><h3 class="sh-h">Worked example <small>the part being worked is shaded</small></h3>' + steps + "</div>" +
+      "</div>" +
+      box("The partners rule: left to right", '<div class="cols c2" style="gap:18px">' +
+        '<div><p class="note" style="margin-bottom:6px">Multiplication and division are <b>equal partners</b>: do them in the order they appear, left to right. M doesn’t beat D.</p>' +
+          '<p class="bigeq">12 ÷ 3 × 2 = 4 × 2 = <b>8</b></p><p class="ex strike" style="margin-top:3px">12 ÷ 3 × 2 = 12 ÷ 6 = 2</p></div>' +
+        '<div><p class="note" style="margin-bottom:6px">Addition and subtraction are partners too: left to right. A doesn’t beat S.</p>' +
+          '<p class="bigeq">10 ' + MINUS + " 4 + 3 = 6 + 3 = <b>9</b></p>" + '<p class="ex strike" style="margin-top:3px">10 ' + MINUS + " 4 + 3 = 10 " + MINUS + " 7 = 3</p></div>" +
+        "</div>", "") +
+      '<div class="cols c3">' +
+        box("Grouping inside grouping", '<p class="ex" style="line-height:1.8">2 × [3 + (8 ' + MINUS + " 6)]<br>= 2 × [3 + 2]<br>= 2 × 5 = <b>10</b></p>" +
+          '<p class="note">Work from the innermost group outward.</p>', "lt") +
+        box("A fraction bar groups", '<p class="ex" style="line-height:1.8">' + fr("8 + 4", "5 " + MINUS + " 2") + " = " + fr(12, 3) + " = <b>4</b></p>" +
+          '<p class="note">Work out the whole top and the whole bottom first, then divide.</p>', "lt") +
+        box("An exponent touches one thing", '<p class="ex" style="line-height:1.8">2 × 3<sup>2</sup> = 2 × 9 = <b>18</b>, not 36<br>' + MINUS + "3<sup>2</sup> = " + MINUS + "9, but (" + MINUS + "3)<sup>2</sup> = 9</p>" +
+          '<p class="note">It squares only what is right beside it, unless parentheses say more.</p>', "lt") +
+      "</div>" +
+      box("Common slips", '<div class="cols c3" style="gap:18px">' +
+        '<div><p class="bigeq" style="font-size:16px">8 ' + MINUS + " 2 × 3 = 8 " + MINUS + " 6 = <b>2</b></p>" + '<p class="ex strike" style="margin:2px 0 4px">8 ' + MINUS + " 2 × 3 = 6 × 3 = 18</p>" +
+          '<p class="note">× comes before ' + MINUS + ", even when the " + MINUS + " is written first.</p></div>" +
+        '<div><p class="bigeq" style="font-size:16px">(2 + 3)<sup>2</sup> = 5<sup>2</sup> = <b>25</b></p>' + '<p class="ex strike" style="margin:2px 0 4px">(2 + 3)<sup>2</sup> = 4 + 9 = 13</p>' +
+          '<p class="note">Finish the parentheses before you square.</p></div>' +
+        '<div><p class="bigeq" style="font-size:16px">20 ÷ 4 × 5 = 5 × 5 = <b>25</b></p>' + '<p class="ex strike" style="margin:2px 0 4px">20 ÷ 4 × 5 = 20 ÷ 20 = 1</p>' +
+          '<p class="note">÷ and × go left to right, as they come.</p></div></div>', "fl");
+  }
+
+  /* ---------- 7 · geometry formulas ---------- */
+  function G(title, pic, label, fm, note){
+    return '<div class="gcell"><h4>' + title + "</h4>" + svg(170, 96, label, pic) +
+      fm.map(function(f){ return '<div class="fm">' + m(f) + "</div>"; }).join("") + (note ? '<p class="note">' + note + "</p>" : "") + "</div>";
+  }
+  function sGeometry(){
+    var sub = function(v, n, x, y){ return '<text class="v" x="' + x + '" y="' + y + '">' + v + '<tspan style="font-size:9px" dy="3">' + n + "</tspan></text>"; };
+    var rect = '<rect class="s t1" x="25" y="16" width="120" height="60"/>' + '<path class="th" d="M25 68 H33 V76"/>' +
+      T(85, 92, "l", "v", "middle") + T(152, 50, "w", "v");
+    var square = '<rect class="s t1" x="51" y="10" width="68" height="68"/>' + '<path class="th" d="M51 70 H59 V78"/>' +
+      ln(85, 74, 85, 82, "th") + ln(115, 44, 123, 44, "th") + ln(85, 6, 85, 14, "th") + ln(47, 44, 55, 44, "th") +
+      T(85, 93, "s", "v", "middle") + T(38, 48, "s", "v");
+    var tri = '<path class="s t1" d="M15 80 L155 80 L110 14 Z"/>' + ln(110, 14, 110, 80, "d") + '<path class="th" d="M110 72 H102 V80"/>' +
+      T(80, 94, "b", "v", "middle") + T(114, 52, "h", "v") + T(50, 44, "a", "v") + T(138, 44, "c", "v");
+    var para = '<path class="s t1" d="M15 80 H120 L155 16 H50 Z"/>' + ln(50, 16, 50, 80, "d") + '<path class="th" d="M50 72 H58 V80"/>' +
+      T(68, 94, "b", "v", "middle") + T(54, 52, "h", "v") + T(144, 52, "a", "v");
+    var trap = '<path class="s t1" d="M10 80 H160 L124 18 H48 Z"/>' + ln(48, 18, 48, 80, "d") + '<path class="th" d="M48 72 H56 V80"/>' +
+      sub("b", "1", 80, 12) + sub("b", "2", 80, 95) + T(52, 54, "h", "v");
+    var circ = '<circle class="s t1" cx="85" cy="47" r="40"/>' + '<circle class="k" cx="85" cy="47" r="2.4"/>' + ln(85, 47, 125, 47) +
+      ln(45, 47, 85, 47, "d") + T(103, 42, "r", "v", "middle") + T(65, 42, "r", "v", "middle") + T(85, 64, "d = 2r", "sm", "middle") + T(20, 18, "C", "v");
+    // solids
+    var boxS = '<path class="t1" d="M15 34 L50 14 H140 L105 34 Z"/><path class="t3" d="M105 34 L140 14 V62 L105 82 Z"/><rect class="t2" x="15" y="34" width="90" height="48"/>' +
+      '<path class="s" d="M15 34 H105 V82 H15 Z M15 34 L50 14 H140 L105 34 M140 14 V62 L105 82"/>' + '<path class="d" d="M15 82 L50 62 H140 M50 62 V14"/>' +
+      T(60, 95, "l", "v", "middle") + T(127, 82, "w", "v") + T(4, 62, "h", "v");
+    var cube = '<path class="t1" d="M34 32 L60 14 H112 L86 32 Z"/><path class="t3" d="M86 32 L112 14 V66 L86 84 Z"/><rect class="t2" x="34" y="32" width="52" height="52"/>' +
+      '<path class="s" d="M34 32 H86 V84 H34 Z M34 32 L60 14 H112 L86 32 M112 14 V66 L86 84"/>' + '<path class="d" d="M34 84 L60 66 H112 M60 66 V14"/>' +
+      T(60, 96, "s", "v", "middle") + T(103, 85, "s", "v") + T(22, 62, "s", "v");
+    var cyl = '<path class="t1" d="M45 18 V78 A40 9 0 0 0 125 78 V18 Z"/><ellipse class="s t2" cx="85" cy="18" rx="40" ry="9"/>' +
+      '<path class="s" d="M45 18 V78 A40 9 0 0 0 125 78 V18"/>' + '<path class="d" d="M45 78 A40 9 0 0 1 125 78"/>' +
+      ln(85, 18, 125, 18) + '<circle class="k" cx="85" cy="18" r="2"/>' + T(131, 22, "r", "v") + T(132, 54, "h", "v");
+    var cone = '<path class="t1" d="M45 74 L85 4 L125 74 A40 9 0 0 1 45 74 Z"/>' + '<path class="s" d="M45 74 L85 4 L125 74 A40 9 0 0 1 45 74"/>' +
+      '<path class="d" d="M45 74 A40 9 0 0 1 125 74"/>' + ln(85, 4, 85, 74, "d") + '<path class="th" d="M85 66 H93 V74"/>' + ln(85, 74, 125, 74) +
+      T(105, 94, "r", "v", "middle") + T(74, 46, "h", "v") + T(111, 36, "ℓ", "v");
+    var sph = '<circle class="s t1" cx="85" cy="48" r="40"/>' + '<path class="s" d="M45 48 A40 10 0 0 0 125 48"/>' + '<path class="d" d="M45 48 A40 10 0 0 1 125 48"/>' +
+      '<circle class="k" cx="85" cy="48" r="2.2"/>' + ln(85, 48, 120, 28) + T(104, 32, "r", "v");
+    var prism = '<path class="t1" d="M45 34 L115 12 L145 62 L75 84 Z"/><path class="t2" d="M15 84 L75 84 L45 34 Z"/>' +
+      '<path class="s" d="M15 84 L75 84 L45 34 Z M45 34 L115 12 L145 62 L75 84"/>' + '<path class="d" d="M15 84 L85 62 L145 62 M85 62 L115 12"/>' +
+      T(45, 72, "B", "v", "middle") + T(116, 86, "h", "v");
+    var pyr = '<path class="t1" d="M25 82 L115 82 L85 8 Z"/><path class="t3" d="M115 82 L145 62 L85 8 Z"/>' +
+      '<path class="s" d="M25 82 H115 L145 62 M25 82 L85 8 L115 82 M85 8 L145 62"/>' + '<path class="d" d="M25 82 L55 62 H145 M55 62 L85 8"/>' +
+      ln(85, 8, 85, 72, "d") + '<path class="th" d="M85 66 H91 V72"/>' + ln(85, 8, 130, 72, "d") +
+      T(89, 44, "h", "v") + T(124, 52, "ℓ", "v");
+
+    var pyth = svg(150, 100, "A right triangle with legs a = 3 and b = 4 and hypotenuse c = 5.",
+      '<path class="s t1" d="M20 86 V32 H20 L92 86 Z"/>' + '<path class="th" d="M20 76 H30 V86"/>' +
+      T(8, 63, "a", "v") + T(56, 99, "b", "v", "middle") + T(60, 54, "c", "v") + T(26, 63, "3", "sm") + T(56, 80, "4", "sm", "middle") + T(64, 66, "5", "sm"));
+
+    return '<div class="gsec"><h3>Flat shapes</h3><span><var>A</var> = area (square units, like cm<sup>2</sup>) · <var>P</var> = perimeter · <var>C</var> = circumference</span></div>' +
+      '<div class="cols c4" style="gap:10px">' +
+        G("Rectangle", rect, "A rectangle with length l and width w.", ["<span class=lb>A</span> = {l} × {w}", "<span class=lb>P</span> = 2{l} + 2{w}"]) +
+        G("Square", square, "A square with side s.", ["<span class=lb>A</span> = {s}^2", "<span class=lb>P</span> = 4{s}"]) +
+        G("Triangle", tri, "A triangle with base b, sides a and c, and a dashed height h at a right angle to the base.", ["<span class=lb>A</span> = ½ × {b} × {h}", "<span class=lb>P</span> = {a} + {b} + {c}"]) +
+        G("Parallelogram", para, "A parallelogram with base b, slanted side a and a dashed height h.", ["<span class=lb>A</span> = {b} × {h}", "<span class=lb>P</span> = 2{a} + 2{b}"]) +
+        G("Trapezoid", trap, "A trapezoid with parallel sides b1 on top and b2 on the bottom, and a dashed height h.", ["<span class=lb>A</span> = ½ × ({b}_1 + {b}_2) × {h}", "<span class=lb>P</span> = add all 4 sides"]) +
+        G("Circle", circ, "A circle with radius r; the diameter d is two radii across.", ["<span class=lb>A</span> = π{r}^2", "<span class=lb>C</span> = 2π{r} = π{d}"], "π ≈ 3.14 or " + fr(22, 7) + "; {d} = 2{r}".replace("{d}", "<var>d</var>").replace("{r}", "<var>r</var>")) +
+        '<div class="gcell wide" style="grid-column:span 2"><div style="flex:none">' + pyth + "</div><div>" +
+          '<h4>Pythagorean theorem</h4><p class="note" style="margin:3px 0 5px">In a right triangle, legs <var>a</var> and <var>b</var> meet at the right angle; the hypotenuse <var>c</var> is the longest side, across from it.</p>' +
+          '<div class="fm" style="font-size:15px">' + m("{a}^2 + {b}^2 = {c}^2") + "</div>" +
+          '<div class="fm">' + m("{c} = √({a}^2 + {b}^2)").replace("√(", "√(") + "</div>" +
+          '<div class="ex" style="margin-top:4px">3<sup>2</sup> + 4<sup>2</sup> = 9 + 16 = 25 = 5<sup>2</sup>, so <var>c</var> = 5</div></div></div>' +
+      "</div>" +
+      '<div class="gsec" style="margin-top:2px"><h3>Solids</h3><span><var>V</var> = volume (cubic units, like cm<sup>3</sup>) · <var>SA</var> = surface area (square units)</span></div>' +
+      '<div class="cols c4" style="gap:10px">' +
+        G("Rectangular prism (box)", boxS, "A box with length l, width w and height h; hidden edges are dashed.", ["<span class=lb>V</span> = {l}{w}{h}", "<span class=lb>SA</span> = 2{l}{w} + 2{l}{h} + 2{w}{h}"]) +
+        G("Cube", cube, "A cube with every edge s.", ["<span class=lb>V</span> = {s}^3", "<span class=lb>SA</span> = 6{s}^2"]) +
+        G("Cylinder", cyl, "A cylinder with radius r and height h.", ["<span class=lb>V</span> = π{r}^2{h}", "<span class=lb>SA</span> = 2π{r}^2 + 2π{r}{h}"]) +
+        G("Cone", cone, "A cone with radius r, height h straight up the middle, and slant height l down the side.", ["<span class=lb>V</span> = " + fr(1, 3) + "π{r}^2{h}", "<span class=lb>SA</span> = π{r}^2 + π{r}ℓ"]) +
+        G("Sphere", sph, "A sphere with radius r.", ["<span class=lb>V</span> = " + fr(4, 3) + "π{r}^3", "<span class=lb>SA</span> = 4π{r}^2"]) +
+        G("Prism (any base)", prism, "A triangular prism: the shaded triangle is the base B, and h is the length between the two bases.", ["<span class=lb>V</span> = {B}{h}", "<span class=lb>SA</span> = 2{B} + {P}{h}"], "<var>B</var> = area of the base, <var>P</var> = its perimeter") +
+        G("Pyramid", pyr, "A square pyramid with base B, a dashed height h from the tip straight down, and slant height l down a face.", ["<span class=lb>V</span> = " + fr(1, 3) + "{B}{h}", "<span class=lb>SA</span> = {B} + area of the faces"], "regular pyramid: faces = ½ × <var>P</var> × ℓ") +
+        '<div class="gcell" style="background:#f2f2f2;border-color:#f2f2f2"><h4>Key</h4><p class="note" style="font-size:11px;line-height:1.5">' +
+          "<var>h</var> = height, always at a right angle (the little square) to the base<br><var>B</var> = area of the base<br>ℓ = slant height, down a slanted face<br>" +
+          "<var>r</var> = radius, <var>d</var> = diameter<br>π ≈ 3.14 (π = 3.14159…)<br>Dashed lines are hidden edges or heights.</p></div>" +
+      "</div>";
+  }
+
+  /* ---------- 8 · angle facts ---------- */
+  function angleMark(cx, cy, r, a0, a1, label, lr, cls){
+    var mid = (a0 + a1) / 2, p = P(cx, cy, lr || r + 13, mid);
+    return '<path class="' + (cls || "th") + '" d="' + arcPath(cx, cy, r, a0, a1) + '"/>' + (label ? T(p[0], p[1] + 4, label, "b", "middle") : "");
+  }
+  function sAngles(){
+    function typ(deg, name, desc){
+      var cx = 58, cy = 42, s = ray(cx, cy, 38, 0) + ray(cx, cy, 38, deg) + '<circle class="k" cx="' + cx + '" cy="' + cy + '" r="2.2"/>';
+      s += deg === 90 ? rightMark(cx, cy, 0, 10) : '<path class="s" d="' + arcPath(cx, cy, deg > 180 ? 11 : 14, 0, deg) + '"/>';
+      return '<div style="text-align:center">' + svg(116, 70, name + " angle: " + desc, s) +
+        '<div style="font-family:var(--f-display);font-weight:700;font-size:12.5px">' + name + '</div><div class="note">' + desc + "</div></div>";
+    }
+    var types = '<div class="cols" style="grid-template-columns:repeat(5,minmax(0,1fr));align-items:start;gap:8px">' +
+      typ(48, "Acute", "less than 90°") + typ(90, "Right", "exactly 90°") + typ(132, "Obtuse", "between 90° and 180°") +
+      typ(180, "Straight", "exactly 180°") + typ(222, "Reflex", "between 180° and 360°") + "</div>";
+
+    // on a straight line
+    var sl = ln(10, 66, 230, 66) + ray(120, 66, 78, 55) + '<circle class="k" cx="120" cy="66" r="2.2"/>' +
+      angleMark(120, 66, 22, 0, 55, "55°", 36) + angleMark(120, 66, 18, 55, 180, "125°", 34);
+    // around a point
+    var ap = ray(90, 56, 52, 20) + ray(90, 56, 52, 120) + ray(90, 56, 52, 270) + '<circle class="k" cx="90" cy="56" r="2.2"/>' +
+      angleMark(90, 56, 16, 20, 120, "100°", 32) + angleMark(90, 56, 20, 120, 270, "150°", 34) + angleMark(90, 56, 13, 270, 380, "110°", 30);
+    // vertical angles
+    var va = ray(100, 54, 78, 20) + ray(100, 54, 78, 200) + ray(100, 54, 64, 130) + ray(100, 54, 64, 310) + '<circle class="k" cx="100" cy="54" r="2.2"/>' +
+      angleMark(100, 54, 18, 20, 130, "110°", 32) + angleMark(100, 54, 18, 200, 310, "110°", 32) +
+      angleMark(100, 54, 24, 130, 200, "70°", 37) + angleMark(100, 54, 24, 310, 380, "70°", 37);
+    // triangle with 50°, 60°, 70° and the exterior angle at B
+    var A = [16, 104], B = [156, 104], AB = 140, AC = AB * Math.sin(60 * Math.PI / 180) / Math.sin(70 * Math.PI / 180);
+    var C = P(A[0], A[1], AC, 50);
+    var tr = '<path class="s t1" d="M' + A[0] + " " + A[1] + " L" + B[0] + " " + B[1] + " L" + r1(C[0]) + " " + r1(C[1]) + ' Z"/>' + ln(156, 104, 222, 104, "d") +
+      angleMark(A[0], A[1], 22, 0, 50, "50°", 36) + angleMark(B[0], B[1], 20, 120, 180, "60°", 34) + angleMark(C[0], C[1], 18, 230, 300, "70°", 31) +
+      angleMark(B[0], B[1], 14, 0, 120, "", 0, "s") + T(194, 84, "120°", "b", "middle");
+    // parallel lines and a transversal
+    var y1 = 40, y2 = 112, k = 65, xL = 116, xU = xL + (y2 - y1) / Math.tan(k * Math.PI / 180);
+    var pl = ln(10, y1, 300, y1) + ln(10, y2, 300, y2);
+    var tA = P(xL, y2, 36, 245), tB = P(xU, y1, 36, 65);
+    pl += ln(tA[0], tA[1], tB[0], tB[1]);
+    pl += '<path class="s" d="M246 ' + (y1 - 5) + " l7 5 l-7 5 M246 " + (y2 - 5) + ' l7 5 l-7 5"/>';
+    var nums = [[xU, y1, 1, 122.5], [xU, y1, 2, 32.5], [xU, y1, 3, 212.5], [xU, y1, 4, 302.5], [xL, y2, 5, 122.5], [xL, y2, 6, 32.5], [xL, y2, 7, 212.5], [xL, y2, 8, 302.5]];
+    nums.forEach(function(n){ var p = P(n[0], n[1], 19, n[3]); pl += T(p[0], p[1] + 4, String(n[2]), "b", "middle"); });
+    pl += angleMark(xU, y1, 10, 0, 65, "", 0) + angleMark(xL, y2, 10, 0, 65, "", 0);
+    pl += T(xU + 34, y1 - 7, "65°", "sm") + T(xL + 34, y2 - 7, "65°", "sm");
+
+    var polys = [[3, "triangle"], [4, "quadrilateral"], [5, "pentagon"], [6, "hexagon"], [7, "heptagon"], [8, "octagon"], [9, "nonagon"], [10, "decagon"], [12, "dodecagon"]];
+    var pt = '<table class="ft" style="font-size:11.5px"><tr><th class="r">sides</th><th>name</th><th class="r">sum of the interior angles</th><th class="r">each angle (regular)</th><th class="r">each exterior angle</th></tr>';
+    function deg(x){ return Math.abs(x - Math.round(x)) < 1e-9 ? String(Math.round(x)) + "°" : "≈ " + x.toFixed(1) + "°"; }
+    polys.forEach(function(p){
+      var n = p[0], sum = (n - 2) * 180;
+      pt += '<tr><td class="r">' + n + '</td><td style="font-family:var(--f-body)">' + p[1] + '</td><td class="r">(' + n + " " + MINUS + " 2) × 180° = <b>" + commas(sum) +
+            '°</b></td><td class="r">' + deg(sum / n) + '</td><td class="r">' + deg(360 / n) + "</td></tr>";
+    });
+    pt += "</table>";
+    // a hexagon cut into 4 triangles from one corner
+    var hx = [], hex = "";
+    for (var i = 0; i < 6; i++) hx.push(P(60, 52, 46, 90 + 60 * i));
+    hex += '<path class="s t1" d="M' + hx.map(function(p){ return r1(p[0]) + " " + r1(p[1]); }).join(" L") + ' Z"/>';
+    for (i = 2; i <= 4; i++) hex += ln(hx[0][0], hx[0][1], hx[i][0], hx[i][1], "d");
+    var hexSvg = svg(120, 118, "A hexagon cut into 4 triangles by lines from one corner: 4 × 180° = 720°.", hex + T(60, 114, "4 × 180° = 720°", "sm", "middle"));
+
+    return types +
+      '<div class="cols c3">' +
+        box("On a straight line: 180°", svg(230, 76, "A straight line with a ray making angles of 55° and 125°.", sl) + '<p class="ex" style="margin-top:4px">55° + 125° = 180°</p>' +
+          '<p class="note">Two angles that add to 180° are <b>supplementary</b>.</p>', "") +
+        box("Around a point: 360°", '<div style="display:flex;justify-content:center">' + svg(180, 112, "Three rays from a point making angles of 100°, 150° and 110°.", ap) + "</div>" +
+          '<p class="ex" style="margin-top:4px">100° + 150° + 110° = 360°</p>', "") +
+        box("Vertical angles are equal", '<div style="display:flex;justify-content:center">' + svg(200, 108, "Two crossing lines: opposite angles are 110° and 110°, 70° and 70°.", va) + "</div>" +
+          '<p class="note" style="margin-top:4px">Angles across the X are equal. Side by side they add to 180°: 110° + 70°.</p>', "") +
+      "</div>" +
+      '<div class="cols" style="grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr)">' +
+        box("In a triangle: 180°", '<div style="display:flex;justify-content:center">' +
+          svg(226, 110, "A triangle with angles 50°, 60° and 70°; the side through the 60° corner is extended to show an exterior angle of 120°.", tr) + "</div>" +
+          '<p class="ex" style="margin-top:4px">50° + 60° + 70° = 180°</p>' +
+          '<p class="note" style="margin-top:3px">An <b>exterior angle</b> equals the two far inside angles: 120° = 50° + 70°. <b>Isosceles:</b> the two base angles are equal. ' +
+          "<b>Equilateral:</b> every angle is 60°. Two angles that add to 90° are <b>complementary</b> (35° + 55°).</p>", "") +
+        box("Parallel lines cut by a transversal", '<div style="display:flex;justify-content:center">' +
+          svg(300, 150, "Two parallel lines crossed by a transversal at 65°, making angles numbered 1 to 8: angles 2, 3, 6 and 7 are 65°; angles 1, 4, 5 and 8 are 115°.", pl) + "</div>" +
+          '<p class="note" style="margin:2px 0 4px;text-align:center">The arrows mark the lines as parallel. &nbsp;<b>65°:</b> angles 2, 3, 6, 7 &nbsp; <b>115°:</b> angles 1, 4, 5, 8</p>' +
+          '<div class="cols c2" style="gap:2px 14px"><p class="note"><b>Corresponding</b> (F shape) are equal: 2 = 6</p><p class="note"><b>Alternate interior</b> (Z shape) are equal: 3 = 6</p>' +
+          '<p class="note"><b>Alternate exterior</b> are equal: 1 = 8</p><p class="note"><b>Same-side interior</b> (C shape) add to 180°: 3 + 5</p></div>', "") +
+      "</div>" +
+      box("Polygons", '<div style="display:flex;gap:16px;align-items:center"><div style="flex:1;min-width:0">' + pt + "</div>" +
+        '<div style="flex:none;width:168px"><div style="display:flex;justify-content:center">' + hexSvg + "</div>" +
+        '<p class="note" style="margin-top:4px">Lines from one corner cut an <var>n</var>-sided polygon into <var>n</var> ' + MINUS + " 2 triangles. The exterior angles of any polygon add to 360°.</p></div></div>",
+        "", "sum of the interior angles = (n " + MINUS + " 2) × 180°");
+  }
+
+  /* ---------- 9 · units and conversions ---------- */
+  function sUnits(){
+    var st = [["kilo", "k", "1,000", "thousand"], ["hecto", "h", "100", "hundred"], ["deka", "da", "10", "ten"], ["base unit", "m · g · L", "1", "meter, gram, liter"],
+              ["deci", "d", "0.1", "tenth"], ["centi", "c", "0.01", "hundredth"], ["milli", "m", "0.001", "thousandth"]];
+    var stair = '<div class="stair">';
+    st.forEach(function(s, i){
+      stair += '<div class="' + (i === 3 ? "base" : "") + '" style="margin-bottom:' + ((6 - i) * 5) + 'px"><b>' + s[0] + "</b><span>" + s[1] + " = " + s[2] + "</span><em>" + s[3] + "</em></div>";
+    });
+    stair += "</div>";
+    function U(rows){
+      var h = '<table class="ut">';
+      rows.forEach(function(r){
+        if (typeof r === "string") h += '<tr class="sub"><td colspan="3">' + r + "</td></tr>";
+        else h += "<tr><td>" + r[0] + '</td><td class="eq">' + (r[2] || "=") + '</td><td class="rhs">' + r[1] + "</td></tr>";
+      });
+      return h + "</table>";
+    }
+    function key(s){ return '<p class="note" style="margin-top:5px;font-size:10px;line-height:1.35">' + s + "</p>"; }
+    var metric = U(["Length", ["1 km", "1,000 m"], ["1 m", "100 cm"], ["1 m", "1,000 mm"], ["1 cm", "10 mm"],
+                    "Mass", ["1 t", "1,000 kg"], ["1 kg", "1,000 g"], ["1 g", "1,000 mg"],
+                    "Capacity", ["1 L", "1,000 mL"], ["1 mL", "1 cm<sup>3</sup>"]]) +
+      key("km kilometer · m meter · cm centimeter · mm millimeter · t metric ton · kg kilogram · g gram · mg milligram · L liter · mL milliliter");
+    var cust = U(["Length", ["1 ft", "12 in"], ["1 yd", "3 ft = 36 in"], ["1 mi", "5,280 ft = 1,760 yd"],
+                  "Weight", ["1 lb", "16 oz"], ["1 ton", "2,000 lb"],
+                  "Capacity", ["1 tbsp", "3 tsp"], ["1 fl oz", "2 tbsp"], ["1 c", "8 fl oz"], ["1 pt", "2 c"], ["1 qt", "2 pt"], ["1 gal", "4 qt"]]) +
+      key("in inch · ft foot · yd yard · mi mile · oz ounce · lb pound · tsp teaspoon · tbsp tablespoon · fl oz fluid ounce · c cup · pt pint · qt quart · gal gallon");
+    var time = U([["1 min", "60 s"], ["1 h", "60 min"], ["1 h", "3,600 s"], ["1 day", "24 h"], ["1 week", "7 days"], ["1 year", "12 months"],
+                  ["1 year", "365 days"], ["1 year", "52 weeks + 1 day"], ["1 decade", "10 years"], ["1 century", "100 years"]]) +
+      key("s second · min minute · h hour. A leap year has 366 days.");
+    var mc = U(["Length", ["1 in", "2.54 cm", "="], ["1 ft", "30.48 cm", "="], ["1 yd", "0.9144 m", "="], ["1 mi", "1.609 km", "≈"],
+                 ["1 cm", "0.394 in", "≈"], ["1 m", "39.37 in", "≈"], ["1 m", "3.281 ft", "≈"], ["1 km", "0.621 mi", "≈"],
+                 "Weight", ["1 oz", "28.35 g", "≈"], ["1 lb", "453.6 g", "≈"], ["1 kg", "2.205 lb", "≈"],
+                 "Capacity", ["1 fl oz", "29.57 mL", "≈"], ["1 c", "236.6 mL", "≈"], ["1 qt", "0.946 L", "≈"], ["1 L", "1.057 qt", "≈"], ["1 gal", "3.785 L", "≈"]]) +
+      key("<b>=</b> is exact: the inch is defined as exactly 2.54 cm. <b>≈</b> is rounded.");
+    var area = U([["1 cm<sup>2</sup>", "100 mm<sup>2</sup>"], ["1 m<sup>2</sup>", "10,000 cm<sup>2</sup>"], ["1 ft<sup>2</sup>", "144 in<sup>2</sup>"],
+                  ["1 yd<sup>2</sup>", "9 ft<sup>2</sup>"], ["1 ft<sup>3</sup>", "1,728 in<sup>3</sup>"], ["1 m<sup>3</sup>", "1,000 L"]]) +
+      key("A square foot is 12 in × 12 in = 144 in<sup>2</sup>; a cubic foot is 12 × 12 × 12 = 1,728 in<sup>3</sup>.");
+
+    return box("Metric prefixes", stair + '<p class="note" style="margin-top:7px">Each step down the stairs is <b>× 10</b>, each step up is <b>÷ 10</b>. ' +
+        "From km down to m is 3 steps: 2.5 km = 2.5 × 1,000 = 2,500 m. The same prefixes work for meters (length), grams (mass) and liters (capacity).</p>", "") +
+      '<div class="cols c3" style="align-items:start">' +
+        '<div style="display:flex;flex-direction:column;gap:12px">' + box("Metric", metric, "lt") + box("Square and cubic units", area, "lt") +
+          box("Converting", '<p class="note"><b>Big unit → small unit: multiply.</b> 3 ft = 3 × 12 = 36 in</p>' +
+            '<p class="note" style="margin-top:4px"><b>Small unit → big unit: divide.</b> 90 in = 90 ÷ 12 = 7.5 ft</p>' +
+            '<p class="note" style="margin-top:4px">Or multiply by a fraction worth 1, with the unit you want on top: 5 gal × ' + fr("4 qt", "1 gal") + " = 20 qt</p>", "fl") + "</div>" +
+        '<div style="display:flex;flex-direction:column;gap:12px">' + box("Customary (US)", cust, "lt") + box("Time", time, "lt") + "</div>" +
+        '<div style="display:flex;flex-direction:column;gap:12px">' + box("Metric ↔ customary", mc, "") +
+          box("Temperature", '<p class="ex" style="line-height:1.9">°F = °C × ' + fr(9, 5) + " + 32<br>°C = (°F " + MINUS + " 32) × " + fr(5, 9) + "</p>" +
+            '<p class="note" style="margin-top:4px">Water freezes at 0 °C = 32 °F and boils at 100 °C = 212 °F. Normal body temperature is about 37 °C (98.6 °F).</p>', "lt") + "</div>" +
+      "</div>";
+  }
+
+  /* ---------- 10 · algebra rules ---------- */
+  function sAlgebra(){
+    var mm = function(s){ return m(s).replace(/−/g, MINUS); };
+    var props = [
+      ["Commutative", "{a} + {b} = {b} + {a}", "{a}{b} = {b}{a}", "3 + 5 = 5 + 3", "order doesn’t matter"],
+      ["Associative", "({a} + {b}) + {c} = {a} + ({b} + {c})", "({a}{b}){c} = {a}({b}{c})", "(2 × 3) × 4 = 2 × (3 × 4)", "grouping doesn’t matter"],
+      ["Distributive", "{a}({b} + {c}) = {a}{b} + {a}{c}", "{a}({b} − {c}) = {a}{b} − {a}{c}", "3({x} + 4) = 3{x} + 12", "multiply each term inside"],
+      ["Identity", "{a} + 0 = {a}", "{a} × 1 = {a}", "7 + 0 = 7;  7 × 1 = 7", "0 and 1 change nothing"],
+      ["Inverse", "{a} + (−{a}) = 0", "{a} × " + fr(1, "<var>a</var>") + " = 1  ({a} ≠ 0)", "5 + (−5) = 0;  5 × " + fr(1, 5) + " = 1", "opposites and reciprocals"],
+      ["Zero", "{a} × 0 = 0", "if {a}{b} = 0, then {a} = 0 or {b} = 0", "9 × 0 = 0", ""]
+    ];
+    var pt = '<table class="pt2"><tr><th>Property</th><th>Addition</th><th>Multiplication</th><th>Example</th></tr>';
+    props.forEach(function(p){
+      pt += "<tr><td>" + p[0] + (p[4] ? ' <span class="note" style="font-weight:400;font-size:10px">' + p[4] + "</span>" : "") +
+            "</td><td>" + mm(p[1]) + "</td><td>" + mm(p[2]) + '</td><td class="x">' + mm(p[3]) + "</td></tr>";
+    });
+    pt += "</table>";
+
+    function supify(s){
+      return s.replace(/\{(\w)\}/g, "<var>$1</var>").replace(/\^\(([^)]*)\)/g, "<sup>$1</sup>").replace(/\^(<var>\w<\/var>|\d+)/g, "<sup>$1</sup>").replace(/−/g, MINUS);
+    }
+    var laws = [
+      ["{a}^{m} × {a}^{n} = {a}^({m} + {n})", "2^3 × 2^2 = 2^5 = 32", "multiplying: add the exponents"],
+      ["{a}^{m} ÷ {a}^{n} = {a}^({m} − {n})", "5^6 ÷ 5^4 = 5^2 = 25", "dividing: subtract them"],
+      ["({a}^{m})^{n} = {a}^({m}{n})", "(3^2)^3 = 3^6 = 729", "power of a power: multiply"],
+      ["({a}{b})^{n} = {a}^{n}{b}^{n}", "(2{x})^3 = 8{x}^3", "each factor gets the power"],
+      ["({a}/{b})^{n} = {a}^{n}/{b}^{n}", "(2/3)^2 = 4/9", "top and bottom"],
+      ["{a}^0 = 1", "7^0 = 1", "when {a} ≠ 0"],
+      ["{a}^(−{n}) = 1/{a}^{n}", "2^(−3) = 1/2^3 = 1/8", "negative: one over it"],
+      ["{a}^1 = {a}", "9^1 = 9", ""]
+    ];
+    function lawRows(list){
+      var h = '<table class="pt2"><tr><th>Law</th><th>Example</th></tr>';
+      list.forEach(function(l){
+        h += '<tr><td style="font-weight:400;font-size:13px">' + supify(l[0]) + '</td><td class="x">' + supify(l[1]) + "</td></tr>";
+      });
+      return h + "</table>";
+    }
+    var lt = '<div class="cols c2" style="gap:20px">' + lawRows(laws.slice(0, 4)) + lawRows(laws.slice(4)) + "</div>";
+
+    // the graph of y = 2x + 3
+    var u = 12, gx0 = 62, gy0 = 132, gr = "";
+    var GX = function(x){ return gx0 + x * u; }, GY = function(y){ return gy0 - y * u; };
+    for (var x = -4; x <= 4; x++) gr += ln(GX(x), GY(-2), GX(x), GY(10), "g");
+    for (var y = -2; y <= 10; y++) gr += ln(GX(-4), GY(y), GX(4), GY(y), "g");
+    gr += ln(GX(-4), GY(0), GX(4) + 6, GY(0), "th") + ln(GX(0), GY(-2), GX(0), GY(10) - 6, "th") + head(GX(4) + 9, GY(0), 1, 0, 6) + head(GX(0), GY(10) - 9, 0, -1, 6);
+    gr += T(GX(4) + 12, GY(0) + 4, "x", "v") + T(GX(0) + 7, GY(10) - 5, "y", "v");
+    gr += ln(GX(-2.5), GY(-2), GX(3.5), GY(10), "s2");
+    gr += '<path class="s" d="M' + GX(1) + " " + GY(5) + " H" + GX(3) + " V" + GY(9) + '"/>';
+    gr += T(GX(2), GY(5) + 12, "run 2", "sm hal", "middle") + T(GX(3) + 4, GY(7) + 3, "rise 4", "sm hal");
+    [[1, 5], [3, 9], [0, 3]].forEach(function(p){ gr += '<circle class="k" cx="' + GX(p[0]) + '" cy="' + GY(p[1]) + '" r="3.4"/>'; });
+    gr += T(GX(1) - 6, GY(5) - 2, "(1, 5)", "sm hal", "end") + T(GX(3) + 6, GY(9) + 3, "(3, 9)", "sm hal") + T(GX(0) - 6, GY(3) + 4, "(0, 3)", "sm hal", "end");
+    for (x = -4; x <= 4; x += 2) if (x) gr += T(GX(x), GY(0) + 12, sgn(x), "sm hal", "middle");
+    [2, 8].forEach(function(y){ gr += T(GX(0) + 4, GY(y) + 3, String(y), "sm hal"); });
+    var graph = svg(176, 164, "The line y = 2x + 3 on a grid, through (0, 3), (1, 5) and (3, 9). From (1, 5) a run of 2 and a rise of 4 reach (3, 9).", gr);
+
+    var lines = '<div style="display:flex;gap:16px;align-items:flex-start"><div style="flex:none">' + graph + "</div>" +
+      '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">' +
+      '<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><div class="fm" style="font-size:13.5px">slope <var>m</var> = ' + fr("rise", "run") + " = " +
+        fr(mm("{y}_2 − {y}_1"), mm("{x}_2 − {x}_1")) + "</div>" +
+      '<div class="ex">(1, 5) and (3, 9): <var>m</var> = ' + fr("9 " + MINUS + " 5", "3 " + MINUS + " 1") + " = " + fr(4, 2) + " = 2</div></div>" +
+      '<table class="pt2"><tr><th>Form</th><th>Equation</th><th>This line</th></tr>' +
+      "<tr><td>Slope-intercept</td><td>" + mm("{y} = {m}{x} + {b}") + '</td><td class="x">' + mm("{y} = 2{x} + 3") + "</td></tr>" +
+      "<tr><td>Point-slope</td><td>" + mm("{y} − {y}_1 = {m}({x} − {x}_1)") + '</td><td class="x">' + mm("{y} − 5 = 2({x} − 1)") + "</td></tr>" +
+      "<tr><td>Standard</td><td>" + mm("{A}{x} + {B}{y} = {C}") + '</td><td class="x">' + mm("2{x} − {y} = −3") + "</td></tr></table>" +
+      '<p class="note"><var>b</var> is the <b>y-intercept</b>, where the line crosses the y-axis. Uphill to the right: positive slope; downhill: negative. ' +
+      "Flat (<var>y</var> = 4): slope 0. Vertical (<var>x</var> = 2): undefined. Parallel lines: equal slopes. " +
+      "Perpendicular: slopes multiply to " + MINUS + "1 (2 and " + MINUS + fr(1, 2) + ").</p></div></div>";
+
+    var solve = '<div class="solve">' +
+      '<span>5(<var>x</var> − 1) + 2 = 2<var>x</var> + 9</span><span class="w"></span>' +
+      '<span>5<var>x</var> − 5 + 2 = 2<var>x</var> + 9</span><span class="w"><b>1</b> simplify: distribute the 5</span>' +
+      '<span>5<var>x</var> − 3 = 2<var>x</var> + 9</span><span class="w"><b>1</b> simplify: combine like terms</span>' +
+      '<span>3<var>x</var> − 3 = 9</span><span class="w"><b>2</b> variable on one side: − 2<var>x</var></span>' +
+      '<span>3<var>x</var> = 12</span><span class="w"><b>3</b> undo the −: + 3 on both sides</span>' +
+      '<span><b><var>x</var> = 4</b></span><span class="w"><b>4</b> undo the ×: ÷ 3 on both sides</span>' +
+      '<span>5(4 − 1) + 2 = 17, 2(4) + 9 = 17 ✓</span><span class="w"><b>5</b> check in the original</span></div>';
+    solve = solve.replace(/−/g, MINUS);
+
+    return box("Properties", pt, "", "true for all numbers a, b and c") +
+      box("Exponent laws", lt, "lt", "for the same base a") +
+      box("Slope and lines", lines, "lt") +
+      '<div class="cols" style="grid-template-columns:minmax(0,1.45fr) minmax(0,.75fr)">' +
+        box("Solving an equation", '<p class="note" style="margin-bottom:6px">Keep it balanced: whatever you do to one side, do to the other.</p>' + solve, "", "the five steps") +
+        '<div style="display:flex;flex-direction:column;gap:12px">' +
+          box("The words", '<p class="ex" style="font-size:15px;margin:0 0 3px">3<var>x</var><sup>2</sup> + 5<var>x</var> ' + MINUS + " 7</p>" +
+            '<p class="note">3 terms. <b>Coefficients</b> 3 and 5; <b>constant</b> ' + MINUS + "7; <b>exponent</b> 2. " +
+            "<b>Like terms</b> match: 4<var>x</var> + 2<var>x</var> = 6<var>x</var>.</p>", "lt") +
+          box("Inequalities", '<p class="note">Like equations, but <b>flip the sign</b> when you multiply or divide by a negative.</p>' +
+            '<p class="ex" style="margin-top:4px">' + MINUS + "2<var>x</var> &lt; 6 → <var>x</var> &gt; " + MINUS + "3</p>", "lt") +
+        "</div>" +
+      "</div>";
+  }
+
+  /* ---------- 11 · integers ---------- */
+  function numLine(jumps, label, opt){
+    opt = opt || {};
+    var min = -10, max = 10, x0 = 16, W = 470, u = W / (max - min), X = function(n){ return x0 + (n - min) * u; }, ay = 56, s = "";
+    s += ln(x0 - 10, ay, x0 + W + 10, ay) + head(x0 - 12, ay, -1, 0, 7) + head(x0 + W + 12, ay, 1, 0, 7);
+    for (var n = min; n <= max; n++){
+      s += ln(X(n), ay - (n === 0 ? 7 : 4), X(n), ay + (n === 0 ? 7 : 4), n === 0 ? "s" : "th");
+      s += T(X(n), ay + 17, sgn(n), n === 0 ? "b" : "sm", "middle");
+    }
+    var level = 0;
+    jumps.forEach(function(j, i){
+      var a = X(j[0]), b = X(j[1]), mid = (a + b) / 2, hgt = Math.min(40, 14 + Math.abs(b - a) * .18), top = ay - 4 - hgt * 2 * .5 - level;
+      var cy = ay - 4 - hgt * 1.3;
+      s += '<path class="s" d="M' + r1(a) + " " + (ay - 4) + " Q" + r1(mid) + " " + r1(cy) + " " + r1(b) + " " + (ay - 4) + '"/>' + head(b, ay - 3, b - mid, (ay - 4) - cy, 7);
+      s += T(mid, (ay - 4 + cy) / 2 - 4, j[2], "b", "middle");
+    });
+    if (opt.start !== undefined) s += '<circle cx="' + r1(X(opt.start)) + '" cy="' + ay + '" r="4.5" style="fill:#fff;stroke:#111;stroke-width:1.6"/>';
+    if (opt.end !== undefined) s += '<circle class="k" cx="' + r1(X(opt.end)) + '" cy="' + ay + '" r="4.8"/>';
+    return svg(502, 78, label, s);
+  }
+  function sIntegers(){
+    function chips(pos, neg){
+      var s = "", x = 10;
+      var g = 22; x = 12;
+      for (var i = 0; i < pos; i++){ s += '<circle cx="' + (x + g * i) + '" cy="14" r="8" style="fill:#fff;stroke:#111;stroke-width:1.4"/>' + T(x + g * i, 18, "+", "b", "middle"); }
+      for (i = 0; i < neg; i++){ s += '<circle class="t3" cx="' + (x + g * i) + '" cy="38" r="8" style="stroke:#111;stroke-width:1.4"/>' + T(x + g * i, 42, MINUS, "b", "middle"); }
+      for (i = 0; i < Math.min(pos, neg); i++) s += '<rect x="' + (x + g * i - 10) + '" y="2" width="20" height="48" rx="10" style="fill:none;stroke:#111;stroke-width:1;stroke-dasharray:3 2"/>';
+      return svg(x + g * (Math.max(pos, neg) - 1) + 12, 52, pos + " positive chips and " + neg + " negative chips; " + Math.min(pos, neg) + " zero pairs are circled.", s);
+    }
+    var rows = [
+      [numLine([[-2, 3, "+5"]], "Start at −2 and jump 5 to the right, landing on 3.", { start:-2, end:3 }), MINUS + "2 + 5 = 3", "Adding a positive: move <b>right</b>."],
+      [numLine([[4, -2, "+(" + MINUS + "6)"]], "Start at 4 and jump 6 to the left, landing on −2.", { start:4, end:-2 }), "4 + (" + MINUS + "6) = " + MINUS + "2", "Adding a negative: move <b>left</b>."],
+      [numLine([[5, -3, MINUS + "8"]], "Start at 5 and jump 8 to the left, landing on −3.", { start:5, end:-3 }), "5 " + MINUS + " 8 = " + MINUS + "3", "Subtracting a positive: move <b>left</b>. 5 − 8 = 5 + (−8).".replace(/−/g, MINUS)],
+      [numLine([[-2, 4, MINUS + "(" + MINUS + "6)"]], "Start at −2 and jump 6 to the right, landing on 4.", { start:-2, end:4 }), MINUS + "2 " + MINUS + " (" + MINUS + "6) = 4", "Subtracting a negative: move <b>right</b>. It’s the same as + 6."],
+      [numLine([[0, -2, MINUS + "2"], [-2, -4, MINUS + "2"], [-4, -6, MINUS + "2"]], "Start at 0 and make three jumps of −2, landing on −6.", { start:0, end:-6 }), "3 × (" + MINUS + "2) = " + MINUS + "6", "Multiplying: 3 jumps of " + MINUS + "2."]
+    ];
+    var nl = '<div class="nlb">';
+    rows.forEach(function(r){ nl += '<div class="lbx"><b>' + r[1] + "</b><span>" + r[2] + "</span></div><div>" + r[0] + "</div>"; });
+    nl += "</div>";
+
+    return box("On the number line", '<p class="note" style="margin-bottom:4px">Open dot: where you start. Filled dot: where you land. Numbers get bigger to the right.</p>' + nl, "") +
+      '<div class="cols c3">' +
+        box("Adding", '<p class="note"><b>Same signs:</b> add, and keep the sign.</p><p class="ex" style="margin:2px 0 6px">' + MINUS + "3 + (" + MINUS + "4) = " + MINUS + "7</p>" +
+          '<p class="note"><b>Different signs:</b> subtract the sizes (absolute values), and keep the sign of the bigger size.</p><p class="ex" style="margin-top:2px;line-height:1.6">' +
+          MINUS + "9 + 4 = " + MINUS + "5<br>9 + (" + MINUS + "4) = 5</p>", "lt") +
+        box("Subtracting", '<p class="note"><b>Add the opposite</b> (keep, change, change): keep the first number, change − to +, change the sign of the second.</p>'.replace(/−/g, MINUS) +
+          '<p class="ex" style="margin-top:4px;line-height:1.6">3 ' + MINUS + " 7 = 3 + (" + MINUS + "7) = " + MINUS + "4<br>4 " + MINUS + " (" + MINUS + "5) = 4 + 5 = 9<br>" +
+          MINUS + "6 " + MINUS + " (" + MINUS + "2) = " + MINUS + "6 + 2 = " + MINUS + "4</p>", "lt") +
+        box("Zero pairs", '<div style="display:flex;gap:10px;align-items:center">' + chips(3, 5) + '<p class="ex" style="white-space:nowrap">3 + (' + MINUS + "5) = " + MINUS + "2</p></div>" +
+          '<p class="note" style="margin-top:4px">A + and a ' + MINUS + " cancel to 0. Three pairs cancel; two negatives are left.</p>", "lt") +
+      "</div>" +
+      '<div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) minmax(0,1fr)">' +
+        box("Multiplying and dividing", '<div class="sgn"><div>+ × +<small>positive</small></div><div>' + MINUS + " × " + MINUS + '<small>positive</small></div>' +
+          '<div class="n">+ × ' + MINUS + '<small>negative</small></div><div class="n">' + MINUS + ' × +<small>negative</small></div></div>' +
+          '<p class="note" style="margin-top:6px"><b>Same signs → positive. Different signs → negative.</b> Division follows the same rule.</p>', "") +
+        box("Examples", '<table class="ft" style="font-size:12.5px">' +
+          "<tr><td>6 × 4 = 24</td><td>(" + MINUS + "6) × (" + MINUS + "4) = 24</td></tr>" +
+          "<tr><td>6 × (" + MINUS + "4) = " + MINUS + "24</td><td>(" + MINUS + "6) × 4 = " + MINUS + "24</td></tr>" +
+          "<tr><td>24 ÷ (" + MINUS + "4) = " + MINUS + "6</td><td>" + MINUS + "24 ÷ (" + MINUS + "4) = 6</td></tr>" +
+          "<tr><td>" + MINUS + "20 ÷ 5 = " + MINUS + "4</td><td>" + MINUS + "18 ÷ (" + MINUS + "6) = 3</td></tr></table>" +
+          '<p class="note" style="margin-top:6px"><b>Count the negatives:</b> an even number gives +, an odd number gives ' + MINUS + ". (" + MINUS + "1)(" + MINUS + "2)(" + MINUS + "3) = " + MINUS + "6 and (" + MINUS + "1)<sup>4</sup> = 1.</p>", "") +
+        box("Good to know", '<ul class="note"><li><b>Absolute value</b> is the distance from 0: |' + MINUS + "5| = 5 and |5| = 5.</li>" +
+          "<li><b>Opposites</b> are the same distance from 0 on either side: 5 and " + MINUS + "5. They add to 0.</li>" +
+          "<li><b>Further left is smaller:</b> " + MINUS + "8 &lt; " + MINUS + "3.</li><li>0 is neither positive nor negative.</li></ul>", "fl") +
+      "</div>";
+  }
+
+  /* ---------- 12 · statistics ---------- */
+  function sStats(){
+    var data = [8, 3, 6, 9, 2, 8, 5, 7, 4, 8], s = data.slice().sort(function(a, b){ return a - b; }), n = s.length;
+    var sum = 0; s.forEach(function(v){ sum += v; });
+    var mean = sum / n;
+    function med(a){ var k = a.length; return k % 2 ? a[(k - 1) / 2] : (a[k / 2 - 1] + a[k / 2]) / 2; }
+    var median = med(s), lower = s.slice(0, Math.floor(n / 2)), upper = s.slice(Math.ceil(n / 2)), q1 = med(lower), q3 = med(upper);
+    var counts = {}, mode = null, best = 0; s.forEach(function(v){ counts[v] = (counts[v] || 0) + 1; if (counts[v] > best){ best = counts[v]; mode = v; } });
+    var devs = s.map(function(v){ return Math.abs(v - mean); }), dsum = 0; devs.forEach(function(d){ dsum += d; });
+    var mad = dsum / n, iqr = q3 - q1;
+
+    var sorted = '<div class="data sorted">' + s.map(function(v, i){ return '<span class="' + (i === 4 || i === 5 ? "mid" : "") + '">' + v + "</span>"; }).join("") + "</div>";
+
+    // the dot plot and the box plot on one scale
+    var x0 = 40, u = 60, X = function(v){ return x0 + v * u; }, pl = "";
+    var ay1 = 92, ay2 = 226;
+    function axis(y){
+      var h = ln(X(0) - 8, y, X(10) + 8, y);
+      for (var t = 0; t <= 10; t++) h += ln(X(t), y - 4, X(t), y + 4, "th") + T(X(t), y + 16, String(t), "sm", "middle");
+      return h;
+    }
+    pl += axis(ay1);
+    var stack = {};
+    s.forEach(function(v){ stack[v] = (stack[v] || 0) + 1; pl += '<circle class="k" cx="' + X(v) + '" cy="' + (ay1 - 12 - (stack[v] - 1) * 17) + '" r="7"/>'; });
+    pl += '<path class="k" d="M' + X(mean) + " " + (ay1 + 22) + " l-6 10 h12 Z\"/>";
+    pl += T(X(mean) + 10, ay1 + 32, "mean " + mean + ": the balance point", "sm");
+    pl += T(X(mode) + 14, ay1 - 44, "mode " + mode, "sm");
+    pl += T(0, 14, "Dot plot", "bd") + T(0, ay1 + 62, "Box plot", "bd");
+    var by = ay2 - 48, bh = 34;
+    pl += axis(ay2);
+    pl += ln(X(s[0]), by + bh / 2, X(q1), by + bh / 2) + ln(X(q3), by + bh / 2, X(s[n - 1]), by + bh / 2);
+    pl += ln(X(s[0]), by + 6, X(s[0]), by + bh - 6) + ln(X(s[n - 1]), by + 6, X(s[n - 1]), by + bh - 6);
+    pl += '<rect class="s t2" x="' + X(q1) + '" y="' + by + '" width="' + (X(q3) - X(q1)) + '" height="' + bh + '"/>' + ln(X(median), by, X(median), by + bh, "s2");
+    [["min", s[0]], ["Q1", q1], ["median", median], ["Q3", q3], ["max", s[n - 1]]].forEach(function(l){
+      pl += T(X(l[1]), by - 20, l[0], "sm", "middle") + T(X(l[1]), by - 7, String(l[1]), "b", "middle");
+    });
+    // the quarters underneath
+    var qy = ay2 + 30;
+    [[s[0], q1], [q1, median], [median, q3], [q3, s[n - 1]]].forEach(function(seg){
+      pl += '<path class="th" d="M' + (X(seg[0]) + 2) + " " + qy + " v5 H" + (X(seg[1]) - 2) + " v-5\"/>" + T((X(seg[0]) + X(seg[1])) / 2, qy + 17, "25%", "sm", "middle");
+    });
+    pl += '<path class="s" d="M' + X(q1) + " " + (qy + 26) + " v5 H" + X(q3) + " v-5\"/>" + T((X(q1) + X(q3)) / 2, qy + 44, "IQR = " + q3 + " " + MINUS + " " + q1 + " = " + iqr + "  (the middle 50%)", "b", "middle");
+    var plot = svg(700, qy + 48, "A dot plot of the data above a box plot on the same scale from 0 to 10. Box plot: minimum 2, Q1 4, median 6.5, Q3 8, maximum 9. Each section holds 25% of the data; the box, from 4 to 8, is the middle 50%.", pl);
+
+    function M(title, how, work, ans){
+      return '<div class="bx lt meas"><h4>' + title + '</h4><p class="note">' + how + '</p><p class="ex">' + work + '</p><p class="ans">' + ans + "</p></div>";
+    }
+    return '<div class="cols" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr)">' +
+        box("The data", '<p class="note" style="margin-bottom:6px">Points scored in 10 games:</p><div class="data">' + data.map(function(v){ return "<span>" + v + "</span>"; }).join("") + "</div>", "") +
+        box("Sorted, smallest to largest", '<p class="note" style="margin-bottom:6px">Always sort before finding the median or quartiles. The two middle values are dark.</p>' + sorted, "") +
+      "</div>" +
+      '<div class="cols c4" style="gap:10px">' +
+        M("Mean", "Add them all up, then divide by how many there are.", '<span style="font-size:10.5px">' + s.join("+") + "</span><br>= " + sum + ", and " + sum + " ÷ " + n, "= " + mean) +
+        M("Median", "The middle value. With an even count, the mean of the two middle ones.", "(" + s[4] + " + " + s[5] + ") ÷ 2", "= " + median) +
+        M("Mode", "The value that appears most often. There can be several, or none.", mode + " appears " + best + " times", "= " + mode) +
+        M("Range", "The spread from smallest to largest: max " + MINUS + " min.", s[n - 1] + " " + MINUS + " " + s[0], "= " + (s[n - 1] - s[0])) +
+      "</div>" +
+      box("Quartiles and the box plot", plot, "", "five-number summary: " + s[0] + ", " + q1 + ", " + median + ", " + q3 + ", " + s[n - 1]) +
+      '<div class="cols c3">' +
+        box("Quartiles", '<p class="note"><b>Q1</b> is the median of the lower half (' + lower.join(", ") + ") = " + q1 + ". <b>Q3</b> is the median of the upper half (" + upper.join(", ") + ") = " + q3 + ". " +
+          "With an odd count, leave the median out of both halves: 1, 3, 4, <b>6</b>, 9, 10, 12 gives Q1 = 3, Q3 = 10.</p>" +
+          '<p class="note" style="margin-top:4px;color:#666">Some calculators use a slightly different method, so their quartiles can differ a little.</p>', "lt") +
+        box("Mean absolute deviation", '<p class="note">How far the values are from the mean, on average. Distances from 6:</p><p class="ex" style="margin:3px 0">' + devs.join(" + ") + " = " + dsum + "</p>" +
+          '<p class="note">MAD = ' + dsum + " ÷ " + n + " = <b>" + mad + "</b></p>", "lt") +
+        box("Outliers and which to use", '<p class="note">An <b>outlier</b> is below Q1 ' + MINUS + " 1.5 × IQR (" + sgn(q1 - 1.5 * iqr) + ") or above Q3 + 1.5 × IQR (" + sgn(q3 + 1.5 * iqr) + "): none here. " +
+          "One game of 50 points would pull the mean up to 110 ÷ 11 = 10, but the median only to 7. Use the <b>median and IQR</b> when there are outliers.</p>".replace("−", MINUS), "lt") +
+      "</div>";
+  }
+
+  var BUILD = { times:sTimes, "times-blank":sTimesBlank, powers:sPowers, fractions:sFractions, "place-value":sPlace, divisibility:sDivisibility,
+                order:sOrder, geometry:sGeometry, angles:sAngles, units:sUnits, algebra:sAlgebra, integers:sIntegers, stats:sStats };
+
+  /* ===================== the page ===================== */
+  var params = new URLSearchParams(location.search), CHECK = params.get("check") === "1";
+  var picked = {}, current = "", fit = true, forced = null;
+  (params.get("print") || "").split(/[,\s]+/).forEach(function(x){ var id = norm(x); if (id) picked[id] = true; });
+
+  // draw every sheet once; the thumbnails are copies
+  var frameEl = $("frame"), html = "";
+  SHEETS.forEach(function(s){
+    try { html += frame(s, BUILD[s.id]()); }
+    catch (e){ html += frame(s, '<p class="note">This sheet could not be drawn.</p>'); if (window.console) console.error(s.id, e); }
+  });
+  frameEl.innerHTML = html;
+  var noscript = $("noscript"); if (noscript) noscript.remove();
+  function sheetEl(id){ return document.getElementById("sheet-" + id); }
+
+  var cardsEl = $("cards"), ch = "";
+  MAIN.forEach(function(s){
+    ch += '<li class="card" data-id="' + s.id + '">' +
+      '<a class="thumb" href="#' + s.id + '" tabindex="-1" aria-hidden="true"><div class="mini"></div></a>' +
+      '<div class="c-body"><div class="c-top"><span class="c-no">' + s.no + '</span><h3><a href="#' + s.id + '">' + s.title + "</a></h3></div>" +
+      "<p>" + s.blurb + "</p>" +
+      '<label class="pick"><input type="checkbox" value="' + s.id + '"> Pick to print</label>' +
+      (s.id === "times" ? '<label class="pick sub"><input type="checkbox" value="times-blank"> Also a blank one to fill in</label>' : "") +
+      '<div class="c-links"><a href="#' + s.id + '">View full size</a><a href="' + s.href + '">Practise this <span aria-hidden="true">→</span></a></div>' +
+      "</div></li>";
+  });
+  cardsEl.innerHTML = ch;
+  [].forEach.call(cardsEl.querySelectorAll(".card"), function(card){
+    var src = sheetEl(card.getAttribute("data-id")), copy = src.cloneNode(true);
+    copy.removeAttribute("id"); copy.setAttribute("aria-hidden", "true");
+    [].forEach.call(copy.querySelectorAll("[id]"), function(x){ x.removeAttribute("id"); });
+    card.querySelector(".mini").appendChild(copy);
+  });
+
+  function sizeThumbs(){
+    var mini = cardsEl.querySelector(".mini");
+    if (mini && mini.clientWidth) cardsEl.style.setProperty("--ts", String(mini.clientWidth / 816));
+    var stage = $("stage");
+    if (stage && stage.clientWidth){
+      var cs = window.getComputedStyle(stage), avail = stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      frameEl.style.setProperty("--vs", String(fit ? Math.min(1, avail / 816) : 1));
+    }
+  }
+
+  /* ---- picking ---- */
+  function pickedList(){ return SHEETS.filter(function(s){ return picked[s.id]; }).map(function(s){ return s.id; }); }
+  function toPrint(){
+    if (forced) return forced;
+    var p = pickedList();
+    if (p.length) return p;
+    if (current) return [current];
+    return MAIN.map(function(s){ return s.id; });
+  }
+  function syncPrint(){
+    var list = toPrint();
+    [].forEach.call(frameEl.querySelectorAll(".sheet"), function(el){
+      var on = list.indexOf(el.getAttribute("data-id")) >= 0;
+      el.classList.toggle("p-on", on); el.classList.remove("p-last");
+    });
+    var last = sheetEl(list[list.length - 1]); if (last) last.classList.add("p-last");
+  }
+  function paintPicks(){
+    [].forEach.call(cardsEl.querySelectorAll("input[type=checkbox]"), function(cb){ cb.checked = !!picked[cb.value]; });
+    [].forEach.call(cardsEl.querySelectorAll(".card"), function(card){
+      var id = card.getAttribute("data-id");
+      card.classList.toggle("on", !!picked[id] || (id === "times" && !!picked["times-blank"]));
+    });
+    var p = pickedList(), n = p.length;
+    $("printSel").textContent = n ? "Print selected (" + n + ")" : "Print selected";
+    $("printSel").disabled = !n;
+    $("status").textContent = n
+      ? "Picked: " + p.map(function(id){ return BY[id].short; }).join(", ") + ". " + (n === 1 ? "It prints" : "They print") + " one page each, in this order."
+      : "Nothing picked yet. Tick the sheets you want, or print all 12 at once (" + MAIN.length + " pages).";
+    syncPrint();
+  }
+  function keepUrl(){
+    try {
+      var p = pickedList(), q = p.length ? "?print=" + p.join(",") : "";
+      history.replaceState(null, "", location.pathname + q + location.hash);
+    } catch (e){}
+  }
+  cardsEl.addEventListener("change", function(e){
+    var t = e.target;
+    if (!t || t.type !== "checkbox") return;
+    if (t.checked) picked[t.value] = true; else delete picked[t.value];
+    paintPicks(); keepUrl();
+  });
+  $("allBtn").addEventListener("click", function(){ MAIN.forEach(function(s){ picked[s.id] = true; }); paintPicks(); keepUrl(); });
+  $("noneBtn").addEventListener("click", function(){ picked = {}; paintPicks(); keepUrl(); });
+
+  /* ---- printing ---- */
+  function printNow(list){
+    forced = list; syncPrint();
+    try { window.print(); } finally { setTimeout(function(){ forced = null; syncPrint(); }, 0); }
+  }
+  window.addEventListener("afterprint", function(){ forced = null; syncPrint(); });
+  $("printSel").addEventListener("click", function(){ var p = pickedList(); if (p.length) printNow(p); });
+  $("printAll").addEventListener("click", function(){ printNow(MAIN.map(function(s){ return s.id; })); });
+  $("printOne").addEventListener("click", function(){ if (current) printNow([current]); });
+
+  /* ---- viewing one sheet: reference.html#times ---- */
+  var ORDER = SHEETS.map(function(s){ return s.id; });
+  function show(id, fromHash){
+    current = id;
+    var viewing = !!id;
+    $("picker").hidden = viewing;
+    $("viewer").hidden = !viewing;
+    [].forEach.call(frameEl.querySelectorAll(".sheet"), function(el){ el.classList.toggle("cur", el.getAttribute("data-id") === id); });
+    if (viewing){
+      var s = BY[id], i = ORDER.indexOf(id), prev = BY[ORDER[(i + ORDER.length - 1) % ORDER.length]], next = BY[ORDER[(i + 1) % ORDER.length]];
+      $("viewNo").textContent = "Sheet " + s.no + (s.parent ? " · blank" : "") + " of 12";
+      $("viewT").textContent = s.title;
+      $("prevLink").href = "#" + prev.id; $("prevT").textContent = prev.short;
+      $("nextLink").href = "#" + next.id; $("nextT").textContent = next.short;
+      $("practise").href = s.href; $("practise").title = "Practise on " + s.hname;
+      document.title = s.title + " · Reference Sheets";
+      sizeThumbs();
+      if (fromHash){
+        window.scrollTo(0, 0);
+        try { $("viewH").focus({ preventScroll:true }); } catch (e){ $("viewH").focus(); }
+      }
+    } else {
+      document.title = "Reference Sheets";
+      sizeThumbs();
+    }
+    syncPrint();
+  }
+  var lastViewed = "";
+  function fromHash(focus){
+    var raw = "";
+    try { raw = decodeURIComponent(location.hash.slice(1)); } catch (e){ raw = location.hash.slice(1); }
+    var id = norm(raw);
+    if (id){ lastViewed = id; show(id, focus); }
+    else {
+      show("", false);
+      if (focus && lastViewed){
+        var a = cardsEl.querySelector('.card[data-id="' + (BY[lastViewed].parent || lastViewed) + '"] h3 a');
+        if (a){ a.scrollIntoView({ block:"center" }); a.focus({ preventScroll:true }); }
+      }
+    }
+  }
+  window.addEventListener("hashchange", function(){ fromHash(true); });
+  $("backLink").addEventListener("click", function(e){
+    e.preventDefault();
+    try { history.pushState(null, "", location.pathname + location.search); } catch (err){ location.hash = ""; }
+    fromHash(true);
+  });
+  window.addEventListener("popstate", function(){ fromHash(true); });
+  document.addEventListener("keydown", function(e){
+    if (!current || e.ctrlKey || e.metaKey || e.altKey) return;
+    var t = e.target && e.target.tagName;
+    if (t === "INPUT" || t === "TEXTAREA" || t === "SELECT") return;
+    if (e.key === "ArrowLeft"){ e.preventDefault(); location.hash = $("prevLink").getAttribute("href"); }
+    else if (e.key === "ArrowRight"){ e.preventDefault(); location.hash = $("nextLink").getAttribute("href"); }
+  });
+  $("fitBtn").addEventListener("click", function(){
+    fit = !fit;
+    $("fitBtn").setAttribute("aria-pressed", String(!fit));
+    sizeThumbs();
+  });
+  window.addEventListener("resize", sizeThumbs);
+  if (window.ResizeObserver) new ResizeObserver(function(){ sizeThumbs(); }).observe(document.body);
+
+  /* ---- theme (same switch as the other pages) ---- */
+  var KEY = "helpers-reference", themeBtn = $("themeBtn");
+  try { var saved = localStorage.getItem(KEY); if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved); } catch (e){}
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    var next = isDark() ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next); paint();
+    try { localStorage.setItem(KEY, next); } catch (e){}
+  });
+  paint();
+
+  paintPicks();
+  fromHash(false);
+  sizeThumbs();
+
+  /* ---- reference.html?check=1: every sheet side by side, each one measured for overflow (for testing) ---- */
+  if (CHECK){
+    document.body.classList.add("checking");
+    $("viewer").hidden = false;
+    var run = function(){
+      var out = [];
+      [].forEach.call(frameEl.querySelectorAll(".sheet"), function(el){
+        var body = el.querySelector(".sh-body"), sr = el.getBoundingClientRect(), bad = [];
+        if (body.scrollHeight > body.clientHeight + 1) bad.push("body overflows by " + (body.scrollHeight - body.clientHeight) + "px");
+        var br = body.getBoundingClientRect();
+        [].forEach.call(body.querySelectorAll("*"), function(x){
+          var r = x.getBoundingClientRect();
+          if (!r.width && !r.height) return;
+          if (r.right > br.right + 1.5 || r.left < br.left - 1.5 || r.bottom > br.bottom + 1.5)
+            if (bad.length < 6) bad.push((x.tagName + "." + (x.getAttribute("class") || "")).slice(0, 40) + " " + Math.round(r.left - br.left) + ".." + Math.round(r.right - br.left) + " x " + Math.round(r.bottom - br.top) + " of " + Math.round(br.width) + "x" + Math.round(br.height));
+        });
+        var free = body.clientHeight - [].reduce.call(body.children, function(a, c){ return Math.max(a, c.getBoundingClientRect().bottom - br.top); }, 0);
+        if (bad.length) el.classList.add("over");
+        out.push(el.getAttribute("data-id") + ": " + (bad.length ? "OVER " + bad.join("; ") : "ok") + " (free " + Math.round(free) + "px, sheet " + Math.round(sr.width) + "x" + Math.round(sr.height) + ")");
+      });
+      var pre = document.createElement("pre"); pre.id = "checkOut"; pre.textContent = out.join("\n");
+      document.querySelector(".page").appendChild(pre);
+    };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ setTimeout(run, 50); }); else setTimeout(run, 300);
+  }
+})();
+</script>

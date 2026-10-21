@@ -32,7 +32,9 @@
     { page:"algebra.html",        name:"Algebra",             title:"The Balance Scale",  c:"alg" },
     { page:"lines.html",          name:"Lines & slope",       title:"The Slope Grid",     c:"lin" },
     { page:"geometry.html",       name:"Geometry",            title:"The Shape Shop",     c:"geo" },
-    { page:"stats.html",          name:"Statistics",          title:"The Dot Plot",       c:"sta" }
+    { page:"stats.html",          name:"Statistics",          title:"The Dot Plot",       c:"sta" },
+    { page:"wordproblems.html",   name:"Story problems",      title:"The Story Problem",  c:"wrd" },
+    { page:"flashcards.html",     name:"Flash cards",         title:"The Flash Cards",    c:"fla" }
   ];
   var BY = {};
   TOPICS.forEach(function(t, i){ t.order = i; BY[t.page] = t; });

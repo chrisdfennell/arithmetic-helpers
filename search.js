@@ -11,10 +11,21 @@
     "factors.html":["The Factor Tree","c-fac"], "integers.html":["The Number Line","c-int"],
     "pemdas.html":["The Order Stack","c-ord"], "algebra.html":["The Balance Scale","c-alg"],
     "geometry.html":["The Shape Shop","c-geo"], "glossary.html":["the Word List","c-ink"], "ratios.html":["The Ratio Table","c-rat"],
-    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"]
+    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"],
+    "wordproblems.html":["The Story Problem","c-wrd"], "flashcards.html":["The Flash Cards","c-fla"],
+    "reference.html":["the reference sheets","c-ink"]
   };
   function go(page, params, what, alt){ return { page:page, params:params, what:what || "", alt:alt || null }; }
   function qp(s){ return "q=" + encodeURIComponent(s); }
+
+  // a story problem: words around the numbers, and a question about them ("Ana has 12 shells. … How many …?")
+  function isStory(s, low){
+    if (!/\d/.test(s)) return false;
+    var words = low.match(/[a-z']{2,}/g) || [];
+    if (words.length < 7) return false;
+    var asks = /\b(how (many|much|far|long|old|fast|tall|heavy|big)|what (is|was|will|time|did|does)|who|when|which|find)\b/.test(low) || /\?\s*$/.test(s);
+    return asks && (/[.!?]\s+\S/.test(s) || words.length >= 12);
+  }
 
   // numbers and operators, or null if it isn't plain arithmetic
   function tokens(s){
@@ -36,6 +47,26 @@
     var s = String(raw).replace(/\s+/g, " ").trim();
     if (!s) return null;
     var low = s.toLowerCase();
+
+    // flash cards: "7 times table", "6, 7 and 8 times tables", "times tables 2 to 5", "division facts"
+    if (/\b(flash ?cards?|times ?tables?|multiplication (?:tables?|facts)|(?:math|number|division|addition|subtraction) facts)\b/.test(low)){
+      var deck = /division/.test(low) ? "div" : /addition/.test(low) ? "add" : /subtraction/.test(low) ? "sub" : "times";
+      var span = /\b(\d+)\s*(?:-|–|to|through)\s*(\d+)\b/.exec(low);
+      var tables = span && +span[1] <= 12 && +span[2] <= 12 && +span[1] < +span[2] ? span[1] + "-" + span[2]
+                 : (low.match(/\d+/g) || []).filter(function(n){ return +n <= 12; }).map(Number).join(",");
+      return go("flashcards.html", "deck=" + deck + (tables && (deck === "times" || deck === "div") ? "&t=" + tables : ""), "flash cards");
+    }
+    // reference sheets: "formula sheet", "cheat sheet", "multiplication chart"
+    if (/\b(reference|cheat ?sheets?|formula sheets?|formulas|(?:multiplication|times table) (?:chart|grid))\b/.test(low))
+      return go("reference.html", /multiplication|times/.test(low) ? "#times" : /\b(area|perimeter|volume|geometry|shapes?)\b/.test(low) ? "#geometry" : "",
+        "the reference sheets");
+    // a story problem, unless it's about shapes (other than a rectangle's area), statistics, a ratio or a line
+    if (isStory(s, low) && !/\b(circles?|triangles?|trapezoids?|parallelograms?|cylinders?|cones?|spheres?|prisms?|pyramids?|hypotenuse|angles?|polygons?|radius|diameter|circumference|volume|surface|mean|median|modes?|average|range|box ?plots?|quartiles?|outliers?|ratios?|proportion|scale|slope|intercepts?|graph)\b/.test(low))
+      return go("wordproblems.html", qp(s), "a story problem",
+        /%|percent/.test(low) ? { page:"percents.html", params:qp(s) } : /\barea\b/.test(low) ? { page:"geometry.html", params:qp(s) } : null);
+    // "7 times 8", "12 divided by 4": the words for the signs
+    if (/^[\d\s.,\/]+(\s*\b(times|plus|minus|divided by)\b\s*[\d\s.,\/]+)+$/.test(low))
+      s = low = low.replace(/\s*\btimes\b\s*/g, " × ").replace(/\s*\bplus\b\s*/g, " + ").replace(/\s*\bminus\b\s*/g, " − ").replace(/\s*\bdivided by\b\s*/g, " ÷ ").trim();
 
     if (/\b(area|perimeter|circumference|volume|surface|circle|rectangle|square|triangle|trapezoid|trapezium|parallelogram|cylinder|cone|sphere|cube|box(?!\s*-?\s*(?:plots?|and))|prism|pyramid|hypotenuse|legs?|angles?|supplement\w*|complement\w*|polygon|pentagon|hexagon|heptagon|octagon|nonagon|decagon|sided|radius|diameter|vertical)\b/.test(low))
       return go("geometry.html", qp(s));

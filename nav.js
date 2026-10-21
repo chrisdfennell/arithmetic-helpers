@@ -17,19 +17,23 @@
     { href:"algebra.html",        sign:"x",  name:"Algebra",   title:"The Balance Scale",  c:"alg", italic:true },
     { href:"lines.html",          sign:"↗",  name:"Lines",     title:"The Slope Grid",     c:"lin" },
     { href:"geometry.html",       sign:"△",  name:"Geometry",  title:"The Shape Shop",     c:"geo" },
-    { href:"stats.html",          sign:"⁘",  name:"Statistics", title:"The Dot Plot",      c:"sta" }
+    { href:"stats.html",          sign:"⁘",  name:"Statistics", title:"The Dot Plot",      c:"sta" },
+    { href:"wordproblems.html",   sign:"✎",  name:"Stories",   title:"The Story Problem",  c:"wrd" }
   ];
   var TOOLS = [
     { href:"worksheet.html", name:"Worksheets", title:"The Worksheet Maker" },
     { href:"practice.html",  name:"Practice",   title:"Practice sets" },
+    { href:"flashcards.html", name:"Flash cards", title:"The Flash Cards: times tables and other facts" },
     { href:"progress.html",  name:"Progress",   title:"Your progress" },
+    { href:"results.html",   name:"Results",    title:"Class results: a teacher's view of a practice set" },
+    { href:"reference.html", name:"Reference",  title:"Reference sheets to print" },
     { href:"glossary.html",  name:"Definitions", title:"The Word List: what the math words mean" }
   ];
 
   var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;"
-            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;";
+            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;";
   var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;"
-            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;";
+            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;";
   var CSS =
     ":root{" + LIGHT + "}" +
     "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + DARK + "}}" +
