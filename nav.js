@@ -71,7 +71,7 @@
       var a = document.createElement("link"); a.rel = "apple-touch-icon"; a.href = "icons/apple-touch-icon.png"; head.appendChild(a);
     }
     if (!head.querySelector('link[rel="icon"]')){
-      var f = document.createElement("link"); f.rel = "icon"; f.type = "image/svg+xml"; f.href = "icons/icon.svg"; head.appendChild(f);
+      var f = document.createElement("link"); f.rel = "icon"; f.type = "image/svg+xml"; f.href = "icons/favicon.svg"; head.appendChild(f);
     }
     if (!head.querySelector('meta[name="theme-color"]')){
       var t = document.createElement("meta"); t.name = "theme-color"; t.content = "#19211D"; head.appendChild(t);
@@ -80,6 +80,11 @@
     if (!window.HelperGlossary && !head.querySelector('script[src="glossary.js"]')){
       var g = document.createElement("script"); g.src = "glossary.js"; g.defer = true; head.appendChild(g);
     }
+    // the search box, settings that follow you, read aloud, recent problems, shortcuts, next problem
+    ["search.js", "tools.js"].forEach(function(src){
+      if (head.querySelector('script[src="' + src + '"]')) return;
+      var sc = document.createElement("script"); sc.src = src; sc.async = false; head.appendChild(sc);
+    });
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
       window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
     }

@@ -294,7 +294,7 @@
     E("scale", "Scale", ["scales"], P,
       "A ratio comparing sizes on a map, model or drawing with the real sizes.",
       "On a map with a scale of 1 cm : 5 km, 3 cm stands for 15 km.",
-      "pct rat geo sta", ["scale-factor", "ratio"], true);
+      "rat", ["scale-factor", "ratio"], true);
     E("scale-factor", "Scale factor", ["scale factors"], P,
       "The number you multiply every length by to make a bigger or smaller copy of a shape.",
       "A scale factor of 3 turns a 2 cm side into a 6 cm side.",

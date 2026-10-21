@@ -34,6 +34,15 @@ Every helper page also has:
 - a picture of the problem: tape diagrams, area models, fraction bars, hundred grids, factor trees, number lines, ratio tables, expression trees, balance scales, graphs, dot plots and shapes drawn to scale
 - answers that aren't whole numbers shown as both fractions and decimals
 - a link to the exact problem on screen (**Copy link**), light and dark themes, and a print layout
+- **Next problem** straight after a right answer, using the same problem-maker settings
+
+And across the whole site:
+
+- light/dark and text size are remembered on every page, not one page at a time
+- a **Type any problem** search box in the bar at the top of every page
+- **Big screen** mode for a projector or smartboard, and **Read aloud** for the step-by-step explanation
+- **Recent** problems on each page, and keyboard shortcuts (press `?` to see them)
+- link previews when a page is shared, and a friendly page for broken links
 
 The home page has a **Type any problem** box that works out which helper a problem belongs to and opens it there (and "what is a denominator" opens the Word List).
 
@@ -63,6 +72,9 @@ Each page is one self-contained HTML file with no build step. A few shared files
 - `nav.js` adds the bar across the top of every page, makes the site installable (`manifest.webmanifest`, `icons/`) and offline (`sw.js`), and loads the definitions popups. To add a page, add it to the list in `nav.js` and to `PAGES` in `sw.js`.
 - `glossary.js` holds every definition, and finds and links the math words on each page.
 - `progress.js` records each Check my answer result in the browser and draws the "Your practice" panel.
+- `tools.js` adds the site-wide settings, big screen, read aloud, recent problems, keyboard shortcuts and Next problem.
+- `search.js` works out which helper a typed problem belongs to (used by the home page, the bar and `404.html`).
+- Visits are counted with GoatCounter (no cookies, nothing personal); pages shown inside other pages and local testing aren't counted.
 
 Each helper reports each check with a `helper:checked` event, and answers worksheet and practice-set requests through `postMessage` (`helper:options` and `helper:make`), so every worksheet and practice answer is worked out by the same code as the helper page.
 
