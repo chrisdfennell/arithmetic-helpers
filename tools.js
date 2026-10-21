@@ -61,7 +61,18 @@
     ".ht-exit{position:fixed;top:12px;right:12px;z-index:70;font-family:var(--f-body,Arial,sans-serif);font-size:14px;font-weight:600;" +
       "color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:8px 14px;cursor:pointer;" +
       "box-shadow:0 10px 24px -14px rgba(0,0,0,.6)}" +
-    "@media print{.ht-bar,.ht-search,.ht-menu,.ht-next,.ht-exit,.ht-read{display:none !important}}";
+    ".ht-pad{position:fixed;left:0;right:0;bottom:0;z-index:80;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" +
+      "padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:var(--surface-2,#e3e7df);border-top:1px solid var(--rule);" +
+      "box-shadow:0 -10px 24px -16px rgba(0,0,0,.5)}" +
+    ".ht-pad[hidden]{display:none}" +
+    ".ht-pad button{min-width:44px;height:44px;padding:0 10px;font-family:var(--f-mono,\"IBM Plex Mono\",Consolas,monospace);" +
+      "font-size:19px;font-weight:600;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:10px;cursor:pointer;" +
+      "touch-action:manipulation;user-select:none;-webkit-user-select:none}" +
+    ".ht-pad button:active{background:var(--rule)}" +
+    ".ht-pad button.wide{min-width:84px;font-size:14px}" +
+    ".ht-pad button.done{font-family:var(--f-body,Arial,sans-serif);font-size:15px;background:var(--ink);color:var(--surface);border-color:var(--ink)}" +
+    "html.ht-padding body{padding-bottom:120px}" +
+    "@media print{.ht-bar,.ht-search,.ht-menu,.ht-next,.ht-exit,.ht-read,.ht-pad{display:none !important}}";
 
   /* ===================== settings that follow you ===================== */
   var themeBtn = null;
@@ -262,6 +273,7 @@
       "<tr><td><kbd>D</kbd></td><td>Switch light and dark</td></tr>" +
       "<tr><td><kbd>+</kbd> <kbd>−</kbd></td><td>Bigger or smaller text</td></tr>" +
       "<tr><td><kbd>B</kbd></td><td>Big screen, for a projector</td></tr>" +
+      "<tr><td><kbd>K</kbd></td><td>Show or hide the math keys (they come up by themselves on phones)</td></tr>" +
       "<tr><td><kbd>Esc</kbd></td><td>Close this, or leave big screen</td></tr>" +
       "<tr><td><kbd>?</kbd></td><td>Show this list</td></tr></table></div>");
     if (!anchor && openMenu){ openMenu.style.position = "fixed"; openMenu.style.top = "70px"; openMenu.style.left = "50%"; openMenu.style.transform = "translateX(-50%)"; }
@@ -297,6 +309,7 @@
     else if (k === "b" || k === "B"){ e.preventDefault(); setBig(!root.classList.contains("ht-big")); }
     else if (k === "+" || k === "="){ e.preventDefault(); setScale(1); }
     else if (k === "-" || k === "_"){ e.preventDefault(); setScale(-1); }
+    else if (k === "k" || k === "K"){ e.preventDefault(); togglePad(); }
     else if (k === "?"){ e.preventDefault(); if (openMenu) closeMenu(); else helpMenu(document.getElementById("htKeys")); }
   }
 
@@ -330,6 +343,103 @@
     var box = live && (live.closest("form, section, .ckbox, .try, .check") || live.parentNode);
     if (!box) return null;
     return [].filter.call(box.querySelectorAll("input"), function(i){ return i.offsetParent !== null && !i.readOnly; })[0] || null;
+  }
+
+
+  /* ===================== the maths keypad (phones and tablets) ===================== */
+  // the symbols that are awkward to type on a phone, chosen for each page
+  var PAD = {
+    "addition.html":"+ − / . , space", "subtraction.html":"− + / . , space", "multiplication.html":"× / . , space",
+    "division.html":"÷ / . : space", "fractions.html":"/ space . % , − ( )", "percents.html":"% $ . , /",
+    "factors.html":", × ^ ²", "integers.html":"− + × ÷ ( ) | ,", "ratios.html":": / = ? x . $ ,",
+    "pemdas.html":"+ − × ÷ ( ) ^ ² .", "algebra.html":"x y + − × ÷ ( ) = < > ^ / .",
+    "lines.html":"x y ( ) , = + − / .", "geometry.html":". / π √ , °", "stats.html":", . − :",
+    "wordproblems.html":". $ / % ,", "flashcards.html":"/ . % − ,"
+  };
+  var padEl = null, padFor = null, padHide = null;
+  function padWanted(){
+    if (S.keypad === true) return true;
+    if (S.keypad === false) return false;
+    return !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+  }
+  function padTarget(el){
+    if (!el || el.tagName !== "INPUT" || el.readOnly || el.disabled) return false;
+    if (!/^(text|search|)$/i.test(el.getAttribute("type") || "")) return false;
+    if (el.closest(".sitenav, .ht-search, .maker, .ht-menu")) return false;   // not the search box or the maker's settings
+    return !!el.closest(".page");
+  }
+  function insertAt(el, text){
+    var a = el.selectionStart, b = el.selectionEnd;
+    if (typeof a !== "number"){ a = b = el.value.length; }
+    if (el.setRangeText) el.setRangeText(text, a, b, "end");
+    else el.value = el.value.slice(0, a) + text + el.value.slice(b);
+    el.dispatchEvent(new Event("input", { bubbles:true }));
+  }
+  function padKey(k){
+    var el = padFor;
+    if (!el) return;
+    if (k === "done"){ el.blur(); hidePad(); return; }
+    if (k === "back"){
+      var a = el.selectionStart, b = el.selectionEnd;
+      if (a === b && a > 0) el.setSelectionRange(a - 1, a);
+      insertAt(el, ""); return;
+    }
+    if (k === "left" || k === "right"){
+      var p = Math.max(0, Math.min(el.value.length, (el.selectionStart || 0) + (k === "left" ? -1 : 1)));
+      el.setSelectionRange(p, p); return;
+    }
+    insertAt(el, k === "space" ? " " : k);
+  }
+  function placePad(){
+    if (!padEl) return;
+    var vv = window.visualViewport, bottom = 0;
+    if (vv) bottom = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));   // sit just above the phone's keyboard
+    padEl.style.bottom = bottom + "px";
+  }
+  function showPad(el){
+    if (!padWanted()) return;
+    clearTimeout(padHide);
+    padFor = el;
+    if (!padEl){
+      padEl = document.createElement("div");
+      padEl.className = "ht-pad"; padEl.setAttribute("role", "toolbar"); padEl.setAttribute("aria-label", "Math keys");
+      document.body.appendChild(padEl);
+      // keep the box focused (and the phone keyboard open) when a key is pressed
+      padEl.addEventListener("pointerdown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
+      padEl.addEventListener("mousedown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
+      padEl.addEventListener("click", function(e){ var b = e.target.closest("button"); if (b) padKey(b.getAttribute("data-k")); });
+      if (window.visualViewport){ window.visualViewport.addEventListener("resize", placePad); window.visualViewport.addEventListener("scroll", placePad); }
+    }
+    var keys = (PAD[page] || "+ − × ÷ / ( ) . = ,").split(" ");
+    var label = { space:"space", "^":"xⁿ", "²":"x²" };
+    padEl.innerHTML = keys.map(function(k){
+      return '<button type="button" data-k="' + esc(k) + '"' + (k === "space" ? ' class="wide"' : "") + ' aria-label="' + esc(k) + '">'
+        + esc(label[k] || k) + "</button>";
+    }).join("") +
+      '<button type="button" data-k="left" aria-label="Move left">←</button>' +
+      '<button type="button" data-k="right" aria-label="Move right">→</button>' +
+      '<button type="button" data-k="back" aria-label="Delete">⌫</button>' +
+      '<button type="button" data-k="done" class="done" aria-label="Done">Done</button>';
+    padEl.hidden = false;
+    root.classList.add("ht-padding");
+    placePad();
+  }
+  function hidePad(){
+    if (padEl) padEl.hidden = true;
+    root.classList.remove("ht-padding");
+    padFor = null;
+  }
+  function initPad(){
+    document.addEventListener("focusin", safe(function(e){ if (padTarget(e.target)) showPad(e.target); }));
+    document.addEventListener("focusout", safe(function(e){
+      if (e.target === padFor){ clearTimeout(padHide); padHide = setTimeout(function(){ if (document.activeElement !== padFor) hidePad(); }, 150); }
+    }));
+  }
+  function togglePad(){
+    S.keypad = !padWanted(); save(KEY, S);
+    if (!S.keypad) hidePad();
+    else { var a = document.activeElement; if (padTarget(a)) showPad(a); }
+    announce(S.keypad ? "Math keys on" : "Math keys off");
   }
 
   /* ===================== the bar: search, recent, text size, big screen, shortcuts ===================== */
@@ -376,7 +486,8 @@
   /* ===================== start ===================== */
   var main = safe(function(){
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
-    if (passive) return;                     // framed or embedded: nothing to add, nothing to save
+    if (page !== "tests.html") initPad();    // the math keys also help inside practice sets on a phone
+    if (passive) return;                     // framed or embedded: nothing else to add, nothing to save
     applySettings();
     watchTheme();
     document.addEventListener("keydown", safe(onKey));
@@ -394,7 +505,7 @@
     })();
   });
 
-  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, words:words };
+  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, words:words, togglePad:togglePad };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
   else main();
 })();
