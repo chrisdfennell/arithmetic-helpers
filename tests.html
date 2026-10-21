@@ -265,7 +265,12 @@
     { page:"ratios.html", name:"The Ratio Table" },
     { page:"pemdas.html", name:"The Order Stack" }, { page:"algebra.html", name:"The Balance Scale" },
     { page:"lines.html", name:"The Slope Grid" },
-    { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" }
+    { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" },
+    { page:"wordproblems.html", name:"The Story Problem" },
+    // not step-by-step helpers: each has its own checks (TOOLS below)
+    { page:"flashcards.html", name:"The Flash Cards", kind:"cards" },
+    { page:"reference.html", name:"Reference sheets", kind:"tool" }, { page:"results.html", name:"Class results", kind:"tool" },
+    { page:"keypad", name:"Math keys (tools.js)", kind:"tool" }
   ];
 
   /* problems with known answers: open the link, and every value must show in the answer */
@@ -300,7 +305,17 @@
     "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"]], ["mode=area&shape=circle&r=5&rd=r&pi=calc",[Fl(78.54),Fl(31.42)]],
                       ["mode=vol&shape=box&l=8&w=3&h=5",["120","158"]], ["mode=right&shape=hyp&a=3&b=4",["5"]],
                       ["mode=right&shape=leg&a=5&c=13",["12"]], ["mode=angle&shape=tri&a=50&b=60",["70"]],
-                      ["mode=angle&shape=poly&n=6",["720","120","60"]] ]
+                      ["mode=angle&shape=poly&n=6",["720","120","60"]] ],
+    "wordproblems.html":[ ["q=" + encodeURIComponent("Ana has 12 shells. That is 5 more than Ben has. How many shells does Ben have?"),["7"]],
+                          ["q=" + encodeURIComponent("Sam had 45 stickers. He gave away 17. How many stickers does he have left?"),["28"]],
+                          ["q=" + encodeURIComponent("A movie starts at 3:45 pm and lasts 95 minutes. When does it end?"),["~5:20"]],
+                          ["q=" + encodeURIComponent("There are 30 students in a class. 40% of them walk to school. How many students walk to school?"),["12"]],
+                          ["q=" + encodeURIComponent("Olivia buys a book for $7.45. She pays with a $10 bill. How much change does she get?"),["2.55"]],
+                          ["q=" + encodeURIComponent("Jake bought 3 packs of cards with 8 cards in each pack. He gave 5 cards to his sister. How many cards does he have now?"),["19"]],
+                          ["q=" + encodeURIComponent("Maria read 2/5 of a 60 page book. How many pages are left to read?"),["36","~pages"]],
+                          ["type=remainder&kind=up&a=73&b=9",["9"]], ["type=percent&kind=save&a=24&p=25",["6"]],
+                          ["type=fraction&kind=rest&a=60&f=2%2F5",["36"]], ["type=twostep&kind=shareleft&a=18&b=10&c=2",["4"]],
+                          ["type=time&b=135&c=1%3A20pm",["~11:05"]] ]
   };
 
   /* Check my answer: [link, what to type, expected verdict] */
@@ -324,7 +339,10 @@
     "lines.html":[ ["mode=slope&q=(1,2) (5,4)",["1/2"],"right"], ["mode=slope&q=(1,2) (5,4)",["0.5"],"right"],
                    ["mode=slope&q=(1,2) (5,4)",["2/4"],"simplify"], ["mode=slope&q=(1,2) (5,4)",["2"],"wrong"] ],
     "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"],"right"], ["mode=area&shape=rect&l=8&w=5",["26","40"],"wrong"],
-                      ["mode=area&shape=circle&r=5&rd=r",["25π","10π"],"right"] ]
+                      ["mode=area&shape=circle&r=5&rd=r",["25π","10π"],"right"] ],
+    "wordproblems.html":[ ["type=compare&a=7&b=12&v=1",["5"],"right"], ["type=compare&a=7&b=12&v=1",["5 shells"],"right"],
+                          ["type=compare&a=7&b=12&v=1",["19"],"wrong"], ["type=money&kind=one&a=7.45&pay=10",["$2.55"],"right"],
+                          ["type=money&kind=one&a=7.45&pay=10",["2.65"],"wrong"] ]
   };
 
   /* ===================== working out made problems here, independently ===================== */
@@ -343,8 +361,85 @@
   function cents(x){ return Math.round(x * 100 + 1e-9) / 100; }
   function isPrime(n){ if (n < 2) return false; for (var i = 2; i * i <= n; i++) if (n % i === 0) return false; return true; }
   function gcdN(a, b){ while (b){ var t = a % b; a = b; b = t; } return a; }
+  function factorsOf(n){ var out = ""; for (var d = 2; d <= n; d++) while (n % d === 0){ out += d; n /= d; } return out; }
+
+  // story problems: the answer's number, or its clock time / length of time in minutes
+  function storyClock(t){                      // "3:45pm", "15:45", "1:50 p.m." → minutes after midnight
+    var m = /(\d{1,2}):(\d\d)\s*([ap])?\.?\s*m?/i.exec(String(t)); if (!m) return NaN;
+    var h = Number(m[1]) % 12, ap = (m[3] || "").toLowerCase();
+    if (!ap) h = Number(m[1]);
+    else if (ap === "p") h += 12;
+    return h * 60 + Number(m[2]);
+  }
+  function storyMinutes(t){                    // "1 hour 35 minutes", "45 minutes", "2 hours"
+    var h = /(\d+)\s*hours?/i.exec(t), mi = /(\d+)\s*min/i.exec(t);
+    return h || mi ? (h ? Number(h[1]) * 60 : 0) + (mi ? Number(mi[1]) : 0) : NaN;
+  }
+  function firstNum(t){ var m = /-?\d+(\.\d+)?/.exec(String(t).replace(/[$,]/g, "")); return m ? Number(m[0]) : NaN; }
 
   var ORACLE = {
+    "wordproblems.html":function(p, a, ansText){
+      var o = P(p), g = function(k){ return o[k] === undefined || o[k] === "" ? null : Number(o[k]); };
+      var A = g("a"), B = g("b"), C = g("c"), D = g("d"), N = g("n"), pay = g("pay"), pc = g("p"), k = o.kind, want;
+      switch (o.type){
+        case "join": case "parts": want = C === null ? A + B : B === null ? C - A : C - B; break;
+        case "separate": want = C === null ? A - B : B === null ? A - C : B + C; break;
+        case "compare": want = C === null ? B - A : B === null ? A + C : B - C; break;
+        case "groups": case "array": case "times": want = C === null ? A * B : B === null ? C / A : C / B; break;
+        case "rate": want = N ? B / A * N : B / A; break;
+        case "money": want = k === "two" ? pay - A - B : k === "many" ? pay - N * A : pay - A; break;
+        case "time":
+          var st = o.a ? storyClock(o.a) : NaN, en = o.c ? storyClock(o.c) : NaN, len = B;
+          if (!o.c){ var got = storyClock(ansText), e = (st + len) % 1440; return got === e ? { ok:true } : { ok:false, msg:"expected the end time " + Math.floor(e / 60) + ":" + ("0" + e % 60).slice(-2) }; }
+          if (!o.a){ var got2 = storyClock(ansText), s0 = (en - len + 1440) % 1440; return got2 === s0 ? { ok:true } : { ok:false, msg:"expected the start time " + Math.floor(s0 / 60) + ":" + ("0" + s0 % 60).slice(-2) }; }
+          var dur = (en - st + 1440) % 1440, gotm = storyMinutes(ansText);
+          if (isNaN(gotm) && /:/.test(ansText)) gotm = storyClock(ansText.replace(/[ap]\.?m\.?/gi, "")) ;
+          return gotm === dur ? { ok:true } : { ok:false, msg:"expected " + dur + " minutes" };
+        case "fraction":
+          var fp = String(o.f || "").split("/"), F = Number(fp[0]) / Number(fp[1]);
+          want = k === "whole" ? C / F : k === "rest" ? A - A * F : A * F; break;
+        case "percent": want = k === "off" ? A - A * pc / 100 : A * pc / 100; break;
+        case "twostep":
+          if (k === "addsub"){ var ops = o.ops || "+-", r1 = ops[0] === "-" ? A - B : A + B; want = ops[1] === "-" ? r1 - C : r1 + C; }
+          else if (k === "timestotal") want = A + A * B;
+          else if (k === "groupsplus") want = A * B + C;
+          else if (k === "groupsless") want = A * B - C;
+          else if (k === "multi") want = A * B + (C || 0) - (D || 0);
+          else if (k === "comparetotal") want = A + A + B;
+          else if (k === "shareleft") want = (A - B) / C;
+          else return { skip:true };
+          break;
+        case "remainder": var q = Math.floor(A / B), r = A % B; want = k === "up" ? q + (r ? 1 : 0) : k === "down" ? q : r; break;
+        default: return { skip:true };
+      }
+      if (isNaN(want)) return { skip:true };
+      var n = firstNum(ansText);
+      return Math.abs(n - want) < 0.005 ? { ok:true } : { ok:false, msg:"expected " + (Math.round(want * 100) / 100) };
+    },
+    "flashcards.html":function(p, a, ansText){
+      var c = (P(p).card || "").split(":"), n = function(i){ return Number(c[i]); };
+      switch (c[0]){
+        case "m": return need(a, [X(String(n(1) * n(2)))]);
+        case "d": return need(a, [X(num(c[1] + "/" + c[2]))]);
+        case "a": return need(a, [X(String(n(1) + n(2)))]);
+        case "s": return need(a, [X(String(n(1) - n(2)))]);
+        case "sq": return need(a, [X(String(n(1) * n(1)))]);
+        case "rt": return need(a, [X(String(n(1)))]);
+        case "cu": return need(a, [X(String(n(1) * n(1) * n(1)))]);
+        case "f":
+          var fr = num(c[1]), way = c[2];
+          if (way === "fd") return need(a, [/^[25]*$/.test(String(factorsOf(Number(c[1].split("/")[1])))) ? X(fr) : Fl(F(fr), 0.001)]);
+          if (way === "fp"){                       // 33⅓% : the one-character fractions read as " 1/3"
+            var VF = { "½":"1/2", "⅓":"1/3", "⅔":"2/3", "¼":"1/4", "¾":"3/4", "⅕":"1/5", "⅖":"2/5", "⅗":"3/5", "⅘":"4/5", "⅙":"1/6", "⅚":"5/6", "⅛":"1/8", "⅜":"3/8", "⅝":"5/8", "⅞":"7/8" };
+            return need(tokens(ansText.replace(/[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/g, function(ch){ return " " + VF[ch]; })), [Fl(F(fr) * 100, 0.001)]);
+          }
+          return need(a, [X(fr)]);                 // df, pf: back to the fraction
+        case "w":
+          var sq2 = function(x){ return String(x).toLowerCase().replace(/[\s-]+/g, " ").trim(); };
+          return sq2(ansText) === sq2(c.slice(1).join(":")) ? { ok:true } : { skip:true };
+      }
+      return { skip:true };
+    },
     "addition.html":function(p, a){
       var terms = P(p).q.split("+").map(num);
       return need(a, [X(terms.reduce(add))]);
@@ -877,8 +972,15 @@
       var sample = depth === "quick" ? all.filter(function(_, i){ return i % 2 === 0; }) : all;
       return sample.reduce(function(chain, it){
         return chain.then(function(){
-          var link = T.page + "?" + withPractice(it.pr.params, "all");
+          var link = T.page + "?" + (T.kind === "cards" ? it.pr.params : withPractice(it.pr.params, "all"));
           return load(link).then(function(fr){
+            if (T.kind === "cards"){
+              var front = cardFront(docOf(fr)), ok = it.pr.text && sameFront(front, it.pr.text.replace(/^Which math word means:.*$/, front));
+              drop(fr);
+              if (ok){ stats.lp++; pass(); } else { stats.lf++; fail(T.page, "link", "the link shows the card “" + front + "”, the problem maker said “" + it.pr.text + "”", link); }
+              score(T.page, "links", stats.lp, stats.lf);
+              return;
+            }
             var text = answerText(docOf(fr)), want = tokens(it.pr.answer || ""), got = tokens(text);
             drop(fr);
             var miss = want.filter(function(w){ return !w.base && !has(got, w.exact && !w.approx ? { exact:w.exact } : { f:w.f, loose:0.002 }); });
@@ -899,12 +1001,177 @@
     }, function(e){ fail(T.page, "made problems", e.message); cell(T.page, "made", '<span class="bad">no reply</span>'); });
   }
 
+  /* ===================== the flash cards: one card at a time, in Quiz ===================== */
+  var CARD_CHECKS = [
+    ["deck=times&t=7&card=m:7:8&mode=quiz", "7 × 8", "56", "right"], ["deck=times&t=7&card=m:7:8&mode=quiz", "7 × 8", "54", "wrong"],
+    ["deck=div&t=6&card=d:42:6&mode=quiz", "42 ÷ 6", "7", "right"], ["deck=sq&sq=12&card=sq:12&mode=quiz", "12²", "144", "right"],
+    ["deck=rt&sq=12&card=rt:9&mode=quiz", "√81", "9", "right"], ["deck=fdp&way=to&card=f:3/4:fd&mode=quiz", "3/4", ".75", "right"],
+    ["deck=fdp&way=to&card=f:3/4:fd&mode=quiz", "3/4", "75%", "form"], ["deck=fdp&way=to&card=f:1/3:fp&mode=quiz", "1/3", "33 1/3", "right"],
+    ["deck=fdp&way=to&card=f:1/3:fp&mode=quiz", "1/3", "30", "wrong"], ["deck=add&within=20&card=a:8:5&mode=quiz", "8 + 5", "13", "right"]
+  ];
+  function cardFront(d){
+    var t = function(el){                       // stacked fractions back into a/b
+      if (!el) return "";
+      var c = el.cloneNode(true);
+      [].forEach.call(c.querySelectorAll(".fr"), function(f){ var nu = f.querySelector(".nu"), de = f.querySelector(".de"); if (nu && de) f.textContent = nu.textContent + "/" + de.textContent; });
+      return c.textContent;
+    };
+    return (t(d.getElementById("qQ")) + " " + t(d.getElementById("qSub"))).replace(/\s+/g, " ").trim();
+  }
+  function sameFront(a, b){ var sq = function(x){ return String(x).replace(/[\s=]/g, "").replace(/[−–]/g, "-"); }; return sq(a).indexOf(sq(b)) >= 0 || sq(b).indexOf(sq(a)) >= 0; }
+  function smokeCards(T){
+    return load(T.page + "?mode=quiz").then(function(fr){
+      var d = docOf(fr), probs = [];
+      if (!d.querySelector(".sitenav")) probs.push("no nav bar");
+      ["tab-study", "tab-quiz", "tab-speed", "tab-learn", "qIn", "qGo", "qFb"].forEach(function(id){ if (!d.getElementById(id)) probs.push("no #" + id); });
+      if (!cardFront(d)) probs.push("no card showing");
+      if (fr.errs.length) probs.push("script error: " + fr.errs[0]);
+      drop(fr);
+      if (probs.length){ fail(T.page, "loads", probs.join("; "), T.page); score(T.page, "load", 0, 1); } else { pass(); score(T.page, "load", 1, 0); }
+    });
+  }
+  function cardRun(T){
+    var p = 0, f = 0, kp = 0, kf = 0;
+    return CARD_CHECKS.reduce(function(chain, c){
+      return chain.then(function(){
+        var link = T.page + "?" + c[0];
+        return load(link).then(function(fr){
+          var d = docOf(fr), front = cardFront(d);
+          // known: the link opens on that card
+          if (sameFront(front, c[1])){ kp++; pass(); } else { kf++; fail(T.page, "known card", c[0] + ": the card shows “" + front + "”, expected “" + c[1] + "”", link); }
+          score(T.page, "known", kp, kf);
+          var inp = d.getElementById("qIn");
+          inp.value = c[2]; inp.dispatchEvent(new Event("input", { bubbles:true }));
+          d.getElementById("qGo").click();
+          return new Promise(function(ok){ setTimeout(ok, 150); }).then(function(){
+            var msg = d.getElementById("qFb").textContent.replace(/\s+/g, " ").trim();
+            var got = /^Almost/.test(msg) ? "form" : /Right/.test(msg) ? "right" : /Not quite|answer is/i.test(msg) ? "wrong" : "unclear";
+            drop(fr);
+            if (got === c[3]){ p++; pass(); } else { f++; fail(T.page, "check my answer", c[1] + ": typed “" + c[2] + "”, expected " + c[3] + ", got " + got + (msg ? " (“" + msg.slice(0, 100) + "”)" : ""), link); }
+            score(T.page, "check", p, f);
+          });
+        }, function(e){ f++; fail(T.page, "check my answer", e.message, link); });
+      });
+    }, Promise.resolve());
+  }
+
+  /* ===================== the tools: reference sheets, class results, the math keys ===================== */
+  function linksOn(T, d){                       // every page this one links to must be there
+    var seen = {}, list = [];
+    [].forEach.call(d.querySelectorAll("a[href]"), function(a){
+      var h = a.getAttribute("href");
+      if (!/^[a-z]+\.html/i.test(h)) return;
+      h = h.split(/[?#]/)[0];
+      if (!seen[h]){ seen[h] = 1; list.push(h); }
+    });
+    var lp = 0, lf = 0;
+    return Promise.all(list.map(function(h){
+      return fetch(h, { method:"HEAD", cache:"no-store" }).then(function(r){
+        if (r.ok){ lp++; pass(); } else { lf++; fail(T.page, "link", h + " answered " + r.status, h); }
+      }, function(e){ lf++; fail(T.page, "link", h + ": " + e.message, h); });
+    })).then(function(){ score(T.page, "links", lp, lf, list.length + " pages"); });
+  }
+  function settle(ms){ return new Promise(function(ok){ setTimeout(ok, ms); }); }
+  var TOOLS = {
+    "reference.html":function(T){
+      return load(T.page + "#times").then(function(fr){
+        var d = docOf(fr), probs = [];
+        if (!d.querySelector(".sitenav")) probs.push("no nav bar");
+        var sheets = d.querySelectorAll("article.sheet").length;
+        if (sheets < 13) probs.push("only " + sheets + " sheets");
+        if (fr.errs.length) probs.push("script error: " + fr.errs[0]);
+        if (probs.length){ fail(T.page, "loads", probs.join("; "), T.page); score(T.page, "load", 0, 1); } else { pass(); score(T.page, "load", 1, 0); }
+        // the times table, every square of it
+        var kp = 0, kf = 0, tt = d.querySelector("#sheet-times table.tt") || d.querySelector("table.tt:not(.blank)");
+        if (!tt){ kf++; fail(T.page, "known answer", "no times table on the times sheet", T.page + "#times"); }
+        else {
+          var rowsT = [].slice.call(tt.querySelectorAll("tr")).filter(function(r){ return r.querySelector("td"); }), bad = [];
+          rowsT.forEach(function(r){
+            var cells = [].map.call(r.querySelectorAll("th, td"), function(c){ return c.textContent.trim(); }), a = Number(cells[0]);
+            cells.slice(1).forEach(function(v, j){ if (Number(v) !== a * (j + 1)) bad.push(a + "×" + (j + 1) + " shows " + v); });
+          });
+          if (rowsT.length !== 12) bad.push(rowsT.length + " rows");
+          if (bad.length){ kf++; fail(T.page, "known answer", "times table: " + bad.slice(0, 4).join(", "), T.page + "#times"); } else { kp++; pass(); }
+        }
+        // a few values from the other sheets
+        var text = d.body.textContent.replace(/\s+/g, "");      // squares are superscripts: "πr2"
+        [["the area of a circle", /A=πr[2²]/], ["Pythagoras", /a[2²]\+b[2²]=c[2²]/], ["3/8 as a decimal", /0\.375/], ["√2", /1\.414/],
+         ["the triangle's angles", /180°/], ["a mile in kilometers", /1\.609/]].forEach(function(w){
+          if (w[1].test(text)){ kp++; pass(); } else { kf++; fail(T.page, "known answer", "can’t find " + w[0], T.page); }
+        });
+        score(T.page, "known", kp, kf);
+        return linksOn(T, d).then(function(){ drop(fr); });
+      });
+    },
+    "results.html":function(T){
+      return load(T.page).then(function(fr){
+        var d = docOf(fr), w = fr.f.contentWindow, probs = [];
+        if (!d.querySelector(".sitenav")) probs.push("no nav bar");
+        if (!w.__results) probs.push("no results reader");
+        if (fr.errs.length) probs.push("script error: " + fr.errs[0]);
+        if (probs.length){ fail(T.page, "loads", probs.join("; "), T.page); score(T.page, "load", 0, 1); drop(fr); return; }
+        pass(); score(T.page, "load", 1, 0);
+        var kp = 0, kf = 0, line = d.getElementById("exLine").textContent.trim();
+        function expect(what, l, status){
+          var r = w.__results.readLine(l), got = r && r.status;
+          if (got === status){ kp++; pass(); } else { kf++; fail(T.page, "known answer", what + ": expected " + status + ", got " + got, T.page); }
+        }
+        expect("a handed-in line", line, "ok");
+        expect("a changed score", line.replace(/(\d+) of (\d+) right first time/, function(m, a, n){ return (Number(a) + 1) + " of " + n + " right first time"; }), "bad");
+        expect("a changed name", line.replace(/^[^·]+·/, "Someone Else ·"), "bad");
+        expect("a changed mark", line.replace(/1([✓~✗–])/, function(m, k){ return "1" + (k === "✓" ? "✗" : "✓"); }), "bad");
+        // the example class: everyone read, the edited line caught
+        d.getElementById("exBtn").click();
+        return settle(400).then(function(){
+          var out = d.getElementById("out"), t = out ? out.textContent : "";
+          if (out && !out.hidden && /edited/.test(t)){ kp++; pass(); } else { kf++; fail(T.page, "known answer", "the example class didn’t show, or didn’t catch the edited line", T.page); }
+          score(T.page, "known", kp, kf);
+          return linksOn(T, d).then(function(){ drop(fr); });
+        });
+      });
+    },
+    "keypad":function(T){
+      // the math keys come up on a phone; here they're switched on in the settings for the test (put back afterwards)
+      var st = {}; try { st = JSON.parse(localStorage.getItem("helpers-settings") || "{}") || {}; } catch (e){}
+      st.keypad = true; try { localStorage.setItem("helpers-settings", JSON.stringify(st)); } catch (e){}
+      var link = "pemdas.html?q=" + encodeURIComponent("3 + 4") + "&practice=check";
+      return load(link).then(function(fr){
+        var d = docOf(fr), kp = 0, kf = 0;
+        var inp = [].filter.call(d.querySelectorAll(".page input[type=text], .page input:not([type])"), function(i){ return i.offsetParent && !i.closest(".maker, .sitenav, .ht-search"); })[0];
+        if (!inp){ fail(T.page, "loads", "no answer box on " + link, link); score(T.page, "load", 0, 1); drop(fr); return; }
+        inp.focus();
+        return settle(100).then(function(){
+          var pad = d.querySelector(".ht-pad");
+          if (!pad || pad.hidden){ fail(T.page, "loads", "the math keys didn’t come up", link); score(T.page, "load", 0, 1); drop(fr); return; }
+          pass(); score(T.page, "load", 1, 0);
+          var key = function(k){ var b = pad.querySelector('[data-k="' + k + '"]'); if (b) b.click(); return !!b; };
+          inp.value = "3"; inp.setSelectionRange(1, 1);
+          var steps = [["×", "3×"], ["(", "3×("], ["back", "3×"], ["left", "3×"], ["÷", "3÷×"]], bad = [];
+          steps.forEach(function(s){
+            if (!key(s[0])) bad.push("no " + s[0] + " key");
+            else if (inp.value !== s[1]) bad.push("after " + s[0] + " the box says “" + inp.value + "”, expected “" + s[1] + "”");
+          });
+          if (d.activeElement !== inp) bad.push("the answer box lost focus");
+          if (bad.length){ kf++; fail(T.page, "known answer", bad.join("; "), link); } else { kp++; pass(); }
+          cell(T.page, "links", '<span class="na">—</span>');
+          key("done");
+          return settle(200).then(function(){
+            if (pad.hidden){ kp++; pass(); } else { kf++; fail(T.page, "known answer", "Done didn’t put the keys away", link); }
+            score(T.page, "known", kp, kf);
+            drop(fr);
+          });
+        });
+      });
+    }
+  };
+
   /* ===================== running everything ===================== */
   var chosen = {};
   PAGES.forEach(function(T){ chosen[T.page] = true; });
   function rows(){
     $("rows").innerHTML = PAGES.map(function(T){
-      return '<tr data-page="' + T.page + '"><td><a href="' + T.page + '">' + esc(T.name) + '</a><br><span class="na">' + T.page + "</span></td>"
+      var href = /\.html$/.test(T.page) ? T.page : "tools.js";
+      return '<tr data-page="' + T.page + '"><td><a href="' + href + '">' + esc(T.name) + '</a><br><span class="na">' + T.page + "</span></td>"
         + ["load", "known", "check", "made", "links"].map(function(c){ return '<td class="n" data-col="' + c + '"><span class="na">—</span></td>'; }).join("") + "</tr>";
     }).join("");
     $("pick").innerHTML = PAGES.map(function(T){
@@ -931,6 +1198,11 @@
     return list.reduce(function(chain, T){
       return chain.then(function(){
         ["load", "known", "check", "made", "links"].forEach(function(c){ cell(T.page, c, '<span class="busy">…</span>'); });
+        if (T.kind === "tool") return TOOLS[T.page](T).then(function(){
+          ["check", "made"].forEach(function(c){ cell(T.page, c, '<span class="na">—</span>'); });
+        }, function(e){ fail(T.page, "loads", e.message, T.page); cell(T.page, "load", '<span class="bad">failed</span>'); });
+        if (T.kind === "cards") return smokeCards(T).then(function(){ return cardRun(T); }).then(function(){ return made(T); },
+          function(e){ fail(T.page, "loads", e.message, T.page); cell(T.page, "load", '<span class="bad">failed</span>'); });
         return smoke(T).then(function(state){
           if (state === "missing"){ ["load", "known", "check", "made", "links"].forEach(function(c){ cell(T.page, c, '<span class="na">page not found</span>'); }); return; }
           return known(T).then(function(){ return checks(T); }).then(function(){ return made(T); });
@@ -956,7 +1228,7 @@
   // ?pages=ratios,stats runs just those
   var only = /[?&]pages=([^&]+)/.exec(location.search);
   if (only){
-    var want = decodeURIComponent(only[1]).split(",").map(function(x){ return x.replace(/\.html$/, "") + ".html"; });
+    var want = decodeURIComponent(only[1]).split(",").map(function(x){ return x === "keypad" ? x : x.replace(/\.html$/, "") + ".html"; });
     PAGES.forEach(function(T){ chosen[T.page] = want.indexOf(T.page) >= 0; });
     rows();
   }
