@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Product Ladder</title>
 <script src="nav.js" defer></script>
@@ -63,6 +64,8 @@
   .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
     box-shadow:0 1px 3px rgba(0,0,0,.12)}
   .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  .modes.small button{font-size:13px;padding:6px 12px}
+  .practice .modes,.maker .modes{flex-wrap:wrap}
 
   .entry{display:flex;align-items:center;gap:14px;flex-wrap:wrap;min-height:74px}
   .entry.hide{display:none}
@@ -272,6 +275,65 @@
     border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
   .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
 
+  /* ---- the problem maker ---- */
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--key);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  @media (max-width:480px){.maker > summary span{display:none}}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;
+    padding:4px 15px 15px}
+  @media (max-width:620px){.maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px}}
+  .maker-body .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .maker-body .modes{justify-self:start}
+  .mrow{display:contents}
+  .mrow[hidden]{display:none}
+  .mrow.off .lbl,.mrow.off .modes{opacity:.45}
+  .toggles{display:flex;gap:6px;flex-wrap:wrap}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px}
+  .tog b{font-family:var(--f-mono);font-weight:600;font-size:15px;line-height:1}
+  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .tog[aria-pressed="true"] b{color:var(--key)}
+  .tog:hover{border-color:var(--key-line)}
+  .maker-go{grid-column:1 / -1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+  .go:hover{filter:brightness(1.08)}
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  /* ---- check my answer ---- */
+  .check{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);
+    padding:16px 20px 18px;display:flex;flex-direction:column;gap:12px}
+  .check[hidden]{display:none}
+  .check-head{display:flex;align-items:baseline;gap:4px 14px;flex-wrap:wrap}
+  .check-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .check-head span{font-size:13.5px;color:var(--ink-3)}
+  .check-row{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap;margin:0}
+  .check-row .dec-in{width:9ch;max-width:100%}
+  .check-tip{margin:0;font-size:13px;color:var(--ink-3)}
+  .check-fb{font-size:15.5px;font-weight:600;color:var(--ink)}
+  .check-fb:empty{display:none}
+  .check-fb.ok{color:var(--alt)}
+  .check-fb.no{color:var(--warm)}
+  .check-fb.near{color:var(--key)}
+  .check-fb .why{display:block;margin-top:3px;font-size:14px;font-weight:400;color:var(--ink-2)}
+  .check-fb .why b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .check-more{display:flex;gap:8px;flex-wrap:wrap}
+  .check-more[hidden]{display:none}
+  .tbtn{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:transparent;
+    border:1.5px solid var(--key);color:var(--key);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .tbtn:hover{background:var(--key);color:var(--surface)}
+  .page.checking #board,.page.checking .answer{display:none}
+
   @media print{
     :root:root{
       --paper:#fff; --surface:#fff; --surface-2:#EFF0F4;
@@ -287,7 +349,7 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.examples,.modes,.footnote,.stepper,#statusLine{display:none !important}
+    .theme-btn,.examples,.modes,.footnote,.stepper,#statusLine,.maker,.check{display:none !important}
 
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px}
@@ -399,6 +461,44 @@
       </div>
     </div>
 
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body">
+        <div class="mrow" data-for="dec" data-dig>
+          <span class="lbl">First factor</span>
+          <div class="modes small" id="gA" role="group" aria-label="Digits in the first factor"></div>
+        </div>
+        <div class="mrow" data-for="dec" data-dig>
+          <span class="lbl">Second factor</span>
+          <div class="modes small" id="gB" role="group" aria-label="Digits in the second factor"></div>
+        </div>
+        <div class="mrow" data-for="dec" data-dig>
+          <span class="lbl">Decimal places</span>
+          <div class="modes small" id="gP" role="group" aria-label="Decimal places in the two factors together"></div>
+        </div>
+        <div class="mrow" data-for="dec">
+          <span class="lbl">Extras</span>
+          <div class="toggles">
+            <button type="button" class="tog" id="gTables"><b>12</b> Times tables only</button>
+          </div>
+        </div>
+        <div class="mrow" data-for="frac">
+          <span class="lbl">Fractions</span>
+          <div class="modes small" id="gKind" role="group" aria-label="Proper fractions or mixed numbers"></div>
+        </div>
+        <div class="mrow" data-for="frac">
+          <span class="lbl">Extras</span>
+          <div class="toggles">
+            <button type="button" class="tog" id="gCancel"><b>&#8600;</b> Can cross-cancel</button>
+          </div>
+        </div>
+        <div class="maker-go">
+          <button type="button" class="go" id="genBtn">New problem</button>
+          <span class="msg" id="genMsg"></span>
+        </div>
+      </div>
+    </details>
+
     <div class="examples">
       <span class="lbl">Try</span>
       <span id="chips"></span>
@@ -406,12 +506,33 @@
         <div class="modes" role="group" aria-label="Practice mode">
           <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
           <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
         </div>
       </span>
     </div>
   </section>
 
   <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <section class="check" id="checkBox" hidden aria-labelledby="checkTitle">
+    <div class="check-head">
+      <h2 id="checkTitle">Your answer</h2>
+      <span id="checkNote"></span>
+    </div>
+    <form class="check-row" id="checkForm" novalidate>
+      <div class="numfield">
+        <label for="ansIn">Product</label>
+        <input class="dec-in" id="ansIn" type="text" inputmode="text" autocomplete="off" spellcheck="false">
+      </div>
+      <button type="submit" class="go" id="checkGo">Check</button>
+    </form>
+    <p class="check-tip" id="checkTip"></p>
+    <div class="check-fb" id="checkFb" aria-live="polite"></div>
+    <div class="check-more" id="checkMore" hidden>
+      <button type="button" class="tbtn" id="hintBtn">Show a hint</button>
+      <button type="button" class="tbtn" id="showBtn">Show me the work</button>
+    </div>
+  </section>
 
   <div class="board" id="board">
     <section class="panel">
@@ -436,16 +557,31 @@
 
   <div class="footnote">
     <button class="print" type="button" id="printBtn">Print this work</button>
+    <button class="print" type="button" id="copyBtn">Copy link</button>
     <span>The decimal point goes in last &mdash; and it never changes which digits you get, only where the point lands.</span>
   </div>
 </div>
 
 <script>
+/* URL parameters
+   Open the page with a problem already in it, e.g. multiplication.html?q=2.4*1.3
+     q=2.4*1.3        the problem: two numbers with *, ×, x, X or · between them. Whole numbers and
+                      decimals open in Decimals mode.
+     q=2 1/2*3/4      if either side is a fraction (3/4) or a mixed number (2 1/2 — a space between the
+                      whole number and the fraction; "+" in a URL is a space too), it opens in Fractions
+                      mode. A whole number beside a fraction is fine: q=3*2/5.
+     practice=all|step|check   Show all work | One step at a time | Check my answer.
+   A problem in the URL wins over the one remembered on this device; a value that doesn't make sense
+   shows the page's usual notice. While you work, the address bar is kept in step with the problem
+   (history.replaceState — problem and practice only, never the theme), so "Copy link" shares it.
+   The worksheet page also talks to this page with postMessage: see "worksheet API" near the end. */
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
   var lastSteps = 0;
-  var S = { mode:"dec", a:"2.4", b:"1.3", frac:[[0,2,3],[0,3,4]], stepMode:false, step:1 };
+  var S = { mode:"dec", a:"2.4", b:"1.3", frac:[[0,2,3],[0,3,4]], stepMode:false, step:1,
+            practice:"all", revealed:false, keepCheck:false,
+            gen:{ a:2, b:2, places:0, tables:false, kind:"proper", cancel:false } };
 
   /* ===================== helpers ===================== */
   function parseNum(raw){
@@ -862,7 +998,8 @@
         esc(fracTxt(simp.n, simp.d)));
     }
 
-    var final = needsMixedOut ? mixedHTML(w, rest, simp.d) : fracHTML(simp.n, simp.d);
+    var final = needsMixedOut ? mixedHTML(w, rest, simp.d)
+              : (simp.d === 1 ? '<span class="mx">' + simp.n + "</span>" : fracHTML(simp.n, simp.d));
     var dec = simp.n / simp.d;
     band('<span class="k">Product</span><span class="v">' + final + "</span>", [
       "As a decimal: <b>" + trimNum(dec) + "</b>",
@@ -1035,7 +1172,8 @@
     $("statusLine").textContent = el.textContent;
     return 0;
   }
-  function render(){
+  function render(){ renderCore(); afterRender(); }
+  function renderCore(){
     var total = (S.mode === "dec") ? renderDecimals() : renderFractions();
     if (!total) return;
     lastSteps = total;
@@ -1089,7 +1227,7 @@
     });
     $("decEntry").classList.toggle("hide", m !== "dec");
     $("fracEntry").classList.toggle("hide", m !== "frac");
-    buildChips(); render(); save();
+    buildChips(); paintGen(); render(); save();
   }
   Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
     b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
@@ -1126,14 +1264,22 @@
     });
   }
 
-  function setStepMode(on){
-    S.stepMode = on; S.step = 1;
-    $("allBtn").setAttribute("aria-pressed", String(!on));
-    $("stepBtn").setAttribute("aria-pressed", String(on));
-    render(); save();
+  /* practice: show all work, one step at a time, or check my answer.
+     keep = the answer box stays open (a hint, or the work shown after a check) */
+  function paintPractice(){
+    $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
   }
-  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
-  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  function setPractice(p, keep){
+    S.practice = p; S.stepMode = (p === "step"); S.step = 1;
+    S.keepCheck = !!keep;
+    if (p === "check" && !keep) resetCheck();
+    paintPractice(); render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
@@ -1141,6 +1287,490 @@
     if (!S.stepMode || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
     if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
     if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+
+  /* ===================== exact values, for checking answers ===================== */
+  var B0 = BigInt(0), B1 = BigInt(1), B2 = BigInt(2), B5 = BigInt(5), B10 = BigInt(10);
+  function babs(x){ return x < B0 ? -x : x; }
+  function bigGcd(a, b){ a = babs(a); b = babs(b); while (b){ var t = a % b; a = b; b = t; } return a; }
+  function Rat(n, d){                          // an exact fraction n/d in lowest terms
+    n = BigInt(n); d = (d === undefined) ? B1 : BigInt(d);
+    if (d === B0) return null;
+    if (d < B0){ n = -n; d = -d; }
+    var g = bigGcd(n, d) || B1;
+    return { n:n / g, d:d / g };
+  }
+  function rAdd(a, b){ return Rat(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function rMul(a, b){ return Rat(a.n * b.n, a.d * b.d); }
+  function rDiv(a, b){ return b.n === B0 ? null : Rat(a.n * b.d, a.d * b.n); }
+  function rEq(a, b){ return !!a && !!b && a.n === b.n && a.d === b.d; }
+  function pow10(k){ var r = B1; for (var i = 0; i < k; i++) r *= B10; return r; }
+  function rShift(a, k){ return k >= 0 ? Rat(a.n * pow10(k), a.d) : Rat(a.n, a.d * pow10(-k)); }
+  function rRound(a, k){ var n = babs(a.n), N = (n * pow10(k) * B2 + a.d) / (a.d * B2); return a.n < B0 ? -N : N; }
+  function rTrunc(a, k){ var N = babs(a.n) * pow10(k) / a.d; return a.n < B0 ? -N : N; }
+  function endsShort(a){                       // a decimal that stops within 12 places?
+    var d = a.d, k2 = 0, k5 = 0;
+    while (d % B2 === B0){ d /= B2; k2++; }
+    while (d % B5 === B0){ d /= B5; k5++; }
+    return d === B1 && Math.max(k2, k5) <= 12;
+  }
+  /* What someone typed: 312, 3.12, .5, 15/8, 1 7/8, 0.(6), 0.6̅, 0.666…, 97 R 8 — commas and a
+     unicode minus are fine. Returns null when it isn't a number at all. */
+  function readAnswer(raw){
+    var s = String(raw == null ? "" : raw).replace(/[−‒–—﹣－]/g, "-")
+      .replace(/[   ]/g, " ").replace(/,/g, "").trim();
+    if (!s) return null;
+    var ell = /(\.\.\.|…)$/.test(s);
+    if (ell) s = s.replace(/(\.\.\.|…)$/, "").trim();
+    s = s.replace(/(\d)[̅̄]/g, "[$1]").replace(/\]\[/g, "").replace(/\[/g, "(").replace(/\]/g, ")")
+         .replace(/\s*\/\s*/g, "/").replace(/\s+/g, " ");
+    var m = /^(\d+) ?(?:r|rem|remainder)\.? ?(\d+)$/i.exec(s);
+    if (m) return { qr:true, q:BigInt(m[1]), r:BigInt(m[2]) };
+    var sg = B1;
+    if (/^[-+]/.test(s)){ if (s.charAt(0) === "-") sg = -B1; s = s.slice(1).trim(); }
+    function mk(i, f, form){
+      var sc = sg * BigInt((i || "0") + f);
+      return { form:form, places:f.length, scaled:sc, ell:ell, v:Rat(sc, pow10(f.length)) };
+    }
+    if ((m = /^(\d+)\.?$/.exec(s))) return mk(m[1], "", "int");
+    if ((m = /^(\d*)\.(\d+)$/.exec(s))) return mk(m[1], m[2], "dec");
+    if ((m = /^(\d*)\.(\d*)\((\d+)\)$/.exec(s))){         // 0.1(6): the bracketed digits repeat
+      var I = m[1] || "0", H = m[2], Rp = m[3];
+      return { form:"bar", v:Rat(sg * (BigInt(I + H + Rp) - BigInt(I + H)),
+                                 pow10(H.length) * (pow10(Rp.length) - B1)) };
+    }
+    if ((m = /^(?:(\d+) )?(\d+)\/(\d+)$/.exec(s))){
+      var w = BigInt(m[1] || "0"), n = BigInt(m[2]), d = BigInt(m[3]);
+      if (d === B0) return { bad:"zero" };
+      return { form: m[1] ? "mixed" : "frac", w:w, n:n, d:d, v:Rat(sg * (w * d + n), d),
+               simplest: m[1] ? (n > B0 && n < d && bigGcd(n, d) === B1) : (d !== B1 && bigGcd(n, d) === B1) };
+    }
+    return null;
+  }
+  /* exact | ok (rounded right, or the digits with … after them) | trunc (cut off, not rounded)
+     | few (fewer than 2 places) | ends (rounded, but this answer stops) | no */
+  function compareAns(ans, V, ends){
+    if (!ans || !ans.v || !V) return "no";
+    if (rEq(ans.v, V)) return "exact";
+    if (ans.form !== "dec") return "no";
+    var k = ans.places, up = rRound(V, k) === ans.scaled, down = rTrunc(V, k) === ans.scaled;
+    if (!up && !down) return "no";
+    if (ends) return "ends";
+    if (k < 2) return "few";
+    return (up || ans.ell) ? "ok" : "trunc";
+  }
+  function nearValue(ans, C){                  // spotting a mistake: exactly C, or C to a few places
+    if (!ans || !ans.v || !C) return false;
+    if (rEq(ans.v, C)) return true;
+    return ans.form === "dec" && (rRound(C, ans.places) === ans.scaled || rTrunc(C, ans.places) === ans.scaled);
+  }
+  function pl(n){ return n === 1 ? "" : "s"; }
+  function tenTimes(k){ return ["", "10", "100", "1,000", "10,000"][Math.abs(k)] || "many"; }
+  /* a stacked fraction with inline styles only, for the answer box and the worksheet page */
+  function frIn(n, d){
+    return '<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;'
+      + 'line-height:1.1;margin:0 .12em;text-align:center"><span style="padding:0 .2em">' + n + "</span>"
+      + '<span style="padding:0 .2em;border-top:.09em solid currentColor">' + d + "</span></span>";
+  }
+  function mixIn(m){ return m[1] === 0 ? String(m[0]) : (m[0] ? m[0] + " " : "") + frIn(m[1], m[2]); }
+
+  /* ===================== the problem as plain data ===================== */
+  // {mode:"dec", a:"2.4", b:"1.3"}  or  {mode:"frac", frac:[[w,n,d],[w,n,d]]}
+  function curProblem(){
+    return S.mode === "dec" ? { mode:"dec", a:String(S.a), b:String(S.b) }
+                            : { mode:"frac", frac:[S.frac[0].slice(), S.frac[1].slice()] };
+  }
+  function opQ(m, any){                        // one side of q=…; a lone whole number keeps its /1
+    if (m[1] !== 0) return (m[0] ? m[0] + " " : "") + m[1] + "/" + m[2];
+    return any ? String(m[0]) : m[0] + "/1";
+  }
+  function qText(p){
+    if (p.mode === "dec") return String(p.a).trim() + "*" + String(p.b).trim();
+    var any = p.frac[0][1] !== 0 || p.frac[1][1] !== 0;
+    return opQ(p.frac[0], any) + "*" + opQ(p.frac[1], any);
+  }
+  function problemQuery(p){ return new URLSearchParams([["q", qText(p)]]).toString(); }
+  function problemText(p){
+    return p.mode === "dec" ? String(p.a).trim() + " × " + String(p.b).trim()
+                            : label(p.frac[0]) + " × " + label(p.frac[1]);
+  }
+  function problemHtml(p){
+    return p.mode === "dec" ? esc(problemText(p)) : mixIn(p.frac[0]) + " &times; " + mixIn(p.frac[1]);
+  }
+  /* the answer, worked out the same way the page does it — null when the page would show a notice */
+  function solveMul(p){
+    if (!p) return null;
+    if (p.mode === "dec"){
+      var a = parseNum(p.a), b = parseNum(p.b);
+      if (!a || !b || (a.i+a.f).length > 9 || (b.i+b.f).length > 6) return null;
+      var places = a.f.length + b.f.length, A = stripZeros(a.i + a.f), B = stripZeros(b.i + b.f);
+      var total = (BigInt(A) * BigInt(B)).toString(), shown = commas(placePoint(total, places));
+      return { mode:"dec", a:a, b:b, A:A, B:B, places:places, total:total,
+               v:Rat(BigInt(total), pow10(places)), ends:true, text:shown, html:esc(shown) };
+    }
+    var m1 = p.frac[0], m2 = p.frac[1];
+    if ([m1,m2].some(function(m){ return m.some(function(v){ return !isFinite(v); }); })) return null;
+    if (m1[2] === 0 || m2[2] === 0) return null;
+    if (m1[2] > 999 || m2[2] > 999 || m1[1] > 9999 || m2[1] > 9999) return null;
+    var fa = toImproper(m1), fb = toImproper(m2);
+    var v = Rat(BigInt(fa.n) * BigInt(fb.n), BigInt(fa.d) * BigInt(fb.d));
+    var n = Number(v.n), d = Number(v.d), w = Math.floor(n / d), r = n % d;
+    return { mode:"frac", m1:m1, m2:m2, a:fa, b:fb, v:v, ends:endsShort(v),
+             text: d === 1 ? String(n) : (n > d ? w + " " + r + "/" + d : n + "/" + d),
+             html: d === 1 ? String(n) : (n > d ? w + " " + frIn(r, d) : frIn(n, d)),
+             cancels: gcd(fa.n, fb.d) > 1 || gcd(fb.n, fa.d) > 1 };
+  }
+
+  /* ===================== check my answer ===================== */
+  function sizeAns(){ var el = $("ansIn"); el.style.width = Math.max(6, Math.min(16, el.value.length + 2)) + "ch"; }
+  function resetCheck(){
+    $("ansIn").value = ""; sizeAns();
+    var f = $("checkFb"); f.className = "check-fb"; f.innerHTML = "";
+    $("checkMore").hidden = true;
+    S.revealed = false;
+  }
+  function paintCheck(){
+    var valid = !!document.querySelector(".answer"), checking = S.practice === "check";
+    $("checkBox").hidden = !(valid && (checking || S.keepCheck));
+    document.querySelector(".page").classList.toggle("checking", valid && checking && !S.revealed);
+    $("checkNote").textContent = checking && !S.revealed ? "The work stays hidden until you check." : "";
+    $("checkTip").textContent = S.mode === "dec"
+      ? "Work it out on paper, then type the product — like 3.12."
+      : "Type a fraction like 3/8 or a mixed number like 1 1/2. A decimal works too.";
+  }
+  function say(kind, head, why, more){
+    var f = $("checkFb");
+    f.className = "check-fb " + kind;
+    f.innerHTML = head + (why ? '<span class="why">' + why + "</span>" : "");
+    $("checkMore").hidden = !more;
+  }
+  function reveal(){
+    S.revealed = true;
+    if (S.practice === "check") render(); else setPractice("all", true);
+  }
+  function correct(note){ say("ok", "✓ Correct!", note || "", false); reveal(); }
+  function checkNow(){
+    var sol = solveMul(curProblem());
+    if (!sol) return;
+    var raw = $("ansIn").value;
+    if (!raw.trim()) return say("plain", "Type your answer in the box first.", "", false);
+    var ans = readAnswer(raw);
+    if (ans && ans.bad) return say("no", "A fraction can’t have 0 on the bottom.", "", false);
+    if (!ans || ans.qr) return say("no", "I can’t read that as a number.",
+      "Try something like <b>3.12</b>, <b>3/8</b> or <b>1 1/2</b>.", false);
+    var c = compareAns(ans, sol.v, sol.ends);
+    var shownAs = "The work writes it as <b>" + esc(sol.text) + "</b>.";
+    if (c === "exact"){
+      if (ans.simplest === false) return say("near", "Right value — now simplify it.", simplifyWhy(ans), false);
+      var same = String(raw).replace(/[,\s]+/g, "") === sol.text.replace(/[,\s]+/g, "");
+      return correct(same ? "" : shownAs);
+    }
+    if (c === "ok") return correct("Rounded just right. Exactly, it’s <b>" + esc(sol.text) + "</b>.");
+    if (c === "trunc") return say("near", "So close — round the last digit.",
+      "The next digit is 5 or more, so the last one goes up. Or show the repeating part in brackets, like <b>0.(6)</b>.", true);
+    if (c === "few") return say("near", "Right so far — give at least 2 decimal places.", "", true);
+    if (c === "ends") return say("no", "Not quite — that’s been rounded.",
+      "This answer stops after a few decimal places, so write every digit.", true);
+    say("no", "Not quite — try again.", diagnoseMul(ans, sol) || "", true);
+  }
+  function simplifyWhy(ans){
+    if (ans.form === "frac" && ans.d === B1) return "A bottom number of 1 means whole ones — write it as a whole number.";
+    if (ans.form === "mixed" && ans.n >= ans.d) return "The fraction part is 1 or more — take the whole ones out of it.";
+    var g = bigGcd(ans.n, ans.d);
+    return "<b>" + ans.n + "</b> and <b>" + ans.d + "</b> can both be divided by <b>" + g + "</b>.";
+  }
+  /* the usual slips, worked out for this problem and compared with what was typed */
+  function diagnoseMul(ans, sol){
+    var V = sol.v, k, i;
+    if (sol.mode === "dec"){
+      var ra = Rat(BigInt(sol.a.i + sol.a.f), pow10(sol.a.f.length)),
+          rb = Rat(BigInt(sol.b.i + sol.b.f), pow10(sol.b.f.length));
+      if (nearValue(ans, rAdd(ra, rb)))
+        return "It looks like you <b>added</b> the numbers. For &times;, multiply — one rung for each digit "
+             + "of the second number, then add the rungs up.";
+      for (k = -8; k <= 8; k++){
+        if (!k || !rEq(ans.v, rShift(V, k))) continue;
+        return "The digits are right, but your answer is " + tenTimes(k) + " times too " + (k > 0 ? "big" : "small")
+          + " — the decimal point is in the wrong place. " + (sol.places
+            ? "<b>" + esc(numStr(sol.a)) + "</b> has <b>" + sol.a.f.length + "</b> decimal place" + pl(sol.a.f.length)
+              + " and <b>" + esc(numStr(sol.b)) + "</b> has <b>" + sol.b.f.length + "</b>, so count <b>" + sol.places
+              + "</b> place" + pl(sol.places) + " in from the right."
+            : "Neither number has a decimal point, so the answer is a whole number — check the zeros on the end.");
+      }
+      var P = buildProduct(sol.A, sol.B), parts = P.partials, A = BigInt(sol.A);
+      if (parts.length > 1){
+        var cands = [], none = B0, less = B0;
+        var allMsg = "It looks like the rungs didn’t shift over. Every rung after the first needs placeholder "
+                   + "zeros on the end — one for the tens digit, two for the hundreds digit — before you add.";
+        parts.forEach(function(p, idx){
+          none += A * BigInt(p.d);
+          less += A * BigInt(p.d) * pow10(Math.max(0, p.shift - 1));
+          if (!p.shift || !p.d) return;
+          cands.push({ v: BigInt(P.total) - A * BigInt(p.d) * (pow10(p.shift) - pow10(p.shift - 1)),
+            msg: "Check rung " + (idx + 1) + ": the <b>" + p.d + "</b> is in the " + placeWord(p.shift)
+               + " place, so that rung needs <b>" + p.shift + "</b> placeholder zero" + pl(p.shift)
+               + " on the end. It looks like one went missing." });
+        });
+        cands.push({ v:none, msg:allMsg }, { v:less, msg:allMsg });
+        for (i = 0; i < cands.length; i++){
+          var cv = Rat(cands[i].v, pow10(sol.places));
+          if (rEq(cv, V)) continue;
+          for (k = -8; k <= 8; k++) if (rEq(ans.v, rShift(cv, k))) return cands[i].msg;
+        }
+      }
+      return null;
+    }
+    var m1 = sol.m1, m2 = sol.m2, a = sol.a, b = sol.b;
+    var fa = Rat(BigInt(a.n), BigInt(a.d)), fb = Rat(BigInt(b.n), BigInt(b.d));
+    if ((m1[0] && m1[1]) || (m2[0] && m2[1])){          // a real mixed number in there
+      var f1 = Rat(BigInt(m1[1]), BigInt(m1[2])), f2 = Rat(BigInt(m2[1]), BigInt(m2[2])),
+          w1 = Rat(BigInt(m1[0])), w2 = Rat(BigInt(m2[0]));
+      var c = [rAdd(rMul(w1, w2), rMul(f1, f2)), rAdd(rAdd(w1, w2), rMul(f1, f2))];
+      if (!m2[1]) c.push(rAdd(rMul(w1, w2), f1));      // 1 1/4 × 3 → 3 1/4: only the wholes multiplied
+      if (!m1[1]) c.push(rAdd(rMul(w1, w2), f2));
+      if (c.some(function(x){ return !rEq(x, V) && nearValue(ans, x); })){
+        var mx = (m1[0] && m1[1]) ? m1 : m2, im = toImproper(mx);
+        return "It looks like the whole numbers and the fractions were multiplied separately. That doesn’t "
+          + "work for &times; — turn each mixed number into an improper fraction first (<b>" + label(mx) + " = "
+          + im.n + "/" + im.d + "</b>), then multiply straight across.";
+      }
+    }
+    if (nearValue(ans, rAdd(fa, fb)))
+      return "It looks like you <b>added</b> the fractions. For &times; there’s no adding — multiply the tops, "
+           + "then multiply the bottoms.";
+    if (a.d === b.d && !rEq(Rat(BigInt(a.n * b.n), BigInt(a.d)), V) && nearValue(ans, Rat(BigInt(a.n * b.n), BigInt(a.d))))
+      return "Multiply the bottom numbers too — <b>" + a.d + " × " + b.d + "</b> — not just the tops. "
+           + "Keeping the bottom the same is for adding.";
+    var L = a.d / gcd(a.d, b.d) * b.d, cd = Rat(BigInt(a.n * (L / a.d)) * BigInt(b.n * (L / b.d)), BigInt(L));
+    if (!rEq(cd, V) && nearValue(ans, cd))
+      return "No common denominator needed for &times;. Multiply the tops together and the bottoms together — "
+           + "straight across.";
+    var dv = rDiv(fa, fb);
+    if (dv && !rEq(dv, V) && nearValue(ans, dv))
+      return "That’s what you get by dividing (multiplying across the diagonals). For &times;, go straight "
+           + "across: top × top over bottom × bottom.";
+    return null;
+  }
+  $("checkForm").addEventListener("submit", function(e){ e.preventDefault(); checkNow(); });
+  $("ansIn").addEventListener("input", sizeAns);
+  $("hintBtn").addEventListener("click", function(){ setPractice("step", true); });
+  $("showBtn").addEventListener("click", reveal);
+
+  /* after every render: a new problem empties the answer box; the address bar follows along */
+  var lastKey = null;
+  function afterRender(){
+    var key = problemQuery(curProblem());
+    if (key !== lastKey){
+      if (lastKey !== null){ resetCheck(); S.keepCheck = false; }
+      lastKey = key;
+    }
+    syncURL();
+    paintCheck();
+  }
+
+  /* ===================== shareable links ===================== */
+  function syncURL(){
+    try{
+      var qs = problemQuery(curProblem()) + (S.practice !== "all" ? "&practice=" + S.practice : "");
+      if (location.search !== "?" + qs) history.replaceState(history.state, "", location.pathname + "?" + qs + location.hash);
+    }catch(e){}
+  }
+  function readOperand(s){
+    s = String(s).trim().replace(/\s+/g, " ").replace(/ ?\/ ?/g, "/");
+    var m;
+    if ((m = /^(\d+) (\d+)\/(\d+)$/.exec(s))) return { f:[+m[1], +m[2], +m[3]], frac:true };
+    if ((m = /^(\d+)\/(\d+)$/.exec(s))) return { f:[0, +m[1], +m[2]], frac:true };
+    if (/^\d+$/.test(s)) return { f:[+s, 0, 1], frac:false };
+    return { f:null, frac:false };
+  }
+  function readQ(q){                           // anything that isn't two fractions goes in as typed
+    q = String(q).trim();
+    var m = /^(.*?)\s*[*×xX·⋅]\s*(.*)$/.exec(q);
+    var L = m ? m[1] : q, R = m ? m[2] : "";
+    var a = readOperand(L), b = readOperand(R);
+    if (a.f && b.f && (a.frac || b.frac)) return { mode:"frac", frac:[a.f, b.f] };
+    return { mode:"dec", a:L.trim(), b:R.trim() };
+  }
+  function applyURL(){
+    var sp;
+    try { sp = new URLSearchParams(location.search); } catch(e){ return; }
+    var pr = sp.get("practice");
+    if (pr === "all" || pr === "step" || pr === "check"){ S.practice = pr; S.stepMode = pr === "step"; }
+    var q = sp.get("q");
+    if (q === null) return;
+    var p = readQ(q);
+    S.mode = p.mode;
+    if (p.mode === "dec"){ S.a = p.a; S.b = p.b; } else S.frac = p.frac;
+  }
+  var copyTimer = null;
+  $("copyBtn").addEventListener("click", function(){
+    var btn = $("copyBtn"), url = location.href;
+    function done(ok){
+      btn.textContent = ok ? "Link copied ✓" : "Copy the address bar instead";
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000);
+    }
+    function fallback(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = url; ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch(e){}
+      document.body.removeChild(ta);
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(url).then(function(){ done(true); }, fallback);
+    else fallback();
+  });
+
+  /* ===================== the problem maker ===================== */
+  function rint(lo, hi){ return lo + Math.floor(Math.random() * (hi - lo + 1)); }
+  function pick(v, list, def){ var n = Number(v); return (v !== null && v !== "" && list.indexOf(n) >= 0) ? n : def; }
+  function truthy(v){ return v === true || v === 1 || v === "1" || v === "true" || v === "on" || v === "yes"; }
+  function genOpts(o){                         // tidy maker / worksheet options; anything odd → defaults
+    o = (o && typeof o === "object") ? o : {};
+    return { mode: (o.mode === "fractions" || o.mode === "frac") ? "frac" : "dec",
+      a: pick(o.a, [1,2,3,4], 2), b: pick(o.b, [1,2,3], 2), places: pick(o.places, [0,1,2,3], 0),
+      tables: truthy(o.tables), kind: o.kind === "mixed" ? "mixed" : "proper", cancel: truthy(o.cancel) };
+  }
+  function makeNum(n, places){                 // n digits, `places` of them after the point
+    var s = String(n === 1 && !places ? rint(2, 9) : rint(1, 9));
+    for (var i = 1; i < n; i++) s += String(rint(0, 9));
+    if (places > 0 && s.charAt(n - 1) === "0") s = s.slice(0, n - 1) + rint(1, 9);
+    if (!places) return s;
+    if (places >= n) return "0." + s;
+    return s.slice(0, n - places) + "." + s.slice(n - places);
+  }
+  function makeDecMul(G){
+    if (G.tables) return { mode:"dec", a:String(rint(2, 12)), b:String(rint(2, 12)) };
+    var P = Math.min(G.places, G.a + G.b), pa = rint(Math.max(0, P - G.b), Math.min(P, G.a));
+    return { mode:"dec", a:makeNum(G.a, pa), b:makeNum(G.b, P - pa) };
+  }
+  function randFrac(){
+    for (;;){ var d = rint(2, 12), n = rint(1, d - 1); if (gcd(n, d) === 1) return [0, n, d]; }
+  }
+  function makeFracMul(G){
+    var f1 = randFrac(), f2 = randFrac();
+    if (G.kind === "mixed"){
+      f1[0] = rint(1, 4);
+      if (Math.random() < 0.5) f2[0] = rint(1, 3);
+      if (Math.random() < 0.3){ var t = f1; f1 = f2; f2 = t; }
+    }
+    return { mode:"frac", frac:[f1, f2] };
+  }
+  /* a problem the page can work, different from the ones in `seen` when possible */
+  function makeMul(G, seen){
+    var first = null, loose = null;
+    for (var t = 0; t < 600; t++){
+      var p = G.mode === "frac" ? makeFracMul(G) : makeDecMul(G), sol = solveMul(p);
+      if (!sol) continue;
+      if (!loose) loose = p;
+      if (G.mode === "frac" && G.cancel && !sol.cancels) continue;
+      if (!first) first = p;
+      var key = qText(p);
+      if (seen[key]) continue;
+      seen[key] = true;
+      return { p:p, exact:true };
+    }
+    if (first) return { p:first, exact:true };
+    return loose ? { p:loose, exact:false } : null;
+  }
+  function loadProblem(p){
+    S.step = 1;
+    if (p.mode === "dec"){
+      S.a = p.a; S.b = p.b;
+      $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn"));
+    } else {
+      S.frac = [p.frac[0].slice(), p.frac[1].slice()];
+      ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){ $(id).value = S.frac[Math.floor(i/3)][i%3]; });
+    }
+    if (S.mode !== p.mode) setMode(p.mode); else { render(); save(); }
+  }
+  function segs(host, values, text, key){
+    values.forEach(function(v){
+      var b = document.createElement("button");
+      b.type = "button"; b.setAttribute("data-v", String(v)); b.textContent = text(v);
+      b.addEventListener("click", function(){ S.gen[key] = v; paintGen(); save(); });
+      $(host).appendChild(b);
+    });
+  }
+  segs("gA", [1,2,3,4], function(v){ return v + " digit" + pl(v); }, "a");
+  segs("gB", [1,2,3], function(v){ return v + " digit" + pl(v); }, "b");
+  segs("gP", [0,1,2,3], function(v){ return v ? String(v) : "None"; }, "places");
+  segs("gKind", ["proper","mixed"], function(v){ return v === "proper" ? "Proper fractions" : "Mixed numbers"; }, "kind");
+  function paintGen(){
+    var G = S.gen;
+    [["gA","a"],["gB","b"],["gP","places"],["gKind","kind"]].forEach(function(p){
+      Array.prototype.forEach.call($(p[0]).querySelectorAll("button"), function(b){
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-v") === String(G[p[1]])));
+      });
+    });
+    $("gTables").setAttribute("aria-pressed", String(G.tables));
+    $("gCancel").setAttribute("aria-pressed", String(G.cancel));
+    Array.prototype.forEach.call(document.querySelectorAll(".mrow"), function(r){
+      r.hidden = r.getAttribute("data-for") !== S.mode;
+      if (r.hasAttribute("data-dig")) r.classList.toggle("off", G.tables);
+    });
+  }
+  $("gTables").addEventListener("click", function(){ S.gen.tables = !S.gen.tables; paintGen(); save(); });
+  $("gCancel").addEventListener("click", function(){ S.gen.cancel = !S.gen.cancel; paintGen(); save(); });
+  $("genBtn").addEventListener("click", function(){
+    var o = {}; for (var k in S.gen) o[k] = S.gen[k];
+    o.mode = S.mode;
+    var seen = {}; seen[qText(curProblem())] = true;
+    var r = makeMul(genOpts(o), seen);
+    if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+    $("genMsg").textContent = r.exact ? "" : "Couldn’t find one that cross-cancels, so this one goes straight across.";
+    loadProblem(r.p);
+  });
+
+  /* ===================== worksheet API =====================
+     The worksheet page loads this page in a hidden iframe and asks it for problems:
+       {type:"helper:options", id}              → {type:"helper:optionsSchema", id, page, title, options}
+       {type:"helper:make", id, count, options} → {type:"helper:made", id, page, problems:[
+           {text, html, params, answer, answerHtml}]}
+     Making problems never touches this page's inputs, what it shows, or what it remembers. */
+  var API_PAGE = "multiplication.html";
+  function apiChoice(key, label, vals, def, modes){
+    return { key:key, label:label, type:"choice", modes:modes,
+             values:vals.map(function(v){ return { v:v[0], label:v[1] }; }), "default":def };
+  }
+  function apiToggle(key, label, modes){
+    return { key:key, label:label, type:"toggle", modes:modes,
+             values:[{ v:false, label:"Off" }, { v:true, label:"On" }], "default":false };
+  }
+  var API_OPTIONS = [
+    apiChoice("mode", "Numbers", [["decimals","Whole numbers & decimals"],["fractions","Fractions"]], "decimals",
+              ["decimals","fractions"]),
+    apiChoice("a", "Digits in the first factor", [[1,"1 digit"],[2,"2 digits"],[3,"3 digits"],[4,"4 digits"]], 2, ["decimals"]),
+    apiChoice("b", "Digits in the second factor", [[1,"1 digit"],[2,"2 digits"],[3,"3 digits"]], 2, ["decimals"]),
+    apiChoice("places", "Decimal places", [[0,"None"],[1,"1"],[2,"2"],[3,"3"]], 0, ["decimals"]),
+    apiToggle("tables", "Times tables only", ["decimals"]),
+    apiChoice("kind", "Fractions", [["proper","Proper fractions"],["mixed","Mixed numbers"]], "proper", ["fractions"]),
+    apiToggle("cancel", "Can cross-cancel", ["fractions"])
+  ];
+  function apiProblem(p){
+    var sol = solveMul(p);
+    return { text:problemText(p), html:problemHtml(p), params:problemQuery(p), answer:sol.text, answerHtml:sol.html };
+  }
+  window.addEventListener("message", function(e){
+    var m = e.data;
+    if (!m || typeof m !== "object" || (m.type !== "helper:options" && m.type !== "helper:make")) return;
+    var to = e.source || window.parent;
+    function reply(o){ try { to.postMessage(o, "*"); } catch(err){} }
+    if (m.type === "helper:options"){
+      reply({ type:"helper:optionsSchema", id:m.id, page:API_PAGE, title:"The Product Ladder", options:API_OPTIONS });
+      return;
+    }
+    var list = [];
+    try{
+      var G = genOpts(m.options), n = Math.floor(Number(m.count)), seen = {};
+      if (!(n >= 1)) n = 10;
+      if (n > 100) n = 100;
+      for (var i = 0; i < n; i++){ var r = makeMul(G, seen); if (!r) break; list.push(apiProblem(r.p)); }
+    }catch(err){}
+    reply({ type:"helper:made", id:m.id, page:API_PAGE, problems:list });
   });
 
   var themeBtn = $("themeBtn");
@@ -1154,9 +1784,12 @@
     paint(); save();
   });
 
+  $("maker").addEventListener("toggle", save);
+
   function save(){
     try{ localStorage.setItem("product-ladder", JSON.stringify({
-      mode:S.mode, a:S.a, b:S.b, frac:S.frac, stepMode:S.stepMode,
+      mode:S.mode, a:S.a, b:S.b, frac:S.frac, stepMode:S.stepMode, practice:S.practice,
+      gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
   }
   function load(){
@@ -1168,17 +1801,23 @@
       if (typeof v.a === "string" && v.a) S.a = v.a;
       if (typeof v.b === "string" && v.b) S.b = v.b;
       if (Array.isArray(v.frac) && v.frac.length === 2) S.frac = v.frac;
-      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+      if (typeof v.stepMode === "boolean"){ S.stepMode = v.stepMode; S.practice = v.stepMode ? "step" : "all"; }
+      if (["all","step","check"].indexOf(v.practice) >= 0){ S.practice = v.practice; S.stepMode = v.practice === "step"; }
+      if (v.gen && typeof v.gen === "object"){
+        var g = genOpts(v.gen);
+        ["a","b","places","tables","kind","cancel"].forEach(function(k){ S.gen[k] = g[k]; });
+      }
+      if (v.maker) $("maker").open = true;
     }catch(e){}
   }
 
   load();
+  applyURL();
   $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn"));
   ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
     $(id).value = S.frac[Math.floor(i/3)][i%3];
   });
-  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
-  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  paintPractice();
   paint();
   setMode(S.mode);
 })();

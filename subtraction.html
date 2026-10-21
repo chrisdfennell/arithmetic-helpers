@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Borrow Bank</title>
 <script src="nav.js" defer></script>
@@ -57,7 +58,7 @@
 
   .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
     box-shadow:var(--shadow);padding:20px 22px 18px;display:flex;flex-direction:column;gap:16px}
-  .modes{display:flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
   .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
     color:var(--ink-2);padding:8px 18px;border-radius:7px;cursor:pointer}
   .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
@@ -99,7 +100,66 @@
     color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer}
   .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
   .practice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
-  button:focus-visible,input:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+  .modes.small button{font-size:13px;padding:6px 12px}
+
+  /* ---- the problem maker ---- */
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--key);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;
+    padding:4px 15px 15px}
+  .maker-body[hidden]{display:none}
+  @media (max-width:620px){.maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px}}
+  .maker-body .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .toggles{display:flex;gap:6px;flex-wrap:wrap}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px}
+  .tog b{font-family:var(--f-mono);font-weight:600;font-size:15px;line-height:1}
+  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .tog[aria-pressed="true"] b{color:var(--key)}
+  .tog:hover{border-color:var(--key-line)}
+  .maker-go{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:0 15px 15px}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+  .go:hover{filter:brightness(1.08)}
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+
+  /* ---- check my answer ---- */
+  .try{background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--alt);
+    border-radius:6px 12px 12px 6px;box-shadow:var(--shadow);padding:14px 18px 15px;
+    display:flex;flex-direction:column;gap:9px}
+  .try[hidden],.try [hidden],.linknote[hidden]{display:none !important}
+  .try .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--alt)}
+  .try-row{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap}
+  .try-in{font-family:var(--f-mono);font-size:clamp(22px,4.2vw,28px);font-weight:600;color:var(--ink);
+    background:transparent;border:0;border-bottom:2.5px solid var(--rule);padding:1px 4px 4px;
+    width:11ch;max-width:100%;outline:none}
+  .try-in:focus{border-bottom-color:var(--focus)}
+  .try-msg{margin:0;font-size:15px;color:var(--ink-2);min-height:1.2em}
+  .try-msg:empty{display:none}
+  .try-msg .lead{font-weight:600;color:var(--ink)}
+  .try-msg.ok .lead{color:var(--alt)}
+  .try-msg.no .lead,.try-msg.half .lead{color:var(--key)}
+  .try-msg b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .try-more{display:flex;gap:8px;flex-wrap:wrap}
+  .try-hint{margin:0;font-size:13px;color:var(--ink-3)}
+  .page.checking #board,.page.checking .answer{display:none}
+  .answer.hideval .v,.answer.hideval .facts{display:none}
+  .answer.hideval::after{content:"?";font-family:var(--f-mono);font-weight:600;line-height:1.1;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink-3)}
+  .closer.hideval{visibility:hidden}
+  .linknote{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+
+  button:focus-visible,input:focus-visible,summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
 
   .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
     padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px}
@@ -291,7 +351,7 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.examples,.modes,.footnote,.stepper,.swap,#statusLine{display:none !important}
+    .theme-btn,.examples,.modes,.footnote,.stepper,.swap,#statusLine,.maker,.try,.linknote{display:none !important}
 
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px}
@@ -348,7 +408,7 @@
   }
 </style>
 
-<div class="page">
+<div class="page" id="page">
   <header class="masthead">
     <div>
       <div class="eyebrow">Subtracting, worked out</div>
@@ -401,6 +461,16 @@
       </div>
     </div>
 
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body" id="makerDec"></div>
+      <div class="maker-body" id="makerFrac" hidden></div>
+      <div class="maker-go">
+        <button type="button" class="go" id="genBtn">New problem</button>
+        <span class="msg" id="genMsg" aria-live="polite"></span>
+      </div>
+    </details>
+
     <div class="examples">
       <span class="lbl">Try</span>
       <span id="chips"></span>
@@ -408,12 +478,28 @@
         <div class="modes" role="group" aria-label="Practice mode">
           <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
           <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
         </div>
       </span>
     </div>
   </section>
 
   <div id="statusLine" role="status" aria-live="polite"></div>
+  <div class="linknote" id="linkNote" hidden></div>
+
+  <section class="try" id="tryBox" hidden aria-label="Check my answer">
+    <label class="k" for="tryIn">Your answer</label>
+    <div class="try-row">
+      <input class="try-in" id="tryIn" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="?">
+      <button type="button" class="go" id="tryBtn">Check</button>
+    </div>
+    <p class="try-msg" id="tryMsg" aria-live="polite"></p>
+    <div class="try-more" id="tryMore" hidden>
+      <button type="button" class="tog" id="hintBtn">Show a hint</button>
+      <button type="button" class="tog" id="showBtn">Show me the work</button>
+    </div>
+    <p class="try-hint" id="tryHint"></p>
+  </section>
 
   <div class="board" id="board">
     <section class="panel">
@@ -438,16 +524,43 @@
 
   <div class="footnote">
     <button class="print" type="button" id="printBtn">Print this work</button>
+    <button class="print" type="button" id="copyBtn">Copy link</button>
     <span>Borrowing isn&rsquo;t cheating &mdash; one ten is worth ten ones, so you&rsquo;re trading, not taking.</span>
   </div>
 </div>
 
 <script>
+/* =============================== URL parameters ===============================
+   q          the problem: two numbers with a minus sign between them. Any "/" in it
+              means Fractions mode, otherwise Decimals.
+                Decimals:  q=52-17             q=25.4-3.75        q=12,345-678
+                Fractions: q=3 1/2-1 2/3       each term is a fraction n/d, a mixed
+                           q=5/6-1/4           number "whole n/d" (one space) or a
+                           q=2-5/8             plain whole number
+              ASCII "-" or the unicode minus "−" (%E2%88%92) both work, with or without
+              spaces around it. A raw "+" in the URL is read as a space (form encoding).
+   mode       optional: dec | frac (or decimals | fractions). Only needed for a
+              fractions problem with no "/", e.g. q=3-1&mode=frac.
+   practice   all | step | check  =  Show all work | One step at a time | Check my answer
+   A link's params win over what the page remembered (localStorage). A link that
+   can't be read shows a notice and the last problem instead. As the problem
+   changes the page keeps q (and mode when needed) in the address bar with
+   history.replaceState; practice and the theme are never written there.
+
+   Worksheet API (window "message" events, for a page that loads this one in an iframe):
+     {type:"helper:options", id}
+        -> {type:"helper:optionsSchema", id, page:"subtraction.html", title, options:[...]}
+     {type:"helper:make", id, count, options:{mode, digits, places, borrow, negative,
+                                               denoms, maxDen, mixed, regroup, simplify}}
+        -> {type:"helper:made", id, page, problems:[{text, html, params, answer, answerHtml}]}
+   Making problems never changes the page, its inputs or localStorage.
+   ============================================================================= */
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
   var lastDec = null;
-  var S = { mode:"dec", a:"25.4", b:"3.75", frac:[[3,1,4],[1,2,3]], stepMode:false, step:1 };
+  var S = { mode:"dec", a:"25.4", b:"3.75", frac:[[3,1,4],[1,2,3]], stepMode:false, step:1,
+            practice:"all", gen:null, chk:{ key:null, tries:0, revealed:false, keep:false } };
 
   /* ===================== helpers ===================== */
   function parseNum(raw){
@@ -458,7 +571,9 @@
   }
   function numStr(n){ var f = n.f.replace(/0+$/,""); return f ? n.i + "." + f : n.i; }
   function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-  function commas(s){ return s.replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+  function commas(s){                        // group the whole-number part only: 12345.6789 -> 12,345.6789
+    var p = String(s).split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g,","); return p.join(".");
+  }
   function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ var t=a%b; a=b; b=t; } return a||1; }
   function lcm(a,b){ return a/gcd(a,b)*b; }
   function placeName(e){
@@ -845,9 +960,10 @@
       simp.by === 1 && !needsMixedOut);
 
     if (simp.by > 1){
-      step(mixedHTML(0, simp.n, simp.d, neg).replace(/^$/,""), "=",
+      step(simp.d === 1 ? mixedHTML(simp.n, 0, 1, neg) : mixedHTML(0, simp.n, simp.d, neg), "=",
         [["c","Simplify","<b>" + Math.abs(diff.n) + "</b> and <b>" + L + "</b> both divide by <b>"
-          + simp.by + "</b>, giving <b>" + (neg?"−":"") + simp.n + "/" + simp.d + "</b>."]],
+          + simp.by + "</b>, giving <b>" + (neg?"−":"") + simp.n + "/" + simp.d + "</b>"
+          + (simp.d === 1 ? " — that’s just <b>" + (neg?"−":"") + simp.n + "</b>" : "") + "."]],
         null, !needsMixedOut);
     }
     if (needsMixedOut){
@@ -871,7 +987,7 @@
             + barHave(an, L, termHTML(m1))
             + barTake(an, bn, L, termHTML(m2))
             + barLeft(an - bn, L, needsMixedOut ? mixedHTML(w, rest, simp.d, false)
-                                                : fracHTML(simp.n, simp.d))
+                                                : (simp.d === 1 ? String(simp.n) : fracHTML(simp.n, simp.d)))
             + "</div>";
     }
     host.innerHTML = html;
@@ -949,7 +1065,8 @@
     }
 
     var final = needsMixedOut ? mixedHTML(w, rest, simp.d, neg)
-              : (simp.n === 0 ? '<span class="mx">0</span>' : mixedHTML(0, simp.n, simp.d, neg));
+              : (simp.n === 0 ? '<span class="mx">0</span>'
+                 : (simp.d === 1 ? mixedHTML(simp.n, 0, 1, neg) : mixedHTML(0, simp.n, simp.d, neg)));
     var dec = (neg ? -1 : 1) * simp.n / simp.d;
     band('<span class="k">Difference</span><span class="v">' + final + "</span>", [
       "As a decimal: <b>" + trimNum(dec) + "</b>",
@@ -1103,8 +1220,15 @@
     return 0;
   }
   function render(){
+    var key = JSON.stringify(problemFromState());
+    if (key !== S.chk.key){                    // a new problem: start the answer box afresh
+      if (S.chk.key !== null) $("linkNote").hidden = true;
+      S.chk.key = key; resetCheck();
+    }
     var total = (S.mode === "dec") ? renderDecimals() : renderFractions();
+    paintCheck(!!total);
     if (!total) return;
+    syncURL();
     if (S.step > total) S.step = total;
     if (S.step < 1) S.step = 1;
     $("stepper").hidden = !S.stepMode;
@@ -1131,13 +1255,551 @@
     var bnd = document.querySelector(".answer");
     if (bnd) bnd.classList.toggle("masked", S.stepMode && S.step < total);
     $("closer").style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+    /* a hint from "Check my answer" walks the steps without giving the answer away */
+    var hide = S.stepMode && S.chk.keep && !S.chk.revealed && S.step < total;
+    if (bnd) bnd.classList.toggle("hideval", hide);
+    $("closer").classList.toggle("hideval", hide);
     Array.prototype.forEach.call(document.querySelectorAll(".tapewrap, .areawrap"), function(el){
       el.classList.toggle("veil", S.stepMode && S.step < total);
     });
   }
 
+  /* ===================== the problem as data ===================== */
+  /* p = { mode:"dec", a:"25.4", b:"3.75" }  or  { mode:"frac", frac:[[3,1,4],[1,2,3]] } */
+  function problemFromState(){
+    return S.mode === "dec" ? { mode:"dec", a:S.a, b:S.b }
+                            : { mode:"frac", frac:[S.frac[0].slice(), S.frac[1].slice()] };
+  }
+  /* the same checks the renderers make: true when the page would show a notice instead */
+  function problemBad(p){
+    if (p.mode === "dec"){
+      var a = parseNum(p.a), b = parseNum(p.b);
+      return !a || !b || (a.i + a.f).length > 12 || (b.i + b.f).length > 12;
+    }
+    var m1 = p.frac[0], m2 = p.frac[1];
+    if ([m1,m2].some(function(m){ return m.some(function(v){ return !isFinite(v); }); })) return true;
+    return m1[2] === 0 || m2[2] === 0 || m1[2] > 999 || m2[2] > 999 || m1[1] > 9999 || m2[1] > 9999;
+  }
+  /* the page's own fraction numbers for m1 − m2 */
+  function fracDiff(f){
+    var a = toImproper(f[0]), b = toImproper(f[1]), L = lcm(a.d, b.d);
+    var an = a.n * (L / a.d), bn = b.n * (L / b.d), diff = an - bn;
+    return { a:a, b:b, L:L, an:an, bn:bn, diff:diff, neg:diff < 0, simp:simplify({ n:Math.abs(diff), d:L }) };
+  }
+  function digAt(n, e){                      // the digit of parsed n in the 10^e place
+    var k = e >= 0 ? n.i.length - 1 - e : -e - 1, s = e >= 0 ? n.i : n.f;
+    return k >= 0 && k < s.length ? Number(s[k]) : 0;
+  }
+
+  /* ===================== exact numbers (BigInt fractions) ===================== */
+  var Z = BigInt(0), ONE = BigInt(1), TEN = BigInt(10);
+  function bgcd(a, b){ if (a < Z) a = -a; if (b < Z) b = -b; while (b){ var t = a % b; a = b; b = t; } return a; }
+  function rat(n, d){
+    n = BigInt(n); d = BigInt(d);
+    if (d < Z){ n = -n; d = -d; }
+    var g = bgcd(n, d) || ONE;
+    return { n:n / g, d:d / g };
+  }
+  function rAdd(x, y){ return rat(x.n*y.d + y.n*x.d, x.d*y.d); }
+  function rSub(x, y){ return rat(x.n*y.d - y.n*x.d, x.d*y.d); }
+  function rNeg(x){ return { n:-x.n, d:x.d }; }
+  function rEq(x, y){ return x.n === y.n && x.d === y.d; }
+  function pow10(k){ var r = ONE; while (k-- > 0) r *= TEN; return r; }
+  function decRat(n){ return rat(BigInt(n.i + n.f), pow10(n.f.length)); }      // n from parseNum
+  function rNum(x){ return Number(x.n) / Number(x.d); }
+  function babs(x){ return x < Z ? -x : x; }
+
+  /* ===================== the answer, exactly as the page shows it ===================== */
+  /* inline-styled fractions for other pages (the worksheet) — no page classes */
+  function ifr(n, d){
+    return '<span style="display:inline-block;vertical-align:middle;text-align:center;line-height:1.1;margin:0 .1em">'
+      + '<span style="display:block;padding:0 .18em">' + esc(n) + "</span>"
+      + '<span style="display:block;padding:0 .18em;border-top:.09em solid currentColor">' + esc(d) + "</span></span>";
+  }
+  function imixed(m){                       // [whole, num, den] as inline html
+    if (m[1] === 0) return esc(m[0]);
+    return (m[0] ? esc(m[0]) + '<span style="display:inline-block;width:.15em"></span>' : "") + ifr(m[1], m[2]);
+  }
+  function answerOf(p){
+    if (p.mode === "dec"){
+      var a = parseNum(p.a), b = parseNum(p.b), flipped = cmp(a, b) < 0;
+      var A = subDecimals(flipped ? b : a, flipped ? a : b);
+      var whole = A.out.slice(0, A.maxI).join("").replace(/^0+(?=\d)/,"");
+      var fracPart = A.out.slice(A.maxI).join("");
+      var shown = (flipped ? "−" : "") + numStr(parseNum(fracPart ? whole + "." + fracPart : whole));
+      return { text:commas(shown), html:esc(commas(shown)), r:rSub(decRat(a), decRat(b)), form:"dec" };
+    }
+    var s = fracDiff(p.frac), q = s.simp, sg = s.neg ? "−" : "", r = rat(s.neg ? -q.n : q.n, q.d);
+    if (q.n === 0) return { text:"0", html:"0", r:r, form:"whole" };
+    if (q.d === 1) return { text:sg + q.n, html:sg + esc(q.n), r:r, form:"whole" };
+    if (q.n >= q.d){
+      var w = Math.floor(q.n / q.d), rest = q.n % q.d;
+      return { text:sg + w + " " + rest + "/" + q.d, html:sg + imixed([w, rest, q.d]), r:r, form:"mixed" };
+    }
+    return { text:sg + q.n + "/" + q.d, html:sg + ifr(q.n, q.d), r:r, form:"frac" };
+  }
+
+  /* ===================== links: read q, keep the address bar in step ===================== */
+  function cleanNum(s){ return String(s).replace(/[,\s_]/g, ""); }
+  function qOf(p){
+    return p.mode === "dec" ? cleanNum(p.a) + "-" + cleanNum(p.b) : p.frac.map(mText).join("-");
+  }
+  function paramsOf(p){
+    var q = qOf(p);
+    return "q=" + encodeURIComponent(q).replace(/%2F/gi, "/")
+         + (p.mode === "frac" && q.indexOf("/") < 0 ? "&mode=frac" : "");
+  }
+  function syncURL(){
+    if (!window.history || !history.replaceState) return;
+    var qs = "?" + paramsOf(problemFromState());
+    if (location.search === qs) return;
+    try{ history.replaceState(history.state, "", location.pathname + qs + location.hash); }catch(e){}
+  }
+  function readTerm(t){                      // "2 3/4", "3/4" or "2" -> [whole, num, den]
+    var m; t = t.replace(/,/g, "").trim();
+    if ((m = /^(\d+) (\d+) ?\/ ?(\d+)$/.exec(t))) return [Number(m[1]), Number(m[2]), Number(m[3])];
+    if ((m = /^(\d+) ?\/ ?(\d+)$/.exec(t))) return [0, Number(m[1]), Number(m[2])];
+    if (/^\d+$/.test(t)) return [Number(t), 0, 1];
+    return null;
+  }
+  function parseQ(raw, hint){
+    var s = String(raw).replace(/[−–—﹣－]/g, "-").replace(/\s+/g, " ").trim();
+    if (!s) return { err:"it was empty" };
+    if (/\+/.test(s)) return { err:"this page only subtracts, so put a minus sign between the numbers (the Carry Column does adding)" };
+    var parts = s.split("-").map(function(t){ return t.trim(); });
+    if (parts.length !== 2 || !parts[0] || !parts[1])
+      return { err:"it needs two positive numbers with one minus sign between them, like 52-17" };
+    if (hint !== "frac" && s.indexOf("/") < 0){
+      var a = cleanNum(parts[0]), b = cleanNum(parts[1]);
+      if (!parseNum(a) || !parseNum(b)) return { err:"each number should be digits with at most one decimal point" };
+      return { p:{ mode:"dec", a:a, b:b } };
+    }
+    var f = parts.map(readTerm);
+    if (!f[0] || !f[1]) return { err:"write fractions like 3/4 and mixed numbers like 2 3/4" };
+    return { p:{ mode:"frac", frac:f } };
+  }
+  /* q, read by hand: "+" is a form-encoded space, everything else is percent-decoded */
+  function rawParam(name){
+    var m = new RegExp("[?&]" + name + "=([^&#]*)").exec(location.search);
+    if (!m) return null;
+    var r = m[1].replace(/\+/g, " ");
+    try{ return decodeURIComponent(r); }catch(e){ return r; }
+  }
+  function fromURL(){
+    var sp, notes = [];
+    try{ sp = new URLSearchParams(location.search); }catch(e){ return null; }
+    var pr = sp.get("practice");
+    if (pr !== null){
+      pr = pr.trim().toLowerCase();
+      if (pr === "all" || pr === "step" || pr === "check"){ S.practice = pr; S.stepMode = pr === "step"; }
+      else notes.push("“practice” can be all, step or check");
+    }
+    var md = sp.get("mode"), hint = null;
+    if (md !== null){
+      md = md.trim().toLowerCase();
+      hint = (md === "dec" || md === "decimals") ? "dec" : (md === "frac" || md === "fractions") ? "frac" : null;
+      if (!hint) notes.push("“mode” can be decimals or fractions");
+    }
+    if (sp.has("q")){
+      var raw = rawParam("q") || "", r = parseQ(raw, hint);
+      if (r.err) notes.unshift("its problem, “" + esc(raw) + "”, couldn’t be read: " + r.err);
+      else {
+        S.mode = r.p.mode; S.step = 1;
+        if (r.p.mode === "dec"){ S.a = r.p.a; S.b = r.p.b; } else S.frac = r.p.frac;
+      }
+    } else if (hint) S.mode = hint;
+    if (!notes.length) return null;
+    return "That link didn’t quite work — " + notes.join("; ") + ". Here’s the last problem instead.";
+  }
+
+  /* ===================== check my answer ===================== */
+  function readAnswer(raw){
+    var s = String(raw).replace(/[−–—﹣－]/g, "-").replace(/[,_]/g, "").replace(/\s+/g, " ").trim();
+    var neg = false, m, out;
+    if (/^[-+]/.test(s)){ neg = s.charAt(0) === "-"; s = s.slice(1).trim(); }
+    if (!s) return null;
+    if ((m = /^(\d+) (\d+) ?\/ ?(\d+)$/.exec(s))){
+      var w = BigInt(m[1]), n = BigInt(m[2]), d = BigInt(m[3]);
+      if (d === Z) return { bad:true };
+      out = { r:rat(w*d + n, d), form:"mixed", top:n, bot:d,
+              simple: n > Z && n < d && bgcd(n, d) === ONE };
+    } else if ((m = /^(\d+) ?\/ ?(\d+)$/.exec(s))){
+      var n2 = BigInt(m[1]), d2 = BigInt(m[2]);
+      if (d2 === Z) return { bad:true };
+      out = { r:rat(n2, d2), form:"frac", top:n2, bot:d2,
+              simple: d2 !== ONE && n2 !== Z && bgcd(n2, d2) === ONE };
+    } else if (/^\d*\.?\d*$/.test(s) && /\d/.test(s)){
+      out = { r:decRat(parseNum(s)), form: s.indexOf(".") >= 0 ? "dec" : "int", simple:true };
+    } else return null;
+    if (neg) out.r = rNeg(out.r);
+    return out;
+  }
+  var WHY = {
+    signNeg: "Right size, wrong sign — the second number is bigger, so the answer is below zero. Put a minus sign in front.",
+    signPos: "Right size, wrong sign — the first number is bigger, so the answer is above zero.",
+    flipCols:"It looks like the smaller digit was taken from the bigger one in every column. When the top digit is smaller, borrow a ten from next door instead.",
+    noReduce:"Close — a ten was borrowed, but the digit it came from wasn’t made one smaller. Cross that digit out and write one less above it.",
+    either:  "It looks like a borrow went wrong — either the smaller digit was taken from the bigger one, or the digit you borrowed from wasn’t made one smaller.",
+    align:   "It looks like the numbers were lined up on the right instead of at the decimal point. Line the decimal points up first, and fill the gaps with zeros.",
+    tops:    "It looks like the tops and the bottoms were both subtracted. Only the tops subtract — rename both fractions to a common denominator first, and the denominator stays the same.",
+    flipFrac:"It looks like the fraction parts were swapped to take the smaller from the bigger. When the second fraction part is bigger, borrow a whole first (or turn both into improper fractions).",
+    round:   "So close — but that decimal is rounded. Give the exact answer as a fraction or mixed number."
+  };
+  /* what common mistake would give exactly u? */
+  function diagnose(p, u, ans){
+    var tests = [];
+    function t(r, why){ tests.push([r, why]); }
+    function both(r, why){ t(r, why); t(rNeg(r), why); }
+    if (ans.r.n !== Z) t(rNeg(ans.r), ans.r.n < Z ? WHY.signNeg : WHY.signPos);
+    if (p.mode === "dec"){
+      var a = parseNum(p.a), b = parseNum(p.b), flipped = cmp(a, b) < 0;
+      var A = subDecimals(flipped ? b : a, flipped ? a : b), den = pow10(A.maxF);
+      if (A.steps.some(function(s){ return s.borrowed; })){
+        var sfb = "", nored = "";
+        for (var k = 0; k < A.L; k++){
+          var td = Number(A.T.chars[k]), bd = Number(A.B.chars[k]);
+          sfb += Math.abs(td - bd);                        // smaller from bigger, every column
+          nored += (td < bd ? td + 10 : td) - bd;          // borrowed ten, lender never reduced
+        }
+        var r1 = rat(BigInt(sfb), den), r2 = rat(BigInt(nored), den);
+        if (rEq(r1, r2)) both(r1, WHY.either);
+        else { both(r1, WHY.flipCols); both(r2, WHY.noReduce); }
+      }
+      if (a.f.length !== b.f.length){
+        var dd = babs(BigInt(a.i + a.f) - BigInt(b.i + b.f));
+        [A.maxF, a.f.length, b.f.length, 0].forEach(function(k){ both(rat(dd, pow10(k)), WHY.align); });
+      }
+    } else {
+      var m1 = p.frac[0], m2 = p.frac[1], fa = toImproper(m1), fb = toImproper(m2);
+      if (m1[2] !== m2[2]){
+        both(rAdd(rat(Math.abs(m1[0] - m2[0]), 1), rat(Math.abs(m1[1] - m2[1]), Math.abs(m1[2] - m2[2]))), WHY.tops);
+        both(rat(Math.abs(fa.n - fb.n), Math.abs(fa.d - fb.d)), WHY.tops);
+      }
+      if ((m1[0] || m2[0]) && m1[1] * m2[2] < m2[1] * m1[2])
+        both(rAdd(rat(m1[0] - m2[0], 1), rat(m2[1] * m1[2] - m1[1] * m2[2], m1[2] * m2[2])), WHY.flipFrac);
+    }
+    for (var i = 0; i < tests.length; i++)
+      if (!rEq(tests[i][0], ans.r) && rEq(tests[i][0], u.r)) return tests[i][1];
+    if (p.mode === "frac" && u.form === "dec"){
+      var d = ans.r.d; while (d % BigInt(2) === Z) d /= BigInt(2); while (d % BigInt(5) === Z) d /= BigInt(5);
+      var want = rNum(ans.r);
+      if (d !== ONE && Math.abs(rNum(u.r) - want) <= 0.006 * Math.max(1, Math.abs(want))) return WHY.round;
+    }
+    return null;
+  }
+  function correctNote(p, u, ans){
+    if (p.mode === "dec")
+      return (u.form === "frac" || u.form === "mixed")
+        ? " As a decimal that’s <b>" + esc(ans.text) + "</b>, the way the page writes it." : "";
+    var imp = (ans.r.n < Z ? "−" : "") + String(babs(ans.r.n)) + "/" + String(ans.r.d);
+    if (ans.form === "mixed"){
+      if (u.form === "frac") return " Improper <b>" + imp + "</b> and mixed <b>" + esc(ans.text)
+        + "</b> are both right — the page shows the mixed number.";
+      if (u.form === "dec") return " That’s the same as <b>" + esc(ans.text) + "</b>, the mixed number the page shows.";
+      return " Mixed <b>" + esc(ans.text) + "</b> is how the page shows it too (improper <b>" + imp + "</b> is also right).";
+    }
+    if (ans.form === "frac" && u.form === "dec")
+      return " That’s the same as <b>" + esc(ans.text) + "</b>, the fraction the page shows.";
+    return "";
+  }
+  function simplifyTip(u){
+    var n = u.top, d = u.bot, g = bgcd(n, d);
+    if (d === ONE) return "Anything over 1 is just a whole number.";
+    if (n === Z) return u.form === "mixed" ? "No pieces left over — it’s just the whole number." : "Zero pieces is just 0.";
+    if (u.form === "mixed" && n >= d) return "The fraction part is a whole or more — trade it into the whole number.";
+    return "<b>" + n + "</b> and <b>" + d + "</b> both divide by <b>" + g + "</b>.";
+  }
+  function say(html, cls){ var el = $("tryMsg"); el.className = "try-msg " + (cls || ""); el.innerHTML = html; }
+  function resetCheck(){
+    S.chk.tries = 0; S.chk.revealed = false;
+    if (S.chk.keep){                       // a hint borrowed step mode for one problem; give it back
+      S.chk.keep = false;
+      if (S.practice === "step"){ S.practice = "check"; S.stepMode = false; paintPractice(); }
+    }
+    $("tryIn").value = ""; say("", "");
+  }
+  function paintCheck(ok){
+    $("tryBox").hidden = !(ok && (S.practice === "check" || S.chk.keep));
+    $("page").classList.toggle("checking", ok && S.practice === "check" && !S.chk.revealed);
+    $("tryMore").hidden = !S.chk.tries || S.chk.revealed;
+    $("hintBtn").hidden = S.chk.keep;
+    $("tryHint").textContent = S.mode === "dec"
+      ? "Decimals, fractions or mixed numbers all count — 3.5, 7/2 and 3 1/2 are the same. Below zero? Start with −."
+      : "Write a fraction like 7/12, a mixed number like 1 7/12, or an improper fraction like 19/12. Below zero? Start with −.";
+  }
+  function checkAnswer(){
+    var p = problemFromState();
+    if (problemBad(p)){ say('<span class="lead">Fix the problem above first,</span> then check.', "no"); return; }
+    var u = readAnswer($("tryIn").value);
+    if (!u){ say('<span class="lead">Type your answer as a number</span> — like 12.5, 7/2, 3 1/2 or −4.', "no"); return; }
+    if (u.bad){ say('<span class="lead">A denominator can’t be 0.</span>', "no"); return; }
+    var ans = answerOf(p);
+    if (rEq(u.r, ans.r) && p.mode === "frac" && !u.simple){
+      S.chk.tries++;
+      say('<span class="lead">Right value — now simplify it.</span> ' + simplifyTip(u), "half");
+    } else if (rEq(u.r, ans.r)){
+      say('<span class="lead">✓ Correct!</span>' + correctNote(p, u, ans), "ok");
+      S.chk.revealed = true;
+      if (S.stepMode) S.step = 999;
+    } else {
+      S.chk.tries++;
+      var why = diagnose(p, u, ans);
+      say('<span class="lead">Not quite — try again.</span>' + (why ? " " + why : ""), "no");
+    }
+    render();
+  }
+  $("tryBtn").addEventListener("click", checkAnswer);
+  $("tryIn").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); checkAnswer(); } });
+  $("hintBtn").addEventListener("click", function(){
+    S.chk.keep = true; S.practice = "step"; S.stepMode = true; S.step = 1;
+    paintPractice(); render(); save();
+  });
+  $("showBtn").addEventListener("click", function(){
+    S.chk.revealed = true;
+    if (S.stepMode) S.step = 999;
+    render();
+  });
+
+  /* ===================== problem maker ===================== */
+  /* one list drives the maker on the page and the worksheet API's options */
+  var OPTS = [
+    { key:"mode", label:"Kind of numbers", type:"choice", default:"decimals",
+      values:[{ v:"decimals", label:"Decimals" }, { v:"fractions", label:"Fractions" }] },
+    { key:"digits", label:"Digits per number (before the point)", short:"Digits", type:"choice", default:2,
+      appliesTo:["decimals"],
+      values:[1,2,3,4,5,6].map(function(v){ return { v:v, label:String(v) }; }) },
+    { key:"places", label:"Decimal places", short:"Decimals", type:"choice", default:0, appliesTo:["decimals"],
+      values:[{ v:0, label:"None" }, { v:1, label:"1 place" }, { v:2, label:"2 places" }, { v:3, label:"3 places" },
+              { v:"mixed", label:"Different lengths" }] },
+    { key:"borrow", label:"Borrowing", short:"Borrowing", type:"choice", default:"any", appliesTo:["decimals"],
+      values:[{ v:"any", label:"Either" }, { v:"borrow", label:"Borrowing" },
+              { v:"zeros", label:"Borrow across zeros" }, { v:"none", label:"No borrowing" }] },
+    { key:"denoms", label:"Denominators", short:"Bottoms", type:"choice", default:"unlike", appliesTo:["fractions"],
+      values:[{ v:"like", label:"Same" }, { v:"unlike", label:"Different" }, { v:"any", label:"Either" }] },
+    { key:"maxDen", label:"Denominators up to", short:"Up to", type:"choice", default:12, appliesTo:["fractions"],
+      values:[{ v:6, label:"6" }, { v:12, label:"12" }, { v:20, label:"20" }] },
+    { key:"mixed", label:"Mixed numbers", type:"toggle", default:false, appliesTo:["fractions"], glyph:"2&frac12;" },
+    { key:"regroup", label:"Regrouping (3 1/4 − 1 3/4)", type:"toggle", default:false, appliesTo:["fractions"],
+      glyph:"&#8634;" },
+    { key:"simplify", label:"Answer needs simplifying", type:"toggle", default:false, appliesTo:["fractions"],
+      glyph:"&divide;" },
+    { key:"negative", label:"Allow negative answers", type:"toggle", default:false,
+      appliesTo:["decimals", "fractions"], glyph:"&minus;" }
+  ];
+  function normOpts(o){
+    o = (o && typeof o === "object") ? o : {};
+    var G = {};
+    OPTS.forEach(function(op){
+      var v = o[op.key];
+      if (op.type === "toggle"){
+        G[op.key] = (v === undefined || v === null || v === "") ? op.default
+                  : (v === true || v === 1 || /^(true|1|on|yes)$/i.test(String(v)));
+        return;
+      }
+      var s = String(v === undefined || v === null ? "" : v).trim().toLowerCase();
+      if (op.key === "mode") s = { dec:"decimals", frac:"fractions" }[s] || s;
+      var hit = op.values.filter(function(x){ return String(x.v).toLowerCase() === s; });
+      G[op.key] = hit.length ? hit[0].v : op.default;
+    });
+    return G;
+  }
+  function ri(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  /* a random number: `digits` whole-number digits, `places` decimal places (no trailing 0);
+     zeroP makes inside digits 0 more often, for borrowing across zeros */
+  function randNum(digits, places, zeroP){
+    var w = String(digits === 1 && places > 0 ? ri(0, 9) : ri(1, 9)), f = "", k;
+    function inner(){ return Math.random() < zeroP ? 0 : ri(0, 9); }
+    for (k = 1; k < digits; k++) w += inner();
+    for (k = 1; k <= places; k++) f += k === places ? ri(1, 9) : inner();
+    return f ? w + "." + f : w;
+  }
+  /* a number that fits under `top` column by column, so nothing needs borrowing */
+  function underNum(top, digits, places){
+    var T = parseNum(top), w = "", f = "", e, td, min;
+    for (e = digits - 1; e >= 0; e--){
+      td = digAt(T, e); min = (e === digits - 1 && !(digits === 1 && places > 0)) ? 1 : 0;
+      if (td < min) return null;
+      w += ri(min, td);
+    }
+    for (e = -1; e >= -places; e--){
+      td = digAt(T, e); min = e === -places ? 1 : 0;
+      if (td < min) return null;
+      f += ri(min, td);
+    }
+    return f ? w + "." + f : w;
+  }
+  function placePair(pl, topLonger){
+    if (pl !== "mixed") return [Number(pl), Number(pl)];
+    for (;;){
+      var pa = ri(0, 3), pb = ri(0, 3);
+      if (pa !== pb && (!topLonger || pa > pb)) return [pa, pb];
+    }
+  }
+  function genDec(G){
+    var fb = null, digits = Number(G.digits), want = G.borrow, exact = true;
+    var cols = digits + (G.places === "mixed" ? 3 : Number(G.places));
+    if (want === "zeros" && cols < 3){ want = "borrow"; exact = false; }    // too few columns for a zero to sit in
+    if (want === "borrow" && cols < 2){ want = "any"; exact = false; }
+    for (var tries = 0; tries < 1500; tries++){
+      var pl = placePair(G.places, want === "none");
+      var top = randNum(digits, pl[0], want === "zeros" ? 0.55 : 0), bot;
+      var db = ri(Math.max(1, digits - 1), digits);
+      if (want === "none"){ bot = underNum(top, db, pl[1]); if (!bot) continue; }
+      else bot = randNum(db, pl[1], 0);
+      var x = parseNum(top), y = parseNum(bot), c = cmp(x, y);
+      if (c === 0) continue;
+      if (c < 0){ var ts = top; top = bot; bot = ts; var tx = x; x = y; y = tx; }
+      var A = subDecimals(x, y);                                   // checked with the page's own subtracter
+      var borrows = A.steps.filter(function(s){ return s.borrowed; });
+      if (!fb) fb = [top, bot];
+      if (want === "none" && borrows.length) continue;
+      if (want === "borrow" && !borrows.length) continue;
+      if (want === "zeros" && !borrows.some(function(s){ return s.borrowed.through.length > 0; })) continue;
+      var neg = G.negative && Math.random() < 0.5;
+      return { p:{ mode:"dec", a:neg ? bot : top, b:neg ? top : bot }, exact:exact };
+    }
+    return fb ? { p:{ mode:"dec", a:fb[0], b:fb[1] }, exact:false } : null;
+  }
+  function genFrac(G){
+    var fb = null, max = Number(G.maxDen), mixed = G.mixed || G.regroup;
+    for (var tries = 0; tries < 4000; tries++){
+      var d1 = ri(2, max), d2 = G.denoms === "like" ? d1 : ri(2, max);
+      if (G.denoms === "unlike" && d1 === d2) continue;
+      var n1 = ri(1, d1 - 1), n2 = ri(1, d2 - 1), w1 = 0, w2 = 0;
+      if (gcd(n1, d1) !== 1 || gcd(n2, d2) !== 1) continue;        // each one already in lowest terms
+      if (n1 * d2 === n2 * d1) continue;
+      if (G.regroup){
+        if (n1 * d2 > n2 * d1){ var tn = n1, td = d1; n1 = n2; d1 = d2; n2 = tn; d2 = td; }   // first part smaller
+        w1 = ri(2, 9); w2 = ri(1, w1 - 1);
+      } else if (mixed){ w1 = ri(1, 9); w2 = ri(1, 9); }
+      var f = [[w1, n1, d1], [w2, n2, d2]];
+      if (problemBad({ mode:"frac", frac:f })) continue;
+      var v = fracDiff(f);                                         // checked with the page's own numbers
+      if (v.diff === 0 || v.L > 5 * max) continue;                 // keep the common denominator friendly
+      if (v.diff < 0){ f = [f[1], f[0]]; v = fracDiff(f); }        // bigger number first
+      if (!fb) fb = f;
+      if (G.simplify && v.simp.by === 1) continue;
+      if (G.negative && Math.random() < 0.5) f = [f[1], f[0]];
+      return { p:{ mode:"frac", frac:f }, exact:true };
+    }
+    return fb ? { p:{ mode:"frac", frac:fb }, exact:false } : null;
+  }
+  function makeOne(mode, G){ return mode === "frac" ? genFrac(G) : genDec(G); }
+
+  function buildMaker(){
+    var hosts = { decimals:$("makerDec"), fractions:$("makerFrac") };
+    Object.keys(hosts).forEach(function(md){
+      var host = hosts[md], togs = null;
+      OPTS.forEach(function(op){
+        if (!op.appliesTo || op.appliesTo.indexOf(md) < 0) return;
+        if (op.type === "toggle"){
+          if (!togs){
+            host.insertAdjacentHTML("beforeend", '<span class="lbl">Extras</span>');
+            togs = document.createElement("div"); togs.className = "toggles"; host.appendChild(togs);
+          }
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "tog"; b.setAttribute("data-key", op.key);
+          b.innerHTML = "<b>" + op.glyph + "</b> " + esc(op.label);
+          b.addEventListener("click", function(){ S.gen[op.key] = !S.gen[op.key]; paintMaker(); save(); });
+          togs.appendChild(b);
+          return;
+        }
+        host.insertAdjacentHTML("beforeend", '<span class="lbl">' + esc(op.short) + "</span>");
+        var g = document.createElement("div");
+        g.className = "modes small"; g.setAttribute("role", "group"); g.setAttribute("aria-label", op.label);
+        op.values.forEach(function(v){
+          var btn = document.createElement("button");
+          btn.type = "button"; btn.textContent = v.label;
+          btn.setAttribute("data-key", op.key); btn.setAttribute("data-v", String(v.v));
+          btn.addEventListener("click", function(){ S.gen[op.key] = v.v; paintMaker(); save(); });
+          g.appendChild(btn);
+        });
+        host.appendChild(g);
+      });
+    });
+  }
+  function paintMaker(){
+    Array.prototype.forEach.call(document.querySelectorAll("#maker [data-key]"), function(b){
+      var k = b.getAttribute("data-key");
+      b.setAttribute("aria-pressed", String(b.classList.contains("tog") ? !!S.gen[k]
+        : String(S.gen[k]) === b.getAttribute("data-v")));
+    });
+    $("makerDec").hidden = S.mode !== "dec";
+    $("makerFrac").hidden = S.mode !== "frac";
+  }
+  $("genBtn").addEventListener("click", function(){
+    var r = makeOne(S.mode, S.gen);
+    if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+    $("genMsg").textContent = r.exact ? ""
+      : (S.mode === "dec" && S.gen.borrow === "zeros"
+          ? "Borrowing across zeros needs at least three columns — add digits or decimal places."
+          : "Couldn’t match every setting, so this one is a little different.");
+    S.step = 1;
+    if (r.p.mode === "dec"){ S.a = r.p.a; S.b = r.p.b; fillDec(); }
+    else { S.frac = [r.p.frac[0].slice(), r.p.frac[1].slice()]; fillFrac(); }
+    render(); save();
+  });
+  $("maker").addEventListener("toggle", save);
+
+  /* ===================== worksheet API ===================== */
+  var PAGE = "subtraction.html";
+  function wsNum(s){                         // 12345.6 -> 12,345.6 (four digits stay as they are)
+    var p = cleanNum(s).split(".");
+    if (p[0].length >= 5) p[0] = commas(p[0]);
+    return p.join(".");
+  }
+  function describe(p){
+    var a = answerOf(p);
+    var text = p.mode === "dec" ? wsNum(p.a) + " − " + wsNum(p.b) : p.frac.map(mText).join(" − ");
+    var html = p.mode === "dec" ? esc(text)
+      : p.frac.map(imixed).join('<span style="padding:0 .35em">&minus;</span>');
+    return { text:text, html:html, params:paramsOf(p), answer:a.text, answerHtml:a.html };
+  }
+  function schema(){
+    return OPTS.map(function(op){
+      var o = { key:op.key, label:op.label, type:op.type, default:op.default };
+      o.values = op.type === "toggle" ? [{ v:false, label:"Off" }, { v:true, label:"On" }]
+               : op.values.map(function(v){ return { v:v.v, label:v.label }; });
+      if (op.appliesTo) o.appliesTo = op.appliesTo.slice();
+      return o;
+    });
+  }
+  function makeSet(count, opts){
+    var G = normOpts(opts), mode = G.mode === "fractions" ? "frac" : "dec", seen = {}, out = [];
+    count = Math.max(1, Math.min(100, Math.floor(Number(count)) || 10));
+    for (var guard = 0; out.length < count && guard < count * 40; guard++){
+      var r = makeOne(mode, G);
+      if (!r) break;
+      var item = describe(r.p);
+      if (seen[item.text] && guard < count * 30) continue;       // no repeats while there's room
+      seen[item.text] = true; out.push(item);
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data, msg = null;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    try{
+      if (d.type === "helper:options")
+        msg = { type:"helper:optionsSchema", id:d.id, page:PAGE, title:document.title, options:schema() };
+      else if (d.type === "helper:make")
+        msg = { type:"helper:made", id:d.id, page:PAGE, problems:makeSet(d.count, d.options) };
+    }catch(e){
+      msg = { type: d.type === "helper:make" ? "helper:made" : "helper:optionsSchema", id:d.id, page:PAGE,
+              error:String(e && e.message || e), problems:[], options:[] };
+    }
+    if (!msg) return;
+    try{ (ev.source || window.parent).postMessage(msg, "*"); }catch(e){}
+  });
+
   /* ===================== wiring ===================== */
   function sizeIn(el){ el.style.width = Math.max(4, Math.min(14, el.value.length + 1)) + "ch"; }
+  function fillDec(){ $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn")); }
+  function fillFrac(){
+    ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
+      $(id).value = S.frac[Math.floor(i/3)][i%3];
+    });
+  }
   ["aIn","bIn"].forEach(function(id, i){
     $(id).addEventListener("input", function(e){
       S[i === 0 ? "a" : "b"] = e.target.value;
@@ -1146,8 +1808,7 @@
   });
   $("swapBtn").addEventListener("click", function(){
     var t = S.a; S.a = S.b; S.b = t;
-    $("aIn").value = S.a; $("bIn").value = S.b;
-    sizeIn($("aIn")); sizeIn($("bIn"));
+    fillDec();
     S.step = 1; render(); save();
   });
   ["w1","n1","d1","w2","n2","d2"].forEach(function(id, idx){
@@ -1166,7 +1827,7 @@
     });
     $("decEntry").classList.toggle("hide", m !== "dec");
     $("fracEntry").classList.toggle("hide", m !== "frac");
-    buildChips(); render(); save();
+    buildChips(); paintMaker(); render(); save();
   }
   Array.prototype.forEach.call(document.querySelectorAll("[data-mode]"), function(b){
     b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
@@ -1188,32 +1849,51 @@
       btn.textContent = S.mode === "dec" ? ex.join(" − ") : ex.map(label).join(" − ");
       btn.addEventListener("click", function(){
         S.step = 1;
-        if (S.mode === "dec"){
-          S.a = ex[0]; S.b = ex[1];
-          $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn"));
-        } else {
-          S.frac = [ex[0].slice(), ex[1].slice()];
-          ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
-            $(id).value = S.frac[Math.floor(i/3)][i%3];
-          });
-        }
+        if (S.mode === "dec"){ S.a = ex[0]; S.b = ex[1]; fillDec(); }
+        else { S.frac = [ex[0].slice(), ex[1].slice()]; fillFrac(); }
         render(); save();
       });
       host.appendChild(btn);
     });
   }
 
-  function setStepMode(on){
-    S.stepMode = on; S.step = 1;
-    $("allBtn").setAttribute("aria-pressed", String(!on));
-    $("stepBtn").setAttribute("aria-pressed", String(on));
-    render(); save();
+  function paintPractice(){
+    $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
   }
-  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
-  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  function setPractice(p){
+    S.chk.keep = false;
+    S.practice = p; S.stepMode = p === "step"; S.step = 1;
+    if (p === "check") resetCheck();
+    paintPractice(); render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
+  var copyTimer = null;
+  $("copyBtn").addEventListener("click", function(){
+    var btn = $("copyBtn"), url = location.href;
+    function show(t){
+      btn.textContent = t; clearTimeout(copyTimer);
+      copyTimer = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000);
+    }
+    function fallback(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = url; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try{ ok = document.execCommand("copy"); }catch(e){}
+      document.body.removeChild(ta);
+      show(ok ? "Link copied ✓" : "Couldn’t copy — use the address bar");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(url).then(function(){ show("Link copied ✓"); }, fallback);
+    else fallback();
+  });
   document.addEventListener("keydown", function(e){
     if (!S.stepMode || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
     if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
@@ -1232,8 +1912,10 @@
   });
 
   function save(){
+    var pr = S.chk.keep ? "check" : S.practice;      // a hint's step mode is only on loan
     try{ localStorage.setItem("borrow-bank", JSON.stringify({
-      mode:S.mode, a:S.a, b:S.b, frac:S.frac, stepMode:S.stepMode,
+      mode:S.mode, a:S.a, b:S.b, frac:S.frac, stepMode:pr === "step", practice:pr, gen:S.gen,
+      maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
   }
   function load(){
@@ -1245,18 +1927,22 @@
       if (typeof v.a === "string" && v.a) S.a = v.a;
       if (typeof v.b === "string" && v.b) S.b = v.b;
       if (Array.isArray(v.frac) && v.frac.length === 2) S.frac = v.frac;
-      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+      if (typeof v.stepMode === "boolean") S.practice = v.stepMode ? "step" : "all";
+      if (v.practice === "all" || v.practice === "step" || v.practice === "check") S.practice = v.practice;
+      if (v.gen && typeof v.gen === "object") S.gen = normOpts(v.gen);
+      if (v.maker) $("maker").open = true;
     }catch(e){}
   }
 
+  S.gen = normOpts({});
   load();
-  $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn"));
-  ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
-    $(id).value = S.frac[Math.floor(i/3)][i%3];
-  });
-  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
-  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  var linkMsg = fromURL();
+  S.stepMode = S.practice === "step";
+  fillDec(); fillFrac();
+  paintPractice();
+  buildMaker();
   paint();
   setMode(S.mode);
+  if (linkMsg){ $("linkNote").innerHTML = linkMsg; $("linkNote").hidden = false; }
 })();
 </script>

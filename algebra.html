@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Balance Scale</title>
 <script src="nav.js" defer></script>
@@ -341,6 +342,38 @@
     border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
   .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
 
+  /* ---- check my answer ---- */
+  .ckbox{background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--key);
+    border-radius:6px 14px 14px 6px;box-shadow:var(--shadow);padding:16px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+  @media (max-width:520px){.ckbox{padding:14px 14px}}
+  .ckbox[hidden]{display:none}
+  .ck-head{display:flex;align-items:baseline;gap:4px 14px;flex-wrap:wrap}
+  .ck-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;letter-spacing:.02em;margin:0}
+  .ck-head span{font-size:13.5px;color:var(--ink-3)}
+  .ck-row{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap;margin:0}
+  .ck-row .numfield{flex:1 1 220px;max-width:360px}
+  .ck-row.two .numfield{flex:1 1 110px;max-width:200px}
+  .ck-row .expr-in{font-size:clamp(19px,3vw,23px)}
+  .ck-row label .vr{text-transform:none;font-size:1.35em;letter-spacing:0}
+  .ck-msg{margin:0;font-size:15px;color:var(--ink)}
+  .ck-msg b{font-family:var(--f-mono);font-weight:600}
+  .ck-msg .yes{color:var(--a);font-weight:600}
+  .ck-msg .no{color:var(--e);font-weight:600}
+  .ck-msg .why{display:block;margin-top:3px;font-size:14px;color:var(--ink-2)}
+  .ck-msg .fr{font-size:.86em;vertical-align:middle;display:inline-flex !important}
+  .ck-more{display:flex;gap:8px;flex-wrap:wrap}
+  .ck-more[hidden]{display:none}
+  .ck-more button{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .ck-more button:hover{color:var(--ink);border-color:var(--key-line);background:var(--key-bg)}
+  .board.ck-veil{position:relative}
+  .board.ck-veil > .panel{filter:blur(6px);opacity:.4;pointer-events:none;user-select:none}
+  .board.ck-veil::before{content:"The work stays hidden until you check your answer";position:absolute;z-index:2;
+    top:22px;left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);text-align:center;
+    font-size:13px;font-weight:600;color:var(--ink-2);background:var(--surface);border:1px solid var(--rule);
+    border-radius:16px;padding:6px 14px;box-shadow:var(--shadow)}
+  .answer.ck-hide{display:none}
+
   @media print{
     :root:root{
       --paper:#fff; --surface:#fff; --surface-2:#F2EEF0;
@@ -356,7 +389,10 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,.methodrow,#modeTabs,#statusLine{display:none !important}
+    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,.methodrow,#modeTabs,#statusLine,.ckbox,#copyBtn{display:none !important}
+    .board.ck-veil > .panel{filter:none;opacity:1}
+    .board.ck-veil::before{display:none}
+    .answer.ck-hide{display:flex}
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px}
     .eyebrow{font-size:9px}
@@ -470,12 +506,34 @@
         <div class="modes" role="group" aria-label="Practice mode">
           <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
           <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
         </div>
       </span>
     </div>
   </section>
 
   <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <section class="ckbox" id="ckBox" hidden aria-labelledby="ckHead">
+    <div class="ck-head"><h2 id="ckHead">Your answer</h2>
+      <span id="ckSub">Work it out on paper first, then type what you got.</span></div>
+    <form class="ck-row" id="ckForm" autocomplete="off">
+      <div class="numfield">
+        <label for="ckIn" id="ckLab1">The answer is</label>
+        <input class="expr-in" id="ckIn" type="text" inputmode="text" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="numfield" id="ckF2" hidden>
+        <label for="ckIn2" id="ckLab2"><i class="vr">y</i> =</label>
+        <input class="expr-in" id="ckIn2" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="2">
+      </div>
+      <button type="submit" class="go" id="ckGo">Check</button>
+    </form>
+    <p class="ck-msg" id="ckMsg" aria-live="polite"></p>
+    <div class="ck-more" id="ckMore" hidden>
+      <button type="button" id="ckHint">Show a hint</button>
+      <button type="button" id="ckShow">Show me the work</button>
+    </div>
+  </section>
 
   <div class="board" id="board">
     <section class="panel">
@@ -505,6 +563,7 @@
 
   <div class="footnote">
     <button class="print" type="button" id="printBtn">Print this work</button>
+    <button class="print" type="button" id="copyBtn">Copy link</button>
     <span>One move per line, nothing skipped. Stuck on the arithmetic inside a step? Work it on
       <a href="addition.html">+</a>, <a href="subtraction.html">&minus;</a>,
       <a href="multiplication.html">&times;</a>, <a href="division.html">&divide;</a> or
@@ -513,10 +572,36 @@
 </div>
 
 <script>
+/* ===================== URL parameters =====================
+   algebra.html?mode=simplify|solve|ineq|sys&q=<problem>&method=elim|sub&practice=all|step|check
+     mode      which tab. Optional: when it's missing it is read off q — a ";" means sys, any of < > ≤ ≥ (or <= >=)
+               means ineq, an "=" means solve, anything else simplify.
+     q         the problem exactly as it would be typed, URL-encoded (encodeURIComponent):
+                 simplify  q=3(x%20%2B%202)%20%E2%88%92%20x%20%2B%204       3(x + 2) − x + 4
+                 solve     q=5x%20%E2%88%92%204%20%3D%202x%20%2B%208          5x − 4 = 2x + 8
+                 ineq      q=%E2%88%922x%20%2B%205%20%3E%2011                −2x + 5 > 11
+                 sys       q=2x%2By%3D7%3Bx-y%3D2                            2x+y=7;x-y=2  (";" between the two equations)
+               A raw "+" (q=2x+y=7;x-y=2) is read as a space first, and as a plus sign if that doesn't make a problem.
+     method    elim (default) or sub — how a system is solved
+     practice  all (default) | step (one step at a time) | check (check my answer)
+   Parameters that are there win over what this browser saved; the rest keep the saved value. A q that
+   can't be worked shows the page's usual notice. The address bar follows the current problem
+   (history.replaceState; problem settings only, never the theme).
+
+   Worksheet API — another page can load this one in a (hidden) iframe and postMessage it:
+     {type:"helper:options", id[, mode]}      → {type:"helper:optionsSchema", id, page:"algebra.html", title, options:[…]}
+                                                (with a mode: only that mode's options, with its defaults)
+     {type:"helper:make", id, count, options} → {type:"helper:made", id, page:"algebra.html", problems:[{text, html, params, answer, answerHtml}]}
+   Option keys (each option lists the modes that use it):
+     mode (simplify|solve|ineq|sys)
+     simplify:     terms (3 4 5 6), par, twoLetters, negAnswer
+     solve, ineq:  oneStep, twoStep, bothSides, parens, fractions, negatives, whole, max (10 20 50); ineq also flip
+     sys:          method (elim|sub), whole, scale, slope, coef (5 10)
+   Making problems never changes this page: not its inputs, its maker settings or what it saved. */
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
-  var S = { mode:"solve", method:"elim", stepMode:false, step:1,
+  var S = { mode:"solve", method:"elim", practice:"all", stepMode:false, step:1,
             inputs:{ simplify:"3(x + 2) − x + 4", solve:"5x − 4 = 2x + 8", ineq:"−2x + 5 > 11",
                      sys1:"2x + y = 7", sys2:"x − y = 2" },
             gen:{ simplify:{ terms:4, par:true, two:false, neg:true },
@@ -1883,6 +1968,7 @@
         + "The answer: <b>" + L(ans) + " = " + nH(b) + "</b>. " + (eqR(a, b) ? '<span class="ok">Same value ✓</span>' : '<span class="bad">Different ✗</span>')
         + " (Any number works for this check — the two expressions are equal for every value.)"
       : "<b>Check:</b> there are no letters, so this was plain arithmetic — the answer is <b>" + nH(b) + "</b>.";
+    CUR = { mode:"simplify", P:out.P, vs:out.vs, list:out.list, html:listHTML(out.list) };
     return n;
   }
   var REL_WORD = { "<":"less than", ">":"greater than", "≤":"less than or equal to", "≥":"greater than or equal to" };
@@ -1967,6 +2053,8 @@
       }
     }
     $("closer").innerHTML = closer;
+    CUR = { mode:ineq ? "ineq" : "solve", P:P, v:v, res:res,
+            flipped:ctx.steps.some(function(st){ return st.lines.some(function(l){ return l[1] === "Flip!"; }); }) };
     return n;
   }
   function drawSys(){
@@ -2014,19 +2102,25 @@
                               : "But the numbers on the right don’t follow along, so the lines are parallel — side by side, never touching.");
     }
     $("closer").innerHTML = closer;
+    CUR = { mode:"sys", res:res, E1:out.E1, E2:out.E2 };
     return n;
   }
 
   /* ===================== render ===================== */
+  var lastSteps = 0;
   function render(){
     var total;
+    if (CK.key !== ckKey()) resetCheck();
+    syncStep();
+    CUR = null;
     try {
       total = S.mode === "simplify" ? drawSimplify() : S.mode === "sys" ? drawSys() : drawEq(S.mode === "ineq");
     } catch (e){
-      if (e && e.user){ total = fail(e.user === "zero" ? "Something in there divides by zero — that can’t be done. Change the 0." : e.user); }
+      if (e && e.user){ CUR = null; total = fail(e.user === "zero" ? "Something in there divides by zero — that can’t be done. Change the 0." : e.user); }
       else throw e;
     }
-    if (!total) return;
+    if (!total){ applyCheck(0); return; }
+    lastSteps = total;
     if (S.step > total) S.step = total;
     if (S.step < 1) S.step = 1;
     $("stepper").hidden = !S.stepMode;
@@ -2036,6 +2130,7 @@
       $("nextBtn").disabled = S.step >= total;
     }
     veil(total);
+    applyCheck(total);
     $("statusLine").textContent = "";
   }
 
@@ -2082,6 +2177,398 @@
     var bnd = document.querySelector(".answer");
     if (bnd) bnd.classList.toggle("masked", S.stepMode && S.step < total);
     $("closer").style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+  }
+
+  /* ===================== check my answer ===================== */
+  var CUR = null;                // the problem on screen, as worked out by the last render
+  var CK = { key:null, reveal:"none", tries:0, done:false };   // reveal: none | step (a hint) | all
+  function ckKey(){ return S.mode + "|" + (S.mode === "sys" ? S.inputs.sys1 + ";" + S.inputs.sys2 : S.inputs[S.mode]); }
+  function syncStep(){ S.stepMode = S.practice === "step" || (S.practice === "check" && CK.reveal === "step"); }
+  function resetCheck(){
+    CK = { key:ckKey(), reveal:"none", tries:0, done:false };
+    $("ckIn").value = ""; $("ckIn2").value = "";
+    $("ckMsg").innerHTML = "";
+  }
+  function paintCheck(){
+    var sys = S.mode === "sys", v = CUR && CUR.v ? CUR.v : "x";
+    $("ckF2").hidden = !sys;
+    $("ckForm").classList.toggle("two", sys);
+    $("ckLab1").innerHTML = sys ? vH("x") + " =" : S.mode === "simplify" ? "Simplified" : S.mode === "ineq" ? "The solution is" : "The answer is";
+    $("ckIn").placeholder = sys ? "3" : S.mode === "simplify" ? "like 2x + 10" : S.mode === "ineq" ? v + " > 3, or (3, ∞)" : v + " = 4, or just 4";
+    $("ckSub").innerHTML = sys ? "Type " + vH("x") + " and " + vH("y") + " — or the point, like (3, 2), in the first box. "
+        + "No solution or infinitely many? Type that in the first box."
+      : S.mode === "simplify" ? "Simplify it on paper first, then type what you got."
+      : "Work it out on paper first, then type what you got.";
+  }
+  function applyCheck(total){
+    var on = S.practice === "check" && total > 0, board = $("board"), hide = on && CK.reveal === "none";
+    $("ckBox").hidden = !on;
+    if (on) paintCheck();
+    board.classList.toggle("ck-veil", hide);
+    if (hide) board.setAttribute("aria-hidden", "true"); else board.removeAttribute("aria-hidden");
+    board.inert = hide;
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.classList.toggle("ck-hide", hide);
+    $("ckMore").hidden = !(on && CK.tries > 0 && !CK.done && CK.reveal !== "all");
+    $("ckHint").hidden = CK.reveal === "step";
+  }
+
+  /* reading what was typed */
+  function decR(t){
+    var q = String(t).split("."), ip = q[0] || "0", fp = q[1] || "";
+    return R(BigInt(ip + fp), 10n ** BigInt(fp.length));
+  }
+  // a number as someone might type it: 4, −3, 7/6, 1 1/6, 2.5, .75, 1,234, (−3), 0.67…
+  function readNum(src){
+    var s = String(src).replace(/[−–—]/g, "-").replace(/\s+/g, " ").trim(), approx = false, ng = false, m, v, places = -1;
+    if (!s || s.length > 40) return null;
+    s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    if (/(…|\.\.\.)$/.test(s)){ approx = true; s = s.replace(/\s*(…|\.\.\.)$/, ""); }
+    function unwrap(){ while (/^\(.*\)$/.test(s)) s = s.slice(1, -1).trim(); }
+    unwrap();
+    if (/^[+-]/.test(s)){ ng = s.charAt(0) === "-"; s = s.slice(1).trim(); unwrap(); }
+    var D = "(\\d+(?:\\.\\d*)?|\\.\\d+)";
+    if ((m = /^(\d+) (\d+) ?[\/÷] ?(\d+)$/.exec(s))){
+      if (/^0+$/.test(m[3])) return null;
+      v = R(BigInt(m[1]) * BigInt(m[3]) + BigInt(m[2]), BigInt(m[3]));
+    } else if ((m = new RegExp("^" + D + " ?[/÷] ?(-?) ?" + D + "$").exec(s))){
+      var a = decR(m[1]), b = decR(m[3]);
+      if (b.n === 0n) return null;
+      v = R(a.n * b.d * (m[2] ? -1n : 1n), a.d * b.n);
+    } else if ((m = new RegExp("^" + D + "$").exec(s))){
+      v = decR(m[1]);
+      if (m[1].indexOf(".") >= 0) places = m[1].split(".")[1].length;
+    } else return null;
+    if (ng) v = R(-v.n, v.d);
+    return { v:v, places:places, approx:approx };
+  }
+  // "exact", "round" (a decimal of an answer that never ends, rounded to 2 or more places) or ""
+  function numMatch(t, v){
+    if (!t) return "";
+    if (eqR(t.v, v)) return "exact";
+    if (t.places >= 2 && !isTermD(v.d)){
+      var p = 10n ** BigInt(t.places), num = (v.n * t.v.d - t.v.n * v.d) * p, den = v.d * t.v.d;
+      if (num < 0n) num = -num;
+      if (2n * num <= den || (t.approx && num < den)) return "round";
+    }
+    return "";
+  }
+  function splitPair(s){                       // "3, 2"  "3; 2"  "3,2" — but not the comma in 1,234
+    var p = s.split(/\s*;\s*/);
+    if (p.length === 2) return p;
+    p = s.split(/,\s+/);
+    if (p.length === 2) return p;
+    p = s.split(/,(?!\d{3}(?!\d))/);
+    if (p.length === 2) return p;
+    p = s.split(",");
+    return p.length === 2 ? p : null;
+  }
+  function wordKind(raw){
+    var w = String(raw).toLowerCase().replace(/[−–—]/g, "-").replace(/[.!]+$/, "").replace(/\s+/g, " ").trim();
+    if (/^(none|no|nothing|never|∅|ø|\{ ?\}|empty( set)?|no number( works)?|no numbers( work)?)$/.test(w)
+        || /\bno (real )?solutions?\b|\bnot? (any )?solutions?\b|\b(0|zero) solutions?\b|\bno answer\b|\bdoesn.?t have a solution\b/.test(w)) return "none";
+    if (/^(all|any|always|everything|ℝ|r|reals|all reals|identity)$/.test(w)
+        || /infinite|\ball (real )?(numbers|values|x|reals)\b|\bany (real )?(number|value)\b|\bevery (real )?(number|value)\b|^\(\s*-\s*(∞|inf|infinity|oo)\s*,\s*\+?\s*(∞|inf|infinity|oo)\s*\)$/.test(w)) return "all";
+    return null;
+  }
+  var ONE_LETTER = /^[A-Za-z]$/;
+  function readEqAns(raw, v){
+    var s = raw.replace(/==/g, "=").trim();
+    if (s.indexOf("=") >= 0){
+      var parts = s.split("=");
+      if (parts.length !== 2) return { err:"Use just one <b>=</b>, like <b>" + vH(v) + " = 4</b>." };
+      var a = parts[0].trim(), b = parts[1].trim(), la = ONE_LETTER.test(a), lb = ONE_LETTER.test(b);
+      if (la === lb) return { err:"Write it as " + vH(v) + " = a number, like <b>" + vH(v) + " = 4</b>." };
+      var lt = la ? a : b;
+      if (lt !== v) return { err:"This problem is about " + vH(v) + ", not " + vH(lt) + "." };
+      s = la ? b : a;
+    }
+    var t = readNum(s);
+    return t ? { t:t } : { err:"I can’t read that. Type a number like <b>4</b>, <b>−2/3</b> or <b>2.5</b> — or <b>" + vH(v) + " = 4</b>." };
+  }
+  var INF_RE = /^\+?\s*(∞|inf|infinity|oo)$/i, NINF_RE = /^-\s*(∞|inf|infinity|oo)$/i;
+  function readIneqAns(raw, v){
+    var s = raw.replace(/[−–—]/g, "-").replace(/<=|=</g, "≤").replace(/>=|=>/g, "≥").replace(/⩽/g, "≤").replace(/⩾/g, "≥").trim();
+    var bad = { err:"I can’t read that. Type it like <b>" + vH(v) + " &gt; 3</b>, <b>3 &lt; " + vH(v) + "</b> or <b>(3, ∞)</b>." };
+    var m = /^([(\[])(.*)([)\]])$/.exec(s);
+    if (m && /∞|inf|oo/i.test(s)){
+      var pr = splitPair(m[2]);
+      if (!pr) return bad;
+      var lo = pr[0].trim(), hi = pr[1].trim();
+      if (NINF_RE.test(lo) && INF_RE.test(hi)) return { all:true };
+      if (NINF_RE.test(lo)){ var th = readNum(hi); return th ? { rel:m[3] === "]" ? "≤" : "<", t:th } : bad; }
+      if (INF_RE.test(hi)){ var tl = readNum(lo); return tl ? { rel:m[1] === "[" ? "≥" : ">", t:tl } : bad; }
+      return bad;
+    }
+    var rels = s.match(/[<>≤≥]/g);
+    if (!rels) return { err:"An inequality’s answer needs a sign — <b>&lt;</b>, <b>&gt;</b>, <b>≤</b> or <b>≥</b> — like <b>"
+      + vH(v) + " &gt; 3</b>. Interval notation like <b>(3, ∞)</b> works too." };
+    if (rels.length > 1) return { err:"Use just one sign, like <b>" + vH(v) + " &gt; 3</b>." };
+    var i = s.search(/[<>≤≥]/), a = s.slice(0, i).trim(), b = s.slice(i + 1).trim(), rel = s.charAt(i);
+    var la = ONE_LETTER.test(a), lb = ONE_LETTER.test(b);
+    if (la === lb) return bad;
+    var lt = la ? a : b;
+    if (lt !== v) return { err:"This problem is about " + vH(v) + ", not " + vH(lt) + "." };
+    var t = readNum(la ? b : a);
+    return t ? { rel:la ? rel : FLIP[rel], t:t } : bad;
+  }
+
+  /* likely slips, worked out exactly */
+  function sumTerms(n, sg, out){
+    if (n.t === "bin" && (n.op === "+" || n.op === "−")){ sumTerms(n.a, sg, out); sumTerms(n.b, n.op === "−" ? -sg : sg, out); }
+    else if (n.t === "neg") sumTerms(n.a, -sg, out);
+    else out.push({ sg:sg, n:n });
+    return out;
+  }
+  function groupOf(n){                          // ( … ), K·( … ) or ( … )·K
+    if (n.t === "par") return { K:ONE, inner:n.a };
+    if (n.t === "bin" && n.op === "×"){
+      if (n.b.t === "par" && !hasVar(n.a)) return { K:evalLin(n.a).k, inner:n.b.a };
+      if (n.a.t === "par" && !hasVar(n.b)) return { K:evalLin(n.b).k, inner:n.a.a };
+    }
+    return null;
+  }
+  // kind "first": the number in front reached only the first term inside; "sign": every term got the size, only the first the sign
+  function distSlip(ast, kind){
+    var hit = null, lin = L0();
+    sumTerms(ast, 1, []).forEach(function(t){
+      var g = groupOf(t.n), m = g ? (t.sg < 0 ? neg(g.K) : g.K) : null;
+      if (g && !hit && (kind === "first" ? !isOne(m) : sgn(m) < 0 && !eqR(m, NEG1))){
+        var inner = sumTerms(g.inner, 1, []);
+        if (inner.length > 1){
+          hit = { m:m };
+          inner.forEach(function(it, i){
+            var f = i === 0 ? mul(m, R(it.sg)) : kind === "first" ? R(it.sg) : mul(absR(m), R(it.sg));
+            lin = lComb(lin, lScale(evalLin(it.n), f), 1);
+          });
+          return;
+        }
+      }
+      lin = lComb(lin, lScale(evalLin(t.n), R(t.sg)), 1);
+    });
+    return hit ? { lin:lin, m:hit.m } : null;
+  }
+  function distWhy(kind, m){
+    if (kind === "first") return eqR(m, NEG1)
+      ? "A minus in front of parentheses changes the sign of <i>every</i> term inside, not just the first one."
+      : "Did the <b>" + nH(m) + "</b> multiply only the first term inside the parentheses? It multiplies <i>every</i> term inside.";
+    return "The <b>" + nH(m) + "</b> multiplies every term inside, sign and all — a negative times a positive is negative, "
+      + "a negative times a negative is positive.";
+  }
+  function eqSlips(P, v){
+    var lL = evalLin(P.L), lR = evalLin(P.R), aL = lCo(lL, v), aR = lCo(lR, v), bL = lL.k, bR = lR.k;
+    var A = sub(aL, aR), B = sub(bR, bL), out = [];
+    if (isZ(A)) return out;
+    var x0 = dvd(B, A);
+    function put(num, den, why){
+      if (isZ(den)) return;
+      var val = dvd(num, den);
+      if (!eqR(val, x0)) out.push({ v:val, why:why });
+    }
+    ["first", "sign"].forEach(function(kind){
+      var fl = distSlip(P.L, kind), fr = distSlip(P.R, kind);
+      if (!fl && !fr) return;
+      var L2 = fl ? fl.lin : lL, R2 = fr ? fr.lin : lR;
+      put(sub(R2.k, L2.k), sub(lCo(L2, v), lCo(R2, v)), distWhy(kind, (fl || fr).m));
+    });
+    var oneSide = "It looks like a step was done to one side only. Whatever you do to one side — add, subtract, multiply, divide — do to the other side too.";
+    var keepSign = "When a term moves to the other side of the <b>=</b>, its sign changes. Better still, subtract it from (or add it to) both sides.";
+    if (isZ(aR) || isZ(aL)){
+      var a = isZ(aR) ? aL : aR, own = isZ(aR) ? bL : bR, far = isZ(aR) ? bR : bL;   // the x side's number, the other side's
+      if (!isZ(own)) put(far, a, oneSide);                                         // took the number away from the x side only
+      if (!isOne(absR(a))) put(sub(far, own), ONE, "Almost — " + vH(v) + " is still being multiplied by <b>" + nH(a)
+        + "</b>. Divide both sides by <b>" + nH(a) + "</b> to finish.");
+      if (!isOne(absR(a)) && !isZ(sub(far, own))) put(a, sub(far, own), "Check the last division: <b>" + nH(a) + vH(v) + " = " + nH(sub(far, own))
+        + "</b> means " + vH(v) + " = " + nH(sub(far, own)) + " ÷ " + nP(a) + ", not the other way round.");
+      if (!isZ(own)) put(add(far, own), a, keepSign);
+    } else {
+      put(B, aL, oneSide);                                                         // took the x term away from one side only
+      put(B, add(aL, aR), keepSign);
+      if (!isZ(bL) && !isZ(bR)) put(add(bR, bL), A, keepSign);
+      if (!isOne(absR(A))) put(B, ONE, "Almost — " + vH(v) + " is still being multiplied by <b>" + nH(A)
+        + "</b>. Divide both sides by <b>" + nH(A) + "</b> to finish.");
+    }
+    if (!isZ(x0)) out.push({ v:neg(x0), why:"The size is right but the sign isn’t — check your signs, especially when you move or divide by a negative." });
+    return out;
+  }
+  function slipFor(list, t){ for (var i = 0; i < list.length; i++) if (numMatch(t, list[i].v)) return list[i].why; return ""; }
+
+  /* simplify: equal at several random points, and actually simplified */
+  function evalAt(n, vals){
+    switch (n.t){
+      case "num": return n.v;
+      case "var": return vals[n.name] || ZERO;
+      case "par": return evalAt(n.a, vals);
+      case "neg": return neg(evalAt(n.a, vals));
+    }
+    var a = evalAt(n.a, vals), b = evalAt(n.b, vals);
+    return n.op === "+" ? add(a, b) : n.op === "−" ? sub(a, b) : n.op === "×" ? mul(a, b) : dvd(a, b);
+  }
+  function randPoints(vs, k){
+    var pts = [];
+    for (var i = 0; i < k; i++){
+      var p = {};
+      vs.forEach(function(v){ p[v] = R(rint(-40, 40) || 7, rint(1, 9)); });
+      pts.push(p);
+    }
+    return pts;
+  }
+  // does `ast` (what was typed) equal f(point) at every point that works? null if it never could be worked
+  function sameAs(ast, f, pts){
+    var good = 0;
+    for (var i = 0; i < pts.length; i++){
+      var a;
+      try { a = evalAt(ast, pts[i]); } catch (e){ continue; }
+      if (!eqR(a, f(pts[i]))) return false;
+      good++;
+    }
+    return good >= 3 ? true : null;
+  }
+  function termKind(n){
+    if (n.t === "num") return "~";
+    if (n.t === "var") return n.name;
+    if (n.t === "bin" && n.op === "×"){
+      if (n.a.t === "num" && n.b.t === "var") return isZ(n.a.v) ? null : n.b.name;
+      if (n.b.t === "num" && n.a.t === "var") return isZ(n.b.v) ? null : n.a.name;
+      return null;
+    }
+    if (n.t === "bin" && n.op === "÷" && n.b.t === "num"){
+      var k = termKind(n.a);
+      return k && k !== "~" ? k : null;
+    }
+    return null;
+  }
+  function hasParNode(n){ return n.t === "par" || (n.t !== "num" && n.t !== "var" && (hasParNode(n.a) || (n.b ? hasParNode(n.b) : false))); }
+  function notSimplified(ast){
+    if (hasParNode(ast)) return "There are still parentheses — multiply them out.";
+    var terms = sumTerms(ast, 1, []), seen = {};
+    for (var i = 0; i < terms.length; i++){
+      var k = termKind(terms[i].n);
+      if (!k) return "There’s still some multiplying or dividing to do inside a term.";
+      if (k === "~" && isZ(terms[i].n.v) && terms.length > 1) return "A <b>0</b> on its own can just be left out.";
+      if (seen[k]) return k === "~" ? "There are still plain numbers that can be combined into one."
+                                    : "There are still " + vH(k) + " terms to combine into one.";
+      seen[k] = true;
+    }
+    return "";
+  }
+  function ckSimplify(){
+    var raw = $("ckIn").value.trim().replace(/^=\s*/, ""), ast;
+    if (!raw) return { state:"empty" };
+    if (/[=<>≤≥]/.test(raw)) return { state:"unread", why:"Just type the simplified expression, like <b>2" + vH("x") + " + 10</b> — no = or &lt; sign needed." };
+    try { ast = parseExprTokens(lex(raw), "Type your answer."); }
+    catch (e){ return { state:"unread", why:e && e.user ? e.user : "" }; }
+    var vs = Object.keys(varsOf(CUR.P.E)), extra = Object.keys(varsOf(ast)).filter(function(k){ return vs.indexOf(k) < 0; });
+    if (extra.length) return { state:"no", why:"Your answer has " + vH(extra[0]) + " in it, but the problem doesn’t." };
+    var full = evalLin(CUR.P.E), pts = randPoints(vs, 7);
+    var same = sameAs(ast, function(p){ return lAt(full, p); }, pts);
+    if (same === null) return { state:"unread", why:"That divides by zero." };
+    if (same){
+      var ns = notSimplified(ast);
+      return ns ? { state:"almost", why:ns } : { state:"ok" };
+    }
+    var cands = [];
+    ["first", "sign"].forEach(function(kind){ var d = distSlip(CUR.P.E, kind); if (d) cands.push({ lin:d.lin, why:distWhy(kind, d.m) }); });
+    // one term's sign slipped
+    vs.concat(["~"]).forEach(function(k){
+      var c = k === "~" ? full.k : lCo(full, k);
+      if (isZ(c)) return;
+      var w = L0(full.k); for (var q in full.c) w.c[q] = full.c[q];
+      if (k === "~") w.k = neg(c); else w.c[k] = neg(c);
+      cands.push({ lin:w, why:"Nearly — the sign of the " + (k === "~" ? "plain number" : T1(mkT(c, k)) + " term") + " isn’t right. Check the sign in front of each piece." });
+    });
+    for (var i = 0; i < cands.length; i++){
+      var L2 = cands[i].lin;
+      if (sameAs(ast, function(p){ return lAt(L2, p); }, pts)) return { state:"no", why:cands[i].why };
+    }
+    return { state:"no" };
+  }
+  function ckEq(ineq){
+    var raw = $("ckIn").value.trim(), v = CUR.v, res = CUR.res, wk;
+    if (!raw) return { state:"empty" };
+    wk = wordKind(raw);
+    if (res.kind !== "one"){
+      if (wk === res.kind) return { state:"ok" };
+      if (ineq && wk === null && res.kind === "all"){ var ia = readIneqAns(raw, v); if (ia.all) return { state:"ok" }; }
+      return { state:"no", why:wk ? "" : "Look at what happens to the " + vH(v) + "’s when you gather them on one side." };
+    }
+    if (wk) return { state:"no", why:"There is an answer here — keep going until " + vH(v) + " is by itself." };
+    var a = ineq ? readIneqAns(raw, v) : readEqAns(raw, v);
+    if (a.err) return { state:"unread", why:a.err };
+    if (a.all) return { state:"no", why:"Not every number works here — try one to see." };
+    var m = numMatch(a.t, res.val);
+    if (!ineq) return m ? { state:"ok", round:m === "round" } : { state:"no", why:slipFor(eqSlips(CUR.P, v), a.t) };
+    var up = function(r){ return r === ">" || r === "≥"; }, strict = function(r){ return r === "<" || r === ">"; };
+    if (m && a.rel === res.rel) return { state:"ok", round:m === "round" };
+    if (m && up(a.rel) !== up(res.rel)) return { state:"no", why:CUR.flipped
+      ? "The number is right — but did you flip the sign? Multiplying or dividing both sides by a <b>negative</b> number turns the inequality sign around."
+      : "The number is right, but the sign points the wrong way. Try a number on each side of it in the original to see which side works." };
+    if (m) return { state:"no", why:"The number is right. Now check whether <b>" + nH(res.val) + "</b> itself is included: "
+      + "<b>&lt;</b> and <b>&gt;</b> leave it out, <b>≤</b> and <b>≥</b> take it in." };
+    return { state:"no", why:slipFor(eqSlips(CUR.P, v), a.t) };
+  }
+  function readPair(r1, r2){
+    var parts, bad = { err:"Type both numbers — " + vH("x") + " in the first box and " + vH("y") + " in the second — or the point, like <b>(3, 2)</b>." };
+    function lab(s){ var m = /^([A-Za-z])\s*=\s*(.*)$/.exec(s.trim()); return m ? { l:m[1], s:m[2] } : { l:null, s:s.trim() }; }
+    if (r2) parts = [lab(r1), lab(r2)];
+    else {
+      var pp = splitPair(r1.replace(/^\s*\((.*)\)\s*$/, "$1"));
+      if (!pp) return bad;
+      parts = [lab(pp[0]), lab(pp[1])];
+    }
+    if (parts[0].l === "y" && parts[1].l !== "y") parts.reverse();
+    for (var i = 0; i < 2; i++) if (parts[i].l && parts[i].l !== (i ? "y" : "x"))
+      return { err:"This system is about " + vH("x") + " and " + vH("y") + "." };
+    var x = readNum(parts[0].s), y = readNum(parts[1].s);
+    if (!x || !y) return { err:"I can’t read " + (!x ? "the " + vH("x") : "the " + vH("y")) + ". Type numbers like <b>3</b>, <b>−2/3</b> or <b>2.5</b>." };
+    return { x:x, y:y };
+  }
+  function ckSys(){
+    var r1 = $("ckIn").value.trim(), r2 = $("ckIn2").value.trim(), res = CUR.res;
+    if (!r1 && !r2) return { state:"empty" };
+    var wk = (!r2 || !r1) ? wordKind(r1 || r2) : null;
+    if (res.kind !== "one"){
+      if (wk === res.kind) return { state:"ok" };
+      return { state:"no", why:wk ? "" : "Try getting rid of one letter — look closely at what’s left." };
+    }
+    if (wk) return { state:"no", why:"These two lines do cross — at exactly one point. Keep going to find it." };
+    var p = readPair(r1, r2);
+    if (p.err) return { state:"unread", why:p.err };
+    var mx = numMatch(p.x, res.x), my = numMatch(p.y, res.y);
+    if (mx && my) return { state:"ok", round:mx === "round" || my === "round" };
+    if (!eqR(res.x, res.y) && numMatch(p.x, res.y) && numMatch(p.y, res.x))
+      return { state:"no", why:"Looks like " + vH("x") + " and " + vH("y") + " got swapped — a point is written (" + vH("x") + ", " + vH("y") + "), " + vH("x") + " first." };
+    if ((mx || numMatch(p.x, neg(res.x))) && (my || numMatch(p.y, neg(res.y))))
+      return { state:"no", why:"The sizes are right but a sign isn’t — check the sign of " + (mx ? vH("y") : my ? vH("x") : vH("x") + " and " + vH("y")) + "." };
+    function fits(E){ return eqR(add(mul(E.a, p.x.v), mul(E.b, p.y.v)), E.c); }
+    var f1 = fits(CUR.E1), f2 = fits(CUR.E2);
+    if (f1 !== f2) return { state:"no", why:"Your point works in equation " + (f1 ? "(1)" : "(2)") + " but not in " + (f1 ? "(2)" : "(1)")
+      + " — the answer has to make <i>both</i> true." };
+    if (mx) return { state:"no", why:vH("x") + " is right, but " + vH("y") + " isn’t. Put " + vH("x") + " back into one of the equations carefully." };
+    if (my) return { state:"no", why:vH("y") + " is right, but " + vH("x") + " isn’t. Put " + vH("y") + " back into one of the equations carefully." };
+    return { state:"no" };
+  }
+  function checkAnswer(){
+    if (!CUR) return;
+    var r, msg = $("ckMsg");
+    try { r = CUR.mode === "simplify" ? ckSimplify() : CUR.mode === "sys" ? ckSys() : ckEq(CUR.mode === "ineq"); }
+    catch (e){ r = { state:"unread", why:e && e.user && e.user !== "zero" ? e.user : "" }; }
+    if (r.state === "empty"){ msg.innerHTML = "Type your answer in the box first."; return; }
+    if (r.state === "unread"){
+      msg.innerHTML = '<span class="no">I can’t read that.</span>' + (r.why ? '<span class="why">' + r.why + "</span>" : "");
+      return;
+    }
+    if (r.state === "ok"){
+      CK.done = true; CK.reveal = "all";
+      msg.innerHTML = '<span class="yes">✓ Correct!</span>' + (r.round ? '<span class="why">Rounding is fine — the exact answer is in the work below.</span>' : "");
+      render();
+      return;
+    }
+    CK.tries++;
+    msg.innerHTML = r.state === "almost"
+      ? '<span class="no">Equal, but not simplified yet.</span><span class="why">' + r.why + "</span>"
+      : '<span class="no">Not quite — try again.</span>' + (r.why ? '<span class="why">' + r.why + "</span>" : "");
+    applyCheck(lastSteps);
   }
 
   /* ===================== making problems ===================== */
@@ -2228,7 +2715,7 @@
     }
     return fallback ? { str:fallback, exact:false } : null;
   }
-  function makeSys(G){
+  function makeSys(G, method){
     var fallback = null, M = G.max;
     for (var tries = 0; tries < 6000; tries++){
       var a1 = nzr(-M, M), b1 = nzr(-M, M), a2 = nzr(-M, M), b2 = G.slope ? 1 : nzr(-M, M), X, Y, c1, c2;
@@ -2245,7 +2732,7 @@
       var s1 = joinT([[a1, "x"], [b1, "y"]]) + " = " + fmtN(c1);
       var s2 = G.slope ? "y = " + joinT([[-a2, "x"], [c2, null]]) : joinT([[a2, "x"], [b2, "y"]]) + " = " + fmtN(c2);
       var out;
-      try { out = runSys(s1, s2, S.method); } catch (e){ continue; }
+      try { out = runSys(s1, s2, method); } catch (e){ continue; }
       if (out.res.kind !== "one") continue;
       var rx = out.res.x, ry = out.res.y;
       if (G.whole && (!isInt(rx) || !isInt(ry))) continue;
@@ -2408,26 +2895,61 @@
     host.appendChild(go);
     $("genBtn").addEventListener("click", generate);
   }
+  // pure: reads only its arguments, and puts back the bits of shared state the solvers use
+  function makeFor(mode, G, method){
+    var keep = HASDEC, seen = SEEN, r;
+    try { r = mode === "simplify" ? makeSimplify(G) : mode === "sys" ? makeSys(G, method) : makeEq(G, mode === "ineq"); }
+    finally { HASDEC = keep; SEEN = seen; }
+    return r;
+  }
   function generate(){
-    var keep = HASDEC, G = S.gen[S.mode], r;
-    r = S.mode === "simplify" ? makeSimplify(G) : S.mode === "sys" ? makeSys(G) : makeEq(G, S.mode === "ineq");
-    HASDEC = keep;
+    var r = makeFor(S.mode, S.gen[S.mode], S.method);
     if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
     $("genMsg").textContent = r.exact ? "" : "Couldn’t match every setting, so this one bends a rule. Try bigger numbers or fewer extras.";
     setProblem(r.str);
   }
 
-  function setStepMode(on){
-    S.stepMode = on; S.step = 1;
-    $("allBtn").setAttribute("aria-pressed", String(!on));
-    $("stepBtn").setAttribute("aria-pressed", String(on));
-    render(); save();
+  /* practice: show all work | one step at a time | check my answer */
+  function paintPractice(){
+    $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
   }
-  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
-  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  function setPractice(p){
+    S.practice = p; S.step = 1;
+    resetCheck();
+    paintPractice(); render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
+  $("ckForm").addEventListener("submit", function(e){ e.preventDefault(); checkAnswer(); });
+  $("ckHint").addEventListener("click", function(){ CK.reveal = "step"; S.step = 1; render(); });
+  $("ckShow").addEventListener("click", function(){ CK.reveal = "all"; render(); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
+  var copyT = 0;
+  $("copyBtn").addEventListener("click", function(){
+    syncURL();
+    var url = location.href, btn = $("copyBtn");
+    function show(t){
+      btn.textContent = t; clearTimeout(copyT);
+      copyT = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000);
+    }
+    function old(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = url; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (e){ ok = false; }
+      document.body.removeChild(ta);
+      show(ok ? "Link copied ✓" : "Couldn’t copy — use the address bar");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(function(){ show("Link copied ✓"); }, old);
+    } else old();
+  });
   document.addEventListener("keydown", function(e){
     if (!S.stepMode || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
     if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
@@ -2448,8 +2970,9 @@
 
   function save(){
     try{ localStorage.setItem("balance-scale", JSON.stringify({
-      mode:S.mode, inputs:S.inputs, method:S.method, stepMode:S.stepMode, gen:S.gen, maker:$("maker").open,
-      theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
+      mode:S.mode, inputs:S.inputs, method:S.method, practice:S.practice, stepMode:S.practice === "step",
+      gen:S.gen, maker:$("maker").open, theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
+    syncURL();
   }
   function load(){
     try{
@@ -2461,7 +2984,8 @@
         if (typeof v.inputs[k] === "string") S.inputs[k] = v.inputs[k];
       });
       if (v.method === "elim" || v.method === "sub") S.method = v.method;
-      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+      if (v.practice === "all" || v.practice === "step" || v.practice === "check") S.practice = v.practice;
+      else if (v.stepMode === true) S.practice = "step";
       if (v.gen){
         var g = v.gen, okForms = ["one","two","both","par","frac"];
         if (g.simplify){
@@ -2486,10 +3010,210 @@
     }catch(e){}
   }
 
+  /* ===================== links: ?mode=…&q=…&method=…&practice=… ===================== */
+  var MODES = ["simplify", "solve", "ineq", "sys"];
+  function rawParam(name){                     // the value with a "+" kept as a plus sign
+    var m = new RegExp("(?:^|[?&])" + name + "=([^&]*)").exec(location.search);
+    if (!m) return null;
+    try { return decodeURIComponent(m[1]); } catch (e){ return null; }
+  }
+  function inferMode(q){ return q.indexOf(";") >= 0 ? "sys" : /[<>≤≥⩽⩾]/.test(q) ? "ineq" : q.indexOf("=") >= 0 ? "solve" : "simplify"; }
+  function splitSys(q){ var i = q.indexOf(";"); return i < 0 ? [q.trim(), ""] : [q.slice(0, i).trim(), q.slice(i + 1).trim()]; }
+  function worksAs(m, q){
+    var keep = HASDEC, seen = SEEN;
+    try {
+      if (m === "sys"){ var two = splitSys(q); runSys(two[0], two[1], "elim"); }
+      else if (m === "simplify") runSimplify(q);
+      else runEq(q, m === "ineq");
+      return true;
+    } catch (e){ return false; }
+    finally { HASDEC = keep; SEEN = seen; }
+  }
+  function readURL(){
+    var P;
+    try { P = new URLSearchParams(location.search); } catch (e){ return; }
+    var q = P.get("q"), mode = P.get("mode"), method = P.get("method"), pr = P.get("practice");
+    if (method === "elim" || method === "sub") S.method = method;
+    if (pr === "all" || pr === "step" || pr === "check") S.practice = pr;
+    var m = MODES.indexOf(mode) >= 0 ? mode : null;
+    if (q !== null && q.trim()){
+      q = q.slice(0, 1000);
+      var lit = rawParam("q");
+      // URLSearchParams reads a raw "+" as a space; if that breaks the problem, read it as a plus sign
+      if (lit && lit !== q && !worksAs(m || inferMode(q), q) && worksAs(m || inferMode(lit), lit)) q = lit;
+      if (!m) m = inferMode(q);
+      if (m === "sys"){ var two = splitSys(q); S.inputs.sys1 = two[0]; S.inputs.sys2 = two[1]; }
+      else S.inputs[m] = q.trim();
+    }
+    if (m) S.mode = m;
+  }
+  function urlQ(){ return S.mode === "sys" ? S.inputs.sys1 + ";" + S.inputs.sys2 : S.inputs[S.mode]; }
+  function paramsFor(mode, q, method){
+    return "mode=" + mode + "&q=" + encodeURIComponent(q) + (mode === "sys" ? "&method=" + method : "");
+  }
+  function syncURL(){
+    try {
+      var qs = "?" + paramsFor(S.mode, urlQ(), S.method) + (S.practice !== "all" ? "&practice=" + S.practice : "");
+      if (location.search !== qs) history.replaceState(history.state, "", location.pathname + qs + location.hash);
+    } catch (e){}
+  }
+
+  /* ===================== worksheet API (postMessage) ===================== */
+  var YN = [{ v:true, label:"Yes" }, { v:false, label:"No" }];
+  function opt(key, label, type, modes, def, values, byMode){
+    var o = { key:key, label:label, type:type, values:values || YN, default:def, modes:modes };
+    if (byMode) o.defaultByMode = byMode;
+    return o;
+  }
+  var FORMS = [["oneStep", "one", "One-step"], ["twoStep", "two", "Two-step"], ["bothSides", "both", "x on both sides"],
+               ["parens", "par", "Parentheses"], ["fractions", "frac", "Fractions"]];
+  var API_OPTS = [
+    opt("mode", "Kind of problem", "choice", MODES, "solve",
+        [{ v:"simplify", label:"Simplify" }, { v:"solve", label:"Solve" }, { v:"ineq", label:"Inequality" }, { v:"sys", label:"System" }]),
+    opt("terms", "Terms", "choice", ["simplify"], 4, [3,4,5,6].map(function(v){ return { v:v, label:v + " terms" }; })),
+    opt("par", "( ) Parentheses", "toggle", ["simplify"], true),
+    opt("twoLetters", "y Two letters", "toggle", ["simplify"], false),
+    opt("negAnswer", "− Negatives in the answer", "toggle", ["simplify"], true)
+  ].concat(FORMS.map(function(f){
+    var on = { solve:f[1] === "two" || f[1] === "both", ineq:f[1] === "two" };
+    return opt(f[0], "Steps: " + f[2], "toggle", ["solve", "ineq"], on.solve, null, on);
+  })).concat([
+    opt("negatives", "− Negative numbers", "toggle", ["solve", "ineq"], false),
+    opt("flip", "⇄ Negative coefficient (the sign flips)", "toggle", ["ineq"], true),
+    opt("whole", "✓ Whole-number answers only", "toggle", ["solve", "ineq", "sys"], true),
+    opt("max", "Numbers", "choice", ["solve", "ineq"], 20, [10,20,50].map(function(v){ return { v:v, label:"up to " + v }; })),
+    opt("method", "Method", "choice", ["sys"], "elim", [{ v:"elim", label:"Elimination" }, { v:"sub", label:"Substitution" }]),
+    opt("scale", "× Needs scaling first", "toggle", ["sys"], false),
+    opt("slope", "y= One in y = mx + b form", "toggle", ["sys"], false),
+    opt("coef", "Numbers", "choice", ["sys"], 5, [5,10].map(function(v){ return { v:v, label:"coefficients up to " + v }; }))
+  ]);
+  function apiSettings(o){
+    o = (o && typeof o === "object") ? o : {};
+    function tog(k, d){
+      var v = o[k];
+      if (v === undefined || v === null || v === "") return d;
+      return v === true || v === 1 || /^(true|1|on|yes)$/i.test(String(v));
+    }
+    function ch(k, list, d){
+      for (var i = 0; i < list.length; i++) if (String(list[i]) === String(o[k])) return list[i];
+      return d;
+    }
+    var mode = ch("mode", MODES, "solve"), G, method = "elim";
+    if (mode === "simplify") G = { terms:ch("terms", [3,4,5,6], 4), par:tog("par", true), two:tog("twoLetters", false), neg:tog("negAnswer", true) };
+    else if (mode === "sys"){
+      G = { whole:tog("whole", true), scale:tog("scale", false), slope:tog("slope", false), max:ch("coef", [5,10], 5) };
+      method = ch("method", ["elim", "sub"], "elim");
+    } else {
+      var forms = [];
+      FORMS.forEach(function(f){ if (tog(f[0], mode === "ineq" ? f[1] === "two" : f[1] === "two" || f[1] === "both")) forms.push(f[1]); });
+      if (!forms.length) forms = mode === "ineq" ? ["two"] : ["two", "both"];
+      G = { forms:forms, neg:tog("negatives", false), max:ch("max", [10,20,50], 20), whole:tog("whole", true) };
+      if (mode === "ineq") G.flip = tog("flip", true);
+    }
+    return { mode:mode, G:G, method:method };
+  }
+  // page markup → the same thing with inline styles, so it can be shown on another page
+  var INLINE = {
+    fr:"display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;font-size:.85em;margin:0 .1em",
+    nu:"display:block;padding:0 .2em;text-align:center",
+    de:"display:block;padding:0 .2em;text-align:center;border-top:1.5px solid currentColor",
+    "op-s":"padding:0 .3em", sg0:"padding:0",
+    vr:"font-family:Georgia,'Times New Roman',serif;font-style:italic;padding:0 .05em",
+    word:"font-weight:600"
+  };
+  function inline(h){
+    var d = document.createElement("div");
+    d.innerHTML = h;
+    Array.prototype.forEach.call(d.querySelectorAll("[class]"), function(el){
+      var st = [];
+      el.className.split(/\s+/).forEach(function(c){ if (INLINE[c]) st.push(INLINE[c]); });
+      el.removeAttribute("class");
+      var own = el.getAttribute("style");
+      if (st.length || own) el.setAttribute("style", st.concat(own ? [own] : []).join(";"));
+    });
+    return d.innerHTML;
+  }
+  function eqH(P){ return astH(P.L) + opS(relH(P.rel)) + astH(P.R); }
+  function apiSolve(mode, str, method){
+    if (mode === "simplify"){
+      var so = runSimplify(str);
+      if (!so.ctx.steps.length) return null;
+      var sh = listHTML(so.list);
+      return { text:"Simplify " + str, html:"Simplify " + inline(astH(so.P.E)), params:paramsFor(mode, str, method),
+               answer:htmlToText(sh), answerHtml:inline(sh) };
+    }
+    if (mode === "sys"){
+      var yo = runSys(str[0], str[1], method), r = yo.res, a, ah;
+      if (r.kind === "one"){
+        a = "(" + numText(r.x) + ", " + numText(r.y) + ")";
+        ah = "(" + nH(r.x) + ", " + nH(r.y) + ")";
+      } else { a = r.kind === "all" ? "Infinitely many solutions" : "No solution"; ah = esc(a); }
+      return { text:"Solve the system: " + str[0] + " and " + str[1],
+               html:'Solve the system:<span style="display:inline-flex;flex-direction:column;vertical-align:middle;'
+                 + 'border-left:2px solid currentColor;padding-left:.5em;margin-left:.5em;gap:.15em">'
+                 + "<span>" + inline(eqH(yo.P1)) + "</span><span>" + inline(eqH(yo.P2)) + "</span></span>",
+               params:paramsFor(mode, str[0] + ";" + str[1], method), answer:a, answerHtml:inline(ah) };
+    }
+    var eo = runEq(str, mode === "ineq"), res = eo.res, v = eo.v, rel = mode === "ineq" ? res.rel : "=", t, h;
+    if (res.kind === "one"){
+      t = v + " " + rel + " " + numText(res.val);
+      h = vH(v) + opS(relH(rel)) + nH(res.val);
+    } else {
+      t = res.kind === "none" ? "No solution" : mode === "ineq" ? "All numbers work" : "Every number works";
+      h = esc(t);
+    }
+    return { text:"Solve " + str, html:"Solve " + inline(eqH(eo.P)), params:paramsFor(mode, str, method),
+             answer:t, answerHtml:inline(h) };
+  }
+  function apiProblem(mode, str, method){
+    var keep = HASDEC, seen = SEEN;
+    try { return apiSolve(mode, str, method); } catch (e){ return null; }
+    finally { HASDEC = keep; SEEN = seen; }
+  }
+  function apiMake(count, o){
+    var set = apiSettings(o), n = Math.floor(Number(count));
+    if (!(n >= 1)) n = 10;
+    n = Math.min(n, 100);
+    var out = [], seen = {};
+    for (var tries = 0; out.length < n && tries < n * 4; tries++){
+      var r = makeFor(set.mode, set.G, set.method);
+      if (!r) break;
+      var key = String(r.str);
+      if (seen[key] && tries < n * 3) continue;
+      seen[key] = true;
+      var pr = apiProblem(set.mode, r.str, set.method);
+      if (pr) out.push(pr);
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    var to = ev.source || window.parent;
+    function send(msg){ try { to.postMessage(msg, "*"); } catch (e){} }
+    if (d.type === "helper:options"){
+      // optional: {mode} (or {options:{mode}}) lists only that mode's options, with that mode's defaults
+      var only = d.mode || (d.options && d.options.mode), list = JSON.parse(JSON.stringify(API_OPTS));
+      if (MODES.indexOf(only) >= 0){
+        list = list.filter(function(o){ return o.key === "mode" || o.modes.indexOf(only) >= 0; });
+        list.forEach(function(o){
+          if (o.key === "mode") o["default"] = only;
+          else if (o.defaultByMode) o["default"] = o.defaultByMode[only];
+        });
+      }
+      send({ type:"helper:optionsSchema", id:d.id, page:"algebra.html", title:"The Balance Scale", options:list });
+    } else if (d.type === "helper:make"){
+      var probs;
+      try { probs = apiMake(d.count, d.options); } catch (e){ probs = []; }
+      send({ type:"helper:made", id:d.id, page:"algebra.html", problems:probs });
+    }
+  });
+
   load();
+  readURL();
   if (S.gen.sys.max !== 5 && S.gen.sys.max !== 10) S.gen.sys.max = 5;
-  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
-  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  paintPractice();
   paint(); paintMode(); render();
+  syncURL();
 })();
 </script>

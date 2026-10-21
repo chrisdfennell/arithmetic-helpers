@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Shape Shop</title>
 <script src="nav.js" defer></script>
@@ -332,7 +333,40 @@
     border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
   .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
 
+  /* ---- check my answer ---- */
+  .mine{border-left:5px solid var(--m);background:var(--m-bg);border-radius:6px 12px 12px 6px;
+    padding:14px 20px 16px;display:flex;flex-direction:column;gap:12px}
+  .mine[hidden]{display:none}
+  @media (max-width:520px){.mine{padding:12px 14px 14px}}
+  .mine-head{display:flex;gap:2px 12px;align-items:baseline;flex-wrap:wrap}
+  .mine-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;margin:0;color:var(--ink)}
+  .mine-head span{font-size:13px;color:var(--ink-2)}
+  .mine-form{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:flex-end}
+  .mine .fld > label{color:var(--m)}
+  .mine .num-in{width:10.5ch;font-size:clamp(17px,3vw,21px)}
+  .mine .num-in::placeholder{color:var(--ink-3);opacity:.7;font-weight:400;font-size:.75em}
+  .mine .num-in.ok{border-bottom-color:var(--a)}
+  .mine .mk{font-family:var(--f-mono);font-weight:600;font-size:18px;min-width:1.2ch}
+  .mine .mk.ok{color:var(--a)} .mine .mk.no{color:var(--e)}
+  .mine-go{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .sbtn{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:7px 13px;cursor:pointer}
+  .sbtn:hover{color:var(--ink);border-color:var(--ink-3)}
+  .sbtn[hidden]{display:none}
+  .mine-fb{font-size:14.5px;color:var(--ink);display:flex;flex-direction:column;gap:5px}
+  .mine-fb:empty{display:none}
+  .mine-fb b{font-family:var(--f-mono);font-weight:600}
+  .mine-fb .ok{color:var(--a);font-weight:600}
+  .mine-fb .no{color:var(--e);font-weight:600}
+  .mine-fb .why{color:var(--ink-2)}
+  .chk-ph{display:none;margin:0;padding:14px 18px 16px;font-size:14px;color:var(--ink-3);border-top:1px dashed var(--rule)}
+  .board.chk .chk-ph{display:block}
+  .board.chk #workHost,.board.chk #log,.board.chk #closer,.board.chk #legend,.board.chk .figcap{display:none !important}
+  #urlNote[hidden]{display:none}
+  #urlNote a{color:inherit;font-family:var(--f-mono);font-size:14px}
+
   @media print{
+    .mine,.chk-ph,#urlNote{display:none !important}
     :root:root{
       --paper:#fff; --surface:#fff; --surface-2:#EEF1EB;
       --ink:#111; --ink-2:#3A4336; --ink-3:#6A7464; --rule:#A9B2A2;
@@ -436,12 +470,28 @@
         <div class="modes" role="group" aria-label="Practice mode">
           <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
           <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
         </div>
       </span>
     </div>
   </section>
 
   <div id="statusLine" role="status" aria-live="polite"></div>
+  <div class="notice" id="urlNote" hidden></div>
+
+  <section class="mine" id="mine" hidden aria-labelledby="mineH">
+    <div class="mine-head"><h2 id="mineH">Your answer</h2>
+      <span>Work it out on paper, then type what you got. Units are optional; &pi; and &radic; are fine (25&pi;, 5&radic;2).</span></div>
+    <form class="mine-form" id="mineForm" autocomplete="off" novalidate>
+      <div class="fields" id="mineFields"></div>
+      <div class="mine-go">
+        <button type="submit" class="go" id="mineGo">Check</button>
+        <button type="button" class="sbtn" id="hintBtn" hidden>Show a hint</button>
+        <button type="button" class="sbtn" id="showBtn" hidden>Show me the work</button>
+      </div>
+    </form>
+    <div class="mine-fb" id="mineFb" aria-live="polite"></div>
+  </section>
 
   <div class="board" id="board">
     <section class="panel">
@@ -454,6 +504,7 @@
         </div>
       </div>
       <div id="figHost"></div>
+      <p class="chk-ph">The working is hidden while you try it yourself. Check your answer above, or ask for a hint.</p>
       <div id="workHost"></div>
       <div class="legend" id="legend">
         <div><span class="badge c-p">( )</span> Parentheses</div><span class="then">&rarr;</span>
@@ -466,6 +517,7 @@
 
     <section class="panel">
       <div class="panel-head"><h2>Say it out loud</h2></div>
+      <p class="chk-ph">Each step gets explained here once you&rsquo;ve checked your answer.</p>
       <ol class="log" id="log"></ol>
       <div class="closer" id="closer"></div>
     </section>
@@ -473,6 +525,7 @@
 
   <div class="footnote">
     <button class="print" type="button" id="printBtn">Print this work</button>
+    <button class="print" type="button" id="copyBtn">Copy link</button>
     <span>Formula, then the numbers, then one operation per line. Stuck on a step? Work it on
       <a href="addition.html">+</a>, <a href="subtraction.html">&minus;</a>,
       <a href="multiplication.html">&times;</a> or <a href="division.html">&divide;</a>, or see the order of
@@ -481,6 +534,46 @@
 </div>
 
 <script>
+/* ===================== URL parameters =====================
+   The page reads its problem from the address bar (overriding what was saved in this browser) and
+   keeps the address bar in step with the problem on screen (history.replaceState), so a link opens
+   exactly this problem. Theme is never put in the URL.
+
+   mode=area|vol|right|angle
+   shape=<id>          area:  rect, square, tri, para, trap, circle, lshape
+                       vol:   box, cube, cyl, cone, sphere, tprism, pyr
+                       right: hyp, leg, check
+                       angle: tri, line, comp, point, vert, par, poly
+                       (if mode is missing, a shape id that only one mode has picks the mode)
+   then one parameter per measurement, named like the field's key:
+     rect l, w · square s · tri b, h, s1, s2 · para b, h, s · trap a, b, h, c, d ·
+     circle r + rd=r|d (r is the radius, or the diameter when rd=d) · lshape W, H, w, h (case matters) ·
+     box l, w, h · cube s · cyl r, h, rd · cone r, h, rd · sphere r, rd · tprism b, h, l, s1, s2 · pyr s, h ·
+     hyp a, b · leg a, c · check a, b, c ·
+     angle tri a, b · line a (a list: a=40,75) · comp a · point a (a list) · vert a · par a, pos=1..8 · poly n
+     A link with mode/shape but no measurements gets that shape's example numbers.
+   unit=none|mm|cm|m|in|ft|yd        pi=exact|314|calc        practice=all|step|check
+   e.g.  ?mode=area&shape=rect&l=8&w=5&unit=cm
+         ?mode=area&shape=circle&r=9&rd=d&pi=314
+         ?mode=angle&shape=par&a=65&pos=1&practice=check
+
+   q=<what someone typed>  (the home-page search box) is read forgivingly, e.g.
+     area of rectangle 8 by 5 · rectangle 8 x 5 · perimeter of square 6 · circle radius 5 · circle r=5 ·
+     circle diameter 9 · triangle base 6 height 4 · parallelogram 9 4 5 · trapezoid 4 10 height 4 · l-shape 10 8 4 3 ·
+     volume of box 8 x 3 x 5 · cube 4 · cylinder r 3 h 10 · cone r 3 h 4 · sphere radius 6 · triangular prism 6 4 10 ·
+     square pyramid 6 4 · hypotenuse 3 4 · legs 3 and 4 · leg 5 hypotenuse 13 · missing leg 5 13 ·
+     is 5 12 13 a right triangle · triangle angles 50 60 · supplement of 130 · straight line 130 · complement of 35 ·
+     around a point 90 120 75 · vertical angles 65 · parallel lines angle 3 = 65 · hexagon ·
+     interior angles of a 7-sided polygon.
+     A unit written after a number (8 cm by 5 cm) sets the units. Anything it can't read gets a friendly
+     notice with examples; the other parameters (unit, pi, practice) still apply alongside q.
+   Bad values never crash the page: a number it can't use shows the usual notice under the problem.
+
+   Worksheet API (postMessage, for a page that loads this one in a hidden iframe):
+     {type:"helper:options", id}                → {type:"helper:optionsSchema", id, page, title, options}
+     {type:"helper:make", id, count, options}   → {type:"helper:made", id, page, problems:[{text, html, params, answer, answerHtml}]}
+   Option keys: mode, shape, max, dec, nice, unit, pi, sketch (see optionsSchema below).
+   Making problems never touches what's on screen, the inputs, the maker settings or localStorage. */
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
@@ -1603,7 +1696,8 @@
     }
     return { main:main, facts:facts };
   }
-  function answer(C, k, r, pow){ var f = fmtAns(r, pow); C.answers.push({ k:k, main:f.main, facts:f.facts }); return f; }
+  // ck: the answer as a number, for "Check my answer" (c, or c × π when pi; pow = 1 length, 2 area, 3 volume, 0 angle)
+  function answer(C, k, r, pow){ var f = fmtAns(r, pow); C.answers.push({ k:k, main:f.main, facts:f.facts, ck:{ c:coefF(r.x), pi:!!r.x.pi, pow:pow } }); return f; }
   function note(C, title, html){ C.blocks.push({ kind:"note", title:title, html:html }); }
 
   /* ===================== the shapes ===================== */
@@ -1842,7 +1936,8 @@
     var lT = rt.info.exact ? lab("l", rt.num) : it("l") + " ≈ " + esc(rt.dec) + (S.unit === "none" ? "" : " " + esc(S.unit));
     addFig(C, figCone(r, h, rLabel(rr), { q:it("l"), t:lT, until:lStep }), "<b class=\"lead\">A sketch.</b> The shaded right triangle has the height <b>h</b> and radius <b>r</b> as its legs and the slant height <b>l</b> as its hypotenuse.");
     answer(C, "Volume", Vv, 3); answer(C, "Surface area", SA, 2);
-    C.answers.push({ k:"Slant height", main:(rt.info.exact ? "" : "≈ ") + (rt.info.exact ? rt.h : esc(rt.dec)) + unitH(1), facts:[] });
+    C.answers.push({ k:"Slant height", main:(rt.info.exact ? "" : "≈ ") + (rt.info.exact ? rt.h : esc(rt.dec)) + unitH(1), facts:[],
+      ck:{ c:rt.info.exact ? toF(rt.v) : rt.info.f, pi:false, pow:1 } });
     if (!rt.info.exact){
       var piv = S.pi === "314" ? 3.14 : Math.PI, full = piv * (r.f * r.f + r.f * rt.info.f), shown = coefF(SA.x) * piv;
       if (fmtF(full, 2) !== fmtF(shown, 2))
@@ -1885,7 +1980,8 @@
     var lT = rt.info.exact ? lab("l", rt.num) : it("l") + " ≈ " + esc(rt.dec) + (S.unit === "none" ? "" : " " + esc(S.unit));
     addFig(C, figPyr(s, h, { q:it("l"), t:lT, until:lStep }), "<b class=\"lead\">A sketch.</b> The shaded right triangle is inside the pyramid: the height <b>h</b>, half the base, and the slant height <b>l</b> up the middle of the front face.");
     answer(C, "Volume", Vv, 3); answer(C, "Surface area", SA, 2);
-    C.answers.push({ k:"Slant height", main:(rt.info.exact ? "" : "≈ ") + (rt.info.exact ? rt.h : esc(rt.dec)) + unitH(1), facts:[] });
+    C.answers.push({ k:"Slant height", main:(rt.info.exact ? "" : "≈ ") + (rt.info.exact ? rt.h : esc(rt.dec)) + unitH(1), facts:[],
+      ck:{ c:rt.info.exact ? toF(rt.v) : rt.info.f, pi:false, pow:1 } });
     if (!rt.info.exact){
       var full = s.f * s.f + 2 * s.f * rt.info.f;
       if (fmtF(full, 2) !== fmtF(toF(SA.v), 2)) C.facts.push("The surface area used l rounded to " + rt.dec + ". Keeping every digit of l, it’s <b>≈ " + fmtF(full, 2) + "</b> " + esc(unitT(2)) + ".");
@@ -1957,7 +2053,8 @@
     facts.push((kind === "hyp" ? "c² = a² + b² = " : "b² = c² − a² = ") + "<b>" + vH(sqv.v) + "</b>");
     if (!ex) facts.push("√" + vT(sqv.v) + " isn’t a whole number, so the decimal is rounded to 2 places" + (rt.h.indexOf("rad") >= 0 ? "; <b>" + rt.h + "</b> is the exact answer" : ""));
     if (ex){ var tn = tripleNote(a.v, kind === "hyp" ? b.v : rt.v, kind === "hyp" ? rt.v : c.v); if (tn) facts.push(tn); }
-    C.answers.push({ k:kind === "hyp" ? 'Hypotenuse <span class="sym">c</span>' : 'Missing leg <span class="sym">b</span>', main:main, facts:facts });
+    C.answers.push({ k:kind === "hyp" ? 'Hypotenuse <span class="sym">c</span>' : 'Missing leg <span class="sym">b</span>', main:main, facts:facts,
+      ck:{ c:kind === "hyp" ? cF : bF, pi:false, pow:1 } });
     var A2 = vT(apply("^", a.v, V(2))), B2 = kind === "hyp" ? vT(apply("^", b.v, V(2))) : vT(sqv.v), C2 = kind === "hyp" ? vT(sqv.v) : vT(apply("^", c.v, V(2)));
     C.closer = "<b>Check:</b> " + A2 + " + " + B2 + " = " + C2 + " <span class=\"ok\">✓</span>, and the hypotenuse is the longest side: <b>"
       + fmtF(cF, 2) + "</b> is more than " + fmtF(a.f, 2) + " and " + fmtF(bF, 2) + " <span class=\"ok\">✓</span>";
@@ -1993,7 +2090,7 @@
       ga:small && isR ? x.f : 0, gb:small && isR ? y.f : 0, gc:small && isR ? z.f : 0 }),
       "<b class=\"lead\">Drawn to scale.</b> " + (isR ? "The two smaller squares add up to exactly the big one, and the corner between them is a right angle."
         : "The marked angle is the one across from the longest side. For a right triangle it would be exactly 90°."));
-    C.answers.push({ k:"Right triangle?", main:isR ? "Yes" : "No", facts:[
+    C.answers.push({ k:"Right triangle?", main:isR ? "Yes" : "No", ck:{ yn:isR, pow:0 }, facts:[
       "a² + b² = <b>" + vH(left.v) + "</b> and c² = <b>" + vH(right.v) + "</b>",
       isR ? (tripleNote(x.v, y.v, z.v) || "The angle between the two shorter sides is exactly 90°.") : "It’s an <b>" + kindW + "</b> triangle: its biggest angle is about <b>" + fmtF(gam * 180 / Math.PI, 1) + "°</b>."] });
     C.closer = isR ? "<b>So:</b> " + vT(left.v) + " = " + vT(right.v) + " — a right triangle <span class=\"ok\">✓</span>"
@@ -2025,7 +2122,8 @@
     addFig(C, figTriAng(a.f, b.f, { a:esc(a.t), b:esc(b.t), x:xLabel(X.v), q:it("x"), until:C.lastStep }), "<b class=\"lead\">Drawn with the true angles.</b> The unknown angle x is highlighted.");
     var xf = toF(X.v), type = Math.max(a.f, b.f, xf);
     var kind = Math.abs(type - 90) < 1e-9 ? "a <b>right</b> triangle (one angle is exactly 90°)" : type > 90 ? "an <b>obtuse</b> triangle (one angle is more than 90°)" : "an <b>acute</b> triangle (every angle is less than 90°)";
-    C.answers.push({ k:"Missing angle", main:lhsH("x") + " = " + vH(X.v) + (valParts(X.v).frac ? " ≈ " + fmtF(xf, 2) + "°" : ""), facts:["It’s " + kind + "."] });
+    C.answers.push({ k:"Missing angle", main:lhsH("x") + " = " + vH(X.v) + (valParts(X.v).frac ? " ≈ " + fmtF(xf, 2) + "°" : ""), facts:["It’s " + kind + "."],
+      ck:{ c:xf, pi:false, pow:0 } });
     C.closer = "<b>Check:</b> " + a.t + " + " + b.t + " + " + vT(X.v) + " = <b>180°</b> <span class=\"ok\">✓</span>";
   }
   function runAngList(C, g, total){
@@ -2040,6 +2138,7 @@
     parts.push({ deg:toF(X.v), x:true, txt:xLabel(X.v), q:it("x"), until:C.lastStep });
     addFig(C, figRays(parts, total), "<b class=\"lead\">Drawn with the true angles.</b> The unknown angle x is highlighted.");
     C.answers.push({ k:"Missing angle", main:lhsH("x") + " = " + vH(X.v) + (valParts(X.v).frac ? " ≈ " + fmtF(toF(X.v), 2) + "°" : ""),
+      ck:{ c:toF(X.v), pi:false, pow:0 },
       facts:[total === 90 ? "x and " + list[0].t + " are complementary." : total === 180 && list.length === 1 ? "x and " + list[0].t + " are supplementary." : total === 360 ? "A full turn is 360°." : "A straight line is 180°."] });
     C.closer = "<b>Check:</b> " + list.map(function(x){ return x.t; }).join(" + ") + " + " + vT(X.v) + " = <b>" + total + "°</b> <span class=\"ok\">✓</span>";
   }
@@ -2134,8 +2233,10 @@
       + (n.f <= 40 ? " The lines from the dotted corner cut it into <b>" + (n.f - 2) + "</b> triangles." : "")
       + " Purple: an interior angle. Orange: the exterior angle at the same corner — the turn you make there. Together they make a straight line.");
     answer(C, "Interior angles add to", Sm, 0);
-    C.answers.push({ k:"Each interior angle", main:(valParts(I.v).frac ? "≈ " + fmtF(toF(I.v), 2) + "°" : vH(I.v)), facts:valParts(I.v).frac ? ["Exactly " + vH(I.v) + "; rounded to 2 decimal places"] : [] });
-    C.answers.push({ k:"Each exterior angle", main:(valParts(E.v).frac ? "≈ " + fmtF(toF(E.v), 2) + "°" : vH(E.v)), facts:["A regular " + esc(nm) + " has " + n.t + " equal sides and " + n.t + " equal angles."] });
+    C.answers.push({ k:"Each interior angle", main:(valParts(I.v).frac ? "≈ " + fmtF(toF(I.v), 2) + "°" : vH(I.v)), facts:valParts(I.v).frac ? ["Exactly " + vH(I.v) + "; rounded to 2 decimal places"] : [],
+      ck:{ c:toF(I.v), pi:false, pow:0 } });
+    C.answers.push({ k:"Each exterior angle", main:(valParts(E.v).frac ? "≈ " + fmtF(toF(E.v), 2) + "°" : vH(E.v)), facts:["A regular " + esc(nm) + " has " + n.t + " equal sides and " + n.t + " equal angles."],
+      ck:{ c:toF(E.v), pi:false, pow:0 } });
     var tot = apply("+", I.v, E.v);
     C.closer = "<b>Check:</b> interior + exterior at one corner = " + vH(I.v) + " + " + vH(E.v) + " = <b>" + vH(tot) + "</b> — a straight line <span class=\"ok\">✓</span>";
   }
@@ -2179,6 +2280,7 @@
   var S = {
     mode:"area", shape:{ area:"rect", vol:"box", right:"hyp", angle:"tri" }, vals:{},
     unit:"cm", pi:"exact", stepMode:false, step:1,
+    practice:"all", revealed:false,                // practice: all | step | check; revealed: in check mode, the work is showing
     gen:{ area:{ shape:"any", max:20, dec:"whole", units:"keep" },
           vol:{ shape:"any", max:20, dec:"whole", units:"keep" },
           right:{ shape:"any", max:20, dec:"whole", nice:"nice", units:"keep" },
@@ -2226,7 +2328,9 @@
     });
     $("log").innerHTML = html;
   }
-  function clearBand(){ var old = document.querySelector(".answer, .notice"); if (old) old.parentNode.removeChild(old); }
+  function clearBand(){
+    Array.prototype.forEach.call(document.querySelectorAll(".answer, .notice"), function(old){ if (old.id !== "urlNote") old.parentNode.removeChild(old); });
+  }
   function band(C){
     clearBand();
     var el = document.createElement("div"), facts = [];
@@ -2248,31 +2352,44 @@
     $("statusLine").textContent = el.textContent;
     if (field && $("f_" + field)) $("f_" + field).classList.add("bad");
     $("legend").style.display = "none";
+    $("board").classList.remove("chk");
+    lastC = null;
+    afterRender();
     return 0;
   }
+  function checking(){ return S.practice === "check" && !S.revealed; }
   function veil(total){
+    // in check mode nothing of the work shows: like step mode before step 1 (the drawing keeps its "?" labels)
+    var chk = checking(), from = chk ? 0 : S.stepMode ? S.step : Infinity;
     Array.prototype.forEach.call(document.querySelectorAll("[data-step]"), function(el){
       var s = Number(el.getAttribute("data-step"));
-      el.classList.toggle("veil", S.stepMode && s >= S.step);
+      el.classList.toggle("veil", s >= from);
     });
     Array.prototype.forEach.call(document.querySelectorAll("[data-until]"), function(el){
       var s = Number(el.getAttribute("data-until"));
-      el.classList.toggle("veil", !S.stepMode || s < S.step);
+      el.classList.toggle("veil", !(chk || S.stepMode) || s < from);
     });
     var bnd = document.querySelector(".answer");
-    if (bnd) bnd.classList.toggle("masked", S.stepMode && S.step < total);
+    if (bnd){ bnd.classList.toggle("masked", S.stepMode && S.step < total); bnd.style.display = chk ? "none" : ""; }
     $("closer").style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+    $("board").classList.toggle("chk", chk);
   }
-  var lastTotal = 0;
+  var lastTotal = 0, lastC = null;
   function render(){
     var C = Ctx(), d = curDef();
-    Array.prototype.forEach.call(document.querySelectorAll(".num-in.bad"), function(el){ el.classList.remove("bad"); });
+    var sig = probQuery(S.mode, d.id, vals(), S.unit, S.pi);
+    if (sig !== MINE.sig){                          // a different problem: start the answer box afresh
+      if (MINE.sig !== null && MINE.sig !== "") $("urlNote").hidden = true;
+      MINE.sig = sig; MINE.fresh = true; S.revealed = false;
+    }
+    Array.prototype.forEach.call(document.querySelectorAll(".num-in.bad"), function(el){ if (!el.closest("#mine")) el.classList.remove("bad"); });
     try { d.run(C, getter(d, vals())); }
     catch (e){
       if (e && e.user) return fail(e.user, e.field);
       if (window.console) console.error(e);
       return fail("Something went wrong working that out — try different numbers.");
     }
+    lastC = C;
     $("legend").style.display = "";
     $("figHost").innerHTML = C.figs.map(function(f){ return '<div class="figwrap">' + f.svg + (f.cap ? '<div class="figcap">' + f.cap + "</div>" : "") + "</div>"; }).join("");
     $("workHost").innerHTML = blocksHTML(C);
@@ -2291,8 +2408,10 @@
     }
     veil(total);
     $("statusLine").textContent = "";
+    afterRender();
     return total;
   }
+  function afterRender(){ syncURL(); updateMine(); }
 
   /* ===================== the controls ===================== */
   function paintModes(){
@@ -2417,9 +2536,11 @@
     }); });
     return out;
   }
-  function gen(){
-    var m = S.mode, G = S.gen[m], list = SH[m], d;
-    var choices = G.shape === "any" ? list.filter(function(x){ return list.length < 2 || x.id !== S.shape[m]; }) : [defOf(m, G.shape)];
+  // pure: makes a problem for mode m with maker settings G; touches nothing on the page.
+  // avoid = a shape id not to pick when the shape is "any" (the one on screen), or null
+  function gen(m, G, avoid){
+    var list = SH[m], d;
+    var choices = G.shape === "any" ? list.filter(function(x){ return list.length < 2 || x.id !== avoid; }) : [defOf(m, G.shape)];
     d = pickOf(choices);
     var M = G.max || 20, dec = G.dec === "dec", k = dec ? 0.5 : 1, Mx = M / k, v = {}, msg = "";
     function sc(x){ return nstr(x * k); }
@@ -2498,8 +2619,7 @@
       case "angle:par":  var a8 = rint(25, 155); if (a8 === 90) a8 = 60; v = { a:String(a8 + (dec ? .5 : 0)), pos:String(rint(1, 8)) }; break;
       case "angle:poly": v = { n:String(rint(3, 12)) }; break;
     }
-    if (G.units === "mix") S.unit = pickOf(["mm","cm","m","in","ft","yd"]);
-    return { id:d.id, v:v, msg:msg };
+    return { id:d.id, v:v, msg:msg, unit:G.units === "mix" ? pickOf(["mm","cm","m","in","ft","yd"]) : null };
   }
   function buildMaker(){
     var m = S.mode, G = S.gen[m], host = $("makerBody"), html = "";
@@ -2524,25 +2644,786 @@
       });
     });
     $("genBtn").addEventListener("click", function(){
-      var r = gen();
+      var r = gen(S.mode, S.gen[S.mode], S.shape[S.mode]);
+      if (r.unit) S.unit = r.unit;
       setProblem(r.id, r.v);
       $("genMsg").textContent = r.msg;
     });
   }
   function buildAll(){ paintModes(); buildShapes(); buildFields(); buildOpts(); buildChips(); buildMaker(); }
 
+  /* ===================== links: the problem lives in the address bar (see "URL parameters" at the top) ===================== */
+  function hasShape(m, id){ return !!SH[m] && SH[m].some(function(d){ return d.id === id; }); }
+  function modesWith(id){ var out = []; for (var m in SH) if (hasShape(m, id)) out.push(m); return out; }
+  // the query string (no "?") that opens this problem
+  function probQuery(mode, id, Vv, unit, pi, practice){
+    var d = defOf(mode, id), p = ["mode=" + mode, "shape=" + d.id];
+    d.f.forEach(function(fd){
+      var x = Vv[fd.k] == null ? "" : String(Vv[fd.k]).trim();
+      if (fd.pos){ p.push("pos=" + encodeURIComponent(x || "1")); return; }
+      if (x !== "") p.push(fd.k + "=" + encodeURIComponent(x));
+      if (fd.rd) p.push("rd=" + (Vv.rd === "d" ? "d" : "r"));
+    });
+    if (mode !== "angle") p.push("unit=" + unit);
+    if (d.pi) p.push("pi=" + pi);
+    if (practice && practice !== "all") p.push("practice=" + practice);
+    return p.join("&");
+  }
+  function syncURL(){
+    try {
+      var q = "?" + probQuery(S.mode, curDef().id, vals(), S.unit, S.pi, S.practice);
+      if (location.search !== q) history.replaceState(history.state, "", q + location.hash);
+    } catch (e){}
+  }
+  var QEX = ["area of rectangle 8 by 5", "circle radius 5", "triangle base 6 height 4", "volume of box 8 x 3 x 5", "cylinder r 3 h 10",
+             "hypotenuse 3 4", "leg 5 hypotenuse 13", "complement of 35", "hexagon"];
+  function qNote(q){
+    return "I couldn’t tell what <b>“" + esc(String(q).slice(0, 80)) + "”</b> is asking about, so here’s the last problem you had. Try something like "
+      + QEX.map(function(x){ return '<a href="?q=' + encodeURIComponent(x) + '">' + esc(x) + "</a>"; }).join(", ") + " — or pick a shape above.";
+  }
+  function readURL(){
+    var P = new URLSearchParams(location.search), keys = [], bad = [], note = "", k;
+    P.forEach(function(v, key){ keys.push(key); });
+    if (!keys.length) return "";
+    function get(key){ var v = P.get(key); return v == null ? null : String(v).slice(0, 60); }
+    var q = P.get("q");
+    if (q != null && q.trim()){
+      var r = parseQ(q.slice(0, 200));
+      if (r){ S.mode = r.mode; S.shape[r.mode] = r.id; S.vals[r.mode + ":" + r.id] = r.v; if (r.unit) S.unit = r.unit; }
+      else note = qNote(q);
+    } else {
+      var mode = get("mode"), shape = get("shape"), m = null;
+      if (mode != null){ if (SH[mode]) m = mode; else bad.push("mode"); }
+      if (!m && shape != null){ var hits = modesWith(shape); if (hits.length === 1) m = hits[0]; }
+      if (!m) m = S.mode;
+      var id = S.shape[m];
+      if (shape != null){ if (hasShape(m, shape)) id = shape; else bad.push("shape"); }
+      var d = defOf(m, id), v = {}, anyF = false, anyP = mode != null || shape != null;
+      d.f.forEach(function(fd){ var x = get(fd.k); if (x != null){ v[fd.k] = x; anyP = true; if (!fd.pos) anyF = true; } });
+      if (P.has("rd")) anyP = true;
+      if (anyP){
+        if (anyF) d.f.forEach(function(fd){ if (v[fd.k] == null) v[fd.k] = ""; });
+        else { var dd = copy(d.d); for (k in v) dd[k] = v[k]; v = dd; }
+        if (d.d.rd != null){
+          var rd = get("rd");
+          if (rd != null && rd !== "r" && rd !== "d") bad.push("rd");
+          v.rd = rd === "d" || rd === "r" ? rd : (anyF ? "r" : d.d.rd);
+        }
+        if (d.d.pos != null && !/^[1-8]$/.test(String(v.pos))){ if (v.pos != null && v.pos !== "") bad.push("pos"); v.pos = "1"; }
+        S.mode = m; S.shape[m] = d.id; S.vals[m + ":" + d.id] = v;
+      }
+    }
+    var u = get("unit"), pi = get("pi"), pr = get("practice");
+    if (u != null){ if (UNITS.indexOf(u) >= 0) S.unit = u; else bad.push("unit"); }
+    if (pi != null){ if (pi === "3.14") pi = "314"; if (["exact","314","calc"].indexOf(pi) >= 0) S.pi = pi; else bad.push("pi"); }
+    if (pr != null){ if (["all","step","check"].indexOf(pr) >= 0){ S.practice = pr; S.stepMode = pr === "step"; } else bad.push("practice"); }
+    if (bad.length && !note) note = "Part of that link didn’t make sense to me (<b>" + bad.map(function(key){ return esc(key + "=" + String(P.get(key)).slice(0, 30)); }).join(", ")
+      + "</b>), so I’ve used the nearest problem I could make. Check the numbers above.";
+    return note;
+  }
+
+  /* what someone typed into a search box: "area of rectangle 8 by 5", "cylinder r 3 h 10", "complement of 35" … */
+  var QNUM = "(\\d+(?:\\.\\d+)?(?:/\\d+)?|\\.\\d+)";
+  var QPOLY = { quadrilateral:4, pentagon:5, hexagon:6, heptagon:7, septagon:7, octagon:8, nonagon:9, decagon:10, hendecagon:11, undecagon:11, dodecagon:12 };
+  function unitWord(w){
+    var L = [[/^(?:mm|millimet(?:er|re)s?)$/, "mm"], [/^(?:cm|centimet(?:er|re)s?)$/, "cm"], [/^(?:m|met(?:er|re)s?)$/, "m"],
+             [/^(?:in|inch(?:es)?)$/, "in"], [/^(?:ft|feet|foot)$/, "ft"], [/^(?:yd|yards?)$/, "yd"]];
+    for (var i = 0; i < L.length; i++) if (L[i][0].test(w)) return L[i][1];
+    return null;
+  }
+  function qf(x){ var r = parseNum(x); return r.bad ? NaN : toF(r.v); }
+  function parseQ(raw){
+    var s = " " + String(raw).toLowerCase()
+      .replace(/[−–—]/g, "-").replace(/°/g, " deg ")
+      .replace(/(\d),(\d{3})(?!\d)/g, "$1$2")
+      .replace(/(\d)\s*[x×*]\s*(?=\.?\d)/g, "$1 by ")
+      .replace(/[=:,;()?!"“”‘’]/g, " ")
+      .replace(/\s+/g, " ") + " ";
+    var unit = null, um = /\d\s*(millimet(?:er|re)s?|mm|centimet(?:er|re)s?|cm|met(?:er|re)s?|m|inch(?:es)?|in(?=\s*(?:by\b|and\b|\d|long|wide|high|tall|deep|$))|feet|foot|ft|yards?|yd)(?![a-z])/.exec(s)
+      || /\bin (millimet(?:er|re)s|mm|centimet(?:er|re)s|cm|met(?:er|re)s|m|inches|feet|ft|yards|yd)\b/.exec(s);
+    if (um) unit = unitWord(um[1]);
+    function has(re){ return re.test(s); }
+    function blank(m){ s = s.slice(0, m.index) + new Array(m[0].length + 1).join(" ") + s.slice(m.index + m[0].length); }
+    // the number written after one of these words ("radius 5", "h=10", "base of 6"), taken out of the text
+    function take(words){
+      var m = new RegExp("\\b(?:" + words + ")(?:\\s+(?:of|is|are|equals?|was))?\\s*" + QNUM).exec(s);
+      if (!m) return null;
+      blank(m);
+      return m[1];
+    }
+    function rest(){ var out = [], re = /(^|[^a-z\d.\/])(\d+(?:\.\d+)?(?:\/\d+)?|\.\d+)/g, m; while ((m = re.exec(s))) out.push(m[2]); return out; }
+    function fill(keys, v){ var r = rest(), i = 0; keys.forEach(function(k){ if (v[k] == null && i < r.length) v[k] = r[i++]; }); return v; }
+    function out(mode, id, v){
+      var d = defOf(mode, id), any = false, k;
+      for (k in v) if (v[k] != null && k !== "rd" && k !== "pos") any = true;
+      var res = any ? {} : copy(d.d);
+      if (any) d.f.forEach(function(fd){ res[fd.k] = v[fd.k] != null ? String(v[fd.k]) : ""; });
+      if (d.d.rd != null) res.rd = v.rd || (any ? "r" : d.d.rd);
+      if (d.d.pos != null) res.pos = v.pos || "1";
+      return { mode:mode, id:id, v:res, unit:unit };
+    }
+    function radius(v){
+      var x = take("diameter|diam|d");
+      if (x != null){ v.r = x; v.rd = "d"; return; }
+      x = take("radius|rad|r");
+      if (x != null) v.r = x;
+      if (has(/diameter/)) v.rd = "d";
+    }
+    var v = {}, m, R, nm, pn = null;
+
+    /* polygons */
+    for (nm in QPOLY) if (s.indexOf(nm) >= 0) pn = QPOLY[nm];
+    if (pn != null || has(/polygon|\d\s*-?\s*sided\b|\d\s*-?\s*gon\b/)){
+      if ((m = /(\d+)\s*-?\s*(?:sided|sides|gon)\b/.exec(s))) pn = m[1];
+      else if (pn == null){ R = rest(); if (R.length) pn = R[0]; }
+      return out("angle", "poly", pn != null ? { n:String(pn) } : {});
+    }
+    /* right triangles */
+    R = rest();
+    if (R.length >= 3 && !has(/\bangles?\b|\bdeg\b/) && ((has(/\bright\b/) && has(/^\s*(?:is|are|can|could|does|do|will|would)\b|\bis (?:it|this|that)\b|\bcheck\b|\bmake\b|\bform\b|\btest\b/)) || has(/\bcheck\b/)))
+      return out("right", "check", fill(["a","b","c"], {}));
+    if (has(/\bleg\b/) && has(/\bhyp/)){ v.a = take("leg"); v.c = take("hypotenuse|hyp"); return out("right", "leg", fill(["a","c"], v)); }
+    if (has(/(?:missing|other|unknown|find (?:the |a )?)\s*leg\b/) || (has(/\bleg\b/) && R.length === 2)){
+      var lg = R.slice(0, 2).sort(function(x, y){ return qf(x) - qf(y); });
+      return out("right", "leg", lg.length === 2 ? { a:lg[0], c:lg[1] } : fill(["a","c"], {}));
+    }
+    if (has(/\bhyp|\blegs\b|pythag|right[- ]?(?:angled? )?triangle/)) return out("right", "hyp", fill(["a","b"], {}));
+    /* angles */
+    if (has(/complement/)) return out("angle", "comp", fill(["a"], {}));
+    if (has(/parallel(?!ogram)|transversal/)){
+      if ((m = /(?:angle|∠|position|pos|number|#)\s*([1-8])(?![\d.\/])/.exec(s))){ v.pos = m[1]; blank(m); }
+      return out("angle", "par", fill(["a"], v));
+    }
+    if (has(/supplement|straight|\bline\b|linear pair/)){ R = rest(); return out("angle", "line", R.length ? { a:R.join(", ") } : {}); }
+    if (has(/\bpoint\b|full turn|all the way a?round/)){ R = rest(); return out("angle", "point", R.length ? { a:R.join(", ") } : {}); }
+    if (has(/vertical|opposite|crossing|intersect|\bcross/)) return out("angle", "vert", fill(["a"], {}));
+    if (has(/\bangles?\b|\bdeg\b|\bdegrees?\b|\bthird\b/) && (has(/triangle/) || R.length === 2)) return out("angle", "tri", fill(["a","b"], {}));
+    /* solids */
+    if (has(/triangular prism|triangle prism/)){ v.b = take("base|b"); v.h = take("height|h"); v.l = take("length|long|l"); return out("vol", "tprism", fill(["b","h","l","s1","s2"], v)); }
+    if (has(/pyramid/)){ v.s = take("base edge|base|side|edge|s"); v.h = take("height|h"); return out("vol", "pyr", fill(["s","h"], v)); }
+    if (has(/\bcubes?\b/)) return out("vol", "cube", fill(["s"], { s:take("side|edge|s") }));
+    if (has(/cylind|\bcan\b|\btube\b|\bpipe\b/)){ radius(v); v.h = take("height|high|tall|length|h|l"); return out("vol", "cyl", fill(["r","h"], v)); }
+    if (has(/\bcones?\b/)){ radius(v); v.h = take("height|high|tall|h"); return out("vol", "cone", fill(["r","h"], v)); }
+    if (has(/spher|\bball\b|globe/)){ radius(v); return out("vol", "sphere", fill(["r"], v)); }
+    if (has(/\bbox\b|cuboid|rectangular prism|\bprism\b|\bvolume\b|surface area|\bbrick\b/)){
+      v.l = take("length|long|l"); v.w = take("width|wide|w"); v.h = take("height|high|tall|deep|depth|h");
+      return out("vol", "box", fill(["l","w","h"], v));
+    }
+    /* flat shapes */
+    if (has(/circle|circumference|\bdis[ck]\b|\bradius\b|\bdiameter\b/)){ radius(v); return out("area", "circle", fill(["r"], v)); }
+    if (has(/\bl[- ]?shaped?\b/)) return out("area", "lshape", fill(["W","H","w","h"], {}));
+    if (has(/trapez/)){ v.a = take("top|a"); v.b = take("bottom|b"); v.h = take("height|h"); return out("area", "trap", fill(["a","b","h","c","d"], v)); }
+    if (has(/parallelogram|rhomboid/)){ v.b = take("base|b"); v.h = take("height|h"); v.s = take("slant(?:ed)? side|side|s"); return out("area", "para", fill(["b","h","s"], v)); }
+    if (has(/triangle/)){ v.b = take("base|b"); v.h = take("height|h"); return out("area", "tri", fill(["b","h","s1","s2"], v)); }
+    if (has(/\bsquare\b/)) return out("area", "square", fill(["s"], { s:take("side|s") }));
+    if (has(/rectangle|\brect\b|oblong/)){ v.l = take("length|long|l"); v.w = take("width|wide|w"); return out("area", "rect", fill(["l","w"], v)); }
+    if (has(/\barea\b|\bperimeter\b/)){
+      R = rest();
+      if (R.length >= 2) return out("area", "rect", { l:R[0], w:R[1] });
+      if (R.length === 1) return out("area", "square", { s:R[0] });
+    }
+    return null;
+  }
+
+  /* ===================== check my answer ===================== */
+  var MINE = { sig:null, fresh:true, targets:[], tried:false };
+  var DIAG = {
+    isP:"That’s the perimeter — the distance around the edge. Area is the space inside.",
+    isA:"That’s the area — the space inside. The perimeter is the distance around the edge.",
+    isC:"That’s the circumference (2 × π × r) — the distance around. Area is π × r²: square the radius.",
+    isCA:"That’s the area (π × r²). The circumference is the distance around: 2 × π × r.",
+    isSA:"That’s the surface area — the outside. Volume is the space inside.",
+    isV:"That’s the volume — the space inside. Surface area is the total area of the outside.",
+    halfT:"It looks like you forgot the ½. A triangle is half of the rectangle with the same base and height, so halve b × h.",
+    halfTrap:"It looks like you forgot the ½. Two copies of the trapezoid make a parallelogram, so one is half of (a + b) × h.",
+    slant:"It looks like you used a slanted side as the height. The height goes straight up from the base, at a right angle to it (dashed in the drawing).",
+    dAsR:"It looks like you used the diameter as the radius. The radius is half the diameter: r = d ÷ 2.",
+    rAsD:"It looks like you treated the radius as the diameter and halved it. The radius is already the radius — use it as it is.",
+    slantV:"It looks like you used the slant height. For volume, use the height straight up the middle (h)."
+  };
+  // what the answer box asks for: one target per answer, each with the right value(s) and common wrong ones (alts)
+  function targetsFor(C, mode, id, Vv){
+    var d = defOf(mode, id), g = getter(d, Vv), T = [], A = {};
+    C.answers.forEach(function(a){ if (a.ck) A[a.k] = a.ck; });
+    function N(c){ return { c:c, pi:false }; }
+    function P(c){ return { c:c, pi:true }; }
+    function sib(ck){ return { c:ck.c, pi:!!ck.pi }; }
+    function f(k){
+      if (!d.f.some(function(fd){ return fd.k === k; })) return null;
+      var x = g.opt(k); return x ? (x.length != null ? x : x.f) : null;
+    }
+    function al(list, msg){ list = list.filter(function(x){ return x && isFinite(x.c) && x.c > 1e-9; }); return list.length ? { cands:list, msg:msg } : null; }
+    function add(label, ck, alts, more){
+      if (!ck) return;
+      T.push({ label:label, pow:ck.pow || 0, pi:!!ck.pi, yn:ck.yn, cands:ck.yn != null ? [] : [{ c:ck.c, pi:!!ck.pi }].concat(more || []),
+               alts:(alts || []).filter(function(a){ return a; }), ph:ck.yn != null ? "yes or no" : mode === "angle" ? "degrees" : "" });
+    }
+    var a1 = A["Area"], p1 = A["Perimeter"], c1 = A["Circumference"], v1 = A["Volume"], s1 = A["Surface area"], l1 = A["Slant height"];
+    var aA = [], pA = [], X, R_, isD, rr, sw, b, h, x1, x2;
+    if (mode === "area"){
+      if (p1) aA.push(al([N(p1.c)], DIAG.isP));
+      if (a1) pA.push(al([N(a1.c)], DIAG.isA));
+      if (id === "rect"){
+        var L_ = f("l"), W_ = f("w");
+        aA.push(al([N(L_ + W_)], "It looks like you added the length and width. For area, multiply them: l × w."));
+        pA.push(al([N(L_ + W_)], "That’s one length and one width — only halfway round. Double it to go all the way around."));
+      } else if (id === "square"){
+        X = f("s");
+        aA.push(al([N(2 * X)], "s² means s × s — the side times itself, not times 2."), al([N(4 * X)], DIAG.isP));
+        pA.push(al([N(2 * X)], "A square has four equal sides, so its perimeter is 4 × s."));
+      } else if (id === "tri"){
+        b = f("b"); h = f("h"); x1 = f("s1"); x2 = f("s2");
+        aA.push(al([N(b * h)], DIAG.halfT));
+        if (x1 && x2){
+          aA.push(al([N(b * x1 / 2), N(b * x2 / 2)], DIAG.slant), al([N(b * x1), N(b * x2)], DIAG.slant + " And remember the ½."));
+          pA.push(al([N(b + h + x1), N(b + h + x2), N(b + h + x1 + x2)], "The height isn’t part of the edge — it’s inside the triangle. Add the three sides: b + s₁ + s₂."));
+        }
+      } else if (id === "para"){
+        b = f("b"); h = f("h"); X = f("s");
+        aA.push(al([N(b * h / 2)], "No ½ for a parallelogram — that’s for triangles. Cut and slide it into a rectangle: base × height."));
+        if (X){
+          aA.push(al([N(b * X)], DIAG.slant));
+          pA.push(al([N(2 * (b + h))], "That uses the height — but the height is inside the shape. The edge is two bases and two slanted sides: 2 × (b + s)."),
+                  al([N(b + X)], "That’s one base and one slanted side — only halfway round. Double it."));
+        }
+      } else if (id === "trap"){
+        var ta = f("a"), tb = f("b"), tc = f("c"), td = f("d"); h = f("h");
+        aA.push(al([N((ta + tb) * h)], DIAG.halfTrap));
+        if (tc && td){
+          aA.push(al([N((ta + tb) * tc / 2), N((ta + tb) * td / 2)], DIAG.slant));
+          pA.push(al([N(ta + tb + 2 * h)], "The height isn’t part of the edge — use the two slanted sides: a + b + c + d."));
+        }
+      } else if (id === "circle"){
+        isD = Vv.rd === "d"; X = g("r").f; R_ = isD ? X / 2 : X;
+        aA = [al([P(2 * R_)], DIAG.isC)];
+        var cA = [al([P(R_ * R_)], DIAG.isCA)];
+        if (isD){ aA.push(al([P(X * X)], DIAG.dAsR)); cA.push(al([P(2 * X)], DIAG.dAsR + " With the diameter it’s just C = π × d.")); }
+        else { aA.push(al([P(R_ * R_ / 4)], DIAG.rAsD)); cA.push(al([P(R_)], "That’s π × r. The distance around is π × the diameter, and the diameter is 2 × r, so C = 2 × π × r.")); }
+        add("Area", a1, aA); add("Circumference", c1, cA);
+        return T;
+      } else if (id === "lshape"){
+        var LW = f("W"), LH = f("H"), lw = f("w"), lh = f("h");
+        aA.push(al([N(LW * LH)], "That’s the whole rectangle — take away the missing corner, w × h."), al([N(LW * LH + lw * lh)], "The missing corner should be taken away, not added."));
+        pA.push(al([N(2 * LW + 2 * LH - lw - lh)], "You missed the two edges of the notch (w and h). Walk all the way round the outside — it has six sides."));
+      }
+      add("Area", a1, aA); add("Perimeter", p1, pA);
+      return T;
+    }
+    if (mode === "vol"){
+      var vA = [], sA = [], lA = [], moreS = [];
+      if (s1) vA.push(al([sib(s1)], DIAG.isSA));
+      if (v1) sA.push(al([sib(v1)], DIAG.isV));
+      if (id === "box" || id === "cube"){
+        var bl = id === "cube" ? f("s") : f("l"), bw = id === "cube" ? bl : f("w"), bh = id === "cube" ? bl : f("h");
+        if (id === "box"){
+          vA.push(al([N(bl + bw + bh)], "It looks like you added. Volume multiplies: l × w × h."));
+          sA.push(al([N(bl * bw + bl * bh + bw * bh)], "That’s one face from each pair — three faces. A box has six, so double it."));
+        } else {
+          vA.push(al([N(3 * bl)], "s³ means s × s × s, not 3 × s."), al([N(bl * bl)], "That’s the area of one face (s²). Volume is s³ = s × s × s."));
+          sA.push(al([N(bl * bl)], "That’s one face — a cube has 6 faces, so 6 × s²."), al([N(4 * bl * bl)], "That’s only four faces — don’t forget the top and the bottom: 6 × s²."));
+        }
+      } else if (id === "cyl" || id === "cone" || id === "sphere"){
+        isD = Vv.rd === "d"; X = g("r").f; R_ = isD ? X / 2 : X; rr = isD ? X : X / 2; sw = isD ? DIAG.dAsR : DIAG.rAsD; h = f("h");
+        if (id === "cyl"){
+          vA.push(al([P(2 * R_ * h)], "That’s just the label around the side (2 × π × r × h). Volume is the circle’s area times the height: π × r² × h."),
+                  al([P(rr * rr * h)], sw));
+          sA.push(al([P(2 * R_ * h)], "That’s only the curved side — add the two circles on the ends (2 × π × r²)."),
+                  al([P(R_ * R_ + 2 * R_ * h)], "That’s only one circle — a cylinder has a top and a bottom."),
+                  al([P(2 * R_ * R_)], "That’s just the two circles — add the label around the side (2 × π × r × h)."),
+                  al([P(2 * rr * rr + 2 * rr * h)], sw));
+        } else if (id === "cone"){
+          var lf = Math.sqrt(R_ * R_ + h * h), lr = l1 ? l1.c : lf, lc = l1 ? Number(fmtF(lr, 2).replace(/,/g, "")) : lf;
+          moreS.push(P(R_ * R_ + R_ * lf));
+          vA.push(al([P(R_ * R_ * h)], "It looks like you forgot the ⅓ — a cone holds a third of the cylinder with the same base and height."),
+                  al([P(R_ * R_ * lf / 3), P(R_ * R_ * lc / 3)], DIAG.slantV), al([P(rr * rr * h / 3)], sw));
+          lA.push(al([N(R_ + h)], "You can’t just add r and h. Square them, add, then take the square root: l² = r² + h²."),
+                  al([N(R_ * R_ + h * h)], "That’s l² — take the square root to get l."),
+                  al([N(Math.sqrt(Math.abs(h * h - R_ * R_)))], "The slant height is the longest side of the right triangle, so add the squares: l² = r² + h²."));
+          sA.push(al([P(R_ * lf), P(R_ * lc)], "That’s only the curved side — add the circle on the bottom (π × r²)."),
+                  al([P(R_ * R_ + R_ * h)], "It looks like you used the height for the curved side. It needs the slant height: π × r × l."));
+        } else {
+          vA.push(al([P(4 * R_ * R_ * R_)], "It looks like you forgot to divide by 3: V = 4/3 × π × r³."), al([P(4 * rr * rr * rr / 3)], sw));
+          sA.push(al([P(R_ * R_)], "That’s one circle’s worth — a sphere’s surface is exactly four of them: 4 × π × r²."), al([P(4 * rr * rr)], sw));
+        }
+      } else if (id === "tprism"){
+        b = f("b"); h = f("h"); var pl = f("l"); x1 = f("s1"); x2 = f("s2");
+        vA.push(al([N(b * h * pl)], "It looks like you forgot the ½ — the end is a triangle, ½ × b × h."));
+        if (x1 && x2){
+          vA.push(al([N(b * x1 * pl / 2), N(b * x2 * pl / 2)], DIAG.slant));
+          sA.push(al([N((b + x1 + x2) * pl)], "That’s just the three rectangles — add the two triangle ends."),
+                  al([N(2 * b * h + (b + x1 + x2) * pl)], "Each triangle end is ½ × b × h — it looks like you forgot the ½."));
+        }
+      } else if (id === "pyr"){
+        var ps = f("s"), plf; h = f("h"); plf = Math.sqrt(h * h + ps * ps / 4);
+        var plr = l1 ? Number(fmtF(l1.c, 2).replace(/,/g, "")) : plf;
+        moreS.push(N(ps * ps + 2 * ps * plf));
+        vA.push(al([N(ps * ps * h)], "It looks like you forgot the ⅓ — a pyramid holds a third of the box with the same base and height."),
+                al([N(ps * ps * plf / 3), N(ps * ps * plr / 3)], DIAG.slantV));
+        lA.push(al([N(h * h + ps * ps / 4)], "That’s l² — take the square root to get l."),
+                al([N(Math.sqrt(h * h + ps * ps))], "Use half the base edge (s ÷ 2): the slant height goes up the middle of a face."),
+                al([N(h + ps / 2)], "You can’t just add them. Square, add, then take the square root: l² = h² + (s ÷ 2)²."));
+        sA.push(al([N(ps * ps + 2 * ps * h)], "It looks like you used the height for the triangle faces. Each face needs the slant height: ½ × s × l."),
+                al([N(2 * ps * plf), N(2 * ps * plr)], "That’s just the four triangles — add the square base (s²)."),
+                al([N(ps * ps + 4 * ps * plf), N(ps * ps + 4 * ps * plr)], "Each triangle face is ½ × s × l — it looks like you forgot the ½."));
+      }
+      add("Volume", v1, vA); add("Surface area", s1, sA, moreS); add("Slant height", l1, lA);
+      return T;
+    }
+    if (mode === "right"){
+      var ck = C.answers[0] && C.answers[0].ck, ra = f("a");
+      if (id === "hyp"){
+        var rb = f("b");
+        add("Hypotenuse c", ck, [al([N(ra + rb)], "You can’t just add the legs. Square them, add, then take the square root: c² = a² + b²."),
+          al([N(ra * ra + rb * rb)], "That’s c² — now take the square root to get c."),
+          al([N(Math.sqrt(Math.abs(ra * ra - rb * rb)))], "For the hypotenuse, add the squares — don’t subtract. It’s the longest side.")]);
+      } else if (id === "leg"){
+        var rc = f("c");
+        add("Missing leg b", ck, [al([N(Math.sqrt(rc * rc + ra * ra))], "It looks like you added the squares. For a missing leg, subtract: b² = c² − a²."),
+          al([N(rc * rc - ra * ra)], "That’s b² — take the square root to get b."),
+          al([N(rc * rc + ra * ra)], "Two things: subtract the squares (b² = c² − a²), then take the square root."),
+          al([N(rc - ra)], "You can’t just subtract the sides. Square them, subtract, then take the square root.")]);
+      } else add("Right triangle? (yes or no)", ck);
+      return T;
+    }
+    /* angles */
+    var TOT = { 90:"a right angle", 180:"a straight line", 360:"a full turn" };
+    if (id === "tri"){
+      var ga = f("a"), gb = f("b");
+      add("Missing angle x", A["Missing angle"], [al([N(360 - ga - gb)], "You used 360°, but the three angles of a triangle add up to 180°."),
+        al([N(90 - ga - gb)], "You took them away from 90°. The angles of a triangle add up to 180°."),
+        al([N(ga + gb)], "That’s the two angles added together. Now take that away from 180°.")]);
+    } else if (id === "line" || id === "comp" || id === "point"){
+      var lst = f("a"); lst = lst && lst.length != null ? lst : [g("a")];
+      var sum = lst.reduce(function(s2, x){ return s2 + x.f; }, 0), tot = id === "line" ? 180 : id === "comp" ? 90 : 360, alts = [];
+      [90, 180, 360].forEach(function(t2){
+        if (t2 === tot) return;
+        var msg = id === "comp" && t2 === 180 ? "You took it away from 180° — that gives the supplement. Complementary angles add up to 90°."
+          : "You took " + (lst.length > 1 ? "them" : "it") + " away from " + t2 + "° — that’s " + TOT[t2] + ". " + (id === "line" ? "A straight line is 180°." : id === "comp" ? "Complementary angles make a right angle: 90°." : "All the way around a point is 360°.");
+        alts.push(al([N(t2 - sum)], msg));
+      });
+      add("Missing angle x", A["Missing angle"], alts);
+    } else if (id === "vert"){
+      var va = f("a"), vy = 180 - va;
+      add("∠2", { c:vy, pow:0 }, [al([N(va)], "∠2 is next to ∠1 on a straight line, so they add up to 180°: ∠2 = 180° − ∠1."), al([N(90 - va)], "A straight line is 180°, not 90°.")]);
+      add("∠3", { c:va, pow:0 }, [al([N(vy)], "∠3 is opposite ∠1 — they’re vertical angles, so they’re equal.")]);
+      add("∠4", { c:vy, pow:0 }, [al([N(va)], "∠4 is next to ∠1 on a straight line, so they add up to 180°: ∠4 = 180° − ∠1."), al([N(90 - va)], "A straight line is 180°, not 90°.")]);
+    } else if (id === "par"){
+      var pa = f("a"), py = 180 - pa, pos = Number(Vv.pos) || 1;
+      if (pos < 1 || pos > 8) pos = 1;
+      var eqSet = [2, 3, 6, 7].indexOf(pos) >= 0 ? [2, 3, 6, 7] : [1, 4, 5, 8];
+      parPicks(pos).forEach(function(q){
+        var rel = parRel(pos, q), eq = eqSet.indexOf(q) >= 0;
+        var why = rel.name === "a straight line" ? "are on a straight line" : "are " + rel.name + " (" + rel.why + ")";
+        var msg = eq ? "∠" + q + " and ∠" + pos + " " + why + ", so they’re equal."
+                     : "∠" + q + " and ∠" + pos + " " + why + ", so they add up to 180°: ∠" + q + " = 180° − " + fmtF(pa, 4) + "°.";
+        add("∠" + q, { c:eq ? pa : py, pow:0 }, [al([N(eq ? py : pa)], msg)]);
+      });
+    } else if (id === "poly"){
+      var pn2 = f("n"), sm = (pn2 - 2) * 180;
+      add("Sum of the interior angles", A["Interior angles add to"], [al([N(pn2 * 180)], "That’s n × 180°. From one corner you get n − 2 triangles, so it’s (n − 2) × 180°."),
+        al([N(360)], "360° is what the exterior angles add up to. The interior angles add up to (n − 2) × 180°.")]);
+      add("Each interior angle", A["Each interior angle"], [al([N(360 / pn2)], "That’s the exterior angle — the turn at each corner. The interior angle is 180° minus that."),
+        al([N(sm)], "That’s all the interior angles together — share it out equally: ÷ n.")]);
+      add("Each exterior angle", A["Each exterior angle"], [al([N(sm / pn2)], "That’s the interior angle. The exterior angle is the turn at each corner: 360° ÷ n."),
+        al([N(360)], "All the turns together make 360° — each one is 360° ÷ n.")]);
+    }
+    return T;
+  }
+  // three angles to ask about when one of the eight is given: a neighbour, the alternate one, and a same-side one
+  function parPicks(p){
+    function nbrs(q){ var base = q <= 4 ? 0 : 4, qq = q - base; return [1, 2, 3, 4].filter(function(x){ return x !== qq && x !== 5 - qq; }).map(function(x){ return base + x; }); }
+    var corr = p <= 4 ? p + 4 : p - 4, cb = corr <= 4 ? 0 : 4, alt = cb + (5 - (corr - cb));
+    var side = nbrs(corr).filter(function(x){ return parRel(p, x); })[0];
+    return [nbrs(p)[0], alt, side].filter(function(x){ return x && parRel(p, x); });
+  }
+
+  /* reading what someone typed as their answer: 40, 12.5, 3/4, 2 1/2, 25π, 81/4 π, 5√2, sqrt(50), 1,256.6 cm² … */
+  function decPlaces(s){ var m = /\.(\d+)/.exec(s); return /\//.test(s) ? Infinity : m ? m[1].length : 0; }
+  function numF(s){
+    s = s.replace(/^\((.*)\)$/, "$1").trim();
+    var r = parseNum(s);
+    if (r.bad) return null;
+    return { f:toF(r.v) * (r.neg ? -1 : 1), dp:decPlaces(s) };
+  }
+  function readMine(src){
+    var s = String(src).toLowerCase().replace(/[−–—]/g, "-").replace(/\s+/g, " ").trim(), u = { unitPow:0, unit:"", unitRaw:"" }, m;
+    s = s.replace(/^(?:∠\s*\d+|[a-z]{1,2}[²2]?)\s*=\s*/, "").replace(/^(?:=|≈|~|about|approx(?:imately|\.)?|roughly|around)\s*/, "").replace(/^(?:=|≈)\s*/, "");
+    m = /\s*(square|sq\.?|cubic|cu\.?)?\s*(millimet(?:er|re)s?|centimet(?:er|re)s?|met(?:er|re)s?|inch(?:es)?|feet|foot|yards?|units?|mm|cm|m|in|ft|yd)\s*(\^\s*[23]|[²³23]|squared|cubed|sq)?\.?$/.exec(s);
+    if (m && m.index > 0){
+      u.unitRaw = m[0].trim();
+      u.unitPow = (m[1] && /^sq/.test(m[1])) || (m[1] && /square/.test(m[1])) || (m[3] && /2|²|squared|sq/.test(m[3])) ? 2
+                : (m[1] && /^cu/.test(m[1])) || (m[3] && /3|³|cubed/.test(m[3])) ? 3 : 1;
+      u.unit = /^units?$/.test(m[2]) ? "units" : unitWord(m[2]) || "";
+      s = s.slice(0, m.index).trim();
+    }
+    s = s.replace(/\s*(?:°|degrees?|deg)\.?$/, "").trim();
+    if (!s) return null;
+    s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1").replace(/,/g, ".").replace(/pi/g, "π");
+    var out = { isPi:false, f:0, dp:0, coef:null, unitPow:u.unitPow, unit:u.unit, unitRaw:u.unitRaw };
+    if (s.indexOf("π") >= 0){
+      var parts = s.split("π");
+      if (parts.length !== 2) return null;
+      var left = parts[0].replace(/[×*x·]\s*$/, "").trim(), right = parts[1].trim(), div = 1, md;
+      if (right){
+        if ((md = /^\/\s*(\d+(?:\.\d+)?)$/.exec(right))) div = Number(md[1]);
+        else if (!left && (md = /^[×*x·]?\s*(.+)$/.exec(right))) left = md[1];
+        else return null;
+      }
+      var co = left ? numF(left) : { f:1, dp:Infinity };
+      if (!co || !div) return null;
+      out.isPi = true; out.coef = co.f / div; out.f = out.coef * Math.PI; out.dp = div !== 1 ? Infinity : co.dp;
+      return out;
+    }
+    var mr = /^(.*?)\s*(?:√|sqrt|square root of|root)\s*\(?\s*(\d+(?:\.\d+)?)\s*\)?$/.exec(s);
+    if (mr){
+      var kk = mr[1].replace(/[×*x·]\s*$/, "").trim(), kf = kk ? numF(kk) : { f:1 };
+      if (!kf) return null;
+      out.f = kf.f * Math.sqrt(Number(mr[2])); out.dp = Infinity;
+      return out;
+    }
+    var nf = numF(s);
+    if (!nf) return null;
+    out.f = nf.f; out.dp = nf.dp;
+    return out;
+  }
+  // is u (typed to dp decimal places) the value t? "exact", "round" (correctly rounded), "close" (off in the last place) or null
+  function near(u, dp, t, rel){
+    var eps = 1e-9 * Math.max(1, Math.abs(t)), dd = Math.abs(u - t);
+    if (dd <= eps) return "exact";
+    if (dp >= 1 && dp < 12){
+      var q = Math.pow(10, -dp), repr = Math.abs(t - Math.round(t / q) * q) <= eps;
+      if (!repr && dd <= q / 2 + eps) return "round";
+      if (rel && dd <= rel * Math.abs(t)) return "round";
+      if (!repr && dd <= q + eps) return "close";
+    }
+    return null;
+  }
+  var RANK = { exact:3, round:2, close:1 };
+  function bestOf(a, b){ return (RANK[a] || 0) >= (RANK[b] || 0) ? a : b; }
+  function matchV(u, c){
+    if (u.isPi) return c.pi ? near(u.coef, u.dp, c.c) : near(u.f, Infinity, c.c);
+    if (c.pi) return bestOf(near(u.f, u.dp, c.c * Math.PI, 1e-4), near(u.f, u.dp, c.c * 3.14));
+    return near(u.f, u.dp, c.c);
+  }
+  function unitWant(pow){ return S.unit === "none" ? (pow === 2 ? "square units" : pow === 3 ? "cubic units" : "units") : S.unit + (pow === 2 ? "²" : pow === 3 ? "³" : ""); }
+  function unitNote(t, u){
+    if (!u.unitPow || !t.pow) return "";
+    if (u.unitPow !== t.pow)
+      return "Small thing about units: " + (t.pow === 1 ? "this is a length, so it’s in plain units" : "this is " + (t.pow === 2 ? "an area, so it’s in square" : "a volume, so it’s in cubic") + " units")
+        + " — write <b>" + esc(unitWant(t.pow)) + "</b>, not " + esc(u.unitRaw) + ".";
+    if (S.unit !== "none" && u.unit && u.unit !== "units" && u.unit !== S.unit)
+      return "Small thing: the measurements are in " + esc(S.unit) + ", so the answer is in <b>" + esc(unitWant(t.pow)) + "</b>.";
+    return "";
+  }
+  function gradeOne(t, raw){
+    var s = String(raw || "").trim();
+    if (!s) return { st:"empty" };
+    if (t.yn != null){
+      var yn = /^(?:y|yes|yep|yeah|yup|true|it is|right)\b/i.test(s) ? true : /^(?:n|no|nope|not|false|it isn|isn)/i.test(s) ? false : null;
+      if (yn === null) return { st:"no", unread:true, msg:"Type <b>yes</b> or <b>no</b>." };
+      if (yn === t.yn) return { st:"ok" };
+      return { st:"no", msg:t.yn ? "Compare again: a² + b² for the two shorter sides, and c² for the longest side. Do they match?"
+                                 : "Compare again: work out a² + b² for the two shorter sides and c² for the longest side — are they really equal?" };
+    }
+    var u = readMine(s);
+    if (!u) return { st:"no", unread:true, msg:"I couldn’t read <b>" + esc(s.slice(0, 40)) + "</b> as a number. Try something like <b>40</b>, <b>12.5</b>, <b>3/4</b>, <b>25π</b> or <b>5√2</b>." };
+    var note = unitNote(t, u), best = null, i;
+    t.cands.forEach(function(c){ best = bestOf(best, matchV(u, c)); });
+    if (best === "exact" || best === "round") return { st:"ok", note:note };
+    for (i = 0; i < t.alts.length; i++){
+      if (t.alts[i].cands.some(function(c){ var r = matchV(u, c); return r === "exact" || r === "round"; })) return { st:"no", msg:t.alts[i].msg, note:note };
+    }
+    if (best === "close") return { st:"no", msg:"Very close — check your rounding (round to the nearest, and keep every digit until the end).", note:note };
+    if (t.pi && !u.isPi && t.cands.some(function(c){ return c.pi && near(u.f, u.dp, c.c) === "exact"; }))
+      return { st:"no", msg:"Don’t forget the π! Write it as a number of π’s (like 25π), or multiply by 3.14.", note:note };
+    return { st:"no", note:note };
+  }
+  function updateMine(){
+    var on = S.practice === "check" && !!lastC;
+    if (on && MINE.fresh){ MINE.fresh = false; buildMine(); }
+    $("mine").hidden = !on || !MINE.targets.length;
+  }
+  function buildMine(){
+    var T = [];
+    try { T = targetsFor(lastC, S.mode, curDef().id, vals()); } catch (e){ if (window.console) console.error(e); T = []; }
+    MINE.targets = T; MINE.tried = false;
+    $("mineFields").innerHTML = T.map(function(t, i){
+      return '<div class="fld"><label for="mine_' + i + '">' + esc(t.label) + '</label><span class="inrow"><input class="num-in" id="mine_' + i
+        + '" type="text" autocomplete="off" spellcheck="false" autocapitalize="off"' + (t.ph ? ' placeholder="' + esc(t.ph) + '"' : "")
+        + '><span class="mk" id="mineMk_' + i + '" aria-hidden="true"></span></span></div>';
+    }).join("");
+    $("mineFb").innerHTML = "";
+    $("hintBtn").hidden = true; $("showBtn").hidden = true;
+  }
+  function checkMine(){
+    var T = MINE.targets, res = [], ok = 0, filled = 0, wrong = 0, many = T.length > 1, lines = [];
+    if (!T.length) return;
+    T.forEach(function(t, i){
+      var inp = $("mine_" + i), r = gradeOne(t, inp.value), mk = $("mineMk_" + i);
+      res.push(r);
+      inp.classList.toggle("ok", r.st === "ok"); inp.classList.toggle("bad", r.st === "no");
+      mk.textContent = r.st === "ok" ? "✓" : r.st === "no" ? "✗" : "";
+      mk.className = "mk" + (r.st === "ok" ? " ok" : r.st === "no" ? " no" : "");
+      if (r.st !== "empty") filled++;
+      if (r.st === "ok") ok++;
+      if (r.st === "no" && !r.unread) wrong++;
+    });
+    if (!filled){ $("mineFb").innerHTML = '<div><span class="why">Type your answer first, then press <b>Check</b> (or Enter).</span></div>'; return; }
+    T.forEach(function(t, i){
+      var r = res[i], lab = many ? "<b>" + esc(t.label.replace(/ \(yes or no\)$/, "")) + ":</b> " : "", note = r.note ? ' <span class="why">' + r.note + "</span>" : "";
+      if (r.st === "ok") lines.push(lab + '<span class="ok">✓ Correct!</span>' + note);
+      else if (r.st === "no") lines.push(lab + (r.unread ? "" : '<span class="no">Not quite — try again.</span> ') + (r.msg ? '<span class="why">' + r.msg + "</span>" : "") + note);
+      else lines.push(lab + '<span class="why">Type your answer for this one too.</span>');
+    });
+    if (wrong) MINE.tried = true;
+    if (ok === T.length){
+      lines.push('<span class="why">' + (many ? "All " + T.length + " are right" : "That’s it") + " — here’s the full work so you can compare.</span>");
+      S.revealed = true;
+    }
+    $("mineFb").innerHTML = lines.map(function(l){ return "<div>" + l + "</div>"; }).join("");
+    $("hintBtn").hidden = !MINE.tried || S.revealed;
+    $("showBtn").hidden = !MINE.tried || S.revealed;
+    if (S.revealed) render();
+  }
+
+  /* ===================== copy link ===================== */
+  var copyT = null;
+  function copyLink(){
+    syncURL();
+    var url = location.href, btn = $("copyBtn");
+    function done(ok){
+      btn.textContent = ok ? "Link copied ✓" : "Couldn’t copy — use the address bar";
+      clearTimeout(copyT); copyT = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000);
+    }
+    function legacy(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = url; ta.setAttribute("readonly", ""); ta.setAttribute("aria-hidden", "true");
+      ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.left = "0"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (e){ ok = false; }
+      document.body.removeChild(ta);
+      done(ok);
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function(){ done(true); }, legacy);
+      else legacy();
+    } catch (e){ legacy(); }
+  }
+
+  /* ===================== worksheet API (postMessage) ===================== */
+  var MODE_NAME = { area:"Area", vol:"Volume", right:"Right triangles", angle:"Angles" };
+  function optionsSchema(){
+    function V2(list){ return list.map(function(x){ return { v:x[0], label:x[1] }; }); }
+    var shapes = [{ v:"any", label:"Any shape" }];
+    ["area","vol","right","angle"].forEach(function(m){ SH[m].forEach(function(d){ shapes.push({ v:m + ":" + d.id, label:MODE_NAME[m] + ": " + d.name, mode:m }); }); });
+    return [
+      { key:"mode", label:"Topic", type:"choice", values:V2([["area","Area & perimeter"],["vol","Volume & surface area"],["right","Right triangles"],["angle","Angles"],["any","A mix of all four"]]), default:"area" },
+      { key:"shape", label:"Shape", type:"choice", values:shapes, default:"any" },
+      { key:"max", label:"Numbers up to", type:"choice", values:V2([["10","10"],["20","20"],["50","50"],["100","100"]]), default:"20" },
+      { key:"dec", label:"Kind of numbers", type:"choice", values:V2([["whole","Whole numbers"],["dec","Decimals (halves for angles)"]]), default:"whole" },
+      { key:"nice", label:"Right-triangle answers", type:"choice", values:V2([["nice","Whole numbers"],["any","Any (square roots)"]]), default:"nice" },
+      { key:"unit", label:"Units", type:"choice", values:V2([["cm","cm"],["mm","mm"],["m","m"],["in","in"],["ft","ft"],["yd","yd"],["none","No units"],["mix","Mix them up"]]), default:"cm" },
+      { key:"pi", label:"π as", type:"choice", values:V2([["exact","Exact (25π)"],["314","3.14"],["calc","Calculator π"]]), default:"exact" },
+      { key:"sketch", label:"Draw each shape", type:"toggle", values:[{ v:true, label:"Yes" }, { v:false, label:"No" }], default:true }
+    ];
+  }
+  function h2t(h){
+    return String(h).replace(/<span class="fr"><span class="nu">([^<]*)<\/span><span class="de">([^<]*)<\/span><\/span>/g, "$1/$2")
+      .replace(/<span class="u">/g, " ").replace(/<[^>]+>/g, "")
+      .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&nbsp;/g, " ").replace(/&amp;/g, "&")
+      .replace(/\s+/g, " ").trim();
+  }
+  function answerParts(C, pi){
+    return C.answers.map(function(a){
+      var v = h2t(a.main), u = a.ck && a.ck.pow ? unitT(a.ck.pow) : "";
+      if (a.ck && a.ck.pi && pi === "exact") v += " (≈ " + fmtF(a.ck.c * Math.PI, 2) + (u ? " " + u : "") + ")";
+      return { k:h2t(a.k), v:v, eq:/class="sym"|∠/.test(a.k) };
+    });
+  }
+  function partsText(parts, html){
+    var sep = parts.some(function(p){ return /,/.test(p.k) || /,/.test(p.v); }) ? "; " : ", ";
+    return parts.map(function(p, i){
+      var k = p.k;
+      if (i && /^[A-Z][a-z]/.test(k)) k = k.charAt(0).toLowerCase() + k.slice(1);
+      return html ? "<b>" + esc(k) + "</b> " + (p.eq ? "= " : "") + esc(p.v) : k + (p.eq ? " = " : " ") + p.v;
+    }).join(sep);
+  }
+  // pure: works the problem out with the page's own code, without touching what's on screen
+  function computeProblem(mode, id, v, unit, pi){
+    var keep = { mode:S.mode, unit:S.unit, pi:S.pi }, d = defOf(mode, id), C = Ctx(), res = null;
+    S.mode = mode; S.unit = unit; S.pi = pi;
+    try { d.run(C, getter(d, v)); res = { C:C, parts:answerParts(C, pi) }; }
+    catch (e){ res = null; }
+    finally { S.mode = keep.mode; S.unit = keep.unit; S.pi = keep.pi; }
+    return res;
+  }
+  function probText(m, id, v, unit){
+    function L(x){ return String(x) + (unit === "none" ? "" : " " + unit); }
+    function D(x){ return String(x) + "°"; }
+    function an(x){ return /^8|^1[18](\.|$)/.test(String(x)) ? "an " : "a "; }
+    function and(list){ return list.length < 2 ? list.join("") : list.slice(0, -1).join(", ") + " and " + list[list.length - 1]; }
+    var R = (v.rd === "d" ? "a diameter of " : "a radius of ") + L(v.r), angs = String(v.a || "").split(/[\s,;]+/).filter(function(x){ return x; }).map(D);
+    switch (m + ":" + id){
+      case "area:rect": return "Find the area and perimeter of a rectangle " + L(v.l) + " by " + L(v.w) + ".";
+      case "area:square": return "Find the area and perimeter of a square with sides of " + L(v.s) + ".";
+      case "area:tri": return v.s1 && v.s2 ? "Find the area and perimeter of a triangle with base " + L(v.b) + ", height " + L(v.h) + " and slanted sides of " + L(v.s1) + " and " + L(v.s2) + "."
+        : "Find the area of a triangle with base " + L(v.b) + " and height " + L(v.h) + ".";
+      case "area:para": return v.s ? "Find the area and perimeter of a parallelogram with base " + L(v.b) + ", height " + L(v.h) + " and slanted sides of " + L(v.s) + "."
+        : "Find the area of a parallelogram with base " + L(v.b) + " and height " + L(v.h) + ".";
+      case "area:trap": return v.c && v.d ? "Find the area and perimeter of a trapezoid with parallel sides of " + L(v.a) + " and " + L(v.b) + ", height " + L(v.h) + " and slanted sides of " + L(v.c) + " and " + L(v.d) + "."
+        : "Find the area of a trapezoid with parallel sides of " + L(v.a) + " and " + L(v.b) + " and height " + L(v.h) + ".";
+      case "area:circle": return "Find the area and circumference of a circle with " + R + ".";
+      case "area:lshape": return "Find the area and perimeter of an L-shape: " + an(v.W) + L(v.W) + " by " + L(v.H) + " rectangle with " + an(v.w) + L(v.w) + " by " + L(v.h) + " piece cut out of one corner.";
+      case "vol:box": return "Find the volume and surface area of a box " + L(v.l) + " long, " + L(v.w) + " wide and " + L(v.h) + " high.";
+      case "vol:cube": return "Find the volume and surface area of a cube with edges of " + L(v.s) + ".";
+      case "vol:cyl": return "Find the volume and surface area of a cylinder with " + R + " and a height of " + L(v.h) + ".";
+      case "vol:cone": return "Find the volume, surface area and slant height of a cone with " + R + " and a height of " + L(v.h) + ".";
+      case "vol:sphere": return "Find the volume and surface area of a sphere with " + R + ".";
+      case "vol:tprism": return v.s1 && v.s2 ? "Find the volume and surface area of a triangular prism " + L(v.l) + " long. Its triangle ends have base " + L(v.b) + ", height " + L(v.h) + " and slanted sides of " + L(v.s1) + " and " + L(v.s2) + "."
+        : "Find the volume of a triangular prism " + L(v.l) + " long whose triangle ends have base " + L(v.b) + " and height " + L(v.h) + ".";
+      case "vol:pyr": return "Find the volume, surface area and slant height of a square pyramid with a base edge of " + L(v.s) + " and a height of " + L(v.h) + ".";
+      case "right:hyp": return "A right triangle has legs of " + L(v.a) + " and " + L(v.b) + ". Find the hypotenuse.";
+      case "right:leg": return "A right triangle has a leg of " + L(v.a) + " and a hypotenuse of " + L(v.c) + ". Find the other leg.";
+      case "right:check": return "Is a triangle with sides of " + and([L(v.a), L(v.b), L(v.c)]) + " a right triangle?";
+      case "angle:tri": return "Two angles of a triangle are " + D(v.a) + " and " + D(v.b) + ". Find the third angle.";
+      case "angle:line": return angs.length === 1 ? "Two angles sit side by side on a straight line. One is " + angs[0] + ". Find the other one."
+        : "Angles of " + and(angs.concat(["x"])) + " sit side by side on a straight line. Find x.";
+      case "angle:comp": return "Two angles are complementary (together they make a right angle). One is " + D(v.a) + ". Find the other one.";
+      case "angle:point": return "Angles of " + and(angs.concat(["x"])) + " fit together all the way around a point. Find x.";
+      case "angle:vert": return "Two straight lines cross. One of the four angles, ∠1, is " + D(v.a) + ". Find ∠2, ∠3 and ∠4 (going round from ∠1).";
+      case "angle:par": return "Two parallel lines are cut by a transversal, and ∠" + (v.pos || 1) + " = " + D(v.a) + ". Find the other seven angles. (∠1–∠4 are at the top crossing and ∠5–∠8 at the bottom one: top left, top right, bottom left, bottom right.)";
+      case "angle:poly": var n = Number(v.n); return "Find the sum of the interior angles, each interior angle and each exterior angle of a regular " + (PNAME[n] || n + "-gon") + " (" + n + " sides).";
+    }
+    return "";
+  }
+  // the page's own drawing, made printable anywhere: inline black-and-white styles, no page classes, no answers in it
+  var SKS = {
+    shp:"fill:#e4e4e4;stroke:none", shp2:"fill:#cfcfcf;stroke:none", shp3:"fill:#f0f0f0;stroke:none",
+    out:"fill:none;stroke:#000;stroke-width:2.4;stroke-linejoin:round", split:"fill:none;stroke:#000;stroke-width:1.6;stroke-dasharray:6 4",
+    hgt:"fill:none;stroke:#000;stroke-width:2;stroke-dasharray:6 4", ram:"fill:none;stroke:#000;stroke-width:1.6",
+    ghost:"fill:none;stroke:#666;stroke-width:1.4;stroke-dasharray:5 4", ghostf:"fill:#f3f3f3;stroke:#666;stroke-width:1.4;stroke-dasharray:5 4",
+    edge:"fill:none;stroke:#000;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round", hid:"fill:none;stroke:#666;stroke-width:1.6;stroke-dasharray:5 4",
+    ff:"fill:#e4e4e4", ft:"fill:#f2f2f2", fs:"fill:#d2d2d2", nf1:"fill:#e4e4e4", nf2:"fill:#f2f2f2", nf3:"fill:#d2d2d2",
+    fold:"fill:none;stroke:#000;stroke-width:1.2;stroke-dasharray:4 4", rad:"fill:none;stroke:#000;stroke-width:2.2;stroke-linecap:round",
+    "tri-in":"fill:#d9d9d9", dot:"fill:#000", ray:"fill:none;stroke:#000;stroke-width:2.2;stroke-linecap:round",
+    arc:"fill:none;stroke:#333;stroke-width:1.8", sec:"fill:#e4e4e4;stroke:none",
+    sqa:"fill:#efefef;stroke:#000;stroke-width:2", sqb:"fill:#e2e2e2;stroke:#000;stroke-width:2", sqc:"fill:#fafafa;stroke:#000;stroke-width:2",
+    tfill:"fill:#fff;stroke:#000;stroke-width:2.4;stroke-linejoin:round", pline:"fill:none;stroke:#000;stroke-width:2.4;stroke-linecap:round",
+    arrow:"fill:#000", "num-c":"fill:#e6e6e6;stroke:none"
+  };
+  var SKT = "font-family:Consolas,'IBM Plex Mono','Courier New',monospace;font-weight:600;font-size:14px;fill:#000;paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round";
+  function skStyle(tag, cls){
+    var c = cls.split(/\s+/), has = function(x){ return c.indexOf(x) >= 0; }, s;
+    if (tag === "text"){
+      s = SKT;
+      if (has("sm")) s += ";font-size:11.5px;fill:#222";
+      if (has("tiny")) s += ";font-size:10px;fill:#222;stroke-width:3px";
+      if (has("big")) s += ";font-size:17px";
+      if (has("nos")) s += ";stroke:none";
+      return s;
+    }
+    if (tag === "tspan") return has("mi") ? "font-family:Cambria,Georgia,'Times New Roman',serif;font-style:italic;font-size:1.1em" : "";
+    s = SKS[c[0]] || "";
+    if (c[0] === "sec") s += has("alt") ? ";fill:#f2f2f2" : has("alt2") ? ";fill:#d6d6d6" : has("x") ? ";fill:#c4c4c4" : (has("ka") || has("km")) ? ";fill:#dadada" : "";
+    if (c[0] === "arc" && has("x")) s += ";stroke:#000;stroke-width:2.4";
+    if (c[0] === "ray" && has("thin")) s += ";stroke-width:1.6";
+    return s;
+  }
+  function sketchOf(C, m, id){
+    if (m + ":" + id === "right:check" || !C.figs.length) return "";          // its drawing would give the answer away
+    var svg = C.figs[0].svg, mm = /<svg class="fig" viewBox="([^"]*)"/.exec(svg);
+    if (!mm) return "";
+    var w = Number(mm[1].split(" ")[2]) || 300, W = Math.min(w, 280);
+    svg = svg.replace(/^<div class="fig-scroll">/, "").replace(/<\/div>$/, "")
+      .replace(/<defs>[\s\S]*?<\/defs>/g, "")
+      .replace(/<g class="(?:grid|sqgrid[^"]*)"[^>]*>[\s\S]*?<\/g>/g, "")
+      .replace(/<text\b[^>]*\sdata-step="[^"]*"[^>]*>[\s\S]*?<\/text>/g, "")          // values that only appear once worked out
+      .replace(/\sdata-(?:until|step)="[^"]*"/g, "")
+      .replace(/<svg class="fig" viewBox="([^"]*)" style="[^"]*"/, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="$1" width="' + W + '" style="max-width:100%;height:auto;display:block;overflow:visible"')
+      .replace(/<(text|tspan|polygon|line|path|circle|ellipse|g|rect)\b([^>]*?)\sclass="([^"]*)"/g, function(all, tag, pre, cls){
+        var st = skStyle(tag, cls);
+        return "<" + tag + pre + (st ? ' style="' + st + '"' : "");
+      });
+    return svg;
+  }
+  function optPick(o, k, list, def){ var x = o[k] == null ? "" : String(o[k]); return list.indexOf(x) >= 0 ? x : def; }
+  function onOff(x, def){
+    if (x == null || x === "") return def;
+    if (x === false || x === 0) return false;
+    var s = String(x).toLowerCase();
+    return !(s === "false" || s === "off" || s === "no" || s === "0");
+  }
+  function makeProblems(count, o){
+    o = o && typeof o === "object" ? o : {};
+    var n = Math.floor(Number(count));
+    if (!(n >= 1)) n = 10; if (n > 100) n = 100;
+    var modeO = optPick(o, "mode", ["area","vol","right","angle","any"], "area"), shapeO = o.shape == null ? "any" : String(o.shape), fixed = null, mm2;
+    if (shapeO !== "any"){
+      if ((mm2 = /^(area|vol|right|angle):(\w+)$/.exec(shapeO)) && hasShape(mm2[1], mm2[2])) fixed = { m:mm2[1], id:mm2[2] };
+      else if (modeO !== "any" && hasShape(modeO, shapeO)) fixed = { m:modeO, id:shapeO };
+      else { var hits = modesWith(shapeO); if (hits.length) fixed = { m:hits[0], id:shapeO }; }
+    }
+    var max = Number(optPick(o, "max", ["10","20","50","100"], "20")), dec = optPick(o, "dec", ["whole","dec"], "whole"), nice = optPick(o, "nice", ["nice","any"], "nice");
+    var unitO = optPick(o, "unit", UNITS.concat(["mix"]), "cm"), piO = optPick(o, "pi", ["exact","314","calc"], "exact"), sketch = onOff(o.sketch, true);
+    var out = [], seen = {};
+    for (var i = 0; i < n; i++){
+      var p = null;
+      for (var tries = 0; tries < 30 && !p; tries++){
+        var m = fixed ? fixed.m : modeO === "any" ? pickOf(["area","vol","right","angle"]) : modeO;
+        var r = gen(m, { shape:fixed ? fixed.id : "any", max:max, dec:dec, nice:nice, units:unitO === "mix" ? "mix" : "keep" }, null);
+        var unit = r.unit || (unitO === "mix" ? "cm" : unitO), q = probQuery(m, r.id, r.v, unit, piO);
+        if (seen[q] && tries < 25) continue;
+        var res = computeProblem(m, r.id, r.v, unit, piO);
+        if (!res) continue;
+        seen[q] = true;
+        var text = probText(m, r.id, r.v, unit), sk = sketch ? sketchOf(res.C, m, r.id) : "";
+        p = { text:text, html:'<div style="line-height:1.45">' + esc(text) + "</div>" + (sk ? '<div style="margin-top:6px">' + sk + "</div>" : ""),
+              params:q, answer:partsText(res.parts, false), answerHtml:partsText(res.parts, true) };
+      }
+      if (p) out.push(p);
+    }
+    return out;
+  }
+  function onMessage(ev){
+    var d = ev && ev.data;
+    if (!d || typeof d !== "object" || typeof d.type !== "string" || d.type.indexOf("helper:") !== 0) return;
+    var src = ev.source || window.parent, msg = null;
+    try {
+      if (d.type === "helper:options") msg = { type:"helper:optionsSchema", id:d.id, page:"geometry.html", title:"The Shape Shop", options:optionsSchema() };
+      else if (d.type === "helper:make") msg = { type:"helper:made", id:d.id, page:"geometry.html", problems:makeProblems(d.count, d.options) };
+    } catch (e){
+      if (d.type === "helper:make") msg = { type:"helper:made", id:d.id, page:"geometry.html", problems:[], error:String(e && e.message || e) };
+    }
+    if (msg && src && src.postMessage){ try { src.postMessage(msg, "*"); } catch (e2){} }
+  }
+
   /* ===================== wiring ===================== */
   Array.prototype.forEach.call(document.querySelectorAll("#modeT button"), function(b){
     b.addEventListener("click", function(){ S.mode = b.getAttribute("data-m"); S.step = 1; buildAll(); render(); save(); });
   });
-  function setStepMode(on){
-    S.stepMode = on; S.step = 1;
-    $("allBtn").setAttribute("aria-pressed", String(!on));
-    $("stepBtn").setAttribute("aria-pressed", String(on));
-    render(); save();
+  function paintPractice(){
+    $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
   }
-  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
-  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  function setPractice(p){
+    S.practice = p; S.stepMode = p === "step"; S.step = 1; S.revealed = false;
+    MINE.fresh = true;
+    paintPractice(); render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
+  $("copyBtn").addEventListener("click", copyLink);
+  $("mineForm").addEventListener("submit", function(e){ e.preventDefault(); checkMine(); });
+  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("showBtn").addEventListener("click", function(){
+    S.revealed = true; $("hintBtn").hidden = true; $("showBtn").hidden = true;
+    render();
+    var fb = $("mineFb"), line = document.createElement("div");
+    line.innerHTML = '<span class="why">Here’s the full work — compare it with yours, step by step.</span>';
+    fb.appendChild(line);
+  });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
@@ -2567,7 +3448,7 @@
   var KEY = "shape-shop";
   function save(){
     try{ localStorage.setItem(KEY, JSON.stringify({
-      mode:S.mode, shape:S.shape, vals:S.vals, unit:S.unit, pi:S.pi, stepMode:S.stepMode, gen:S.gen, maker:$("maker").open,
+      mode:S.mode, shape:S.shape, vals:S.vals, unit:S.unit, pi:S.pi, stepMode:S.stepMode, practice:S.practice, gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme") || "" })); }catch(e){}
   }
   function load(){
@@ -2586,7 +3467,9 @@
       }
       if (UNITS.indexOf(v.unit) >= 0) S.unit = v.unit;
       if (["exact","314","calc"].indexOf(v.pi) >= 0) S.pi = v.pi;
-      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+      if (["all","step","check"].indexOf(v.practice) >= 0) S.practice = v.practice;
+      else if (typeof v.stepMode === "boolean") S.practice = v.stepMode ? "step" : "all";
+      S.stepMode = S.practice === "step";
       if (v.gen) for (var gm in S.gen){
         var src = v.gen[gm], dst = S.gen[gm];
         if (!src) continue;
@@ -2601,8 +3484,11 @@
   }
 
   load();
-  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
-  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  var urlMsg = "";
+  try { urlMsg = readURL(); } catch (e){ urlMsg = "That link didn’t quite make sense to me, so here’s the last problem you had instead."; }
+  if (urlMsg){ $("urlNote").innerHTML = urlMsg; $("urlNote").hidden = false; }
+  paintPractice();
   paint(); buildAll(); render();
+  window.addEventListener("message", onMessage);
 })();
 </script>

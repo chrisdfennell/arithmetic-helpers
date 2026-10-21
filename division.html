@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Division House</title>
 <script src="nav.js" defer></script>
@@ -425,6 +426,62 @@
   }
   .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
 
+  /* ---------- the problem maker ---------- */
+  .segmented.small button{font-size:13px;padding:6px 12px}
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--amber);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  @media (max-width:480px){.maker > summary span{display:none}}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;
+    padding:4px 15px 15px}
+  @media (max-width:620px){ .maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px} }
+  .maker-body .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .maker-body .segmented{justify-self:start}
+  .mrow{display:contents}
+  .mrow[hidden]{display:none}
+  .toggles{display:flex;gap:6px;flex-wrap:wrap}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px}
+  .tog b{font-family:var(--f-mono);font-weight:600;font-size:15px;line-height:1}
+  .tog[aria-pressed="true"]{background:var(--amber-bg);border-color:var(--amber);color:var(--ink)}
+  .tog[aria-pressed="true"] b{color:var(--amber)}
+  .tog:hover{border-color:var(--amber-line)}
+  .maker-go{grid-column:1 / -1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--amber);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+  .go:hover{filter:brightness(1.08)}
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  summary:focus-visible,.tog:focus-visible,.go:focus-visible,.print:focus-visible{
+    outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  /* ---------- check my answer ---------- */
+  .check{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);
+    padding:16px 20px 18px;display:flex;flex-direction:column;gap:12px}
+  .check[hidden],.check [hidden]{display:none}
+  .check-head{display:flex;align-items:baseline;gap:4px 14px;flex-wrap:wrap}
+  .check-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .check-head span{font-size:13.5px;color:var(--ink-3)}
+  .check-row{display:flex;align-items:flex-end;gap:12px 14px;flex-wrap:wrap;margin:0}
+  .check-row .num-field input{width:7ch;max-width:100%}
+  .check-tip{margin:0;font-size:13px;color:var(--ink-3)}
+  .check-fb{font-size:15.5px;font-weight:600;color:var(--ink)}
+  .check-fb:empty{display:none}
+  .check-fb.ok{color:var(--green)}
+  .check-fb.no{color:var(--amber)}
+  .check-fb.near{color:var(--blue)}
+  .check-fb .why{display:block;margin-top:3px;font-size:14px;font-weight:400;color:var(--ink-2)}
+  .check-fb .why b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .check-more{display:flex;gap:8px;flex-wrap:wrap}
+  .page.checking #board,.page.checking .answer{display:none}
+
   @media print{
     :root:root{
       --paper:#fff; --surface:#fff; --surface-2:#F0F2EE;
@@ -440,7 +497,7 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.examples,.controls,.footnote,.stepper,.swap-btn,#statusLine{display:none !important}
+    .theme-btn,.examples,.controls,.footnote,.stepper,.swap-btn,#statusLine,.maker,.check{display:none !important}
 
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px}
@@ -577,9 +634,50 @@
         <div class="segmented" role="group" aria-label="Step-through mode">
           <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
           <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
         </div>
       </div>
     </div>
+
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body">
+        <div class="mrow" data-for="dec">
+          <span class="lbl">Dividend</span>
+          <div class="segmented small" id="gDvd" role="group" aria-label="Digits in the dividend"></div>
+        </div>
+        <div class="mrow" data-for="dec">
+          <span class="lbl">Divisor</span>
+          <div class="segmented small" id="gDvs" role="group" aria-label="Digits in the divisor"></div>
+        </div>
+        <div class="mrow" data-for="dec">
+          <span class="lbl">Remainder</span>
+          <div class="segmented small" id="gRem" role="group" aria-label="Remainder"></div>
+        </div>
+        <div class="mrow" data-for="dec">
+          <span class="lbl">Decimals</span>
+          <div class="segmented small" id="gDec" role="group" aria-label="A decimal in the dividend or the divisor"></div>
+        </div>
+        <div class="mrow" data-for="dec">
+          <span class="lbl">Answer as</span>
+          <div class="segmented small" id="gAns" role="group" aria-label="Answer type"></div>
+        </div>
+        <div class="mrow" data-for="dec">
+          <span class="lbl">Extras</span>
+          <div class="toggles">
+            <button type="button" class="tog" id="gZero"><b>0</b> Zero in the quotient</button>
+          </div>
+        </div>
+        <div class="mrow" data-for="frac">
+          <span class="lbl">Fractions</span>
+          <div class="segmented small" id="gKind" role="group" aria-label="Proper fractions or mixed numbers"></div>
+        </div>
+        <div class="maker-go">
+          <button type="button" class="go" id="genBtn">New problem</button>
+          <span class="msg" id="genMsg"></span>
+        </div>
+      </div>
+    </details>
 
     <div class="examples">
       <span class="lbl">Try</span>
@@ -588,6 +686,35 @@
   </section>
 
   <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <section class="check" id="checkBox" hidden aria-labelledby="checkTitle">
+    <div class="check-head">
+      <h2 id="checkTitle">Your answer</h2>
+      <span id="checkNote"></span>
+    </div>
+    <form class="check-row" id="checkForm" novalidate>
+      <div class="num-field" id="ansOne">
+        <label for="ansIn">Answer</label>
+        <input id="ansIn" type="text" inputmode="text" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="num-field" id="ansQBox">
+        <label for="ansQ">Quotient</label>
+        <input id="ansQ" type="text" inputmode="text" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="obelus" id="ansRSep" aria-hidden="true">R</div>
+      <div class="num-field" id="ansRBox">
+        <label for="ansR">Remainder</label>
+        <input id="ansR" type="text" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </div>
+      <button type="submit" class="go" id="checkGo">Check</button>
+    </form>
+    <p class="check-tip" id="checkTip"></p>
+    <div class="check-fb" id="checkFb" aria-live="polite"></div>
+    <div class="check-more" id="checkMore" hidden>
+      <button type="button" class="ghost" id="hintBtn">Show a hint</button>
+      <button type="button" class="ghost" id="showBtn">Show me the work</button>
+    </div>
+  </section>
 
   <div class="board" id="board">
     <section class="panel">
@@ -618,18 +745,37 @@
 
   <div class="footnote">
     <button class="print" type="button" id="printBtn">Print this work</button>
+    <button class="print" type="button" id="copyBtn">Copy link</button>
     <span>D&#8202;&middot;&#8202;M&#8202;&middot;&#8202;S&#8202;&middot;&#8202;B &mdash;
       Divide, Multiply, Subtract, Bring down. Then do it again.</span>
   </div>
 </div>
 
 <script>
+/* URL parameters
+   Open the page with a problem already in it, e.g. division.html?q=847%C3%B712&ans=remainder
+     q=847÷12           the problem, dividend first. ÷ is the usual sign; : works too, and so does / —
+                        but / only when both sides are plain whole numbers or decimals (q=847/12, q=12.5/0.4).
+     q=3/4÷1/2          if either side is a fraction or a mixed number (2 1/2 — a space between the whole
+     q=2 1/2÷3/4        number and the fraction; "+" in a URL is a space too) it opens in Fractions mode.
+                        Here ÷ or : is required, because / is part of the fractions.
+     ans=remainder|fraction|decimal   Answer as: Quotient & remainder | Fraction | Decimal (Decimals mode
+                        only). Left out, it's Quotient & remainder for whole numbers and Decimal for decimals.
+     places=3|6|9       Stop after that many decimal places (12 works too).
+     practice=all|step|check          Show all work | One step at a time | Check my answer.
+   A problem in the URL wins over the one remembered on this device; a value that doesn't make sense
+   shows the page's usual notice. While you work, the address bar is kept in step with the problem
+   (history.replaceState — problem, answer type, places and practice only, never the theme), so
+   "Copy link" shares it. The worksheet page also talks to this page with postMessage: see
+   "worksheet API" near the end. */
 (function(){
   "use strict";
 
   /* ============================== state ============================== */
   var S = { nums:"dec", dividend:"619", divisor:"5", mode:"remainder", places:6,
-            frac:[[0,3,4],[0,1,2]], stepMode:false, step:0 };
+            frac:[[0,3,4],[0,1,2]], stepMode:false, step:0,
+            practice:"all", revealed:false, keepCheck:false,
+            gen:{ ans:"remainder", dividend:3, divisor:1, rem:"any", zero:false, dec:"none", kind:"proper" } };
 
   var $ = function(id){ return document.getElementById(id); };
   var elDividend = $("dividend"), elDivisor = $("divisor"), elWork = $("work"),
@@ -1180,7 +1326,8 @@
 
   /* ============================== render ============================== */
 
-  function render(){
+  function render(){ renderCore(); afterRender(); }
+  function renderCore(){
     if (S.nums === "frac"){
       var ftotal = renderFractions();
       if (!ftotal) return;
@@ -1678,6 +1825,9 @@
       b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === m));
     });
     elPlacesCtl.hidden = (m !== "decimal");
+    S.gen.ans = m;                               // the maker's answer type follows the switch
+    if (m !== "decimal") S.gen.dec = "none";
+    paintGen();
     render();
     save();
   }
@@ -1689,16 +1839,26 @@
     S.places = Number(e.target.value); S.step = 1; render(); save();
   });
 
-  function setStepMode(on){
-    S.stepMode = on;
+  /* practice: show all work, one step at a time, or check my answer.
+     keep = the answer box stays open (a hint, or the work shown after a check) */
+  function paintPractice(){
+    $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
+  }
+  function setPractice(p, keep){
+    S.practice = p;
+    S.stepMode = (p === "step");
     S.step = 1;
-    $("allBtn").setAttribute("aria-pressed", String(!on));
-    $("stepBtn").setAttribute("aria-pressed", String(on));
+    S.keepCheck = !!keep;
+    if (p === "check" && !keep) resetCheck();
+    paintPractice();
     render();
     save();
   }
-  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
-  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
 
@@ -1726,6 +1886,7 @@
     $("answerAsCtl").hidden = (n !== "dec");
     $("placesCtl").hidden = (n !== "dec" || S.mode !== "decimal");
     buildChips();
+    paintGen();
     render(); save();
   }
   Array.prototype.forEach.call(document.querySelectorAll("[data-nums]"), function(b){
@@ -1773,6 +1934,642 @@
     if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
   });
 
+  /* ============================== exact values, for checking answers ============================== */
+  var B0 = BigInt(0), B1 = BigInt(1), B2 = BigInt(2), B5 = BigInt(5), B10 = BigInt(10);
+  function babs(x){ return x < B0 ? -x : x; }
+  function bigGcd(a, b){ a = babs(a); b = babs(b); while (b){ var t = a % b; a = b; b = t; } return a; }
+  function Rat(n, d){                          // an exact fraction n/d in lowest terms
+    n = BigInt(n); d = (d === undefined) ? B1 : BigInt(d);
+    if (d === B0) return null;
+    if (d < B0){ n = -n; d = -d; }
+    var g = bigGcd(n, d) || B1;
+    return { n:n / g, d:d / g };
+  }
+  function rAdd(a, b){ return Rat(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function rMul(a, b){ return Rat(a.n * b.n, a.d * b.d); }
+  function rDiv(a, b){ return b.n === B0 ? null : Rat(a.n * b.d, a.d * b.n); }
+  function rEq(a, b){ return !!a && !!b && a.n === b.n && a.d === b.d; }
+  function pow10(k){ var r = B1; for (var i = 0; i < k; i++) r *= B10; return r; }
+  function rShift(a, k){ return k >= 0 ? Rat(a.n * pow10(k), a.d) : Rat(a.n, a.d * pow10(-k)); }
+  function rRound(a, k){ var n = babs(a.n), N = (n * pow10(k) * B2 + a.d) / (a.d * B2); return a.n < B0 ? -N : N; }
+  function rTrunc(a, k){ var N = babs(a.n) * pow10(k) / a.d; return a.n < B0 ? -N : N; }
+  function endsShort(a){                       // a decimal that stops within 12 places?
+    var d = a.d, k2 = 0, k5 = 0;
+    while (d % B2 === B0){ d /= B2; k2++; }
+    while (d % B5 === B0){ d /= B5; k5++; }
+    return d === B1 && Math.max(k2, k5) <= 12;
+  }
+  /* What someone typed: 97, 97.67, .5, 293/3, 97 2/3, 0.(6), 0.6̅, 0.666…, 97 R 8 — commas and a
+     unicode minus are fine. Returns null when it isn't a number at all. */
+  function readAnswer(raw){
+    var s = String(raw == null ? "" : raw).replace(/[−‒–—﹣－]/g, "-")
+      .replace(/[   ]/g, " ").replace(/,/g, "").trim();
+    if (!s) return null;
+    var ell = /(\.\.\.|…)$/.test(s);
+    if (ell) s = s.replace(/(\.\.\.|…)$/, "").trim();
+    s = s.replace(/(\d)[̅̄]/g, "[$1]").replace(/\]\[/g, "").replace(/\[/g, "(").replace(/\]/g, ")")
+         .replace(/\s*\/\s*/g, "/").replace(/\s+/g, " ");
+    var m = /^(\d+) ?(?:r|rem|remainder)\.? ?(\d+)$/i.exec(s);
+    if (m) return { qr:true, q:BigInt(m[1]), r:BigInt(m[2]) };
+    var sg = B1;
+    if (/^[-+]/.test(s)){ if (s.charAt(0) === "-") sg = -B1; s = s.slice(1).trim(); }
+    function mk(i, f, form){
+      var sc = sg * BigInt((i || "0") + f);
+      return { form:form, places:f.length, scaled:sc, ell:ell, v:Rat(sc, pow10(f.length)) };
+    }
+    if ((m = /^(\d+)\.?$/.exec(s))) return mk(m[1], "", "int");
+    if ((m = /^(\d*)\.(\d+)$/.exec(s))) return mk(m[1], m[2], "dec");
+    if ((m = /^(\d*)\.(\d*)\((\d+)\)$/.exec(s))){         // 0.1(6): the bracketed digits repeat
+      var I = m[1] || "0", H = m[2], Rp = m[3];
+      return { form:"bar", v:Rat(sg * (BigInt(I + H + Rp) - BigInt(I + H)),
+                                 pow10(H.length) * (pow10(Rp.length) - B1)) };
+    }
+    if ((m = /^(?:(\d+) )?(\d+)\/(\d+)$/.exec(s))){
+      var w = BigInt(m[1] || "0"), n = BigInt(m[2]), d = BigInt(m[3]);
+      if (d === B0) return { bad:"zero" };
+      return { form: m[1] ? "mixed" : "frac", w:w, n:n, d:d, v:Rat(sg * (w * d + n), d),
+               simplest: m[1] ? (n > B0 && n < d && bigGcd(n, d) === B1) : (d !== B1 && bigGcd(n, d) === B1) };
+    }
+    return null;
+  }
+  /* exact | ok (rounded right, or the digits with … after them) | trunc (cut off, not rounded)
+     | few (fewer than 2 places) | ends (rounded, but this answer stops) | no */
+  function compareAns(ans, V, ends){
+    if (!ans || !ans.v || !V) return "no";
+    if (rEq(ans.v, V)) return "exact";
+    if (ans.form !== "dec") return "no";
+    var k = ans.places, up = rRound(V, k) === ans.scaled, down = rTrunc(V, k) === ans.scaled;
+    if (!up && !down) return "no";
+    if (ends) return "ends";
+    if (k < 2) return "few";
+    return (up || ans.ell) ? "ok" : "trunc";
+  }
+  function nearValue(ans, C){                  // spotting a mistake: exactly C, or C to a few places
+    if (!ans || !ans.v || !C) return false;
+    if (rEq(ans.v, C)) return true;
+    return ans.form === "dec" && (rRound(C, ans.places) === ans.scaled || rTrunc(C, ans.places) === ans.scaled);
+  }
+  function pl(n){ return Number(n) === 1 ? "" : "s"; }
+  function tenTimes(k){ return ["", "10", "100", "1,000", "10,000"][Math.abs(k)] || "many"; }
+  /* a stacked fraction with inline styles only, for the answer box and the worksheet page */
+  function frIn(n, d){
+    return '<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;'
+      + 'line-height:1.1;margin:0 .12em;text-align:center"><span style="padding:0 .2em">' + n + "</span>"
+      + '<span style="padding:0 .2em;border-top:.09em solid currentColor">' + d + "</span></span>";
+  }
+  function mixIn(m){ return m[1] === 0 ? String(m[0]) : (m[0] ? m[0] + " " : "") + frIn(m[1], m[2]); }
+
+  /* ============================== the problem as plain data ============================== */
+  // {nums:"dec", dividend:"847", divisor:"12", ans:"remainder", places:6}  or  {nums:"frac", frac:[[w,n,d],[w,n,d]]}
+  function curProblem(){
+    return S.nums === "dec"
+      ? { nums:"dec", dividend:String(S.dividend), divisor:String(S.divisor), ans:S.mode, places:S.places }
+      : { nums:"frac", frac:[S.frac[0].slice(), S.frac[1].slice()] };
+  }
+  function opQ(m, any){                        // one side of q=…; a lone whole number keeps its /1
+    if (m[1] !== 0) return (m[0] ? m[0] + " " : "") + m[1] + "/" + m[2];
+    return any ? String(m[0]) : m[0] + "/1";
+  }
+  function qText(p){
+    if (p.nums === "dec") return String(p.dividend).trim() + "÷" + String(p.divisor).trim();
+    var any = p.frac[0][1] !== 0 || p.frac[1][1] !== 0;
+    return opQ(p.frac[0], any) + "÷" + opQ(p.frac[1], any);
+  }
+  function problemQuery(p){
+    var q = [["q", qText(p)]];
+    if (p.nums === "dec"){
+      q.push(["ans", p.ans]);
+      if (p.ans === "decimal") q.push(["places", String(p.places)]);
+    }
+    return new URLSearchParams(q).toString();
+  }
+  function problemText(p){
+    return p.nums === "dec" ? String(p.dividend).trim() + " ÷ " + String(p.divisor).trim()
+                            : fracText(p.frac[0]) + " ÷ " + fracText(p.frac[1]);
+  }
+  function problemHtml(p){
+    return p.nums === "dec" ? esc(problemText(p)) : mixIn(p.frac[0]) + " &divide; " + mixIn(p.frac[1]);
+  }
+  function barParts(r){                        // the repeating decimal split into its start and its repeat
+    if (!r.repeat) return null;
+    var head = "", rep = "";
+    for (var i = quotientStart(r); i < r.repeat.end; i++){
+      if (i === r.pointIdx && r.hasPoint) head += ".";
+      if (i >= r.repeat.start) rep += String(r.quo[i] || 0); else head += String(r.quo[i] || 0);
+    }
+    return { head:head, rep:rep };
+  }
+  /* the answer, worked out with the page's own long division — null when the page would show a notice.
+     kind: qr (quotient & remainder), frac (fraction answer), dec (decimal answer), fr (Fractions mode) */
+  function solveDiv(p){
+    if (!p) return null;
+    if (p.nums === "frac"){
+      var m1 = p.frac[0], m2 = p.frac[1];
+      if ([m1,m2].some(function(m){ return m.some(function(v){ return !isFinite(v); }); })) return null;
+      if (m1[2] === 0 || m2[2] === 0) return null;
+      if (m1[2] > 999 || m2[2] > 999 || m1[1] > 9999 || m2[1] > 9999) return null;
+      var fa = toImproper(m1), fb = toImproper(m2);
+      if (fb.n === 0) return null;
+      var fv = Rat(BigInt(fa.n) * BigInt(fb.d), BigInt(fa.d) * BigInt(fb.n));
+      var n = Number(fv.n), d = Number(fv.d), w = Math.floor(n / d), rest = n % d;
+      return { kind:"fr", m1:m1, m2:m2, a:fa, b:fb, v:fv, ends:endsShort(fv),
+               text: d === 1 ? String(n) : (n > d ? w + " " + rest + "/" + d : n + "/" + d),
+               html: d === 1 ? String(n) : (n > d ? w + " " + frIn(rest, d) : frIn(n, d)) };
+    }
+    var dvd = parseNum(p.dividend), dvs = parseNum(p.divisor);
+    if (!dvd || !dvs || isZero(dvs)) return null;
+    if ((dvd.i + dvd.f).length > 15 || (dvs.i + dvs.f).length > 9) return null;
+    var ans = (p.ans === "fraction" || p.ans === "decimal") ? p.ans : "remainder";
+    if (ans !== "decimal" && (dvd.f || dvs.f)) return null;
+    var places = [3,6,9,12].indexOf(Number(p.places)) >= 0 ? Number(p.places) : 6;
+    var shift = dvs.f.length, sDvd = shiftRight(dvd, shift), sDvs = shiftRight(dvs, shift), D = Number(sDvs.i);
+    var digits = (sDvd.i + sDvd.f).split(""), pointIdx = sDvd.i.length;
+    var r = divide(digits, pointIdx, D, ans === "fraction" ? "remainder" : ans, places);
+    var qt = quotientText(r);
+    var k = Math.max(dvd.f.length, dvs.f.length);
+    var A = BigInt(shiftRight(dvd, k).i), Bv = BigInt(shiftRight(dvs, k).i);
+    var out = { kind: ans === "remainder" ? "qr" : (ans === "fraction" ? "frac" : "dec"),
+                dvd:dvd, dvs:dvs, D:D, shift:shift, v:Rat(A, Bv), q:A / Bv, r:A % Bv,
+                whole: !dvd.f && !dvs.f, qtext: r.steps.length ? qt.text : "0", ends:endsShort(Rat(A, Bv)) };
+    if (out.kind === "qr"){
+      out.text = commas(out.qtext) + (r.rem > 0 ? " R " + r.rem : "");
+      out.html = esc(out.text);
+    } else if (out.kind === "frac"){
+      var gF = r.rem > 0 ? gcd(r.rem, D) : 1, lead = out.qtext !== "0" ? commas(out.qtext) + " " : "";
+      out.text = r.rem === 0 ? commas(out.qtext) : lead + (r.rem / gF) + "/" + (D / gF);
+      out.html = r.rem === 0 ? esc(commas(out.qtext)) : esc(lead) + frIn(r.rem / gF, D / gF);
+    } else {
+      var bp = barParts(r);
+      out.qtext = qt.text;
+      if (bp){
+        out.text = bp.head + bp.rep.replace(/(\d)/g, "$1̅");
+        out.html = esc(bp.head) + '<span style="text-decoration:overline">' + bp.rep + "</span>";
+      } else {
+        out.text = qt.text + (r.capped ? "…" : "");
+        out.html = esc(out.text);
+        if (r.capped){                          // what it really is, past where the page stopped
+          var V = out.v, dl = 0;
+          while (dl <= 15 && (V.n * pow10(dl)) % V.d !== B0) dl++;
+          out.exact = dl <= 15 ? esc(scaledStr(V.n * pow10(dl) / V.d, dl)) : esc(V.n + "/" + V.d);
+        }
+      }
+      out.ends = !(r.repeat || r.capped);         // the page writes it all out within `places`
+    }
+    return out;
+  }
+
+  /* ============================== check my answer ============================== */
+  function sizeAns(){ var el = $("ansIn"); el.style.width = Math.max(6, Math.min(16, el.value.length + 2)) + "ch"; }
+  function resetCheck(){
+    $("ansIn").value = ""; $("ansQ").value = ""; $("ansR").value = ""; sizeAns();
+    var f = $("checkFb"); f.className = "check-fb"; f.innerHTML = "";
+    $("checkMore").hidden = true;
+    S.revealed = false;
+  }
+  function paintCheck(){
+    var valid = !!document.querySelector(".answer"), checking = S.practice === "check";
+    $("checkBox").hidden = !(valid && (checking || S.keepCheck));
+    document.querySelector(".page").classList.toggle("checking", valid && checking && !S.revealed);
+    $("checkNote").textContent = checking && !S.revealed ? "The work stays hidden until you check." : "";
+    var qr = S.nums === "dec" && S.mode === "remainder";
+    $("ansOne").hidden = qr;
+    $("ansQBox").hidden = $("ansRSep").hidden = $("ansRBox").hidden = !qr;
+    $("checkTip").textContent = S.nums === "frac"
+      ? "Type a fraction like 3/2 or a mixed number like 1 1/2. A decimal works too."
+      : S.mode === "remainder" ? "Type the quotient and what’s left over — or the whole thing, like 97 R 8, in the first box."
+      : S.mode === "fraction" ? "Write the remainder as a fraction, like 70 7/12 — or as one fraction, like 847/12."
+      : "Type the decimal, like 4.25. If it goes on forever, round to 2 or more places, or put the repeating digits in brackets: 0.1(6).";
+  }
+  function say(kind, head, why, more){
+    var f = $("checkFb");
+    f.className = "check-fb " + kind;
+    f.innerHTML = head + (why ? '<span class="why">' + why + "</span>" : "");
+    $("checkMore").hidden = !more;
+  }
+  function reveal(){
+    S.revealed = true;
+    if (S.practice === "check") render(); else setPractice("all", true);
+  }
+  function correct(note){ say("ok", "✓ Correct!", note || "", false); reveal(); }
+  function simplifyWhy(ans){
+    if (ans.form === "frac" && ans.d === B1) return "A bottom number of 1 means whole ones — write it as a whole number.";
+    if (ans.form === "mixed" && ans.n >= ans.d) return "The fraction part is 1 or more — take the whole ones out of it.";
+    var g = bigGcd(ans.n, ans.d);
+    return "<b>" + ans.n + "</b> and <b>" + ans.d + "</b> can both be divided by <b>" + g + "</b>.";
+  }
+  function unreadable(){
+    say("no", "I can’t read that as a number.", S.mode === "remainder" && S.nums === "dec"
+      ? "Type the quotient in the first box and what’s left over in the second — or <b>97 R 8</b> in one box."
+      : "Try something like <b>4.25</b>, <b>3/4</b> or <b>2 1/2</b>.", false);
+  }
+  function checkNow(){
+    var sol = solveDiv(curProblem());
+    if (!sol) return;
+    if (sol.kind === "qr") return checkQR(sol);
+    var raw = $("ansIn").value;
+    if (!raw.trim()) return say("plain", "Type your answer in the box first.", "", false);
+    var a = readAnswer(raw);
+    if (a && a.bad) return say("no", "A fraction can’t have 0 on the bottom.", "", false);
+    if (!a) return unreadable();
+    if (a.qr){
+      if (sol.whole && a.q === sol.q && a.r === sol.r)
+        return say("near", "That’s the quotient and remainder — now one more step.", sol.kind === "frac"
+          ? "Write the remainder as a fraction of the divisor: <b>" + sol.r + "</b> left over out of <b>"
+            + commas(String(sol.D)) + "</b> is <b>" + sol.r + "/" + sol.D + "</b> of another one."
+          : "Keep dividing: put a decimal point after the <b>" + commas(sol.q.toString())
+            + "</b>, add a zero to the dividend, bring it down and carry on.", true);
+      return say("no", "Not quite — try again.", sol.kind === "dec"
+        ? "This one wants a decimal answer, like 4.25." : "This one wants a fraction or a mixed number, like 2 3/4.", true);
+    }
+    valueCheck(a, sol, raw, "");
+  }
+  function valueCheck(a, sol, raw, note){
+    var c = compareAns(a, sol.v, sol.ends);
+    if (c === "exact"){
+      if (a.simplest === false) return say("near", "Right value — now simplify it.", simplifyWhy(a), false);
+      var same = String(raw).replace(/[,\s]+/g, "") === sol.text.replace(/[,\s]+/g, "");
+      return correct(note || (same ? "" : "The work writes it as <b>" + sol.html + "</b>."));
+    }
+    if (c === "ok") return correct(note || ("Rounded just right. Exactly, it’s <b>" + (sol.exact || sol.html) + "</b>."));
+    if (c === "trunc") return say("near", "So close — round the last digit.",
+      "The next digit is 5 or more, so the last one goes up. Or show the repeating part in brackets, like <b>0.1(6)</b>.", true);
+    if (c === "few") return say("near", "Right so far — give at least 2 decimal places.", "", true);
+    if (c === "ends") return say("no", "Not quite — that’s been rounded.",
+      "This answer stops after a few decimal places, so write every digit.", true);
+    say("no", "Not quite — try again.", diagnoseValue(a, sol) || "", true);
+  }
+  function checkQR(sol){
+    var rq = $("ansQ").value.trim(), rr = $("ansR").value.trim();
+    if (!rq && !rr) return say("plain", "Type your answer in the boxes first.", "", false);
+    if (!rq) return say("plain", "Fill in the quotient too.", "", false);
+    var a = readAnswer(rq), uq, ur = null;
+    if (a && a.bad) return say("no", "A fraction can’t have 0 on the bottom.", "", false);
+    if (a && a.qr){ uq = a.q; ur = a.r; }
+    else if (a && a.form === "int" && a.scaled >= B0){
+      uq = a.scaled;
+      if (rr){
+        var rv = readAnswer(rr.replace(/^r(em(ainder)?)?\.?\s*/i, ""));
+        if (!rv || rv.form !== "int" || rv.scaled < B0)
+          return say("no", "The remainder should be a whole number — what’s left over.", "", false);
+        ur = rv.scaled;
+      }
+    }
+    else if (a && a.v && !rr)                   // 97 2/3 or 97.67 typed in one box: fine too
+      return valueCheck(a, sol, rq, "As a quotient and remainder, that’s <b>" + esc(sol.text) + "</b>.");
+    else return unreadable();
+    if (uq === sol.q && (ur === null ? B0 : ur) === sol.r) return correct("");
+    say("no", "Not quite — try again.", diagnoseQR(uq, ur, sol) || "", true);
+  }
+
+  /* the usual slips, worked out for this problem and compared with what was typed */
+  var ZERO_MSG = "It looks like a zero went missing in the quotient. When the divisor doesn’t fit into the "
+               + "number you’ve brought down, write <b>0</b> in the answer before you bring down the next digit.";
+  function wrongWay(sol){
+    return "That’s <b>" + esc(numStr(sol.dvs)) + " ÷ " + esc(numStr(sol.dvd)) + "</b> — the wrong way round. "
+         + "The first number (the dividend) goes inside the house, and you divide it by the second.";
+  }
+  function dropZeros(s){                       // "103" -> ["13"]; "4.05" -> ["4.5"]; "1020" -> ["120","102","12"]
+    var out = [], first = s.search(/[1-9]/), pt = s.indexOf(".");
+    if (first < 0) return out;
+    for (var i = 0; i < s.length; i++){
+      if (s.charAt(i) !== "0" || (i < first && !(pt >= 0 && i > pt))) continue;
+      out.push(s.slice(0, i) + s.slice(i + 1));
+    }
+    if (out.length > 1) out.push(s.slice(0, first + 1) + s.slice(first + 1).replace(/0/g, ""));
+    return out;
+  }
+  function diagnoseQR(uq, ur, sol){
+    var D = BigInt(sol.D), Ds = commas(String(sol.D));
+    var dvdI = BigInt(sol.dvd.i), dvsI = BigInt(sol.dvs.i);
+    if (dvsI < dvdI && uq === B0 && ur !== null && ur === dvsI) return wrongWay(sol);   // 12 ÷ 847 = 0 R 12
+    if (ur !== null && ur >= D) return ur === D
+      ? "Your remainder is the same as the divisor — that means one more <b>" + Ds + "</b> fits. Add 1 to the quotient."
+      : "Your remainder (<b>" + commas(ur.toString()) + "</b>) is bigger than the divisor (<b>" + Ds + "</b>), so another <b>"
+        + Ds + "</b> still fits in. A remainder always has to be smaller than the divisor.";
+    if (uq === sol.q){
+      if (sol.r > B0 && (ur === null || ur === B0))
+        return "The quotient is right, but you forgot the remainder — what’s left over after <b>"
+             + commas(sol.q.toString()) + " × " + Ds + "</b>?";
+      return "The quotient is right — check the remainder. It’s what’s left after you take away <b>"
+           + commas(sol.q.toString()) + " × " + Ds + "</b>.";
+    }
+    if (dropZeros(sol.q.toString()).indexOf(uq.toString()) >= 0) return ZERO_MSG;
+    return null;
+  }
+  function diagnoseValue(a, sol){
+    var V = sol.v, k, i;
+    if (sol.kind === "fr"){
+      var m1 = sol.m1, m2 = sol.m2, A = sol.a, Bf = sol.b;
+      var fa = Rat(BigInt(A.n), BigInt(A.d)), fb = Rat(BigInt(Bf.n), BigInt(Bf.d));
+      var inv = rDiv(fb, fa);
+      if (inv && !rEq(inv, V) && nearValue(a, inv))
+        return "That’s upside down. Keep the <b>first</b> fraction as it is and flip the <b>second</b> — it looks like "
+             + "the first one got flipped (or the division went the wrong way round).";
+      var noflip = rMul(fa, fb);
+      if (!rEq(noflip, V) && nearValue(a, noflip))
+        return "It looks like you multiplied without flipping. Keep, change, flip: change ÷ to × <em>and</em> flip the "
+             + "second fraction — <b>" + Bf.n + "/" + Bf.d + "</b> becomes <b>" + Bf.d + "/" + Bf.n + "</b>.";
+      var both = noflip.n === B0 ? null : rDiv(Rat(B1), noflip);
+      if (both && !rEq(both, V) && nearValue(a, both))
+        return "Only flip the <b>second</b> fraction — the first one stays exactly as it is.";
+      if (m2[0] && m2[1]){
+        var sep = rAdd(Rat(BigInt(m1[0]), BigInt(m2[0])), rDiv(Rat(BigInt(m1[1]), BigInt(m1[2])), Rat(BigInt(m2[1]), BigInt(m2[2]))));
+        if (sep && !rEq(sep, V) && nearValue(a, sep))
+          return "Mixed numbers can’t be divided in pieces. Turn each one into an improper fraction first (<b>"
+               + fracText(m2) + " = " + Bf.n + "/" + Bf.d + "</b>), then keep, change, flip.";
+      }
+      return null;
+    }
+    var isWhole = V.d === B1, Ds = commas(String(sol.D));
+    if (!isWhole && a.form === "int" && a.scaled === sol.q)
+      return sol.kind === "frac"
+        ? "That’s the whole-number part, but there’s <b>" + sol.r + "</b> left over. Write it as a fraction of the divisor "
+          + "and put it beside the <b>" + commas(sol.q.toString()) + "</b>."
+        : sol.kind === "qr"
+        ? "That’s the quotient — now add the remainder."
+        : "That’s only the whole-number part. Put a decimal point after <b>" + commas(sol.q.toString())
+          + "</b>, add a zero to the dividend and keep dividing.";
+    var drops = dropZeros(sol.kind === "dec" ? sol.qtext : sol.q.toString());
+    for (i = 0; i < drops.length; i++){
+      var cand = readAnswer(drops[i]);
+      if (!cand || !cand.v) continue;
+      var cv = sol.kind === "dec" ? cand.v : rAdd(cand.v, Rat(sol.r, BigInt(sol.D)));
+      if (!rEq(cv, V) && nearValue(a, cv)) return ZERO_MSG;
+    }
+    for (k = -6; k <= 6; k++){
+      if (!k || !nearValue(a, rShift(V, k))) continue;
+      return "The digits are right, but your answer is " + tenTimes(k) + " times too " + (k > 0 ? "big" : "small")
+        + " — the decimal point is in the wrong place. " + (sol.shift
+          ? "After you slide the point <b>" + sol.shift + "</b> place" + pl(sol.shift) + " right in both numbers, "
+            + "the point in the answer goes straight up from the one in the dividend."
+          : "The point in the answer sits straight above the point in the dividend.");
+    }
+    var inv2 = rDiv(Rat(B1), V);
+    if (inv2 && !rEq(inv2, V) && nearValue(a, inv2)) return wrongWay(sol);
+    return null;
+  }
+  $("checkForm").addEventListener("submit", function(e){ e.preventDefault(); checkNow(); });
+  $("ansIn").addEventListener("input", sizeAns);
+  $("hintBtn").addEventListener("click", function(){ setPractice("step", true); });
+  $("showBtn").addEventListener("click", reveal);
+
+  /* after every render: a new problem empties the answer box; the address bar follows along */
+  var lastKey = null;
+  function afterRender(){
+    var key = problemQuery(curProblem());
+    if (key !== lastKey){
+      if (lastKey !== null){ resetCheck(); S.keepCheck = false; }
+      lastKey = key;
+    }
+    syncURL();
+    paintCheck();
+  }
+
+  /* ============================== shareable links ============================== */
+  function syncURL(){
+    try{
+      var qs = problemQuery(curProblem()) + (S.practice !== "all" ? "&practice=" + S.practice : "");
+      if (location.search !== "?" + qs) history.replaceState(history.state, "", location.pathname + "?" + qs + location.hash);
+    }catch(e){}
+  }
+  function readOperand(s){
+    s = String(s).trim().replace(/\s+/g, " ").replace(/ ?\/ ?/g, "/");
+    var m;
+    if ((m = /^(\d+) (\d+)\/(\d+)$/.exec(s))) return { f:[+m[1], +m[2], +m[3]], frac:true };
+    if ((m = /^(\d+)\/(\d+)$/.exec(s))) return { f:[0, +m[1], +m[2]], frac:true };
+    if (/^\d+$/.test(s)) return { f:[+s, 0, 1], frac:false };
+    return { f:null, frac:false };
+  }
+  function readQ(q){                           // anything that isn't two fractions goes in as typed
+    q = String(q).trim();
+    var m = /^(.*?)\s*[÷:]\s*(.*)$/.exec(q), L, R;
+    if (m){ L = m[1]; R = m[2]; }
+    else if ((m = /^([\d.,]+)\s*\/\s*([\d.,]+)$/.exec(q))){ L = m[1]; R = m[2]; }
+    else { L = q; R = ""; }
+    var a = readOperand(L), b = readOperand(R);
+    if (a.f && b.f && (a.frac || b.frac)) return { nums:"frac", frac:[a.f, b.f] };
+    return { nums:"dec", dividend:L.trim(), divisor:R.trim() };
+  }
+  function applyURL(){
+    var sp;
+    try { sp = new URLSearchParams(location.search); } catch(e){ return; }
+    var pr = sp.get("practice");
+    if (pr === "all" || pr === "step" || pr === "check"){ S.practice = pr; S.stepMode = pr === "step"; }
+    var ans = sp.get("ans"), okAns = ["remainder","fraction","decimal"].indexOf(ans) >= 0;
+    var pls = Number(sp.get("places"));
+    if ([3,6,9,12].indexOf(pls) >= 0) S.places = pls;
+    var q = sp.get("q");
+    if (q === null){ if (okAns) S.mode = ans; return; }
+    var p = readQ(q);
+    S.nums = p.nums;
+    if (p.nums === "frac"){ S.frac = p.frac; if (okAns) S.mode = ans; return; }
+    S.dividend = elDividend.value = p.dividend;
+    S.divisor = elDivisor.value = p.divisor;
+    S.mode = okAns ? ans : (/\./.test(p.dividend + p.divisor) ? "decimal" : "remainder");
+  }
+  var copyTimer = null;
+  $("copyBtn").addEventListener("click", function(){
+    var btn = $("copyBtn"), url = location.href;
+    function done(ok){
+      btn.textContent = ok ? "Link copied ✓" : "Copy the address bar instead";
+      clearTimeout(copyTimer);
+      copyTimer = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000);
+    }
+    function fallback(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = url; ta.setAttribute("readonly", "");
+      ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch(e){}
+      document.body.removeChild(ta);
+      done(ok);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText)
+      navigator.clipboard.writeText(url).then(function(){ done(true); }, fallback);
+    else fallback();
+  });
+
+  /* ============================== the problem maker ============================== */
+  function rint(lo, hi){ return lo + Math.floor(Math.random() * (hi - lo + 1)); }
+  function pick(v, list, def){ var n = Number(v); return (v !== null && v !== "" && list.indexOf(n) >= 0) ? n : def; }
+  function truthy(v){ return v === true || v === 1 || v === "1" || v === "true" || v === "on" || v === "yes"; }
+  function oneOf(v, list, def){ return list.indexOf(v) >= 0 ? v : def; }
+  function genOpts(o){                         // tidy maker / worksheet options; anything odd → defaults
+    o = (o && typeof o === "object") ? o : {};
+    var G = { nums: (o.mode === "fractions" || o.mode === "frac") ? "frac" : "dec",
+      ans: oneOf(o.ans, ["remainder","fraction","decimal"], "remainder"),
+      dividend: pick(o.dividend, [2,3,4,5,6], 3), divisor: pick(o.divisor, [1,2,3], 1),
+      rem: oneOf(o.rem, ["none","some","any"], "any"), zero: truthy(o.zero),
+      dec: oneOf(o.dec, ["none","dividend","divisor"], "none"),
+      places: pick(o.places, [3,6,9,12], 6), kind: o.kind === "mixed" ? "mixed" : "proper" };
+    if (G.dec !== "none") G.ans = "decimal";   // decimals only divide out to a decimal answer
+    return G;
+  }
+  function makeNum(n, places){                 // n digits, `places` of them after the point
+    var s = String(n === 1 && !places ? rint(2, 9) : rint(1, 9));
+    for (var i = 1; i < n; i++) s += String(rint(0, 9));
+    if (places > 0 && s.charAt(n - 1) === "0") s = s.slice(0, n - 1) + rint(1, 9);
+    if (!places) return s;
+    if (places >= n) return "0." + s;
+    return s.slice(0, n - places) + "." + s.slice(n - places);
+  }
+  function makeDecDiv(G, t){
+    var dvsP = G.dec === "divisor" ? rint(1, G.divisor) : 0;
+    var dvdP = G.dec === "dividend" ? rint(1, Math.max(1, Math.min(2, G.dividend - 1))) : 0;
+    var dvs = makeNum(G.divisor, dvsP), dvd;
+    if (G.rem === "none" && (G.ans !== "decimal" || t > 1500)){
+      // build it to come out even: dividend = divisor × something
+      var Dint = Number(dvs.replace(".", "")), lo = Math.ceil(Math.pow(10, G.dividend - 1) / Dint),
+          hi = Math.floor((Math.pow(10, G.dividend) - 1) / Dint);
+      if (lo > hi) return null;
+      var s = String(Dint * rint(lo, hi));
+      if (dvdP && s.charAt(s.length - 1) === "0") return null;
+      dvd = dvdP ? s.slice(0, s.length - dvdP) + "." + s.slice(s.length - dvdP) : s;
+    } else dvd = makeNum(G.dividend, dvdP);
+    return { nums:"dec", dividend:dvd, divisor:dvs, ans:G.ans, places:G.places };
+  }
+  function randFrac(){
+    for (;;){ var d = rint(2, 12), n = rint(1, d - 1); if (gcdN(n, d) === 1) return [0, n, d]; }
+  }
+  function makeFracDiv(G){
+    var f1 = randFrac(), f2 = randFrac();
+    if (G.kind === "mixed"){
+      f1[0] = rint(1, 4);
+      if (Math.random() < 0.4) f2[0] = rint(1, 2);
+    }
+    return { nums:"frac", frac:[f1, f2] };
+  }
+  function hasZero(qtext){ return /0/.test(String(qtext).replace(".", "").replace(/^0+/, "")); }
+  /* a problem the page can work, different from the ones in `seen` when possible */
+  function makeDiv(G, seen){
+    var first = null, loose = null;
+    for (var t = 0; t < 3000; t++){
+      var p = G.nums === "frac" ? makeFracDiv(G) : makeDecDiv(G, t), sol = solveDiv(p);
+      if (!sol) continue;
+      if (!loose) loose = p;
+      if (G.nums === "dec"){
+        if (sol.v.n < sol.v.d) continue;                    // the dividend should be the bigger one
+        var even = sol.kind === "dec" ? sol.ends : sol.r === B0;
+        if ((G.rem === "none" && !even) || (G.rem === "some" && even)) continue;
+        if (G.zero && !hasZero(sol.qtext)) continue;
+      }
+      if (!first) first = p;
+      var key = qText(p);
+      if (seen[key]) continue;
+      seen[key] = true;
+      return { p:p, exact:true };
+    }
+    if (first) return { p:first, exact:true };
+    return loose ? { p:loose, exact:false } : null;
+  }
+  function loadProblem(p){
+    S.step = 1;
+    if (p.nums === "dec"){
+      elDividend.value = S.dividend = p.dividend;
+      elDivisor.value = S.divisor = p.divisor;
+      sizeInput(elDividend); sizeInput(elDivisor);
+      setMode(p.ans);
+      if (S.nums !== "dec") setNums("dec");
+    } else {
+      S.frac = [p.frac[0].slice(), p.frac[1].slice()];
+      ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){ $(id).value = S.frac[Math.floor(i/3)][i%3]; });
+      if (S.nums !== "frac") setNums("frac"); else { render(); save(); }
+    }
+  }
+  function segs(host, values, text, key){
+    values.forEach(function(v){
+      var b = document.createElement("button");
+      b.type = "button"; b.setAttribute("data-v", String(v)); b.textContent = text(v);
+      b.addEventListener("click", function(){
+        S.gen[key] = v;
+        if (key === "dec" && v !== "none") S.gen.ans = "decimal";
+        if (key === "ans" && v !== "decimal") S.gen.dec = "none";
+        paintGen(); save();
+      });
+      $(host).appendChild(b);
+    });
+  }
+  segs("gDvd", [2,3,4,5,6], function(v){ return v + " digits"; }, "dividend");
+  segs("gDvs", [1,2,3], function(v){ return v + " digit" + pl(v); }, "divisor");
+  segs("gRem", ["none","some","any"], function(v){ return { none:"None", some:"Some", any:"Any" }[v]; }, "rem");
+  segs("gDec", ["none","dividend","divisor"], function(v){
+    return { none:"Whole numbers", dividend:"In the dividend", divisor:"In the divisor" }[v]; }, "dec");
+  segs("gAns", ["remainder","fraction","decimal"], function(v){
+    return { remainder:"Quotient & remainder", fraction:"Fraction", decimal:"Decimal" }[v]; }, "ans");
+  segs("gKind", ["proper","mixed"], function(v){ return v === "proper" ? "Proper fractions" : "Mixed numbers"; }, "kind");
+  function paintGen(){
+    var G = S.gen;
+    [["gDvd","dividend"],["gDvs","divisor"],["gRem","rem"],["gDec","dec"],["gAns","ans"],["gKind","kind"]].forEach(function(p){
+      Array.prototype.forEach.call($(p[0]).querySelectorAll("button"), function(b){
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-v") === String(G[p[1]])));
+      });
+    });
+    $("gZero").setAttribute("aria-pressed", String(G.zero));
+    Array.prototype.forEach.call(document.querySelectorAll(".mrow"), function(r){
+      r.hidden = r.getAttribute("data-for") !== S.nums;
+    });
+  }
+  $("gZero").addEventListener("click", function(){ S.gen.zero = !S.gen.zero; paintGen(); save(); });
+  $("genBtn").addEventListener("click", function(){
+    var o = {}; for (var k in S.gen) o[k] = S.gen[k];
+    o.mode = S.nums; o.places = S.places;
+    var seen = {}; seen[qText(curProblem())] = true;
+    var r = makeDiv(genOpts(o), seen);
+    if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+    $("genMsg").textContent = r.exact ? "" : "Couldn’t fit everything you picked into one problem, so this one bends a rule. Try other choices.";
+    loadProblem(r.p);
+  });
+
+  /* ============================== worksheet API ==============================
+     The worksheet page loads this page in a hidden iframe and asks it for problems:
+       {type:"helper:options", id}              → {type:"helper:optionsSchema", id, page, title, options}
+       {type:"helper:make", id, count, options} → {type:"helper:made", id, page, problems:[
+           {text, html, params, answer, answerHtml}]}
+     Making problems never touches this page's inputs, what it shows, or what it remembers. */
+  var API_PAGE = "division.html";
+  function apiChoice(key, label, vals, def, modes){
+    return { key:key, label:label, type:"choice", modes:modes,
+             values:vals.map(function(v){ return { v:v[0], label:v[1] }; }), "default":def };
+  }
+  var API_OPTIONS = [
+    apiChoice("mode", "Numbers", [["decimals","Whole numbers & decimals"],["fractions","Fractions"]], "decimals",
+              ["decimals","fractions"]),
+    apiChoice("ans", "Answer as", [["remainder","Quotient & remainder"],["fraction","Fraction"],["decimal","Decimal"]],
+              "remainder", ["decimals"]),
+    apiChoice("dividend", "Digits in the dividend", [[2,"2 digits"],[3,"3 digits"],[4,"4 digits"],[5,"5 digits"],[6,"6 digits"]],
+              3, ["decimals"]),
+    apiChoice("divisor", "Digits in the divisor", [[1,"1 digit"],[2,"2 digits"],[3,"3 digits"]], 1, ["decimals"]),
+    apiChoice("rem", "Remainder", [["none","None"],["some","Some"],["any","Any"]], "any", ["decimals"]),
+    { key:"zero", label:"Zero in the quotient", type:"toggle", modes:["decimals"],
+      values:[{ v:false, label:"Off" }, { v:true, label:"On" }], "default":false },
+    apiChoice("dec", "Decimals", [["none","Whole numbers"],["dividend","In the dividend"],["divisor","In the divisor"]],
+              "none", ["decimals"]),
+    apiChoice("places", "Stop after", [[3,"3 decimal places"],[6,"6 decimal places"],[9,"9 decimal places"]], 6, ["decimals"]),
+    apiChoice("kind", "Fractions", [["proper","Proper fractions"],["mixed","Mixed numbers"]], "proper", ["fractions"])
+  ];
+  function apiProblem(p){
+    var sol = solveDiv(p);
+    return { text:problemText(p), html:problemHtml(p), params:problemQuery(p), answer:sol.text, answerHtml:sol.html };
+  }
+  window.addEventListener("message", function(e){
+    var m = e.data;
+    if (!m || typeof m !== "object" || (m.type !== "helper:options" && m.type !== "helper:make")) return;
+    var to = e.source || window.parent;
+    function reply(o){ try { to.postMessage(o, "*"); } catch(err){} }
+    if (m.type === "helper:options"){
+      reply({ type:"helper:optionsSchema", id:m.id, page:API_PAGE, title:"The Division House", options:API_OPTIONS });
+      return;
+    }
+    var list = [];
+    try{
+      var G = genOpts(m.options), n = Math.floor(Number(m.count)), seen = {};
+      if (!(n >= 1)) n = 10;
+      if (n > 100) n = 100;
+      for (var i = 0; i < n; i++){ var r = makeDiv(G, seen); if (!r) break; list.push(apiProblem(r.p)); }
+    }catch(err){}
+    reply({ type:"helper:made", id:m.id, page:API_PAGE, problems:list });
+  });
+
   /* theme toggle */
   var themeBtn = $("themeBtn");
   function currentDark(){
@@ -1788,11 +2585,13 @@
   });
 
   /* remember the last problem on this device */
+  $("maker").addEventListener("toggle", save);
   function save(){
     try{
       localStorage.setItem("division-house", JSON.stringify({
         nums:S.nums, frac:S.frac,
         dividend:S.dividend, divisor:S.divisor, mode:S.mode, places:S.places,
+        practice:S.practice, gen:S.gen, maker:$("maker").open,
         theme:document.documentElement.getAttribute("data-theme") || ""
       }));
     }catch(e){}
@@ -1811,16 +2610,24 @@
       if ([3,6,9,12].indexOf(Number(v.places)) >= 0) S.places = Number(v.places);
       if (v.nums === "dec" || v.nums === "frac") S.nums = v.nums;
       if (Array.isArray(v.frac) && v.frac.length === 2) S.frac = v.frac;
+      if (["all","step","check"].indexOf(v.practice) >= 0){ S.practice = v.practice; S.stepMode = v.practice === "step"; }
+      if (v.gen && typeof v.gen === "object"){
+        var g = genOpts(v.gen);
+        ["dividend","divisor","rem","zero","dec","kind"].forEach(function(k){ S.gen[k] = g[k]; });
+      }
+      if (v.maker) $("maker").open = true;
     }catch(e){}
   }
 
   load();
+  applyURL();
   $("places").value = String(S.places);
   sizeInput(elDividend); sizeInput(elDivisor);
   ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
     $(id).value = S.frac[Math.floor(i/3)][i%3];
   });
   paintThemeBtn();
+  paintPractice();
   setMode(S.mode);
   setNums(S.nums);
 })();

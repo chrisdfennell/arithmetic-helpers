@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Order Stack</title>
 <script src="nav.js" defer></script>
@@ -249,6 +250,34 @@
     border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
   .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
 
+  /* ---- check my answer ---- */
+  .ckbox{background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--key);
+    border-radius:6px 14px 14px 6px;box-shadow:var(--shadow);padding:16px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+  .ckbox[hidden]{display:none}
+  .ck-head{display:flex;align-items:baseline;gap:4px 14px;flex-wrap:wrap}
+  .ck-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;letter-spacing:.02em;margin:0}
+  .ck-head span{font-size:13.5px;color:var(--ink-3)}
+  .ck-row{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap;margin:0}
+  .ck-row .numfield{flex:1 1 220px;max-width:360px}
+  .ck-row .expr-in{font-size:clamp(19px,3vw,23px)}
+  .ck-msg{margin:0;font-size:15px;color:var(--ink)}
+  .ck-msg b{font-family:var(--f-mono);font-weight:600}
+  .ck-msg .yes{color:var(--a);font-weight:600}
+  .ck-msg .no{color:var(--e);font-weight:600}
+  .ck-msg .why{display:block;margin-top:3px;font-size:14px;color:var(--ink-2)}
+  .ck-more{display:flex;gap:8px;flex-wrap:wrap}
+  .ck-more[hidden]{display:none}
+  .ck-more button{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .ck-more button:hover{color:var(--ink);border-color:var(--key-line);background:var(--key-bg)}
+  .board.ck-veil{position:relative}
+  .board.ck-veil > .panel{filter:blur(6px);opacity:.4;pointer-events:none;user-select:none}
+  .board.ck-veil::before{content:"The work stays hidden until you check your answer";position:absolute;z-index:2;
+    top:22px;left:50%;transform:translateX(-50%);max-width:calc(100% - 24px);text-align:center;
+    font-size:13px;font-weight:600;color:var(--ink-2);background:var(--surface);border:1px solid var(--rule);
+    border-radius:16px;padding:6px 14px;box-shadow:var(--shadow)}
+  .answer.ck-hide{display:none}
+
   @media print{
     :root:root{
       --paper:#fff; --surface:#fff; --surface-2:#EEF1F4;
@@ -264,7 +293,10 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,#statusLine{display:none !important}
+    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,#statusLine,.ckbox,#copyBtn{display:none !important}
+    .board.ck-veil > .panel{filter:none;opacity:1}
+    .board.ck-veil::before{display:none}
+    .answer.ck-hide{display:flex}
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px}
     .eyebrow{font-size:9px}
@@ -374,12 +406,31 @@
         <div class="modes" role="group" aria-label="Practice mode">
           <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
           <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
         </div>
       </span>
     </div>
   </section>
 
   <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <section class="ckbox" id="ckBox" hidden aria-labelledby="ckHead">
+    <div class="ck-head"><h2 id="ckHead">Your answer</h2>
+      <span>Work it out on paper first, then type what you got.</span></div>
+    <form class="ck-row" id="ckForm" autocomplete="off">
+      <div class="numfield">
+        <label for="ckIn">The answer is</label>
+        <input class="expr-in" id="ckIn" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+               placeholder="15, −3, 7/6, 2.5…">
+      </div>
+      <button type="submit" class="go" id="ckGo">Check</button>
+    </form>
+    <p class="ck-msg" id="ckMsg" aria-live="polite"></p>
+    <div class="ck-more" id="ckMore" hidden>
+      <button type="button" id="ckHint">Show a hint</button>
+      <button type="button" id="ckShow">Show me the work</button>
+    </div>
+  </section>
 
   <div class="board" id="board">
     <section class="panel">
@@ -409,6 +460,7 @@
 
   <div class="footnote">
     <button class="print" type="button" id="printBtn">Print this work</button>
+    <button class="print" type="button" id="copyBtn">Copy link</button>
     <span>One operation per line, nothing skipped. Stuck on one of the steps? Work it on
       <a href="addition.html">+</a>, <a href="subtraction.html">&minus;</a>,
       <a href="multiplication.html">&times;</a> or <a href="division.html">&divide;</a>.</span>
@@ -416,10 +468,28 @@
 </div>
 
 <script>
+/* ===================== URL parameters =====================
+   pemdas.html?q=<expression>&as=frac|dec&practice=all|step|check
+     q         the problem exactly as it would be typed in the box, URL-encoded (encodeURIComponent):
+               q=20%20%E2%88%92%2012%20%C3%B7%204%20%C3%97%202%20%2B%201   (20 − 12 ÷ 4 × 2 + 1)
+               q=2*(3%2B5)%5E2                                          (2*(3+5)^2)
+               Anything the box accepts works: * x · for ×, / : for ÷, ^ ** ² ³ for powers, [ ] { } as parentheses.
+               A raw "+" (q=3+4) is read as a space first, and as a plus sign if that doesn't make a problem.
+     as        frac (default) or dec — how answers that aren't whole numbers are shown
+     practice  all (default) | step (one step at a time) | check (check my answer)
+   Parameters that are there win over what this browser saved; the rest keep the saved value. A q that
+   can't be worked shows the page's usual notice. The address bar follows the current problem
+   (history.replaceState; problem settings only, never the theme).
+
+   Worksheet API — another page can load this one in a (hidden) iframe and postMessage it:
+     {type:"helper:options", id}              → {type:"helper:optionsSchema", id, page:"pemdas.html", title, options:[…]}
+     {type:"helper:make", id, count, options} → {type:"helper:made", id, page:"pemdas.html", problems:[{text, html, params, answer, answerHtml}]}
+   Option keys: add sub mul div par exp dec nice (toggles), len (3 4 5 6 8 10), max (10 20 50 100), as (frac|dec).
+   Making problems never changes this page: not its inputs, its maker settings or what it saved. */
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
-  var S = { expr:"20 − 12 ÷ 4 × 2 + 1", as:"frac", stepMode:false, step:1,
+  var S = { expr:"20 − 12 ÷ 4 × 2 + 1", as:"frac", practice:"all", stepMode:false, step:1,
             gen:{ ops:["+","−","×","÷"], par:true, exp:false, dec:false, nice:true, len:5, max:20 } };
   var HASDEC = false;            // did the typed problem use decimals? then terminating results stay decimals
   var MAX_OPS = 24;
@@ -802,8 +872,10 @@
   /* ===================== render ===================== */
   var lastSteps = 0;
   function render(){
+    if (CK.key !== S.expr) resetCheck();
+    syncStep();
     var total = draw();
-    if (!total) return;
+    if (!total){ applyCheck(0); return; }
     lastSteps = total;
     if (S.step > total) S.step = total;
     if (S.step < 1) S.step = 1;
@@ -814,11 +886,14 @@
       $("nextBtn").disabled = S.step >= total;
     }
     veil(total);
+    applyCheck(total);
     $("statusLine").textContent = "";
   }
 
+  var CUR = null;                // the problem on screen: its value and the classic wrong answer
   function draw(){
     var parsed, sol;
+    CUR = null;
     try {
       parsed = parse(S.expr);
       HASDEC = parsed.dec;
@@ -935,6 +1010,7 @@
                            : " There was only one way to go.");
     }
     $("closer").innerHTML = closer;
+    CUR = { value:sol.value, ltr:ltr, tree:parsed.tree, text:fin.text };
     return n;
   }
   function hasParAround(root, id){              // is parentheses `id` inside other parentheses?
@@ -998,6 +1074,169 @@
     var bnd = document.querySelector(".answer");
     if (bnd) bnd.classList.toggle("masked", S.stepMode && S.step < total);
     $("closer").style.opacity = (S.stepMode && S.step < total) ? ".2" : "1";
+  }
+
+  /* ===================== check my answer ===================== */
+  var CK = { key:null, reveal:"none", tries:0, done:false };   // reveal: none | step (a hint) | all
+  function syncStep(){ S.stepMode = S.practice === "step" || (S.practice === "check" && CK.reveal === "step"); }
+  function resetCheck(){
+    CK = { key:S.expr, reveal:"none", tries:0, done:false };
+    $("ckIn").value = "";
+    $("ckMsg").innerHTML = "";
+  }
+  function applyCheck(total){
+    var on = S.practice === "check" && total > 0, board = $("board"), hide = on && CK.reveal === "none";
+    $("ckBox").hidden = !on;
+    board.classList.toggle("ck-veil", hide);
+    if (hide) board.setAttribute("aria-hidden", "true"); else board.removeAttribute("aria-hidden");
+    board.inert = hide;
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.classList.toggle("ck-hide", hide);
+    $("ckMore").hidden = !(on && CK.tries > 0 && !CK.done && CK.reveal !== "all");
+    $("ckHint").hidden = CK.reveal === "step";
+  }
+  function decR(t){
+    var q = String(t).split("."), ip = q[0] || "0", fp = q[1] || "";
+    return R(BigInt(ip + fp), 10n ** BigInt(fp.length));
+  }
+  // a number as someone might type it: 15, −3, 7/6, 1 1/6, 2.5, .75, 1,234, (−3), 0.67…
+  function readNum(src){
+    var s = String(src).replace(/[−–—]/g, "-").replace(/\s+/g, " ").trim(), approx = false, ng = false, m, v, places = -1;
+    if (!s || s.length > 40) return null;
+    s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    if (/(…|\.\.\.)$/.test(s)){ approx = true; s = s.replace(/\s*(…|\.\.\.)$/, ""); }
+    function unwrap(){ while (/^\(.*\)$/.test(s)) s = s.slice(1, -1).trim(); }
+    unwrap();
+    if (/^[+-]/.test(s)){ ng = s.charAt(0) === "-"; s = s.slice(1).trim(); unwrap(); }
+    var D = "(\\d+(?:\\.\\d*)?|\\.\\d+)";
+    if ((m = /^(\d+) (\d+) ?[\/÷] ?(\d+)$/.exec(s))){
+      if (/^0+$/.test(m[3])) return null;
+      v = R(BigInt(m[1]) * BigInt(m[3]) + BigInt(m[2]), BigInt(m[3]));
+    } else if ((m = new RegExp("^" + D + " ?[/÷] ?(-?) ?" + D + "$").exec(s))){
+      var a = decR(m[1]), b = decR(m[3]);
+      if (b.n === 0n) return null;
+      v = R(a.n * b.d * (m[2] ? -1n : 1n), a.d * b.n);
+    } else if ((m = new RegExp("^" + D + "$").exec(s))){
+      v = decR(m[1]);
+      if (m[1].indexOf(".") >= 0) places = m[1].split(".")[1].length;
+    } else return null;
+    if (ng) v = R(-v.n, v.d);
+    return { v:v, places:places, approx:approx };
+  }
+  // "exact", "round" (a decimal of an answer that never ends, rounded to 2 or more places) or ""
+  function numMatch(t, v){
+    if (!t) return "";
+    if (t.v.n === v.n && t.v.d === v.d) return "exact";
+    if (t.places >= 2 && !isTermD(v.d)){
+      var p = 10n ** BigInt(t.places), num = (v.n * t.v.d - t.v.n * v.d) * p, den = v.d * t.v.d;
+      if (num < 0n) num = -num;
+      if (2n * num <= den || (t.approx && num < den)) return "round";
+    }
+    return "";
+  }
+  function exactText(v){ var a = v.n < 0n ? -v.n : v.n; return (v.n < 0n ? "−" : "") + commas(a.toString()) + (v.d === 1n ? "" : "/" + v.d); }
+  // the classic misreadings, worked exactly: "addFirst" (+ − before × ÷), "mulFirst" (× before ÷),
+  // "negSq" (−3² read as (−3)²). null if it can't be worked.
+  function misEval(src, variant){
+    var tk, p = 0;
+    try { tk = lex(src); } catch (e){ return null; }
+    var PREC = variant === "addFirst" ? { "+":2, "−":2, "×":1, "÷":1 }
+             : variant === "mulFirst" ? { "+":1, "−":1, "÷":2, "×":3 } : { "+":1, "−":1, "×":2, "÷":2 };
+    function nextOp(){
+      var t = tk[p];
+      if (!t) return null;
+      if (t.k === "op" && PREC[t.s]) return t.s;
+      if (t.k === "(" || (t.k === "num" && tk[p-1] && tk[p-1].k === ")")) return "imp";
+      return null;
+    }
+    function expr(minP){
+      var left = unary();
+      for (;;){
+        var op = nextOp(), pr = op === "imp" ? PREC["×"] : PREC[op];
+        if (!op || pr < minP) return left;
+        if (op !== "imp") p++;
+        left = apply(op === "imp" ? "×" : op, left, expr(pr + 1));
+      }
+    }
+    function unary(){
+      var t = tk[p];
+      if (t && t.k === "op" && (t.s === "−" || t.s === "+")){
+        p++;
+        if (variant === "negSq" && t.s === "−" && tk[p] && tk[p].k === "num" && tk[p+1] && tk[p+1].k === "op" && tk[p+1].s === "^"){
+          var base = apply("neg", primary()); p++;
+          return apply("^", base, unary());
+        }
+        var a = unary();
+        return t.s === "−" ? apply("neg", a) : a;
+      }
+      return power();
+    }
+    function power(){
+      var b = primary();
+      if (tk[p] && tk[p].k === "op" && tk[p].s === "^"){ p++; return apply("^", b, unary()); }
+      return b;
+    }
+    function primary(){
+      var t = tk[p++];
+      if (!t) throw new UserErr("end");
+      if (t.k === "num") return decR(t.s);
+      if (t.k === "("){
+        var v = expr(1);
+        if (!tk[p] || tk[p].k !== ")") throw new UserErr("paren");
+        p++;
+        return v;
+      }
+      throw new UserErr("bad");
+    }
+    try {
+      var v = expr(1);
+      return (p < tk.length || tooBig(v)) ? null : v;
+    } catch (e){ return null; }
+  }
+  function negSqText(n){
+    if (!n || n.t === "num") return null;
+    if (n.t === "neg" && n.a.t === "bin" && n.a.op === "^" && n.a.a.t === "num" && n.a.b.t === "num"){
+      var b = nodeParts(n.a.a).html, e = "<sup>" + esc(numText(n.a.b.v)) + "</sup>";
+      return { a:"−" + b + e, b:"−(" + b + e + ")", c:"(−" + b + ")" + e };
+    }
+    return negSqText(n.a) || (n.b ? negSqText(n.b) : null);
+  }
+  function mistakes(){
+    var v = CUR.value, out = [];
+    function add(val, html){ if (val && !(val.n === v.n && val.d === v.d)) out.push({ v:val, html:html }); }
+    var ns = negSqText(CUR.tree);
+    if (ns) add(misEval(S.expr, "negSq"), "Careful: <b>" + ns.a + "</b> means <b>" + ns.b + "</b> — the power goes first, "
+      + "then the minus. Only <b>" + ns.c + "</b> raises the negative number to the power.");
+    add(CUR.ltr, "That’s what you get going straight left to right. × and ÷ come before + and −, wherever they are in the line.");
+    add(misEval(S.expr, "addFirst"), "It looks like a + or − was done before a × or ÷. × and ÷ go first; + and − wait until the end.");
+    add(misEval(S.expr, "mulFirst"), "It looks like the × was done before the ÷. They’re partners: whichever comes first, "
+      + "reading left to right, goes first — the M before the D in PEMDAS is just spelling.");
+    if (v.n !== 0n) add(R(-v.n, v.d), "The size is right but the sign isn’t — check how the minus signs work out.");
+    return out;
+  }
+  function checkAnswer(){
+    if (!CUR) return;
+    var raw = $("ckIn").value, msg = $("ckMsg"), t;
+    if (!raw.trim()){ msg.innerHTML = "Type your answer in the box first."; return; }
+    try { t = readNum(raw); } catch (e){ t = null; }
+    if (!t){
+      msg.innerHTML = '<span class="no">I can’t read that as a number.</span><span class="why">Type it like '
+        + "<b>15</b>, <b>−3</b>, <b>7/6</b>, <b>1 1/6</b> or <b>2.5</b>.</span>";
+      return;
+    }
+    var m = numMatch(t, CUR.value);
+    if (m){
+      CK.done = true; CK.reveal = "all";
+      msg.innerHTML = '<span class="yes">✓ Correct!</span>' + (m === "round"
+        ? '<span class="why">Rounding is fine — exactly, it’s <b>' + exactText(CUR.value) + "</b>.</span>" : "");
+      render();
+      return;
+    }
+    CK.tries++;
+    var why = "", ms = mistakes();
+    for (var i = 0; i < ms.length; i++) if (numMatch(t, ms[i].v)){ why = ms[i].html; break; }
+    msg.innerHTML = '<span class="no">Not quite — try again.</span>' + (why ? '<span class="why">' + why + "</span>" : "");
+    applyCheck(lastSteps);
   }
 
   /* ===================== making problems ===================== */
@@ -1075,8 +1314,9 @@
       return (v.n / v.d) <= 10000n;
     });
   }
-  function makeProblem(){
-    var G = S.gen, keepDec = HASDEC, fallback = null;
+  // pure: reads only G (the maker's settings), touches nothing on the page
+  function makeProblem(G){
+    var keepDec = HASDEC, fallback = null;
     for (var tries = 0; tries < 6000; tries++){
       var c = candidate(G), sol;
       try { sol = solve(parse(c.str).tree); } catch (e){ continue; }
@@ -1163,7 +1403,7 @@
   segs("lenT", [3,4,5,6,8,10], function(v){ return v + " ops"; }, "len");
   segs("maxT", [10,20,50,100], function(v){ return "up to " + v; }, "max");
   $("genBtn").addEventListener("click", function(){
-    var r = makeProblem();
+    var r = makeProblem(S.gen);
     if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
     $("genMsg").textContent = r.exact ? "" : "Couldn’t keep everything whole with those settings, so this one has a "
       + "fraction or a negative in it. Fewer ÷ makes it easier.";
@@ -1179,17 +1419,47 @@
   $("asFrac").addEventListener("click", function(){ setAs("frac"); });
   $("asDec").addEventListener("click", function(){ setAs("dec"); });
 
-  function setStepMode(on){
-    S.stepMode = on; S.step = 1;
-    $("allBtn").setAttribute("aria-pressed", String(!on));
-    $("stepBtn").setAttribute("aria-pressed", String(on));
-    render(); save();
+  /* practice: show all work | one step at a time | check my answer */
+  function paintPractice(){
+    $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
   }
-  $("allBtn").addEventListener("click", function(){ setStepMode(false); });
-  $("stepBtn").addEventListener("click", function(){ setStepMode(true); });
+  function setPractice(p){
+    S.practice = p; S.step = 1;
+    resetCheck();
+    paintPractice(); render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
+  $("ckForm").addEventListener("submit", function(e){ e.preventDefault(); checkAnswer(); });
+  $("ckHint").addEventListener("click", function(){ CK.reveal = "step"; S.step = 1; render(); });
+  $("ckShow").addEventListener("click", function(){ CK.reveal = "all"; render(); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
+  var copyT = 0;
+  $("copyBtn").addEventListener("click", function(){
+    syncURL();
+    var url = location.href, btn = $("copyBtn");
+    function show(t){
+      btn.textContent = t; clearTimeout(copyT);
+      copyT = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000);
+    }
+    function old(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = url; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (e){ ok = false; }
+      document.body.removeChild(ta);
+      show(ok ? "Link copied ✓" : "Couldn’t copy — use the address bar");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(function(){ show("Link copied ✓"); }, old);
+    } else old();
+  });
   document.addEventListener("keydown", function(e){
     if (!S.stepMode || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
     if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
@@ -1210,8 +1480,9 @@
 
   function save(){
     try{ localStorage.setItem("order-stack", JSON.stringify({
-      expr:S.expr, as:S.as, stepMode:S.stepMode, gen:S.gen, maker:$("maker").open,
+      expr:S.expr, as:S.as, practice:S.practice, stepMode:S.practice === "step", gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
+    syncURL();
   }
   function load(){
     try{
@@ -1220,7 +1491,8 @@
       if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
       if (typeof v.expr === "string" && v.expr) S.expr = v.expr;
       if (v.as === "frac" || v.as === "dec") S.as = v.as;
-      if (typeof v.stepMode === "boolean") S.stepMode = v.stepMode;
+      if (v.practice === "all" || v.practice === "step" || v.practice === "check") S.practice = v.practice;
+      else if (v.stepMode === true) S.practice = "step";
       if (v.gen && Array.isArray(v.gen.ops) && v.gen.ops.length){
         var g = v.gen, ok = ["+","−","×","÷"];
         S.gen.ops = g.ops.filter(function(o){ return ok.indexOf(o) >= 0; });
@@ -1233,12 +1505,137 @@
     }catch(e){}
   }
 
+  /* ===================== links: ?q=…&as=…&practice=… ===================== */
+  function rawParam(name){                     // the value with a "+" kept as a plus sign
+    var m = new RegExp("(?:^|[?&])" + name + "=([^&]*)").exec(location.search);
+    if (!m) return null;
+    try { return decodeURIComponent(m[1]); } catch (e){ return null; }
+  }
+  function works(src){ try { solve(parse(src).tree); return true; } catch (e){ return false; } }
+  function readURL(){
+    var P;
+    try { P = new URLSearchParams(location.search); } catch (e){ return; }
+    var q = P.get("q");
+    if (q !== null && q.trim()){
+      q = q.slice(0, 1000);
+      var lit = rawParam("q");
+      if (!works(q) && lit && lit !== q && works(lit)) q = lit;
+      S.expr = q;
+    }
+    var as = P.get("as");
+    if (as === "frac" || as === "dec") S.as = as;
+    var pr = P.get("practice");
+    if (pr === "all" || pr === "step" || pr === "check") S.practice = pr;
+  }
+  function syncURL(){
+    try {
+      var qs = "?q=" + encodeURIComponent(S.expr) + (S.as === "dec" ? "&as=dec" : "")
+             + (S.practice !== "all" ? "&practice=" + S.practice : "");
+      if (location.search !== qs) history.replaceState(history.state, "", location.pathname + qs + location.hash);
+    } catch (e){}
+  }
+
+  /* ===================== worksheet API (postMessage) ===================== */
+  var YN = [{ v:true, label:"Yes" }, { v:false, label:"No" }];
+  var API_OPTS = [
+    { key:"add", label:"+ Add", type:"toggle", values:YN, default:true },
+    { key:"sub", label:"− Subtract", type:"toggle", values:YN, default:true },
+    { key:"mul", label:"× Multiply", type:"toggle", values:YN, default:true },
+    { key:"div", label:"÷ Divide", type:"toggle", values:YN, default:true },
+    { key:"par", label:"( ) Parentheses", type:"toggle", values:YN, default:true },
+    { key:"exp", label:"x² Exponents", type:"toggle", values:YN, default:false },
+    { key:"dec", label:".5 Decimals", type:"toggle", values:YN, default:false },
+    { key:"nice", label:"No negatives or remainders", type:"toggle", values:YN, default:true },
+    { key:"len", label:"Length", type:"choice", default:5,
+      values:[3,4,5,6,8,10].map(function(v){ return { v:v, label:v + " ops" }; }) },
+    { key:"max", label:"Numbers", type:"choice", default:20,
+      values:[10,20,50,100].map(function(v){ return { v:v, label:"up to " + v }; }) },
+    { key:"as", label:"Show fractions as", type:"choice", default:"frac",
+      values:[{ v:"frac", label:"Fractions" }, { v:"dec", label:"Decimals" }] }
+  ];
+  function apiSettings(o){
+    o = (o && typeof o === "object") ? o : {};
+    function tog(k, d){
+      var v = o[k];
+      if (v === undefined || v === null || v === "") return d;
+      return v === true || v === 1 || /^(true|1|on|yes)$/i.test(String(v));
+    }
+    function ch(k, list, d){
+      for (var i = 0; i < list.length; i++) if (String(list[i]) === String(o[k])) return list[i];
+      return d;
+    }
+    var ops = [];
+    [["add","+"],["sub","−"],["mul","×"],["div","÷"]].forEach(function(p){ if (tog(p[0], true)) ops.push(p[1]); });
+    if (!ops.length) ops = ["+","−","×","÷"];
+    return { G:{ ops:ops, par:tog("par", true), exp:tog("exp", false), dec:tog("dec", false), nice:tog("nice", true),
+                 len:ch("len", [3,4,5,6,8,10], 5), max:ch("max", [10,20,50,100], 20) },
+             as:ch("as", ["frac","dec"], "frac") };
+  }
+  // page markup → the same thing with inline styles, so it can be shown on another page
+  var INLINE = {
+    fr:"display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;font-size:.85em;margin:0 .1em",
+    nu:"display:block;padding:0 .2em;text-align:center",
+    de:"display:block;padding:0 .2em;text-align:center;border-top:1.5px solid currentColor",
+    "op-s":"padding:0 .3em", sx:"vertical-align:super;font-size:.7em;line-height:0"
+  };
+  function inline(h){
+    var d = document.createElement("div");
+    d.innerHTML = h;
+    Array.prototype.forEach.call(d.querySelectorAll("[class]"), function(el){
+      var st = [];
+      el.className.split(/\s+/).forEach(function(c){ if (INLINE[c]) st.push(INLINE[c]); });
+      el.removeAttribute("class");
+      var own = el.getAttribute("style");
+      if (st.length || own) el.setAttribute("style", st.concat(own ? [own] : []).join(";"));
+    });
+    return d.innerHTML;
+  }
+  function apiProblem(str, as){
+    var parsed, sol, ans, html, keepAs = S.as, keepDec = HASDEC;
+    try { parsed = parse(str); sol = solve(parsed.tree); } catch (e){ return null; }
+    if (!sol.steps.length) return null;
+    try { S.as = as; HASDEC = parsed.dec; ans = numParts(sol.value); html = plain(parsed.tree); }
+    finally { S.as = keepAs; HASDEC = keepDec; }
+    return { text:str, html:inline(html), params:"q=" + encodeURIComponent(str) + (as === "dec" ? "&as=dec" : ""),
+             answer:ans.text, answerHtml:inline(ans.html) };
+  }
+  function apiMake(count, o){
+    var set = apiSettings(o), n = Math.floor(Number(count));
+    if (!(n >= 1)) n = 10;
+    n = Math.min(n, 100);
+    var out = [], seen = {};
+    for (var tries = 0; out.length < n && tries < n * 4; tries++){
+      var r = makeProblem(set.G);
+      if (!r) break;
+      if (seen[r.str] && tries < n * 3) continue;
+      seen[r.str] = true;
+      var pr = apiProblem(r.str, set.as);
+      if (pr) out.push(pr);
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    var to = ev.source || window.parent;
+    function send(msg){ try { to.postMessage(msg, "*"); } catch (e){} }
+    if (d.type === "helper:options"){
+      send({ type:"helper:optionsSchema", id:d.id, page:"pemdas.html", title:"The Order Stack",
+             options:JSON.parse(JSON.stringify(API_OPTS)) });
+    } else if (d.type === "helper:make"){
+      var probs;
+      try { probs = apiMake(d.count, d.options); } catch (e){ probs = []; }
+      send({ type:"helper:made", id:d.id, page:"pemdas.html", problems:probs });
+    }
+  });
+
   load();
+  readURL();
   inp.value = S.expr;
-  $("allBtn").setAttribute("aria-pressed", String(!S.stepMode));
-  $("stepBtn").setAttribute("aria-pressed", String(S.stepMode));
+  paintPractice();
   $("asFrac").setAttribute("aria-pressed", String(S.as === "frac"));
   $("asDec").setAttribute("aria-pressed", String(S.as === "dec"));
   paint(); paintGen(); render();
+  syncURL();
 })();
 </script>
