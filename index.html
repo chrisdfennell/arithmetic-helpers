@@ -8,6 +8,13 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#19211D">
 <script src="progress.js" defer></script>
+<script>
+  /* counting visits with GoatCounter (no cookies, no personal data); not when testing on this computer */
+  if (/^https?:$/.test(location.protocol) && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) && window.top === window.self){
+    window.goatcounter = { path: function(){ return location.pathname; } };
+    document.write('<script data-goatcounter="https://fennell.goatcounter.com/count" async src="https://gc.zgo.at/count.js"><\/script>');
+  }
+</script>
 <meta name="description" content="Type in a math problem and see every step written out the way it's done on paper: addition, subtraction, multiplication, long division, order of operations, algebra and geometry.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -715,7 +722,8 @@
   <footer>
     <div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i></div>
     <div class="row">
-      <span>Arithmetic Helpers &middot; light and dark themes, and a print layout on every page.</span>
+      <span>Arithmetic Helpers &middot; light and dark themes, and a print layout on every page.
+        Visits are counted with <a href="https://www.goatcounter.com">GoatCounter</a>: no cookies, nothing personal.</span>
       <a href="https://github.com/chrisdfennell/arithmetic-helpers">Source on GitHub</a>
     </div>
   </footer>

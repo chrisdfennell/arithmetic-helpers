@@ -83,6 +83,25 @@
     if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
       window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
     }
+    countVisit();
+  }
+
+  /* Counting visits with GoatCounter (no cookies, no personal data). Only real visits count: not a page
+     shown inside another one (worksheet problems, practice sets, the self-test), not the self-test page,
+     and not local testing. Each page is counted by its name, without the problem in the address. */
+  function countVisit(){
+    var framed = true;
+    try { framed = window.top !== window.self; } catch (e){}
+    var page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+    if (framed || embedded() || page === "tests.html" || !/^https?:$/.test(location.protocol)
+        || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) return;
+    if (document.querySelector('script[data-goatcounter]')) return;
+    window.goatcounter = window.goatcounter || {};
+    window.goatcounter.path = function(){ return location.pathname; };
+    var gc = document.createElement("script");
+    gc.async = true; gc.src = "https://gc.zgo.at/count.js";
+    gc.setAttribute("data-goatcounter", "https://fennell.goatcounter.com/count");
+    document.head.appendChild(gc);
   }
 
   function build(){
