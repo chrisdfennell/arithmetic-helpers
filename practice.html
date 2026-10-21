@@ -24,7 +24,7 @@
     --key:#33463F; --key-bg:#DDE6E1; --key-line:#8BA398;
     --warm:#9A5410; --warm-bg:#F6E5D2;
     --focus:#33463F;
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C;
     --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
     --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -38,7 +38,7 @@
       --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
       --warm:#E8A45C; --warm-bg:#37270F;
       --focus:#B8C9C1;
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C;
       --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     }
@@ -49,7 +49,7 @@
     --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
     --warm:#E8A45C; --warm-bg:#37270F;
     --focus:#B8C9C1;
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C;
     --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
   }
@@ -177,6 +177,9 @@
   .handin{display:flex;flex-direction:column;gap:8px}
   .handin code{display:block;font-family:var(--f-mono);font-size:13.5px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;
     overflow-wrap:anywhere;user-select:all}
+  .handin .name-in{width:100%;max-width:22em}
+  .teacher-note{font-size:13px;color:var(--ink-3)}
+  .teacher-note a{color:var(--ink-2);font-weight:600}
   @media (max-width:520px){
     .plist li{padding:9px 14px}
     .stage-head,.controls{padding-left:14px;padding-right:14px}
@@ -229,6 +232,8 @@
             <a class="ghost" id="startLink" href="#">Start it now <span aria-hidden="true">→</span></a>
             <span class="msg" id="copyMsg" role="status" aria-live="polite"></span>
           </div>
+          <span class="teacher-note">At the end, each student gets a line to send you. Paste them all into
+            <a href="results.html">Class results</a> to see who missed which problems — this set is remembered on this device, so its problems show there too.</span>
         </div>
       </section>
       <section class="panel" aria-labelledby="prevHead">
@@ -241,6 +246,7 @@
             <textarea id="verifyIn" rows="3" aria-label="Result line"></textarea>
             <div class="actions"><button type="button" class="ghost" id="verifyBtn">Check it</button>
               <span class="msg" id="verifyOut" role="status" aria-live="polite"></span></div>
+            <span class="teacher-note">A whole class? Paste all the lines into <a href="results.html">Class results</a>.</span>
           </div>
         </details>
       </section>
@@ -285,6 +291,8 @@
     <section class="panel" aria-labelledby="handHead">
       <div class="panel-head"><h2 id="handHead">To hand in</h2><span>copy this line and send it to your teacher</span></div>
       <div class="blk handin">
+        <label class="field"><span class="lbl">Your name (optional)</span>
+          <input type="text" class="name-in" id="nameIn" maxlength="40" autocomplete="name" placeholder="So your teacher knows it’s yours"></label>
         <code id="resultLine"></code>
         <div class="actions"><button type="button" class="go" id="copyResult">Copy the result</button>
           <span class="msg" id="copyResMsg" role="status" aria-live="polite"></span></div>
@@ -332,7 +340,8 @@
     ["factors.html","Factors & primes","The Factor Tree","fac"], ["integers.html","Integers","The Number Line","int"],
     ["ratios.html","Ratios & rates","The Ratio Table","rat"], ["pemdas.html","Order of operations","The Order Stack","ord"],
     ["algebra.html","Algebra","The Balance Scale","alg"], ["lines.html","Lines & slope","The Slope Grid","lin"],
-    ["geometry.html","Geometry","The Shape Shop","geo"], ["stats.html","Statistics","The Dot Plot","sta"]
+    ["geometry.html","Geometry","The Shape Shop","geo"], ["stats.html","Statistics","The Dot Plot","sta"],
+    ["wordproblems.html","Story problems","The Story Problem","wrd"], ["flashcards.html","Flash cards","The Flash Cards","fla"]
   ];
   function topic(page){
     if (!/\.html$/.test(page)) page += ".html";
@@ -415,6 +424,88 @@
     return 4294967296 * (2097151 & h2) + (h1 >>> 0);
   }
   function hid(str, n, seed){ var s = hash(str, seed).toString(36).toUpperCase(); while (s.length < n) s = "0" + s; return s.slice(-n); }
+
+  /* ===================== the hand-in line (results.html has the same reader) =====================
+     v2 (now):  [Name · ]Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 1✓ 2~ 3✗ 4– … ·
+                2026-10-21 11:17 · set DLMILC · check YG1AE4
+     v1 (old):  Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 2026-10-21 11:17 · set DLMILC · check YG1AE4
+     Marks, one per problem: ✓ right first time, ~ right after more tries or a hint, ✗ looked at the work or tried and
+     not right, – skipped without trying. "set" is hid(the set's code, 6). The check code is cyrb53 over every field,
+     the name and the marks too (marks hashed as letters y a x s, so ✓ typed as v or ✗ as x still checks out).
+     Neither the title nor the name can hold " · " (it becomes "-"), so the fields split cleanly. */
+  var MK = { y:"✓", a:"~", x:"✗", s:"–" };
+  var MK_IN = { "✓":"y", "✔":"y", "√":"y", "v":"y", "V":"y", "y":"y", "Y":"y", "+":"y",
+                "~":"a", "∼":"a", "～":"a", "≈":"a", "˜":"a",
+                "✗":"x", "✘":"x", "×":"x", "x":"x", "X":"x", "✕":"x", "✖":"x",
+                "–":"s", "-":"s", "—":"s", "−":"s", "_":"s", "‒":"s", "―":"s" };
+  function checkV1(title, first, total, solved, skipped, when, setId){
+    return hid(["v1", title, first, total, solved, skipped, when, setId].join("|"), 6, 7919);
+  }
+  function checkV2(name, title, first, total, solved, skipped, marks, when, setId){
+    return hid(["v2", name, title, first, total, solved, skipped, marks, when, setId].join("|"), 6, 7919);
+  }
+  function cleanField(s){ return String(s || "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/·/g, "-").replace(/\s+/g, " ").trim(); }
+  function lineFor(o){            // o: { name, title, first, n, solved, skipped, marks:"yaxs…", when, set }
+    var name = cleanField(o.name).slice(0, 40), title = cleanField(o.title) || "Practice set";
+    var mk = o.marks.split("").map(function(c, k){ return (k + 1) + MK[c]; }).join(" ");
+    return (name ? name + " · " : "") + title + " · " + o.first + " of " + o.n + " right first time · " + o.solved + " of " + o.n
+      + " right in the end · " + o.skipped + " skipped · " + mk + " · " + o.when + " · set " + o.set
+      + " · check " + checkV2(name, title, o.first, o.n, o.solved, o.skipped, o.marks, o.when, o.set);
+  }
+  var CORE = /(\d+) of (\d+) right first time · (\d+) of (\d+) right in the end · (\d+) skipped · (?:(.*?) · )?(\d{4}-\d\d-\d\d \d\d:\d\d) · set ([0-9A-Za-z]{6}) · check ([0-9A-Za-z]{6})(?![0-9A-Za-z])/;
+  function readMarks(s, n){
+    var out = "", re = /(\d+)\s*([^\s\d])/g, m, k = 0;
+    if (/[^\s]/.test(s.replace(re, ""))) return null;
+    while ((m = re.exec(s))){ k++; if (Number(m[1]) !== k || !MK_IN[m[2]]) return null; out += MK_IN[m[2]]; }
+    return k === n ? out : null;
+  }
+  function wordTails(s){ var w = s.split(" "), out = []; for (var i = 0; i < w.length && i < 16; i++) out.push(w.slice(i).join(" ")); return out; }
+  function unBullet(s){ return s.replace(/^(?:[-*•◦‣▪–—>]+|\(?\d{1,3}[.)])\s+/, "").trim(); }
+  var CP1252 = { "€":0x80, "‚":0x82, "ƒ":0x83, "„":0x84, "…":0x85, "†":0x86, "‡":0x87, "ˆ":0x88, "‰":0x89, "Š":0x8A, "‹":0x8B, "Œ":0x8C, "Ž":0x8E,
+                 "‘":0x91, "’":0x92, "“":0x93, "”":0x94, "•":0x95, "–":0x96, "—":0x97, "˜":0x98, "™":0x99, "š":0x9A, "›":0x9B, "œ":0x9C, "ž":0x9E, "Ÿ":0x9F };
+  function unMojibake(s){         // UTF-8 read as Windows-1252 ("Â·", "âœ“") back to what it was
+    if (!/[ÂâÃ]/.test(s) || typeof TextDecoder !== "function") return s;
+    try {
+      var bytes = [];
+      for (var i = 0; i < s.length; i++){
+        var c = s.charAt(i), b = c.charCodeAt(0);
+        if (b < 256) bytes.push(b); else if (CP1252[c] !== undefined) bytes.push(CP1252[c]); else return s;
+      }
+      return new TextDecoder("utf-8", { fatal:true }).decode(new Uint8Array(bytes));
+    } catch (e){ return s; }
+  }
+  function squash(s){ return String(s).replace(/[\s\u00a0\u2007\u202f]+/g, " ").trim(); }
+  function readTry(t){
+    var m = CORE.exec(t);
+    if (!m) return null;
+    var r = { ver:m[6] === undefined ? 1 : 2, name:"", title:"", first:+m[1], n:+m[2], solved:+m[3], skipped:+m[5], marks:null,
+              when:m[7], set:m[8].toUpperCase(), check:m[9].toUpperCase(), status:"bad", why:"" };
+    if (+m[4] !== r.n || !r.n || r.first > r.n || r.solved > r.n || r.skipped > r.n){ r.status = "unk"; r.why = "the numbers don’t add up"; }
+    if (r.ver === 2){
+      r.marks = readMarks(m[6], r.n);
+      if (r.marks === null){ r.status = "unk"; r.why = "the problem-by-problem marks can’t be read"; }
+    }
+    var pre = t.slice(0, m.index).replace(/\s*·\s*$/, ""), f = pre ? pre.split(" · ") : [""], L = f.length;
+    var titleF = f[L - 1], nameF = L >= 2 ? f[L - 2] : null, cands = [];
+    if (r.ver === 2 && nameF !== null) wordTails(nameF).forEach(function(nm){ cands.push([nm, titleF]); });
+    wordTails(titleF).forEach(function(tt){ cands.push(["", tt]); });
+    if (r.status !== "unk") for (var i = 0; i < cands.length; i++){
+      var c = r.ver === 2 ? checkV2(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.when, r.set)
+                          : checkV1(cands[i][1], r.first, r.n, r.solved, r.skipped, r.when, r.set);
+      if (c === r.check){ r.name = cands[i][0]; r.title = cands[i][1]; r.status = "ok"; return r; }
+    }
+    r.name = r.ver === 2 && nameF !== null ? unBullet(nameF) : "";
+    r.title = unBullet(titleF);
+    return r;
+  }
+  // read one hand-in line: null if it isn't one; status "ok" (unchanged), "bad" (changed after it was made), "unk" (can't tell)
+  function readLine(s){
+    var a = squash(s), b = squash(unMojibake(a).replace(/\s*(?:·|•|∙|\|)\s*/g, " · ")), r = readTry(a);
+    if (r && r.status === "ok") return r;
+    var r2 = b !== a ? readTry(b) : null;
+    if (r2 && (r2.status === "ok" || !r)) return r2;
+    return r;
+  }
 
   /* ===================== theme ===================== */
   var themeBtn = $("themeBtn");
@@ -619,32 +710,43 @@
     return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " "
       + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
   }
-  function checkCode(title, first, total, solved, skipped, when, setId){
-    return hid(["v1", title, first, total, solved, skipped, when, setId].join("|"), 6, 7919);
+  var checkCode = checkV1;        // the old lines' check code, still read
+  // one letter per problem: y right first time, a right in the end (more tries or a hint), x looked at the work or tried and not right, s skipped
+  function markOf(r){
+    if (r.st === "first") return "y";
+    if (r.st === "right" || r.st === "hint") return "a";
+    if (r.st === "shown" || r.tries) return "x";
+    return "s";
   }
+  function stName(r){ return r.st === "skip" && r.tries ? "tried" : r.st; }
+  var NAME_KEY = "practice-name";
+  function myName(){ return cleanField($("nameIn").value).slice(0, 40); }
   function resultLine(){
-    var n = SET.probs.length, first = 0, solved = 0, skipped = 0;
-    RUN.r.forEach(function(r){ if (r.st === "first") first++; if (r.st === "first" || r.st === "right" || r.st === "hint") solved++; if (r.st === "skip") skipped++; });
-    var when = stamp(RUN.finished), setId = hid(CODE, 6);
-    var title = SET.title.replace(/·/g, "-");
-    return title + " · " + first + " of " + n + " right first time · " + solved + " of " + n + " right in the end · " + skipped + " skipped · "
-      + when + " · set " + setId + " · check " + checkCode(title, first, n, solved, skipped, when, setId);
+    var marks = RUN.r.map(markOf).join("");
+    return lineFor({ name:myName(), title:SET.title, n:SET.probs.length, first:marks.split("y").length - 1,
+      solved:marks.replace(/[^ya]/g, "").length, skipped:marks.split("s").length - 1, marks:marks,
+      when:stamp(RUN.finished), set:hid(CODE, 6) });
   }
+  try { $("nameIn").value = localStorage.getItem(NAME_KEY) || ""; } catch (e){}
+  $("nameIn").addEventListener("input", function(){
+    try { if (myName()) localStorage.setItem(NAME_KEY, myName()); else localStorage.removeItem(NAME_KEY); } catch (e){}
+    if (RUN && RUN.finished){ $("resultLine").textContent = resultLine(); $("copyResMsg").textContent = ""; }
+  });
   function showDone(){
     $("player").hidden = true; $("resume").hidden = true; $("done").hidden = false;
-    var n = SET.probs.length, c = { first:0, right:0, hint:0, shown:0, skip:0 };
-    RUN.r.forEach(function(r){ c[r.st] = (c[r.st] || 0) + 1; });
+    var n = SET.probs.length, c = { first:0, right:0, hint:0, shown:0, skip:0, tried:0 };
+    RUN.r.forEach(function(r){ var k = stName(r); c[k] = (c[k] || 0) + 1; });
     $("big").innerHTML = c.first + "<small> / " + n + "</small>";
     var pc = Math.round(100 * c.first / n);
     $("scoreHead").innerHTML = "right first time<span>" + (pc === 100 ? "Every one, first time. Excellent!" : pc >= 80 ? "That’s strong work." : pc >= 50 ? "Good going — the ones below are worth another look."
       : "Keep at it — try the ones you missed again.") + "</span>";
-    $("chips").innerHTML = [["first", "right first time"], ["right", "right after more tries"], ["hint", "right with a hint"], ["shown", "looked at the work"], ["skip", "skipped"]]
+    $("chips").innerHTML = [["first", "right first time"], ["right", "right after more tries"], ["hint", "right with a hint"], ["shown", "looked at the work"], ["tried", "tried, not right"], ["skip", "skipped"]]
       .filter(function(k){ return c[k[0]]; }).map(function(k){ return "<span>" + c[k[0]] + " " + k[1] + "</span>"; }).join("");
     $("resultLine").textContent = resultLine();
     $("copyResMsg").textContent = "";
     $("rlist").innerHTML = SET.probs.map(function(p, k){
-      var r = RUN.r[k], s = ST[r.st || ""], t = topic(p.page);
-      return '<li><span class="n">' + (k + 1) + '.</span><span class="ic ' + (r.st || "") + '" aria-hidden="true">' + s.ic + "</span>"
+      var r = RUN.r[k], s = ST[stName(r) || ""], t = topic(p.page);
+      return '<li><span class="n">' + (k + 1) + '.</span><span class="ic ' + (stName(r) || "") + '" aria-hidden="true">' + s.ic + "</span>"
         + '<span class="q">' + esc(r.text || textOf(p.page, p.params)) + "</span>"
         + '<span class="st"><i class="dot" style="--c:' + cvar(t) + ';width:8px;height:8px"></i> ' + esc(t[1]) + " · " + s.t
         + (r.tries && r.st !== "first" ? " · " + r.tries + " wrong tr" + (r.tries === 1 ? "y" : "ies") : "") + "</span>"
@@ -836,17 +938,32 @@
       $("startLink").href = "practice.html?set=" + code;
       $("linkInfo").textContent = list.length + " problems · " + url.length + " characters";
       $("linkPanel").hidden = false; $("copyMsg").textContent = "";
+      rememberSet(code, B.title || "Math practice", list.length);
       try { $("linkOut").focus(); $("linkOut").select(); } catch (e){}
     }, function(){ status("Couldn’t make the link in this browser.", true); });
   });
   $("copyBtn").addEventListener("click", function(){ copyText($("linkOut").value, $("copyMsg"), "Link copied ✓"); });
+  /* the sets made here are kept on this device (newest first, 40 at most), so Class results (results.html) can show
+     each problem: localStorage["practice-sets"] = [{ c:code, t:title, n:problems, at:time made }] */
+  function rememberSet(code, title, n){
+    try {
+      var list = JSON.parse(localStorage.getItem("practice-sets") || "[]");
+      if (!Array.isArray(list)) list = [];
+      list = list.filter(function(x){ return x && x.c !== code; });
+      list.unshift({ c:code, t:String(title).slice(0, 60), n:n, at:Date.now() });
+      localStorage.setItem("practice-sets", JSON.stringify(list.slice(0, 40)));
+    } catch (e){}
+  }
   $("verifyBtn").addEventListener("click", function(){
-    var s = $("verifyIn").value.replace(/\s+/g, " ").trim(), out = $("verifyOut");
-    var m = /^(.*) · (\d+) of (\d+) right first time · (\d+) of \3 right in the end · (\d+) skipped · (\d{4}-\d\d-\d\d \d\d:\d\d) · set ([0-9A-Z]{6}) · check ([0-9A-Z]{6})$/.exec(s);
-    if (!m){ out.textContent = "That doesn’t look like a result line. Paste the whole line, from the title to the check code."; return; }
-    var ok = checkCode(m[1], Number(m[2]), Number(m[3]), Number(m[4]), Number(m[5]), m[6], m[7]) === m[8];
-    out.textContent = ok ? "✓ This line hasn’t been changed: " + m[2] + " of " + m[3] + " right first time, finished " + m[6] + "."
-                         : "✗ This line has been changed since it was made — the check code doesn’t match.";
+    var out = $("verifyOut"), r = readLine($("verifyIn").value);
+    if (!r){ out.textContent = "That doesn’t look like a result line. Paste the whole line, from the title to the check code."; return; }
+    if (r.status === "unk"){ out.textContent = "? This looks like a result line, but " + r.why + ", so it can’t be checked."; return; }
+    if (r.status !== "ok"){ out.textContent = "✗ This line has been changed since it was made — the check code doesn’t match."; return; }
+    var missed = [];
+    if (r.marks) r.marks.split("").forEach(function(c, k){ if (c !== "y") missed.push((k + 1) + MK[c]); });
+    out.textContent = "✓ This line hasn’t been changed: " + (r.name ? r.name + ", " : "") + r.first + " of " + r.n + " right first time, finished " + r.when + "."
+      + (r.marks ? (missed.length ? " Not right first time: " + missed.join(" ") + "." : " Every problem right first time.") : "")
+      + (r.name ? "" : " There’s no name in the line" + (r.ver === 1 ? " (older lines never had one)." : "."));
   });
 
   function save(){
@@ -887,7 +1004,8 @@
       $("h1").innerHTML = "Practice <em>sets</em>";
     });
   } else startBuilder();
-  window.__practice = { encodeSet:encodeSet, decodeSet:decodeSet, checkCode:checkCode, run:function(){ return RUN; }, set:function(){ return SET; } };
+  window.__practice = { encodeSet:encodeSet, decodeSet:decodeSet, checkCode:checkCode, checkV2:checkV2, lineFor:lineFor, readLine:readLine,
+    resultLine:function(){ return RUN && RUN.finished ? resultLine() : ""; }, run:function(){ return RUN; }, set:function(){ return SET; } };
 })();
 </script>
 </html>
