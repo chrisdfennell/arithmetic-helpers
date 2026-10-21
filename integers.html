@@ -1,0 +1,2267 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Number Line</title>
+<script src="nav.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#ECEEF0; --surface:#F8F9FA; --surface-2:#E0E4E8;
+    --ink:#1A1F26; --ink-2:#4B545E; --ink-3:#7B848D; --rule:#C7CDD4;
+    --key:#46596E;   --key-bg:#DDE3EA;  --key-line:#98A7B8;   /* the page itself */
+    --pos:#B4432B;   --pos-bg:#F8DFD7;                        /* positive: warm counters, jumps right */
+    --neg:#3557B8;   --neg-bg:#DCE4F7;                        /* negative: cool counters, jumps left */
+    --e:#9A5410;     --e-bg:#F6E5D2;                          /* opposites, tidying */
+    --m:#6A3F96;     --m-bg:#EBE0F4;                          /* signs, multiply and divide */
+    --a:#0D7361;     --a-bg:#D4EAE7;                          /* add and subtract the sizes */
+    --warm:#9A5410;  --warm-bg:#F6E5D2;                       /* notes */
+    --focus:#46596E;
+    --shadow:0 1px 0 rgba(26,31,38,.05), 0 14px 30px -20px rgba(26,31,38,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#121518; --surface:#1A1E23; --surface-2:#262C33;
+      --ink:#E4E8EC; --ink-2:#A2ABB4; --ink-3:#76808A; --rule:#363E47;
+      --key:#A9BDD2;  --key-bg:#1C2631;  --key-line:#4E6176;
+      --pos:#F2927A;  --pos-bg:#3B1E17;
+      --neg:#8FAAF5;  --neg-bg:#18254A;
+      --e:#E8A45C;    --e-bg:#37270F;
+      --m:#C5A2EE;    --m-bg:#2C1E42;
+      --a:#4FCCB0;    --a-bg:#0F2F2C;
+      --warm:#E8A45C; --warm-bg:#37270F;
+      --focus:#A9BDD2;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121518; --surface:#1A1E23; --surface-2:#262C33;
+    --ink:#E4E8EC; --ink-2:#A2ABB4; --ink-3:#76808A; --rule:#363E47;
+    --key:#A9BDD2;  --key-bg:#1C2631;  --key-line:#4E6176;
+    --pos:#F2927A;  --pos-bg:#3B1E17;
+    --neg:#8FAAF5;  --neg-bg:#18254A;
+    --e:#E8A45C;    --e-bg:#37270F;
+    --m:#C5A2EE;    --m-bg:#2C1E42;
+    --a:#4FCCB0;    --a-bg:#0F2F2C;
+    --warm:#E8A45C; --warm-bg:#37270F;
+    --focus:#A9BDD2;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
+  @media (max-width:520px){.page{padding:22px 16px 60px}}
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .eyebrow a{color:inherit}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:56ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:20px 22px 18px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  @media (max-width:520px){.problem{padding:16px 14px 14px}}
+  .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
+    color:var(--ink-2);padding:8px 16px;border-radius:7px;cursor:pointer}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  .modes.small button{font-size:13px;padding:6px 12px}
+  @media (max-width:520px){.modes button{padding:7px 11px;font-size:13.5px}}
+
+  .entry{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap}
+  .fields{display:flex;flex-direction:column;gap:14px;flex:1 1 420px;min-width:0}
+  .numfield{display:flex;flex-direction:column;gap:4px;min-width:0}
+  .numfield > label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .expr-in{font-family:var(--f-mono);font-size:clamp(20px,3.6vw,27px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;width:100%;min-width:0;
+    border-bottom:2.5px solid var(--rule);padding:1px 4px 5px;outline:none;border-radius:0}
+  .expr-in:focus{border-bottom-color:var(--focus)}
+  .keys{display:flex;gap:5px;flex-wrap:wrap}
+  .keys button{font-family:var(--f-mono);font-size:16px;font-weight:600;min-width:38px;height:36px;
+    background:var(--surface-2);color:var(--ink);border:0;border-radius:8px;cursor:pointer;padding:0 8px}
+  .keys button:hover{background:var(--key-bg);color:var(--key)}
+  .keys button[hidden]{display:none}
+  .keys .kn{color:var(--neg)}
+  .hint{margin:-6px 0 0;font-size:13px;color:var(--ink-3)}
+  .hint code{font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);background:var(--surface-2);
+    border-radius:4px;padding:0 4px}
+
+  /* ---- the problem maker ---- */
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;flex-wrap:wrap}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--key);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;
+    padding:4px 15px 15px}
+  @media (max-width:620px){.maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px}}
+  .maker-body .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .toggles{display:flex;gap:6px;flex-wrap:wrap}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px}
+  .tog b{font-family:var(--f-mono);font-weight:600;font-size:15px;line-height:1}
+  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .tog[aria-pressed="true"] b{color:var(--key)}
+  .tog:hover{border-color:var(--key-line)}
+  .maker-go{grid-column:1 / -1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+  .go:hover{filter:brightness(1.08)}
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    border-top:1px dashed var(--rule);padding-top:14px}
+  .examples .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+  #chips{display:contents}
+  .chip{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer;max-width:100%;text-align:left}
+  .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
+  .practice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+  button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  /* ---- check my answer ---- */
+  .ckbox{background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--key);
+    border-radius:6px 14px 14px 6px;box-shadow:var(--shadow);padding:16px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+  .ckbox[hidden]{display:none}
+  .ck-head{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline}
+  .ck-head .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .ck-ask{font-size:14px;color:var(--ink-2)}
+  .ck-row{display:flex;align-items:flex-end;gap:10px 14px;flex-wrap:wrap}
+  .ck-q{font-family:var(--f-mono);font-weight:600;font-size:clamp(19px,3.4vw,24px);display:inline-flex;
+    align-items:center;flex-wrap:wrap;white-space:nowrap;padding-bottom:6px}
+  .ck-q span{display:inline-flex;align-items:center}
+  .ck-in{flex:1 1 170px;max-width:340px;font-size:clamp(19px,3.4vw,24px)}
+  .ck-msg{margin:0;font-size:14.5px;color:var(--ink-2);min-height:1.4em}
+  .ck-msg.ok{color:var(--a);font-weight:600}
+  .ck-msg.ok span{color:var(--ink-2);font-weight:400}
+  .ck-msg.no strong.nq{color:var(--e)}
+  .ck-msg b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .ck-more{display:flex;gap:8px;flex-wrap:wrap}
+  .ck-more[hidden]{display:none}
+  .plain-btn{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .plain-btn:hover{color:var(--ink);border-color:var(--key-line);background:var(--key-bg)}
+
+  .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
+    padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px}
+  .answer[hidden],.board[hidden]{display:none}
+  .answer .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .answer .v{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink);line-height:1.1;display:flex;align-items:center;
+    flex-wrap:wrap;gap:0 .2ch}
+  .answer .v span{display:inline-flex;align-items:center}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto;min-width:0}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .answer.masked .v{color:var(--ink-3);filter:blur(8px);user-select:none}
+  .answer.masked .facts{filter:blur(5px);user-select:none}
+  .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
+
+  .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
+  @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden;min-width:0}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{font-family:var(--f-mono);font-size:13px;font-weight:600;background:var(--surface-2);
+    border:0;color:var(--ink);border-radius:7px;width:30px;height:28px;cursor:pointer}
+  .stepper button:disabled{color:var(--ink-3);cursor:not-allowed}
+  .stepper button:hover:not(:disabled){background:var(--key-bg);color:var(--key)}
+  .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
+    text-align:center;font-variant-numeric:tabular-nums}
+  .stepper[hidden]{display:none}
+
+  /* colour by kind of move */
+  .c-p{--c:var(--key);--cb:var(--key-bg)}
+  .c-e{--c:var(--e);--cb:var(--e-bg)}
+  .c-m{--c:var(--m);--cb:var(--m-bg)}
+  .c-a{--c:var(--a);--cb:var(--a-bg)}
+  .c-pos{--c:var(--pos);--cb:var(--pos-bg)}
+  .c-neg{--c:var(--neg);--cb:var(--neg-bg)}
+
+  /* negative numbers are always blue (and in parentheses after an operation); the minus operation is plain grey */
+  .ng{color:var(--neg)}
+  .opp{color:var(--e)}
+  .bar{color:var(--key);font-weight:600}
+
+  /* ---- the chain of rewrites ---- */
+  .chain-scroll{overflow-x:auto}
+  .chain{padding:16px 18px 18px;display:flex;flex-direction:column;min-width:max-content}
+  .crow{display:grid;grid-template-columns:1.6ch max-content auto;gap:0 12px;align-items:center;
+    padding:9px 0;border-bottom:1px dashed var(--rule)}
+  .crow:last-child{border-bottom:0}
+  .crow .eq{font-family:var(--f-mono);font-size:clamp(18px,3.2vw,23px);color:var(--ink-3);font-weight:600}
+  .crow.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.crow,.figwrap{transition:opacity .2s ease}}
+  .expr{display:flex;align-items:center;white-space:nowrap;font-family:var(--f-mono);
+    font-size:clamp(18px,3.2vw,23px);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
+    min-height:1.9em}
+  .expr span{display:inline-flex;align-items:center}
+  .crow.result .expr{color:var(--key);font-size:clamp(21px,3.8vw,27px)}
+  .op-s{padding:0 .38ch;color:var(--ink-2)}
+  .expr .pg{color:var(--key);font-weight:500}
+  .expr .hl{background:var(--cb);color:var(--c);border-radius:7px;padding:.08em .3ch;
+    box-shadow:inset 0 0 0 2px var(--c)}
+  .expr .hl .op-s{color:inherit}
+  .expr .fresh{color:var(--c);box-shadow:inset 0 -3px 0 var(--c);border-radius:2px}
+  .crow .next{display:flex;gap:4px;align-items:center}
+  .badge{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;
+    padding:2px 7px;border-radius:999px;background:var(--cb);color:var(--c);white-space:nowrap}
+  .fr{display:inline-flex !important;flex-direction:column;align-items:center;vertical-align:middle;
+    line-height:1.05;margin:0 .1ch;font-size:.82em}
+  .fr > span{display:flex !important;justify-content:center;padding:0 .25ch;text-align:center}
+  .fr .de{border-top:2px solid currentColor;margin-top:1px}
+
+  /* ---- pictures ---- */
+  .figwrap{padding:14px 18px 18px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
+  .figwrap[data-step].veil{opacity:.16}
+  .tapecap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .tapecap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .tapecap .lead{font-family:var(--f-body);color:var(--ink)}
+  .figbody{min-width:0}
+  .cdot{display:inline-flex;align-items:center;justify-content:center;width:1.35em;height:1.35em;border-radius:50%;
+    border:2px solid var(--c);background:var(--cb);color:var(--c);font-family:var(--f-mono);font-style:normal;
+    font-weight:600;font-size:.86em;line-height:1;vertical-align:-.2em}
+  .cdot.cp{--c:var(--pos);--cb:var(--pos-bg)}
+  .cdot.cn{--c:var(--neg);--cb:var(--neg-bg)}
+  svg text{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums}
+  .nl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+  .nl-svg{display:block;width:100%;min-width:430px;max-width:680px;height:auto;margin:0 auto}
+  .nl-axis{stroke:var(--ink-2);stroke-width:2}
+  .nl-head{fill:var(--ink-2)}
+  .nl-tick{stroke:var(--ink-3);stroke-width:1.3}
+  .nl-tick.maj{stroke:var(--ink-2);stroke-width:1.6}
+  .nl-tick.zero{stroke:var(--ink);stroke-width:2.6}
+  .nl-num{fill:var(--ink-2);font-size:12.5px}
+  .nl-num.ngt{fill:var(--neg)}
+  .nl-num.zero{fill:var(--ink)}
+  .lbg{fill:var(--surface)}
+  .j .arc{fill:none;stroke-width:2.6;stroke-linecap:round}
+  .j .arc.dash{stroke-dasharray:6 5}
+  .jp .arc{stroke:var(--pos)} .jp .hd{fill:var(--pos)} .jp .jl{fill:var(--pos)}
+  .jn .arc{stroke:var(--neg)} .jn .hd{fill:var(--neg)} .jn .jl{fill:var(--neg)}
+  .jg .arc{stroke:var(--ink-3)} .jg .hd{fill:var(--ink-3)} .jg .jl{fill:var(--ink-3)}
+  .jo .arc{stroke:var(--e)} .jo .hd{fill:var(--e)} .jo .jl{fill:var(--e)}
+  .jl{font-size:12.5px}
+  .dot-s{fill:var(--key);stroke:var(--surface);stroke-width:2}
+  .dot-e{fill:var(--surface);stroke:var(--key);stroke-width:3}
+  .dot-e2{fill:var(--key)}
+  .dot-g{fill:var(--surface);stroke:var(--ink-3);stroke-width:2;stroke-dasharray:3 2}
+  .dot-p{stroke:var(--surface);stroke-width:2}
+  .dot-p.pp{fill:var(--pos)} .dot-p.pn{fill:var(--neg)} .dot-p.p0{fill:var(--ink-2)}
+  .nl-val{fill:var(--key);font-size:13.5px}
+  .nl-val.dim{fill:var(--ink-3)}
+  .nl-ab{fill:var(--ink);font-size:13px}
+  .nl-ab.ngt{fill:var(--neg)}
+  .nl-lead{stroke:var(--ink-3);stroke-width:1}
+  .nl-br{stroke:var(--key);stroke-width:2.2;fill:none}
+  .nl-br.dash{stroke:var(--ink-3);stroke-dasharray:5 4}
+  .nl-brt{fill:var(--key);font-size:12px}
+  .nl-brt.dim{fill:var(--ink-3)}
+  .nl-ord circle{fill:var(--key)}
+  .nl-ord text{fill:var(--surface);font-size:11px}
+  svg [data-step].veil{opacity:0}
+  @media (prefers-reduced-motion:no-preference){svg [data-step]{transition:opacity .2s ease}}
+  .ctr-svg{display:block;max-width:100%;height:auto;margin:0 auto}
+  .ctr circle{stroke-width:2}
+  .ctr text{font-size:15px}
+  .cp circle{fill:var(--pos-bg);stroke:var(--pos)} .cp text{fill:var(--pos)}
+  .cn circle{fill:var(--neg-bg);stroke:var(--neg)} .cn text{fill:var(--neg)}
+  .zp rect{fill:none;stroke:var(--ink-2);stroke-width:1.6;stroke-dasharray:4 3}
+  .zp line,.gone line{stroke:var(--ink);stroke-width:2.2;stroke-linecap:round}
+  .gone rect{fill:var(--surface);opacity:.6}
+  .addbox{fill:none;stroke:var(--e);stroke-width:1.7;stroke-dasharray:5 4}
+  .addlbl{fill:var(--e);font-size:11px}
+  .rowlbl{fill:var(--ink-3);font-size:11px}
+  .rowlbl.ngt{fill:var(--neg)}
+  .figs2{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-start}
+  .signs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-width:330px;flex:1 1 250px}
+  .sgc{border:1px solid var(--rule);border-radius:9px;padding:6px 8px 5px;font-family:var(--f-mono);font-weight:600;
+    font-size:15px;text-align:center;color:var(--ink-2);background:var(--surface)}
+  .sgc small{display:block;font-family:var(--f-body);font-weight:500;font-size:11px;color:var(--ink-3);margin-top:2px}
+  .sgc.hit{border-color:var(--m);box-shadow:inset 0 0 0 1.5px var(--m);background:var(--m-bg);color:var(--ink)}
+  .pat{border-collapse:collapse;font-family:var(--f-mono);font-weight:600;font-size:15px;font-variant-numeric:tabular-nums}
+  .pat td{padding:2px 7px;white-space:nowrap;text-align:right}
+  .pat td:first-child{text-align:right}
+  .pat td:nth-child(2){color:var(--ink-3);padding:2px 0}
+  .pat td:nth-child(3){text-align:left}
+  .pat .df{font-size:11.5px;color:var(--ink-3);text-align:left}
+  .pat tr.past td{background:var(--surface-2)}
+  .pat tr.hit td{background:var(--m-bg);color:var(--ink)}
+  .pat tr.hit td:first-child{border-radius:7px 0 0 7px}
+  .pat tr.hit td:last-child{border-radius:0 7px 7px 0}
+  .pat tr.gap td{text-align:center;color:var(--ink-3)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 18px;border-top:1px dashed var(--rule)}
+  .legend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .legend b{font-family:var(--f-mono);font-weight:600}
+  .legend .arw{font-family:var(--f-mono);font-weight:600;font-size:15px}
+
+  .log{padding:6px 0 10px;margin:0;list-style:none}
+  .log > li{padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 12px;align-items:start}
+  .log .line + .line{margin-top:3px}
+  .log > li:last-child{border-bottom:0}
+  .log > li.veil{opacity:.16}
+  @media (prefers-reduced-motion:no-preference){.log > li{transition:opacity .2s ease}}
+  .log .n{grid-column:1;grid-row:1 / span 99;font-family:var(--f-mono);font-size:11px;font-weight:600;
+    color:var(--ink-3);background:var(--surface-2);border-radius:7px;padding:3px 7px;
+    letter-spacing:.04em;white-space:nowrap}
+  .log .line{grid-column:2;display:flex;gap:9px;align-items:baseline;font-size:14.5px;min-width:0}
+  .log .tag{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;flex:none;min-width:8.2ch;text-align:center;
+    background:var(--cb);color:var(--c)}
+  .log .txt{color:var(--ink-2);min-width:0;overflow-wrap:anywhere}
+  .log .txt b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
+    overflow-wrap:normal;white-space:nowrap}
+  .log .txt .fr{font-size:.86em;vertical-align:middle;display:inline-flex !important}
+  .log .op-s,.closer .op-s,.answer .fact .op-s,.ck-msg .op-s{padding:0 .3ch}
+  .log strong,.closer strong,.answer .fact strong,.ck-msg strong{font-weight:600;color:var(--ink)}
+  .log .aside{grid-column:2;margin-top:4px;font-size:13.5px;color:var(--ink);background:var(--warm-bg);
+    border-left:3px solid var(--warm);border-radius:4px 8px 8px 4px;padding:8px 12px}
+  .log .aside b{font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+  .closer{padding:14px 18px;font-size:14px;color:var(--ink-2);background:var(--surface-2)}
+  .closer b{font-family:var(--f-mono);font-weight:600;color:var(--ink);white-space:nowrap}
+  .closer .ok{color:var(--a);font-weight:600}
+  .closer .fr{font-size:.86em;vertical-align:middle;display:inline-flex !important}
+
+  .footnote{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote a{color:var(--ink-2)}
+  .footnote .print{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
+  .footnote .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#EFF1F3;
+      --ink:#111; --ink-2:#3B434B; --ink-3:#6B747D; --rule:#AEB5BD;
+      --key:#46596E;  --key-bg:#DDE3EA;  --key-line:#98A7B8;
+      --pos:#B4432B;  --pos-bg:#F8DFD7;
+      --neg:#3557B8;  --neg-bg:#DCE4F7;
+      --e:#9A5410;    --e-bg:#F6E5D2;
+      --m:#6A3F96;    --m-bg:#EBE0F4;
+      --a:#0D7361;    --a-bg:#D4EAE7;
+      --warm:#9A5410; --warm-bg:#F6E5D2;
+      --shadow:none;
+    }
+    @page{margin:13mm 11mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,#modeTabs,#statusLine,.ckbox{display:none !important}
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px}
+    .eyebrow{font-size:9px}
+    .tagline{display:none}
+    .problem{border:0;box-shadow:none;padding:0;gap:4px;break-after:avoid}
+    .expr-in{font-size:18px;border-bottom-color:var(--ink)}
+    .numfield > label{font-size:8.5px}
+    .answer{padding:8px 12px;gap:5px 16px;break-after:avoid;break-inside:avoid}
+    .answer .v{font-size:22px}
+    .answer .facts{margin-left:0;flex-basis:100%}
+    .answer .fact{font-size:11px}
+    .board{display:flex;gap:12px;align-items:flex-start}
+    .board > .panel:first-of-type{flex:0 1 57%;min-width:0}
+    .board > .panel:last-of-type{flex:1 1 40%;min-width:0}
+    .panel{box-shadow:none;border:1px solid var(--rule);break-inside:auto}
+    .panel-head{padding:6px 10px}
+    .panel-head h2{font-size:12.5px}
+    .chain-scroll,.nl-wrap{overflow:visible}
+    .chain{padding:8px 10px 10px;min-width:0}
+    .crow{padding:5px 0;break-inside:avoid}
+    .expr,.crow .eq{font-size:15px}
+    .crow.result .expr{font-size:17px}
+    .crow.veil,.log > li.veil,.figwrap.veil{opacity:1}
+    svg [data-step].veil{opacity:1}
+    .answer.masked .v,.answer.masked .facts{filter:none;color:var(--ink)}
+    #closer{opacity:1 !important}
+    .figwrap{padding:8px 10px 10px;gap:6px;break-inside:avoid}
+    .nl-svg{min-width:0;max-width:100%}
+    .ctr-svg{max-width:100%;max-height:170px;width:auto}
+    .sgc{font-size:11px;padding:3px 5px}
+    .sgc small{font-size:8.5px}
+    .pat{font-size:11px}
+    .tapecap{font-size:10.5px}
+    .legend{padding:7px 10px;gap:4px 13px}
+    .legend div{font-size:10px}
+    .log{padding:2px 0 4px}
+    .log > li{padding:7px 10px;break-inside:avoid}
+    .log .n{font-size:9.5px;padding:2px 5px}
+    .log .line{font-size:11px;gap:7px}
+    .log .tag{font-size:8.5px;min-width:7.2ch;padding:1px 4px}
+    .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
+    .closer{font-size:11px;padding:8px 10px}
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Integers, worked out</div>
+      <h1>The Number <em>Line</em></h1>
+      <p class="tagline">Negative numbers without the guesswork. Every problem is worked on the number line and with
+        counters, with a reason for every sign: add, subtract, multiply and divide integers, find absolute values,
+        and put numbers in order.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem">
+    <div class="modes" id="modeTabs" role="group" aria-label="What kind of problem">
+      <button type="button" data-mode="add" aria-pressed="true">Add</button>
+      <button type="button" data-mode="sub" aria-pressed="false">Subtract</button>
+      <button type="button" data-mode="muldiv" aria-pressed="false">Multiply &amp; divide</button>
+      <button type="button" data-mode="abs" aria-pressed="false">Absolute value &amp; compare</button>
+      <button type="button" data-mode="chain" aria-pressed="false">Chains</button>
+    </div>
+    <div class="entry">
+      <div class="fields">
+        <div class="numfield">
+          <label for="in1" id="lab1">Your problem</label>
+          <input class="expr-in" id="in1" type="text" inputmode="text" autocomplete="off" spellcheck="false" value="">
+        </div>
+      </div>
+      <div class="keys" id="keys" aria-label="Insert a symbol">
+        <button type="button" data-k=" + " aria-label="Plus">+</button>
+        <button type="button" data-k=" − " aria-label="Minus (subtract)">&minus;</button>
+        <button type="button" data-k=" × " data-only="muldiv chain" aria-label="Times">&times;</button>
+        <button type="button" data-k=" ÷ " data-only="muldiv chain" aria-label="Divided by">&divide;</button>
+        <button type="button" class="kn" data-k="(−" aria-label="Start a negative number">(&minus;</button>
+        <button type="button" data-k=")">)</button>
+        <button type="button" data-k="|" data-only="abs chain" aria-label="Absolute value bar">|</button>
+        <button type="button" data-k=", " data-only="abs" aria-label="Comma">,</button>
+      </div>
+    </div>
+    <p class="hint" id="hint"></p>
+
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body" id="makerBody"></div>
+    </details>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips"></span>
+      <span class="practice">
+        <div class="modes" role="group" aria-label="Practice mode">
+          <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
+          <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
+        </div>
+      </span>
+    </div>
+  </section>
+
+  <section class="ckbox" id="checkBox" hidden aria-label="Check my answer">
+    <div class="ck-head"><span class="k">Your answer</span><span class="ck-ask" id="ckAsk"></span></div>
+    <div class="ck-row">
+      <span class="ck-q" id="ckQ"></span>
+      <input class="expr-in ck-in" id="ckIn" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+             aria-label="Your answer" aria-describedby="ckAsk">
+      <button type="button" class="go" id="ckBtn">Check</button>
+    </div>
+    <p class="ck-msg" id="ckMsg" aria-live="polite"></p>
+    <div class="ck-more" id="ckMore" hidden>
+      <button type="button" class="plain-btn" id="hintBtn">Show a hint</button>
+      <button type="button" class="plain-btn" id="showBtn">Show me the work</button>
+    </div>
+  </section>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <div class="board" id="board">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The work</h2>
+        <div class="stepper" id="stepper" hidden>
+          <button type="button" id="prevBtn" aria-label="Previous step">&larr;</button>
+          <span class="count" id="stepCount"></span>
+          <button type="button" id="nextBtn" aria-label="Next step">&rarr;</button>
+        </div>
+      </div>
+      <div id="workHost"></div>
+      <div class="legend" id="legend">
+        <div><b class="ng">(&minus;3)</b> a negative number</div>
+        <div><b class="op-s" style="padding:0">&minus;</b> minus: subtract</div>
+        <div><i class="cdot cp">+</i> counter worth +1</div>
+        <div><i class="cdot cn">&minus;</i> counter worth <span class="ng">&minus;1</span></div>
+        <div><span class="arw" style="color:var(--pos)">&rarr;</span> jump right</div>
+        <div><span class="arw" style="color:var(--neg)">&larr;</span> jump left</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Say it out loud</h2></div>
+      <ol class="log" id="log"></ol>
+      <div class="closer" id="closer"></div>
+    </section>
+  </div>
+
+  <div class="footnote">
+    <span class="btns">
+      <button class="print" type="button" id="printBtn">Print this work</button>
+      <button class="print" type="button" id="copyBtn">Copy link</button>
+    </span>
+    <span>Every sign gets a reason. Need the arithmetic of the sizes? Work it on
+      <a href="addition.html">+</a>, <a href="subtraction.html">&minus;</a>,
+      <a href="multiplication.html">&times;</a> or <a href="division.html">&divide;</a>. Long problems that mix
+      &times; &divide; with + &minus; go on <a href="pemdas.html">the Order Stack</a>.</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ======================================================================
+     URL parameters
+       q=        the problem, written the way a person would type it. Any of:
+                   -5+3   -5 + (-3)   -7-(-2)   -7 - -2   4-9         (add / subtract)
+                   -4*3   -4×3   -4x3   -12/(-3)   -12÷-3   -12:3   (multiply / divide)
+                   |-7|   abs -7   abs(-7)                          (absolute value)
+                   -3,5,-8,0   -8 < -3   compare -8 and -3          (put in order)
+                   -3+8-(-5)   -2*3/(-6)   |-4|-9+(-1)              (chains, left to right)
+                 ASCII hyphen or the real minus sign (−, –, — also work); × x X * · for times; ÷ / : for divide;
+                 [ ] { } count as parentheses; words like "negative 5 plus 3", "minus", "times",
+                 "divided by" and "abs of" are understood; a trailing "=" or "= ?" is ignored.
+                 A literal + in the address (?q=-5+3) means plus, unless the query was form-encoded
+                 (spaces sent as +, a real plus as %2B).
+                 Anything mixing × ÷ with + − (or parentheses with work inside) gets a link to the
+                 Order Stack (pemdas.html?q=…) instead.
+       mode=     add | sub | muldiv | abs | chain. Optional: worked out from q when missing, or when q
+                 doesn't fit the mode given.
+       practice= all | step | check  (Show all work / One step at a time / Check my answer)
+     The address keeps ?q= (plus &mode= when it isn't the obvious one) in step with the problem on screen.
+     Worksheet API: postMessage {type:"helper:options", id} and {type:"helper:make", id, count, options}.
+     ====================================================================== */
+  var $ = function(id){ return document.getElementById(id); };
+  var MODES = ["add", "sub", "muldiv", "abs", "chain"];
+  var EX = {
+    add:["−5 + 3", "−5 + (−3)", "4 + (−9)", "−6 + 6", "7 + 5", "−12 + 20", "0 + (−4)", "−45 + 78"],
+    sub:["−7 − (−2)", "4 − 9", "−3 − 5", "6 − (−4)", "−2 − (−8)", "0 − 7", "−15 − (−15)", "35 − 82"],
+    muldiv:["−3 × (−2)", "−4 × 3", "5 × (−6)", "−12 ÷ (−3)", "20 ÷ (−4)", "−7 ÷ 2", "0 × (−9)", "−36 ÷ 9"],
+    abs:["|−7|", "|12|", "|0|", "−3, 5, −8, 0", "−8, −3", "4, −4, −10, 2, −1, 7"],
+    chain:["−3 + 8 − (−5)", "10 − 15 + 7 − (−2)", "−6 − 4 − (−9) + 1", "−2 × 3 ÷ (−6)", "|−4| − 9 + (−1)", "5 − 12 + 3 − 8"]
+  };
+  var S = { mode:"add", practice:"all", step:1,
+            inputs:{ add:EX.add[0], sub:EX.sub[0], muldiv:EX.muldiv[0], abs:EX.abs[3], chain:EX.chain[0] },
+            good:{},
+            gen:{ add:{ range:10, signs:"any", zero:true }, sub:{ range:10, signs:"any", zero:true },
+                  muldiv:{ op:"both", range:10, signs:"any", whole:true, zero:true },
+                  abs:{ kind:"compare", count:4, range:10 }, chain:{ len:4, ops:"as", range:10, zero:true } },
+            ck:{ key:"", tries:0, solved:false }, cur:null };
+
+  /* ===================== helpers ===================== */
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function commas(s){ return String(s).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+  function UserErr(msg){ this.user = msg; }
+  function mag(n){ var a = Math.abs(n); return a >= 10000 ? commas(a) : String(a); }
+  function f1(n){ return (Math.round(n * 10) / 10).toString(); }
+  // a number as plain text: "−7"; par = put a negative in parentheses (it comes after an operation)
+  function nT(n, par){ var s = (n < 0 ? "−" : "") + mag(n); return par && n < 0 ? "(" + s + ")" : s; }
+  function nH(n, par){
+    if (n < 0) return '<span class="ng">' + (par ? "(" : "") + "−" + mag(n) + (par ? ")" : "") + "</span>";
+    return "<span>" + mag(n) + "</span>";
+  }
+  function op(o){ return '<span class="op-s">' + esc(o) + "</span>"; }
+  function plural(n, w){ return mag(n) + " " + w + (Math.abs(n) === 1 ? "" : "s"); }
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while (b){ var t = a % b; a = b; b = t; } return a || 1; }
+  function rat(n, d){ if (d < 0){ n = -n; d = -d; } var g = gcd(n, d); return { n:n / g, d:d / g }; }
+  function isTerm(d){ while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5; return d === 1; }
+  function decStr(n, d){                       // exact when it ends, otherwise 3 places and "…"
+    var neg = n < 0, a = Math.abs(n), ip = Math.floor(a / d), rem = a % d, ds = "", k = 0, lim = isTerm(d) ? 12 : 3;
+    while (rem && k < lim){ rem *= 10; ds += Math.floor(rem / d); rem %= d; k++; }
+    return (neg ? "−" : "") + mag(ip) + (ds ? "." + ds : "") + (rem ? "…" : "");
+  }
+  function rT(r){ return r.d === 1 ? nT(r.n) : (r.n < 0 ? "−" : "") + mag(r.n) + "/" + r.d; }
+  function rH(r, par){
+    if (r.d === 1) return nH(r.n, par);
+    var f = '<span class="fr"><span class="nu">' + mag(r.n) + '</span><span class="de">' + mag(r.d) + "</span></span>";
+    return r.n < 0 ? '<span class="ng">' + (par ? "(" : "") + "−" + f + (par ? ")" : "") + "</span>" : f;
+  }
+  function htmlToText(h){ var d = document.createElement("div"); d.innerHTML = h; return d.textContent; }
+
+  /* ===================== reading the problem ===================== */
+  var MINUS_RE = /[−–—‐‑‒﹣－]/g;
+  var OPN = { "+":"+", "-":"−", "*":"×", "/":"÷" };
+  function normalize(src){
+    var s = " " + String(src).toLowerCase() + " ";
+    s = s.replace(MINUS_RE, "-").replace(/＋/g, "+").replace(/[×·∙⋅✕✖]/g, "*").replace(/[÷∶]/g, "/");
+    var eq = s.indexOf("=");
+    if (eq >= 0 && !/[<>]/.test(s.slice(eq - 1, eq))) s = s.slice(0, eq) + " ";
+    s = s.replace(/\?/g, ",").replace(/<=|>=|[≤≥<>]/g, ",");
+    s = s.replace(/\b(?:what(?:'|’)?s|what is|compute|calculate|evaluate|work out|find|simplify|solve|compare|order|sort|put in order|arrange|(?:from )?(?:least|smallest|lowest) to (?:greatest|biggest|largest|highest)|the numbers|numbers)\b/g, " ");
+    s = s.replace(/\b(?:the )?absolute value of\b|\babsolute value\b|\babs of\b|\babs\b/g, " abs ");
+    s = s.replace(/\bdivided by\b|\bdiv\b/g, " / ").replace(/\bmultiplied by\b|\btimes\b/g, " * ");
+    s = s.replace(/\bplus\b/g, " + ").replace(/\bminus\b|\btake away\b/g, " - ");
+    s = s.replace(/\b(?:the )?opposite of\b/g, " - ").replace(/\b(?:negative|neg)\b/g, " - ").replace(/\b(?:positive|pos)\b/g, " + ");
+    s = s.replace(/\b(?:and|vs\.?|versus)\b/g, ",");
+    s = s.replace(/x/g, "*").replace(/[\[{]/g, "(").replace(/[\]}]/g, ")").replace(/:/g, "/");
+    return s.replace(/^[\s,;]+|[\s,;]+$/g, "");
+  }
+  function lex(s){
+    var out = [], i = 0, m;
+    while (i < s.length){
+      var c = s[i], rest = s.slice(i);
+      if (/\s/.test(c)){ i++; continue; }
+      if ((m = /^\d*\.\d+|^\d+\.\d*/.exec(rest)) && /\d/.test(m[0]))
+        throw new UserErr("This page works with <strong>integers</strong> — whole numbers and their negatives, like <b>−4</b>, <b>0</b> and <b>7</b>. "
+          + "<b>" + esc(m[0]) + "</b> has a decimal point. (Decimals and fractions work on <a href=\"pemdas.html\">the Order Stack</a>.)");
+      if ((m = /^\d+/.exec(rest))){
+        if (m[0].replace(/^0+(?=\d)/, "").length > 6)
+          throw new UserErr("<b>" + esc(m[0]) + "</b> is a big one! Keep each number to 6 digits or fewer so the pictures still make sense.");
+        out.push({ k:"num", v:parseInt(m[0], 10), s:m[0] }); i += m[0].length; continue;
+      }
+      if (rest.slice(0, 3) === "abs"){ out.push({ k:"abs", s:"abs" }); i += 3; continue; }
+      if ("+-*/".indexOf(c) >= 0){ out.push({ k:"op", s:c }); i++; continue; }
+      if ("()|,;".indexOf(c) >= 0){ out.push({ k:c === ";" ? "," : c, s:c }); i++; continue; }
+      if (c === "^" || c === "²" || c === "³")
+        throw new UserErr("Powers aren’t on this page. Try <a href=\"pemdas.html\">the Order Stack</a> for those.");
+      if ((m = /^[a-z]+/.exec(rest)))
+        throw new UserErr("I don’t know the word <b>" + esc(m[0]) + "</b> here. Use whole numbers, + − × ÷, parentheses, bars like <b>|−7|</b> for absolute value, and commas between numbers to put them in order.");
+      throw new UserErr("I don’t know the symbol <b>" + esc(c) + "</b>. Use whole numbers, + − × ÷, parentheses, bars like <b>|−7|</b> for absolute value, and commas between numbers to put them in order.");
+    }
+    return out;
+  }
+  function tokT(t){ return !t ? "" : t.k === "op" ? OPN[t.s] : t.s; }
+  function parseTokens(tk){
+    var p = 0, complex = false;
+    function atom(){
+      var negs = 0;
+      while (tk[p] && tk[p].k === "op" && (tk[p].s === "-" || tk[p].s === "+")){ if (tk[p].s === "-") negs++; p++; }
+      var t = tk[p], node;
+      if (!t) throw new UserErr(p > 0 ? "The problem ends with <b>" + esc(tokT(tk[p - 1])) + "</b> — what comes after it?"
+                                      : "Type a problem, like <b>−5 + 3</b>.");
+      if (t.k === "num"){ p++; node = { t:"num", v:t.v }; }
+      else if (t.k === "abs"){ p++; node = { t:"abs", a:atom() }; }
+      else if (t.k === "("){
+        p++;
+        if (tk[p] && tk[p].k === ")") throw new UserErr("There’s an empty pair of parentheses <b>( )</b> — put a number inside.");
+        var inner = seq();
+        if (!tk[p] || tk[p].k !== ")") throw new UserErr(tk[p] ? "Something’s missing before <b>" + esc(tokT(tk[p])) + "</b>."
+                                                                : "A <b>(</b> is never closed — add a <b>)</b>.");
+        p++;
+        if (inner.ops.length){ complex = true; node = { t:"grp", s:inner }; }
+        else node = { t:"par", a:inner.atoms[0] };
+      }
+      else if (t.k === "|"){
+        p++;
+        var ins = seq();
+        if (!tk[p] || tk[p].k !== "|") throw new UserErr("An absolute value bar <b>|</b> is never closed — add another <b>|</b>.");
+        p++;
+        if (ins.ops.length) throw new UserErr("There’s a calculation inside the bars. This page takes the absolute value of one number at a time — "
+          + "work out the inside first (the Chains tab can do it), then put that one number between the bars, like <b>|−7|</b>.");
+        node = { t:"abs", a:ins.atoms[0] };
+      }
+      else if (t.k === ")") throw new UserErr(p > 0 && tk[p - 1].k !== "op" && tk[p - 1].k !== "(" ? "There’s a <b>)</b> with no <b>(</b> to match it." : "Something’s missing before <b>)</b>.");
+      else if (t.k === "op") throw new UserErr("<b>" + esc(tokT(t)) + "</b> right after " + (p > 0 ? "<b>" + esc(tokT(tk[p - 1])) + "</b>" : "the start")
+        + " — there’s a number missing.");
+      else if (t.k === ",") throw new UserErr("There’s a comma with no number in front of it.");
+      else throw new UserErr("Something’s missing near <b>" + esc(tokT(t)) + "</b>.");
+      for (var i = 0; i < negs; i++) node = { t:"neg", a:node };
+      return node;
+    }
+    function seq(){
+      var atoms = [atom()], ops = [];
+      for (;;){
+        var t = tk[p];
+        if (!t) break;
+        if (t.k === "op"){ p++; ops.push(OPN[t.s]); atoms.push(atom()); continue; }
+        if (t.k === "("){ ops.push("×"); atoms.push(atom()); continue; }      // 2(−3) means 2 × (−3)
+        if (t.k === "num" || t.k === "abs")
+          throw new UserErr("Two numbers in a row — <b>" + esc(tokT(tk[p - 1])) + " " + esc(tokT(t)) + "</b> — with nothing between them. "
+            + "Put an operation between them, or commas to put numbers in order: <b>5, 3</b>.");
+        break;
+      }
+      return { atoms:atoms, ops:ops };
+    }
+    var top = seq();
+    if (p < tk.length){
+      var t = tk[p];
+      if (t.k === ")") throw new UserErr("There’s a <b>)</b> with no <b>(</b> to match it.");
+      if (t.k === "|") throw new UserErr("That <b>|</b> bar doesn’t have a partner. Absolute value needs one on each side: <b>|−7|</b>.");
+      throw new UserErr("Something’s off near <b>" + esc(tokT(t)) + "</b>.");
+    }
+    top.complex = complex;
+    return top;
+  }
+  function stripPar(n){ while (n.t === "par") n = n.a; return n; }
+  function nodeVal(n){
+    if (n.t === "num") return n.v;
+    if (n.t === "par") return nodeVal(n.a);
+    if (n.t === "neg") return -nodeVal(n.a) || 0;
+    if (n.t === "abs") return Math.abs(nodeVal(n.a));
+    return NaN;
+  }
+  // a plain integer: 5, −5, (−5), −(5) — nothing to tidy
+  function nodePlain(n){
+    n = stripPar(n);
+    if (n.t === "num") return true;
+    return n.t === "neg" && stripPar(n.a).t === "num";
+  }
+  function rawH(n){
+    if (n.t === "num") return "<span>" + mag(n.v) + "</span>";
+    if (n.t === "par") return '<span class="pg">(</span>' + rawH(n.a) + '<span class="pg">)</span>';
+    if (n.t === "abs") return '<span class="bar">|</span>' + rawH(n.a) + '<span class="bar">|</span>';
+    if (n.t === "neg") return n.a.t === "num" ? nH(-n.a.v) : '<span class="opp">−</span>' + rawH(n.a);
+    return "";
+  }
+  function rawT(n){
+    if (n.t === "num") return mag(n.v);
+    if (n.t === "par") return "(" + rawT(n.a) + ")";
+    if (n.t === "abs") return "|" + rawT(n.a) + "|";
+    if (n.t === "neg") return "−" + rawT(n.a);
+    return "";
+  }
+  function rawA(n){
+    if (n.t === "num") return String(n.v);
+    if (n.t === "par") return "(" + rawA(n.a) + ")";
+    if (n.t === "abs") return "|" + rawA(n.a) + "|";
+    if (n.t === "neg") return "-" + rawA(n.a);
+    return "";
+  }
+  function wrapNeg(n, first, s, l, r){ return (!first && stripPar(n).t === "neg") ? l + s + r : s; }
+  function nodeH(n, first){ return nodePlain(n) ? nH(nodeVal(n), !first) : wrapNeg(n, first, rawH(n), '<span class="pg">(</span>', '<span class="pg">)</span>'); }
+  function nodeT(n, first){ return nodePlain(n) ? nT(nodeVal(n), !first) : wrapNeg(n, first, rawT(n), "(", ")"); }
+  function nodeA(n, first){
+    if (nodePlain(n)){ var v = nodeVal(n); return v < 0 ? (first ? "-" + (-v) : "(-" + (-v) + ")") : String(v); }
+    return wrapNeg(n, first, rawA(n), "(", ")");
+  }
+  var OPA = { "+":"+", "−":"-", "×":"*", "÷":"/" };
+  function exprH(P){
+    if (P.kind === "list") return P.vals.map(function(v){ return nH(v); }).join('<span class="op-s" style="padding-left:0">,</span>');
+    var h = nodeH(P.atoms[0], true);
+    for (var i = 0; i < P.ops.length; i++) h += op(P.ops[i]) + nodeH(P.atoms[i + 1], false);
+    return h;
+  }
+  function exprT(P){
+    if (P.kind === "list") return P.vals.map(function(v){ return nT(v); }).join(", ");
+    var s = nodeT(P.atoms[0], true);
+    for (var i = 0; i < P.ops.length; i++) s += " " + P.ops[i] + " " + nodeT(P.atoms[i + 1], false);
+    return s;
+  }
+  function exprA(P){
+    if (P.kind === "list") return P.vals.join(",");
+    var s = nodeA(P.atoms[0], true);
+    for (var i = 0; i < P.ops.length; i++) s += OPA[P.ops[i]] + nodeA(P.atoms[i + 1], false);
+    return s;
+  }
+  function parseQ(src){
+    var s = normalize(src);
+    if (!s) throw new UserErr("Type a problem, like <b>−5 + 3</b>, <b>−7 − (−2)</b> or <b>|−7|</b>.");
+    var tk = lex(s);
+    if (!tk.length) throw new UserErr("Type a problem, like <b>−5 + 3</b>.");
+    var depth = 0, parts = [[]];
+    tk.forEach(function(t){
+      if (t.k === "(") depth++;
+      if (t.k === ")") depth--;
+      if (t.k === "," && depth <= 0) parts.push([]); else parts[parts.length - 1].push(t);
+    });
+    if (parts.length > 1){
+      var vals = [];
+      parts.forEach(function(pt){
+        if (!pt.length) return;
+        var r = parseTokens(pt);
+        if (r.ops.length || r.complex || !nodePlain(r.atoms[0]))
+          throw new UserErr("To put numbers in order, give a list of plain integers with commas between them, like <b>−3, 5, −8, 0</b>.");
+        vals.push(nodeVal(r.atoms[0]));
+      });
+      if (vals.length < 2) return single(vals[0]);
+      if (vals.length > 8) throw new UserErr("That’s " + vals.length + " numbers. Keep it to 8 or fewer so they fit on one number line.");
+      return { kind:"list", vals:vals };
+    }
+    var e = parseTokens(tk);
+    var hasAS = e.ops.some(function(o){ return o === "+" || o === "−"; }), hasMD = e.ops.some(function(o){ return o === "×" || o === "÷"; });
+    if (e.complex || (hasAS && hasMD)) return { kind:"pemdas", src:String(src), why:e.complex ? "par" : "mix" };
+    if (e.ops.length > 8) throw new UserErr("That’s " + e.ops.length + " operations — keep a chain to 8 or fewer so the work fits.");
+    return { kind:"expr", atoms:e.atoms, ops:e.ops, vals:e.atoms.map(nodeVal) };
+    function single(v){ return { kind:"expr", atoms:[v < 0 ? { t:"neg", a:{ t:"num", v:-v } } : { t:"num", v:v }], ops:[], vals:[v] }; }
+  }
+  function infer(P){
+    if (P.kind === "list" || !P.ops.length) return "abs";
+    if (P.ops.length === 1 && P.atoms.every(nodePlain)) return P.ops[0] === "+" ? "add" : P.ops[0] === "−" ? "sub" : "muldiv";
+    return "chain";
+  }
+  function fits(m, P){
+    if (P.kind === "pemdas") return false;
+    if (m === "abs") return P.kind === "list" || !P.ops.length;
+    if (P.kind !== "expr" || !P.ops.length) return false;
+    if (m !== "chain") return infer(P) === m;
+    // a chain tab keeps a one-step problem, unless it's a division that won't come out even (that needs fractions)
+    return infer(P) === "chain" || !(P.ops[0] === "÷" && P.vals[1] !== 0 && P.vals[0] % P.vals[1] !== 0);
+  }
+  function pemdasMsg(P){
+    return (P.why === "mix" ? "This one mixes × or ÷ with + or −" : "This one has parentheses with working inside them")
+      + ", so the <strong>order of operations</strong> decides what to do first. That’s a job for the Order Stack: "
+      + '<a href="pemdas.html?q=' + esc(encodeURIComponent(P.src)) + '">work it out there &rarr;</a>';
+  }
+
+  /* ===================== solving (pure: no drawing) ===================== */
+  function divZeroMsg(a){
+    return "<b>" + nH(a) + " ÷ 0</b> can’t be done. Dividing asks “what number times 0 makes " + nT(a) + "?” "
+      + (a !== 0 ? "But anything times 0 is 0, never " + nT(a) + ", so there’s no answer at all."
+                 : "Every number times 0 is 0, so every number would work — there’s no one answer.")
+      + " That’s why dividing by zero is called <strong>undefined</strong>. Change the 0 to another number.";
+  }
+  function solve(P, mode){
+    var a = P.vals[0], b = P.vals[1];
+    if (mode === "abs"){
+      if (P.kind === "list"){
+        var s = P.vals.slice().sort(function(x, y){ return x - y; });
+        return { mode:mode, kind:"compare", vals:P.vals, sorted:s, ans:{ type:"list", vals:s, orig:P.vals } };
+      }
+      var I = absInfo(P.atoms[0]);
+      return { mode:mode, kind:"abs", info:I, ans:{ type:"int", v:I.result } };
+    }
+    if (mode === "add") return { mode:mode, a:a, b:b, ans:{ type:"int", v:a + b } };
+    if (mode === "sub") return { mode:mode, a:a, b:b, ans:{ type:"int", v:a - b || 0 } };
+    if (mode === "muldiv"){
+      if (P.ops[0] === "×") return { mode:mode, a:a, b:b, op:"×", ans:{ type:"int", v:a * b || 0 } };
+      if (b === 0) throw new UserErr(divZeroMsg(a));
+      var r = rat(a, b);
+      return { mode:mode, a:a, b:b, op:"÷", ans:r.d === 1 ? { type:"int", v:r.n || 0 } : { type:"frac", n:r.n, d:r.d } };
+    }
+    // chain: tidy |…| and −(−…) first, then left to right
+    var vals = P.vals.slice(), recs = [], cur = vals[0];
+    for (var i = 0; i < P.ops.length; i++){
+      var o = P.ops[i], r2 = vals[i + 1], res;
+      if (o === "+") res = cur + r2;
+      else if (o === "−") res = cur - r2;
+      else if (o === "×") res = cur * r2;
+      else {
+        if (r2 === 0) throw new UserErr("Step " + (i + 1) + " asks for " + divZeroMsg(cur).replace(/^<b>/, "<b>"));
+        if (cur % r2 !== 0) throw new UserErr("Step " + (i + 1) + " is <b>" + nH(cur) + " ÷ " + nH(r2, true) + "</b>, which doesn’t come out even, "
+          + "so the answer isn’t an integer. Chains here stay with integers — work this one on the Order Stack, which handles fractions: "
+          + '<a href="pemdas.html?q=' + esc(encodeURIComponent(P.src || exprT(P))) + '">open it there &rarr;</a>');
+        res = cur / r2;
+      }
+      res = res || 0;
+      if (Math.abs(res) > 1e12) throw new UserErr("The numbers get too big to follow by step " + (i + 1) + ". Try smaller numbers.");
+      recs.push({ l:cur, op:o, r:r2, res:res });
+      cur = res;
+    }
+    return { mode:mode, vals:vals, recs:recs, ans:{ type:"int", v:cur } };
+  }
+  function absInfo(node){
+    var n = stripPar(node), outer = false;
+    if (n.t === "neg" && stripPar(n.a).t === "abs"){ outer = true; n = stripPar(n.a); }
+    var typedAbs = n.t === "abs", inner = typedAbs ? n.a : node, x = nodeVal(inner);
+    return { outer:outer, typedAbs:typedAbs, inner:inner, x:x, size:Math.abs(x), result:outer ? -Math.abs(x) || 0 : Math.abs(x) };
+  }
+  function relOf(x, y){ return x < y ? "<" : x > y ? ">" : "="; }
+  function relChainT(s){ var t = nT(s[0]); for (var i = 1; i < s.length; i++) t += " " + (s[i] === s[i - 1] ? "=" : "<") + " " + nT(s[i]); return t; }
+  function relChainH(s){ var t = nH(s[0]); for (var i = 1; i < s.length; i++) t += op(s[i] === s[i - 1] ? "=" : "<") + nH(s[i]); return t; }
+  function answerText(sol){
+    var A = sol.ans;
+    if (A.type === "int") return nT(A.v);
+    if (A.type === "frac") return rT(A) + " = " + decStr(A.n, A.d);
+    if (A.orig.length === 2) return nT(A.orig[0]) + " " + relOf(A.orig[0], A.orig[1]) + " " + nT(A.orig[1]);
+    return A.vals.map(function(v){ return nT(v); }).join(", ");
+  }
+  function problemText(P, sol){
+    if (sol.kind === "compare"){
+      if (P.vals.length === 2) return "Write <, > or =:  " + nT(P.vals[0]) + " ☐ " + nT(P.vals[1]);
+      return "Order from least to greatest: " + exprT(P);
+    }
+    if (sol.kind === "abs" && !sol.info.typedAbs) return "|" + nT(P.vals[0]) + "|";
+    return exprT(P);
+  }
+
+  /* ===================== pictures: the number line ===================== */
+  function labStep(px, need){
+    for (var m = 1; m < 1e9; m *= 10){ var c = [1, 2, 5]; for (var i = 0; i < 3; i++) if (c[i] * m * px >= need) return c[i] * m; }
+    return 1e9;
+  }
+  function wrapStep(g, step){ return step >= 0 ? '<g data-step="' + step + '">' + g + "</g>" : g; }
+  function lblText(x, y, text, cls){
+    var w = String(text).length * 7.7 + 9;
+    return '<rect class="lbg" x="' + f1(x - w / 2) + '" y="' + f1(y - 13.5) + '" width="' + f1(w) + '" height="18" rx="4"/>'
+         + '<text class="' + cls + '" x="' + f1(x) + '" y="' + f1(y) + '" text-anchor="middle">' + esc(text) + "</text>";
+  }
+  /* sp: { jumps:[{from,to,label,step,cls,dash,below}], dots:[{v,kind,lab,above,step}],
+           brackets:[{from,to,label,step,dash}], order:[{v,n,step}], minSpan, label } */
+  function nlSVG(sp){
+    var jumps = sp.jumps || [], dots = sp.dots || [], brs = sp.brackets || [], ords = sp.order || [];
+    var vs = [0];
+    jumps.forEach(function(j){ vs.push(j.from, j.to); });
+    dots.forEach(function(d){ vs.push(d.v); });
+    brs.forEach(function(b){ vs.push(b.from, b.to); });
+    var lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs), span = hi - lo, ms = sp.minSpan || 10;
+    if (span < ms){ var ad = ms - span, half = Math.floor(ad / 2); lo -= half; hi += ad - half; span = ms; }
+    var pad = Math.max(1, Math.round(span * 0.05));
+    lo -= pad; hi += pad;
+    var W = 600, xa = 26, xb = W - 26, px = (xb - xa) / (hi - lo);
+    function X(v){ return xa + (v - lo) * px; }
+    var chars = Math.max(nT(lo).length, nT(hi).length);
+    var lab = labStep(px, chars * 7.8 + 9), minor = 0;
+    if (lab > 1) [1, lab / 5, lab / 2].some(function(c){
+      if (c === Math.round(c) && lab % c === 0 && c * px >= 5){ minor = c; return true; } return false;
+    });
+    // jumps above the line get stacked so they never overlap
+    var placed = [], lvMax = -1;
+    jumps.forEach(function(j){
+      if (j.below || j.from === j.to) return;
+      var a = Math.min(X(j.from), X(j.to)), b = Math.max(X(j.from), X(j.to)), lv = 0;
+      for (;;){
+        var clash = placed.some(function(q){ return q.lv === lv && a < q.b - 3 && b > q.a + 3; });
+        if (!clash) break; lv++;
+      }
+      j._lv = lv; placed.push({ a:a, b:b, lv:lv }); if (lv > lvMax) lvMax = lv;
+    });
+    function arcH(lv){ return 22 + lv * 21; }
+    var abSeen = {};
+    dots.forEach(function(d){ if (d.above){ if (abSeen[d.v]) d.above = null; abSeen[d.v] = true; } });
+    var above = dots.filter(function(d){ return d.above; }).sort(function(p, q){ return p.v - q.v; }), lastX = [], abMax = -1;
+    above.forEach(function(d){
+      var x = X(d.v), w = d.above.length * 7.7 + 12, lv = 0;
+      while (lastX[lv] !== undefined && x - lastX[lv] < w) lv++;
+      lastX[lv] = x; d._lv = lv; if (lv > abMax) abMax = lv;
+    });
+    var need = 16;
+    if (lvMax >= 0) need = Math.max(need, arcH(lvMax) + 24);
+    if (brs.length) need = Math.max(need, 48);
+    if (abMax >= 0) need = Math.max(need, 34 + abMax * 20);
+    var y = need + 4, hasBelow = jumps.some(function(j){ return j.below; });
+    var ordY = y + 40 + (hasBelow ? 48 : 0), Hh = ordY + (ords.length ? 26 : -6);
+    var s = '<line class="nl-axis" x1="' + (xa - 14) + '" y1="' + y + '" x2="' + (xb + 14) + '" y2="' + y + '"/>'
+          + '<path class="nl-head" d="M' + (xb + 19) + "," + y + ' l-11,-6 v12 Z"/>'
+          + '<path class="nl-head" d="M' + (xa - 19) + "," + y + ' l11,-6 v12 Z"/>';
+    var stp = minor || lab;
+    for (var t = Math.ceil(lo / stp) * stp; t <= hi; t += stp){
+      var maj = t % lab === 0, xx = X(t);
+      s += '<line class="nl-tick' + (t === 0 ? " zero" : maj ? " maj" : "") + '" x1="' + f1(xx) + '" y1="' + (y - (maj ? 7 : 4)) + '" x2="' + f1(xx) + '" y2="' + (y + (maj ? 7 : 4)) + '"/>';
+      if (maj) s += '<text class="nl-num' + (t === 0 ? " zero" : t < 0 ? " ngt" : "") + '" x="' + f1(xx) + '" y="' + (y + 24) + '" text-anchor="middle">' + esc(nT(t)) + "</text>";
+    }
+    brs.forEach(function(b){
+      var x1 = X(b.from), x2 = X(b.to), yb = y - 24;
+      var g = '<path class="nl-br' + (b.dash ? " dash" : "") + '" d="M' + f1(x1) + "," + (yb + 7) + " V" + yb + " H" + f1(x2) + " V" + (yb + 7) + '"/>';
+      if (b.label) g += lblText((x1 + x2) / 2, yb - 7, b.label, "nl-brt" + (b.dash ? " dim" : ""));
+      s += wrapStep(g, b.step);
+    });
+    jumps.forEach(function(j){
+      if (j.from === j.to) return;
+      var x1 = X(j.from), x2 = X(j.to), xm = (x1 + x2) / 2, below = !!j.below, dir = below ? 1 : -1;
+      var h = below ? 32 : arcH(j._lv), yc = y + dir * 2 * h, tipY = y + dir * 1.5;
+      var cls = j.cls || (j.to > j.from ? "jp" : "jn");
+      var tx = x2 - xm, ty = tipY - yc, L = Math.sqrt(tx * tx + ty * ty) || 1, ux = tx / L, uy = ty / L;
+      var hd = "M" + f1(x2) + "," + f1(tipY) + " L" + f1(x2 - ux * 10 - uy * 5) + "," + f1(tipY - uy * 10 + ux * 5)
+             + " L" + f1(x2 - ux * 10 + uy * 5) + "," + f1(tipY - uy * 10 - ux * 5) + " Z";
+      var g = '<g class="j ' + cls + '"><path class="arc' + (j.dash ? " dash" : "") + '" d="M' + f1(x1) + "," + f1(y + dir * 2)
+            + " Q" + f1(xm) + "," + f1(yc) + " " + f1(x2) + "," + f1(tipY) + '"/><path class="hd" d="' + hd + '"/>';
+      if (j.label && (j.force || Math.abs(x2 - x1) >= String(j.label).length * 7.7 + 4))
+        g += lblText(xm, below ? y + h + 17 : y - h - 6, j.label, "jl");
+      s += wrapStep(g + "</g>", j.step);
+    });
+    var leads = "", dotsS = "";
+    dots.forEach(function(d){
+      var x = X(d.v), g = "";
+      if (d.kind === "start") g += '<circle class="dot-s" cx="' + f1(x) + '" cy="' + y + '" r="6.5"/>';
+      else if (d.kind === "end") g += '<circle class="dot-e" cx="' + f1(x) + '" cy="' + y + '" r="8"/><circle class="dot-e2" cx="' + f1(x) + '" cy="' + y + '" r="3.6"/>';
+      else if (d.kind === "ghost") g += '<circle class="dot-g" cx="' + f1(x) + '" cy="' + y + '" r="6"/>';
+      else g += '<circle class="dot-p ' + (d.v < 0 ? "pn" : d.v > 0 ? "pp" : "p0") + '" cx="' + f1(x) + '" cy="' + y + '" r="6.5"/>';
+      if (d.lab) g += lblText(x, y + 24, nT(d.v), "nl-val" + (d.kind === "ghost" ? " dim" : ""));
+      if (d.above){
+        var ya = y - 16 - d._lv * 20;
+        if (d._lv) leads += wrapStep('<line class="nl-lead" x1="' + f1(x) + '" y1="' + (y - 8) + '" x2="' + f1(x) + '" y2="' + (ya + 5) + '"/>', d.step);
+        g += lblText(x, ya, d.above, "nl-ab" + (d.v < 0 ? " ngt" : ""));
+      }
+      dotsS += wrapStep(g, d.step);
+    });
+    s += leads + dotsS;
+    var seen = {};
+    ords.forEach(function(o){
+      var k = String(o.v), c = seen[k] = (seen[k] || 0) + 1, x = X(o.v) + (c - 1) * 21;
+      s += wrapStep('<g class="nl-ord"><circle cx="' + f1(x) + '" cy="' + (ordY - 4) + '" r="9.5"/><text x="' + f1(x) + '" y="' + f1(ordY) + '" text-anchor="middle">' + o.n + "</text></g>", o.step);
+    });
+    return '<div class="nl-wrap"><svg class="nl-svg" viewBox="0 0 ' + W + " " + Hh + '" role="img" aria-label="' + esc(sp.label || "Number line") + '">' + s + "</svg></div>";
+  }
+
+  /* ===================== pictures: counters ===================== */
+  function ctr(x, y, pos){
+    return '<g class="ctr ' + (pos ? "cp" : "cn") + '"><circle cx="' + f1(x) + '" cy="' + f1(y) + '" r="10.5"/><text x="' + f1(x) + '" y="' + f1(y + 5) + '" text-anchor="middle">' + (pos ? "+" : "−") + "</text></g>";
+  }
+  // a on the top row, b on the bottom row; zero pairs ringed and crossed out at pairStep
+  function addCountersSVG(a, b, pairStep){
+    var A = Math.abs(a), B = Math.abs(b), cols = Math.max(A, B, 1), per = 10, bands = Math.ceil(cols / per);
+    var cell = 27, lw = 52, rowH = 28, bandH = rowH * 2 + 18, top0 = 8;
+    var pairs = a && b && (a < 0) !== (b < 0) ? Math.min(A, B) : 0;
+    var Wd = lw + Math.min(cols, per) * cell + 8, Hd = top0 + (bands - 1) * bandH + rowH * 2 + 8, s = "", ov = "";
+    s += '<text class="rowlbl' + (a < 0 ? " ngt" : "") + '" x="' + (lw - 10) + '" y="' + (top0 + rowH / 2 + 4) + '" text-anchor="end">' + esc(nT(a)) + "</text>";
+    s += '<text class="rowlbl' + (b < 0 ? " ngt" : "") + '" x="' + (lw - 10) + '" y="' + (top0 + rowH * 1.5 + 4) + '" text-anchor="end">' + esc(nT(b)) + "</text>";
+    for (var c = 0; c < cols; c++){
+      var bd = Math.floor(c / per), cc = c % per, x = lw + cc * cell + cell / 2, yt = top0 + bd * bandH + rowH / 2, yb = yt + rowH;
+      if (c < A) s += ctr(x, yt, a > 0);
+      if (c < B) s += ctr(x, yb, b > 0);
+      if (c < pairs) ov += '<rect x="' + f1(x - 13) + '" y="' + f1(yt - 13.5) + '" width="26" height="' + (rowH + 27) + '" rx="13"/>'
+                         + '<line x1="' + f1(x + 8) + '" y1="' + f1(yt - 9) + '" x2="' + f1(x - 8) + '" y2="' + f1(yb + 9) + '"/>';
+    }
+    if (ov) s += wrapStep('<g class="zp">' + ov + "</g>", pairStep);
+    return '<svg class="ctr-svg" width="' + f1(Wd * 1.3) + '" height="' + f1(Hd * 1.3) + '" viewBox="0 0 ' + Wd + " " + Hd + '" role="img" aria-label="Counters: '
+      + esc(nT(a)) + " on top, " + esc(nT(b)) + ' underneath' + (pairs ? ", with " + pairs + " zero pairs crossed out" : "") + '">' + s + "</svg>";
+  }
+  // a − b by taking away: positives on top, negatives underneath; zero pairs added when there aren't enough
+  function takeAway(a, b){
+    var A = Math.abs(a), need = Math.abs(b), sb = b > 0;
+    var have = (a !== 0 && (a > 0) === sb) ? A : 0, k = Math.max(0, need - have);
+    return { A:A, need:need, k:k, cols:A + k };
+  }
+  function takeAwaySVG(a, b){
+    var T = takeAway(a, b), A = T.A, k = T.k, cols = Math.max(T.cols, 1), per = 10, bands = Math.ceil(cols / per), sb = b > 0;
+    var cell = 27, lw = 78, rowH = 28, bandH = rowH * 2 + 30, top0 = 24, s = "";
+    var topR = [], botR = [], c;
+    for (c = 0; c < A; c++){ if (a > 0) topR[c] = true; else botR[c] = true; }
+    for (c = A; c < A + k; c++){ topR[c] = true; botR[c] = true; }
+    var row = sb ? topR : botR, gone = {}, cnt = 0;
+    for (c = cols - 1; c >= 0 && cnt < T.need; c--) if (row[c]){ gone[c] = true; cnt++; }
+    var Wd = lw + Math.min(cols, per) * cell + 10, Hd = top0 + (bands - 1) * bandH + rowH * 2 + 10;
+    s += '<text class="rowlbl" x="' + (lw - 10) + '" y="' + (top0 + rowH / 2 + 4) + '" text-anchor="end">positives</text>';
+    s += '<text class="rowlbl ngt" x="' + (lw - 10) + '" y="' + (top0 + rowH * 1.5 + 4) + '" text-anchor="end">negatives</text>';
+    for (var bd = 0; bd < bands && k; bd++){              // the added zero pairs, boxed
+      var c0 = Math.max(A, bd * per), c1 = Math.min(A + k, (bd + 1) * per) - 1;
+      if (c1 < c0) continue;
+      var x0 = lw + (c0 % per) * cell + 1, x1 = lw + (c1 % per) * cell + cell - 1, yt0 = top0 + bd * bandH;
+      s += '<rect class="addbox" x="' + f1(x0) + '" y="' + f1(yt0 - 3) + '" width="' + f1(x1 - x0) + '" height="' + (rowH * 2 + 6) + '" rx="9"/>';
+      if (c0 === A) s += '<text class="addlbl" x="' + f1(x0 + 2) + '" y="' + f1(yt0 - 9) + '">+ ' + k + " zero pair" + (k === 1 ? "" : "s") + "</text>";
+    }
+    for (c = 0; c < cols; c++){
+      var b2 = Math.floor(c / per), cc = c % per, x = lw + cc * cell + cell / 2, yt = top0 + b2 * bandH + rowH / 2, yb = yt + rowH;
+      if (topR[c]) s += ctr(x, yt, true);
+      if (botR[c]) s += ctr(x, yb, false);
+      if (gone[c]){
+        var yy = sb ? yt : yb;
+        s += '<g class="gone"><rect x="' + f1(x - 12) + '" y="' + f1(yy - 12) + '" width="24" height="24" rx="12"/>'
+           + '<line x1="' + f1(x - 8) + '" y1="' + f1(yy - 8) + '" x2="' + f1(x + 8) + '" y2="' + f1(yy + 8) + '"/>'
+           + '<line x1="' + f1(x + 8) + '" y1="' + f1(yy - 8) + '" x2="' + f1(x - 8) + '" y2="' + f1(yy + 8) + '"/></g>';
+      }
+    }
+    return '<svg class="ctr-svg" width="' + f1(Wd * 1.3) + '" height="' + f1(Hd * 1.3) + '" viewBox="0 0 ' + Wd + " " + Hd + '" role="img" aria-label="Counters for '
+      + esc(nT(a)) + " take away " + esc(nT(b)) + '">' + s + "</svg>";
+  }
+
+  /* ===================== pictures: signs ===================== */
+  function cdot(pos){ return '<i class="cdot ' + (pos ? "cp" : "cn") + '">' + (pos ? "+" : "−") + "</i>"; }
+  function signTable(a, b, o){
+    var cells = [[1, 1], [1, -1], [-1, 1], [-1, -1]], ha = a > 0 ? 1 : -1, hb = b > 0 ? 1 : -1;
+    return '<div class="signs" role="table" aria-label="Sign rules">' + cells.map(function(c){
+      var on = c[0] === ha && c[1] === hb;
+      return '<div class="sgc' + (on ? " hit" : "") + '" role="cell">' + cdot(c[0] > 0) + " " + o + " " + cdot(c[1] > 0) + " = " + cdot(c[0] * c[1] > 0)
+        + "<small>" + (c[0] === c[1] ? "same signs → positive" : "different signs → negative") + "</small></div>";
+    }).join("") + "</div>";
+  }
+  function patternHTML(a, b){                  // a < 0: walk the first number down from 3 to a, b fixed
+    var ks = [], k;
+    for (k = 3; k >= a; k--) ks.push(k);
+    if (ks.length > 9) ks = [3, 2, 1, 0, -1, -2, null, a];
+    var rows = "", prev = null;
+    ks.forEach(function(k2){
+      if (k2 === null){ rows += '<tr class="gap"><td colspan="4">⋮</td></tr>'; prev = null; return; }
+      var p = k2 * b || 0;
+      rows += '<tr class="' + (k2 === a ? "hit" : k2 < 0 ? "past" : "") + '"><td>' + nH(k2) + op("×") + nH(b, true) + "</td><td>=</td><td>" + nH(p) + '</td><td class="df">'
+        + (prev === null ? "" : (p - prev > 0 ? "+" : "−") + mag(p - prev)) + "</td></tr>";
+      prev = p;
+    });
+    return '<table class="pat" aria-label="A pattern of products">' + rows + "</table>";
+  }
+
+  /* ===================== the work: rows, figures, words ===================== */
+  function Ctx(){ return { rows:[], steps:[], figs:[] }; }
+  function addStep(ctx, lines, asides){ ctx.steps.push({ lines:lines, asides:asides || [] }); return ctx.steps.length - 1; }
+  function addRow(ctx, html, step, badge, o){ ctx.rows.push({ html:html, step:step, badge:badge, result:!!(o && o.result), eq:o && o.eq }); }
+  function rowsHTML(ctx){
+    var h = '<div class="chain-scroll"><div class="chain">';
+    ctx.rows.forEach(function(r, i){
+      h += '<div class="crow' + (r.result ? " result" : "") + '"' + (r.step >= 0 ? ' data-step="' + r.step + '"' : "") + '><span class="eq">'
+         + (r.eq !== undefined ? r.eq : (i ? "=" : "")) + '</span><span class="expr">' + r.html + "</span>"
+         + (r.badge ? '<span class="next"><span class="badge c-' + r.badge[0] + '">' + r.badge[1] + "</span></span>" : "<span></span>") + "</div>";
+    });
+    return h + "</div></div>";
+  }
+  function figsHTML(ctx){
+    return ctx.figs.map(function(f){
+      return '<div class="figwrap"' + (f.step >= 0 ? ' data-step="' + f.step + '"' : "") + '><div class="tapecap">' + f.cap + "</div>"
+        + (f.html ? '<div class="figbody">' + f.html + "</div>" : "") + "</div>";
+    }).join("");
+  }
+  function finish(ctx){
+    $("workHost").innerHTML = rowsHTML(ctx) + figsHTML(ctx);
+    writeLog(ctx.steps.map(function(st, i){ return { n:"Step&nbsp;" + (i + 1), step:i, lines:st.lines, asides:st.asides }; }));
+    return ctx.steps.length;
+  }
+  function ok(){ return ' <span class="ok">✓</span>'; }
+  var KCC = "A shortcut you may hear: <strong>keep, change, change</strong> — keep the first number, change − to +, and change the sign "
+          + "of the second number. It’s just a quick way of saying “add the opposite”, which is why it works.";
+
+  /* ---------- adding: the number line, counters and the rule ---------- */
+  function addWork(ctx, a, b, o){
+    var c = a + b, A = Math.abs(a), B = Math.abs(b), r = { c:c, sPair:-1 };
+    r.sStart = addStep(ctx, [["p", "Start", (o.sub ? "Now it’s an addition. " : "") + "Start at <b>" + nH(a) + "</b> on the number line"
+      + (a === 0 ? " — that’s 0 itself." : a < 0 ? ", " + mag(a) + " to the left of 0." : ", " + mag(a) + " to the right of 0.")]]);
+    var mv, asides = [];
+    if (b === 0) mv = ["p", "Move", "Adding <b>0</b> doesn’t move you at all: you stay on <b>" + nH(a) + "</b>."];
+    else if (b > 0) mv = ["pos", "Move", "<b>" + nH(b) + "</b> is positive, and adding a positive moves you <strong>right</strong>. Jump "
+      + mag(b) + " to the right and you land on <b>" + nH(c) + "</b>."];
+    else mv = ["neg", "Move", "<b>" + nH(b) + "</b> is negative, and adding a negative moves you <strong>left</strong>. Jump "
+      + mag(b) + " to the left and you land on <b>" + nH(c) + "</b>."];
+    if (a !== 0 && b !== 0 && (a < 0) !== (b < 0)){
+      if (c === 0) asides.push("You land exactly on <b>0</b>: the jump is the same size as the distance back to 0.");
+      else if ((a < 0) !== (c < 0)) asides.push("You cross 0 on the way. It takes " + mag(a) + " to get from <b>" + nH(a) + "</b> back to 0, and that leaves "
+        + mag(c) + " more on the other side.");
+    }
+    r.sMove = addStep(ctx, [mv], asides);
+    if (a === 0 || b === 0){
+      ctx.steps[r.sMove].lines.push(["a", "Rule", a === 0 && b === 0 ? "0 + 0 is just <b>0</b>."
+        : a === 0 ? "Starting from 0, you end up wherever the jump takes you: <b>0 + " + nH(b, true) + " = " + nH(b) + "</b>."
+                  : "Adding 0 changes nothing: <b>" + nH(a) + " + 0 = " + nH(a) + "</b>."]);
+      addRow(ctx, nH(c), r.sMove, ["a", "adding 0"], { result:true });
+      r.last = r.sMove; return r;
+    }
+    if ((a < 0) === (b < 0)){
+      var sR;
+      if (a > 0){
+        sR = addStep(ctx, [["a", "Same signs", "Both numbers are positive, so this is ordinary adding: <b>" + mag(a) + " + " + mag(b) + " = " + nH(c) + "</b>."]]);
+        addRow(ctx, nH(c), sR, ["a", "same signs: add"], { result:true });
+      } else {
+        sR = addStep(ctx, [["a", "Same signs", "Both numbers are negative — the <strong>same sign</strong> — so add their sizes, <b>" + mag(a) + " + " + mag(b) + " = " + mag(c)
+          + "</b>, and keep the sign they share: <b>" + nH(c) + "</b>."]],
+          o.counters ? ["With counters: " + plural(a, "negative") + " and " + mag(b) + " more make " + plural(c, "negative") + ". Nothing cancels, because there are no positives to pair them with."] : []);
+        addRow(ctx, '<span class="ng">−(</span>' + mag(a) + op("+") + mag(b) + '<span class="ng">)</span>', sR, ["a", "same signs: add the sizes"]);
+        addRow(ctx, nH(c), sR, null, { result:true });
+      }
+      r.last = sR; return r;
+    }
+    var big = A > B ? a : b, bg = Math.max(A, B), sm = Math.min(A, B);
+    if (c === 0){
+      r.sPair = addStep(ctx, [["a", "Zero pairs", "The signs are different and the sizes are the same (" + mag(a) + " and " + mag(b) + "). "
+        + (o.counters ? "Every positive counter pairs up with a negative one to make 0, " : "The positive part and the negative part cancel completely, ")
+        + "so nothing is left: <b>0</b>."]], ["A number plus its <strong>opposite</strong> is always <b>0</b>."]);
+      addRow(ctx, nH(0), r.sPair, ["a", "opposites cancel"], { result:true });
+      r.last = r.sPair; return r;
+    }
+    r.sPair = addStep(ctx, [["a", "Zero pairs", "The signs are <strong>different</strong>, so part of it cancels. " + (o.counters
+        ? "A positive and a negative counter make a <strong>zero pair</strong>: <b>1 + " + nH(-1, true) + " = 0</b>. There are " + mag(sm) + " pair" + (sm === 1 ? "" : "s") + " — cross them out. "
+        : "The positive part and the negative part cancel " + mag(sm) + " of each other. ")
+      + "That’s the same as subtracting the sizes: <b>" + mag(bg) + " − " + mag(sm) + " = " + mag(c) + "</b>."]]);
+    var inner = "<span>" + mag(bg) + "</span>" + op("−") + "<span>" + mag(sm) + "</span>";
+    addRow(ctx, c < 0 ? '<span class="ng">−(</span>' + inner + '<span class="ng">)</span>' : inner, r.sPair, ["a", "different signs: subtract the sizes"]);
+    r.last = addStep(ctx, [["m", "Sign", (o.counters ? "The " + plural(c, "counter") + " left over " + (Math.abs(c) === 1 ? "is " : "are ") + (c < 0 ? "negative" : "positive") + ". " : "")
+      + "The answer takes the sign of the number with the bigger size: " + mag(bg) + " is bigger than " + mag(sm) + ", and it belongs to <b>" + nH(big)
+      + "</b>, which is " + (big < 0 ? "negative" : "positive") + ". So the answer is <b>" + nH(c) + "</b>."]]);
+    addRow(ctx, nH(c), r.last, null, { result:true });
+    return r;
+  }
+  function addFigs(ctx, a, b, r, sub){
+    var c = a + b, jl = (b > 0 ? "+" : "−") + mag(b);
+    ctx.figs.push({ step:-1, cap:'<b class="lead">On the number line.</b> Start at <b>' + nH(a) + "</b> (the dot), then jump "
+      + (sub ? "the opposite of the number being subtracted: " : "") + (b === 0 ? "nowhere — adding 0 stays put."
+        : (b > 0 ? "<b>" + mag(b) + "</b> to the <strong>right</strong> for a positive" : "<b>" + mag(b) + "</b> to the <strong>left</strong> for a negative") + ". The ringed dot is the answer."),
+      html:nlSVG({ label:"Number line from " + nT(a) + ", a jump of " + jl + ", landing on " + nT(c),
+        dots:[{ v:a, kind:"start", lab:true, step:r.sStart }].concat(b ? [{ v:c, kind:"end", lab:true, step:r.sMove }] : []),
+        jumps:b ? [{ from:a, to:c, label:jl, step:r.sMove, force:true }] : [] }) });
+    if (Math.abs(a) <= 20 && Math.abs(b) <= 20 && (a || b)){
+      var pairs = a && b && (a < 0) !== (b < 0);
+      ctx.figs.push({ step:-1, cap:'<b class="lead">With counters.</b> Each ' + cdot(true) + " is +1 and each " + cdot(false) + " is " + nH(-1)
+        + ". Top row: <b>" + nH(a) + "</b>. Bottom row: <b>" + nH(b) + "</b>."
+        + (pairs ? " A + and a − together make 0 — a <strong>zero pair</strong> — so the pairs cancel and only the leftovers count." : " They’re all the same kind, so nothing cancels: just count them."),
+        html:addCountersSVG(a, b, r.sPair) });
+    } else if (a || b) {
+      ctx.figs.push({ step:-1, cap:'<b class="lead">Counters skipped.</b> ' + mag(Math.max(Math.abs(a), Math.abs(b))) + " counters in a row would be too many to draw or count. "
+        + "The number line and the rule do the same job: counters are just a picture of the rule." });
+    }
+  }
+  function ruleFact(a, b){
+    if (!a || !b) return "Adding 0 changes nothing.";
+    if ((a < 0) === (b < 0)) return "Same signs: add the sizes and keep the sign.";
+    return "Different signs: subtract the sizes, and take the sign of the bigger size.";
+  }
+  function drawAdd(P, sol){
+    var a = sol.a, b = sol.b, c = a + b, ctx = Ctx();
+    addRow(ctx, exprH(P), -1);
+    var r = addWork(ctx, a, b, { counters:Math.abs(a) <= 20 && Math.abs(b) <= 20 });
+    addFigs(ctx, a, b, r, false);
+    var n = finish(ctx);
+    band('<span class="k">Answer</span><span class="v">' + nH(c) + "</span>", [
+      "<b>" + n + "</b> step" + (n === 1 ? "" : "s") + ". " + ruleFact(a, b),
+      b ? "On the number line: from <b>" + nH(a) + "</b>, " + mag(b) + " to the " + (b > 0 ? "right" : "left") + "." : "Nothing to move."]);
+    $("closer").innerHTML = "<b>Check</b> by undoing it: take <b>" + nH(b) + "</b> back off. <b>" + nH(c) + op("−") + nH(b, true) + " = " + nH(a) + "</b>"
+      + ok() + " — back where you started.";
+    return n;
+  }
+
+  /* ---------- subtracting: add the opposite ---------- */
+  function drawSub(P, sol){
+    var a = sol.a, b = sol.b, nb = -b || 0, c = a - b || 0, ctx = Ctx(), B = Math.abs(b);
+    addRow(ctx, exprH(P), -1);
+    if (b === 0){
+      var s = addStep(ctx, [["e", "Take away", "Taking away <b>0</b> takes away nothing, so you still have <b>" + nH(a) + "</b>."]]);
+      addRow(ctx, nH(a), s, ["e", "minus 0"], { result:true });
+      ctx.figs.push({ step:-1, cap:'<b class="lead">On the number line.</b> Subtracting 0 doesn’t move you: you stay on <b>' + nH(a) + "</b>.",
+        html:nlSVG({ dots:[{ v:a, kind:"end", lab:true, step:0 }], label:"Number line at " + nT(a) }) });
+      var n0 = finish(ctx);
+      band('<span class="k">Answer</span><span class="v">' + nH(a) + "</span>", ["<b>1</b> step. Taking away 0 changes nothing."]);
+      $("closer").innerHTML = "<b>Check:</b> <b>" + nH(a) + " + 0 = " + nH(a) + "</b>" + ok();
+      return n0;
+    }
+    var drawT = Math.abs(a) <= 20 && B <= 20, T = takeAway(a, b), k = T.k;
+    var why = b < 0
+      ? "Why does taking away a negative make the answer go <i>up</i>? " + (drawT ? "Look at the counters: start" : "Picture counters: start") + " with <b>" + nH(a) + "</b>. "
+        + (k ? "There " + (T.need - k === 1 ? "is" : "are") + " not enough negatives to take " + mag(b) + " away, so first add " + plural(k, "zero pair")
+             + " — each is +1 and " + nH(-1) + ", worth 0 together, so the value doesn’t change. " : "")
+        + "Now take away " + plural(b, "negative") + ". Removing " + nH(-1) + "s leaves what’s left " + mag(b) + " <i>higher</i> — exactly the same as adding " + mag(nb) + "."
+      : "Why? Taking away " + mag(b) + " and adding " + nH(nb) + " do the same thing: both move you " + mag(b) + " to the left on the number line."
+        + (k ? " With counters there aren’t enough positives to take " + mag(b) + " away, so first add " + plural(k, "zero pair")
+             + " (worth 0 — the value doesn’t change), then take " + plural(b, "positive") + " away." : "");
+    var s0 = addStep(ctx, [["e", "Opposite", "Subtracting is the same as <strong>adding the opposite</strong>. The opposite of <b>" + nH(b) + "</b> is <b>" + nH(nb)
+      + "</b>, so <b>" + nH(a) + op("−") + nH(b, true) + "</b> becomes <b>" + nH(a) + op("+") + nH(nb, true) + "</b>."]], [why]);
+    addRow(ctx, nH(a) + op("+") + nH(nb, true), s0, ["e", "add the opposite"]);
+    var r = addWork(ctx, a, nb, { counters:Math.abs(a) <= 20 && B <= 20, sub:true });
+    ctx.steps[r.last].asides.push(KCC);
+    if (drawT){
+      ctx.figs.push({ step:s0, cap:'<b class="lead">Taking away, with counters.</b> Start with <b>' + nH(a) + "</b>"
+        + (a ? ": " + plural(a, a > 0 ? "positive" : "negative") + ". " : ": no counters at all. ")
+        + "To take away <b>" + nH(b) + "</b> you need " + plural(b, b > 0 ? "positive" : "negative") + "."
+        + (k ? " There " + (T.need - k === 1 ? "is only 1" : T.need - k ? "are only " + (T.need - k) : "are none") + ", so add " + plural(k, "zero pair") + " (the dashed box) — worth 0, so the value stays the same." : "")
+        + " Cross out the ones taken away. What’s left is the answer: <b>" + nH(c) + "</b>.",
+        html:takeAwaySVG(a, b) });
+    } else {
+      ctx.figs.push({ step:s0, cap:'<b class="lead">Counters skipped.</b> With ' + mag(Math.max(Math.abs(a), B)) + " counters it’s too many to draw. "
+        + "The idea is the same: taking away " + nH(b) + " leaves you where adding " + nH(nb) + " would." });
+    }
+    addFigs(ctx, a, nb, r, true);
+    var n = finish(ctx);
+    band('<span class="k">Answer</span><span class="v">' + nH(c) + "</span>", [
+      "<b>" + n + "</b> steps. Same as <b>" + nH(a) + op("+") + nH(nb, true) + "</b>: subtracting is adding the opposite.",
+      c === 0 ? "A number minus itself is 0." : "<b>" + nH(a) + "</b> is " + mag(c) + " to the " + (c < 0 ? "left" : "right") + " of <b>" + nH(b) + "</b> on the number line, so the answer is "
+        + (c < 0 ? "negative" : "positive") + "."]);
+    $("closer").innerHTML = "<b>Check</b> by adding back what was taken away: <b>" + nH(c) + op("+") + nH(b, true) + " = " + nH(a) + "</b>" + ok() + " — that’s where you started.";
+    return n;
+  }
+
+  /* ---------- multiplying and dividing ---------- */
+  function repeatH(b, n){ var p = []; for (var i = 0; i < n; i++) p.push(nH(b, true)); return p.join(op("+")); }
+  function multJumps(a, b, stepJ, stepEnd){
+    var k, sz, flip = false;
+    if (a > 0){ k = a; sz = b; } else if (b > 0){ k = b; sz = a; } else { k = -a; sz = b; flip = true; }
+    if (k > 10 || Math.abs(k * sz) > 120) return null;
+    var jumps = [], i, lbl = (sz > 0 ? "+" : "−") + mag(sz);
+    for (i = 0; i < k; i++) jumps.push({ from:i * sz, to:(i + 1) * sz, label:lbl, step:stepJ, cls:flip ? "jg" : null, dash:flip, force:i === 0 });
+    var dots = [{ v:0, kind:"start", step:stepJ }];
+    if (flip){
+      jumps.push({ from:k * sz, to:-k * sz, label:"opposite", below:true, cls:"jo", step:stepEnd, force:true });
+      dots.push({ v:k * sz, kind:"ghost", lab:true, step:stepJ });
+    }
+    dots.push({ v:a * b, kind:"end", lab:true, step:stepEnd });
+    return { k:k, sz:sz, flip:flip, svg:nlSVG({ jumps:jumps, dots:dots, label:k + " jumps of " + nT(sz) + (flip ? ", then the opposite" : "") }) };
+  }
+  function drawMul(P, sol){
+    var a = sol.a, b = sol.b, c = sol.ans.v, A = Math.abs(a), B = Math.abs(b), ctx = Ctx();
+    addRow(ctx, exprH(P), -1);
+    if (a === 0 || b === 0){
+      var s = addStep(ctx, [["m", "Zero", "Anything times <b>0</b> is <b>0</b>: " + (a === 0 ? "0 groups of anything is nothing." : plural(a, "group") + " of 0 is still nothing.")
+        + " And 0 is neither positive nor negative, so there’s no sign to work out."]]);
+      addRow(ctx, nH(0), s, ["m", "times 0"], { result:true });
+      var z = finish(ctx);
+      band('<span class="k">Answer</span><span class="v">' + nH(0) + "</span>", ["<b>1</b> step. Anything times 0 is 0."]);
+      $("closer").innerHTML = "<b>Check:</b> 0 has no sign, so no sign rule is needed. <b>" + exprT(P) + " = 0</b>" + ok();
+      return z;
+    }
+    var negs = (a < 0 ? 1 : 0) + (b < 0 ? 1 : 0);
+    var s0 = addStep(ctx, [["m", "Signs", negs === 0 ? "Both numbers are positive, so the answer is positive — this is the times table you already know."
+      : negs === 1 ? "One number is negative and one is positive — <strong>different signs</strong> — so the answer is <strong>negative</strong>."
+      : "Both numbers are negative — the <strong>same sign</strong> — so the answer is <strong>positive</strong>."]]);
+    var inner = "<span>" + mag(a) + "</span>" + op("×") + "<span>" + mag(b) + "</span>";
+    addRow(ctx, negs === 1 ? '<span class="ng">−(</span>' + inner + '<span class="ng">)</span>' : inner, s0,
+      ["m", negs === 0 ? "pos × pos = pos" : negs === 1 ? "different signs → negative" : "neg × neg = pos"]);
+    var sWhy = -1;
+    if (negs){
+      if (a > 0){
+        sWhy = addStep(ctx, [["e", "Why", "<b>" + nH(a) + op("×") + nH(b, true) + "</b> means <strong>" + plural(a, "group") + " of " + nH(b) + "</strong>"
+          + (A <= 6 ? ": <b>" + repeatH(b, A) + " = " + nH(c) + "</b>" : "") + ". Adding negatives keeps moving left, so the answer ends up below 0."]]);
+      } else {
+        var up = b < 0;
+        sWhy = addStep(ctx, [["e", "Why", "Look at the pattern in the table: each time the first number goes down by 1, the answer goes <strong>" + (up ? "up" : "down")
+          + "</strong> by " + mag(b) + ". Keep the pattern going past 0 and the answers " + (up ? "climb above 0 — so a negative times a negative is <strong>positive</strong>."
+          : "drop below 0 — so a negative times a positive is <strong>negative</strong>.")]],
+          up ? ["Another way to see it: <b>" + nH(a) + op("×") + nH(b, true) + "</b> is the <strong>opposite</strong> of <b>" + mag(a) + op("×") + nH(b, true) + " = " + nH(A * b) + "</b>, and the opposite of "
+            + nH(A * b) + " is " + nH(c) + "."]
+             : ["You can also swap them: <b>" + nH(a) + op("×") + nH(b, true) + " = " + nH(b) + op("×") + nH(a, true) + "</b>, which is " + plural(b, "group") + " of " + nH(a) + "."]);
+      }
+    }
+    var sM = addStep(ctx, [["a", "Multiply", "Now multiply the sizes: <b>" + mag(a) + " × " + mag(b) + " = " + mag(c) + "</b>. "
+      + (negs === 1 ? "With the negative sign from step 1: " : "It’s positive, so: ") + "<b>" + nH(c) + "</b>."]]);
+    addRow(ctx, nH(c), sM, null, { result:true });
+    ctx.figs.push({ step:s0, cap:'<b class="lead">The sign rule.</b> Multiplying: same signs give a positive, different signs give a negative. This problem is the highlighted one.',
+      html:'<div class="figs2">' + signTable(a, b, "×") + (a < 0 && negs ? patternHTML(a, b) : "") + "</div>" });
+    var J = multJumps(a, b, sWhy >= 0 ? sWhy : sM, sM);
+    if (J) ctx.figs.push({ step:-1, cap:'<b class="lead">Repeated jumps.</b> ' + (J.flip
+        ? "First " + J.k + " jumps of <b>" + nH(J.sz) + "</b> from 0 (dashed) — that’s <b>" + mag(J.k) + op("×") + nH(J.sz, true) + " = " + nH(J.k * J.sz) + "</b>. "
+          + "Multiplying by a negative instead of a positive flips it to the <strong>opposite</strong> side of 0: <b>" + nH(c) + "</b>."
+        : (a < 0 ? "Swap the order (" + nH(b) + op("×") + nH(a, true) + "): " : "") + J.k + " jumps of <b>" + nH(J.sz) + "</b> from 0 land on <b>" + nH(c) + "</b>."),
+      html:J.svg });
+    var n = finish(ctx);
+    band('<span class="k">Answer</span><span class="v">' + nH(c) + "</span>", [
+      "<b>" + n + "</b> steps. " + (negs === 1 ? "Different signs → negative." : negs === 2 ? "Negative × negative → positive." : "Positive × positive → positive."),
+      "Sizes: <b>" + mag(a) + " × " + mag(b) + " = " + mag(c) + "</b>."]);
+    $("closer").innerHTML = "<b>Check</b> by dividing back: <b>" + nH(c) + op("÷") + nH(b, true) + " = " + nH(a) + "</b>" + ok();
+    return n;
+  }
+  function drawDiv(P, sol){
+    var a = sol.a, b = sol.b, A = Math.abs(a), B = Math.abs(b), ctx = Ctx(), ans = sol.ans, even = ans.type === "int";
+    var cR = even ? { n:ans.v, d:1 } : { n:ans.n, d:ans.d };
+    addRow(ctx, exprH(P), -1);
+    addStep(ctx, [["p", "Think", "Division undoes multiplication. <b>" + nH(a) + op("÷") + nH(b, true) + "</b> asks: what number times <b>" + nH(b) + "</b> makes <b>" + nH(a) + "</b>?"]]);
+    if (a === 0){
+      var sz = addStep(ctx, [["m", "Zero", "<b>0 ÷ " + nH(b, true) + " = 0</b>, because <b>0 × " + nH(b, true) + " = 0</b>. 0 has no sign, so there’s nothing else to decide."]]);
+      addRow(ctx, nH(0), sz, ["m", "0 divided"], { result:true });
+      var z = finish(ctx);
+      band('<span class="k">Answer</span><span class="v">' + nH(0) + "</span>", ["<b>2</b> steps. 0 divided by any number (except 0) is 0."]);
+      $("closer").innerHTML = "<b>Check</b> by multiplying back: <b>0" + op("×") + nH(b, true) + " = 0</b>" + ok();
+      return z;
+    }
+    var negs = (a < 0 ? 1 : 0) + (b < 0 ? 1 : 0), cneg = negs === 1;
+    var s1 = addStep(ctx, [["m", "Signs", "Dividing uses the same sign rule as multiplying: " + (negs === 1 ? "<strong>different signs → negative</strong>."
+      : negs === 2 ? "<strong>both negative → positive</strong>." : "both positive → positive.")]],
+      negs ? ["Why? The answer times <b>" + nH(b) + "</b> has to make <b>" + nH(a) + "</b>. Multiplying by a " + (b < 0 ? "negative flips the sign" : "positive keeps the sign")
+        + ", so to land on a " + (a < 0 ? "negative" : "positive") + " number the answer must be <strong>" + (cneg ? "negative" : "positive") + "</strong>."] : []);
+    var inner = "<span>" + mag(a) + "</span>" + op("÷") + "<span>" + mag(b) + "</span>";
+    addRow(ctx, cneg ? '<span class="ng">−(</span>' + inner + '<span class="ng">)</span>' : inner, s1,
+      ["m", negs === 0 ? "pos ÷ pos = pos" : negs === 1 ? "different signs → negative" : "neg ÷ neg = pos"]);
+    var sD, q = Math.floor(A / B), rm = A % B;
+    if (even){
+      sD = addStep(ctx, [["a", "Divide", "Divide the sizes: <b>" + mag(a) + " ÷ " + mag(b) + " = " + mag(ans.v) + "</b>. With the sign: <b>" + nH(ans.v) + "</b>."]]);
+    } else {
+      var rd = rat(A, B);
+      sD = addStep(ctx, [["a", "Divide", "Divide the sizes: <b>" + mag(a) + " ÷ " + mag(b) + "</b> doesn’t come out even — "
+        + (q === 0 ? mag(b) + " doesn’t fit into " + mag(a) + " even once" : "it’s " + mag(q) + " remainder " + mag(rm)) + ". So the answer is <strong>not an integer</strong>. "
+        + "Write it as a fraction, <b>" + mag(a) + "/" + mag(b) + (rd.d !== B ? " = " + rd.n + "/" + rd.d : "") + "</b>" + (rd.d !== B ? " in lowest terms" : "")
+        + ", which is <b>" + decStr(rd.n, rd.d) + "</b> as a decimal. With the sign: <b>" + rH(cR) + "</b>."]],
+        ["Adding, subtracting or multiplying integers always gives an integer. Dividing is the one that can land <i>between</i> two integers — here, between " + nH(Math.floor(cR.n / cR.d)) + " and " + nH(Math.floor(cR.n / cR.d) + 1) + "."]);
+    }
+    addRow(ctx, rH(cR), sD, null, { result:true });
+    ctx.figs.push({ step:s1, cap:'<b class="lead">The sign rule.</b> Dividing follows the same rule as multiplying. This problem is the highlighted one.', html:signTable(a, b, "÷") });
+    if (even && A <= 120 && Math.abs(ans.v) <= 12){
+      var k = Math.abs(ans.v), stp = a > 0 ? B : -B, jumps = [];
+      for (var i = 0; i < k; i++) jumps.push({ from:i * stp, to:(i + 1) * stp, label:(stp > 0 ? "+" : "−") + mag(stp), step:sD, force:i === 0 });
+      var fwd = (stp > 0) === (b > 0);
+      ctx.figs.push({ step:-1, cap:'<b class="lead">How many jumps?</b> How many jumps of <b>' + nH(b) + "</b> get from 0 to <b>" + nH(a) + "</b>? "
+        + (fwd ? "It takes " + k + " — so the answer is <b>" + nH(ans.v) + "</b>."
+               : "Jumps of " + nH(b) + " go " + (b > 0 ? "right" : "left") + ", but " + nH(a) + " is to the " + (a > 0 ? "right" : "left") + ", so you need " + k + " jumps <strong>backwards</strong> — that’s <b>" + nH(ans.v) + "</b>."),
+        html:nlSVG({ jumps:jumps, dots:[{ v:0, kind:"start", step:sD }, { v:a, kind:"end", lab:true, step:sD }], label:k + " jumps of " + nT(B) + " from 0 to " + nT(a) }) });
+    }
+    var n = finish(ctx), facts = ["<b>" + n + "</b> steps. " + (negs === 1 ? "Different signs → negative." : negs === 2 ? "Negative ÷ negative → positive." : "Positive ÷ positive → positive.")];
+    if (!even){
+      var sg = cR.n < 0 ? "−" : "", an = Math.abs(cR.n);
+      facts.push("It doesn’t come out even, so it isn’t an integer. As a decimal: <b>" + decStr(cR.n, cR.d) + "</b>");
+      if (an > cR.d) facts.push("As a mixed number: <b>" + sg + Math.floor(an / cR.d) + " " + (an % cR.d) + "/" + cR.d + "</b>");
+    } else facts.push("Sizes: <b>" + mag(a) + " ÷ " + mag(b) + " = " + mag(ans.v) + "</b>.");
+    band('<span class="k">Answer</span><span class="v">' + rH(cR) + "</span>", facts);
+    $("closer").innerHTML = "<b>Check</b> by multiplying back: <b>" + rH(cR, true) + op("×") + nH(b, true) + " = " + nH(a) + "</b>" + ok();
+    return n;
+  }
+
+  /* ---------- absolute value, and putting numbers in order ---------- */
+  function drawAbs(P, sol){
+    var I = sol.info, x = I.x, X = Math.abs(x), ctx = Ctx(), node = P.atoms[0];
+    addRow(ctx, I.typedAbs ? nodeH(node, true) : '<span class="bar">|</span>' + nH(x) + '<span class="bar">|</span>', -1);
+    var innerPlain = nodePlain(I.inner);
+    var s0 = addStep(ctx, [["p", "Place", (I.typedAbs ? "" : "You typed just one number, so here’s its absolute value. ")
+      + (innerPlain ? "" : "Inside the bars, <b>" + rawH(I.inner) + "</b> works out to <b>" + nH(x) + "</b>. ") + "Find <b>" + nH(x) + "</b> on the number line."]]);
+    var asides = [];
+    if (x < 0) asides.push("A distance can’t be negative — you can’t walk " + nH(x) + " steps. So an absolute value is <strong>never negative</strong>. "
+      + "The opposite, <b>" + mag(x) + "</b>, is the same distance on the other side of 0, so <b>|" + mag(x) + "| = " + mag(x) + "</b> too.");
+    else if (x > 0) asides.push("<b>" + nH(-x) + "</b> is the same distance on the other side of 0, so <b>|" + nH(-x) + "| = " + mag(x) + "</b> too.");
+    var s1 = addStep(ctx, [["a", "Distance", "<strong>Absolute value</strong> means distance from 0. " + (x === 0 ? "<b>0</b> is 0 steps from itself, so <b>|0| = 0</b>."
+      : "<b>" + nH(x) + "</b> is " + plural(x, "step") + " from 0, so <b>|" + nH(x) + "| = " + mag(x) + "</b>.")]], asides);
+    if (I.outer){
+      addRow(ctx, '<span class="opp">−</span><span class="pg">(</span>' + mag(x) + '<span class="pg">)</span>', s1, ["a", "distance from 0"]);
+      var s2 = addStep(ctx, [["e", "Opposite", "The minus sign <strong>outside</strong> the bars means “the opposite of”. The opposite of " + mag(x) + " is <b>" + nH(I.result) + "</b>."]],
+        ["So <b>−|" + nT(x) + "|</b> is negative even though an absolute value never is: the bars finish first, then the minus outside flips it."]);
+      addRow(ctx, nH(I.result), s2, ["e", "the opposite"], { result:true });
+    } else addRow(ctx, nH(X), s1, ["a", "distance from 0"], { result:true });
+    var dots = [{ v:x, kind:"pt", lab:true, step:s0 }], brs = [];
+    if (x !== 0){
+      brs.push({ from:0, to:x, label:plural(x, "step"), step:s1 });
+      brs.push({ from:0, to:-x, label:"also " + mag(x), step:s1, dash:true });
+      dots.push({ v:-x, kind:"ghost", lab:true, step:s1 });
+    }
+    ctx.figs.push({ step:-1, cap:'<b class="lead">Distance from 0.</b> ' + (x === 0 ? "0 is right at zero: no distance at all."
+      : "The solid bracket measures from 0 to <b>" + nH(x) + "</b>: " + plural(x, "step") + ". The dashed one shows <b>" + nH(-x) + "</b> is just as far on the other side."),
+      html:nlSVG({ dots:dots, brackets:brs, label:"Distance from 0 to " + nT(x) + " is " + mag(x) }) });
+    var n = finish(ctx);
+    band('<span class="k">Answer</span><span class="v">' + nH(I.result) + "</span>", [
+      "<b>" + nH(x) + "</b> is " + plural(x, "step") + " from 0.",
+      x ? "<b>" + nH(x) + "</b> and <b>" + nH(-x) + "</b> are opposites, and they have the same absolute value." : "0 is the only number whose absolute value is 0."]);
+    $("closer").innerHTML = x ? "<b>Check:</b> <b>" + nH(x) + "</b> and <b>" + nH(-x) + "</b> are both " + plural(x, "step") + " from 0, so <b>|" + nH(x) + "| = |" + nH(-x) + "| = " + mag(x) + "</b>" + ok()
+                              : "<b>Check:</b> 0 sits at zero, so its distance from 0 is <b>0</b>" + ok();
+    return n;
+  }
+  function drawCompare(P, sol){
+    var vals = P.vals, s = sol.sorted, n = vals.length, ctx = Ctx();
+    addRow(ctx, exprH(P), -1);
+    var hasZero = vals.indexOf(0) >= 0;
+    var s0 = addStep(ctx, [["p", "Place", "Put each number on the number line: negatives to the left of 0, positives to the right" + (hasZero ? ", and 0 in the middle" : "") + "."]]);
+    var asides = [], negs = s.filter(function(v){ return v < 0; }), dup = null;
+    for (var i = 1; i < s.length; i++) if (s[i] === s[i - 1]) dup = s[i];
+    if (negs.length >= 2 && negs[0] !== negs[negs.length - 1]){
+      var p = negs[0], q = negs[negs.length - 1];
+      asides.push("Careful with negatives: <b>" + nH(p) + "</b> is <i>less</i> than <b>" + nH(q) + "</b>, even though " + mag(p) + " is more than " + mag(q) + ". "
+        + nH(p) + " is further left — further below 0 — like " + mag(p) + "° below zero being colder than " + mag(q) + "° below.");
+    } else if (negs.length && s[s.length - 1] > 0) asides.push("Every negative number is less than every positive number — negatives are all to the left of 0.");
+    if (dup !== null) asides.push("<b>" + nH(dup) + "</b> is in the list more than once. Equal numbers sit on the same spot, so they get an = sign.");
+    var s1 = addStep(ctx, [["a", "Read", "Numbers get bigger as you go right, so read the dots from <strong>left to right</strong>: <b>" + s.map(function(v){ return nH(v); }).join(", ")
+      + "</b>. That’s least to greatest."]], asides);
+    var ansH, last = s1;
+    if (n === 2){
+      var x = vals[0], y = vals[1], rel = relOf(x, y), flip = rel === "<" ? ">" : rel === ">" ? "<" : "=";
+      last = addStep(ctx, [["m", "Compare", "So <b>" + nH(x) + op(rel) + nH(y) + "</b>" + (rel === "<" ? " — say it “" + nT(x) + " is less than " + nT(y) + "”."
+        : rel === ">" ? " — say it “" + nT(x) + " is greater than " + nT(y) + "”." : " — they’re equal.")
+        + (rel !== "=" ? " The same fact the other way round: <b>" + nH(y) + op(flip) + nH(x) + "</b>." : "")]],
+        rel !== "=" ? ["The open side of <b>&lt;</b> or <b>&gt;</b> faces the bigger number; the point faces the smaller one."] : []);
+      ansH = nH(x) + op(rel) + nH(y);
+      addRow(ctx, ansH, last, ["m", rel === "=" ? "equal" : "left is smaller"], { result:true, eq:"→" });
+    } else {
+      ansH = relChainH(s);
+      addRow(ctx, ansH, s1, ["a", "least to greatest"], { result:true, eq:"→" });
+    }
+    var order = s.map(function(v, j){ return { v:v, n:j + 1, step:s1 }; });
+    ctx.figs.push({ step:-1, cap:'<b class="lead">On the number line.</b> Each dot is one of the numbers. Left is always smaller, so the order badges count from the left.',
+      html:nlSVG({ dots:vals.map(function(v){ return { v:v, kind:"pt", above:nT(v), step:s0 }; }), order:order, label:"Number line with " + exprT(P) }) });
+    var nn = finish(ctx), facts = ["Least: <b>" + nH(s[0]) + "</b> &middot; Greatest: <b>" + nH(s[n - 1]) + "</b>"];
+    if (n > 2) facts.push("Greatest to least: <b>" + s.slice().reverse().map(function(v){ return nH(v); }).join(", ") + "</b>");
+    band('<span class="k">' + (n === 2 ? "Answer" : "In order") + '</span><span class="v">' + ansH + "</span>", facts);
+    $("closer").innerHTML = "<b>Check:</b> the first one, <b>" + nH(s[0]) + "</b>, is the furthest left on the line, and the last one, <b>" + nH(s[n - 1])
+      + "</b>, is the furthest right" + ok();
+    return nn;
+  }
+
+  /* ---------- chains, left to right ---------- */
+  var OPCLS = { "+":"a", "−":"e", "×":"m", "÷":"m" }, OPTAG = { "+":"Add", "−":"Subtract", "×":"Multiply", "÷":"Divide" };
+  function addRuleT(a, b, c){
+    if (a === 0 || b === 0) return (b === 0 ? "adding 0 changes nothing" : "0 plus a number is just that number") + ": <b>" + nH(c) + "</b>.";
+    if ((a < 0) === (b < 0)) return "same signs, so add the sizes (" + mag(a) + " + " + mag(b) + " = " + mag(c) + ") and keep the sign: <b>" + nH(c) + "</b>.";
+    if (c === 0) return "a number plus its opposite is <b>0</b>.";
+    var big = Math.abs(a) > Math.abs(b) ? a : b;
+    return "different signs, so subtract the sizes (" + mag(Math.max(Math.abs(a), Math.abs(b))) + " − " + mag(Math.min(Math.abs(a), Math.abs(b))) + " = " + mag(c)
+      + ") and take the sign of the bigger size (" + nH(big) + " is " + (big < 0 ? "negative" : "positive") + "): <b>" + nH(c) + "</b>.";
+  }
+  function mulRuleT(a, o, b, c){
+    if (a === 0) return "0 " + (o === "×" ? "times anything" : "divided by any number") + " is <b>0</b>.";
+    if (b === 0) return "anything times 0 is <b>0</b>.";
+    var negs = (a < 0 ? 1 : 0) + (b < 0 ? 1 : 0);
+    return (negs === 1 ? "one negative, so the answer is negative" : negs === 2 ? "two negatives make a positive" : "both positive, so positive")
+      + "; " + mag(a) + " " + o + " " + mag(b) + " = " + mag(c) + ": <b>" + nH(c) + "</b>.";
+  }
+  function tidyT(n){
+    var s = stripPar(n), v = nodeVal(n);
+    if (s.t === "abs") return "<b>" + rawH(n) + "</b> is an absolute value — the distance of <b>" + nH(nodeVal(s.a)) + "</b> from 0 — so it’s <b>" + nH(v) + "</b>.";
+    if (s.t === "neg" && stripPar(s.a).t === "abs") return "<b>" + rawH(n) + "</b>: the bars give " + mag(v) + ", and the minus outside makes it the opposite: <b>" + nH(v) + "</b>.";
+    return "<b>" + rawH(n) + "</b> means the opposite of <b>" + nH(nodeVal(s.a)) + "</b>, which is <b>" + nH(v) + "</b>.";
+  }
+  function chainRow(items, ops, hl){
+    var parts = items.map(function(it, i){
+      var t = it.html ? (i > 0 && it.wrap ? '<span class="pg">(</span>' + it.html + '<span class="pg">)</span>' : it.html) : nH(it.v, i > 0);
+      if (it.hl) t = '<span class="hl c-' + it.hl + '">' + t + "</span>";
+      if (it.fresh) t = '<span class="fresh c-' + it.fresh + '">' + t + "</span>";
+      return t;
+    });
+    var h = parts[0], i;
+    if (hl && parts.length > 1){ h = '<span class="hl c-' + hl + '">' + parts[0] + op(ops[0]) + parts[1] + "</span>"; i = 2; }
+    else i = 1;
+    for (; i < parts.length; i++) h += op(ops[i - 1]) + parts[i];
+    return h;
+  }
+  function drawChain(P, sol){
+    var ctx = Ctx(), ops = P.ops.slice();
+    var items = P.atoms.map(function(n){ return nodePlain(n) ? { v:nodeVal(n) } : { v:nodeVal(n), html:rawH(n), node:n, wrap:stripPar(n).t === "neg" }; });
+    var tidy = [];
+    items.forEach(function(it, i){ if (it.html) tidy.push(i); });
+    function nextHL(list){
+      for (var i = 0; i < list.length; i++) if (list[i].html){ list[i].hl = "e"; return null; }
+      return ops.length ? OPCLS[ops[0]] : null;
+    }
+    function snap(list){ return list.map(function(it){ var c = {}; for (var k in it) c[k] = it[k]; return c; }); }
+    var cur = snap(items), hl = nextHL(cur);
+    addRow(ctx, chainRow(cur, ops, hl), -1);
+    tidy.forEach(function(idx){
+      var it = items[idx], st = addStep(ctx, [["e", "Tidy", "Before going left to right, tidy up: " + tidyT(it.node)]]);
+      cur = snap(cur); cur.forEach(function(c){ delete c.hl; delete c.fresh; });
+      cur[idx] = { v:it.v, fresh:"e" };
+      var h2 = nextHL(cur);
+      addRow(ctx, chainRow(cur, ops, h2), st, ["e", "tidy"]);
+    });
+    var firstOpStep = ctx.steps.length, jumps = [], at = cur[0].v, pos = [], neg = [];
+    if (ops[0] === "+" || ops[0] === "−") (at < 0 ? neg : pos).push(at);
+    sol.recs.forEach(function(r, k){
+      var o = r.op, L = "<b>" + nH(r.l) + op(o) + nH(r.r, true) + "</b>: ", txt;
+      if (o === "+") txt = L + addRuleT(r.l, r.r, r.res);
+      else if (o === "−") txt = L + "subtracting " + nH(r.r, true) + " is adding its opposite, so it’s <b>" + nH(r.l) + op("+") + nH(-r.r || 0, true) + "</b> — " + addRuleT(r.l, -r.r || 0, r.res);
+      else txt = L + mulRuleT(r.l, o, r.r, r.res);
+      var st = addStep(ctx, [[OPCLS[o], OPTAG[o], (k === 0 && P.ops.length > 1 ? "Go left to right. " : "") + txt]],
+        k === 0 && o === "−" && r.r < 0 && P.ops.length > 1 ? ["Subtracting a negative moves you <strong>right</strong>, just like adding a positive."] : []);
+      cur = [{ v:r.res, fresh:ops.length > 1 ? OPCLS[o] : null }].concat(snap(cur.slice(2)));
+      cur.forEach(function(c, i){ if (i) { delete c.fresh; delete c.hl; } });
+      ops.shift();
+      addRow(ctx, chainRow(cur, ops, ops.length ? OPCLS[ops[0]] : null), st, ops.length ? null : null, { result:!ops.length });
+      if (o === "+" || o === "−"){
+        var mv = o === "+" ? r.r : -r.r || 0;
+        if (mv) jumps.push({ from:r.l, to:r.res, label:(mv > 0 ? "+" : "−") + mag(mv), step:st });
+        (mv < 0 ? neg : pos).push(mv);
+      }
+    });
+    var n = ctx.steps.length, last = sol.ans.v, as = P.ops[0] === "+" || P.ops[0] === "−";
+    if (as){
+      var vs = [at].concat(sol.recs.map(function(r){ return r.res; })), span = Math.max.apply(null, vs.concat(0)) - Math.min.apply(null, vs.concat(0));
+      if (span <= 400 && sol.recs.length <= 8)
+        ctx.figs.push({ step:-1, cap:'<b class="lead">On the number line.</b> Start at <b>' + nH(at) + "</b> and make one jump per step: right for adding a positive "
+          + "(or subtracting a negative), left for adding a negative (or subtracting a positive).",
+          html:nlSVG({ jumps:jumps, dots:[{ v:at, kind:"start", lab:true, step:firstOpStep }, { v:last, kind:"end", lab:true, step:n - 1 }], label:"Number line for the chain" }) });
+    }
+    finish(ctx);
+    var facts = ["<b>" + n + "</b> step" + (n === 1 ? "" : "s") + ", left to right" + (tidy.length ? ", after tidying " + tidy.length + " number" + (tidy.length === 1 ? "" : "s") : "") + "."];
+    var terms = [at].concat(sol.recs.map(function(r){ return r.op === "+" ? r.r : -r.r || 0; }));
+    if (as) facts.push("Same as adding: <b>" + terms.map(function(t, i){ return nH(t, i > 0); }).join(op("+")) + "</b>");
+    band('<span class="k">Answer</span><span class="v">' + nH(last) + "</span>", facts);
+    var closer;
+    if (as){
+      var ps = terms.filter(function(t){ return t > 0; }), ns = terms.filter(function(t){ return t < 0; });
+      var P1 = ps.reduce(function(x, y){ return x + y; }, 0), N1 = ns.reduce(function(x, y){ return x + y; }, 0);
+      closer = "<b>Check</b> another way: turn every subtraction into adding the opposite, then add the positives and the negatives separately. "
+        + (ps.length ? "Positives: <b>" + ps.map(function(t){ return nH(t); }).join(" + ") + " = " + nH(P1) + "</b>. " : "There are no positives. ")
+        + (ns.length ? "Negatives: <b>" + ns.map(function(t, i){ return nH(t, i > 0); }).join(" + ") + " = " + nH(N1) + "</b>. " : "There are no negatives. ")
+        + "Together: <b>" + nH(P1) + op("+") + nH(N1, true) + " = " + nH(P1 + N1) + "</b>" + ok();
+    } else {
+      var vals = [at].concat(sol.recs.map(function(r){ return r.r; })), nz = vals.indexOf(0) >= 0, nneg = vals.filter(function(v){ return v < 0; }).length;
+      closer = nz ? "<b>Check:</b> there’s a 0 being multiplied or divided, so the answer has to be <b>0</b>" + ok()
+        : "<b>Check the sign</b> another way: there " + (nneg === 1 ? "is 1 negative number" : "are " + nneg + " negative numbers") + " — "
+          + (nneg % 2 ? "an odd number, so the answer is negative" : "an even number, so the answer is positive") + ": <b>" + nH(last) + "</b>" + ok();
+    }
+    $("closer").innerHTML = closer;
+    return n;
+  }
+
+  /* ===================== render ===================== */
+  var DRAW = { add:drawAdd, sub:drawSub, abs:null, chain:drawChain };
+  function render(){
+    var total = 0, P = null, raw = S.inputs[S.mode];
+    S.cur = null;
+    try {
+      P = parseQ(raw);
+      if (P.kind === "pemdas") throw new UserErr(pemdasMsg(P));
+      if (!fits(S.mode, P)){
+        if (P.kind === "expr" && !P.ops.length && nodePlain(P.atoms[0])) throw new UserErr("That’s just one number, <b>" + nH(P.vals[0]) + "</b>. Add an operation, like <b>"
+          + nH(P.vals[0]) + " + 3</b> — or, to find its absolute value, use the <b>Absolute value &amp; compare</b> tab.");
+        switchTo(infer(P));
+      }
+      P.src = raw;
+      var sol = solve(P, S.mode);
+      S.good[S.mode] = raw;
+      if (S.mode === "abs") total = sol.kind === "compare" ? drawCompare(P, sol) : drawAbs(P, sol);
+      else if (S.mode === "muldiv") total = sol.op === "×" ? drawMul(P, sol) : drawDiv(P, sol);
+      else total = DRAW[S.mode](P, sol);
+      S.cur = { P:P, sol:sol, mode:S.mode };
+    } catch (e){
+      if (e && e.user){ total = fail(e.user); if (P && P.kind === "pemdas") P = null; }
+      else throw e;
+    }
+    syncURL(S.cur ? S.cur.P : (P && P.kind === "expr" && fits(S.mode, P) ? P : null));
+    var key = S.cur ? S.mode + "|" + exprA(S.cur.P) : "";
+    if (key !== S.ck.key){ S.ck.key = key; resetCheck(); }
+    var stepMode = S.practice === "step";
+    $("stepper").hidden = !stepMode || !total;
+    if (total){
+      if (S.step > total) S.step = total;
+      if (S.step < 1) S.step = 1;
+      if (stepMode){
+        $("stepCount").textContent = S.step + " of " + total;
+        $("prevBtn").disabled = S.step <= 1;
+        $("nextBtn").disabled = S.step >= total;
+      }
+      veil(total);
+      $("statusLine").textContent = "";
+    }
+    paintCheck();
+  }
+  function switchTo(m){
+    var old = S.mode, txt = S.inputs[old];
+    S.inputs[m] = txt;
+    S.inputs[old] = S.good[old] || EX[old][old === "abs" ? 3 : 0];
+    S.mode = m;
+    paintMode(true);
+  }
+
+  /* ===================== shared shell ===================== */
+  function band(inner, facts){
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "answer";
+    el.innerHTML = inner + '<div class="facts">' + facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    $("board").parentNode.insertBefore(el, $("board"));
+  }
+  function writeLog(items){
+    var html = "";
+    items.forEach(function(it){
+      html += "<li" + (it.step !== undefined ? ' data-step="' + it.step + '"' : "") + '><span class="n">' + it.n + "</span>";
+      it.lines.forEach(function(l){
+        html += '<div class="line"><span class="tag c-' + l[0] + '">' + l[1] + '</span><span class="txt">' + l[2] + "</span></div>";
+      });
+      (it.asides || []).forEach(function(a){ html += '<div class="aside">' + a + "</div>"; });
+      html += "</li>";
+    });
+    $("log").innerHTML = html;
+  }
+  function fail(msg){
+    $("workHost").innerHTML = ""; $("log").innerHTML = "";
+    $("closer").textContent = ""; $("stepper").hidden = true;
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "notice"; el.innerHTML = msg;
+    $("board").parentNode.insertBefore(el, $("board"));
+    $("statusLine").textContent = el.textContent;
+    $("board").hidden = false;
+    return 0;
+  }
+  function veil(total){
+    var on = S.practice === "step";
+    Array.prototype.forEach.call(document.querySelectorAll("#workHost [data-step], #log [data-step]"), function(el){
+      el.classList.toggle("veil", on && Number(el.getAttribute("data-step")) >= S.step);
+    });
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.classList.toggle("masked", on && S.step < total);
+    $("closer").style.opacity = (on && S.step < total) ? ".2" : "1";
+  }
+
+  /* ===================== check my answer ===================== */
+  function resetCheck(){
+    S.ck.tries = 0; S.ck.solved = false;
+    $("ckIn").value = ""; $("ckMsg").innerHTML = ""; $("ckMsg").className = "ck-msg"; $("ckMore").hidden = true;
+  }
+  function paintCheck(){
+    var on = S.practice === "check" && !!S.cur, hide = on && !S.ck.solved;
+    $("checkBox").hidden = !on;
+    $("board").hidden = hide;
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.hidden = hide;
+    if (!on) return;
+    var sol = S.cur.sol, P = S.cur.P, ask, q, ph;
+    if (sol.kind === "compare"){
+      if (P.vals.length === 2){
+        ask = "Is the first number less than, greater than or equal to the second? Type <, > or = (or write the whole thing, like a &lt; b).";
+        q = nH(P.vals[0]) + '<span class="op-s">☐</span>' + nH(P.vals[1]); ph = "<, > or =";
+      } else {
+        ask = "Put them in order from least to greatest, with commas between.";
+        q = exprH(P) + '<span class="op-s">→</span>'; ph = "least, …, greatest";
+      }
+    } else {
+      ask = sol.ans.type === "frac" || (sol.op === "÷") ? "Type the number. If it doesn’t come out even, a fraction (like −7/2) or a decimal is fine." : "Type the number — −3, -3 or “negative 3” all work.";
+      q = (sol.kind === "abs" && !sol.info.typedAbs ? '<span class="bar">|</span>' + nH(P.vals[0]) + '<span class="bar">|</span>' : exprH(P)) + '<span class="op-s">=</span>';
+      ph = "your answer";
+    }
+    $("ckAsk").innerHTML = esc(ask).replace(/&amp;lt;/g, "&lt;");
+    $("ckQ").innerHTML = q;
+    $("ckIn").placeholder = ph;
+  }
+  function parseAnsNum(raw){
+    var s = String(raw).toLowerCase().replace(MINUS_RE, "-").replace(/＋/g, "+");
+    s = s.replace(/^\s*(?:the answer is|answer:?|it'?s|=)\s*/, "");
+    s = s.replace(/\b(?:negative|neg|minus)\b/g, " - ").replace(/\b(?:positive|plus)\b/g, " + ");
+    s = s.replace(/[()\[\]]/g, " ").replace(/(\d),(?=\d{3}\b)/g, "$1").trim();
+    var sign = 1, m;
+    while ((m = /^([+-])\s*/.exec(s))){ if (m[1] === "-") sign = -sign; s = s.slice(m[0].length); }
+    s = s.replace(/\s+/g, " ").trim();
+    if ((m = /^(\d+)$/.exec(s))) return { n:sign * parseInt(m[1], 10) || 0, d:1, kind:"int" };
+    if ((m = /^(\d+) ?\/ ?(\d+)$/.exec(s))){ var d = parseInt(m[2], 10); if (!d) return null; var r = rat(sign * parseInt(m[1], 10), d); return { n:r.n, d:r.d, kind:"frac" }; }
+    if ((m = /^(\d+) (\d+) ?\/ ?(\d+)$/.exec(s))){
+      var d2 = parseInt(m[3], 10); if (!d2) return null;
+      var r2 = rat(sign * (parseInt(m[1], 10) * d2 + parseInt(m[2], 10)), d2); return { n:r2.n, d:r2.d, kind:"frac" };
+    }
+    if ((m = /^(\d*)\.(\d+)(\.\.\.|…)?$/.exec(s)) && m[2].length <= 9){
+      var k = m[2].length, den = Math.pow(10, k);
+      return { n:sign * (parseInt(m[1] || "0", 10) * den + parseInt(m[2], 10)), d:den, kind:"dec", k:k };
+    }
+    return null;
+  }
+  function eqR(x, v){ return typeof v === "number" ? x.n === v * x.d : x.n * v.d === v.n * x.d; }
+  function checkNum(raw, cur){
+    var A = cur.sol.ans, frac = A.type === "frac", c = frac ? { n:A.n, d:A.d } : { n:A.v, d:1 };
+    var x = parseAnsNum(raw);
+    if (!x){
+      if (/\d\s*r\s*\d/i.test(raw)) return { unread:true, msg:"Remainders get confusing with negatives. Give the answer as a fraction (like <b>−7/2</b>) or a decimal instead." };
+      return { unread:true, msg:"I couldn’t read that as a number. Type something like <b>−3</b>, <b>-3</b>, <b>(−3)</b> or <b>negative 3</b>" + (frac ? ", or a fraction like <b>−7/2</b> or a decimal" : "") + "." };
+    }
+    if (eqR(x, c)) return { ok:true, note:x.kind === "dec" && frac ? "As a fraction that’s " + rT(c) + "." : x.kind !== "int" && !frac ? "" : "" };
+    if (x.kind === "dec" && !isTerm(c.d)){
+      var sc = c.n * x.d / c.d, close = x.n === Math.round(sc) || x.n === (sc < 0 ? Math.ceil(sc) : Math.floor(sc)) || x.n === -Math.round(-sc);
+      if (close && x.k >= 2) return { ok:true, note:"Exactly, it’s " + rT(c) + " (" + decStr(c.n, c.d) + " goes on forever)." };
+      if (close)
+      return { unread:true, msg:"Close — but that’s rounded a lot. Give at least two decimal places, or write it as a fraction." };
+    }
+    return { ok:false, diag:diagnose(cur, x) };
+  }
+  function chainAlt(sol){                      // the classic slip: − (negative) done as − (positive)
+    var any = false, acc = sol.vals[0];
+    for (var i = 0; i < sol.recs.length; i++){
+      var r = sol.recs[i];
+      if (r.op === "+") acc += r.r;
+      else if (r.op === "−"){ if (r.r < 0){ any = true; acc -= -r.r; } else acc -= r.r; }
+      else return null;
+    }
+    return any ? acc : null;
+  }
+  function diagnose(cur, x){
+    var sol = cur.sol, P = cur.P, m = cur.mode, A = sol.ans, c = A.type === "frac" ? { n:A.n, d:A.d } : A.v;
+    var cz = typeof c === "number" ? c === 0 : c.n === 0, negC = typeof c === "number" ? -c : { n:-c.n, d:c.d };
+    function is(v){ return v !== null && v !== undefined && eqR(x, v); }
+    var a = P.vals[0], b = P.vals[1];
+    if (m === "add" || m === "sub"){
+      var bb = m === "add" ? b : -b || 0, big = Math.abs(a) > Math.abs(bb) ? a : bb;
+      if (m === "sub" && b < 0 && is(a + b)) return "It looks like you subtracted the negative as if it were positive. Taking away <b>" + nH(b) + "</b> is the same as <strong>adding " + mag(b) + "</strong>: <b>" + nH(a) + op("+") + mag(b) + "</b>.";
+      if (m === "sub" && b > 0 && is(a + b)) return "That’s what you get by adding " + mag(b) + ". Subtracting " + mag(b) + " is adding its opposite, <b>" + nH(-b) + "</b> — a move to the left.";
+      if (m === "sub" && is(b - a) && !cz) return "That’s <b>" + nH(b) + op("−") + nH(a, true) + "</b> — the numbers the other way round. Order matters in subtraction: start at <b>" + nH(a) + "</b>.";
+      if (a && bb && (a < 0) !== (bb < 0) && (is(Math.abs(a) + Math.abs(bb)) || is(-(Math.abs(a) + Math.abs(bb)))))
+        return (m === "sub" ? "Once it’s <b>" + nH(a) + op("+") + nH(bb, true) + "</b>, the signs are different" : "The signs are different")
+          + ", so the two parts partly cancel: <strong>subtract</strong> the sizes (" + mag(Math.max(Math.abs(a), Math.abs(bb))) + " − " + mag(Math.min(Math.abs(a), Math.abs(bb))) + "), don’t add them.";
+      if (!cz && is(negC)) return "Right size, wrong sign. " + (a && bb && (a < 0) === (bb < 0) ? "Both numbers are " + (a < 0 ? "negative" : "positive") + (m === "sub" ? " once it’s an addition" : "") + ", so the answer is too."
+        : "The answer takes the sign of the number with the bigger size, <b>" + nH(big) + "</b>.");
+      if (m === "add" && is(a - b)) return "That’s <b>" + nH(a) + op("−") + nH(b, true) + "</b>. This one adds.";
+    }
+    if (m === "muldiv"){
+      var o = P.ops[0], negs = (a < 0 ? 1 : 0) + (b < 0 ? 1 : 0);
+      if (o === "÷" && A.type === "frac" && x.d === 1) return "It doesn’t come out even, so the answer isn’t an integer. Give it as a fraction (like <b>7/2</b>) or a decimal.";
+      if (!cz && is(negC)){
+        if (negs === 2) return "Right size, wrong sign: a negative " + (o === "×" ? "times" : "divided by") + " a negative is <strong>positive</strong>." + (o === "×" ? " The pattern in the hint shows why." : "");
+        if (negs === 1) return "Right size, wrong sign: one negative and one positive make a <strong>negative</strong> answer.";
+        return "Right size, wrong sign: both numbers are positive.";
+      }
+      if (o === "÷" && is(a * b)) return "That’s what you get by multiplying — this one divides.";
+      if (o === "×" && is(a + b)) return "That’s the sum — this one multiplies.";
+    }
+    if (m === "abs" && sol.info){
+      var I = sol.info;
+      if (!I.outer && I.x !== 0 && is(-Math.abs(I.x))) return "An absolute value is a distance from 0, so it’s <strong>never negative</strong>.";
+      if (I.outer && is(Math.abs(I.x))) return "Don’t forget the minus sign outside the bars: it takes the opposite.";
+    }
+    if (m === "chain"){
+      var alt = chainAlt(sol);
+      if (alt !== null && alt !== A.v && is(alt)) return "It looks like you subtracted a negative as if it were positive somewhere. Subtracting a negative is <strong>adding</strong>: <b>− " + nH(-2, true) + "</b> is <b>+ 2</b>.";
+      if (!cz && is(negC)) return "Right size, wrong sign. Go one step at a time and check the sign at each step.";
+    }
+    return "";
+  }
+  function checkList(raw, cur){
+    var vals = cur.sol.vals, n = vals.length, sorted = cur.sol.sorted;
+    var s = String(raw).toLowerCase().replace(MINUS_RE, "-").replace(/\b(?:negative|neg|minus)\s*/g, "-").replace(/[()\[\]]/g, " ");
+    s = s.replace(/<=|=</g, "≤").replace(/>=|=>/g, "≥");
+    if (n === 2){
+      var t = s.replace(/\s+/g, " ").trim().replace(/^(?:it'?s |is )/, "");
+      var W = { "<":"<", ">":">", "=":"=", "less":"<", "less than":"<", "smaller":"<", "smaller than":"<", "greater":">", "greater than":">", "bigger":">",
+                "bigger than":">", "more":">", "more than":">", "equal":"=", "equals":"=", "equal to":"=", "the same":"=" };
+      if (W[t]){
+        var want = relOf(vals[0], vals[1]);
+        if (W[t] === want) return { ok:true };
+        return { ok:false, diag:Math.abs(vals[0]) !== Math.abs(vals[1]) && (vals[0] < 0 || vals[1] < 0) && relOf(Math.abs(vals[0]), Math.abs(vals[1])) === W[t]
+          ? "It looks like you compared the sizes and ignored the signs. On the number line <b>" + nH(sorted[0]) + "</b> is further left, so it’s the smaller one."
+          : "Picture them on the number line: the one further left is smaller." };
+      }
+    }
+    var re = /[+-]?\s*\d+|≤|≥|<|>|=|,|;/g, toks = [], mm;
+    var left = s.replace(re, function(z){ toks.push(z.replace(/\s+/g, "")); return " "; }).replace(/\band\b/g, " ").trim();
+    if (left) return { unread:true, msg:"I couldn’t read that. Type the numbers with commas between them, like <b>−8, −3, 0</b>" + (n === 2 ? ", or a sign: <b>&lt;</b>, <b>&gt;</b> or <b>=</b>" : "") + "." };
+    var nums = [], seps = [], pend = null;
+    toks.forEach(function(z){
+      if (/\d/.test(z)){ if (nums.length) seps.push(pend || ","); nums.push(parseInt(z.replace(/^\+/, ""), 10) || 0); pend = null; }
+      else pend = z === ";" ? "," : z;
+    });
+    if (!nums.length) return { unread:true, msg:"Type the numbers with commas between them." };
+    var a1 = nums.slice().sort(function(p, q){ return p - q; }).join(","), a2 = sorted.join(",");
+    if (a1 !== a2) return { ok:false, diag:"Use each of the " + n + " numbers exactly once: <b>" + vals.map(function(v){ return nH(v); }).join(", ") + "</b>." };
+    var rel = seps.some(function(z){ return z !== ","; });
+    if (rel){
+      for (var i = 0; i < seps.length; i++){
+        var p = nums[i], q = nums[i + 1], z = seps[i];
+        var good = z === "<" ? p < q : z === ">" ? p > q : z === "≤" ? p <= q : z === "≥" ? p >= q : z === "=" ? p === q : false;
+        if (z === ",") return { unread:true, msg:"Use the same kind of separator all the way: commas (least to greatest) or signs like <b>&lt;</b>." };
+        if (!good) return { ok:false, diag:"<b>" + nH(p) + op(z) + nH(q) + "</b> isn’t true: on the number line " + nH(p) + " is " + (p === q ? "in the same place as" : "to the " + (p < q ? "left" : "right") + " of") + " " + nH(q)
+          + ", so it’s " + (p === q ? "equal" : p < q ? "smaller" : "bigger") + "." + (p < 0 && q < 0 ? " With negatives, a bigger size means <i>smaller</i>." : "") };
+      }
+      return { ok:true };
+    }
+    var asc = true, desc = true, byAbs = true;
+    for (var j = 1; j < nums.length; j++){
+      if (nums[j] < nums[j - 1]) asc = false;
+      if (nums[j] > nums[j - 1]) desc = false;
+      if (Math.abs(nums[j]) < Math.abs(nums[j - 1])) byAbs = false;
+    }
+    if (asc) return { ok:true };
+    if (desc) return { ok:false, diag:"That’s greatest to least. Start with the <strong>smallest</strong> — the one furthest left on the number line." };
+    if (byAbs && sorted[0] < 0){
+      var ng = sorted.filter(function(v){ return v < 0; });
+      return { ok:false, diag:"It looks like you put them in order by size and ignored the signs. For negatives, a bigger size means further left: "
+        + (ng.length >= 2 && ng[0] !== ng[ng.length - 1] ? "<b>" + nH(ng[0]) + op("<") + nH(ng[ng.length - 1]) + "</b>." : "every negative is less than every positive.") };
+    }
+    return { ok:false, diag:"Read the number line from left to right: the furthest-left number comes first." };
+  }
+  function doCheck(){
+    var cur = S.cur;
+    if (!cur) return;
+    var raw = $("ckIn").value, msg = $("ckMsg");
+    if (!raw.trim()){ msg.className = "ck-msg"; msg.innerHTML = "Type your answer first."; return; }
+    var res = cur.sol.ans.type === "list" ? checkList(raw, cur) : checkNum(raw, cur);
+    if (res.ok){
+      S.ck.solved = true;
+      msg.className = "ck-msg ok";
+      msg.innerHTML = "✓ Correct!" + (res.note ? " <span>" + res.note + "</span>" : "") + ' <span>Here’s the full work.</span>';
+      $("ckMore").hidden = true;
+      paintCheck(); veil(lastTotal());
+    } else if (res.unread){
+      msg.className = "ck-msg"; msg.innerHTML = res.msg;
+    } else {
+      S.ck.tries++;
+      msg.className = "ck-msg no";
+      msg.innerHTML = '<strong class="nq">Not quite — try again.</strong>' + (res.diag ? " " + res.diag : "");
+      $("ckMore").hidden = false;
+    }
+  }
+  function lastTotal(){ return document.querySelectorAll("#log > li").length; }
+
+  /* ===================== making problems (pure: never touches the page) ===================== */
+  function rint(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  function rangeOf(o){ var r = Number(o && o.range); return r === 20 || r === 100 ? r : 10; }
+  function togOf(o, k, d){
+    var v = o ? o[k] : undefined;
+    if (typeof v === "boolean") return v;
+    if (v === "true" || v === "1" || v === 1 || v === "on" || v === "yes") return true;
+    if (v === "false" || v === "0" || v === 0 || v === "off" || v === "no") return false;
+    return d;
+  }
+  function pickN(R, sign, zero){
+    for (var i = 0; i < 400; i++){
+      var v = rint(-R, R);
+      if (v === 0 && (!zero || sign !== "any")) continue;
+      if (sign === "neg" && v >= 0) continue;
+      if (sign === "pos" && v <= 0) continue;
+      return v;
+    }
+    return sign === "pos" ? 1 : -1;
+  }
+  function coin(p){ return Math.random() < (p === undefined ? .5 : p); }
+  var GEN = {
+    add:function(o){
+      var R = rangeOf(o), z = togOf(o, "zero", true), sg = o.signs, a, b;
+      if (sg === "neg"){ a = pickN(R, "neg"); b = pickN(R, "neg"); }
+      else if (sg === "diff"){ a = pickN(R, coin() ? "neg" : "pos"); b = pickN(R, a < 0 ? "pos" : "neg"); }
+      else { do { a = pickN(R, "any", z); b = pickN(R, "any", z); } while ((a >= 0 && b >= 0 && coin(.85)) || (a === 0 && b === 0)); }
+      return nT(a) + " + " + nT(b, true);
+    },
+    sub:function(o){
+      var R = rangeOf(o), z = togOf(o, "zero", true), sg = o.signs, a, b;
+      if (sg === "subneg"){ a = pickN(R, "any", z); b = pickN(R, "neg"); }
+      else if (sg === "neg"){ a = pickN(R, "neg"); b = pickN(R, "neg"); }
+      else if (sg === "diff"){ a = pickN(R, coin() ? "neg" : "pos"); b = pickN(R, a < 0 ? "pos" : "neg"); }
+      else { do { a = pickN(R, "any", z); b = pickN(R, "any", z); } while ((a >= 0 && b >= 0 && a >= b && coin(.9)) || (a === 0 && b === 0)); }
+      return nT(a) + " − " + nT(b, true);
+    },
+    muldiv:function(o){
+      var R = rangeOf(o), z = togOf(o, "zero", true), whole = togOf(o, "whole", true), sg = o.signs;
+      var opx = o.op === "mul" ? "×" : o.op === "div" ? "÷" : (coin() ? "×" : "÷"), s;
+      if (sg === "neg") s = [-1, -1];
+      else if (sg === "diff") s = coin() ? [-1, 1] : [1, -1];
+      else { var r = Math.random(); s = r < .32 ? [-1, -1] : r < .62 ? [-1, 1] : r < .92 ? [1, -1] : [1, 1]; }
+      var dMax = R === 100 ? 20 : Math.min(R, 12), a, b;
+      if (opx === "×"){
+        a = s[0] * rint(2, R); b = s[1] * rint(2, R === 100 ? 20 : R);
+        if (z && sg !== "neg" && sg !== "diff" && coin(.07)){ if (coin()) a = 0; else b = 0; }
+      } else {
+        var d = rint(2, dMax), q = rint(1, R === 100 ? 40 : R);
+        b = s[1] * d;
+        if (whole || coin(.3)) a = s[0] * q * d;
+        else a = s[0] * (q * d + rint(1, d - 1));
+        if (z && sg !== "neg" && sg !== "diff" && coin(.06)) a = 0;
+      }
+      return nT(a) + " " + opx + " " + nT(b, true);
+    },
+    abs:function(o){
+      var R = rangeOf(o);
+      if (o.kind === "abs") return "|" + nT(pickN(R, coin(.75) ? "neg" : "pos")) + "|";
+      var n = Math.max(2, Math.min(6, parseInt(o.count, 10) || 4)), vals = [], guard = 0;
+      while (vals.length < n && guard++ < 500){
+        var v = rint(-R, R);
+        if (vals.indexOf(v) >= 0) continue;
+        vals.push(v);
+      }
+      var nneg = vals.filter(function(v2){ return v2 < 0; }).length;
+      if (n >= 3 && nneg < 2) return null;
+      if (n === 2 && !nneg) return null;
+      return vals.map(function(v2){ return nT(v2); }).join(", ");
+    },
+    chain:function(o){
+      var R = rangeOf(o), z = togOf(o, "zero", true), n = Math.max(3, Math.min(6, parseInt(o.len, 10) || 4)), s, i;
+      if (o.ops === "md"){
+        var M = Math.min(R, 12), cur = (coin() ? -1 : 1) * rint(2, M), parts = [nT(cur)], negs = cur < 0 ? 1 : 0;
+        for (i = 1; i < n; i++){
+          var divs = [];
+          for (var d = 2; d <= 12; d++) if (cur % d === 0 && Math.abs(cur) / d >= 1) divs.push(d);
+          var sgn = coin() ? -1 : 1, v, opx;
+          if (divs.length && (coin(.5) || Math.abs(cur) > 300)){ opx = "÷"; v = sgn * divs[rint(0, divs.length - 1)]; }
+          else { opx = "×"; v = sgn * rint(2, Math.min(M, 9)); }
+          if (i === n - 1 && !negs && v > 0) v = -v;
+          if (v < 0) negs++;
+          cur = opx === "×" ? cur * v : cur / v;
+          parts.push(" " + opx + " " + nT(v, true));
+        }
+        return parts.join("");
+      }
+      var hasSN = false;
+      s = nT(pickN(R, "any", z));
+      for (i = 1; i < n; i++){
+        var o2 = coin() ? "+" : "−", v2 = pickN(R, coin(.55) ? "neg" : "any", z);
+        if (i === n - 1 && !hasSN && coin(.75)){ o2 = "−"; v2 = pickN(R, "neg"); }
+        if (o2 === "−" && v2 < 0) hasSN = true;
+        s += " " + o2 + " " + nT(v2, true);
+      }
+      return s;
+    }
+  };
+  function makeOne(mode, o){
+    o = o || {};
+    for (var t = 0; t < 80; t++){
+      var txt = GEN[mode](o);
+      if (!txt) continue;
+      try {
+        var P = parseQ(txt);
+        if (!fits(mode, P)) continue;
+        P.src = txt;
+        var sol = solve(P, mode);
+        if (mode === "muldiv" && sol.op === "÷" && togOf(o, "whole", true) && sol.ans.type !== "int") continue;
+        return { text:txt, P:P, mode:mode, sol:sol };
+      } catch (e){ if (!(e && e.user)) throw e; }
+    }
+    return null;
+  }
+
+  /* ===================== the worksheet API ===================== */
+  var RANGEV = [{ v:10, label:"−10 to 10" }, { v:20, label:"−20 to 20" }, { v:100, label:"−100 to 100" }];
+  var OPTIONS = [
+    { key:"mode", label:"Kind of problem", type:"choice", default:"add",
+      values:[{ v:"add", label:"Add" }, { v:"sub", label:"Subtract" }, { v:"muldiv", label:"Multiply & divide" },
+              { v:"abs", label:"Absolute value & compare" }, { v:"chain", label:"Chains" }, { v:"mixed", label:"A mix of everything" }] },
+    { key:"range", label:"Numbers from", type:"choice", default:10, values:RANGEV, modes:["add", "sub", "muldiv", "abs", "chain", "mixed"] },
+    { key:"signs", label:"Signs", type:"choice", default:"any", modes:["add", "sub", "muldiv"],
+      values:[{ v:"any", label:"Any signs" }, { v:"neg", label:"Both negative" }, { v:"diff", label:"Different signs" }, { v:"subneg", label:"Subtract a negative (subtract only)" }] },
+    { key:"zero", label:"Include zero", type:"toggle", default:true, modes:["add", "sub", "muldiv", "chain"] },
+    { key:"op", label:"Multiply or divide", type:"choice", default:"both", modes:["muldiv"],
+      values:[{ v:"both", label:"× and ÷" }, { v:"mul", label:"× only" }, { v:"div", label:"÷ only" }] },
+    { key:"whole", label:"Whole-number division only", type:"toggle", default:true, modes:["muldiv"] },
+    { key:"kind", label:"Absolute value or compare", type:"choice", default:"compare", modes:["abs"],
+      values:[{ v:"abs", label:"Absolute value" }, { v:"compare", label:"Compare & order" }] },
+    { key:"count", label:"How many to order", type:"choice", default:4, modes:["abs"],
+      values:[2, 3, 4, 5, 6].map(function(v){ return { v:v, label:String(v) }; }) },
+    { key:"len", label:"Numbers in a chain", type:"choice", default:4, modes:["chain"],
+      values:[3, 4, 5, 6].map(function(v){ return { v:v, label:v + " numbers" }; }) },
+    { key:"ops", label:"Chain operations", type:"choice", default:"as", modes:["chain"],
+      values:[{ v:"as", label:"+ and −" }, { v:"md", label:"× and ÷" }] }
+  ];
+  function apiOpts(raw){
+    var o = {}, src = raw && typeof raw === "object" ? raw : {};
+    OPTIONS.forEach(function(op2){
+      var v = src[op2.key];
+      if (op2.type === "toggle"){ o[op2.key] = togOf(src, op2.key, op2.default); return; }
+      var hit = op2.values.filter(function(x){ return String(x.v) === String(v); })[0];
+      o[op2.key] = hit ? hit.v : op2.default;
+    });
+    return o;
+  }
+  function encQ(q){ return encodeURIComponent(q).replace(/%2C/gi, ",").replace(/%2F/gi, "/"); }
+  function paramsFor(P, mode){ return "q=" + encQ(exprA(P)) + (infer(P) !== mode ? "&mode=" + mode : ""); }
+  function problemOut(r){
+    var text = problemText(r.P, r.sol), ans = answerText(r.sol), out = { text:text, html:esc(text), params:paramsFor(r.P, r.mode), answer:ans };
+    if (r.sol.ans.type === "frac"){
+      var A = r.sol.ans;
+      out.answerHtml = (A.n < 0 ? "−" : "") + "<sup>" + Math.abs(A.n) + "</sup>&frasl;<sub>" + A.d + "</sub> = " + esc(decStr(A.n, A.d));
+    }
+    return out;
+  }
+  function makeBatch(count, opts){
+    var n = Math.max(1, Math.min(200, parseInt(count, 10) || 10)), o = apiOpts(opts), out = [], seen = {}, guard = 0;
+    while (out.length < n && guard++ < n * 10 + 20){
+      var mode = o.mode === "mixed" ? MODES[Math.floor(Math.random() * MODES.length)] : o.mode;
+      var oo = o;
+      if (o.mode === "mixed" && mode === "abs" && coin(.4)){ oo = {}; for (var k in o) oo[k] = o[k]; oo.kind = "abs"; }
+      var r = makeOne(mode, oo);
+      if (!r) continue;
+      if (seen[r.text] && guard < n * 8) continue;
+      seen[r.text] = true;
+      out.push(problemOut(r));
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if (!d || typeof d !== "object" || !ev.source) return;
+    try {
+      if (d.type === "helper:options")
+        ev.source.postMessage({ type:"helper:optionsSchema", id:d.id, page:"integers.html", title:"The Number Line", options:OPTIONS }, "*");
+      else if (d.type === "helper:make")
+        ev.source.postMessage({ type:"helper:made", id:d.id, page:"integers.html", problems:makeBatch(d.count, d.options) }, "*");
+    } catch (e){}
+  });
+
+  /* ===================== the address bar ===================== */
+  function readParams(){
+    var raw = location.search.replace(/^\?/, ""), out = {};
+    var qraw = (/(?:^|&)q=([^&]*)/.exec(raw) || [])[1] || "";
+    // a literal + is a plus sign, unless the query was form-encoded (then + means a space)
+    var formEnc = /%2B/i.test(raw) || /\+(?:-|%E2%88%92|x|\*|\/|%C3%97|%C3%B7)\+/i.test(qraw);
+    raw.split("&").forEach(function(kv){
+      if (!kv) return;
+      var i = kv.indexOf("="), k = i < 0 ? kv : kv.slice(0, i), v = i < 0 ? "" : kv.slice(i + 1);
+      v = (k === "q" && !formEnc) ? v.replace(/\+/g, "%2B") : v.replace(/\+/g, " ");
+      try { v = decodeURIComponent(v); } catch (e){ try { v = unescape(v); } catch (e2){} }
+      try { k = decodeURIComponent(k); } catch (e3){}
+      out[k] = v;
+    });
+    return out;
+  }
+  // browsers limit how often the address can change, so typing updates it after a short pause
+  var pendingQS = null, urlTimer = null, urlSynced = false;
+  function syncURL(P){
+    var raw = S.inputs[S.mode] || "";
+    pendingQS = P ? paramsFor(P, S.mode) : (raw.trim() ? "q=" + encQ(raw) + "&mode=" + S.mode : "mode=" + S.mode);
+    clearTimeout(urlTimer);
+    if (!urlSynced){ urlSynced = true; flushURL(); } else urlTimer = setTimeout(flushURL, 250);
+  }
+  function flushURL(){
+    clearTimeout(urlTimer);
+    if (pendingQS === null) return;
+    try { if (location.search !== "?" + pendingQS) history.replaceState(history.state, "", location.pathname + "?" + pendingQS + location.hash); } catch (e){}
+    pendingQS = null;
+  }
+  function copyLink(){
+    flushURL();
+    var btn = $("copyBtn"), url = location.href;
+    function done(){ btn.textContent = "Link copied ✓"; clearTimeout(copyLink.t); copyLink.t = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = url; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e){}
+      document.body.removeChild(ta); done();
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, fallback);
+      else fallback();
+    } catch (e){ fallback(); }
+  }
+
+  /* ===================== wiring ===================== */
+  var in1 = $("in1");
+  var HINTS = {
+    add:"Type it like <code>-5 + 3</code> or <code>-5 + (-3)</code>. A minus sign right in front of a number makes it negative; the real minus sign <code>−</code> works too.",
+    sub:"Type it like <code>-7 - (-2)</code>, <code>-7 - -2</code> or <code>4 - 9</code>. Parentheses around a negative are optional.",
+    muldiv:"Use <code>*</code>, <code>x</code> or <code>×</code> for times and <code>/</code>, <code>:</code> or <code>÷</code> for divide: <code>-4 * 3</code>, <code>-12 / (-3)</code>.",
+    abs:"Bars for absolute value: <code>|-7|</code> or <code>abs -7</code>. Or a list with commas, like <code>-3, 5, -8, 0</code>, to put in order.",
+    chain:"A few numbers with + and −, like <code>-3 + 8 - (-5)</code>, or with × and ÷, like <code>-2 * 3 / (-6)</code>. Done left to right. (Mixing × ÷ with + − is a job for the Order Stack.)"
+  };
+  var LABELS = { add:"Your addition", sub:"Your subtraction", muldiv:"Your multiplication or division", abs:"An absolute value, or numbers to put in order", chain:"Your chain" };
+  function buildChips(){
+    var host = $("chips");
+    host.innerHTML = "";
+    EX[S.mode].forEach(function(ex){
+      var btn = document.createElement("button");
+      btn.className = "chip"; btn.type = "button"; btn.textContent = ex;
+      btn.addEventListener("click", function(){ setProblem(ex); });
+      host.appendChild(btn);
+    });
+  }
+  function setProblem(txt){ S.inputs[S.mode] = txt; in1.value = txt; S.step = 1; render(); save(); }
+  function paintMode(keepInput){
+    Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === S.mode));
+    });
+    $("lab1").textContent = LABELS[S.mode];
+    $("hint").innerHTML = HINTS[S.mode];
+    Array.prototype.forEach.call(document.querySelectorAll("#keys button[data-only]"), function(b){
+      b.hidden = b.getAttribute("data-only").split(" ").indexOf(S.mode) < 0;
+    });
+    buildChips(); buildMaker();
+    if (!keepInput && in1.value !== S.inputs[S.mode]) in1.value = S.inputs[S.mode];
+  }
+  function setMode(m){ S.mode = m; S.step = 1; paintMode(false); render(); save(); }
+  Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){
+    b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
+  });
+  in1.addEventListener("input", function(){ S.inputs[S.mode] = in1.value; S.step = 1; render(); save(); });
+  Array.prototype.forEach.call(document.querySelectorAll("#keys button"), function(b){
+    b.addEventListener("mousedown", function(e){ e.preventDefault(); });
+    b.addEventListener("click", function(){
+      var k = b.getAttribute("data-k"), st = in1.selectionStart, en = in1.selectionEnd;
+      if (typeof st !== "number"){ st = en = in1.value.length; }
+      in1.value = in1.value.slice(0, st) + k + in1.value.slice(en);
+      in1.focus();
+      in1.setSelectionRange(st + k.length, st + k.length);
+      S.inputs[S.mode] = in1.value; S.step = 1; render(); save();
+    });
+  });
+
+  /* the maker's controls, per mode */
+  var RANGESEG = { lbl:"Numbers", seg:"range", vals:[[10, "−10 to 10"], [20, "−20 to 20"], [100, "−100 to 100"]] };
+  var SIGNS3 = [["any", "Any"], ["neg", "Both negative"], ["diff", "Different signs"]];
+  var MAKER = {
+    add:[RANGESEG, { lbl:"Signs", seg:"signs", vals:SIGNS3 }, { lbl:"Extras", togs:[["zero", "0", "Include zero"]] }],
+    sub:[RANGESEG, { lbl:"Signs", seg:"signs", vals:[["any", "Any"], ["subneg", "Subtract a negative"], ["neg", "Both negative"], ["diff", "Different signs"]] },
+         { lbl:"Extras", togs:[["zero", "0", "Include zero"]] }],
+    muldiv:[{ lbl:"Operation", seg:"op", vals:[["both", "× and ÷"], ["mul", "× only"], ["div", "÷ only"]] },
+            { lbl:"Numbers", seg:"range", vals:[[10, "up to 10"], [20, "up to 20"], [100, "up to 100"]] },
+            { lbl:"Signs", seg:"signs", vals:SIGNS3 },
+            { lbl:"Extras", togs:[["whole", "✓", "Whole-number division only"], ["zero", "0", "Include zero"]] }],
+    abs:[{ lbl:"Kind", seg:"kind", vals:[["abs", "Absolute value"], ["compare", "Compare & order"]] },
+         { lbl:"How many", seg:"count", vals:[[2, "2"], [3, "3"], [4, "4"], [5, "5"], [6, "6"]], only:"compare" },
+         RANGESEG],
+    chain:[{ lbl:"Length", seg:"len", vals:[[3, "3 numbers"], [4, "4"], [5, "5"], [6, "6"]] },
+           { lbl:"Operations", seg:"ops", vals:[["as", "+ and −"], ["md", "× and ÷"]] },
+           RANGESEG, { lbl:"Extras", togs:[["zero", "0", "Include zero"]] }]
+  };
+  function buildMaker(){
+    var host = $("makerBody"), G = S.gen[S.mode];
+    host.innerHTML = "";
+    MAKER[S.mode].forEach(function(sec){
+      if (sec.only && G.kind !== sec.only) return;
+      var lbl = document.createElement("span");
+      lbl.className = "lbl"; lbl.textContent = sec.lbl; host.appendChild(lbl);
+      var box = document.createElement("div");
+      if (sec.seg){
+        box.className = "modes small"; box.setAttribute("role", "group"); box.setAttribute("aria-label", sec.lbl);
+        sec.vals.forEach(function(pr){
+          var b = document.createElement("button");
+          b.type = "button"; b.textContent = pr[1];
+          b.setAttribute("aria-pressed", String(G[sec.seg] === pr[0]));
+          b.addEventListener("click", function(){ G[sec.seg] = pr[0]; buildMaker(); save(); });
+          box.appendChild(b);
+        });
+      } else {
+        box.className = "toggles";
+        sec.togs.forEach(function(t){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "tog";
+          b.innerHTML = "<b>" + esc(t[1]) + "</b> " + esc(t[2]);
+          b.setAttribute("aria-pressed", String(!!G[t[0]]));
+          b.addEventListener("click", function(){ G[t[0]] = !G[t[0]]; buildMaker(); save(); });
+          box.appendChild(b);
+        });
+      }
+      host.appendChild(box);
+    });
+    var go = document.createElement("div");
+    go.className = "maker-go";
+    go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
+    host.appendChild(go);
+    $("genBtn").addEventListener("click", function(){
+      var r = makeOne(S.mode, S.gen[S.mode]);
+      if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+      $("genMsg").textContent = "";
+      setProblem(r.text);
+    });
+  }
+
+  function paintPractice(){
+    $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
+  }
+  function setPractice(p){ S.practice = p; S.step = 1; paintPractice(); render(); save(); }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
+  $("ckBtn").addEventListener("click", doCheck);
+  $("ckIn").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); doCheck(); } });
+  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("showBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
+  $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+  $("copyBtn").addEventListener("click", copyLink);
+  document.addEventListener("keydown", function(e){
+    if (S.practice !== "step" || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
+    if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
+    if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    paint(); save();
+  });
+  $("maker").addEventListener("toggle", save);
+
+  function save(){
+    try { localStorage.setItem("number-line", JSON.stringify({
+      mode:S.mode, inputs:S.inputs, practice:S.practice, gen:S.gen, maker:$("maker").open,
+      theme:document.documentElement.getAttribute("data-theme") || "" })); } catch (e){}
+  }
+  function load(){
+    try {
+      var v = JSON.parse(localStorage.getItem("number-line") || "null");
+      if (!v) return;
+      if (v.theme === "light" || v.theme === "dark") document.documentElement.setAttribute("data-theme", v.theme);
+      if (MODES.indexOf(v.mode) >= 0) S.mode = v.mode;
+      if (v.inputs) MODES.forEach(function(m){ if (typeof v.inputs[m] === "string") S.inputs[m] = v.inputs[m]; });
+      if (["all", "step", "check"].indexOf(v.practice) >= 0) S.practice = v.practice;
+      if (v.gen) MODES.forEach(function(m){
+        var g = v.gen[m]; if (!g) return;
+        MAKER[m].forEach(function(sec){
+          if (sec.seg){ if (sec.vals.some(function(pr){ return pr[0] === g[sec.seg]; })) S.gen[m][sec.seg] = g[sec.seg]; }
+          else sec.togs.forEach(function(t){ if (typeof g[t[0]] === "boolean") S.gen[m][t[0]] = g[t[0]]; });
+        });
+      });
+      if (v.maker) $("maker").open = true;
+    } catch (e){}
+  }
+
+  load();
+  var qp = readParams();
+  if (["all", "step", "check"].indexOf(qp.practice) >= 0) S.practice = qp.practice;
+  if (typeof qp.q === "string" && qp.q.trim()){
+    var pm = MODES.indexOf(qp.mode) >= 0 ? qp.mode : null, P0 = null;
+    try { P0 = parseQ(qp.q); } catch (e){ P0 = null; }
+    if (P0 && P0.kind !== "pemdas"){
+      var mm = pm && fits(pm, P0) ? pm : infer(P0);
+      S.mode = mm; S.inputs[mm] = exprT(P0);
+    } else { if (pm) S.mode = pm; S.inputs[S.mode] = qp.q; }
+  } else if (MODES.indexOf(qp.mode) >= 0) S.mode = qp.mode;
+  paintPractice(); paint(); paintMode(false); render();
+})();
+</script>

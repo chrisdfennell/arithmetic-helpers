@@ -1,0 +1,2104 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Factor Tree</title>
+<script src="nav.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EEECF0; --surface:#F9F8FA; --surface-2:#E4E0E8;
+    --ink:#211B27; --ink-2:#544C5D; --ink-3:#847C8E; --rule:#CFC8D7;
+    --key:#7B3FA0;   --key-bg:#EEE2F5;  --key-line:#B98FD3;   /* factor pairs, splits, and the page itself */
+    --e:#9A5410;     --e-bg:#F6E5D2;                          /* stopping points, LCM */
+    --m:#1F5E8C;     --m-bg:#DCE8F2;                          /* testing and dividing */
+    --a:#0D7361;     --a-bg:#D4EAE7;                          /* primes, answers */
+    --warm:#9A5410;  --warm-bg:#F6E5D2;                       /* notes */
+    --focus:#7B3FA0;
+    --shadow:0 1px 0 rgba(33,27,39,.05), 0 14px 30px -20px rgba(33,27,39,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#141218; --surface:#1C1922; --surface-2:#2A2631;
+      --ink:#ECE8F0; --ink-2:#ADA6B6; --ink-3:#807988; --rule:#3D3746;
+      --key:#C9A0EE;  --key-bg:#2E1E3E;  --key-line:#6E4E8F;
+      --e:#E8A45C;    --e-bg:#37270F;
+      --m:#7DB8E8;    --m-bg:#142838;
+      --a:#4FCCB0;    --a-bg:#0F2F2C;
+      --warm:#E8A45C; --warm-bg:#37270F;
+      --focus:#C9A0EE;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#141218; --surface:#1C1922; --surface-2:#2A2631;
+    --ink:#ECE8F0; --ink-2:#ADA6B6; --ink-3:#807988; --rule:#3D3746;
+    --key:#C9A0EE;  --key-bg:#2E1E3E;  --key-line:#6E4E8F;
+    --e:#E8A45C;    --e-bg:#37270F;
+    --m:#7DB8E8;    --m-bg:#142838;
+    --a:#4FCCB0;    --a-bg:#0F2F2C;
+    --warm:#E8A45C; --warm-bg:#37270F;
+    --focus:#C9A0EE;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  sup{font-size:.62em;line-height:0}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
+  @media (max-width:520px){.page{padding:22px 16px 60px}}
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .eyebrow a{color:inherit}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:56ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:20px 22px 18px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  @media (max-width:520px){.problem{padding:16px 14px 14px}}
+  .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
+    color:var(--ink-2);padding:8px 16px;border-radius:7px;cursor:pointer}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  .modes.small button{font-size:13px;padding:6px 12px}
+  @media (max-width:520px){.modes button{padding:7px 11px;font-size:13.5px}}
+
+  .entry{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap}
+  .numfield{display:flex;flex-direction:column;gap:4px;flex:1 1 420px;min-width:0}
+  .numfield > label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .expr-in{font-family:var(--f-mono);font-size:clamp(20px,3.6vw,27px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;width:100%;min-width:0;
+    border-bottom:2.5px solid var(--rule);padding:1px 4px 5px;outline:none;border-radius:0}
+  .expr-in:focus{border-bottom-color:var(--focus)}
+  .hint{margin:-6px 0 0;font-size:13px;color:var(--ink-3)}
+  .hint code{font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);background:var(--surface-2);
+    border-radius:4px;padding:0 4px}
+  .methodrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:-4px}
+  .lbl2{font-size:12.5px;color:var(--ink-3)}
+
+  /* ---- the problem maker ---- */
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;flex-wrap:wrap}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--key);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;
+    padding:4px 15px 15px}
+  @media (max-width:620px){.maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px}}
+  .maker-body .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .toggles{display:flex;gap:6px;flex-wrap:wrap}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px}
+  .tog b{font-family:var(--f-mono);font-weight:600;font-size:15px;line-height:1}
+  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .tog[aria-pressed="true"] b{color:var(--key)}
+  .tog:hover{border-color:var(--key-line)}
+  .maker-go{grid-column:1 / -1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+  .go:hover{filter:brightness(1.08)}
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    border-top:1px dashed var(--rule);padding-top:14px}
+  .examples .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+  #chips{display:contents}
+  .chip{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer;max-width:100%;text-align:left}
+  .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
+  .practice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+  button:focus-visible,input:focus-visible,summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  /* ---- check my answer ---- */
+  .ckbox{background:var(--surface);border:1px solid var(--key-line);border-radius:14px;box-shadow:var(--shadow);
+    padding:16px 20px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .ckbox h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;letter-spacing:.02em;margin:0}
+  .ckq{font-size:15.5px;color:var(--ink)}
+  .ckq b{font-family:var(--f-mono);font-weight:600}
+  .ckrow{display:flex;gap:12px 16px;align-items:flex-end;flex-wrap:wrap}
+  .ckfields{display:flex;gap:12px 18px;flex-wrap:wrap;flex:1 1 320px;min-width:0}
+  .ckf{display:flex;flex-direction:column;gap:4px;flex:1 1 200px;min-width:0}
+  .ckf label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .ckf input{font-family:var(--f-mono);font-size:clamp(17px,3vw,21px);font-weight:600;color:var(--ink);
+    background:transparent;border:0;border-bottom:2.5px solid var(--rule);padding:1px 4px 5px;outline:none;
+    width:100%;min-width:0;border-radius:0}
+  .ckf input:focus{border-bottom-color:var(--focus)}
+  .ckfb{font-size:14.5px;color:var(--ink-2)}
+  .ckfb:empty{display:none}
+  .ckfb .lead{font-weight:600;color:var(--e)}
+  .ckfb.ok .lead{color:var(--a)}
+  .ckfb .why{display:block;margin-top:4px;color:var(--ink-2)}
+  .ckfb b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .ckmore{display:flex;gap:8px;flex-wrap:wrap}
+  .cknote{font-size:13px;color:var(--ink-3)}
+
+  .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
+    padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px}
+  .answer .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .answer .v{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink);line-height:1.15;display:flex;align-items:baseline;
+    flex-wrap:wrap;gap:0 .6ch;min-width:0}
+  .answer .v.long{font-size:clamp(16px,2.4vw,21px);line-height:1.45;display:block;flex:1 1 100%}
+  .answer .v .word{font-family:var(--f-display);font-stretch:110%;font-weight:700}
+  .answer .v .wk{font-family:var(--f-display);font-stretch:110%;font-weight:700;font-size:.62em;color:var(--key);
+    letter-spacing:.04em}
+  .answer .v .sep{color:var(--ink-3);padding:0 .3ch}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto;min-width:0}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .answer.masked .v{color:var(--ink-3);filter:blur(8px);user-select:none}
+  .answer.masked .facts{filter:blur(5px);user-select:none}
+  .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .notice b{font-family:var(--f-mono)}
+
+  .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
+  @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden;min-width:0}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{font-family:var(--f-mono);font-size:13px;font-weight:600;background:var(--surface-2);
+    border:0;color:var(--ink);border-radius:7px;width:30px;height:28px;cursor:pointer}
+  .stepper button:disabled{color:var(--ink-3);cursor:not-allowed}
+  .stepper button:hover:not(:disabled){background:var(--key-bg);color:var(--key)}
+  .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
+    text-align:center;font-variant-numeric:tabular-nums}
+
+  /* colour by kind of step */
+  .c-p{--c:var(--key);--cb:var(--key-bg)}
+  .c-e{--c:var(--e);--cb:var(--e-bg)}
+  .c-m{--c:var(--m);--cb:var(--m-bg)}
+  .c-a{--c:var(--a);--cb:var(--a-bg)}
+  .badge{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;
+    padding:2px 7px;border-radius:999px;background:var(--cb);color:var(--c);white-space:nowrap}
+
+  /* ---- the work: sections ---- */
+  .sect{padding:14px 18px 16px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px;min-width:0}
+  .sect:first-child{border-top:0}
+  .tapecap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .tapecap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .tapecap .lead{font-family:var(--f-body);color:var(--ink)}
+  .xscroll{overflow-x:auto;max-width:100%;padding-bottom:2px}
+  .veil{opacity:.16}
+  svg [data-step].veil{opacity:0}
+  @media (prefers-reduced-motion:no-preference){[data-step]{transition:opacity .2s ease}}
+  svg{display:block}
+  .xscroll > svg.ft,.xscroll > svg.venn{margin:0 auto}
+  .xscroll > svg.venn{max-width:100%;height:auto}
+  svg text{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums}
+
+  .tests{border-collapse:collapse;font-size:14.5px;min-width:max-content}
+  .tests td{padding:6px 14px 6px 0;border-bottom:1px dashed var(--rule);vertical-align:middle}
+  .tests tr:last-child td{border-bottom:0}
+  .tests td.d{font-family:var(--f-mono);font-weight:600;color:var(--ink);white-space:nowrap}
+  .tests td.w{color:var(--ink-2);white-space:nowrap}
+  .tests td.w b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .tests tr.miss td.d{color:var(--ink-3)}
+  .verdict{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.04em;padding:3px 9px;
+    border-radius:999px;white-space:nowrap;display:inline-block}
+  .verdict.hit{background:var(--key-bg);color:var(--key);box-shadow:inset 0 0 0 1.5px var(--key)}
+  .verdict.miss{background:var(--surface-2);color:var(--ink-3)}
+  .verdict.yes{background:var(--a-bg);color:var(--a)}
+  .verdict.no{background:var(--e-bg);color:var(--e)}
+
+  .bigline{font-family:var(--f-mono);font-weight:600;font-size:clamp(17px,3vw,21px);color:var(--ink);
+    font-variant-numeric:tabular-nums;line-height:1.5}
+  .bigline .eqk{color:var(--key)}
+  .bigline .pr{color:var(--a)}
+  .bigline + .bigline{margin-top:-4px}
+
+  /* rainbow, arrays, tree, venn */
+  .arc{fill:none;stroke-width:2.6;stroke-linecap:round}
+  .arc.k0{stroke:var(--key)} .arc.k1{stroke:var(--m)} .arc.k2{stroke:var(--a)} .arc.k3{stroke:var(--e)}
+  .fl{fill:var(--ink);font-size:14px}
+  .fl.sq{fill:var(--key)}
+  .arrs{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end}
+  .arr{margin:0;display:flex;flex-direction:column;gap:4px;max-width:100%;min-width:0}
+  .arr .xscroll{padding-bottom:0}
+  .arr figcaption{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink-2)}
+  .arr .bg{fill:var(--key-bg);stroke:var(--key);stroke-width:1.5}
+  .arr .gl{stroke:var(--key-line);stroke-width:1}
+  .ft .edge{stroke:var(--ink-3);stroke-width:1.6}
+  .ft rect{stroke-width:1.6}
+  .ft text{font-size:15px}
+  .ft .cn rect{fill:var(--surface);stroke:var(--key-line)}
+  .ft .cn text{fill:var(--ink)}
+  .ft .rt rect{fill:var(--key-bg);stroke:var(--key);stroke-width:2}
+  .ft .rt text{fill:var(--key)}
+  .ft .pn rect{fill:var(--a-bg);stroke:var(--a);stroke-width:2.6}
+  .ft .pn text{fill:var(--a)}
+  .vf0{fill:var(--m-bg);opacity:.7} .vf1{fill:var(--a-bg);opacity:.7} .vf2{fill:var(--e-bg);opacity:.7}
+  .vmid{fill:var(--key-bg)}
+  .vc{fill:none;stroke-width:2}
+  .vc.c0{stroke:var(--m)} .vc.c1{stroke:var(--a)} .vc.c2{stroke:var(--e)}
+  .vt{fill:var(--ink);font-size:15px}
+  .vt.mid{fill:var(--key)}
+  .vlab{font-size:15px}
+  .vlab.c0{fill:var(--m)} .vlab.c1{fill:var(--a)} .vlab.c2{fill:var(--e)}
+  .vnone{fill:var(--ink-3);font-size:12px;font-weight:400}
+
+  .ladder{border-collapse:collapse;font-family:var(--f-mono);font-weight:600;font-size:18px;
+    font-variant-numeric:tabular-nums}
+  .ladder td{padding:4px 12px;text-align:right}
+  .ladder td.dv{color:var(--key);border-right:2.5px solid var(--ink-2);padding-left:2px}
+  .ladder tr:not(.bot) td.q{border-bottom:2.5px solid var(--ink-2)}
+  .ladder tr.p2 td.dv{color:var(--e)}
+  .ladder td.skip{color:var(--ink-3)}
+  .ladder tr.bot td.dv{border-right-color:transparent}
+  .ladder tr.bot td.q{color:var(--a)}
+
+  .lists{display:flex;flex-direction:column;gap:8px}
+  .lrow{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;align-items:baseline}
+  .lrow .ln{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-size:14px;white-space:nowrap}
+  .toks{display:flex;flex-wrap:wrap;gap:4px}
+  .tk{font-family:var(--f-mono);font-size:13.5px;padding:1px 6px;border-radius:6px;color:var(--ink-2);
+    background:var(--surface-2);font-variant-numeric:tabular-nums}
+  .tk.cm{background:var(--a-bg);color:var(--a);font-weight:600}
+  .tk.best{background:var(--key-bg);color:var(--key);box-shadow:inset 0 0 0 2px var(--key);font-weight:600}
+  .tk.more{background:transparent;color:var(--ink-3)}
+
+  .dgrid{border-collapse:collapse;font-family:var(--f-mono);font-weight:600;font-size:15px;min-width:max-content}
+  .dgrid th,.dgrid td{padding:5px 10px;text-align:center;border:1px solid var(--rule)}
+  .dgrid th{color:var(--ink-2);background:var(--surface-2);font-size:13px}
+  .dgrid td.y{color:var(--a);background:var(--a-bg)}
+  .dgrid td.n{color:var(--e)}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 18px;border-top:1px dashed var(--rule)}
+  .legend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .legend .badge{min-width:3.4ch;text-align:center}
+
+  .log{padding:6px 0 10px;margin:0;list-style:none}
+  .log > li{padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 12px;align-items:start}
+  .log .line + .line{margin-top:3px}
+  .log > li:last-child{border-bottom:0}
+  .log .n{grid-column:1;grid-row:1 / span 99;font-family:var(--f-mono);font-size:11px;font-weight:600;
+    color:var(--ink-3);background:var(--surface-2);border-radius:7px;padding:3px 7px;
+    letter-spacing:.04em;white-space:nowrap}
+  .log .line{grid-column:2;display:flex;gap:9px;align-items:baseline;font-size:14.5px;min-width:0}
+  .log .tag{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;flex:none;min-width:8.2ch;text-align:center;
+    background:var(--cb);color:var(--c)}
+  .log .txt{color:var(--ink-2);min-width:0;overflow-wrap:anywhere}
+  .log .txt b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
+    overflow-wrap:normal}
+  .log .aside{grid-column:2;margin-top:6px;font-size:13.5px;color:var(--ink);background:var(--warm-bg);
+    border-left:3px solid var(--warm);border-radius:4px 8px 8px 4px;padding:8px 12px}
+  .log .aside b{font-family:var(--f-mono);font-weight:600}
+  .log strong,.closer strong,.answer .fact strong{font-weight:600;color:var(--ink)}
+  .closer{padding:14px 18px;font-size:14px;color:var(--ink-2);background:var(--surface-2)}
+  .closer b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .closer .ok{color:var(--a);font-weight:600}
+  .closer .ck + .ck{margin-top:6px}
+
+  .footnote{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote a{color:var(--ink-2)}
+  .print{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .print:hover{color:var(--ink);border-color:var(--ink-3)}
+  .footnote .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#F1EEF3;
+      --ink:#111; --ink-2:#3E3744; --ink-3:#6E6676; --rule:#B4ABBC;
+      --key:#7B3FA0;  --key-bg:#EEE2F5;  --key-line:#B98FD3;
+      --e:#9A5410;    --e-bg:#F6E5D2;
+      --m:#1F5E8C;    --m-bg:#DCE8F2;
+      --a:#0D7361;    --a-bg:#D4EAE7;
+      --warm:#9A5410; --warm-bg:#F6E5D2;
+      --shadow:none;
+    }
+    @page{margin:13mm 11mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.examples,.maker,.hint,.footnote,.stepper,.methodrow,#modeTabs,#statusLine,.ckmore,.cknote,#ckGo{display:none !important}
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px}
+    .eyebrow{font-size:9px}
+    .tagline{display:none}
+    .problem{border:0;box-shadow:none;padding:0;gap:4px;break-after:avoid}
+    .expr-in{font-size:18px;border-bottom-color:var(--ink)}
+    .numfield > label{font-size:8.5px}
+    .ckbox{box-shadow:none;padding:8px 12px;gap:6px}
+    .answer{padding:8px 12px;gap:5px 16px;break-after:avoid;break-inside:avoid}
+    .answer .v{font-size:22px}
+    .answer .v.long{font-size:13px}
+    .answer .facts{margin-left:0;flex-basis:100%}
+    .answer .fact{font-size:11px}
+    .answer.masked .v,.answer.masked .facts{filter:none;color:var(--ink)}
+    .board{display:flex;gap:12px;align-items:flex-start}
+    .board > .panel:first-of-type{flex:0 1 57%;min-width:0}
+    .board > .panel:last-of-type{flex:1 1 40%;min-width:0}
+    .panel{box-shadow:none;border:1px solid var(--rule);break-inside:auto}
+    .panel-head{padding:6px 10px}
+    .panel-head h2{font-size:12.5px}
+    .veil,svg [data-step].veil{opacity:1}
+    #closer{opacity:1 !important}
+    .xscroll{overflow:visible}
+    .xscroll:has(> svg),.arrs{break-inside:avoid}
+    .sect{padding:8px 10px 10px;gap:6px}
+    .sect svg{max-width:100%;height:auto}
+    .tapecap{font-size:10.5px}
+    .tests{font-size:10.5px;min-width:0}
+    .tests td{padding:3px 8px 3px 0}
+    .tests td.w{white-space:normal}
+    .verdict{font-size:9px;padding:1px 6px}
+    .bigline{font-size:14px}
+    .ladder{font-size:13px}
+    .ladder td{padding:2px 8px}
+    .tk{font-size:10px}
+    .lrow .ln{font-size:11px}
+    .dgrid{font-size:11px;min-width:0}
+    .dgrid th,.dgrid td{padding:3px 6px}
+    .legend{padding:7px 10px;gap:4px 13px}
+    .legend div{font-size:10px}
+    .log{padding:2px 0 4px}
+    .log > li{padding:7px 10px;break-inside:avoid}
+    .log .n{font-size:9.5px;padding:2px 5px}
+    .log .line{font-size:11px;gap:7px}
+    .log .tag{font-size:8.5px;min-width:7.2ch;padding:1px 4px}
+    .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
+    .closer{font-size:11px;padding:8px 10px}
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Factors and primes, worked out</div>
+      <h1>The Factor <em>Tree</em></h1>
+      <p class="tagline">Every whole number is built out of primes. Find all the factors in pairs, grow a factor
+        tree down to its primes, test whether a number is prime, find the GCF and LCM, and use the
+        divisibility rules &mdash; with the reason for every step.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem">
+    <div class="modes" id="modeTabs" role="group" aria-label="What kind of problem">
+      <button type="button" data-mode="factors" aria-pressed="false">Factors</button>
+      <button type="button" data-mode="prime" aria-pressed="true">Prime factorization</button>
+      <button type="button" data-mode="test" aria-pressed="false">Prime or composite?</button>
+      <button type="button" data-mode="gcf" aria-pressed="false">GCF &amp; LCM</button>
+      <button type="button" data-mode="div" aria-pressed="false">Divisibility</button>
+    </div>
+    <div class="entry">
+      <div class="numfield">
+        <label for="numIn" id="numLab">Your number</label>
+        <input class="expr-in" id="numIn" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" value="">
+      </div>
+    </div>
+    <p class="hint" id="hint"></p>
+    <div class="methodrow" id="methodRow" hidden>
+      <span class="lbl2">Split the tree by</span>
+      <div class="modes small" role="group" aria-label="How to split the factor tree">
+        <button type="button" id="spSmall" aria-pressed="true">Smallest prime first</button>
+        <button type="button" id="spAny" aria-pressed="false">Any split (start near the middle)</button>
+      </div>
+    </div>
+
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body" id="makerBody"></div>
+    </details>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips"></span>
+      <span class="practice">
+        <div class="modes" role="group" aria-label="Practice mode">
+          <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
+          <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
+        </div>
+      </span>
+    </div>
+  </section>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <section class="ckbox" id="ckBox" hidden aria-labelledby="ckH">
+    <h2 id="ckH">Your answer</h2>
+    <div class="ckq" id="ckQ"></div>
+    <div class="ckrow">
+      <div class="ckfields" id="ckFields"></div>
+      <button type="button" class="go" id="ckGo">Check</button>
+    </div>
+    <div class="ckfb" id="ckFb" aria-live="polite"></div>
+    <div class="ckmore" id="ckMore" hidden>
+      <button type="button" class="print" id="hintBtn">Show a hint</button>
+      <button type="button" class="print" id="showBtn">Show me the work</button>
+    </div>
+    <div class="cknote" id="ckNote"></div>
+  </section>
+
+  <div class="board" id="board">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The work</h2>
+        <div class="stepper" id="stepper" hidden>
+          <button type="button" id="prevBtn" aria-label="Previous step">&larr;</button>
+          <span class="count" id="stepCount"></span>
+          <button type="button" id="nextBtn" aria-label="Next step">&rarr;</button>
+        </div>
+      </div>
+      <div id="workHost"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Say it out loud</h2></div>
+      <ol class="log" id="log"></ol>
+      <div class="closer" id="closer"></div>
+    </section>
+  </div>
+
+  <div class="footnote">
+    <span class="btns">
+      <button class="print" type="button" id="printBtn">Print this work</button>
+      <button class="print" type="button" id="copyBtn">Copy link</button>
+    </span>
+    <span>Whole numbers up to 1,000,000, every step written out. Need a division done out in full? Work it on
+      <a href="division.html">&divide;</a>, or check a product on <a href="multiplication.html">&times;</a>.</span>
+  </div>
+</div>
+
+<script>
+/* =============================================================================
+   URL parameters
+   ---------------
+   mode      factors | prime | test | gcf | div  — which tab opens.
+             (Also understood: factor, divisors, pf, factorization, tree, isprime, composite,
+             lcm, gcd, hcf, divisibility.)
+   q         The problem. One whole number (q=360), or for GCF & LCM a comma list of two or
+             three (q=12,18 or q=12,18,30). Words are read too, case doesn't matter, and when
+             mode is missing they choose the tab:
+               gcf 12 18 · lcm of 4 and 6 · greatest common factor of 8 and 12    -> gcf
+               prime factorization 360 · prime factors of 90 · factor tree 84      -> prime
+               is 91 prime · prime or composite 51 · is 57 composite               -> test
+               factors of 36 · factor pairs of 48 · divisors of 100                -> factors
+               divisibility 2340 · is 2340 divisible by 9                          -> div
+             With no mode and no words: a list of two or three numbers -> gcf, one number -> prime.
+             Commas inside one number (q=1,000,000) only count as thousands when the tab takes
+             one number; a bare list like q=12,180 is two numbers.
+   practice  all | step | check  =  Show all work | One step at a time | Check my answer
+   split     small | any  (prime factorization) how the factor tree splits; default small.
+   A link's params win over what the page remembered (localStorage). One that can't be read
+   shows the usual friendly notice instead. As the problem changes, the page keeps mode, q
+   (and split=any) in the address bar with history.replaceState — never practice or the theme.
+
+   Worksheet API (window "message" events, for a page that loads this one in an iframe):
+     {type:"helper:options", id}
+        -> {type:"helper:optionsSchema", id, page:"factors.html", title, options:[…]}
+     {type:"helper:make", id, count, options:{mode, size, count, nice, primes, gcf1, tricky}}
+        -> {type:"helper:made", id, page:"factors.html", problems:[{text, html, params, answer, answerHtml}]}
+   Making problems never changes the page, its inputs or localStorage.
+   ============================================================================= */
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var PAGE = "factors.html", STORE = "factor-tree";
+  var LIMIT = 1000000;
+  var MODES = ["factors","prime","test","gcf","div"];
+  var DIVS = [2,3,4,5,6,8,9,10,11];
+  var S = { mode:"prime", practice:"all", step:1, split:"small",
+            inputs:{ factors:"36", prime:"360", test:"91", gcf:"12, 18", div:"2,340" },
+            gen:{ factors:{ max:100, nice:false, primes:true },
+                  prime:{ max:100, nice:true, primes:false },
+                  test:{ max:100, tricky:true },
+                  gcf:{ max:100, count:2, gcf1:true, nice:false },
+                  div:{ max:10000, nice:true } } };
+  var CK = { sig:null, vals:{}, revealed:false, tried:false, fb:"", ok:false };
+  var CUR = null;                 // the problem on screen, once it reads
+
+  /* ===================== helpers ===================== */
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function C(x){ return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+  function B(x){ return "<b>" + x + "</b>"; }
+  function UserErr(msg){ this.user = msg; }
+  function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+  var WORDS = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve"];
+  function word(k){ return k < WORDS.length ? WORDS[k] : String(k); }
+  function listAnd(a){ return a.length < 2 ? a.join("") : a.length === 2 ? a[0] + " and " + a[1] : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+  function listOr(a){ return a.length < 2 ? a.join("") : a.length === 2 ? a[0] + " or " + a[1] : a.slice(0, -1).join(", ") + " or " + a[a.length - 1]; }
+  var SUPD = ["⁰","¹","²","³","⁴","⁵","⁶","⁷","⁸","⁹"];
+  function supT(e){ return String(e).split("").map(function(d){ return SUPD[+d]; }).join(""); }
+  function f1(x){ return (Math.round(x * 10) / 10).toString(); }
+  function ds(step){ return (step === undefined || step === null || step < 0) ? "" : ' data-step="' + step + '"'; }
+  function range(a, b){ var o = []; for (var i = a; i <= b; i++) o.push(i); return o; }
+
+  /* ===================== number facts ===================== */
+  var PRIMES = (function(){
+    var lim = 1000, sv = [], out = [];
+    for (var i = 2; i <= lim; i++) if (!sv[i]){ out.push(i); for (var j = i * i; j <= lim; j += i) sv[j] = true; }
+    return out;                                   // enough to test anything up to 1,000,000
+  })();
+  function isqrt(n){ var r = Math.floor(Math.sqrt(n)); while (r * r > n) r--; while ((r + 1) * (r + 1) <= n) r++; return r; }
+  function spf(m){                                // smallest prime factor (m ≥ 2)
+    for (var i = 0; i < PRIMES.length; i++){ var p = PRIMES[i]; if (p * p > m) return m; if (m % p === 0) return p; }
+    return m;
+  }
+  function isPrime(n){ return n >= 2 && spf(n) === n; }
+  function nextPrime(p){ var q = p + 1; while (!isPrime(q)) q++; return q; }
+  function factorize(n){
+    var out = [], m = n;
+    while (m > 1){ var p = spf(m), e = 0; while (m % p === 0){ m /= p; e++; } out.push({ p:p, e:e }); }
+    return out;
+  }
+  function expand(fs){ var o = []; fs.forEach(function(f){ for (var i = 0; i < f.e; i++) o.push(f.p); }); return o; }
+  function divisors(n){
+    var lo = [], hi = [];
+    for (var i = 1; i * i <= n; i++) if (n % i === 0){ lo.push(i); if (i * i !== n) hi.unshift(n / i); }
+    return lo.concat(hi);
+  }
+  function nDiv(n){ return factorize(n).reduce(function(a, f){ return a * (f.e + 1); }, 1); }
+  function omega(n){ return factorize(n).reduce(function(a, f){ return a + f.e; }, 0); }
+  function gcd(a, b){ while (b){ var t = a % b; a = b; b = t; } return a; }
+  function bgcd(a, b){ while (b){ var t = a % b; a = b; b = t; } return a; }
+  function gcfOf(nums){ return nums.reduce(function(a, b){ return gcd(a, b); }); }
+  function lcmOf(nums){ var l = 1n; nums.forEach(function(x){ var b = BigInt(x); l = l / bgcd(l, b) * b; }); return l; }
+  function prodB(arr){ return arr.reduce(function(a, x){ return a * BigInt(x); }, 1n); }
+  function fzH(fs){ return fs.length ? fs.map(function(f){ return C(f.p) + (f.e > 1 ? "<sup>" + f.e + "</sup>" : ""); }).join(" × ") : "1"; }
+  function fzT(fs){ return fs.length ? fs.map(function(f){ return C(f.p) + (f.e > 1 ? supT(f.e) : ""); }).join(" × ") : "1"; }
+  function xH(arr){ return arr.map(C).join(" × "); }
+  function digitsOf(n){ return String(n).split("").map(Number); }
+  function dsum(n){ return digitsOf(n).reduce(function(a, b){ return a + b; }, 0); }
+  function sumText(n){ return digitsOf(n).join(" + "); }
+  function altVal(n){ var d = digitsOf(n).reverse(), s = 0; d.forEach(function(x, i){ s += i % 2 ? -x : x; }); return s; }
+  function altText(n){ var d = digitsOf(n).reverse(), t = String(d[0]); for (var i = 1; i < d.length; i++) t += (i % 2 ? " − " : " + ") + d[i]; return t; }
+  function signed(v){ return v < 0 ? "−" + (-v) : String(v); }
+  function divT(a, d){ var q = Math.floor(a / d), r = a % d; return C(a) + " ÷ " + C(d) + " = " + C(q) + (r ? " R " + C(r) : ""); }
+
+  /* one divisibility rule, worked: {ok, how (short, for a table), say (a sentence)} */
+  function rule(n, d){
+    var last = n % 10, s, t, two, ok, how, say, a, b;
+    switch (d){
+      case 2:
+        ok = last % 2 === 0;
+        how = "last digit " + B(last) + (ok ? " is even" : " is odd");
+        say = "2 goes in when the last digit is even (0, 2, 4, 6 or 8). " + C(n) + " ends in " + B(last) + (ok ? ", which is even — yes." : ", which is odd — no.");
+        break;
+      case 3: case 9:
+        s = dsum(n); ok = s % d === 0;
+        t = n < 10 ? "it’s just " + B(n) : "digits " + B(sumText(n) + " = " + s);
+        how = t + (ok ? ", a multiple of " + d : ", not a multiple of " + d);
+        say = (n < 10 ? "A one-digit number: " + B(n) + "." : "Add the digits: " + B(sumText(n) + " = " + s) + ".") + " "
+            + (ok ? s + " is a multiple of " + d + " (" + s + " = " + d + " × " + (s / d) + "), so " + d + " goes in — yes."
+                  : s + " isn’t a multiple of " + d + ", so " + d + " doesn’t go in — no.");
+        break;
+      case 4: case 8:
+        a = d === 4 ? 100 : 1000; t = n % a; two = String(t);
+        while (n >= a && two.length < String(a).length - 1) two = "0" + two;
+        ok = t % d === 0;
+        b = n >= a ? "last " + (d === 4 ? "two" : "three") + " digits " + B(two) + ": " : "";
+        how = b + B(divT(t, d));
+        say = (n >= a ? "Only the last " + (d === 4 ? "two" : "three") + " digits matter: " + B(two) + ". " : "")
+            + B(divT(t, d)) + (ok ? " — no remainder, so " + d + " goes in — yes." : " — a remainder, so " + d + " doesn’t go in — no.");
+        break;
+      case 5:
+        ok = last === 0 || last === 5;
+        how = "last digit " + B(last) + (ok ? "" : " (not 0 or 5)");
+        say = "5 goes in when the number ends in 0 or 5. " + C(n) + " ends in " + B(last) + (ok ? " — yes." : " — no.");
+        break;
+      case 6:
+        a = n % 2 === 0; b = n % 3 === 0; ok = a && b;
+        how = "2 " + (a ? "✓" : "✗") + " and 3 " + (b ? "✓" : "✗");
+        say = "6 = 2 × 3, so 6 goes in exactly when 2 <i>and</i> 3 both do. Here 2 " + (a ? "does" : "doesn’t") + " and 3 "
+            + (b ? "does" : "doesn’t") + (ok ? " — yes." : " — so no.");
+        break;
+      case 10:
+        ok = last === 0;
+        how = "last digit " + B(last);
+        say = "10 goes in when the number ends in 0. " + C(n) + " ends in " + B(last) + (ok ? " — yes." : " — no.");
+        break;
+      case 11:
+        s = altVal(n); ok = s % 11 === 0;
+        t = n < 10 ? "it’s just " + B(n) : B(altText(n) + " = " + signed(s));
+        how = t;
+        say = (n < 10 ? "A one-digit number can’t be a multiple of 11 — no." :
+              "Starting from the ones digit, take away and add the digits in turn: " + B(altText(n) + " = " + signed(s)) + ". "
+            + (ok ? (s === 0 ? "0" : signed(s)) + " is " + (s === 0 ? "a multiple of 11 (0 = 11 × 0)" : "a multiple of 11") + ", so 11 goes in — yes."
+                  : signed(s) + " isn’t 0 or a multiple of 11, so 11 doesn’t go in — no."));
+        break;
+    }
+    return { ok:ok, how:how, say:say };
+  }
+
+  /* ===================== reading what was typed ===================== */
+  var EMPTY = { factors:"Type a whole number, like <b>36</b>.", prime:"Type a whole number, like <b>360</b>.",
+                test:"Type a whole number, like <b>91</b>.", gcf:"Type two or three whole numbers, like <b>12, 18</b>.",
+                div:"Type a whole number, like <b>2,340</b>." };
+  function numTokens(s, list){
+    // In a list, a comma right between digits is a separator ("12,18") unless the list is clearly
+    // separated some other way ("12, 18" or "1,000 and 2,000"); then "1,000" is one number.
+    var thousands = !list || /,\s|\d[\s;&]+\d|\band\b/i.test(s);
+    var re = thousands ? /\d{1,3}(?:,\d{3})+(?!\d)|\d+/g : /\d+/g;
+    return (s.match(re) || []).map(function(t){ return t.replace(/,/g, "").replace(/^0+(?=\d)/, ""); });
+  }
+  function tooBig(t){
+    return "<b>" + C(t) + "</b> is bigger than this page’s limit of <b>1,000,000</b>. Past a million the lists of factors "
+      + "run off the page, and the testing stops being something you’d do by hand — a number near a million already "
+      + "means trying every prime up to 1,000.";
+  }
+  function readProblem(mode, text){
+    var s = String(text == null ? "" : text).trim(), m;
+    if (!s) throw new UserErr(EMPTY[mode]);
+    if ((m = /\d*\.\d+/.exec(s))) throw new UserErr("Factors and primes are about <b>whole numbers</b>, so <b>" + esc(m[0])
+      + "</b> doesn’t work here. Try a whole number.");
+    if (/\d\s*\/\s*\d/.test(s)) throw new UserErr("Fractions don’t have factors the way whole numbers do — try a whole number.");
+    if (/(^|[^\w])[−–-]\s*\d/.test(s)) throw new UserErr("Use positive whole numbers here — leave off the minus sign. "
+      + "(A negative number has the same factors, just with signs attached.)");
+    var list = mode === "gcf", toks = numTokens(s, list);
+    if (!toks.length) throw new UserErr("I can’t find a number in <b>" + esc(s) + "</b>. " + EMPTY[mode]);
+    for (var i = 0; i < toks.length; i++) if (toks[i].length > 7 || Number(toks[i]) > LIMIT) throw new UserErr(tooBig(toks[i]));
+    var nums = toks.map(Number);
+    if (list){
+      if (nums.length < 2) throw new UserErr("The GCF and LCM need at least two numbers to compare — like <b>"
+        + C(nums[0]) + ", " + C(nums[0] === 1 ? 6 : nums[0] * 2) + "</b>.");
+      if (nums.length > 3) throw new UserErr("Up to three numbers at a time, like <b>12, 18, 30</b>. You typed " + nums.length + ".");
+      if (nums.indexOf(0) >= 0) throw new UserErr("Leave out the <b>0</b>. Every number goes into 0, so there’s no greatest "
+        + "common factor to find — and 0 isn’t counted as a multiple when you look for the least one.");
+      return { mode:mode, nums:nums, q:nums.join(",") };
+    }
+    if (nums.length > 1) throw new UserErr("That looks like " + (nums.length === 2 ? "two numbers" : "several numbers")
+      + " (" + nums.map(C).join(", ") + "). This tab takes one" + (nums.length <= 3 ? " — for two or three, use <b>GCF &amp; LCM</b>." : "."));
+    var n = nums[0];
+    if (n === 0 && mode !== "test"){
+      throw new UserErr(mode === "div"
+        ? "<b>0</b> is divisible by everything (0 ÷ 7 = 0, no remainder), so every rule would say yes. Try a number from 1 up."
+        : mode === "prime"
+        ? "<b>0</b> can’t be broken into primes: 0 = 0 × 5 = 0 × 17 = …, so there’s no one way to split it. Try a number from 2 up."
+        : "<b>0</b> has endless factors — every number goes into 0 (0 = 0 × 5 = 0 × 17 …), so there’s no list to make. Try a number from 1 up.");
+    }
+    if (n === 1 && mode === "prime") throw new UserErr("<b>1</b> has no prime factors at all — it isn’t prime and it isn’t "
+      + "composite, so a factor tree has nothing to split. Try a number from 2 up.");
+    return { mode:mode, n:n, nums:[n], q:String(n) };
+  }
+
+  /* ===================== shared pieces of drawing ===================== */
+  function sect(capt, inner, step, cls){
+    return '<div class="sect' + (cls ? " " + cls : "") + '"' + ds(step) + ">" + (capt ? '<div class="tapecap">' + capt + "</div>" : "") + inner + "</div>";
+  }
+  function verdict(on, yes, no, clsYes, clsNo){
+    return '<span class="verdict ' + (on ? (clsYes || "hit") : (clsNo || "miss")) + '">' + (on ? yes : no) + "</span>";
+  }
+  function ladderHTML(rows, bottom, stepOf, bottomStep){
+    var h = '<table class="ladder"><tbody>';
+    rows.forEach(function(rw, i){
+      h += "<tr" + (rw.all === false ? ' class="p2"' : "") + ds(stepOf(i)) + '><td class="dv">' + C(rw.p) + "</td>"
+         + rw.vals.map(function(v, j){ return '<td class="q' + (rw.hit && !rw.hit[j] ? " skip" : "") + '">' + C(v) + "</td>"; }).join("") + "</tr>";
+    });
+    h += '<tr class="bot"' + ds(bottomStep) + '><td class="dv"></td>'
+       + bottom.map(function(v){ return '<td class="q">' + C(v) + "</td>"; }).join("") + "</tr>";
+    return h + "</tbody></table>";
+  }
+  function quick(n, a){            // the quick reason a divides n or not, when there is one
+    var last = n % 10, s;
+    if (a === 2) return C(n) + (n % 2 ? " is odd" : " is even");
+    if (a === 3 && n >= 10){ s = dsum(n); return "the digits add to " + s + (s % 3 ? ", not a multiple of 3" : ", a multiple of 3"); }
+    if (a === 5 || a === 10) return C(n) + " ends in " + last;
+    return "";
+  }
+  function whyPrime(m){            // " (no prime up to 7 goes in, and 11 × 11 = 121 is past 97)"
+    if (m < 50) return "";
+    var r = isqrt(m), q = r; while (!isPrime(q)) q--;
+    var nx = nextPrime(q);
+    return " (no prime up to " + C(q) + " goes in, and the next one, " + C(nx) + ", has " + C(nx) + " × " + C(nx) + " = "
+      + C(nx * nx) + " — already past " + C(m) + ")";
+  }
+
+  /* ===================== tab 1: all the factors ===================== */
+  function solveFactors(n){
+    var r = isqrt(n), pairs = [];
+    for (var i = 1; i <= r; i++) if (n % i === 0) pairs.push([i, n / i]);
+    return { n:n, r:r, pairs:pairs, divs:divisors(n), square:r * r === n, fs:factorize(n) };
+  }
+  function stopPhrase(n){
+    var r = isqrt(n);
+    if (r * r === n) return "√" + C(n) + " = " + C(r) + ", the number that times itself makes " + C(n) + " (" + C(r) + " × " + C(r) + " = " + C(n) + ")";
+    return C(r) + ": " + C(r) + " × " + C(r) + " = " + C(r * r) + " is still under " + C(n) + ", but " + C(r + 1) + " × "
+      + C(r + 1) + " = " + C((r + 1) * (r + 1)) + " is over (so √" + C(n) + " is between " + C(r) + " and " + C(r + 1) + ")";
+  }
+  function missText(n, list){
+    if (list.length === 1){
+      var a = list[0], q = quick(n, a);
+      return (q ? cap(q) + ", so " + a + " doesn’t go in" : C(a) + " doesn’t go in evenly") + ": " + B(divT(n, a)) + ".";
+    }
+    if (list.length === 2) return C(list[0]) + " and " + C(list[1]) + " don’t go in evenly: " + B(divT(n, list[0])) + " and " + B(divT(n, list[1])) + ".";
+    return "Nothing from " + C(list[0]) + " to " + C(list[list.length - 1]) + " goes in evenly — each one leaves a remainder.";
+  }
+  function hitText(n, a, b){
+    if (a === b) return B(C(n) + " ÷ " + C(a) + " = " + C(a)) + " — " + C(a) + " pairs with <i>itself</i>: " + B(C(a) + " × " + C(a) + " = " + C(n))
+      + ". Write it in the list just once.";
+    var q = quick(n, a);
+    return (q ? cap(q) + ", so " + a + " goes in: " : "") + B(divT(n, a)) + " with nothing left over, so "
+      + B(C(a) + " × " + C(b) + " = " + C(n)) + " — " + C(a) + " and " + C(b) + " are a factor pair.";
+  }
+  function rainbowSVG(sol, stepOfPair){
+    var d = sol.divs, k = d.length, pairs = Math.floor(k / 2);
+    var maxL = d.reduce(function(m, x){ return Math.max(m, C(x).length); }, 1);
+    var slot = Math.max(30, maxL * 8.6 + 14), pad = 6;
+    var Hm = Math.min(170, 26 + 20 * Math.max(pairs, 1)), base = Hm + 14, W = Math.ceil(pad * 2 + slot * k), H = base + 28;
+    if (k % 2) H = Math.max(H, base + 28);
+    function xOf(i){ return pad + slot * i + slot / 2; }
+    function pairOf(i){ return i < k - 1 - i ? i : k - 1 - i; }
+    var out = "";
+    for (var i = 0; i < pairs; i++){
+      var x1 = xOf(i), x2 = xOf(k - 1 - i), rx = (x2 - x1) / 2, ry = 12 + (Hm - 12) * (pairs - i) / pairs;
+      out += '<path class="arc k' + (i % 4) + '"' + ds(stepOfPair(i)) + ' d="M' + f1(x1) + " " + (base - 2) + " A" + f1(rx) + " "
+           + f1(ry) + " 0 0 1 " + f1(x2) + " " + (base - 2) + '"/>';
+    }
+    if (k % 2){
+      var mi = (k - 1) / 2;
+      out += '<circle class="arc k' + (mi % 4) + '"' + ds(stepOfPair(mi)) + ' cx="' + f1(xOf(mi)) + '" cy="' + (base - 13) + '" r="9"/>';
+    }
+    d.forEach(function(x, i){
+      out += '<text class="fl' + (k % 2 && i === (k - 1) / 2 ? " sq" : "") + '"' + ds(stepOfPair(pairOf(i))) + ' x="' + f1(xOf(i)) + '" y="' + (base + 18)
+           + '" text-anchor="middle">' + C(x) + "</text>";
+    });
+    return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Factor rainbow: '
+         + "each arc joins two factors that multiply to " + C(sol.n) + '">' + out + "</svg>";
+  }
+  function arraysHTML(sol, stepOfPair){
+    var n = sol.n, P = sol.pairs, figs = [], note = "";
+    if (n <= 144){
+      P.forEach(function(pr, i){
+        var a = pr[0], b = pr[1], u = Math.max(4, Math.min(16, Math.floor(260 / b))), w = b * u, h = a * u, g = "";
+        for (var c = 1; c < b; c++) g += '<line class="gl" x1="' + (1 + c * u) + '" y1="1" x2="' + (1 + c * u) + '" y2="' + (1 + h) + '"/>';
+        for (var r = 1; r < a; r++) g += '<line class="gl" x1="1" y1="' + (1 + r * u) + '" x2="' + (1 + w) + '" y2="' + (1 + r * u) + '"/>';
+        figs.push({ i:i, svg:'<svg width="' + (w + 2) + '" height="' + (h + 2) + '" viewBox="0 0 ' + (w + 2) + " " + (h + 2) + '"><rect class="bg" x="1" y="1" width="'
+          + w + '" height="' + h + '"/>' + g + "</svg>", cap:a + " row" + (a === 1 ? "" : "s") + " of " + C(b) });
+      });
+    } else {
+      var ok = P.map(function(pr, i){ return { pr:pr, i:i }; }).filter(function(o){ return o.pr[1] / o.pr[0] <= 30; });
+      var keep = ok.slice(-6);
+      keep.forEach(function(o){
+        var a = o.pr[0], b = o.pr[1], w = Math.sqrt(5200 * b / a), h = 5200 / w;
+        w = Math.max(3, Math.round(w)); h = Math.max(3, Math.round(h));
+        figs.push({ i:o.i, svg:'<svg width="' + (w + 2) + '" height="' + (h + 2) + '" viewBox="0 0 ' + (w + 2) + " " + (h + 2)
+          + '"><rect class="bg" x="1" y="1" width="' + w + '" height="' + h + '"/></svg>', cap:C(a) + " × " + C(b) });
+      });
+      note = keep.length < P.length ? " Drawn to scale, all with the same area; the very long, thin ones (like 1 × " + C(n) + ") are left out." : " Drawn to scale, all with the same area.";
+    }
+    var html = '<div class="arrs">' + figs.map(function(f){
+      return '<figure class="arr"' + ds(stepOfPair(f.i)) + '><div class="xscroll">' + f.svg + "</div><figcaption>" + f.cap + "</figcaption></figure>";
+    }).join("") + "</div>";
+    return { html:html, note:note, any:figs.length > 0 };
+  }
+  function drawFactors(P){
+    var n = P.n, sol = solveFactors(n), items = [], html = "", facts = [];
+    if (n === 1){
+      $("workHost").innerHTML = sect('<b class="lead">Only one way to make 1.</b>', '<div class="bigline">1 = <span class="eqk">1 × 1</span></div>');
+      writeLog([{ n:"Step&nbsp;1", step:0, lines:[["p","Pair","The only factor pair is " + B("1 × 1 = 1") + ", so 1 has just " + B("one") + " factor: 1 itself."]],
+        aside:"That single factor is why 1 is neither prime nor composite: a prime has exactly two different factors (1 and itself), and a composite has more than two." }]);
+      band('<span class="k">Factors of 1</span><span class="v">1</span>', ["<b>1</b> factor", "1 is neither prime nor composite"], "answer");
+      $("closer").innerHTML = "<b>Check:</b> 1 ÷ 1 = 1, and nothing bigger than 1 can go into 1 " + '<span class="ok">✓</span>';
+      return 1;
+    }
+    var pr = sol.pairs, m = pr.length, r = sol.r;
+    var groups = [[0]], stepOfPairIdx = [];
+    if (m - 1 <= 17){ for (var i = 1; i < m; i++) groups.push([i]); }
+    else {
+      var cs = Math.ceil((m - 1) / 16);
+      for (var i2 = 1; i2 < m; i2 += cs){ var g = []; for (var j = i2; j < Math.min(m, i2 + cs); j++) g.push(j); groups.push(g); }
+    }
+    groups.forEach(function(g, s){ g.forEach(function(pi){ stepOfPairIdx[pi] = s; }); });
+    var stopStep = groups.length;
+    function stepOfTest(t){ for (var q = 0; q < m; q++) if (pr[q][0] >= t) return stepOfPairIdx[q]; return stopStep; }
+    function stepOfPair(pi){ return stepOfPairIdx[pi]; }
+
+    /* --- the testing table --- */
+    var rows = "", t = 1;
+    while (t <= r){
+      if (n % t === 0){
+        rows += "<tr" + ds(stepOfTest(t)) + '><td class="d">÷ ' + C(t) + '</td><td class="w">' + B(divT(n, t)) + "</td><td>"
+              + verdict(true, C(t) + " × " + C(n / t), "") + "</td></tr>";
+        t++; continue;
+      }
+      var st0 = stepOfTest(t), u = t;
+      while (u <= r && n % u !== 0 && stepOfTest(u) === st0) u++;
+      var run = range(t, u - 1);
+      if (run.length <= 2) run.forEach(function(x){
+        rows += '<tr class="miss"' + ds(st0) + '><td class="d">÷ ' + C(x) + '</td><td class="w">' + B(divT(n, x)) + "</td><td>" + verdict(false, "", "✗ remainder") + "</td></tr>";
+      });
+      else rows += '<tr class="miss"' + ds(st0) + '><td class="d">÷ ' + C(run[0]) + "–" + C(run[run.length - 1]) + '</td><td class="w">'
+                 + run.length + " numbers, each leaves a remainder</td><td>" + verdict(false, "", "✗ none") + "</td></tr>";
+      t = u;
+    }
+    html += sect('<b class="lead">Test 1, 2, 3, … up to ' + (sol.square ? "√" + C(n) + " = " + C(r) : C(r)) + ".</b> Divide " + C(n)
+      + " by each one. Every number that goes in evenly — no remainder — is a factor, and the answer is its partner.",
+      '<div class="xscroll"><table class="tests"><tbody>' + rows + "</tbody></table></div>");
+    html += sect('<b class="lead">The factor rainbow.</b> The factors in order, with an arc joining each pair. The smallest '
+      + "pairs with the biggest, the next smallest with the next biggest, so the arcs nest inside each other."
+      + (sol.square ? " " + C(r) + " pairs with itself, so it gets a little loop of its own." : ""),
+      '<div class="xscroll">' + rainbowSVG(sol, function(pi){ return stepOfPair(Math.min(pi, m - 1)); }) + "</div>");
+    var arr = arraysHTML(sol, stepOfPair);
+    html += sect('<b class="lead">As rectangles.</b> ' + C(n) + " squares can be laid out in a rectangle for every factor pair — "
+      + (m > 1 ? C(pr[m - 1][0]) + " rows of " + C(pr[m - 1][1]) + ", and so on." : "but a prime only makes one: a single row.") + arr.note,
+      arr.any ? arr.html : '<div class="tapecap">(Only 1 × ' + C(n) + " — one long row, too long to draw.)</div>");
+    $("workHost").innerHTML = html;
+
+    /* --- the words --- */
+    var odd2 = n % 2 === 1 && r >= 2 && m - 1 <= 17;
+    groups.forEach(function(g, s){
+      var lines = [], aside = null;
+      var prevA = s === 0 ? 0 : pr[groups[s - 1][groups[s - 1].length - 1]][0];
+      if (s === 0){
+        lines.push(["m","Plan","Test 1, 2, 3, … in order. Each number that divides " + C(n) + " evenly brings a partner with it. "
+          + (r === 1 ? "Here only 1 needs testing, since 2 × 2 = 4 is already more than " + C(n) + "." : "You only need to go up to " + stopPhrase(n) + ".")]);
+        lines.push(["p","Pair","Start with 1: it goes into every number. " + B("1 × " + C(n) + " = " + C(n)) + ", so 1 and " + C(n) + " are the first pair."]);
+      } else if (g.length === 1){
+        var a = pr[g[0]][0], b = pr[g[0]][1], misses = range(prevA + 1, a - 1);
+        if (misses.length) lines.push(["m","Test", missText(n, misses)]);
+        lines.push(["p","Pair", hitText(n, a, b)]);
+        if (odd2 && misses.indexOf(2) >= 0) aside = C(n) + " is odd, so no even number can go in either — 4, 6, 8, … are all multiples of 2. "
+          + "You could skip them; they’re tested here so nothing is hidden.";
+      } else {
+        var to = pr[g[g.length - 1]][0];
+        lines.push(["p","Pairs","Testing " + C(prevA + 1) + " to " + C(to) + " turns up " + listAnd(g.map(function(pi){
+          return B(C(pr[pi][0]) + " × " + C(pr[pi][1])); })) + "."]);
+      }
+      items.push({ n:"Step&nbsp;" + (s + 1), step:s, lines:lines, aside:aside });
+    });
+    var lastA = pr[m - 1][0], tail = range(lastA + 1, r), lines2 = [];
+    var bk = pr.filter(function(p){ return p[0] !== p[1]; }).pop();
+    if (tail.length) lines2.push(["m","Test", missText(n, tail)]);
+    lines2.push(["e","Stop","The next number to test is " + C(r + 1) + ", but " + C(r + 1) + " × " + C(r + 1) + " = " + C((r + 1) * (r + 1))
+      + " is more than " + C(n) + " — so stop here."]);
+    var lowList = pr.map(function(p){ return C(p[0]); }), highList = pr.slice().reverse().filter(function(p){ return p[0] !== p[1]; }).map(function(p){ return C(p[1]); });
+    lines2.push(["a","List", m === 1 ? "Only " + B("1 × " + C(n)) + " turned up, so " + C(n) + " has exactly two factors, 1 and itself. That makes it " + B("prime") + "."
+      : "Read the small partners going up, then the big partners coming back down: " + B(lowList.concat(highList).join(", ")) + ". That’s "
+      + B(sol.divs.length) + " factors."]);
+    if (sol.square && n > 1) lines2.push(["p","Square", C(n) + " has an odd number of factors because " + C(r) + " had no different partner. Only perfect squares do that."]);
+    items.push({ n:"Step&nbsp;" + (stopStep + 1), step:stopStep, lines:lines2,
+      aside: r >= 2 ? "Why stop at " + (sol.square ? "√" + C(n) : C(r)) + "? In every pair, one number is at most √" + C(n) + " and the other at least √" + C(n)
+        + " — if both were bigger, they’d multiply to more than " + C(n) + ". So every pair has a small partner, and we’ve tested all the small ones. "
+        + "Going on would only find the same pairs backwards" + (bk ? ": " + C(bk[1]) + " × " + C(bk[0]) + ", …" : ".") : null });
+    writeLog(items);
+
+    /* --- answer --- */
+    var cnt = sol.divs.length, txt = sol.divs.map(C).join(", ");
+    facts.push(B(cnt) + " factors" + (m > 1 ? ": " + (sol.square ? (m - 1) + " pair" + (m - 1 === 1 ? "" : "s") + ", plus " + C(r) + " × " + C(r)
+      : m + " pair" + (m === 1 ? "" : "s")) : ""));
+    if (sol.square) facts.push(C(n) + " is a perfect square (" + C(r) + " × " + C(r) + "), which is why the count is odd");
+    facts.push("Prime factorization: " + B(fzH(sol.fs)));
+    facts.push(cnt === 2 ? C(n) + " is <strong>prime</strong> — exactly two factors" : C(n) + " is <strong>composite</strong> — more than two factors");
+    band('<span class="k">Factors of ' + C(n) + '</span><span class="v' + (txt.length > 34 ? " long" : "") + '">' + txt + "</span>", facts, "answer");
+    var shown = pr.slice(0, 4).map(function(p){ return C(p[0]) + " × " + C(p[1]); }).join(", ") + (m > 4 ? ", …" : "");
+    var ex = sol.fs.map(function(f){ return "(" + f.e + " + 1)"; }).join(" × ");
+    $("closer").innerHTML = '<div class="ck"><b>Check:</b> every pair multiplies back to ' + C(n) + " — " + shown + ' <span class="ok">✓</span></div>'
+      + '<div class="ck"><b>Count check:</b> from ' + C(n) + " = " + fzH(sol.fs) + ", add 1 to each exponent and multiply: "
+      + ex + " = " + cnt + " factors " + '<span class="ok">✓</span></div>';
+    return items.length;
+  }
+
+  /* ===================== tab 2: prime factorization ===================== */
+  function divSeq(n){                // the ladder: smallest prime each time, with the primes that were skipped
+    var out = [], m = n, pi = 0;
+    while (m > 1){
+      var sk = [], p = 0;
+      while (pi < PRIMES.length && PRIMES[pi] * PRIMES[pi] <= m){
+        if (m % PRIMES[pi] === 0){ p = PRIMES[pi]; break; }
+        sk.push(PRIMES[pi]); pi++;
+      }
+      if (!p) p = m;
+      out.push({ m:m, p:p, skipped:sk });
+      m = m / p;
+    }
+    return out;
+  }
+  function lowSplit(m){ for (var a = isqrt(m); a > 1; a--) if (m % a === 0) return a; return 1; }
+  function buildTree(n, split){
+    function mk(v){ return { v:v, kids:null, prime:isPrime(v) }; }
+    var root = mk(n), splits = [];
+    if (split === "any"){
+      var queue = [root];
+      while (queue.length){
+        var c = queue.shift();
+        if (c.prime) continue;
+        var a = lowSplit(c.v);
+        c.kids = [mk(a), mk(c.v / a)]; c.split = splits.length; splits.push(c);
+        queue.push(c.kids[0], c.kids[1]);
+      }
+    } else {
+      var cur = root;
+      while (!cur.prime){ var p = spf(cur.v); cur.kids = [mk(p), mk(cur.v / p)]; cur.split = splits.length; splits.push(cur); cur = cur.kids[1]; }
+    }
+    return { root:root, splits:splits };
+  }
+  function treeSVG(tree, root){
+    var GAP = 12, LV = 62, TOP = 20, maxD = 0, edges = "", nodes = "";
+    function nw(nd){ return Math.max(30, C(nd.v).length * 9.4 + 18); }
+    function measure(nd){
+      nd.w = nw(nd);
+      if (!nd.kids){ nd.sw = nd.w; return; }
+      measure(nd.kids[0]); measure(nd.kids[1]);
+      nd.sw = Math.max(nd.w, nd.kids[0].sw + GAP + nd.kids[1].sw);
+    }
+    function place(nd, x0, dep, step){
+      nd.y = TOP + dep * LV; nd.st = step; maxD = Math.max(maxD, dep);
+      if (!nd.kids){ nd.x = x0 + nd.sw / 2; return; }
+      var a = nd.kids[0], b = nd.kids[1], off = (nd.sw - (a.sw + GAP + b.sw)) / 2;
+      place(a, x0 + off, dep + 1, nd.split); place(b, x0 + off + a.sw + GAP, dep + 1, nd.split);
+      nd.x = (a.x + b.x) / 2;
+    }
+    measure(root); place(root, 8, 0, -1);
+    (function walk(nd){
+      if (nd.kids) nd.kids.forEach(function(k){
+        edges += '<line class="edge"' + ds(nd.split) + ' x1="' + f1(nd.x) + '" y1="' + (nd.y + 15) + '" x2="' + f1(k.x) + '" y2="' + (k.y - 15) + '"/>';
+        walk(k);
+      });
+      var cls = nd.prime ? "pn" : nd === root ? "rt" : "cn";
+      nodes += '<g class="' + cls + '"' + ds(nd.st) + '><rect x="' + f1(nd.x - nd.w / 2) + '" y="' + (nd.y - 15) + '" width="' + f1(nd.w)
+             + '" height="30" rx="15"/><text x="' + f1(nd.x) + '" y="' + (nd.y + 5.5) + '" text-anchor="middle">' + C(nd.v) + "</text></g>";
+    })(root);
+    var W = Math.ceil(root.sw + 16), H = TOP + maxD * LV + 22;
+    return '<svg class="ft" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H
+         + '" role="img" aria-label="Factor tree for ' + C(root.v) + ': primes are circled at the ends of the branches">' + edges + nodes + "</svg>";
+  }
+  function goesText(m, p, first){
+    var last = m % 10;
+    if (p === 2) return (first ? "Start with the smallest prime, 2. " : "") + C(m) + " is even, so 2 goes in:";
+    if (p === 3) return (m >= 10 ? "Try 3: the digits add to " + dsum(m) + ", a multiple of 3, so 3 goes in:" : "Try 3:");
+    if (p === 5) return "Try 5: " + C(m) + " ends in " + last + ", so 5 goes in:";
+    return "Try " + C(p) + ": " + B(C(m) + " ÷ " + C(p)) + " comes out even, so " + C(p) + " goes in:";
+  }
+  function againText(m, p){
+    if (p === 2) return C(m) + " is still even — 2 again:";
+    if (p === 3) return "3 still goes in" + (m >= 10 ? " (the digits add to " + dsum(m) + ")" : "") + ":";
+    if (p === 5) return C(m) + " still ends in " + (m % 10) + " — 5 again:";
+    return C(p) + " goes in again:";
+  }
+  function skipText(m, sk){
+    var parts = [], rest = [];
+    sk.forEach(function(q){
+      if (q === 2) parts.push("not 2 (" + C(m) + " is odd)");
+      else if (q === 3 && m >= 10) parts.push("not 3 (the digits add to " + dsum(m) + ")");
+      else if (q === 5) parts.push("not 5 (it doesn’t end in 0 or 5)");
+      else rest.push(q);
+    });
+    if (rest.length === 1) parts.push("not " + C(rest[0]) + " (" + B(divT(m, rest[0])) + ")");
+    else if (rest.length && rest.length <= 4) parts.push("not " + listOr(rest.map(C)) + " (they leave remainders)");
+    else if (rest.length) parts.push("none of the primes from " + C(rest[0]) + " to " + C(rest[rest.length - 1]) + " go in");
+    return parts.length ? cap(listAnd(parts)) + "." : "";
+  }
+  function drawPrime(P){
+    var n = P.n, fs = factorize(n), list = expand(fs), seq = divSeq(n), split = S.split;
+    var tree = buildTree(n, split), splits = tree.splits, nS = splits.length, items = [], html = "";
+    var collect = nS;
+    var ladderStep = function(i){ return split === "any" ? collect : Math.min(i, Math.max(nS - 1, 0)); };
+    html += sect('<b class="lead">Factor tree.</b> Split the number into two factors that multiply to it, then split those, and so on. '
+      + "A prime can’t be split, so it gets <i>circled</i>" + (nS ? " — the circled primes at the ends of the branches are the answer." : "."),
+      '<div class="xscroll">' + treeSVG(tree, tree.root) + "</div>");
+    html += sect('<b class="lead">The ladder (upside-down division).</b> The same thing in a column: divide by the smallest prime that goes in, '
+      + "write the answer underneath, and keep going until you reach 1. The primes down the side are the prime factors.",
+      '<div class="xscroll">' + ladderHTML(seq.map(function(s){ return { p:s.p, vals:[s.m] }; }), [1], ladderStep, ladderStep(seq.length - 1)) + "</div>");
+    html += sect("", '<div class="bigline">' + C(n) + " = " + '<span class="pr">' + xH(list) + "</span></div>"
+      + (list.length > 1 ? '<div class="bigline">' + C(n) + " = " + '<span class="eqk">' + fzH(fs) + "</span></div>" : ""), collect);
+    $("workHost").innerHTML = html;
+
+    if (!nS){
+      items.push({ n:"Step&nbsp;1", step:0, lines:[["a","Prime", C(n) + " is prime" + whyPrime(n) + ". It can’t be split into two smaller factors, so its "
+        + "factor tree is just " + C(n) + ", circled. On the ladder, " + B(C(n) + " ÷ " + C(n) + " = 1") + " and you’re done."],
+        ["a","Answer","A prime’s factorization is the prime itself: " + B(C(n) + " = " + C(n)) + "."]] });
+    } else if (split === "small"){
+      for (var k = 0; k < nS; k++){
+        var st = seq[k], q = st.m / st.p, lines = [], prev = k ? seq[k - 1].p : 0;
+        var head = (st.skipped.length ? skipText(st.m, st.skipped) + " " : "")
+          + (st.p === prev && !st.skipped.length ? againText(st.m, st.p) : goesText(st.m, st.p, k === 0));
+        lines.push(["p","Split", head + " " + B(C(st.m) + " = " + C(st.p) + " × " + C(q)) + "."]);
+        if (k === nS - 1){
+          lines.push(["a","Circle", (st.p === q ? "Both " + C(q) + "s are prime" : C(st.p) + " and " + C(q) + " are both prime") + whyPrime(q)
+            + " — circle them. Every branch now ends in a circled prime, so the tree is finished."]);
+        } else lines.push(["a","Circle","Circle the " + C(st.p) + " — it’s prime. " + C(q) + " isn’t prime yet, so it keeps splitting."]);
+        items.push({ n:"Step&nbsp;" + (k + 1), step:k, lines:lines,
+          aside: k === 0 ? "Each split is one row of the ladder: " + C(st.p) + " goes down the side, " + C(q) + " goes underneath." : null });
+      }
+    } else {
+      splits.forEach(function(nd, s){
+        var a = nd.kids[0], b = nd.kids[1], lines = [];
+        lines.push(["p","Split", s === 0
+          ? "Start with any two factors that multiply to " + C(nd.v) + ". " + C(a.v) + " × " + C(b.v) + " is the pair nearest the middle: " + B(C(nd.v) + " = " + C(a.v) + " × " + C(b.v)) + "."
+          : C(nd.v) + " isn’t prime, so split it: " + B(C(nd.v) + " = " + C(a.v) + " × " + C(b.v)) + "."]);
+        var pr = [a, b].filter(function(x){ return x.prime; }), cp = [a, b].filter(function(x){ return !x.prime; });
+        var txt = "";
+        if (pr.length) txt += (pr.length === 2 ? (a.v === b.v ? "Both " + C(a.v) + "s are prime" : C(a.v) + " and " + C(b.v) + " are both prime") + " — circle them."
+                                                 : C(pr[0].v) + " is prime" + whyPrime(pr[0].v) + " — circle it.");
+        if (cp.length) txt += (txt ? " " : "") + listAnd(cp.map(function(x){ return C(x.v); })) + (cp.length === 2 ? " both split again." : " still splits.");
+        if (s === nS - 1) txt += " Every branch now ends in a circled prime, so the tree is finished.";
+        lines.push(["a","Circle", txt]);
+        items.push({ n:"Step&nbsp;" + (s + 1), step:s, lines:lines,
+          aside: s === 0 ? "Any factor pair works to start. A tree split another way looks different, but it always ends with the very same circled primes." : null });
+      });
+    }
+    if (nS){
+      var lines3 = [["a","Collect","Gather the circled primes, smallest first: " + B(xH(list) + " = " + C(n)) + "."]];
+      var reps = fs.filter(function(f){ return f.e > 1; });
+      if (reps.length) lines3.push(["a","Shorten","Repeats get an exponent: " + listAnd(reps.map(function(f){
+        return word(f.e) + " " + C(f.p) + "s multiplied is " + B(C(f.p) + "<sup>" + f.e + "</sup>") + (f.e === 2 ? " (“" + C(f.p) + " squared”)" : f.e === 3 ? " (“" + C(f.p) + " cubed”)" : "");
+      })) + ". So " + B(C(n) + " = " + fzH(fs)) + "."]);
+      lines3.push(["m","Ladder", split === "any" ? "The ladder gets the same primes another way — smallest prime first, down to 1: " + B(xH(seq.map(function(s){ return s.p; }))) + "."
+        : "The ladder’s side column reads the same primes from top to bottom: " + B(xH(seq.map(function(s){ return s.p; }))) + "."]);
+      var alt = split === "any" ? spf(n) : lowSplit(n), other = null;
+      if (split === "any" && alt !== lowSplit(n)) other = "Split off the smallest prime instead (" + C(n) + " = " + C(alt) + " × " + C(n / alt) + ", then keep going) and the tree grows down one side";
+      if (split === "small" && alt !== spf(n)) other = "Start another way instead — say " + C(n) + " = " + C(alt) + " × " + C(n / alt) + " — and the tree looks different";
+      items.push({ n:"Step&nbsp;" + (collect + 1), step:collect, lines:lines3,
+        aside: other ? other + ", but the circled primes at the bottom are exactly the same: " + B(xH(list)) + ". Every whole number above 1 has just one set of prime factors "
+          + "— that’s why the answer never depends on how you split." : null });
+    }
+    writeLog(items);
+
+    var facts = [];
+    if (list.length > 1) facts.push("Written out: " + B(xH(list)));
+    facts.push(nS ? B(list.length) + " prime factors, " + B(fs.length) + " different" : C(n) + " is <strong>prime</strong>");
+    facts.push("Number of factors: " + B(fs.map(function(f){ return "(" + f.e + "+1)"; }).join("") + " = " + nDiv(n)));
+    band('<span class="k">Prime factorization</span><span class="v"><span class="vv">' + fzH(fs) + "</span></span>", facts, "answer");
+    var run = 1, parts = [];
+    fs.forEach(function(f, i){
+      var pw = Math.pow(f.p, f.e), pwT = f.e > 1 ? C(f.p) + "<sup>" + f.e + "</sup>" : C(f.p);
+      if (i === 0){ parts.push(f.e > 1 ? pwT + " = " + C(pw) : C(pw)); run = pw; }
+      else { parts.push(C(run) + " × " + (f.e > 1 ? pwT + " (" + C(pw) + ")" : C(pw)) + " = " + C(run * pw)); run *= pw; }
+    });
+    $("closer").innerHTML = "<b>Check:</b> multiply the primes back together — " + (parts.length > 1 ? parts.join("; ") : C(n) + " is already prime")
+      + " " + '<span class="ok">✓</span> And every one of them is prime, so nothing splits any further.';
+    return items.length;
+  }
+
+  /* ===================== tab 3: prime or composite? ===================== */
+  function solveTest(n){
+    if (n < 2) return { n:n, kind:"neither", tested:[], found:0 };
+    var r = isqrt(n), tested = [], found = 0;
+    for (var i = 0; i < PRIMES.length && PRIMES[i] <= r; i++){ tested.push(PRIMES[i]); if (n % PRIMES[i] === 0){ found = PRIMES[i]; break; } }
+    return { n:n, r:r, kind:found ? "composite" : "prime", tested:tested, found:found };
+  }
+  var TRICKS = { 51:"51 fools a lot of people: it’s odd and doesn’t end in 5. But 5 + 1 = 6, a multiple of 3, so 3 goes in: 51 = 3 × 17.",
+                 57:"57 is a famous trick — it looks prime, but 5 + 7 = 12, so 3 goes in: 57 = 3 × 19.",
+                 87:"87 looks prime, but 8 + 7 = 15, so 3 goes in: 87 = 3 × 29.",
+                 91:"91 is the classic trick: it’s odd, doesn’t end in 5, and its digits add to 10, so it looks prime. But 7 × 13 = 91." };
+  function testHow(n, p){
+    if (p === 2 || p === 5) return rule(n, p).how;
+    if (p === 3 && n >= 10) return rule(n, 3).how;
+    if (p === 11 && n >= 100) return rule(n, 11).how + (n % 11 ? "" : ", a multiple of 11");
+    return B(divT(n, p));
+  }
+  function testSay(n, p){
+    var hit = n % p === 0;
+    if (p === 2) return hit ? C(n) + " is even, so 2 goes in." : C(n) + " is odd, so 2 doesn’t go in — and no even number will.";
+    if (p === 3 && n >= 10) return "The digits add to " + B(sumText(n) + " = " + dsum(n)) + (hit ? ", a multiple of 3 — so 3 goes in." : ", not a multiple of 3 — so 3 doesn’t go in.");
+    if (p === 5) return C(n) + " ends in " + (n % 10) + (hit ? ", so 5 goes in." : ", not 0 or 5 — so 5 doesn’t go in.");
+    if (p === 11 && n >= 100) return "Take away and add the digits from the right: " + B(altText(n) + " = " + signed(altVal(n))) + (hit ? " — a multiple of 11, so 11 goes in." : " — not a multiple of 11, so 11 doesn’t go in.");
+    return B(divT(n, p)) + (hit ? " — it comes out even, so " + C(p) + " goes in." : " — a remainder, so " + C(p) + " doesn’t go in.");
+  }
+  function drawTest(P){
+    var n = P.n, sol = solveTest(n), items = [], html = "";
+    if (n < 2){
+      html = sect('<b class="lead">' + (n === 0 ? "The factors of 0." : "The factors of 1.") + "</b>",
+        '<div class="bigline">' + (n === 0 ? "0 = 0 × 1 = 0 × 2 = 0 × 3 = …" : "1 = 1 × 1 — just one factor") + "</div>");
+      $("workHost").innerHTML = html;
+      items.push({ n:"Step&nbsp;1", step:0, lines: n === 0
+        ? [["m","Rule","A prime has exactly two different factors: 1 and itself. A composite has more than two."],
+           ["e","Neither","Every number goes into 0 (0 ÷ 7 = 0, 0 ÷ 100 = 0), so 0 has endless factors. It doesn’t fit either rule, so 0 is " + B("neither") + " prime nor composite."]]
+        : [["m","Rule","A prime has exactly two different factors: 1 and itself. A composite has more than two."],
+           ["e","Neither","1’s only factor is 1 — just " + B("one") + " factor. That’s too few to be prime and too few to be composite, so 1 is " + B("neither") + "."]],
+        aside: n === 1 ? "Why isn’t 1 prime? If it were, numbers would have many prime factorizations (6 = 2 × 3 = 1 × 2 × 3 = 1 × 1 × 2 × 3 …). Leaving 1 out keeps every number’s primes unique." : null });
+      writeLog(items);
+      band('<span class="k">' + C(n) + ' is</span><span class="v"><span class="word">Neither</span></span>', ["Not prime and not composite", n === 0 ? "Every number is a factor of 0" : "1 has only one factor"], "answer");
+      $("closer").innerHTML = "<b>Check:</b> the only numbers that are neither prime nor composite are 0 and 1 " + '<span class="ok">✓</span>';
+      return 1;
+    }
+    var rowsArr = [], i = 0, T = sol.tested;
+    while (i < T.length){
+      if (T[i] <= 13 || T[i] === sol.found){ rowsArr.push([T[i]]); i++; continue; }
+      var g = [];
+      while (i < T.length && g.length < 8 && T[i] !== sol.found){ g.push(T[i]); i++; }
+      rowsArr.push(g);
+    }
+    // the found prime shares a step with the group just before it
+    var steps = [], stepOfRow = [];
+    rowsArr.forEach(function(row, ri){
+      var joinPrev = row.length === 1 && row[0] === sol.found && row[0] > 13 && ri > 0 && rowsArr[ri - 1].length > 1;
+      if (joinPrev){ stepOfRow[ri] = steps.length; steps[steps.length - 1].push(ri); stepOfRow[ri] = steps.length; }
+      else { steps.push([ri]); stepOfRow[ri] = steps.length; }
+    });
+    var tb = "";
+    rowsArr.forEach(function(row, ri){
+      if (row.length === 1){
+        var p = row[0], hit = n % p === 0;
+        tb += "<tr" + (hit ? "" : ' class="miss"') + ds(stepOfRow[ri]) + '><td class="d">÷ ' + C(p) + '</td><td class="w">' + testHow(n, p) + "</td><td>"
+            + verdict(hit, "✓ goes in", "✗") + "</td></tr>";
+      } else {
+        tb += '<tr class="miss"' + ds(stepOfRow[ri]) + '><td class="d">÷ ' + C(row[0]) + " … " + C(row[row.length - 1]) + '</td><td class="w">'
+            + row.length + " primes: " + row.map(C).join(", ") + "</td><td>" + verdict(false, "", "✗ none") + "</td></tr>";
+      }
+    });
+    var stopStep = steps.length + 1;
+    var nx = T.length ? nextPrime(T[T.length - 1]) : 2;
+    if (sol.kind === "prime") tb += '<tr class="miss"' + ds(T.length ? stopStep : 0) + '><td class="d">÷ ' + C(nx) + '</td><td class="w">' + C(nx) + " × " + C(nx) + " = "
+      + B(C(nx * nx)) + " is past " + C(n) + " — stop</td><td>" + verdict(true, "prime", "", "yes") + "</td></tr>";
+    html += sect('<b class="lead">Divide by primes, up to √' + C(n) + ".</b> " + (T.length ? "A prime that goes in evenly means " + C(n)
+      + " has another factor besides 1 and itself." : "There’s nothing to test: even 2 × 2 = 4 is bigger than " + C(n) + "."),
+      '<div class="xscroll"><table class="tests"><tbody>' + tb + "</tbody></table></div>");
+    if (sol.kind === "composite") html += sect("", '<div class="bigline">' + C(n) + " = " + '<span class="eqk">' + C(sol.found) + " × " + C(n / sol.found) + "</span></div>"
+      + '<div class="tapecap">So ' + C(n) + " has factors besides 1 and itself. All of them: " + divisors(n).map(C).join(", ") + ". Its primes: " + fzH(factorize(n)) + ".</div>", stopStep - 1);
+    $("workHost").innerHTML = html;
+
+    var r = sol.r;
+    items.push({ n:"Step&nbsp;1", step:0, lines:[["m","Plan","A prime has exactly two factors: 1 and itself. To test " + C(n) + ", divide by the primes 2, 3, 5, 7, … "
+      + (T.length ? "— but only up to " + stopPhrase(n) + "." : "— but even 2 × 2 = 4 is already bigger than " + C(n) + ", so there’s nothing to try.")]]
+      .concat(n === 2 ? [["a","Prime","2’s only factors are 1 and 2, so it’s prime — the only even prime. Every other even number has 2 as a factor."]]
+            : !T.length ? [["a","Prime","Nothing can go in, so " + C(n) + "’s only factors are 1 and itself: it’s " + B("prime") + "."]] : []),
+      aside: T.length ? "Why only primes? If a bigger number like 9 went in, its prime factor 3 would have gone in first. And why stop at √" + C(n)
+        + "? If " + C(n) + " = a × b, the smaller of a and b can’t be bigger than √" + C(n) + ". So if nothing up to there goes in, nothing bigger will either." : null });
+    steps.forEach(function(rowIdx, si){
+      var lines = [], aside = null;
+      rowIdx.forEach(function(ri){
+        var row = rowsArr[ri];
+        if (row.length === 1){
+          var p = row[0];
+          lines.push([n % p === 0 ? "p" : "m", n % p === 0 ? "Found" : "÷ " + p, testSay(n, p)]);
+        } else lines.push(["m","Test","Divide by " + listAnd(row.map(C)) + ": none of them go in evenly."]);
+      });
+      if (sol.found && si === steps.length - 1){
+        lines.push(["a","Answer", B(C(n) + " = " + C(sol.found) + " × " + C(n / sol.found)) + ", so " + C(n) + " has factors besides 1 and itself — it’s " + B("composite") + "."]);
+        if (TRICKS[n]) aside = TRICKS[n];
+        else if (n % 2 && n % 3 && n % 5 && n < 1000) aside = C(n) + " can look prime — it’s odd, its digits don’t add to a multiple of 3, and it doesn’t end in 5. That’s why you keep testing past 5.";
+      }
+      items.push({ n:"Step&nbsp;" + (si + 2), step:si + 1, lines:lines, aside:aside });
+    });
+    if (sol.kind === "prime" && T.length){
+      items.push({ n:"Step&nbsp;" + (stopStep + 1), step:stopStep, lines:[["e","Stop","The next prime is " + C(nx) + ", and " + C(nx) + " × " + C(nx) + " = " + C(nx * nx)
+        + " is more than " + C(n) + " — nothing is left to try."], ["a","Answer","No prime went in evenly, so " + C(n) + "’s only factors are 1 and " + C(n) + ". It’s " + B("prime") + "."]] });
+    }
+    writeLog(items);
+    var facts = [];
+    if (sol.kind === "composite"){
+      facts.push("Smallest prime factor: " + B(C(sol.found)) + " — " + C(n) + " = " + C(sol.found) + " × " + C(n / sol.found));
+      facts.push("Prime factorization: " + B(fzH(factorize(n))));
+    } else {
+      facts.push("Its only factors: " + B("1") + " and " + B(C(n)));
+      facts.push(T.length ? "Tested " + (T.length <= 8 ? listAnd(T.map(C)) : T.length + " primes, 2 to " + C(T[T.length - 1])) + " — every prime up to √" + C(n) : "Nothing to test below √" + C(n));
+    }
+    band('<span class="k">' + C(n) + ' is</span><span class="v"><span class="word">' + (sol.kind === "prime" ? "Prime" : "Composite") + "</span></span>", facts, "answer");
+    $("closer").innerHTML = sol.kind === "composite"
+      ? "<b>Check:</b> " + C(sol.found) + " × " + C(n / sol.found) + " = " + C(n) + ' <span class="ok">✓</span> — a factor pair other than 1 × ' + C(n) + ", so " + C(n) + " is composite."
+      : "<b>Check:</b> any factor pair of " + C(n) + " would need one number no bigger than √" + C(n) + (T.length ? ", and every prime up to there left a remainder " : " ")
+        + '<span class="ok">✓</span> So ' + C(n) + " is prime.";
+    return items.length;
+  }
+
+  /* ===================== tab 4: GCF & LCM ===================== */
+  function cake(nums){
+    var rows = [], cur = nums.slice();
+    for (;;){
+      var g = gcfOf(cur);
+      if (g === 1) break;
+      var p = spf(g);
+      rows.push({ p:p, vals:cur.slice(), all:true });
+      cur = cur.map(function(x){ return x / p; });
+    }
+    if (nums.length === 3){
+      for (;;){
+        var best = 0;
+        [[0,1],[0,2],[1,2]].forEach(function(pr){ var g2 = gcd(cur[pr[0]], cur[pr[1]]); if (g2 > 1){ var q = spf(g2); if (!best || q < best) best = q; } });
+        if (!best) break;
+        var hit = cur.map(function(x){ return x % best === 0; });
+        rows.push({ p:best, vals:cur.slice(), all:false, hit:hit });
+        cur = cur.map(function(x){ return x % best === 0 ? x / best : x; });
+      }
+    }
+    return { rows:rows, bottom:cur };
+  }
+  function solveGcf(nums){
+    var fsx = nums.map(factorize), g = gcfOf(nums), L = lcmOf(nums), primes = [], R = {};
+    fsx.forEach(function(fs){ fs.forEach(function(f){ if (primes.indexOf(f.p) < 0) primes.push(f.p); }); });
+    primes.sort(function(a, b){ return a - b; });
+    primes.forEach(function(p){
+      var es = fsx.map(function(fs){ var f = fs.filter(function(x){ return x.p === p; })[0]; return f ? f.e : 0; });
+      var mx = Math.max.apply(null, es);
+      for (var k = 1; k <= mx; k++){
+        var mask = 0;
+        es.forEach(function(e, i){ if (e >= k) mask |= (1 << i); });
+        (R[mask] = R[mask] || []).push(p);
+      }
+    });
+    var all = (1 << nums.length) - 1, everything = [];
+    Object.keys(R).forEach(function(k){ everything = everything.concat(R[k]); });
+    everything.sort(function(a, b){ return a - b; });
+    return { nums:nums, fsx:fsx, g:g, L:L, R:R, mid:R[all] || [], everything:everything, cake:cake(nums) };
+  }
+  function tokensOf(list, maxPlain){
+    if (list.length <= maxPlain) return list.map(function(p){ return { t:C(p), s:"" }; });
+    var out = [], i = 0;
+    while (i < list.length){ var p = list[i], e = 0; while (i < list.length && list[i] === p){ e++; i++; } out.push({ t:C(p), s:e > 1 ? String(e) : "" }); }
+    return out;
+  }
+  function tokW(t){ return t.t.length * 9 + (t.s ? t.s.length * 6.5 + 2 : 0); }
+  function rowsOf(toks, per){ var rows = []; for (var i = 0; i < toks.length; i += per) rows.push(toks.slice(i, i + per)); return rows; }
+  function rowW(row){ return row.reduce(function(a, t){ return a + tokW(t); }, 0) + (row.length - 1) * 12; }
+  function maxRowW(rows){ return rows.reduce(function(m, r){ return Math.max(m, rowW(r)); }, 0); }
+  function drawToks(rows, cx, cy, cls){
+    var out = "", lh = 22, y0 = cy - (rows.length - 1) * lh / 2 + 5;
+    rows.forEach(function(row, ri){
+      var x = cx - rowW(row) / 2, y = y0 + ri * lh;
+      row.forEach(function(t){
+        out += '<text class="' + cls + '" x="' + f1(x) + '" y="' + f1(y) + '">' + esc(t.t) + (t.s ? '<tspan dy="-7" font-size="10">' + t.s + "</tspan>" : "") + "</text>";
+        x += tokW(t) + 12;
+      });
+    });
+    return out;
+  }
+  function vennSVG(sol){
+    var nums = sol.nums, R = sol.R, out = "", W, H;
+    if (nums.length === 2){
+      var tA = rowsOf(tokensOf(R[1] || [], 8), 2), tB = rowsOf(tokensOf(R[2] || [], 8), 2), tM = rowsOf(tokensOf(R[3] || [], 8), 2);
+      var r = Math.max(88, (maxRowW(tA) + 26) / 0.9, (maxRowW(tB) + 26) / 0.9, (maxRowW(tM) + 22) / 0.7, Math.max(tA.length, tB.length, tM.length) * 24 / 1.1);
+      var d = 1.2 * r, pad = 10, top = 30, x1 = pad + r, x2 = x1 + d, cy = top + r;
+      W = Math.ceil(x2 + r + pad); H = Math.ceil(cy + r + 10);
+      out += '<defs><clipPath id="vclipA"><circle cx="' + f1(x1) + '" cy="' + f1(cy) + '" r="' + f1(r) + '"/></clipPath></defs>';
+      out += '<circle class="vf0" cx="' + f1(x1) + '" cy="' + f1(cy) + '" r="' + f1(r) + '"/><circle class="vf1" cx="' + f1(x2) + '" cy="' + f1(cy) + '" r="' + f1(r) + '"/>';
+      out += '<circle class="vmid" clip-path="url(#vclipA)" cx="' + f1(x2) + '" cy="' + f1(cy) + '" r="' + f1(r) + '"/>';
+      out += '<circle class="vc c0" cx="' + f1(x1) + '" cy="' + f1(cy) + '" r="' + f1(r) + '"/><circle class="vc c1" cx="' + f1(x2) + '" cy="' + f1(cy) + '" r="' + f1(r) + '"/>';
+      out += '<text class="vlab c0" x="' + f1(x1 - 0.35 * r) + '" y="' + (top - 10) + '" text-anchor="middle">' + C(nums[0]) + "</text>";
+      out += '<text class="vlab c1" x="' + f1(x2 + 0.35 * r) + '" y="' + (top - 10) + '" text-anchor="middle">' + C(nums[1]) + "</text>";
+      out += drawToks(tA, x1 - 0.4 * r, cy, "vt") + drawToks(tB, x2 + 0.4 * r, cy, "vt") + drawToks(tM, (x1 + x2) / 2, cy, "vt mid");
+      if (!(R[3] || []).length) out += '<text class="vnone" x="' + f1((x1 + x2) / 2) + '" y="' + f1(cy + 5) + '" text-anchor="middle">none</text>';
+    } else {
+      var keys = [1, 2, 4, 3, 5, 6, 7], tk = {}, mx = 0, rmax = 0;
+      keys.forEach(function(k){ tk[k] = rowsOf(tokensOf(R[k] || [], 2), 2); mx = Math.max(mx, maxRowW(tk[k])); rmax = Math.max(rmax, tk[k].length); });
+      var r3 = Math.max(104, (mx + 16) / 0.62, rmax * 22 / 0.5), d3 = 1.1 * r3, pd = 10, tp = 30;
+      var Ax = pd + r3, Ay = tp + r3, Bx = Ax + d3, Cx = Ax + d3 / 2, Cy = Ay + 0.866 * d3, Gx = Cx, Gy = Ay + 0.2887 * d3;
+      W = Math.ceil(Bx + r3 + pd); H = Math.ceil(Cy + r3 + 30);
+      var away = function(x, y, dist){ var vx = x - Gx, vy = y - Gy, l = Math.sqrt(vx * vx + vy * vy) || 1; return [x + vx / l * dist, y + vy / l * dist]; };
+      var anc = { 1:away(Ax, Ay, 0.48 * r3), 2:away(Bx, Ay, 0.48 * r3), 4:away(Cx, Cy, 0.48 * r3),
+                  3:away((Ax + Bx) / 2, Ay, 0.42 * r3), 5:away((Ax + Cx) / 2, (Ay + Cy) / 2, 0.42 * r3), 6:away((Bx + Cx) / 2, (Ay + Cy) / 2, 0.42 * r3), 7:[Gx, Gy] };
+      var circ = function(x, y){ return 'cx="' + f1(x) + '" cy="' + f1(y) + '" r="' + f1(r3) + '"'; };
+      out += '<defs><clipPath id="vclipA"><circle ' + circ(Ax, Ay) + '/></clipPath><clipPath id="vclipB"><circle ' + circ(Bx, Ay) + "/></clipPath></defs>";
+      out += '<circle class="vf0" ' + circ(Ax, Ay) + '/><circle class="vf1" ' + circ(Bx, Ay) + '/><circle class="vf2" ' + circ(Cx, Cy) + "/>";
+      out += '<g clip-path="url(#vclipA)"><circle class="vmid" clip-path="url(#vclipB)" ' + circ(Cx, Cy) + "/></g>";
+      out += '<circle class="vc c0" ' + circ(Ax, Ay) + '/><circle class="vc c1" ' + circ(Bx, Ay) + '/><circle class="vc c2" ' + circ(Cx, Cy) + "/>";
+      out += '<text class="vlab c0" x="' + f1(Ax - 0.3 * r3) + '" y="' + (tp - 10) + '" text-anchor="middle">' + C(nums[0]) + "</text>";
+      out += '<text class="vlab c1" x="' + f1(Bx + 0.3 * r3) + '" y="' + (tp - 10) + '" text-anchor="middle">' + C(nums[1]) + "</text>";
+      out += '<text class="vlab c2" x="' + f1(Cx) + '" y="' + f1(Cy + r3 + 22) + '" text-anchor="middle">' + C(nums[2]) + "</text>";
+      keys.forEach(function(k){ out += drawToks(tk[k], anc[k][0], anc[k][1], k === 7 ? "vt mid" : "vt"); });
+      if (!(R[7] || []).length) out += '<text class="vnone" x="' + f1(Gx) + '" y="' + f1(Gy + 5) + '" text-anchor="middle">none</text>';
+    }
+    return '<svg class="venn" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Venn diagram of the prime factors: '
+         + 'shared primes in the middle">' + out + "</svg>";
+  }
+  function tokList(arr, cls){ return '<span class="toks">' + arr.map(function(x){ return '<span class="tk' + (cls(x) ? " " + cls(x) : "") + '">' + C(x) + "</span>"; }).join("") + "</span>"; }
+  function drawGcf(P){
+    var sol = solveGcf(P.nums), nums = P.nums, k = nums.length, g = sol.g, L = sol.L, items = [], html = "", st = 0;
+    var Lt = C(L.toString()), andN = listAnd(nums.map(C));
+    var dl = nums.map(divisors), facOK = dl.every(function(d){ return d.length <= 48; });
+    var multOK = nums.every(function(x){ return L / BigInt(x) <= 30n; });
+    var stF = -1, stM, stP, stV, stG, stL, stK;
+    if (facOK){
+      stF = st++;
+      var common = dl[0].filter(function(d){ return dl.every(function(l){ return l.indexOf(d) >= 0; }); });
+      html += sect('<b class="lead">Listing the factors.</b> The ones on every list are the <i>common</i> factors; the greatest is the GCF.',
+        '<div class="lists">' + nums.map(function(x, i){ return '<div class="lrow"><span class="ln">' + C(x) + "</span>" + tokList(dl[i], function(d){
+          return d === g ? "best" : common.indexOf(d) >= 0 ? "cm" : ""; }) + "</div>"; }).join("") + "</div>", stF);
+      var longL = dl.some(function(d){ return d.length > 12; });
+      items.push({ step:stF, lines:[["m","List", "List the factors of each number" + (longL ? " (see the lists)" : ": " + nums.map(function(x, i){ return C(x) + ": " + dl[i].map(C).join(", "); }).join("; "))
+        + ". The ones on every list are " + listAnd(common.map(function(x){ return B(C(x)); })) + " — the common factors."],
+        ["p","GCF","The greatest of them is " + B(C(g)) + ", so the GCF is " + C(g) + "."]] });
+    }
+    stM = st++;
+    var mlists = nums.map(function(x){ var cnt = multOK ? Number(L / BigInt(x)) : 8, o = []; for (var i = 1; i <= cnt; i++) o.push(BigInt(x) * BigInt(i)); return o; });
+    var inAll = function(v){ return mlists.every(function(l){ return l.some(function(y){ return y === v; }); }); };
+    html += sect('<b class="lead">Listing the multiples.</b> Count up by each number. ' + (multOK ? "The first number on every list is the LCM." : "These lists get long before they meet, so they’re cut short here."),
+      '<div class="lists">' + nums.map(function(x, i){ return '<div class="lrow"><span class="ln">' + C(x) + "</span>" + '<span class="toks">' + mlists[i].map(function(v){
+        var c = v === L ? "best" : inAll(v) ? "cm" : "";
+        return '<span class="tk' + (c ? " " + c : "") + '">' + C(v.toString()) + "</span>"; }).join("") + (multOK ? "" : '<span class="tk more">…</span>') + "</span></div>"; }).join("") + "</div>", stM);
+    items.push({ step:stM, lines: multOK
+      ? [["m","List","Count up by " + listAnd(nums.map(function(x){ return C(x) + "s"; })) + ": " + nums.map(function(x, i){ return mlists[i].slice(0, 6).map(function(v){ return C(v.toString()); }).join(", ") + (mlists[i].length > 6 ? ", …" : ""); }).join("; ") + "."],
+         ["e","LCM","The first number that shows up on every list is " + B(Lt) + " — the least common multiple."]]
+      : [["m","List","Counting up by " + andN + " would take a long time before the lists meet — the first match is " + (L > 100000n ? "far" : "a long way") + " down. The prime method below gets there faster."]] });
+    stP = st++;
+    html += sect('<b class="lead">Break each number into primes.</b>', nums.map(function(x, i){
+      return '<div class="bigline">' + C(x) + " = " + '<span class="pr">' + (x === 1 ? "1 (no primes)" : xH(expand(sol.fsx[i]))) + "</span></div>"; }).join(""), stP);
+    items.push({ step:stP, lines:[["m","Primes","Break each number into primes (a quick factor tree for each): " + nums.map(function(x, i){
+      return B(C(x) + " = " + (x === 1 ? "1" : fzH(sol.fsx[i]))); }).join(", ") + "." + (nums.indexOf(1) >= 0 ? " 1 has no prime factors at all." : "")]] });
+    stV = st++;
+    html += sect('<b class="lead">The Venn diagram.</b> Each circle holds one number’s primes. Primes they share go where the circles overlap, matched up one copy at a time'
+      + (k === 3 ? "; the very middle holds the primes all three share." : ".") + " GCF = the middle. LCM = everything.",
+      '<div class="xscroll">' + vennSVG(sol) + "</div>", stV);
+    var side = function(i){ var l = sol.R[1 << i] || []; return C(nums[i]) + (l.length ? " keeps " + xH(l) : " has nothing left over"); };
+    var vline;
+    if (k === 2) vline = "Put each number’s primes in its circle. Match them up one at a time: each prime they " + B("share") + " goes in the overlap, once. "
+      + (sol.mid.length ? "The middle gets " + listAnd(sol.mid.map(function(p){ return B(C(p)); })) + "." : "Here they share no primes, so the middle stays empty.")
+      + " What’s left stays on its own side: " + side(0) + "; " + side(1) + ".";
+    else {
+      var pairTxt = [[3, 0, 1], [5, 0, 2], [6, 1, 2]].filter(function(t){ return (sol.R[t[0]] || []).length; }).map(function(t){
+        return xH(sol.R[t[0]]) + " (just " + C(nums[t[1]]) + " and " + C(nums[t[2]]) + ")"; });
+      vline = "Put each number’s primes in its circle, matching shared ones up one copy at a time. The very middle — primes all three share — gets "
+        + (sol.mid.length ? listAnd(sol.mid.map(function(p){ return B(C(p)); })) : "nothing") + "."
+        + (pairTxt.length ? " Where only two circles overlap: " + listAnd(pairTxt) + "." : "")
+        + " The rest stays in one circle: " + [0, 1, 2].map(side).join("; ") + ".";
+    }
+    items.push({ step:stV, lines:[["m","Venn", vline]] });
+    stG = st++;
+    html += sect("", '<div class="bigline"><span class="eqk">GCF</span> = ' + (sol.mid.length ? xH(sol.mid) + " = " : "") + B(C(g)) + "</div>"
+      + (sol.mid.length ? "" : '<div class="tapecap">Nothing in the middle, so the GCF is 1.</div>'), stG);
+    items.push({ step:stG, lines:[["p","GCF", sol.mid.length
+      ? "The GCF is the product of the middle: " + B(xH(sol.mid) + " = " + C(g)) + ". Those primes are in " + (k === 2 ? "both numbers" : "all three numbers") + ", so " + C(g)
+        + " goes into each one — and nothing bigger can, because no other prime is shared by " + (k === 2 ? "both" : "all three") + "."
+      : "Nothing is in the middle — no prime goes into " + (k === 2 ? "both" : "all three") + " — so the GCF is " + B("1") + ". Numbers like this are called <strong>relatively prime</strong>."]],
+      aside: k === 3 && [3, 5, 6].some(function(t){ return (sol.R[t] || []).length; }) ? "With three numbers, the GCF only uses the very middle. A prime shared by just two of them isn’t in the third, so it can’t be part of a factor of all three." : null });
+    stL = st++;
+    html += sect("", '<div class="bigline"><span class="eqk">LCM</span> = ' + (sol.everything.length > 1 ? xH(sol.everything) + " = " : "") + B(Lt) + "</div>", stL);
+    items.push({ step:stL, lines:[["e","LCM","The LCM is the product of <strong>everything</strong>" + " in the diagram: " + B((sol.everything.length ? xH(sol.everything) : "1") + " = " + Lt)
+      + ". Every circle’s primes are all there, so each number goes into it — and nothing is doubled up, so it’s the least."]],
+      aside: "Word problems: splitting things into equal groups with nothing left over (the most bags, the biggest group size) → <strong>GCF</strong>. "
+        + "Something that repeats, and you want when it happens together again (two buses, two blinking lights, hot dogs and buns in different-sized packs) → <strong>LCM</strong>." });
+    stK = st++;
+    var ck = sol.cake, side1 = ck.rows.filter(function(r){ return r.all; }).map(function(r){ return r.p; }), side2 = ck.rows.filter(function(r){ return !r.all; }).map(function(r){ return r.p; });
+    html += sect('<b class="lead">The ladder (cake) method.</b> Divide every number by a prime that goes into all of them, and repeat. '
+      + "GCF = the primes down the side. LCM = the side times the bottom row."
+      + (side2.length ? " Orange rows divide just two of the three (the third comes down unchanged) — they count for the LCM, not the GCF." : ""),
+      '<div class="xscroll">' + ladderHTML(ck.rows, ck.bottom, function(){ return stK; }, stK) + "</div>", stK);
+    var ktxt;
+    if (!ck.rows.length) ktxt = "The ladder: no prime goes into " + (k === 2 ? "both " : "all of ") + andN + ", so it can’t even start. GCF = " + B("1") + ", and LCM = "
+      + B(xH(nums) + " = " + Lt) + ".";
+    else ktxt = "The ladder: " + ck.rows.map(function(rw){ return "÷ " + rw.p + " → " + rw.vals.map(function(v, j){ return C(rw.hit && !rw.hit[j] ? v : v / rw.p); }).join(", "); }).join("; ")
+      + ". " + (side2.length ? "No prime goes into two of them now, so stop." : "Nothing goes into " + (k === 2 ? "both" : "all") + " of " + listAnd(ck.bottom.map(C)) + ", so stop.")
+      + (side1.length ? " GCF = the " + (side2.length ? "rows that divide all three: " : "side: ") + B(xH(side1) + " = " + C(g)) : " No row divides all three, so GCF = " + B("1")) + ". LCM = side × bottom: "
+      + B(xH(side1.concat(side2).concat(ck.bottom.filter(function(v){ return v > 1; }))) + " = " + Lt) + ".";
+    items.push({ step:stK, lines:[["m","Ladder", ktxt]],
+      aside: k === 2 ? "For two numbers, GCF × LCM = the two numbers multiplied: " + B(C(g) + " × " + Lt + " = " + C((BigInt(g) * L).toString())) + " and "
+        + B(C(nums[0]) + " × " + C(nums[1]) + " = " + C(prodB(nums).toString())) + ". Handy for checking — or for finding the LCM fast: " + B(C(nums[0]) + " × " + C(nums[1]) + " ÷ " + C(g)) + "." : null });
+    items.forEach(function(it, i){ it.n = "Step&nbsp;" + (i + 1); });
+    $("workHost").innerHTML = html;
+    writeLog(items);
+
+    var facts = nums.map(function(x, i){ return C(x) + " = " + B(x === 1 ? "1" : fzH(sol.fsx[i])); });
+    if (g === 1) facts.push(andN + " are <strong>relatively prime</strong> — no common factor but 1");
+    if (k === 2) facts.push("GCF × LCM = " + B(C(nums[0]) + " × " + C(nums[1])) + " = " + B(C(prodB(nums).toString())));
+    band('<span class="k">Answer</span><span class="v"><span class="wk">GCF</span>' + C(g) + '<span class="sep">·</span><span class="wk">LCM</span>' + Lt + "</span>", facts, "answer");
+    var qg = nums.map(function(x){ return x / g; }), ql = nums.map(function(x){ return L / BigInt(x); });
+    $("closer").innerHTML = '<div class="ck"><b>Check the GCF:</b> ' + nums.map(function(x, i){ return C(x) + " ÷ " + C(g) + " = " + C(qg[i]); }).join(", ")
+      + " — all whole, and " + listAnd(qg.map(C)) + " share no factor but 1, so nothing bigger than " + C(g) + ' works <span class="ok">✓</span></div>'
+      + '<div class="ck"><b>Check the LCM:</b> ' + nums.map(function(x, i){ return Lt + " ÷ " + C(x) + " = " + C(ql[i].toString()); }).join(", ")
+      + " — all whole, and " + listAnd(ql.map(function(v){ return C(v.toString()); })) + " share no factor but 1, so no smaller common multiple exists " + '<span class="ok">✓</span></div>';
+    return items.length;
+  }
+
+  /* ===================== tab 5: divisibility ===================== */
+  function drawDiv(P){
+    var n = P.n, res = DIVS.map(function(d){ var r = rule(n, d); r.d = d; return r; }), items = [], tb = "";
+    res.forEach(function(r, i){
+      tb += "<tr" + (r.ok ? "" : ' class="miss"') + ds(i) + '><td class="d">÷ ' + r.d + '</td><td class="w">' + r.how + "</td><td>"
+          + verdict(r.ok, "✓ yes", "✗ no", "yes", "no") + "</td></tr>";
+    });
+    var html = sect('<b class="lead">Rule by rule.</b> Each rule looks at the digits instead of doing the whole division.',
+      '<div class="xscroll"><table class="tests"><tbody>' + tb + "</tbody></table></div>");
+    html += sect('<b class="lead">The scorecard.</b>', '<div class="xscroll"><table class="dgrid"><thead><tr><th>÷</th>' + DIVS.map(function(d){ return "<th>" + d + "</th>"; }).join("")
+      + "</tr></thead><tbody><tr><th>" + C(n) + "</th>" + res.map(function(r){ return '<td class="' + (r.ok ? "y" : "n") + '">' + (r.ok ? "✓" : "✗") + "</td>"; }).join("")
+      + "</tr></tbody></table></div>", DIVS.length);
+    $("workHost").innerHTML = html;
+    var ASIDE = {
+      3:"Why does adding the digits work? 10, 100 and 1,000 are each 1 more than a multiple of 9 (9, 99, 999 — and those are multiples of 3 too). So every digit leaves just itself behind as a remainder; add them up and you have what’s left over.",
+      4:"Why only the last two digits? 100 = 4 × 25, so the hundreds, thousands and up always split evenly by 4. Only the last two digits can leave a remainder. (For 8 it’s the last three, since 1,000 = 8 × 125.)",
+      11:"Why does it work? 10 is one less than 11, so each step to the left flips between “one more” and “one less” than a multiple of 11 — that’s the take-away-then-add pattern."
+    };
+    res.forEach(function(r, i){
+      items.push({ n:"Step&nbsp;" + (i + 1), step:i, lines:[[r.ok ? "a" : "e", "÷ " + r.d, r.say]], aside:(i === 1 || i === 2 || i === 8) && n >= 10 ? ASIDE[r.d] : null });
+    });
+    var yes = res.filter(function(r){ return r.ok; }).map(function(r){ return r.d; }), no = res.filter(function(r){ return !r.ok; }).map(function(r){ return r.d; });
+    items.push({ n:"Step&nbsp;" + (DIVS.length + 1), step:DIVS.length, lines:[["a","Sum up", yes.length
+      ? C(n) + " is divisible by " + B(listAnd(yes.map(String))) + (no.length ? ", but not by " + listOr(no.map(String)) + "." : " — every one of them!")
+      : "None of the rules say yes — " + C(n) + " isn’t divisible by any of " + listOr(DIVS.map(String)) + "."]],
+      aside: "There’s a rule for 7 too, but it’s clumsy — for 7 it’s easier to just divide." });
+    writeLog(items);
+    var facts = [];
+    if (no.length && yes.length) facts.push("Not by " + B(listOr(no.map(String))));
+    facts.push("Prime factorization: " + B(n === 1 ? "1" : fzH(factorize(n))));
+    band('<span class="k">' + C(n) + ' is divisible by</span><span class="v">' + (yes.length ? yes.join(", ") : '<span class="word">none of them</span>') + "</span>", facts, "answer");
+    $("closer").innerHTML = "<b>Check by really dividing:</b> " + res.map(function(r){ return B(divT(n, r.d)); }).join(" · ")
+      + " — the ✓s divide with no remainder " + '<span class="ok">✓</span>';
+    return items.length;
+  }
+
+  var DRAW = { factors:drawFactors, prime:drawPrime, test:drawTest, gcf:drawGcf, div:drawDiv };
+  var LEGEND = {
+    factors:'<div><span class="badge c-m">Test</span> try a number</div><div><span class="badge c-p">Pair</span> a factor pair</div><div><span class="badge c-e">Stop</span> past √n</div><div><span class="badge c-a">List</span> the answer</div>',
+    prime:'<div><span class="badge c-p">' + "&nbsp;12&nbsp;" + '</span> still splits</div><div><span class="badge c-a">&nbsp;3&nbsp;</span> prime — circled</div><div><span class="badge c-m">Ladder</span> same divisions in a column</div>',
+    test:'<div><span class="badge c-m">÷ p</span> try a prime</div><div><span class="badge c-p">Found</span> a factor</div><div><span class="badge c-e">Stop</span> past √n</div><div><span class="badge c-a">Answer</span></div>',
+    gcf:'<div><span class="badge c-a">&nbsp;6&nbsp;</span> common</div><div><span class="badge c-p">GCF</span> greatest common factor</div><div><span class="badge c-e">LCM</span> least common multiple</div>',
+    div:'<div><span class="badge c-a">✓ yes</span> divides evenly</div><div><span class="badge c-e">✗ no</span> leaves a remainder</div>'
+  };
+
+  /* ===================== problems as words: check box, worksheets ===================== */
+  function record(P){
+    var mode = P.mode, o = { params:"mode=" + mode + "&q=" + P.q }, n = P.n;
+    if (mode === "factors"){
+      var d = divisors(n).map(C);
+      o.text = "List all the factors of " + C(n) + "."; o.html = "List all the factors of <b>" + C(n) + "</b>.";
+      o.answer = d.join(", "); o.answerHtml = o.answer;
+    } else if (mode === "prime"){
+      var fs = factorize(n), ex = expand(fs).map(C).join(" × ");
+      o.text = "Write " + C(n) + " as a product of primes."; o.html = "Write <b>" + C(n) + "</b> as a product of primes.";
+      o.answer = fs.length === 1 && fs[0].e === 1 ? C(n) + " (it’s prime)" : fzT(fs) + (expand(fs).length > 1 && fs.some(function(f){ return f.e > 1; }) ? " = " + ex : "");
+      o.answerHtml = fs.length === 1 && fs[0].e === 1 ? C(n) + " (it’s prime)" : fzH(fs) + (expand(fs).length > 1 && fs.some(function(f){ return f.e > 1; }) ? " = " + ex : "");
+    } else if (mode === "test"){
+      var s = solveTest(n);
+      o.text = "Is " + C(n) + " prime or composite?"; o.html = "Is <b>" + C(n) + "</b> prime or composite?";
+      o.answer = s.kind === "neither" ? "Neither" : s.kind === "prime" ? "Prime" : "Composite (" + C(n) + " = " + C(s.found) + " × " + C(n / s.found) + ")";
+      o.answerHtml = s.kind === "composite" ? "Composite (" + C(n) + " = " + C(s.found) + " × " + C(n / s.found) + ")" : o.answer;
+    } else if (mode === "gcf"){
+      var g = gcfOf(P.nums), L = lcmOf(P.nums).toString(), nn = listAnd(P.nums.map(C));
+      o.text = "Find the GCF and LCM of " + nn + "."; o.html = "Find the GCF and LCM of " + listAnd(P.nums.map(function(x){ return "<b>" + C(x) + "</b>"; })) + ".";
+      o.answer = "GCF " + C(g) + ", LCM " + C(L); o.answerHtml = "GCF <b>" + C(g) + "</b>, LCM <b>" + C(L) + "</b>";
+    } else {
+      var yes = DIVS.filter(function(dv){ return n % dv === 0; });
+      o.text = "Which of 2, 3, 4, 5, 6, 8, 9, 10 and 11 divide " + C(n) + " evenly?";
+      o.html = "Which of 2, 3, 4, 5, 6, 8, 9, 10 and 11 divide <b>" + C(n) + "</b> evenly?";
+      o.answer = yes.length ? yes.join(", ") : "None of them"; o.answerHtml = o.answer;
+    }
+    return o;
+  }
+
+  /* ===================== check my answer ===================== */
+  var FIELDS = {
+    factors:[{ k:"a", label:"All the factors, any order", ph:"1, 2, 3, …" }],
+    prime:[{ k:"a", label:"Prime factorization", ph:"like 2^3 × 3 or 2 × 2 × 2 × 3" }],
+    test:[{ k:"a", label:"Prime, composite or neither?", ph:"prime / composite / neither" }],
+    gcf:[{ k:"g", label:"GCF", ph:"" }, { k:"l", label:"LCM", ph:"" }],
+    div:[{ k:"a", label:"Divisible by", ph:"e.g. 2, 5, 10 — or none" }]
+  };
+  function parseNumList(s){
+    s = String(s || "").trim();
+    var thousands = /,\s/.test(s), re = thousands ? /\d{1,3}(?:,\d{3})+(?!\d)|\d+/g : /\d+/g;
+    return (s.match(re) || []).map(function(t){ return Number(t.replace(/,/g, "")); });
+  }
+  function parseFz(s){            // "2^3 × 3²", "2*2*2*3", "2 x 2 x 3", "2·3" -> [{b, e}]
+    s = String(s || "").replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, function(m){ return "^" + m.split("").map(function(c){ return SUPD.indexOf(c); }).join(""); }).replace(/\*\*/g, "^");
+    if (s.indexOf("=") >= 0){
+      var parts = s.split("="), best = parts[parts.length - 1], bc = -1;
+      parts.forEach(function(p){ var c = (p.match(/\d+/g) || []).length; if (c >= bc){ bc = c; best = p; } });
+      s = best;
+    }
+    var out = [], re = /(\d+)\s*(?:\^\s*(\d+))?/g, m;
+    while ((m = re.exec(s))) out.push({ b:Number(m[1]), e:m[2] ? Math.min(64, Number(m[2])) : 1 });
+    return out;
+  }
+  function fzProd(t){ return t.reduce(function(a, x){ return a * (BigInt(x.b) ** BigInt(x.e)); }, 1n); }
+  function parseAnsNum(s){
+    s = String(s || "").trim();
+    if (!s) return null;
+    if (s.indexOf("=") >= 0) s = s.split("=").pop();
+    s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    var t = parseFz(s);
+    return t.length ? fzProd(t) : NaN;
+  }
+  function wordAns(s){
+    var t = " " + String(s || "").toLowerCase().replace(/[’']/g, "").replace(/[^a-z0-9]+/g, " ") + " ";
+    if (/ neither | none /.test(t)) return "neither";
+    if (/ (not|isnt|non|aint) (a )?prime /.test(t) || / nonprime /.test(t)) return "notprime";
+    if (/ composite | comp /.test(t)) return "composite";
+    if (/ prime /.test(t) || /^ (yes|yep|yeah|y|p) $/.test(t)) return "prime";
+    if (/^ (no|nope|n|c) $/.test(t)) return "notprime";
+    return null;
+  }
+  function grade(P, vals){
+    var mode = P.mode, n = P.n, msg = null, i, raw = (vals.a || "").trim();
+    if (mode === "factors"){
+      if (!raw) return { empty:true };
+      var got = parseNumList(raw), want = divisors(n), seen = {};
+      got.forEach(function(x){ seen[x] = true; });
+      if (!got.length) return { ok:false, why:"Type the factors as numbers, like <b>1, 2, 3</b>." };
+      var extra = Object.keys(seen).map(Number).filter(function(x){ return want.indexOf(x) < 0; });
+      var miss = want.filter(function(x){ return !seen[x]; });
+      if (!extra.length && !miss.length) return { ok:true };
+      if (extra.length){ var x = extra[0];
+        return { ok:false, why: x === 0 ? "0 isn’t a factor of " + C(n) + " — you can’t divide by 0." : x > n ? B(C(x)) + " is bigger than " + C(n) + ", so it can’t be a factor."
+          : B(C(x)) + " isn’t a factor of " + C(n) + ": " + B(divT(n, x)) + " leaves a remainder." + (miss.length ? " (Something’s missing too.)" : "") };
+      }
+      if (miss.indexOf(1) >= 0 && miss.indexOf(n) >= 0) return { ok:false, why:"Don’t forget " + B("1") + " and " + B(C(n)) + " themselves — every number has those two." };
+      for (i = 0; i < miss.length; i++){
+        var a = miss[i], b = n / a;
+        if (a <= b && miss.indexOf(b) >= 0) return { ok:false, why:"You’re missing a factor pair: " + B(C(a) + " × " + C(b) + " = " + C(n)) + "." + (miss.length > 2 ? " (And more.)" : "") };
+      }
+      var m0 = miss[0], p0 = n / m0;
+      return { ok:false, why:"You have " + B(C(p0)) + " but not its partner " + B(C(m0)) + " (" + C(Math.min(m0, p0)) + " × " + C(Math.max(m0, p0)) + " = " + C(n) + ")." };
+    }
+    if (mode === "prime"){
+      if (!raw) return { empty:true };
+      if (/^\s*(it\s*is\s*|its\s*)?prime\s*$/i.test(raw)) return isPrime(n) ? { ok:true } : { ok:false, why:C(n) + " isn’t prime — it can be split, so write it as primes multiplied together." };
+      var t = parseFz(raw);
+      if (!t.length) return { ok:false, why:"Write it as primes multiplied together, like <b>2 × 2 × 3</b> or <b>2^2 × 3</b>." };
+      var prod = fzProd(t), nB = BigInt(n);
+      var ones = t.filter(function(x){ return x.b === 1; }), zeros = t.filter(function(x){ return x.b === 0; });
+      var bad = t.filter(function(x){ return x.b > 1 && !isPrime(x.b); });
+      if (zeros.length) return { ok:false, why:"There’s a 0 in there — anything times 0 is 0, so take it out." };
+      if (bad.length){ var bb = bad[0].b;
+        return { ok:false, why:(prod === nB ? "Those multiply to " + C(n) + " ✓, but " : "") + B(C(bb)) + " isn’t prime — " + B(C(bb) + " = " + fzH(factorize(bb)))
+          + ". Keep splitting until every factor is prime." };
+      }
+      if (ones.length && prod === nB) return { ok:false, why:"Almost — leave out the " + B("1") + ". 1 isn’t prime (and multiplying by 1 changes nothing)." };
+      if (prod === nB) return { ok:true };
+      var ps = C(prod.toString());
+      if (prod < nB && nB % prod === 0n){ var mf = Number(nB / prod);
+        return { ok:false, why:"Those multiply to " + B(ps) + ", not " + C(n) + " — you’re short a factor of " + B(isPrime(mf) ? C(mf) : C(mf) + " (= " + fzH(factorize(mf)) + ")") + "." };
+      }
+      if (prod > nB && prod % nB === 0n){ var xf = prod / nB;
+        return { ok:false, why:"Those multiply to " + B(ps) + " — that’s " + B(C(xf.toString())) + " times too big. Is there an extra factor in there?" };
+      }
+      return { ok:false, why:"Those multiply to " + B(ps) + ", not " + C(n) + ". Multiply your primes back together to check." };
+    }
+    if (mode === "test"){
+      if (!raw) return { empty:true };
+      var sol = solveTest(n), ans = wordAns(raw);
+      if (!ans){
+        var tt = parseFz(raw);
+        if (tt.length >= 2 && fzProd(tt) === BigInt(n) && tt.every(function(x){ return x.b > 1 && x.b < n; })) ans = "composite";
+      }
+      if (!ans) return { ok:false, why:"Answer with a word: <b>prime</b>, <b>composite</b> or <b>neither</b>." };
+      if (sol.kind === "neither"){
+        if (ans === "neither" || ans === "notprime") return { ok:true };
+        if (ans === "prime") return { ok:false, why: n === 1
+          ? B("1") + " isn’t prime: a prime has exactly two different factors (1 and itself), but 1 only has one factor. 1 is neither prime nor composite."
+          : B("0") + " isn’t prime: every number goes into 0, so it has far more than two factors." };
+        return { ok:false, why:"Composite means <i>more than two</i> factors made from smaller pieces. " + (n === 1 ? "1 has only one factor" : "0 doesn’t work like other numbers — every number divides it") + ", so it’s neither." };
+      }
+      if (sol.kind === "prime"){
+        if (ans === "prime") return { ok:true };
+        if (ans === "neither") return { ok:false, why:"Only 0 and 1 are neither. Every whole number from 2 up is prime or composite." };
+        return { ok:false, why:"Which number did you find that goes into " + C(n) + "? Try dividing — remember you only need to test primes up to √" + C(n) + "." };
+      }
+      if (ans === "composite" || ans === "notprime") return { ok:true };
+      if (ans === "neither") return { ok:false, why:"Only 0 and 1 are neither. Every whole number from 2 up is prime or composite." };
+      return { ok:false, why: TRICKS[n] ? TRICKS[n] : C(n) + " has a factor besides 1 and itself. Hint: try dividing by " + B(C(sol.found)) + "." };
+    }
+    if (mode === "gcf"){
+      var G = BigInt(gcfOf(P.nums)), L = lcmOf(P.nums), prodN = prodB(P.nums);
+      var gv = parseAnsNum(vals.g), lv = parseAnsNum(vals.l);
+      if (gv === null && lv === null) return { empty:true };
+      if ((gv !== null && gv !== gv) || (lv !== null && lv !== lv)) return { ok:false, why:"Type each answer as a number." };
+      var gOK = gv === G, lOK = lv === L;
+      if (gOK && lOK) return { ok:true };
+      if (gv !== null && lv !== null && gv === L && lv === G && G !== L) return { ok:false, why:"Those are swapped. The GCF is the small one — it has to fit <i>into</i> every number. The LCM is the big one — every number fits into it." };
+      var why = [];
+      if (gOK) why.push("Your GCF is right ✓.");
+      else if (gv === null) why.push("Fill in the GCF too.");
+      else if (gv === L && G !== L) why.push(B(C(gv.toString())) + " is the LCM, not the GCF. The GCF is the small one: it has to go <i>into</i> every number.");
+      else if (gv === 0n) why.push("The GCF can’t be 0.");
+      else {
+        var notIn = P.nums.filter(function(x){ return BigInt(x) % gv !== 0n; });
+        if (!notIn.length) why.push(B(C(gv.toString())) + " goes into every number, but it isn’t the <i>greatest</i> — there’s a bigger common factor.");
+        else why.push("For the GCF: " + B(C(gv.toString())) + " doesn’t go into " + C(notIn[0]) + (gv < BigInt(notIn[0]) ? " (" + B(divT(notIn[0], Number(gv))) + ")" : "") + ".");
+      }
+      if (lOK) why.push("Your LCM is right ✓.");
+      else if (lv === null) why.push("Fill in the LCM too.");
+      else if (lv === G && G !== L) why.push(B(C(lv.toString())) + " is the GCF, not the LCM. The LCM is the big one: every number has to go into it.");
+      else if (lv === prodN && prodN !== L) why.push(B(C(lv.toString())) + " is " + xH(P.nums) + " — that’s always <i>a</i> common multiple, but here there’s a smaller one.");
+      else if (lv === 0n) why.push("The LCM can’t be 0 — look for the smallest multiple above 0.");
+      else {
+        var notM = P.nums.filter(function(x){ return lv % BigInt(x) !== 0n; });
+        if (!notM.length) why.push(B(C(lv.toString())) + " is a common multiple, but not the <i>least</i> — there’s a smaller one.");
+        else why.push("For the LCM: " + B(C(lv.toString())) + " isn’t a multiple of " + C(notM[0]) + ".");
+      }
+      return { ok:false, why:why.join(" ") };
+    }
+    // divisibility
+    if (!raw) return { empty:true };
+    var none = /^(none|nothing|no|none of them|0)$/i.test(raw);
+    var list = none ? [] : parseNumList(raw);
+    if (!none && !list.length) return { ok:false, why:"List the divisors that work, like <b>2, 5, 10</b> — or type <b>none</b>." };
+    var off = list.filter(function(x){ return DIVS.indexOf(x) < 0; });
+    if (off.length) return { ok:false, why:"Only choose from 2, 3, 4, 5, 6, 8, 9, 10 and 11 — " + B(off[0]) + " isn’t one of them." };
+    var wantD = DIVS.filter(function(dv){ return n % dv === 0; });
+    var ex2 = wantD.length ? list.filter(function(x){ return wantD.indexOf(x) < 0; }) : list;
+    var mi2 = wantD.filter(function(x){ return list.indexOf(x) < 0; });
+    if (!ex2.length && !mi2.length) return { ok:true };
+    if (ex2.length) return { ok:false, why:C(n) + " isn’t divisible by " + B(ex2[0]) + " — " + rule(n, ex2[0]).how + "." };
+    return { ok:false, why:"You missed " + B(mi2[0]) + " — " + rule(n, mi2[0]).how + "." };
+  }
+  function buildCheck(P){
+    var f = FIELDS[P.mode];
+    $("ckQ").innerHTML = record(P).html;
+    $("ckFields").innerHTML = f.map(function(x){
+      return '<div class="ckf"><label for="ck_' + x.k + '">' + x.label + '</label><input id="ck_' + x.k + '" data-k="' + x.k
+        + '" type="text" autocomplete="off" spellcheck="false" placeholder="' + esc(x.ph) + '" value="' + esc(CK.vals[x.k] || "") + '"></div>';
+    }).join("");
+    Array.prototype.forEach.call(document.querySelectorAll("#ckFields input"), function(inp){
+      inp.addEventListener("input", function(){ CK.vals[inp.getAttribute("data-k")] = inp.value; });
+      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); doCheck(); } });
+    });
+    $("ckFb").className = "ckfb" + (CK.ok ? " ok" : ""); $("ckFb").innerHTML = CK.fb;
+    $("ckMore").hidden = !(CK.tried && !CK.ok && !CK.revealed);
+    $("ckNote").textContent = CK.revealed ? "" : "The work and the answer stay hidden until you check.";
+  }
+  function doCheck(){
+    if (!CUR) return;
+    Array.prototype.forEach.call(document.querySelectorAll("#ckFields input"), function(inp){ CK.vals[inp.getAttribute("data-k")] = inp.value; });
+    var r = grade(CUR, CK.vals);
+    if (r.empty){ CK.fb = '<span class="lead">Type your answer first.</span>'; CK.ok = false; }
+    else if (r.ok){ CK.ok = true; CK.revealed = true; CK.fb = '<span class="lead">✓ Correct!</span><span class="why">Here’s the full work.</span>'; }
+    else { CK.ok = false; CK.tried = true; CK.fb = '<span class="lead">Not quite — try again.</span>' + (r.why ? '<span class="why">' + r.why + "</span>" : ""); }
+    var had = document.activeElement && document.activeElement.id;
+    render();
+    if (!CK.ok && had && /^ck_/.test(had) && $(had)) $(had).focus();
+  }
+
+  /* ===================== render ===================== */
+  var lastTotal = 0;
+  function render(){
+    var total = 0, P = null;
+    try { P = readProblem(S.mode, S.inputs[S.mode]); total = DRAW[S.mode](P); }
+    catch (e){ if (e && e.user){ P = null; total = fail(e.user); } else throw e; }
+    CUR = P;
+    var sig = P ? S.mode + "|" + P.q : null;
+    if (sig !== CK.sig){ CK = { sig:sig, vals:{}, revealed:false, tried:false, fb:"", ok:false }; }
+    $("legend").innerHTML = LEGEND[S.mode];
+    lastTotal = total;
+    if (total){
+      if (S.step > total) S.step = total;
+      if (S.step < 1) S.step = 1;
+    }
+    paintPractice(total);
+    syncURL();
+  }
+  function paintPractice(total){
+    var stepMode = S.practice === "step" && total > 0, check = S.practice === "check" && total > 0, hide = check && !CK.revealed;
+    $("stepper").hidden = !stepMode;
+    if (stepMode){
+      $("stepCount").textContent = S.step + " of " + total;
+      $("prevBtn").disabled = S.step <= 1;
+      $("nextBtn").disabled = S.step >= total;
+    }
+    $("ckBox").hidden = !check;
+    if (check) buildCheck(CUR);
+    $("board").hidden = hide;
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.hidden = hide;
+    Array.prototype.forEach.call(document.querySelectorAll("#workHost [data-step], #log [data-step]"), function(el){
+      el.classList.toggle("veil", stepMode && Number(el.getAttribute("data-step")) >= S.step);
+    });
+    if (bnd) bnd.classList.toggle("masked", stepMode && S.step < total);
+    $("closer").style.opacity = (stepMode && S.step < total) ? ".2" : "1";
+    if (total) $("statusLine").textContent = "";
+  }
+
+  /* ===================== shared shell ===================== */
+  function band(inner, facts, cls){
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = cls;
+    el.innerHTML = inner + '<div class="facts">' + facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    $("board").parentNode.insertBefore(el, $("board"));
+  }
+  function writeLog(items){
+    var html = "";
+    items.forEach(function(it){
+      html += "<li" + (it.step !== undefined ? ' data-step="' + it.step + '"' : "") + ">" + '<span class="n">' + it.n + "</span>";
+      it.lines.forEach(function(l){
+        html += '<div class="line"><span class="tag c-' + l[0] + '">' + l[1] + '</span><span class="txt">' + l[2] + "</span></div>";
+      });
+      if (it.aside) html += '<div class="aside">' + it.aside + "</div>";
+      html += "</li>";
+    });
+    $("log").innerHTML = html;
+  }
+  function fail(msg){
+    $("workHost").innerHTML = ""; $("log").innerHTML = "";
+    $("closer").textContent = ""; $("stepper").hidden = true;
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "notice"; el.innerHTML = msg;
+    $("board").parentNode.insertBefore(el, $("board"));
+    $("statusLine").textContent = el.textContent;
+    return 0;
+  }
+
+  /* ===================== links ===================== */
+  var MODE_ALIAS = { factors:"factors", factor:"factors", divisors:"factors", pairs:"factors",
+    prime:"prime", primes:"prime", pf:"prime", factorization:"prime", factorisation:"prime", tree:"prime",
+    test:"test", isprime:"test", "prime-or-composite":"test", composite:"test",
+    gcf:"gcf", lcm:"gcf", gcd:"gcf", hcf:"gcf", "gcf-lcm":"gcf",
+    div:"div", divisibility:"div", divisible:"div" };
+  function parseQ(q, modeParam){
+    var s = String(q).trim(), low = s.toLowerCase(), kw = null;
+    if (/\b(gcf|gcd|hcf|lcm|lcd)s?\b|greatest common|highest common|least common|lowest common|common (factor|multiple|divisor)/.test(low)) kw = "gcf";
+    else if (/prime\s*factor|factori[sz]|factor\s*tree|decompos|product of primes/.test(low)) kw = "prime";
+    else if (/divisib|divisible/.test(low)) kw = "div";
+    else if (/prime|composite/.test(low)) kw = "test";
+    else if (/factor|divisor/.test(low)) kw = "factors";
+    var words = /[a-z]/.test(low), mode = modeParam || kw;
+    var bareThousands = !mode && !words && /^\d{1,3}(,\d{3})+$/.test(s) && /,0/.test(s);   // q=1,000,000 is one number
+    var toks = numTokens(s, mode ? mode === "gcf" : !bareThousands);
+    if (!mode) mode = toks.length >= 2 && !/\d\.\d/.test(s) ? "gcf" : "prime";
+    var text;
+    if (mode === "gcf") text = toks.length >= 2 && !/[−–-]\s*\d|\d\s*[./]\s*\d/.test(s) ? toks.join(", ") : s;
+    else text = words && toks.length && !/[−–-]\s*\d|\d\s*[./]\s*\d/.test(s) ? toks[0] : s;     // bare text goes in as typed, so a bad one gets the usual notice
+    return { mode:mode, text:text };
+  }
+  function qString(){ return CUR ? CUR.q : String(S.inputs[S.mode] || "").trim(); }
+  function syncURL(){
+    if (!window.history || !history.replaceState) return;
+    var qs = "?mode=" + S.mode + "&q=" + encodeURIComponent(qString()).replace(/%2C/gi, ",") + (S.mode === "prime" && S.split === "any" ? "&split=any" : "");
+    if (location.search === qs) return;
+    try{ history.replaceState(history.state, "", location.pathname + qs + location.hash); }catch(e){}
+  }
+  function readParams(){
+    var sp;
+    try{ sp = new URLSearchParams(location.search); }catch(e){ return; }
+    var mode = MODE_ALIAS[String(sp.get("mode") || "").toLowerCase().trim()] || null, q = sp.get("q"), pr = String(sp.get("practice") || "").toLowerCase(), sp2 = String(sp.get("split") || "").toLowerCase();
+    if (q !== null){ var r = parseQ(q, mode); S.mode = r.mode; S.inputs[r.mode] = r.text; S.step = 1; }
+    else if (mode) S.mode = mode;
+    if (pr === "all" || pr === "step" || pr === "check") S.practice = pr;
+    if (sp2 === "any" || sp2 === "small") S.split = sp2;
+  }
+
+  /* ===================== making problems ===================== */
+  function rint(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pickOf(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  function randPrime(lo, hi){ for (var t = 0; t < 4000; t++){ var x = rint(lo, hi); if (isPrime(x)) return x; } return 2; }
+  var NICE_DIV = [12, 18, 24, 30, 36, 45, 60, 66, 72, 90, 99, 110, 120, 132, 180, 198, 264, 330, 360, 396, 495, 660, 792, 990, 1320, 1980, 3960, 7920];
+  var GEN = {
+    factors:function(G){
+      var max = G.max, lo = Math.min(6, max);
+      if (G.primes && Math.random() < .15) return [randPrime(Math.max(2, Math.floor(max / 4)), max)];
+      var need = G.nice ? (max <= 50 ? 6 : max <= 100 ? 8 : max <= 500 ? 12 : 16) : 3;
+      for (var t = 0; t < 600; t++){ var n = rint(lo, max); if (isPrime(n) || nDiv(n) < need) continue; return [n]; }
+      return [rint(lo, max)];
+    },
+    prime:function(G){
+      var max = G.max, lo = Math.min(8, max);
+      if (G.primes && Math.random() < .15) return [randPrime(Math.max(5, Math.floor(max / 4)), max)];
+      var need = G.nice ? (max <= 50 ? 3 : max <= 100 ? 4 : 5) : 2;
+      for (var t = 0; t < 600; t++){ var n = rint(lo, max); if (omega(n) < need || factorize(n).length < (G.nice && max > 50 ? 2 : 1)) continue; return [n]; }
+      return [rint(lo, max)];
+    },
+    test:function(G){
+      var max = G.max;
+      if (Math.random() < .45) return [randPrime(Math.min(11, max), max)];
+      for (var t = 0; t < 1000; t++){
+        var n = rint(Math.min(10, max), max);
+        if (isPrime(n)) continue;
+        if (G.tricky && (n % 2 === 0 || n % 5 === 0 || (spf(n) < 7 && !(n % 3 === 0 && n > 30)))) continue;
+        return [n];
+      }
+      return [pickOf([51, 57, 91])];
+    },
+    gcf:function(G){
+      var k = G.count === 3 ? 3 : 2, max = G.max;
+      for (var t = 0; t < 800; t++){
+        var nums = [], i;
+        if (G.gcf1){
+          var g = rint(2, Math.max(2, Math.floor(max / (k === 3 ? 6 : 4)))), top = Math.floor(max / g);
+          if (top < k + 1) continue;
+          var ms = [];
+          while (ms.length < k){ var mm = rint(1, top); if (ms.indexOf(mm) < 0) ms.push(mm); }
+          nums = ms.map(function(x){ return x * g; });
+        } else {
+          while (nums.length < k){ var x = rint(2, max); if (nums.indexOf(x) < 0) nums.push(x); }
+        }
+        nums.sort(function(a, b){ return a - b; });
+        if (nums[0] < 2) continue;
+        if (G.nice && nums.some(function(x){ return nDiv(x) < 6; })) continue;
+        if (!G.gcf1 && t < 600 && Math.random() < .5 && gcfOf(nums) > 1) continue;      // a fair share of GCF = 1
+        for (i = 1; i < k; i++) if (nums[i] % nums[0] === 0 && t < 400 && Math.random() < .85) break;   // fewer "one divides the other"
+        if (i < k) continue;
+        return nums;
+      }
+      return k === 3 ? [12, 18, 30] : [12, 18];
+    },
+    div:function(G){
+      var max = G.max, lo = Math.max(10, Math.floor(max / 10));
+      if (G.nice){
+        var bases = NICE_DIV.filter(function(b){ return b * 2 <= max; });
+        for (var t = 0; t < 300 && bases.length; t++){
+          var b = pickOf(bases), n = b * rint(Math.max(1, Math.ceil(lo / b)), Math.floor(max / b));
+          if (n > max || n < 2) continue;
+          if (DIVS.filter(function(d){ return n % d === 0; }).length >= 4) return [n];
+        }
+      }
+      return [rint(lo, max)];
+    }
+  };
+  function makeOne(mode, G, avoid){
+    for (var t = 0; t < 60; t++){
+      var nums = GEN[mode](G), text = mode === "gcf" ? nums.join(", ") : String(nums[0]), P;
+      try { P = readProblem(mode, text); } catch (e){ continue; }
+      if (avoid && avoid[P.q] && t < 50) continue;
+      return P;
+    }
+    return null;
+  }
+
+  /* ===================== the maker's controls ===================== */
+  var SIZES = [50, 100, 500, 1000];
+  var MAKER = {
+    factors:[{ lbl:"Numbers", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["nice","∗","Lots of factors"],["primes","p","Primes sometimes"]] }],
+    prime:[{ lbl:"Numbers", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["nice","∗","Lots of primes in the tree"],["primes","p","Primes sometimes"]] }],
+    test:[{ lbl:"Numbers", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["tricky","?","Tricky ones that look prime"]] }],
+    gcf:[{ lbl:"How many", seg:"count", vals:[2, 3], fmt:function(v){ return v + " numbers"; } }, { lbl:"Numbers", seg:"max", vals:SIZES },
+         { lbl:"Extras", togs:[["gcf1","&gt;1","GCF bigger than 1"],["nice","∗","Lots of factors"]] }],
+    div:[{ lbl:"Numbers", seg:"max", vals:[100, 1000, 10000, 100000, 1000000] }, { lbl:"Extras", togs:[["nice","✓","Lots of ✓s"]] }]
+  };
+  function buildMaker(){
+    var host = $("makerBody"), G = S.gen[S.mode];
+    host.innerHTML = "";
+    MAKER[S.mode].forEach(function(sec){
+      var lbl = document.createElement("span");
+      lbl.className = "lbl"; lbl.textContent = sec.lbl; host.appendChild(lbl);
+      var box = document.createElement("div");
+      if (sec.seg){
+        box.className = "modes small"; box.setAttribute("role", "group"); box.setAttribute("aria-label", sec.lbl);
+        sec.vals.forEach(function(v){
+          var b = document.createElement("button");
+          b.type = "button"; b.textContent = sec.fmt ? sec.fmt(v) : "up to " + C(v);
+          b.setAttribute("aria-pressed", String(G[sec.seg] === v));
+          b.addEventListener("click", function(){ G[sec.seg] = v; buildMaker(); save(); });
+          box.appendChild(b);
+        });
+      } else {
+        box.className = "toggles";
+        sec.togs.forEach(function(t){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "tog"; b.innerHTML = "<b>" + t[1] + "</b> " + esc(t[2]);
+          b.setAttribute("aria-pressed", String(!!G[t[0]]));
+          b.addEventListener("click", function(){ G[t[0]] = !G[t[0]]; buildMaker(); save(); });
+          box.appendChild(b);
+        });
+      }
+      host.appendChild(box);
+    });
+    var go = document.createElement("div");
+    go.className = "maker-go";
+    go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
+    host.appendChild(go);
+    $("genBtn").addEventListener("click", function(){
+      var avoid = {}; if (CUR) avoid[CUR.q] = true;
+      var P = makeOne(S.mode, S.gen[S.mode], avoid);
+      if (!P){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+      setProblem(S.mode === "gcf" ? P.nums.map(C).join(", ") : C(P.n));
+    });
+  }
+
+  /* ===================== worksheet API ===================== */
+  function tog(v, d){
+    if (v === undefined || v === null || v === "") return d;
+    if (typeof v === "boolean") return v;
+    v = String(v).toLowerCase();
+    return v === "true" || v === "1" || v === "yes" || v === "on";
+  }
+  function schema(){
+    var onOff = [{ v:false, label:"Off" }, { v:true, label:"On" }];
+    return [
+      { key:"mode", label:"Kind of problem", type:"choice", default:"prime", values:[
+        { v:"factors", label:"List the factors" }, { v:"prime", label:"Prime factorization" }, { v:"test", label:"Prime or composite?" },
+        { v:"gcf", label:"GCF & LCM" }, { v:"div", label:"Divisibility rules" }] },
+      { key:"size", label:"Numbers up to", type:"choice", default:"100", values:[50, 100, 500, 1000, 10000, 100000].map(function(v){ return { v:String(v), label:"up to " + C(v) }; }) },
+      { key:"count", label:"How many numbers (GCF & LCM)", type:"choice", default:"2", values:[{ v:"2", label:"2 numbers" }, { v:"3", label:"3 numbers" }], appliesTo:["gcf"] },
+      { key:"nice", label:"Numbers with lots of factors", type:"toggle", default:false, values:onOff, appliesTo:["factors","prime","gcf","div"] },
+      { key:"primes", label:"Primes sometimes", type:"toggle", default:true, values:onOff, appliesTo:["factors","prime"] },
+      { key:"gcf1", label:"GCF bigger than 1", type:"toggle", default:true, values:onOff, appliesTo:["gcf"] },
+      { key:"tricky", label:"Tricky ones that look prime", type:"toggle", default:true, values:onOff, appliesTo:["test"] }
+    ];
+  }
+  function optsToGen(o){
+    o = o && typeof o === "object" ? o : {};
+    var mode = MODE_ALIAS[String(o.mode || "").toLowerCase()] || "prime";
+    var size = parseInt(o.size, 10);
+    if ([50, 100, 500, 1000, 10000, 100000, 1000000].indexOf(size) < 0) size = mode === "div" ? 10000 : 100;
+    return { mode:mode, G:{ max:size, nice:tog(o.nice, false), primes:tog(o.primes, true), tricky:tog(o.tricky, true),
+                            count:String(o.count) === "3" ? 3 : 2, gcf1:tog(o.gcf1, true) } };
+  }
+  function makeSet(count, opts){
+    var M = optsToGen(opts), seen = {}, out = [];
+    count = Math.max(1, Math.min(100, Math.floor(Number(count)) || 10));
+    for (var guard = 0; out.length < count && guard < count * 40; guard++){
+      var P = makeOne(M.mode, M.G, guard < count * 30 ? seen : null);
+      if (!P) break;
+      if (seen[P.q] && guard < count * 30) continue;
+      seen[P.q] = true; out.push(record(P));
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data, msg = null;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    try{
+      if (d.type === "helper:options")
+        msg = { type:"helper:optionsSchema", id:d.id, page:PAGE, title:"The Factor Tree", options:schema() };
+      else if (d.type === "helper:make")
+        msg = { type:"helper:made", id:d.id, page:PAGE, problems:makeSet(d.count, d.options) };
+    }catch(e){
+      msg = { type: d.type === "helper:make" ? "helper:made" : "helper:optionsSchema", id:d.id, page:PAGE,
+              error:String(e && e.message || e), problems:[], options:[] };
+    }
+    if (!msg) return;
+    try{ (ev.source || window.parent).postMessage(msg, "*"); }catch(e){}
+  });
+
+  /* ===================== wiring ===================== */
+  var inp = $("numIn");
+  var HINTS = {
+    factors:"A whole number from 1 to 1,000,000. Commas are fine: <code>10,000</code>.",
+    prime:"A whole number from 2 to 1,000,000.",
+    test:"Any whole number from 0 to 1,000,000.",
+    gcf:"Two or three whole numbers up to 1,000,000, split by commas, spaces or “and”: <code>12, 18</code> or <code>4 and 6 and 8</code>.",
+    div:"A whole number from 1 to 1,000,000."
+  };
+  var LABELS = { factors:"Your number", prime:"Your number", test:"Your number", gcf:"Your numbers", div:"Your number" };
+  var EX = {
+    factors:["12","24","36","48","60","100","17","144","360","1,000"],
+    prime:["360","84","100","128","210","1,001","97","9,240","65,536"],
+    test:["91","51","97","57","1","0","2","221","7,919","999,983"],
+    gcf:["12, 18","8, 12","24, 36","15, 28","48, 180","4, 6, 8","12, 18, 30","7, 13"],
+    div:["2,340","360","1,001","7,920","1,155","98,765","111,111","990"]
+  };
+  function buildChips(){
+    var host = $("chips");
+    host.innerHTML = "";
+    EX[S.mode].forEach(function(ex){
+      var btn = document.createElement("button");
+      btn.className = "chip"; btn.type = "button"; btn.textContent = ex;
+      btn.addEventListener("click", function(){ setProblem(ex); });
+      host.appendChild(btn);
+    });
+  }
+  function setProblem(text){ S.inputs[S.mode] = text; inp.value = text; S.step = 1; render(); save(); }
+  function paintMode(){
+    Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === S.mode));
+    });
+    $("numLab").textContent = LABELS[S.mode];
+    $("hint").innerHTML = HINTS[S.mode];
+    inp.setAttribute("inputmode", S.mode === "gcf" ? "text" : "numeric");
+    $("methodRow").hidden = S.mode !== "prime";
+    paintSplit(); buildChips(); buildMaker();
+    inp.value = S.inputs[S.mode];
+  }
+  function paintSplit(){
+    $("spSmall").setAttribute("aria-pressed", String(S.split === "small"));
+    $("spAny").setAttribute("aria-pressed", String(S.split === "any"));
+  }
+  function setMode(m){ S.mode = m; S.step = 1; paintMode(); render(); save(); }
+  Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){
+    b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
+  });
+  inp.addEventListener("input", function(){ S.inputs[S.mode] = inp.value; S.step = 1; render(); save(); });
+  $("spSmall").addEventListener("click", function(){ S.split = "small"; S.step = 1; paintSplit(); render(); save(); });
+  $("spAny").addEventListener("click", function(){ S.split = "any"; S.step = 1; paintSplit(); render(); save(); });
+
+  function setPractice(p){
+    S.practice = p; S.step = 1;
+    $("allBtn").setAttribute("aria-pressed", String(p === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(p === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(p === "check"));
+    render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
+  $("ckGo").addEventListener("click", doCheck);
+  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("showBtn").addEventListener("click", function(){ CK.revealed = true; render(); });
+  $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
+  $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+  $("copyBtn").addEventListener("click", function(){
+    var btn = $("copyBtn"), url;
+    syncURL(); url = location.href;
+    function done(){ btn.textContent = "Link copied ✓"; clearTimeout(btn._t); btn._t = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = url; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.left = "-9999px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); }catch(e){}
+      document.body.removeChild(ta); done();
+    }
+    try{
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, fallback);
+      else fallback();
+    }catch(e){ fallback(); }
+  });
+  document.addEventListener("keydown", function(e){
+    if (S.practice !== "step" || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
+    if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
+    if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    paint(); save();
+  });
+  $("maker").addEventListener("toggle", save);
+
+  function save(){
+    try{ localStorage.setItem(STORE, JSON.stringify({
+      mode:S.mode, inputs:S.inputs, practice:S.practice, split:S.split, gen:S.gen, maker:$("maker").open,
+      theme:document.documentElement.getAttribute("data-theme") || "" })); }catch(e){}
+  }
+  function load(){
+    try{
+      var v = JSON.parse(localStorage.getItem(STORE) || "null");
+      if (!v) return;
+      if (v.theme === "light" || v.theme === "dark") document.documentElement.setAttribute("data-theme", v.theme);
+      if (MODES.indexOf(v.mode) >= 0) S.mode = v.mode;
+      if (v.inputs) MODES.forEach(function(m){ if (typeof v.inputs[m] === "string") S.inputs[m] = v.inputs[m]; });
+      if (v.practice === "all" || v.practice === "step" || v.practice === "check") S.practice = v.practice;
+      if (v.split === "small" || v.split === "any") S.split = v.split;
+      if (v.gen) MODES.forEach(function(m){
+        var g = v.gen[m], G = S.gen[m]; if (!g) return;
+        Object.keys(G).forEach(function(k){
+          if (typeof G[k] === "boolean" && typeof g[k] === "boolean") G[k] = g[k];
+          if (typeof G[k] === "number" && typeof g[k] === "number"){
+            var ok = MAKER[m].filter(function(sec){ return sec.seg === k; })[0];
+            if (ok && ok.vals.indexOf(g[k]) >= 0) G[k] = g[k];
+          }
+        });
+      });
+      if (v.maker) $("maker").open = true;
+    }catch(e){}
+  }
+
+  load();
+  readParams();
+  $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+  $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+  $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
+  paint(); paintMode(); render();
+})();
+</script>
