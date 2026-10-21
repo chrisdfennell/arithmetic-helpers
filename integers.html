@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Number Line</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -128,6 +129,8 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-family:var(--f-mono);font-weight:600;color:var(--ink);white-space:pre-wrap}
 
   .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
     border-top:1px dashed var(--rule);padding-top:14px}
@@ -442,7 +445,7 @@
       <button type="button" data-mode="sub" aria-pressed="false">Subtract</button>
       <button type="button" data-mode="muldiv" aria-pressed="false">Multiply &amp; divide</button>
       <button type="button" data-mode="abs" aria-pressed="false">Absolute value &amp; compare</button>
-      <button type="button" data-mode="chain" aria-pressed="false">Chains</button>
+      <button type="button" data-mode="chain" aria-pressed="false">Several steps</button>
     </div>
     <div class="entry">
       <div class="fields">
@@ -679,7 +682,7 @@
         if (!tk[p] || tk[p].k !== "|") throw new UserErr("An absolute value bar <b>|</b> is never closed — add another <b>|</b>.");
         p++;
         if (ins.ops.length) throw new UserErr("There’s a calculation inside the bars. This page takes the absolute value of one number at a time — "
-          + "work out the inside first (the Chains tab can do it), then put that one number between the bars, like <b>|−7|</b>.");
+          + "work out the inside first (the Several steps tab can do it), then put that one number between the bars, like <b>|−7|</b>.");
         node = { t:"abs", a:ins.atoms[0] };
       }
       else if (t.k === ")") throw new UserErr(p > 0 && tk[p - 1].k !== "op" && tk[p - 1].k !== "(" ? "There’s a <b>)</b> with no <b>(</b> to match it." : "Something’s missing before <b>)</b>.");
@@ -860,7 +863,7 @@
       else {
         if (r2 === 0) throw new UserErr("Step " + (i + 1) + " asks for " + divZeroMsg(cur).replace(/^<b>/, "<b>"));
         if (cur % r2 !== 0) throw new UserErr("Step " + (i + 1) + " is <b>" + nH(cur) + " ÷ " + nH(r2, true) + "</b>, which doesn’t come out even, "
-          + "so the answer isn’t an integer. Chains here stay with integers — work this one on the Order Stack, which handles fractions: "
+          + "so the answer isn’t an integer. Several-step problems here stay with integers — work this one on the Order Stack, which handles fractions: "
           + '<a href="pemdas.html?q=' + esc(encodeURIComponent(P.src || exprT(P))) + '">open it there &rarr;</a>');
         res = cur / r2;
       }
@@ -1666,7 +1669,8 @@
     $("ckIn").value = ""; $("ckMsg").innerHTML = ""; $("ckMsg").className = "ck-msg"; $("ckMore").hidden = true;
   }
   function paintCheck(){
-    var on = S.practice === "check" && !!S.cur, hide = on && !S.ck.solved;
+    // embedded, the answer box stays through a hint or the work
+    var on = (S.practice === "check" || EMBED) && !!S.cur, hide = S.practice === "check" && !!S.cur && !S.ck.solved;
     $("checkBox").hidden = !on;
     $("board").hidden = hide;
     var bnd = document.querySelector(".answer");
@@ -1841,6 +1845,8 @@
       msg.className = "ck-msg ok";
       msg.innerHTML = "✓ Correct!" + (res.note ? " <span>" + res.note + "</span>" : "") + ' <span>Here’s the full work.</span>';
       $("ckMore").hidden = true;
+      report("right");
+      if (EMBED && S.practice === "step"){ S.practice = "all"; render(); }   // after a hint (one step at a time), show all of it
       paintCheck(); veil(lastTotal());
     } else if (res.unread){
       msg.className = "ck-msg"; msg.innerHTML = res.msg;
@@ -1849,6 +1855,7 @@
       msg.className = "ck-msg no";
       msg.innerHTML = '<strong class="nq">Not quite — try again.</strong>' + (res.diag ? " " + res.diag : "");
       $("ckMore").hidden = false;
+      report("wrong");
     }
   }
   function lastTotal(){ return document.querySelectorAll("#log > li").length; }
@@ -1969,25 +1976,25 @@
   }
 
   /* ===================== the worksheet API ===================== */
-  var RANGEV = [{ v:10, label:"−10 to 10" }, { v:20, label:"−20 to 20" }, { v:100, label:"−100 to 100" }];
+  var RANGEV = [{ v:10, label:"−10 and 10" }, { v:20, label:"−20 and 20" }, { v:100, label:"−100 and 100" }];
   var OPTIONS = [
     { key:"mode", label:"Kind of problem", type:"choice", default:"add",
       values:[{ v:"add", label:"Add" }, { v:"sub", label:"Subtract" }, { v:"muldiv", label:"Multiply & divide" },
-              { v:"abs", label:"Absolute value & compare" }, { v:"chain", label:"Chains" }, { v:"mixed", label:"A mix of everything" }] },
-    { key:"range", label:"Numbers from", type:"choice", default:10, values:RANGEV, modes:["add", "sub", "muldiv", "abs", "chain", "mixed"] },
+              { v:"abs", label:"Absolute value & compare" }, { v:"chain", label:"Several steps in a row (like −3 + 8 − 5)" }, { v:"mixed", label:"A mix of everything" }] },
+    { key:"range", label:"Numbers between", type:"choice", default:10, values:RANGEV, modes:["add", "sub", "muldiv", "abs", "chain", "mixed"] },
     { key:"signs", label:"Signs", type:"choice", default:"any", modes:["add", "sub", "muldiv"],
       values:[{ v:"any", label:"Any signs" }, { v:"neg", label:"Both negative" }, { v:"diff", label:"Different signs" }, { v:"subneg", label:"Subtract a negative (subtract only)" }] },
-    { key:"zero", label:"Include zero", type:"toggle", default:true, modes:["add", "sub", "muldiv", "chain"] },
+    { key:"zero", label:"Zero can be one of the numbers", type:"toggle", default:true, modes:["add", "sub", "muldiv", "chain"] },
     { key:"op", label:"Multiply or divide", type:"choice", default:"both", modes:["muldiv"],
       values:[{ v:"both", label:"× and ÷" }, { v:"mul", label:"× only" }, { v:"div", label:"÷ only" }] },
-    { key:"whole", label:"Whole-number division only", type:"toggle", default:true, modes:["muldiv"] },
+    { key:"whole", label:"Division comes out even (whole-number answers)", type:"toggle", default:true, modes:["muldiv"] },
     { key:"kind", label:"Absolute value or compare", type:"choice", default:"compare", modes:["abs"],
       values:[{ v:"abs", label:"Absolute value" }, { v:"compare", label:"Compare & order" }] },
     { key:"count", label:"How many to order", type:"choice", default:4, modes:["abs"],
       values:[2, 3, 4, 5, 6].map(function(v){ return { v:v, label:String(v) }; }) },
-    { key:"len", label:"Numbers in a chain", type:"choice", default:4, modes:["chain"],
-      values:[3, 4, 5, 6].map(function(v){ return { v:v, label:v + " numbers" }; }) },
-    { key:"ops", label:"Chain operations", type:"choice", default:"as", modes:["chain"],
+    { key:"len", label:"How many numbers in a row", type:"choice", default:4, modes:["chain"],
+      values:[3, 4, 5, 6].map(function(v){ return { v:v, label:String(v) }; }) },
+    { key:"ops", label:"Signs in the row", type:"choice", default:"as", modes:["chain"],
       values:[{ v:"as", label:"+ and −" }, { v:"md", label:"× and ÷" }] }
   ];
   function apiOpts(raw){
@@ -2133,22 +2140,23 @@
   });
 
   /* the maker's controls, per mode */
-  var RANGESEG = { lbl:"Numbers", seg:"range", vals:[[10, "−10 to 10"], [20, "−20 to 20"], [100, "−100 to 100"]] };
+  var RANGESEG = { lbl:"Numbers between", seg:"range", vals:[[10, "−10 and 10"], [20, "−20 and 20"], [100, "−100 and 100"]] };
   var SIGNS3 = [["any", "Any"], ["neg", "Both negative"], ["diff", "Different signs"]];
+  var ZEROTOG = ["zero", "0", "Zero can be one of the numbers"];
   var MAKER = {
-    add:[RANGESEG, { lbl:"Signs", seg:"signs", vals:SIGNS3 }, { lbl:"Extras", togs:[["zero", "0", "Include zero"]] }],
+    add:[RANGESEG, { lbl:"Signs", seg:"signs", vals:SIGNS3 }, { lbl:"Extras", togs:[ZEROTOG] }],
     sub:[RANGESEG, { lbl:"Signs", seg:"signs", vals:[["any", "Any"], ["subneg", "Subtract a negative"], ["neg", "Both negative"], ["diff", "Different signs"]] },
-         { lbl:"Extras", togs:[["zero", "0", "Include zero"]] }],
-    muldiv:[{ lbl:"Operation", seg:"op", vals:[["both", "× and ÷"], ["mul", "× only"], ["div", "÷ only"]] },
-            { lbl:"Numbers", seg:"range", vals:[[10, "up to 10"], [20, "up to 20"], [100, "up to 100"]] },
+         { lbl:"Extras", togs:[ZEROTOG] }],
+    muldiv:[{ lbl:"Multiply or divide", seg:"op", vals:[["both", "× and ÷"], ["mul", "× only"], ["div", "÷ only"]] },
+            RANGESEG,
             { lbl:"Signs", seg:"signs", vals:SIGNS3 },
-            { lbl:"Extras", togs:[["whole", "✓", "Whole-number division only"], ["zero", "0", "Include zero"]] }],
-    abs:[{ lbl:"Kind", seg:"kind", vals:[["abs", "Absolute value"], ["compare", "Compare & order"]] },
-         { lbl:"How many", seg:"count", vals:[[2, "2"], [3, "3"], [4, "4"], [5, "5"], [6, "6"]], only:"compare" },
+            { lbl:"Extras", togs:[["whole", "✓", "Division comes out even (whole-number answers)"], ZEROTOG] }],
+    abs:[{ lbl:"Kind of problem", seg:"kind", vals:[["abs", "Absolute value"], ["compare", "Compare & order"]] },
+         { lbl:"How many to order", seg:"count", vals:[[2, "2"], [3, "3"], [4, "4"], [5, "5"], [6, "6"]], only:"compare" },
          RANGESEG],
-    chain:[{ lbl:"Length", seg:"len", vals:[[3, "3 numbers"], [4, "4"], [5, "5"], [6, "6"]] },
-           { lbl:"Operations", seg:"ops", vals:[["as", "+ and −"], ["md", "× and ÷"]] },
-           RANGESEG, { lbl:"Extras", togs:[["zero", "0", "Include zero"]] }]
+    chain:[{ lbl:"How many numbers in a row", seg:"len", vals:[[3, "3"], [4, "4"], [5, "5"], [6, "6"]] },
+           { lbl:"Signs in the row", seg:"ops", vals:[["as", "+ and −"], ["md", "× and ÷"]] },
+           RANGESEG, { lbl:"Extras", togs:[ZEROTOG] }]
   };
   function buildMaker(){
     var host = $("makerBody"), G = S.gen[S.mode];
@@ -2180,6 +2188,9 @@
       }
       host.appendChild(box);
     });
+    var sample = document.createElement("p");
+    sample.className = "sample"; sample.id = "sample"; host.appendChild(sample);
+    paintSample();
     var go = document.createElement("div");
     go.className = "maker-go";
     go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
@@ -2192,6 +2203,13 @@
     });
   }
 
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), t = null;
+    if (!el) return;
+    try { var r = makeOne(S.mode, S.gen[S.mode]); t = r ? problemText(r.P, r.sol) : null; } catch (e){ t = null; }
+    el.innerHTML = t ? "Makes problems like: <b>" + esc(t) + "</b>" : "Those choices don’t make a problem — try different ones.";
+  }
   function paintPractice(){
     $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
     $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
@@ -2203,8 +2221,8 @@
   $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("ckBtn").addEventListener("click", doCheck);
   $("ckIn").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); doCheck(); } });
-  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
-  $("showBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("hintBtn").addEventListener("click", function(){ noteHint(); setPractice("step"); });
+  $("showBtn").addEventListener("click", function(){ report("shown"); setPractice("all"); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
@@ -2225,10 +2243,10 @@
     document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
     paint(); save();
   });
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   function save(){
-    try { localStorage.setItem("number-line", JSON.stringify({
+    if (!EMBED) try { localStorage.setItem("number-line", JSON.stringify({
       mode:S.mode, inputs:S.inputs, practice:S.practice, gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme") || "" })); } catch (e){}
   }
@@ -2251,9 +2269,61 @@
     } catch (e){}
   }
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(S.cur ? S.cur.P : null); flushURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"integers.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:String(S.inputs[S.mode] || "").slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   var qp = readParams();
   if (["all", "step", "check"].indexOf(qp.practice) >= 0) S.practice = qp.practice;
+  if (EMBED){
+    S.practice = "check";
+    embedSetup("html.embed #modeTabs,html.embed .keys,html.embed .hint,html.embed .maker,html.embed .examples{display:none !important}");
+    in1.readOnly = true;
+  }
   if (typeof qp.q === "string" && qp.q.trim()){
     var pm = MODES.indexOf(qp.mode) >= 0 ? qp.mode : null, P0 = null;
     try { P0 = parseQ(qp.q); } catch (e){ P0 = null; }

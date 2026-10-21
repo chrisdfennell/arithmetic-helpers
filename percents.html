@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Hundred Grid</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -133,6 +134,8 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-weight:600;color:var(--ink)}
 
   .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
     border-top:1px dashed var(--rule);padding-top:14px}
@@ -1518,7 +1521,7 @@
     var key = probParams(prob);
     syncURL(key);
     if (key !== lastKey){ lastKey = key; S.revealed = false; buildCheck(res); }
-    $("checkBox").hidden = S.practice !== "check";
+    $("checkBox").hidden = !(S.practice === "check" || EMBED);   // embedded, the answer box stays through a hint
     $("workHost").innerHTML = rowsHTML(res.rows) + figHTML(res.fig);
     writeLog(res.log);
     band(res.pairs, res.facts);
@@ -1664,10 +1667,13 @@
     if (allOK){
       msg.innerHTML = '<span class="ok">✓ Correct!</span> ' + notes.join(" ") + " Here’s the full work, so you can compare.";
       $("ckMore").hidden = true;
+      report("right");
       S.revealed = true; render();
     } else {
       msg.innerHTML = '<span class="bad">Not quite — try again.</span>' + lines.map(function(l){ return '<div class="why">' + l + "</div>"; }).join("");
       $("ckMore").hidden = false;
+      // graded only if something readable was typed
+      if (res.answers.some(function(A, i){ var a = parseAns($("ck" + i).value); return !a.empty && !a.bad; })) report("wrong");
     }
   }
 
@@ -1802,9 +1808,9 @@
       { v:"whole", label:"Find the whole" }, { v:"change", label:"Percent change" }, { v:"money", label:"Money" }, { v:"mix", label:"A mix of all five" }], "default":"of" },
     { key:"kind", label:"Money problems", type:"choice", values:[{ v:"mix", label:"A mix" }, { v:"discount", label:"Discount" }, { v:"markup", label:"Markup" },
       { v:"tax", label:"Sales tax" }, { v:"tip", label:"Tip" }, { v:"interest", label:"Simple interest" }], "default":"mix" },
-    { key:"pct", label:"Percents", type:"choice", values:[{ v:"friendly", label:"Friendly (multiples of 5, 10, 25)" }, { v:"any", label:"Any" }], "default":"friendly" },
-    { key:"max", label:"Numbers up to", type:"choice", values:[{ v:100, label:"100" }, { v:500, label:"500" }, { v:1000, label:"1,000" }], "default":100 },
-    { key:"whole", label:"Whole-number answers (money: exact to the cent)", type:"toggle", values:[{ v:true, label:"On" }, { v:false, label:"Off" }], "default":true },
+    { key:"pct", label:"Percents", type:"choice", values:[{ v:"friendly", label:"Friendly (like 5%, 10%, 25%)" }, { v:"any", label:"Any" }], "default":"friendly" },
+    { key:"max", label:"Biggest number", type:"choice", values:[{ v:100, label:"100" }, { v:500, label:"500" }, { v:1000, label:"1,000" }], "default":100 },
+    { key:"whole", label:"Keep answers whole (money: to the exact cent)", type:"toggle", values:[{ v:true, label:"On" }, { v:false, label:"Off" }], "default":true },
     { key:"over", label:"Percents over 100%", type:"toggle", values:[{ v:true, label:"On" }, { v:false, label:"Off" }], "default":false },
     { key:"dir", label:"Percent change goes", type:"choice", values:[{ v:"both", label:"Up or down" }, { v:"up", label:"Up (increase)" }, { v:"down", label:"Down (decrease)" }], "default":"both" },
     { key:"cents", label:"Prices with cents", type:"toggle", values:[{ v:true, label:"On" }, { v:false, label:"Off" }], "default":false }
@@ -1961,14 +1967,14 @@
   var MK_SECS = { of:["pct","togs","max"], what:["pct","togs","max"], whole:["pct","togs","max"], change:["dir","pct","togs","max"], money:["kind","pct","togs","max"] };
   var MK_TOGS = { of:["whole","over"], what:["whole","over"], whole:["whole","over"], change:["whole","over"], money:["cents","whole"] };
   var SEGS = {
-    pct:{ lbl:"Percents", vals:[["friendly", "Friendly: 5s, 10s, 25s"], ["any", "Any"]] },
-    max:{ lbl:"Numbers", vals:[[100, "up to 100"], [500, "up to 500"], [1000, "up to 1,000"]] },
-    dir:{ lbl:"Change", vals:[["both", "Up or down"], ["up", "Increase"], ["down", "Decrease"]] },
-    kind:{ lbl:"Type", vals:[["discount", "Discount"], ["markup", "Markup"], ["tax", "Sales tax"], ["tip", "Tip"], ["interest", "Interest"], ["mix", "Mix"]] }
+    pct:{ lbl:"Percents", vals:[["friendly", "Friendly (like 5%, 10%, 25%)"], ["any", "Any"]] },
+    max:{ lbl:"Biggest number", vals:[[100, "100"], [500, "500"], [1000, "1,000"]] },
+    dir:{ lbl:"Change goes", vals:[["both", "Up or down"], ["up", "Up (increase)"], ["down", "Down (decrease)"]] },
+    kind:{ lbl:"Kind of money problem", vals:[["discount", "Discount"], ["markup", "Markup"], ["tax", "Sales tax"], ["tip", "Tip"], ["interest", "Simple interest"], ["mix", "A mix"]] }
   };
   function togLbl(k){
-    if (k === "whole") return S.mode === "money" ? ["✓", "Exact to the cent (no rounding)"] : ["✓", "Whole-number answers"];
-    return k === "over" ? ["100+", "Over 100%"] : ["¢", "Prices with cents"];
+    if (k === "whole") return S.mode === "money" ? ["✓", "Exact to the cent (no rounding)"] : ["✓", "Keep answers whole"];
+    return k === "over" ? ["100+", "Over 100% (like 150%)"] : ["¢", "Prices with cents"];
   }
   function buildMaker(){
     var host = $("makerBody"), G = S.gen;
@@ -1996,11 +2002,21 @@
       }
       host.appendChild(box);
     });
+    var sample = document.createElement("p");
+    sample.className = "sample"; sample.id = "sample"; host.appendChild(sample);
+    paintSample();
     var go = document.createElement("div");
     go.className = "maker-go";
     go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
     host.appendChild(go);
     $("genBtn").addEventListener("click", generate);
+  }
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), t = null;
+    if (!el) return;
+    try { var r = makeProb(S.mode, S.gen); t = r ? solve(r).text : null; } catch (e){ t = null; }
+    el.innerHTML = t ? "Makes problems like: <b>" + esc(t) + "</b>" : "Those choices don’t make a problem — try different ones.";
   }
   function generate(){
     var r = makeProb(S.mode, S.gen);
@@ -2024,8 +2040,8 @@
   $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
   $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("ckBtn").addEventListener("click", doCheck);
-  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
-  $("showBtn").addEventListener("click", function(){ S.revealed = true; $("ckMore").hidden = true; render(); });
+  $("hintBtn").addEventListener("click", function(){ noteHint(); setPractice("step"); });
+  $("showBtn").addEventListener("click", function(){ report("shown"); S.revealed = true; $("ckMore").hidden = true; render(); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
@@ -2060,10 +2076,10 @@
     document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
     paint(); save();
   });
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   function save(){
-    try{ localStorage.setItem("hundred-grid", JSON.stringify({
+    if (!EMBED) try{ localStorage.setItem("hundred-grid", JSON.stringify({
       mode:S.mode, kind:S.kind, inputs:S.inputs, practice:S.practice, gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
   }
@@ -2086,9 +2102,63 @@
     }catch(e){}
   }
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(probParams(curProb())); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"percents.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:String(CUR && CUR.text || $("sentence").textContent).slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   readURL();
+  if (EMBED){
+    S.practice = "check";
+    embedSetup("html.embed #modeTabs,html.embed #kindRow,html.embed .qrow,html.embed .hint,html.embed .maker,html.embed .examples,html.embed .answer.checking{display:none !important}");
+  }
   if (S.badQ) $("qIn").value = S.badQ;
   paint(); paintMode(); render();
+  if (EMBED) Array.prototype.forEach.call(document.querySelectorAll("#sentence input, #sentence button"), function(el){
+    if (el.tagName === "BUTTON") el.disabled = true; else el.readOnly = true;
+  });
 })();
 </script>

@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Order Stack</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -116,6 +117,11 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .lenrow{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+  .maker-body > .modes{justify-self:start}
+  .lenhint{font-size:12.5px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
 
   .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
     border-top:1px dashed var(--rule);padding-top:14px}
@@ -369,24 +375,26 @@
     <details class="maker" id="maker">
       <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
       <div class="maker-body">
-        <span class="lbl">Operations</span>
+        <span class="lbl">Signs to use</span>
         <div class="toggles" id="opsT">
           <button type="button" class="tog" data-op="+"><b>+</b> Add</button>
           <button type="button" class="tog" data-op="−"><b>&minus;</b> Subtract</button>
           <button type="button" class="tog" data-op="×"><b>&times;</b> Multiply</button>
           <button type="button" class="tog" data-op="÷"><b>&divide;</b> Divide</button>
         </div>
-        <span class="lbl">Extras</span>
+        <span class="lbl">Also include</span>
         <div class="toggles">
           <button type="button" class="tog" id="parT"><b>( )</b> Parentheses</button>
-          <button type="button" class="tog" id="expT"><b>x&sup2;</b> Exponents</button>
+          <button type="button" class="tog" id="expT"><b>x&sup2;</b> Powers (x&sup2;)</button>
           <button type="button" class="tog" id="decT"><b>.5</b> Decimals</button>
-          <button type="button" class="tog" id="niceT"><b>&check;</b> No negatives or remainders</button>
+          <button type="button" class="tog" id="niceT"><b>&check;</b> Keep every answer a whole number</button>
         </div>
-        <span class="lbl">Length</span>
-        <div class="modes small" id="lenT" role="group" aria-label="How many operations"></div>
-        <span class="lbl">Numbers</span>
-        <div class="modes small" id="maxT" role="group" aria-label="How big the numbers get"></div>
+        <span class="lbl">How long</span>
+        <div class="lenrow"><div class="modes small" id="lenT" role="group" aria-label="How long: how many steps"></div>
+          <span class="lenhint">each step is one + &minus; &times; or &divide;</span></div>
+        <span class="lbl">Biggest number</span>
+        <div class="modes small" id="maxT" role="group" aria-label="Biggest number"></div>
+        <p class="sample" id="sample"></p>
         <div class="maker-go">
           <button type="button" class="go" id="genBtn">New problem</button>
           <span class="msg" id="genMsg"></span>
@@ -485,6 +493,7 @@
      {type:"helper:options", id}              → {type:"helper:optionsSchema", id, page:"pemdas.html", title, options:[…]}
      {type:"helper:make", id, count, options} → {type:"helper:made", id, page:"pemdas.html", problems:[{text, html, params, answer, answerHtml}]}
    Option keys: add sub mul div par exp dec nice (toggles), len (3 4 5 6 8 10), max (10 20 50 100), as (frac|dec).
+   (On the page these read "Signs to use", "Also include", "Keep every answer a whole number", "How long" in steps, "Biggest number".)
    Making problems never changes this page: not its inputs, its maker settings or what it saved. */
 (function(){
   "use strict";
@@ -1229,6 +1238,7 @@
       CK.done = true; CK.reveal = "all";
       msg.innerHTML = '<span class="yes">✓ Correct!</span>' + (m === "round"
         ? '<span class="why">Rounding is fine — exactly, it’s <b>' + exactText(CUR.value) + "</b>.</span>" : "");
+      report("right");
       render();
       return;
     }
@@ -1236,6 +1246,7 @@
     var why = "", ms = mistakes();
     for (var i = 0; i < ms.length; i++) if (numMatch(t, ms[i].v)){ why = ms[i].html; break; }
     msg.innerHTML = '<span class="no">Not quite — try again.</span>' + (why ? '<span class="why">' + why + "</span>" : "");
+    report("wrong");
     applyCheck(lastSteps);
   }
 
@@ -1379,6 +1390,14 @@
     Array.prototype.forEach.call(document.querySelectorAll("#maxT button"), function(b){
       b.setAttribute("aria-pressed", String(Number(b.getAttribute("data-v")) === G.max));
     });
+    paintSample();
+  }
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), r = null;
+    if (!el) return;
+    try { r = makeProblem(S.gen); } catch (e){ r = null; }
+    el.innerHTML = r ? "Makes problems like: <b>" + esc(r.str) + "</b>" : "Those choices don’t make a problem — try different ones.";
   }
   Array.prototype.forEach.call(document.querySelectorAll("#opsT .tog"), function(b){
     b.addEventListener("click", function(){
@@ -1400,8 +1419,8 @@
       $(host).appendChild(b);
     });
   }
-  segs("lenT", [3,4,5,6,8,10], function(v){ return v + " ops"; }, "len");
-  segs("maxT", [10,20,50,100], function(v){ return "up to " + v; }, "max");
+  segs("lenT", [3,4,5,6,8,10], function(v){ return v + " steps"; }, "len");
+  segs("maxT", [10,20,50,100], function(v){ return String(v); }, "max");
   $("genBtn").addEventListener("click", function(){
     var r = makeProblem(S.gen);
     if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
@@ -1434,8 +1453,8 @@
   $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
   $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("ckForm").addEventListener("submit", function(e){ e.preventDefault(); checkAnswer(); });
-  $("ckHint").addEventListener("click", function(){ CK.reveal = "step"; S.step = 1; render(); });
-  $("ckShow").addEventListener("click", function(){ CK.reveal = "all"; render(); });
+  $("ckHint").addEventListener("click", function(){ noteHint(); CK.reveal = "step"; S.step = 1; render(); });
+  $("ckShow").addEventListener("click", function(){ report("shown"); CK.reveal = "all"; render(); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
@@ -1479,7 +1498,7 @@
   $("maker").addEventListener("toggle", save);
 
   function save(){
-    try{ localStorage.setItem("order-stack", JSON.stringify({
+    if (!EMBED) try{ localStorage.setItem("order-stack", JSON.stringify({
       expr:S.expr, as:S.as, practice:S.practice, stepMode:S.practice === "step", gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
     syncURL();
@@ -1543,13 +1562,13 @@
     { key:"mul", label:"× Multiply", type:"toggle", values:YN, default:true },
     { key:"div", label:"÷ Divide", type:"toggle", values:YN, default:true },
     { key:"par", label:"( ) Parentheses", type:"toggle", values:YN, default:true },
-    { key:"exp", label:"x² Exponents", type:"toggle", values:YN, default:false },
+    { key:"exp", label:"Powers (x²)", type:"toggle", values:YN, default:false },
     { key:"dec", label:".5 Decimals", type:"toggle", values:YN, default:false },
-    { key:"nice", label:"No negatives or remainders", type:"toggle", values:YN, default:true },
-    { key:"len", label:"Length", type:"choice", default:5,
-      values:[3,4,5,6,8,10].map(function(v){ return { v:v, label:v + " ops" }; }) },
-    { key:"max", label:"Numbers", type:"choice", default:20,
-      values:[10,20,50,100].map(function(v){ return { v:v, label:"up to " + v }; }) },
+    { key:"nice", label:"Keep every answer a whole number", type:"toggle", values:YN, default:true },
+    { key:"len", label:"How long", type:"choice", default:5,
+      values:[3,4,5,6,8,10].map(function(v){ return { v:v, label:v + " steps" }; }) },
+    { key:"max", label:"Biggest number", type:"choice", default:20,
+      values:[10,20,50,100].map(function(v){ return { v:v, label:String(v) }; }) },
     { key:"as", label:"Show fractions as", type:"choice", default:"frac",
       values:[{ v:"frac", label:"Fractions" }, { v:"dec", label:"Decimals" }] }
   ];
@@ -1629,8 +1648,61 @@
     }
   });
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"pemdas.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:String(S.expr).slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   readURL();
+  if (EMBED){
+    S.practice = "check";
+    embedSetup("html.embed .keys,html.embed .hint,html.embed .maker,html.embed .examples,html.embed .board.ck-veil{display:none !important}");
+    inp.readOnly = true;
+    document.querySelector('label[for="exprIn"]').textContent = "The problem";
+  }
   inp.value = S.expr;
   paintPractice();
   $("asFrac").setAttribute("aria-pressed", String(S.as === "frac"));

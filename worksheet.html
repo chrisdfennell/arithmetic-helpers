@@ -127,6 +127,10 @@
   .sh-foot{position:absolute;left:48px;right:48px;bottom:18px;font-size:10.5px;color:#888;display:flex;justify-content:space-between}
   @media (max-width:640px){.sh-foot{position:static;margin-top:16px}}
   .empty{padding:40px 20px;text-align:center;color:var(--ink-3)}
+  .setbox{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--rule);padding-top:12px}
+  .setbox textarea{width:100%;font-family:var(--f-mono);font-size:12px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);
+    border-radius:8px;padding:7px 10px;resize:vertical;word-break:break-all}
+  a.ghost{text-decoration:none;display:inline-flex;align-items:center}
 
   @media print{
     @page{size:letter;margin:12mm 12mm 14mm}
@@ -183,8 +187,19 @@
         <div class="actions">
           <button type="button" class="go" id="newBtn">New numbers</button>
           <button type="button" class="ghost" id="printBtn">Print</button>
+          <button type="button" class="ghost" id="setBtn">Practice link</button>
         </div>
         <div class="sec-msg" id="status" role="status" aria-live="polite"></div>
+        <div class="setbox" id="setBox" hidden>
+          <span class="lbl">Practice it online</span>
+          <span class="sec-msg">The same problems, one at a time, with Check my answer and a score at the end.</span>
+          <textarea id="setOut" readonly rows="3" aria-label="Practice link"></textarea>
+          <div class="actions">
+            <button type="button" class="go" id="setCopy">Copy link</button>
+            <a class="ghost" id="setOpen" href="#" target="_blank" rel="noopener">Open it</a>
+            <span class="sec-msg" id="setMsg" role="status" aria-live="polite"></span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -378,6 +393,51 @@
   $("newBtn").addEventListener("click", function(){ S.secs.forEach(function(_, i){ regen(i); }); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
 
+  /* the worksheet's problems as a practice set (practice.html?set=…): same format as practice.html makes —
+     "z" + base64url(deflate-raw(JSON)) when the browser can compress and it's shorter, else "j" + base64url(JSON),
+     JSON = {v:1, t:title, p:[[page without .html, params], …]} */
+  function b64url(bytes){
+    var s = "";
+    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+  function setCode(title, list){
+    var json = JSON.stringify({ v:1, t:String(title || "Math practice").slice(0, 60),
+      p:list.map(function(x){ return [x[0].replace(/\.html$/, ""), x[1]]; }) });
+    var bytes = new TextEncoder().encode(json), plain = "j" + b64url(bytes);
+    try {
+      if (typeof CompressionStream !== "function") return Promise.resolve(plain);
+      var cs = new CompressionStream("deflate-raw"), w = cs.writable.getWriter();
+      w.write(bytes); w.close();
+      return new Response(cs.readable).arrayBuffer().then(function(b){
+        var z = "z" + b64url(new Uint8Array(b));
+        return z.length < plain.length * .9 ? z : plain;
+      }, function(){ return plain; });
+    } catch (e){ return Promise.resolve(plain); }
+  }
+  $("setBtn").addEventListener("click", function(){
+    var list = items().filter(function(it){ return it.p && it.p.params; }).slice(0, 100).map(function(it){ return [it.page, it.p.params]; });
+    if (!list.length){ status("Make some problems first."); return; }
+    setCode(S.title, list).then(function(code){
+      var url = new URL("practice.html?set=" + code, location.href).href;
+      $("setOut").value = url; $("setOpen").href = url; $("setMsg").textContent = list.length + " problems";
+      $("setBox").hidden = false;
+      try { $("setOut").focus(); $("setOut").select(); } catch (e){}
+    });
+  });
+  $("setCopy").addEventListener("click", function(){
+    var url = $("setOut").value, msg = $("setMsg");
+    function old(){
+      var ok = false;
+      try { $("setOut").select(); ok = document.execCommand("copy"); } catch (e){ ok = false; }
+      msg.textContent = ok ? "Link copied ✓" : "Couldn’t copy — select it and copy it yourself";
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(function(){ msg.textContent = "Link copied ✓"; }, old); return; }
+    } catch (e){}
+    old();
+  });
+
   function shuffled(list){
     var a = list.slice();
     for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
@@ -398,6 +458,7 @@
   var SPACE = { sm:"18px", md:"64px", lg:"130px" };
   function draw(){
     var list = items(), host = $("preview");
+    if ($("setBox")) $("setBox").hidden = true;
     if (!list.length){
       host.innerHTML = '<p class="preview-note">Your worksheet will show up here.</p><div class="sheet grow"><div class="empty">'
         + (busy ? "Making problems…" : "Add a section to get started.") + "</div></div>";

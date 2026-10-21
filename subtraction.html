@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Borrow Bank</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -130,6 +131,8 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{margin:0;padding:0 15px 12px;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
 
   /* ---- check my answer ---- */
   .try{background:var(--surface);border:1px solid var(--rule);border-left:5px solid var(--alt);
@@ -465,6 +468,7 @@
       <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
       <div class="maker-body" id="makerDec"></div>
       <div class="maker-body" id="makerFrac" hidden></div>
+      <p class="sample" id="sample"></p>
       <div class="maker-go">
         <button type="button" class="go" id="genBtn">New problem</button>
         <span class="msg" id="genMsg" aria-live="polite"></span>
@@ -1537,24 +1541,29 @@
     if (rEq(u.r, ans.r) && p.mode === "frac" && !u.simple){
       S.chk.tries++;
       say('<span class="lead">Right value — now simplify it.</span> ' + simplifyTip(u), "half");
+      report("simplify");
     } else if (rEq(u.r, ans.r)){
       say('<span class="lead">✓ Correct!</span>' + correctNote(p, u, ans), "ok");
+      report("right");
       S.chk.revealed = true;
       if (S.stepMode) S.step = 999;
     } else {
       S.chk.tries++;
       var why = diagnose(p, u, ans);
       say('<span class="lead">Not quite — try again.</span>' + (why ? " " + why : ""), "no");
+      report("wrong");
     }
     render();
   }
   $("tryBtn").addEventListener("click", checkAnswer);
   $("tryIn").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); checkAnswer(); } });
   $("hintBtn").addEventListener("click", function(){
+    noteHint();
     S.chk.keep = true; S.practice = "step"; S.stepMode = true; S.step = 1;
     paintPractice(); render(); save();
   });
   $("showBtn").addEventListener("click", function(){
+    report("shown");
     S.chk.revealed = true;
     if (S.stepMode) S.step = 999;
     render();
@@ -1565,21 +1574,23 @@
   var OPTS = [
     { key:"mode", label:"Kind of numbers", type:"choice", default:"decimals",
       values:[{ v:"decimals", label:"Decimals" }, { v:"fractions", label:"Fractions" }] },
-    { key:"digits", label:"Digits per number (before the point)", short:"Digits", type:"choice", default:2,
+    { key:"digits", label:"Digits in each number", short:"Digits in each number", type:"choice", default:2,
       appliesTo:["decimals"],
-      values:[1,2,3,4,5,6].map(function(v){ return { v:v, label:String(v) }; }) },
-    { key:"places", label:"Decimal places", short:"Decimals", type:"choice", default:0, appliesTo:["decimals"],
+      values:[1,2,3,4,5,6].map(function(v){
+        return { v:v, label:v + " (like " + ["7","47","347","5347","65,347","865,347"][v - 1] + ")" }; }) },
+    { key:"places", label:"Decimal places", short:"Decimal places", type:"choice", default:0, appliesTo:["decimals"],
       values:[{ v:0, label:"None" }, { v:1, label:"1 place" }, { v:2, label:"2 places" }, { v:3, label:"3 places" },
-              { v:"mixed", label:"Different lengths" }] },
+              { v:"mixed", label:"Different lengths (like 5.2 − 1.75)" }] },
     { key:"borrow", label:"Borrowing", short:"Borrowing", type:"choice", default:"any", appliesTo:["decimals"],
-      values:[{ v:"any", label:"Either" }, { v:"borrow", label:"Borrowing" },
+      values:[{ v:"any", label:"Either way" }, { v:"borrow", label:"Make it borrow" },
               { v:"zeros", label:"Borrow across zeros" }, { v:"none", label:"No borrowing" }] },
-    { key:"denoms", label:"Denominators", short:"Bottoms", type:"choice", default:"unlike", appliesTo:["fractions"],
-      values:[{ v:"like", label:"Same" }, { v:"unlike", label:"Different" }, { v:"any", label:"Either" }] },
-    { key:"maxDen", label:"Denominators up to", short:"Up to", type:"choice", default:12, appliesTo:["fractions"],
+    { key:"denoms", label:"Bottom numbers (denominators)", short:"Bottom numbers (denominators)", type:"choice",
+      default:"unlike", appliesTo:["fractions"],
+      values:[{ v:"like", label:"The same" }, { v:"unlike", label:"Different" }, { v:"any", label:"Either" }] },
+    { key:"maxDen", label:"Biggest bottom number", short:"Biggest bottom number", type:"choice", default:12, appliesTo:["fractions"],
       values:[{ v:6, label:"6" }, { v:12, label:"12" }, { v:20, label:"20" }] },
     { key:"mixed", label:"Mixed numbers", type:"toggle", default:false, appliesTo:["fractions"], glyph:"2&frac12;" },
-    { key:"regroup", label:"Regrouping (3 1/4 − 1 3/4)", type:"toggle", default:false, appliesTo:["fractions"],
+    { key:"regroup", label:"Borrow from the whole number (like 3 1/4 − 1 3/4)", type:"toggle", default:false, appliesTo:["fractions"],
       glyph:"&#8634;" },
     { key:"simplify", label:"Answer needs simplifying", type:"toggle", default:false, appliesTo:["fractions"],
       glyph:"&divide;" },
@@ -1726,6 +1737,15 @@
     });
     $("makerDec").hidden = S.mode !== "dec";
     $("makerFrac").hidden = S.mode !== "frac";
+    paintSample();
+  }
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), r = null;
+    if (!el) return;
+    try { r = makeOne(S.mode, S.gen); } catch (e){ r = null; }
+    el.innerHTML = r ? "Makes problems like: <b>" + esc(describe(r.p).text) + "</b>"
+                     : "Those choices don’t make a problem — try different ones.";
   }
   $("genBtn").addEventListener("click", function(){
     var r = makeOne(S.mode, S.gen);
@@ -1739,7 +1759,7 @@
     else { S.frac = [r.p.frac[0].slice(), r.p.frac[1].slice()]; fillFrac(); }
     render(); save();
   });
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   /* ===================== worksheet API ===================== */
   var PAGE = "subtraction.html";
@@ -1913,7 +1933,7 @@
 
   function save(){
     var pr = S.chk.keep ? "check" : S.practice;      // a hint's step mode is only on loan
-    try{ localStorage.setItem("borrow-bank", JSON.stringify({
+    if (!EMBED) try{ localStorage.setItem("borrow-bank", JSON.stringify({
       mode:S.mode, a:S.a, b:S.b, frac:S.frac, stepMode:pr === "step", practice:pr, gen:S.gen,
       maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
@@ -1934,15 +1954,68 @@
     }catch(e){}
   }
 
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var EMBED_Q = location.search;                  // read before the page rewrites the address bar
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"subtraction.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:qOf(problemFromState()).replace(/-/g, " − ").slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(EMBED_Q);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
   S.gen = normOpts({});
-  load();
+  if (!EMBED) load();
   var linkMsg = fromURL();
+  if (EMBED) S.practice = "check";
   S.stepMode = S.practice === "step";
   fillDec(); fillFrac();
   paintPractice();
   buildMaker();
   paint();
   setMode(S.mode);
+  if (EMBED){
+    embedSetup("html.embed .problem > .modes,html.embed .swap,html.embed .maker,html.embed .examples{display:none !important}");
+    Array.prototype.forEach.call(document.querySelectorAll(".problem input"), function(i){ i.readOnly = true; });
+  }
   if (linkMsg){ $("linkNote").innerHTML = linkMsg; $("linkNote").hidden = false; }
 })();
 </script>

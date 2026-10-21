@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Balance Scale</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -127,6 +128,10 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .lenrow{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+  .lenhint{font-size:12.5px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-family:var(--f-mono);font-weight:600;color:var(--ink);white-space:pre-wrap}
 
   .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
     border-top:1px dashed var(--rule);padding-top:14px}
@@ -2561,6 +2566,7 @@
     if (r.state === "ok"){
       CK.done = true; CK.reveal = "all";
       msg.innerHTML = '<span class="yes">✓ Correct!</span>' + (r.round ? '<span class="why">Rounding is fine — the exact answer is in the work below.</span>' : "");
+      report("right");
       render();
       return;
     }
@@ -2568,6 +2574,7 @@
     msg.innerHTML = r.state === "almost"
       ? '<span class="no">Equal, but not simplified yet.</span><span class="why">' + r.why + "</span>"
       : '<span class="no">Not quite — try again.</span>' + (r.why ? '<span class="why">' + r.why + "</span>" : "");
+    report(r.state === "almost" ? "simplify" : "wrong");
     applyCheck(lastSteps);
   }
 
@@ -2829,23 +2836,23 @@
       b.setAttribute("aria-pressed", String(b.getAttribute("data-method") === S.method));
     });
   }
-  function setMethod(m){ S.method = m; S.step = 1; paintMethod(); render(); save(); }
+  function setMethod(m){ S.method = m; S.step = 1; paintMethod(); paintSample(); render(); save(); }
   $("mElim").addEventListener("click", function(){ setMethod("elim"); });
   $("mSub").addEventListener("click", function(){ setMethod("sub"); });
 
   /* the maker's controls, per mode */
   var MAKER = {
-    simplify:[{ lbl:"Terms", seg:"terms", vals:[3, 4, 5, 6], fmt:function(v){ return v + " terms"; } },
-              { lbl:"Extras", togs:[["par", "( )", "Parentheses"], ["two", "y", "Two letters"], ["neg", "−", "Negatives in the answer"]] }],
-    solve:[{ lbl:"Steps", forms:[["one", "1", "One-step"], ["two", "2", "Two-step"], ["both", "x|x", "x on both sides"], ["par", "( )", "Parentheses"], ["frac", "½", "Fractions"]] },
+    simplify:[{ lbl:"How many pieces (terms)", hint:"a piece is something like 3x, −y or 5", seg:"terms", vals:[3, 4, 5, 6], fmt:function(v){ return String(v); } },
+              { lbl:"Extras", togs:[["par", "( )", "Parentheses"], ["two", "y", "Two letters (x and y)"], ["neg", "−", "Negatives in the answer"]] }],
+    solve:[{ lbl:"Kinds of problems", forms:[["one", "1", "One-step"], ["two", "2", "Two-step"], ["both", "x|x", "x on both sides"], ["par", "( )", "Parentheses"], ["frac", "½", "Fractions"]] },
            { lbl:"Extras", togs:[["neg", "−", "Negative numbers"], ["whole", "✓", "Whole-number answers only"]] },
-           { lbl:"Numbers", seg:"max", vals:[10, 20, 50], fmt:function(v){ return "up to " + v; } }],
-    ineq:[{ lbl:"Steps", forms:[["one", "1", "One-step"], ["two", "2", "Two-step"], ["both", "x|x", "x on both sides"], ["par", "( )", "Parentheses"], ["frac", "½", "Fractions"]] },
-          { lbl:"Extras", togs:[["flip", "⇄", "Negative coefficient (the sign flips)"], ["neg", "−", "Negative numbers"], ["whole", "✓", "Whole-number answers only"]] },
-          { lbl:"Numbers", seg:"max", vals:[10, 20, 50], fmt:function(v){ return "up to " + v; } }],
-    sys:[{ lbl:"Method", method:true },
-         { lbl:"Extras", togs:[["whole", "✓", "Whole-number solution"], ["scale", "×", "Needs scaling first"], ["slope", "y=", "One in y = mx + b form"]] },
-         { lbl:"Numbers", seg:"max", vals:[5, 10], fmt:function(v){ return "coefficients up to " + v; } }]
+           { lbl:"Biggest number", seg:"max", vals:[10, 20, 50], fmt:function(v){ return String(v); } }],
+    ineq:[{ lbl:"Kinds of problems", forms:[["one", "1", "One-step"], ["two", "2", "Two-step"], ["both", "x|x", "x on both sides"], ["par", "( )", "Parentheses"], ["frac", "½", "Fractions"]] },
+          { lbl:"Extras", togs:[["flip", "⇄", "A negative number in front of x (the sign flips)"], ["neg", "−", "Negative numbers"], ["whole", "✓", "Whole-number answers only"]] },
+          { lbl:"Biggest number", seg:"max", vals:[10, 20, 50], fmt:function(v){ return String(v); } }],
+    sys:[{ lbl:"Method", method:true, hint:"Elimination adds or subtracts the equations; substitution swaps one into the other" },
+         { lbl:"Extras", togs:[["whole", "✓", "Whole-number solution"], ["scale", "×", "Needs one equation multiplied first"], ["slope", "y=", "One in y = mx + b form"]] },
+         { lbl:"Biggest number in front of the letters", seg:"max", vals:[5, 10], fmt:function(v){ return String(v); } }]
   };
   function buildMaker(){
     var host = $("makerBody"), G = S.gen[S.mode];
@@ -2887,8 +2894,15 @@
           box.appendChild(b);
         });
       }
-      host.appendChild(box);
+      if (sec.hint){
+        var row = document.createElement("div"), hint = document.createElement("span");
+        row.className = "lenrow"; hint.className = "lenhint"; hint.textContent = sec.hint;
+        row.appendChild(box); row.appendChild(hint); host.appendChild(row);
+      } else host.appendChild(box);
     });
+    var sample = document.createElement("p");
+    sample.className = "sample"; sample.id = "sample"; host.appendChild(sample);
+    paintSample();
     var go = document.createElement("div");
     go.className = "maker-go";
     go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
@@ -2901,6 +2915,16 @@
     try { r = mode === "simplify" ? makeSimplify(G) : mode === "sys" ? makeSys(G, method) : makeEq(G, mode === "ineq"); }
     finally { HASDEC = keep; SEEN = seen; }
     return r;
+  }
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), t = null;
+    if (!el) return;
+    try {
+      var r = makeFor(S.mode, S.gen[S.mode], S.method);
+      t = r ? (Array.isArray(r.str) ? r.str.join("  and  ") : r.str) : null;
+    } catch (e){ t = null; }
+    el.innerHTML = t ? "Makes problems like: <b>" + esc(t) + "</b>" : "Those choices don’t make a problem — try different ones.";
   }
   function generate(){
     var r = makeFor(S.mode, S.gen[S.mode], S.method);
@@ -2924,8 +2948,8 @@
   $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
   $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("ckForm").addEventListener("submit", function(e){ e.preventDefault(); checkAnswer(); });
-  $("ckHint").addEventListener("click", function(){ CK.reveal = "step"; S.step = 1; render(); });
-  $("ckShow").addEventListener("click", function(){ CK.reveal = "all"; render(); });
+  $("ckHint").addEventListener("click", function(){ noteHint(); CK.reveal = "step"; S.step = 1; render(); });
+  $("ckShow").addEventListener("click", function(){ report("shown"); CK.reveal = "all"; render(); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
@@ -2966,10 +2990,10 @@
     document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
     paint(); save();
   });
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   function save(){
-    try{ localStorage.setItem("balance-scale", JSON.stringify({
+    if (!EMBED) try{ localStorage.setItem("balance-scale", JSON.stringify({
       mode:S.mode, inputs:S.inputs, method:S.method, practice:S.practice, stepMode:S.practice === "step",
       gen:S.gen, maker:$("maker").open, theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
     syncURL();
@@ -3070,22 +3094,22 @@
   var API_OPTS = [
     opt("mode", "Kind of problem", "choice", MODES, "solve",
         [{ v:"simplify", label:"Simplify" }, { v:"solve", label:"Solve" }, { v:"ineq", label:"Inequality" }, { v:"sys", label:"System" }]),
-    opt("terms", "Terms", "choice", ["simplify"], 4, [3,4,5,6].map(function(v){ return { v:v, label:v + " terms" }; })),
+    opt("terms", "How many pieces (terms, like 3x or 5)", "choice", ["simplify"], 4, [3,4,5,6].map(function(v){ return { v:v, label:String(v) }; })),
     opt("par", "( ) Parentheses", "toggle", ["simplify"], true),
-    opt("twoLetters", "y Two letters", "toggle", ["simplify"], false),
+    opt("twoLetters", "y Two letters (x and y)", "toggle", ["simplify"], false),
     opt("negAnswer", "− Negatives in the answer", "toggle", ["simplify"], true)
   ].concat(FORMS.map(function(f){
     var on = { solve:f[1] === "two" || f[1] === "both", ineq:f[1] === "two" };
-    return opt(f[0], "Steps: " + f[2], "toggle", ["solve", "ineq"], on.solve, null, on);
+    return opt(f[0], "Include: " + f[2], "toggle", ["solve", "ineq"], on.solve, null, on);
   })).concat([
     opt("negatives", "− Negative numbers", "toggle", ["solve", "ineq"], false),
-    opt("flip", "⇄ Negative coefficient (the sign flips)", "toggle", ["ineq"], true),
+    opt("flip", "⇄ A negative number in front of x (the sign flips)", "toggle", ["ineq"], true),
     opt("whole", "✓ Whole-number answers only", "toggle", ["solve", "ineq", "sys"], true),
-    opt("max", "Numbers", "choice", ["solve", "ineq"], 20, [10,20,50].map(function(v){ return { v:v, label:"up to " + v }; })),
+    opt("max", "Biggest number", "choice", ["solve", "ineq"], 20, [10,20,50].map(function(v){ return { v:v, label:String(v) }; })),
     opt("method", "Method", "choice", ["sys"], "elim", [{ v:"elim", label:"Elimination" }, { v:"sub", label:"Substitution" }]),
-    opt("scale", "× Needs scaling first", "toggle", ["sys"], false),
+    opt("scale", "× Needs one equation multiplied first", "toggle", ["sys"], false),
     opt("slope", "y= One in y = mx + b form", "toggle", ["sys"], false),
-    opt("coef", "Numbers", "choice", ["sys"], 5, [5,10].map(function(v){ return { v:v, label:"coefficients up to " + v }; }))
+    opt("coef", "Biggest number in front of x or y", "choice", ["sys"], 5, [5,10].map(function(v){ return { v:v, label:String(v) }; }))
   ]);
   function apiSettings(o){
     o = (o && typeof o === "object") ? o : {};
@@ -3209,8 +3233,60 @@
     }
   });
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"algebra.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:(({ simplify:"Simplify ", solve:"Solve ", ineq:"Solve " })[S.mode] || "Solve ") + String(urlQ()).slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   readURL();
+  if (EMBED){
+    S.practice = "check";
+    embedSetup("html.embed #modeTabs,html.embed .keys,html.embed .hint,html.embed .methodrow,html.embed .maker,html.embed .examples,html.embed .board.ck-veil{display:none !important}");
+    $("in1").readOnly = true; $("in2").readOnly = true;
+  }
   if (S.gen.sys.max !== 5 && S.gen.sys.max !== 10) S.gen.sys.max = 5;
   paintPractice();
   paint(); paintMode(); render();

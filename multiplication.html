@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Product Ladder</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -307,6 +308,8 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
   summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
 
   /* ---- check my answer ---- */
@@ -465,16 +468,16 @@
       <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
       <div class="maker-body">
         <div class="mrow" data-for="dec" data-dig>
-          <span class="lbl">First factor</span>
-          <div class="modes small" id="gA" role="group" aria-label="Digits in the first factor"></div>
+          <span class="lbl">Digits in the first number</span>
+          <div class="modes small" id="gA" role="group" aria-label="Digits in the first number"></div>
         </div>
         <div class="mrow" data-for="dec" data-dig>
-          <span class="lbl">Second factor</span>
-          <div class="modes small" id="gB" role="group" aria-label="Digits in the second factor"></div>
+          <span class="lbl">Digits in the second number</span>
+          <div class="modes small" id="gB" role="group" aria-label="Digits in the second number"></div>
         </div>
         <div class="mrow" data-for="dec" data-dig>
-          <span class="lbl">Decimal places</span>
-          <div class="modes small" id="gP" role="group" aria-label="Decimal places in the two factors together"></div>
+          <span class="lbl">Decimal places (both numbers together)</span>
+          <div class="modes small" id="gP" role="group" aria-label="Decimal places (both numbers together)"></div>
         </div>
         <div class="mrow" data-for="dec">
           <span class="lbl">Extras</span>
@@ -483,15 +486,16 @@
           </div>
         </div>
         <div class="mrow" data-for="frac">
-          <span class="lbl">Fractions</span>
-          <div class="modes small" id="gKind" role="group" aria-label="Proper fractions or mixed numbers"></div>
+          <span class="lbl">Kind of fractions</span>
+          <div class="modes small" id="gKind" role="group" aria-label="Kind of fractions"></div>
         </div>
         <div class="mrow" data-for="frac">
           <span class="lbl">Extras</span>
           <div class="toggles">
-            <button type="button" class="tog" id="gCancel"><b>&#8600;</b> Can cross-cancel</button>
+            <button type="button" class="tog" id="gCancel"><b>&#8600;</b> Can simplify before multiplying (cross-cancel)</button>
           </div>
         </div>
+        <p class="sample" id="sample"></p>
         <div class="maker-go">
           <button type="button" class="go" id="genBtn">New problem</button>
           <span class="msg" id="genMsg"></span>
@@ -1448,7 +1452,7 @@
     S.revealed = true;
     if (S.practice === "check") render(); else setPractice("all", true);
   }
-  function correct(note){ say("ok", "✓ Correct!", note || "", false); reveal(); }
+  function correct(note){ report("right"); say("ok", "✓ Correct!", note || "", false); reveal(); }
   function checkNow(){
     var sol = solveMul(curProblem());
     if (!sol) return;
@@ -1461,11 +1465,12 @@
     var c = compareAns(ans, sol.v, sol.ends);
     var shownAs = "The work writes it as <b>" + esc(sol.text) + "</b>.";
     if (c === "exact"){
-      if (ans.simplest === false) return say("near", "Right value — now simplify it.", simplifyWhy(ans), false);
+      if (ans.simplest === false){ report("simplify"); return say("near", "Right value — now simplify it.", simplifyWhy(ans), false); }
       var same = String(raw).replace(/[,\s]+/g, "") === sol.text.replace(/[,\s]+/g, "");
       return correct(same ? "" : shownAs);
     }
     if (c === "ok") return correct("Rounded just right. Exactly, it’s <b>" + esc(sol.text) + "</b>.");
+    if (c !== "exact" && c !== "ok") report("wrong");
     if (c === "trunc") return say("near", "So close — round the last digit.",
       "The next digit is 5 or more, so the last one goes up. Or show the repeating part in brackets, like <b>0.(6)</b>.", true);
     if (c === "few") return say("near", "Right so far — give at least 2 decimal places.", "", true);
@@ -1553,8 +1558,8 @@
   }
   $("checkForm").addEventListener("submit", function(e){ e.preventDefault(); checkNow(); });
   $("ansIn").addEventListener("input", sizeAns);
-  $("hintBtn").addEventListener("click", function(){ setPractice("step", true); });
-  $("showBtn").addEventListener("click", reveal);
+  $("hintBtn").addEventListener("click", function(){ noteHint(); setPractice("step", true); });
+  $("showBtn").addEventListener("click", function(){ report("shown"); reveal(); });
 
   /* after every render: a new problem empties the answer box; the address bar follows along */
   var lastKey = null;
@@ -1698,7 +1703,7 @@
   segs("gA", [1,2,3,4], function(v){ return v + " digit" + pl(v); }, "a");
   segs("gB", [1,2,3], function(v){ return v + " digit" + pl(v); }, "b");
   segs("gP", [0,1,2,3], function(v){ return v ? String(v) : "None"; }, "places");
-  segs("gKind", ["proper","mixed"], function(v){ return v === "proper" ? "Proper fractions" : "Mixed numbers"; }, "kind");
+  segs("gKind", ["proper","mixed"], function(v){ return v === "proper" ? "Less than 1 (like 3/4)" : "Mixed numbers (like 2 1/2)"; }, "kind");
   function paintGen(){
     var G = S.gen;
     [["gA","a"],["gB","b"],["gP","places"],["gKind","kind"]].forEach(function(p){
@@ -1712,6 +1717,17 @@
       r.hidden = r.getAttribute("data-for") !== S.mode;
       if (r.hasAttribute("data-dig")) r.classList.toggle("off", G.tables);
     });
+    paintSample();
+  }
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), r = null, o = {};
+    if (!el) return;
+    for (var k in S.gen) o[k] = S.gen[k];
+    o.mode = S.mode;
+    try { r = makeMul(genOpts(o), {}); } catch (e){ r = null; }
+    el.innerHTML = r ? "Makes problems like: <b>" + esc(problemText(r.p)) + "</b>"
+                     : "Those choices don’t make a problem — try different ones.";
   }
   $("gTables").addEventListener("click", function(){ S.gen.tables = !S.gen.tables; paintGen(); save(); });
   $("gCancel").addEventListener("click", function(){ S.gen.cancel = !S.gen.cancel; paintGen(); save(); });
@@ -1743,12 +1759,13 @@
   var API_OPTIONS = [
     apiChoice("mode", "Numbers", [["decimals","Whole numbers & decimals"],["fractions","Fractions"]], "decimals",
               ["decimals","fractions"]),
-    apiChoice("a", "Digits in the first factor", [[1,"1 digit"],[2,"2 digits"],[3,"3 digits"],[4,"4 digits"]], 2, ["decimals"]),
-    apiChoice("b", "Digits in the second factor", [[1,"1 digit"],[2,"2 digits"],[3,"3 digits"]], 2, ["decimals"]),
-    apiChoice("places", "Decimal places", [[0,"None"],[1,"1"],[2,"2"],[3,"3"]], 0, ["decimals"]),
+    apiChoice("a", "Digits in the first number", [[1,"1 digit"],[2,"2 digits"],[3,"3 digits"],[4,"4 digits"]], 2, ["decimals"]),
+    apiChoice("b", "Digits in the second number", [[1,"1 digit"],[2,"2 digits"],[3,"3 digits"]], 2, ["decimals"]),
+    apiChoice("places", "Decimal places (both numbers together)", [[0,"None"],[1,"1"],[2,"2"],[3,"3"]], 0, ["decimals"]),
     apiToggle("tables", "Times tables only", ["decimals"]),
-    apiChoice("kind", "Fractions", [["proper","Proper fractions"],["mixed","Mixed numbers"]], "proper", ["fractions"]),
-    apiToggle("cancel", "Can cross-cancel", ["fractions"])
+    apiChoice("kind", "Kind of fractions", [["proper","Less than 1 (like 3/4)"],["mixed","Mixed numbers (like 2 1/2)"]], "proper",
+              ["fractions"]),
+    apiToggle("cancel", "Can simplify before multiplying (cross-cancel)", ["fractions"])
   ];
   function apiProblem(p){
     var sol = solveMul(p);
@@ -1784,10 +1801,10 @@
     paint(); save();
   });
 
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   function save(){
-    try{ localStorage.setItem("product-ladder", JSON.stringify({
+    if (!EMBED) try{ localStorage.setItem("product-ladder", JSON.stringify({
       mode:S.mode, a:S.a, b:S.b, frac:S.frac, stepMode:S.stepMode, practice:S.practice,
       gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme")||"" })); }catch(e){}
@@ -1811,8 +1828,57 @@
     }catch(e){}
   }
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var EMBED_Q = location.search;                  // read before the page rewrites the address bar
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"multiplication.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:problemText(curProblem()).slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(EMBED_Q);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   applyURL();
+  if (EMBED){ S.practice = "check"; S.stepMode = false; }
   $("aIn").value = S.a; $("bIn").value = S.b; sizeIn($("aIn")); sizeIn($("bIn"));
   ["w1","n1","d1","w2","n2","d2"].forEach(function(id, i){
     $(id).value = S.frac[Math.floor(i/3)][i%3];
@@ -1820,5 +1886,9 @@
   paintPractice();
   paint();
   setMode(S.mode);
+  if (EMBED){
+    embedSetup("html.embed .problem > .modes,html.embed .maker,html.embed .examples{display:none !important}");
+    Array.prototype.forEach.call(document.querySelectorAll(".problem input"), function(i){ i.readOnly = true; });
+  }
 })();
 </script>

@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Factor Tree</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -119,6 +120,8 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-weight:600;color:var(--ink)}
 
   .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
     border-top:1px dashed var(--rule);padding-top:14px}
@@ -1664,8 +1667,8 @@
     Array.prototype.forEach.call(document.querySelectorAll("#ckFields input"), function(inp){ CK.vals[inp.getAttribute("data-k")] = inp.value; });
     var r = grade(CUR, CK.vals);
     if (r.empty){ CK.fb = '<span class="lead">Type your answer first.</span>'; CK.ok = false; }
-    else if (r.ok){ CK.ok = true; CK.revealed = true; CK.fb = '<span class="lead">✓ Correct!</span><span class="why">Here’s the full work.</span>'; }
-    else { CK.ok = false; CK.tried = true; CK.fb = '<span class="lead">Not quite — try again.</span>' + (r.why ? '<span class="why">' + r.why + "</span>" : ""); }
+    else if (r.ok){ CK.ok = true; CK.revealed = true; CK.fb = '<span class="lead">✓ Correct!</span><span class="why">Here’s the full work.</span>'; report("right"); }
+    else { CK.ok = false; CK.tried = true; CK.fb = '<span class="lead">Not quite — try again.</span>' + (r.why ? '<span class="why">' + r.why + "</span>" : ""); report("wrong"); }
     var had = document.activeElement && document.activeElement.id;
     render();
     if (!CK.ok && had && /^ck_/.test(had) && $(had)) $(had).focus();
@@ -1690,7 +1693,9 @@
     syncURL();
   }
   function paintPractice(total){
-    var stepMode = S.practice === "step" && total > 0, check = S.practice === "check" && total > 0, hide = check && !CK.revealed;
+    // embedded, the answer box stays through a hint (which switches to one step at a time)
+    var stepMode = S.practice === "step" && total > 0, check = (S.practice === "check" || EMBED) && total > 0,
+        hide = S.practice === "check" && total > 0 && !CK.revealed;
     $("stepper").hidden = !stepMode;
     if (stepMode){
       $("stepCount").textContent = S.step + " of " + total;
@@ -1862,12 +1867,12 @@
   /* ===================== the maker's controls ===================== */
   var SIZES = [50, 100, 500, 1000];
   var MAKER = {
-    factors:[{ lbl:"Numbers", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["nice","∗","Lots of factors"],["primes","p","Primes sometimes"]] }],
-    prime:[{ lbl:"Numbers", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["nice","∗","Lots of primes in the tree"],["primes","p","Primes sometimes"]] }],
-    test:[{ lbl:"Numbers", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["tricky","?","Tricky ones that look prime"]] }],
-    gcf:[{ lbl:"How many", seg:"count", vals:[2, 3], fmt:function(v){ return v + " numbers"; } }, { lbl:"Numbers", seg:"max", vals:SIZES },
-         { lbl:"Extras", togs:[["gcf1","&gt;1","GCF bigger than 1"],["nice","∗","Lots of factors"]] }],
-    div:[{ lbl:"Numbers", seg:"max", vals:[100, 1000, 10000, 100000, 1000000] }, { lbl:"Extras", togs:[["nice","✓","Lots of ✓s"]] }]
+    factors:[{ lbl:"Biggest number", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["nice","∗","Lots of factors"],["primes","p","Include some prime numbers"]] }],
+    prime:[{ lbl:"Biggest number", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["nice","∗","Lots of primes in the tree"],["primes","p","Include some prime numbers"]] }],
+    test:[{ lbl:"Biggest number", seg:"max", vals:SIZES }, { lbl:"Extras", togs:[["tricky","?","Tricky ones that look prime"]] }],
+    gcf:[{ lbl:"How many numbers", seg:"count", vals:[2, 3], fmt:function(v){ return String(v); } }, { lbl:"Biggest number", seg:"max", vals:SIZES },
+         { lbl:"Extras", togs:[["gcf1","&gt;1","They share a factor (GCF bigger than 1)"],["nice","∗","Lots of factors"]] }],
+    div:[{ lbl:"Biggest number", seg:"max", vals:[100, 1000, 10000, 100000, 1000000] }, { lbl:"Extras", togs:[["nice","✓","Lots of them divide evenly (lots of ✓s)"]] }]
   };
   function buildMaker(){
     var host = $("makerBody"), G = S.gen[S.mode];
@@ -1880,7 +1885,7 @@
         box.className = "modes small"; box.setAttribute("role", "group"); box.setAttribute("aria-label", sec.lbl);
         sec.vals.forEach(function(v){
           var b = document.createElement("button");
-          b.type = "button"; b.textContent = sec.fmt ? sec.fmt(v) : "up to " + C(v);
+          b.type = "button"; b.textContent = sec.fmt ? sec.fmt(v) : C(v);
           b.setAttribute("aria-pressed", String(G[sec.seg] === v));
           b.addEventListener("click", function(){ G[sec.seg] = v; buildMaker(); save(); });
           box.appendChild(b);
@@ -1897,6 +1902,9 @@
       }
       host.appendChild(box);
     });
+    var sample = document.createElement("p");
+    sample.className = "sample"; sample.id = "sample"; host.appendChild(sample);
+    paintSample();
     var go = document.createElement("div");
     go.className = "maker-go";
     go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
@@ -1907,6 +1915,14 @@
       if (!P){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
       setProblem(S.mode === "gcf" ? P.nums.map(C).join(", ") : C(P.n));
     });
+  }
+
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), t = null;
+    if (!el) return;
+    try { var P = makeOne(S.mode, S.gen[S.mode]); t = P ? record(P).text : null; } catch (e){ t = null; }
+    el.innerHTML = t ? "Makes problems like: <b>" + esc(t) + "</b>" : "Those choices don’t make a problem — try different ones.";
   }
 
   /* ===================== worksheet API ===================== */
@@ -1922,11 +1938,11 @@
       { key:"mode", label:"Kind of problem", type:"choice", default:"prime", values:[
         { v:"factors", label:"List the factors" }, { v:"prime", label:"Prime factorization" }, { v:"test", label:"Prime or composite?" },
         { v:"gcf", label:"GCF & LCM" }, { v:"div", label:"Divisibility rules" }] },
-      { key:"size", label:"Numbers up to", type:"choice", default:"100", values:[50, 100, 500, 1000, 10000, 100000].map(function(v){ return { v:String(v), label:"up to " + C(v) }; }) },
-      { key:"count", label:"How many numbers (GCF & LCM)", type:"choice", default:"2", values:[{ v:"2", label:"2 numbers" }, { v:"3", label:"3 numbers" }], appliesTo:["gcf"] },
+      { key:"size", label:"Biggest number", type:"choice", default:"100", values:[50, 100, 500, 1000, 10000, 100000].map(function(v){ return { v:String(v), label:C(v) }; }) },
+      { key:"count", label:"How many numbers", type:"choice", default:"2", values:[{ v:"2", label:"2" }, { v:"3", label:"3" }], appliesTo:["gcf"] },
       { key:"nice", label:"Numbers with lots of factors", type:"toggle", default:false, values:onOff, appliesTo:["factors","prime","gcf","div"] },
-      { key:"primes", label:"Primes sometimes", type:"toggle", default:true, values:onOff, appliesTo:["factors","prime"] },
-      { key:"gcf1", label:"GCF bigger than 1", type:"toggle", default:true, values:onOff, appliesTo:["gcf"] },
+      { key:"primes", label:"Include some prime numbers", type:"toggle", default:true, values:onOff, appliesTo:["factors","prime"] },
+      { key:"gcf1", label:"They share a factor (GCF bigger than 1)", type:"toggle", default:true, values:onOff, appliesTo:["gcf"] },
       { key:"tricky", label:"Tricky ones that look prime", type:"toggle", default:true, values:onOff, appliesTo:["test"] }
     ];
   }
@@ -2027,8 +2043,8 @@
   $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
   $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("ckGo").addEventListener("click", doCheck);
-  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
-  $("showBtn").addEventListener("click", function(){ CK.revealed = true; render(); });
+  $("hintBtn").addEventListener("click", function(){ noteHint(); setPractice("step"); });
+  $("showBtn").addEventListener("click", function(){ report("shown"); CK.revealed = true; render(); });
   $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
   $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
   $("printBtn").addEventListener("click", function(){ window.print(); });
@@ -2064,10 +2080,10 @@
     document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
     paint(); save();
   });
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   function save(){
-    try{ localStorage.setItem(STORE, JSON.stringify({
+    if (!EMBED) try{ localStorage.setItem(STORE, JSON.stringify({
       mode:S.mode, inputs:S.inputs, practice:S.practice, split:S.split, gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme") || "" })); }catch(e){}
   }
@@ -2094,8 +2110,60 @@
     }catch(e){}
   }
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"factors.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:((({ factors:"Factors of ", prime:"Prime factorization of ", test:"Prime or composite: ", gcf:"GCF and LCM of ", div:"Divisibility of " })[S.mode] || "") + qString()).slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   readParams();
+  if (EMBED){
+    S.practice = "check";
+    embedSetup("html.embed #modeTabs,html.embed .hint,html.embed .methodrow,html.embed .maker,html.embed .examples{display:none !important}");
+    $("numIn").readOnly = true;
+  }
   $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
   $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
   $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));

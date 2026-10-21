@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Shape Shop</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -124,6 +125,8 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-weight:600;color:var(--ink)}
 
   .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
     border-top:1px dashed var(--rule);padding-top:14px}
@@ -2629,18 +2632,20 @@
       html += "</div>";
     }
     seg(PICK[m], "shape", [["any","Any"]].concat(SH[m].map(function(d){ return [d.id, d.name]; })));
-    if (m !== "angle") seg("Numbers", "max", [[10,"up to 10"],[20,"up to 20"],[50,"up to 50"],[100,"up to 100"]]);
-    seg("Kind", "dec", [["whole","Whole numbers"],["dec", m === "angle" ? "With halves (.5)" : "Decimals"]]);
-    if (m === "right") seg("Answers", "nice", [["nice","Whole-number answers"],["any","Any (square roots)"]]);
+    if (m !== "angle") seg("Biggest measurement", "max", [[10,"10"],[20,"20"],[50,"50"],[100,"100"]]);
+    seg("Kind of numbers", "dec", [["whole","Whole numbers"],["dec", m === "angle" ? "With halves (.5)" : "Decimals"]]);
+    if (m === "right") seg("Answers", "nice", [["nice","Whole numbers"],["any","Any (some are square roots like √50)"]]);
     if (m !== "angle") seg("Units", "units", [["keep","Keep mine"],["mix","Mix them up"]]);
+    html += '<p class="sample" id="sample"></p>';
     html += '<div class="maker-go"><button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span></div>';
     host.innerHTML = html;
+    paintSample();
     Array.prototype.forEach.call(host.querySelectorAll("[data-gk]"), function(b){
       b.addEventListener("click", function(){
         var k = b.getAttribute("data-gk"), v = b.getAttribute("data-gv");
         G[k] = k === "max" ? Number(v) : v;
         Array.prototype.forEach.call(host.querySelectorAll('[data-gk="' + k + '"]'), function(x){ x.setAttribute("aria-pressed", String(x === b)); });
-        save();
+        paintSample(); save();
       });
     });
     $("genBtn").addEventListener("click", function(){
@@ -2649,6 +2654,16 @@
       setProblem(r.id, r.v);
       $("genMsg").textContent = r.msg;
     });
+  }
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), t = null;
+    if (!el) return;
+    try {
+      var r = gen(S.mode, S.gen[S.mode], null);
+      t = probText(S.mode, r.id, r.v, r.unit || S.unit);
+    } catch (e){ t = null; }
+    el.innerHTML = t ? "Makes problems like: <b>" + esc(t) + "</b>" : "Those choices don’t make a problem — try different ones.";
   }
   function buildAll(){ paintModes(); buildShapes(); buildFields(); buildOpts(); buildChips(); buildMaker(); }
 
@@ -3139,7 +3154,7 @@
     return { st:"no", note:note };
   }
   function updateMine(){
-    var on = S.practice === "check" && !!lastC;
+    var on = (S.practice === "check" || EMBED) && !!lastC;   // embedded, the answer box stays through a hint or the work
     if (on && MINE.fresh){ MINE.fresh = false; buildMine(); }
     $("mine").hidden = !on || !MINE.targets.length;
   }
@@ -3179,7 +3194,9 @@
     if (ok === T.length){
       lines.push('<span class="why">' + (many ? "All " + T.length + " are right" : "That’s it") + " — here’s the full work so you can compare.</span>");
       S.revealed = true;
-    }
+      if (EMBED){ S.practice = "all"; S.stepMode = false; }   // after a hint (one step at a time), show all of it
+      report("right");
+    } else if (wrong) report("wrong");
     $("mineFb").innerHTML = lines.map(function(l){ return "<div>" + l + "</div>"; }).join("");
     $("hintBtn").hidden = !MINE.tried || S.revealed;
     $("showBtn").hidden = !MINE.tried || S.revealed;
@@ -3219,9 +3236,9 @@
     return [
       { key:"mode", label:"Topic", type:"choice", values:V2([["area","Area & perimeter"],["vol","Volume & surface area"],["right","Right triangles"],["angle","Angles"],["any","A mix of all four"]]), default:"area" },
       { key:"shape", label:"Shape", type:"choice", values:shapes, default:"any" },
-      { key:"max", label:"Numbers up to", type:"choice", values:V2([["10","10"],["20","20"],["50","50"],["100","100"]]), default:"20" },
+      { key:"max", label:"Biggest measurement", type:"choice", values:V2([["10","10"],["20","20"],["50","50"],["100","100"]]), default:"20" },
       { key:"dec", label:"Kind of numbers", type:"choice", values:V2([["whole","Whole numbers"],["dec","Decimals (halves for angles)"]]), default:"whole" },
-      { key:"nice", label:"Right-triangle answers", type:"choice", values:V2([["nice","Whole numbers"],["any","Any (square roots)"]]), default:"nice" },
+      { key:"nice", label:"Right-triangle answers", type:"choice", values:V2([["nice","Whole numbers"],["any","Any (some are square roots like √50)"]]), default:"nice" },
       { key:"unit", label:"Units", type:"choice", values:V2([["cm","cm"],["mm","mm"],["m","m"],["in","in"],["ft","ft"],["yd","yd"],["none","No units"],["mix","Mix them up"]]), default:"cm" },
       { key:"pi", label:"π as", type:"choice", values:V2([["exact","Exact (25π)"],["314","3.14"],["calc","Calculator π"]]), default:"exact" },
       { key:"sketch", label:"Draw each shape", type:"toggle", values:[{ v:true, label:"Yes" }, { v:false, label:"No" }], default:true }
@@ -3416,9 +3433,11 @@
   $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
   $("copyBtn").addEventListener("click", copyLink);
   $("mineForm").addEventListener("submit", function(e){ e.preventDefault(); checkMine(); });
-  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("hintBtn").addEventListener("click", function(){ noteHint(); setPractice("step"); });
   $("showBtn").addEventListener("click", function(){
+    report("shown");
     S.revealed = true; $("hintBtn").hidden = true; $("showBtn").hidden = true;
+    if (EMBED){ S.practice = "all"; S.stepMode = false; }
     render();
     var fb = $("mineFb"), line = document.createElement("div");
     line.innerHTML = '<span class="why">Here’s the full work — compare it with yours, step by step.</span>';
@@ -3443,11 +3462,11 @@
     document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
     paint(); save();
   });
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   var KEY = "shape-shop";
   function save(){
-    try{ localStorage.setItem(KEY, JSON.stringify({
+    if (!EMBED) try{ localStorage.setItem(KEY, JSON.stringify({
       mode:S.mode, shape:S.shape, vals:S.vals, unit:S.unit, pi:S.pi, stepMode:S.stepMode, practice:S.practice, gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme") || "" })); }catch(e){}
   }
@@ -3483,12 +3502,72 @@
     }catch(e){}
   }
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function geoText(){
+    var d = curDef(), V = vals();
+    return (d.name + ": " + d.f.map(function(fd){ return V[fd.k] == null || V[fd.k] === "" ? "" : (fd.sym || fd.k) + " = " + V[fd.k]; })
+      .filter(Boolean).join(", ")).slice(0, 120);
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"geometry.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:geoText() };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   var urlMsg = "";
   try { urlMsg = readURL(); } catch (e){ urlMsg = "That link didn’t quite make sense to me, so here’s the last problem you had instead."; }
   if (urlMsg){ $("urlNote").innerHTML = urlMsg; $("urlNote").hidden = false; }
+  if (EMBED){
+    S.practice = "check"; S.stepMode = false;
+    embedSetup("html.embed #modeT,html.embed .pick,html.embed #unitGrp,html.embed .hint,html.embed .maker,html.embed .examples,html.embed #urlNote{display:none !important}"
+      + "html.embed .problem button:disabled{cursor:default}html.embed .board.chk > .panel ~ .panel{display:none}html.embed .board.chk{grid-template-columns:minmax(0,1fr)}");
+  }
   paintPractice();
   paint(); buildAll(); render();
+  if (EMBED) Array.prototype.forEach.call(document.querySelectorAll("#fields input, #fields button, #piGrp button"), function(el){
+    if (el.tagName === "INPUT") el.readOnly = true; else el.disabled = true;
+  });
   window.addEventListener("message", onMessage);
 })();
 </script>

@@ -2,6 +2,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Fraction Bar</title>
 <script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -128,6 +129,8 @@
     border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
   .go:hover{filter:brightness(1.08)}
   .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:4px 0 0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-weight:600;color:var(--ink)}
 
   .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
     border-top:1px dashed var(--rule);padding-top:14px}
@@ -1872,13 +1875,13 @@
     { key:"mode", label:"Kind of problem", type:"choice", default:"simplify",
       values:[{ v:"simplify", label:"Simplify" }, { v:"convert", label:"Convert (fractions, decimals, percents)" },
               { v:"compare", label:"Compare & order" }, { v:"equiv", label:"Equivalent fractions (missing number)" }] },
-    { key:"simplifyMax", forMode:"simplify", label:"Simplify: denominators up to", type:"choice", default:24,
+    { key:"simplifyMax", forMode:"simplify", label:"Simplify: biggest bottom number (denominator)", type:"choice", default:24,
       values:[{ v:12, label:"12" }, { v:24, label:"24" }, { v:50, label:"50" }, { v:100, label:"100" }] },
     { key:"simplifyMixed", forMode:"simplify", label:"Simplify: include mixed numbers", type:"toggle", default:false, values:TOG },
     { key:"simplifyImproper", forMode:"simplify", label:"Simplify: include improper fractions", type:"toggle", default:false, values:TOG },
-    { key:"simplifySimplest", forMode:"simplify", label:"Simplify: sometimes already in simplest form", type:"toggle", default:true, values:TOG },
+    { key:"simplifySimplest", forMode:"simplify", label:"Simplify: some already in simplest form", type:"toggle", default:true, values:TOG },
     { key:"convertFrom", forMode:"convert", label:"Convert: start with", type:"choice", default:"any",
-      values:[{ v:"any", label:"Any" }, { v:"fraction", label:"Fractions" }, { v:"mixed", label:"Mixed numbers" }, { v:"improper", label:"Improper fractions" },
+      values:[{ v:"any", label:"Any" }, { v:"fraction", label:"Fractions" }, { v:"mixed", label:"Mixed numbers" }, { v:"improper", label:"Improper fractions (like 7/4)" },
               { v:"decimal", label:"Decimals" }, { v:"percent", label:"Percents" }] },
     { key:"convertTo", forMode:"convert", label:"Convert: turn it into", type:"choice", default:"all",
       values:[{ v:"all", label:"Every form" }, { v:"fraction", label:"Fraction (simplest)" }, { v:"mixed", label:"Mixed number" }, { v:"improper", label:"Improper fraction" },
@@ -1886,14 +1889,14 @@
     { key:"convertRepeating", forMode:"convert", label:"Convert: repeating decimals", type:"toggle", default:false, values:TOG },
     { key:"compareCount", forMode:"compare", label:"Compare: how many numbers", type:"choice", default:3,
       values:[{ v:2, label:"2" }, { v:3, label:"3" }, { v:4, label:"4" }, { v:5, label:"5" }] },
-    { key:"compareDen", forMode:"compare", label:"Compare: denominators", type:"choice", default:"unlike",
+    { key:"compareDen", forMode:"compare", label:"Compare: bottom numbers (denominators)", type:"choice", default:"unlike",
       values:[{ v:"unlike", label:"Different" }, { v:"like", label:"The same" }, { v:"either", label:"Either" }] },
     { key:"compareMixed", forMode:"compare", label:"Compare: include mixed numbers", type:"toggle", default:false, values:TOG },
     { key:"compareDecimals", forMode:"compare", label:"Compare: include decimals", type:"toggle", default:false, values:TOG },
     { key:"equivMissing", forMode:"equiv", label:"Equivalent: missing number", type:"choice", default:"either",
       values:[{ v:"either", label:"Top or bottom" }, { v:"top", label:"Top" }, { v:"bottom", label:"Bottom" }] },
-    { key:"equivFactor", forMode:"equiv", label:"Equivalent: factor up to", type:"choice", default:5,
-      values:[{ v:5, label:"×5" }, { v:10, label:"×10" }] },
+    { key:"equivFactor", forMode:"equiv", label:"Equivalent: multiply top and bottom by", type:"choice", default:5,
+      values:[{ v:5, label:"up to 5" }, { v:10, label:"up to 10" }] },
     { key:"equivSimplifyFirst", forMode:"equiv", label:"Equivalent: needs simplifying first", type:"toggle", default:false, values:TOG }
   ];
   function optOf(o, key){
@@ -2011,7 +2014,7 @@
     syncURL();
   }
   function paintCheck(){
-    var on = S.practice === "check" && !!CUR;
+    var on = (S.practice === "check" || EMBED) && !!CUR;   // embedded, the answer box stays through a hint or the work
     $("page").classList.toggle("checking", S.practice === "check");
     $("page").classList.toggle("revealed", SOLVED);
     $("checkBox").hidden = !on;
@@ -2051,6 +2054,7 @@
       SOLVED = true;
       var notes = results.map(function(r){ return r.note; }).filter(Boolean);
       fb.innerHTML = '<span class="ok">✓ Correct!</span> Compare your work with the steps below.' + (notes.length ? '<span class="tip">' + notes.join(" ") + "</span>" : "");
+      report("right");
     } else {
       TRIED = true;
       var bad = results.filter(function(r){ return r.st === "bad"; }), part = results.filter(function(r){ return r.st === "part"; });
@@ -2059,15 +2063,17 @@
         var diag = bad.filter(function(r){ return r.msg; })[0];
         fb.innerHTML = '<span class="bad">Not quite — try again.</span>' + (diag ? '<span class="tip">' + label(diag) + diag.msg + "</span>" : "")
           + (part.length ? '<span class="tip">' + label(part[0]) + part[0].msg + "</span>" : "");
+        report("wrong");
       } else if (part.length){
         fb.innerHTML = '<span class="part">' + (part[0].msg.indexOf("Right value") === 0 ? "" : "Almost! ") + label(part[0]) + part[0].msg + "</span>";
+        report("simplify");
       } else fb.innerHTML = "Fill in every box" + (fields.length > 1 ? " — " + results.filter(function(r){ return r.st === "empty"; }).length + " still empty." : ".");
     }
     paintCheck();
   }
   $("ckBtn").addEventListener("click", doCheck);
-  $("hintBtn").addEventListener("click", function(){ setPractice("step"); });
-  $("showBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("hintBtn").addEventListener("click", function(){ noteHint(); setPractice("step"); });
+  $("showBtn").addEventListener("click", function(){ report("shown"); setPractice("all"); });
 
   /* ===================== the address bar ===================== */
   function syncURL(){
@@ -2171,19 +2177,19 @@
   });
 
   /* the maker's controls, per mode */
-  var FROM_L = { any:"Any", fraction:"Fraction", mixed:"Mixed number", improper:"Improper", decimal:"Decimal", percent:"Percent" };
-  var TO_L = { all:"Every form", fraction:"Fraction", mixed:"Mixed number", improper:"Improper", decimal:"Decimal", percent:"Percent" };
+  var FROM_L = { any:"Any", fraction:"Fraction", mixed:"Mixed number", improper:"Improper fraction", decimal:"Decimal", percent:"Percent" };
+  var TO_L = { all:"Every form", fraction:"Fraction (simplest)", mixed:"Mixed number", improper:"Improper fraction", decimal:"Decimal", percent:"Percent" };
   var MAKER = {
-    simplify:[{ lbl:"Denominators", seg:"max", vals:[12, 24, 50, 100], fmt:function(v){ return "up to " + v; } },
-              { lbl:"Extras", togs:[["mixed", "2⅓", "Mixed numbers"], ["improper", "7/4", "Improper fractions"], ["simplest", "✓", "Sometimes already simplest"]] }],
+    simplify:[{ lbl:"Biggest bottom number (denominator)", seg:"max", vals:[12, 24, 50, 100], fmt:function(v){ return String(v); } },
+              { lbl:"Extras", togs:[["mixed", "2⅓", "Mixed numbers"], ["improper", "7/4", "Improper fractions"], ["simplest", "✓", "Some already in simplest form"]] }],
     convert:[{ lbl:"Start with", seg:"from", vals:["any", "fraction", "mixed", "improper", "decimal", "percent"], fmt:function(v){ return FROM_L[v]; } },
              { lbl:"Turn it into", seg:"to", vals:["all", "fraction", "mixed", "improper", "decimal", "percent"], fmt:function(v){ return TO_L[v]; } },
              { lbl:"Extras", togs:[["rep", "0.3̅", "Repeating decimals"]] }],
-    compare:[{ lbl:"How many", seg:"count", vals:[2, 3, 4, 5], fmt:function(v){ return v + " numbers"; } },
-             { lbl:"Bottoms", seg:"den", vals:["unlike", "like", "either"], fmt:function(v){ return { unlike:"Different", like:"The same", either:"Either" }[v]; } },
+    compare:[{ lbl:"How many numbers", seg:"count", vals:[2, 3, 4, 5], fmt:function(v){ return String(v); } },
+             { lbl:"Bottom numbers (denominators)", seg:"den", vals:["unlike", "like", "either"], fmt:function(v){ return { unlike:"Different", like:"The same", either:"Either" }[v]; } },
              { lbl:"Extras", togs:[["mixed", "1½", "Mixed numbers"], ["dec", ".5", "Decimals"]] }],
-    equiv:[{ lbl:"Missing", seg:"miss", vals:["either", "top", "bottom"], fmt:function(v){ return { either:"Top or bottom", top:"Top", bottom:"Bottom" }[v]; } },
-           { lbl:"Factor", seg:"factor", vals:[5, 10], fmt:function(v){ return "up to ×" + v; } },
+    equiv:[{ lbl:"Missing number", seg:"miss", vals:["either", "top", "bottom"], fmt:function(v){ return { either:"Top or bottom", top:"Top", bottom:"Bottom" }[v]; } },
+           { lbl:"Multiply top and bottom by", seg:"factor", vals:[5, 10], fmt:function(v){ return "up to " + v; } },
            { lbl:"Extras", togs:[["first", "÷", "Needs simplifying first"]] }]
   };
   function buildMaker(){
@@ -2215,11 +2221,24 @@
       }
       host.appendChild(box);
     });
+    var sample = document.createElement("p");
+    sample.className = "sample"; sample.id = "sample"; host.appendChild(sample);
+    paintSample();
     var go = document.createElement("div");
     go.className = "maker-go";
     go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
     host.appendChild(go);
     $("genBtn").addEventListener("click", generate);
+  }
+  // "Makes problems like: …", a sample from the same (pure) generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("sample"), t = null;
+    if (!el) return;
+    try {
+      var g = genOne(S.mode, S.gen[S.mode]);
+      t = solveAny(S.mode, g.q, { to:g.to || "all", gcf:"list" }).api.text;
+    } catch (e){ t = null; }
+    el.innerHTML = t ? "Makes problems like: <b>" + esc(t) + "</b>" : "Those choices don’t make a problem — try different ones.";
   }
   function generate(){
     var G = S.gen[S.mode], r = genOne(S.mode, G), msg = "";
@@ -2286,10 +2305,10 @@
     document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
     paint(); save();
   });
-  $("maker").addEventListener("toggle", save);
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
 
   function save(){
-    try { localStorage.setItem("fraction-bar", JSON.stringify({
+    if (!EMBED) try { localStorage.setItem("fraction-bar", JSON.stringify({
       mode:S.mode, inputs:S.inputs, to:S.to, gcf:S.gcf, practice:S.practice, gen:S.gen, maker:$("maker").open,
       theme:document.documentElement.getAttribute("data-theme") || "" })); } catch (e){}
   }
@@ -2329,8 +2348,60 @@
     } catch (e){}
   }
 
-  load();
+  /* ===================== practice hooks =====================
+     Every graded Check, and "Show me the work", is reported as helper:checked: a CustomEvent on document
+     (progress.js keeps the log) and, in a frame, a postMessage to the parent:
+       { page, params (this problem's link without practice/embed/theme), verdict:"right"|"wrong"|"simplify"|"shown",
+         firstTry, hinted, text }
+     embed=1 (a practice set shows the problem in a frame): Check my answer only, the problem read-only, no
+     masthead, maker, examples, practice toggle or footnote, nothing saved, theme=light|dark followed, and the
+     height posted to the parent as {type:"helper:height", h}. */
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    try { syncURL(); } catch (e){}
+    var k = location.search.replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor(), d = { page:"fractions.html", params:r.key, verdict:verdict, firstTry:verdict !== "shown" && r.graded === 0,
+                            hinted:r.hinted, text:(({ simplify:"Simplify ", convert:"Convert ", compare:"Order " })[S.mode] || "") + String(S.inputs[S.mode]).slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(css){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(location.search);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote{display:none !important}" + css;
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);                    // and a slow check, in case something resizes unobserved
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  if (!EMBED) load();
   readURL();
+  if (EMBED){
+    S.practice = "check";
+    embedSetup("html.embed #modeTabs,html.embed .keys,html.embed .hint,html.embed .methodrow,html.embed .maker,html.embed .examples{display:none !important}");
+    in1.readOnly = true;
+  }
   $("pAll").setAttribute("aria-pressed", String(S.practice === "all"));
   $("pStep").setAttribute("aria-pressed", String(S.practice === "step"));
   $("pCheck").setAttribute("aria-pressed", String(S.practice === "check"));
