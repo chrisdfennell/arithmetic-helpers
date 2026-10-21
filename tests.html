@@ -249,8 +249,10 @@
     { page:"multiplication.html", name:"The Product Ladder" }, { page:"division.html", name:"The Division House" },
     { page:"fractions.html", name:"The Fraction Bar" }, { page:"percents.html", name:"The Hundred Grid" },
     { page:"factors.html", name:"The Factor Tree" }, { page:"integers.html", name:"The Number Line" },
+    { page:"ratios.html", name:"The Ratio Table" },
     { page:"pemdas.html", name:"The Order Stack" }, { page:"algebra.html", name:"The Balance Scale" },
-    { page:"geometry.html", name:"The Shape Shop" }
+    { page:"lines.html", name:"The Slope Grid" },
+    { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" }
   ];
 
   /* problems with known answers: open the link, and every value must show in the answer */
@@ -274,6 +276,14 @@
                      ["mode=solve&q=" + encodeURIComponent("x/4 + 1 = 3"),["8"]], ["mode=ineq&q=" + encodeURIComponent("-3x + 4 > 19"),["-5"]],
                      ["mode=sys&q=" + encodeURIComponent("3x + 2y = 16;2x - y = 1"),["18/7","29/7"]],
                      ["mode=sys&q=" + encodeURIComponent("y = 3x - 2;2x + y = 13"),["3","7"]] ],
+    "ratios.html":[ ["mode=simplify&q=12:18",["2","3"]], ["mode=simplify&q=3:4%3D%3F:20",["15"]], ["mode=prop&q=3/4%3Dx/20",["15"]],
+                    ["mode=share&q=share 60 in 2:3",["24","36"]], ["mode=rate&q=%244.50 for 6 apples",["0.75"]] ],
+    "stats.html":[ ["mode=center&q=4, 8, 6, 5, 7",["6"]], ["mode=center&q=median 3 9 4 7",["11/2"]],
+                   ["mode=box&q=3,7,8,5,12,14,21,13,18",["6","12","16"]], ["mode=spread&q=mad 2 4 6 8",["2"]],
+                   ["mode=missing&q=mean of 5 numbers is 8: 6, 9, 7, 10",["8"]] ],
+    "lines.html":[ ["mode=slope&q=(1,2) (5,4)",["1/2"]], ["mode=equation&q=(1,2) and (5,4)",["1/2","3/2"]],
+                   ["mode=graph&q=y%3D2x-3",["2","-3"]], ["mode=parallel&q=parallel to y%3D2x%2B1 through (3,4)",["2","-2"]],
+                   ["mode=parallel&q=perpendicular to 2x%2B3y%3D6 through (0,0)",["3/2"]] ],
     "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"]], ["mode=area&shape=circle&r=5&rd=r&pi=calc",[Fl(78.54),Fl(31.42)]],
                       ["mode=vol&shape=box&l=8&w=3&h=5",["120","158"]], ["mode=right&shape=hyp&a=3&b=4",["5"]],
                       ["mode=right&shape=leg&a=5&c=13",["12"]], ["mode=angle&shape=tri&a=50&b=60",["70"]],
@@ -296,6 +306,10 @@
     "algebra.html":[ ["mode=solve&q=" + encodeURIComponent("5x - 4 = 2x + 8"),["x = 4"],"right"], ["mode=solve&q=" + encodeURIComponent("5x - 4 = 2x + 8"),["-4"],"wrong"],
                      ["mode=ineq&q=" + encodeURIComponent("-3x + 4 > 19"),["x < -5"],"right"], ["mode=ineq&q=" + encodeURIComponent("-3x + 4 > 19"),["x > -5"],"wrong"],
                      ["mode=simplify&q=" + encodeURIComponent("3(x + 2) - x"),["2x + 6"],"right"], ["mode=simplify&q=" + encodeURIComponent("3(x + 2) - x"),["3x + 6 - x"],"simplify"] ],
+    "ratios.html":[ ["mode=simplify&q=12:18",["2:3"],"right"], ["mode=simplify&q=12:18",["4:6"],"simplify"], ["mode=simplify&q=12:18",["3:2"],"wrong"] ],
+    "stats.html":[ ["mode=center&ask=mean&q=4, 8, 6, 5, 7",["6"],"right"], ["mode=center&ask=mean&q=4, 8, 6, 5, 7",["30"],"wrong"] ],
+    "lines.html":[ ["mode=slope&q=(1,2) (5,4)",["1/2"],"right"], ["mode=slope&q=(1,2) (5,4)",["0.5"],"right"],
+                   ["mode=slope&q=(1,2) (5,4)",["2/4"],"simplify"], ["mode=slope&q=(1,2) (5,4)",["2"],"wrong"] ],
     "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"],"right"], ["mode=area&shape=rect&l=8&w=5",["26","40"],"wrong"],
                       ["mode=area&shape=circle&r=5&rd=r",["25π","10π"],"right"] ]
   };
@@ -476,6 +490,133 @@
         var asc = seen.every(function(v, i){ return !i || cmp(seen[i - 1], v) <= 0; });
         var desc = seen.every(function(v, i){ return !i || cmp(seen[i - 1], v) >= 0; });
         return asc || desc ? { ok:true } : { ok:false, msg:"not in order: " + seen.map(txt).join(", ") };
+      }
+      return { skip:true };
+    },
+    "ratios.html":function(p, a, ansText){
+      var o = P(p), q = String(o.q || ""), mode = o.mode;
+      if (mode === "simplify" && /^\s*\d+(\s*:\s*\d+)+\s*$/.test(q)){
+        var parts = q.split(":").map(function(x){ return parseInt(x, 10); }), g = parts.reduce(gcdN);
+        return need(a, parts.map(function(x){ return X(String(x / g)); }));
+      }
+      var m = /^\s*(\d+(?:\.\d+)?|[a-z?])\s*[\/:]\s*(\d+(?:\.\d+)?|[a-z?])\s*=\s*(\d+(?:\.\d+)?|[a-z?])\s*[\/:]\s*(\d+(?:\.\d+)?|[a-z?])\s*$/i.exec(q);
+      if (m){
+        var v = m.slice(1, 5), k = v.findIndex(function(x){ return /^[a-z?]$/i.test(x); });
+        if (k < 0) return { skip:true };
+        var n = v.map(function(x){ return /^[a-z?]$/i.test(x) ? null : num(x); }), miss;
+        // a/b = c/d, so a·d = b·c
+        if (k === 0) miss = div(mul(n[1], n[2]), n[3]);
+        else if (k === 1) miss = div(mul(n[0], n[3]), n[2]);
+        else if (k === 2) miss = div(mul(n[0], n[3]), n[1]);
+        else miss = div(mul(n[1], n[2]), n[0]);
+        return need(a, [X(miss)]);
+      }
+      var sh = /share\s+\$?(\d+(?:\.\d+)?)\s+in\s+(?:the\s+ratio\s+)?(\d+(?:\s*:\s*\d+)+)/i.exec(q);
+      if (sh){
+        var total = num(sh[1]), r = sh[2].split(":").map(function(x){ return R(BigInt(x.trim())); });
+        var sum = r.reduce(add);
+        return need(a, r.map(function(x){ return X(div(mul(total, x), sum)); }));
+      }
+      return { skip:true };
+    },
+    "stats.html":function(p, a, ansText){
+      var o = P(p), q = String(o.q || ""), mode = o.mode || "center";
+      if (mode !== "center" && mode !== "box" && mode !== "spread") return { skip:true };
+      if (/:|\?|need|numbers is/i.test(q)) return { skip:true };
+      var xs = (q.match(/[−-]?\d+(?:\.\d+)?/g) || []).map(function(x){ return num(x.replace("−", "-")); });
+      if (xs.length < 2) return { skip:true };
+      var sorted = xs.slice().sort(cmp), n = sorted.length;
+      function med(list){ var k = list.length; return k % 2 ? list[(k - 1) / 2] : div(add(list[k / 2 - 1], list[k / 2]), R(2)); }
+      var mean = div(xs.reduce(add), R(n)), median = med(sorted), range = sub(sorted[n - 1], sorted[0]);
+      if (mode === "center"){
+        var ask = o.ask || "all", want = [];
+        if (ask === "mean" || ask === "all") want.push({ f:F(mean), loose:0.002 });
+        if (ask === "median" || ask === "all") want.push(X(median));
+        if (ask === "range" || ask === "all") want.push(X(range));
+        return need(a, want);
+      }
+      if (mode === "box"){
+        var lower = sorted.slice(0, Math.floor(n / 2)), upper = sorted.slice(Math.ceil(n / 2));
+        if (o.method === "inclusive" && n % 2){ lower = sorted.slice(0, (n + 1) / 2); upper = sorted.slice((n - 1) / 2); }
+        return need(a, [X(med(lower)), X(median), X(med(upper))]);
+      }
+      if (mode === "spread" && !/standard|sd/i.test(q) && !o.sd){
+        var mad = div(xs.map(function(x){ return abs(sub(x, mean)); }).reduce(add), R(n));
+        return need(a, [{ f:F(mad), loose:0.003 }]);
+      }
+      return { skip:true };
+    },
+    "lines.html":function(p, a, ansText){
+      var o = P(p), q = String(o.q || "").replace(/[−–]/g, "-"), mode = o.mode, A = String(ansText).replace(/[−–]/g, "-");
+      // a straight line as A·x + B·y + C = 0, read straight off an equation
+      function line(eqText){
+        var t = eqText.replace(/f\(x\)/gi, "y").split("=");
+        if (t.length !== 2) return null;
+        var f = function(x, y){ return sub(evaluate(t[0], { x:x, y:y }), evaluate(t[1], { x:x, y:y })); };
+        var c = f(R(0), R(0));
+        return { a:sub(f(R(1), R(0)), c), b:sub(f(R(0), R(1)), c), c:c, on:function(x, y){ return eq(f(x, y), R(0)); } };
+      }
+      function slope(L){ return L.b.n === 0n ? null : div(R(-L.a.n, L.a.d), L.b); }
+      function pts(text){
+        var out = [], re = /\(\s*(-?[\d.\/]+)\s*,\s*(-?[\d.\/]+)\s*\)/g, m;
+        while ((m = re.exec(text))) out.push([num(m[1]), num(m[2])]);
+        return out;
+      }
+      // the answer's own equation: everything before "(standard form" or the first ";"
+      function firstEq(text){ var e = text.split(/\(\s*standard form|;/)[0].trim(); return /=/.test(e) ? e : null; }
+      if (mode === "slope"){
+        var P2 = pts(q);
+        if (P2.length !== 2) return { skip:true };
+        var run = sub(P2[1][0], P2[0][0]);
+        if (run.n === 0n) return /undefined/i.test(A) ? { ok:true } : { ok:false, msg:"a vertical line’s slope is undefined" };
+        return need(a, [X(div(sub(P2[1][1], P2[0][1]), run))]);
+      }
+      if (mode === "graph"){
+        var G = line(q.replace(/^\s*graph\s*/i, ""));
+        if (!G || G.b.n === 0n || G.a.n === 0n) return { skip:true };
+        var m0 = slope(G), b0 = div(R(-G.c.n, G.c.d), G.b), x0 = div(R(-G.c.n, G.c.d), G.a);
+        return need(a, [X(m0), X(b0), X(x0)]);
+      }
+      if (mode === "parallel" && /\band\b/.test(q) && !/through/i.test(q)){
+        var two = q.split(/\band\b/).map(function(e){ return line(e.trim()); });
+        if (!two[0] || !two[1]) return { skip:true };
+        var s1 = slope(two[0]), s2 = slope(two[1]), kind;
+        if (s1 && s2) kind = eq(s1, s2) ? "parallel" : eq(mul(s1, s2), R(-1)) ? "perpendicular" : "neither";
+        else kind = (!s1 && !s2) ? "parallel" : ((!s1 && s2 && s2.n === 0n) || (!s2 && s1 && s1.n === 0n)) ? "perpendicular" : "neither";
+        if (kind === "parallel" && /same line/i.test(A)) return { ok:true };
+        return new RegExp(kind, "i").test(A) ? { ok:true } : { ok:false, msg:"should be " + kind };
+      }
+      var E = firstEq(A), L = E && line(E);
+      if (!L) return { skip:true };
+      var given = pts(q);
+      if (mode === "equation"){
+        var mm = /(?:slope|m)\s*=?\s*(-?[\d.\/]+)/i.exec(q), bb = /(?:\bb|y-intercept)\s*=?\s*(-?[\d.\/]+)/i.exec(q);
+        if (given.length === 2) return L.on(given[0][0], given[0][1]) && L.on(given[1][0], given[1][1]) ? { ok:true } : { ok:false, msg:"the line misses a given point" };
+        if (mm && bb){ var M = num(mm[1]), B = num(bb[1]); return L.on(R(0), B) && L.on(R(1), add(B, M)) ? { ok:true } : { ok:false, msg:"wrong slope or intercept" }; }
+        if (mm && given.length === 1){ var M2 = num(mm[1]), g = given[0];
+          return L.on(g[0], g[1]) && L.on(add(g[0], R(1)), add(g[1], M2)) ? { ok:true } : { ok:false, msg:"wrong slope or misses the point" }; }
+        return { skip:true };
+      }
+      if (mode === "convert"){
+        var Q = line(q.replace(/\s+in\s+.*$/i, ""));
+        if (!Q) return { skip:true };
+        // the same line: two points of the problem's line must lie on the answer's
+        var probe = Q.b.n !== 0n
+          ? [[R(0), div(R(-Q.c.n, Q.c.d), Q.b)], [R(1), div(sub(R(-Q.c.n, Q.c.d), Q.a), Q.b)]]
+          : [[div(R(-Q.c.n, Q.c.d), Q.a), R(0)], [div(R(-Q.c.n, Q.c.d), Q.a), R(1)]];
+        return probe.every(function(pt){ return L.on(pt[0], pt[1]); }) ? { ok:true } : { ok:false, msg:"not the same line as the problem" };
+      }
+      if (mode === "parallel"){
+        var mt = /(parallel|perpendicular)\s+to\s+(.+?)\s+through/i.exec(q);
+        if (!mt || given.length < 1) return { skip:true };
+        var base = line(mt[2]); if (!base) return { skip:true };
+        var sb = slope(base), pt0 = given[given.length - 1];
+        if (!L.on(pt0[0], pt0[1])) return { ok:false, msg:"doesn’t go through the point" };
+        var sa = slope(L);
+        if (/parallel/i.test(mt[1])) return (sb === null ? sa === null : sa !== null && eq(sa, sb)) ? { ok:true } : { ok:false, msg:"slope isn’t the same" };
+        if (sb === null) return sa !== null && sa.n === 0n ? { ok:true } : { ok:false, msg:"should be horizontal" };
+        if (sb.n === 0n) return sa === null ? { ok:true } : { ok:false, msg:"should be vertical" };
+        return sa !== null && eq(mul(sa, sb), R(-1)) ? { ok:true } : { ok:false, msg:"slopes don’t multiply to −1" };
       }
       return { skip:true };
     },
@@ -731,8 +872,10 @@
             var words = !want.length && it.pr.answer ? String(it.pr.answer).toLowerCase().split(/\W+/).filter(function(x){ return x.length > 3; }) : [];
             var missWord = words.filter(function(w){ return text.toLowerCase().indexOf(w) < 0; });
             // an expression answer (14x − 17) is easier to compare as text with the spaces taken out
-            var squash = function(x){ return String(x).replace(/[\s|]/g, "").replace(/[−–]/g, "-").toLowerCase(); };
-            if ((miss.length || missWord.length) && it.pr.answer && squash(text).indexOf(squash(it.pr.answer)) >= 0){ miss = []; missWord = []; }
+            var squash = function(x){ return String(x).replace(/[\s|:()]/g, "").replace(/[−–]/g, "-").toLowerCase(); };
+            // an answer in several parts ("y = −3x − 27 (standard form: 3x + y = −27)") can show in several places on the page
+            var parts = it.pr.answer ? String(it.pr.answer).split(/;|\(\s*standard form\s*:?|\)/).map(squash).filter(function(x){ return /\d/.test(x); }) : [];
+            if ((miss.length || missWord.length) && parts.length && parts.every(function(x){ return squash(text).indexOf(x) >= 0; })){ miss = []; missWord = []; }
             if (!text){ stats.lf++; fail(T.page, "link", "nothing shown for " + decodeURIComponent(it.pr.params), link); }
             else if (miss.length || missWord.length){ stats.lf++; fail(T.page, "link", "the link shows “" + text.slice(0, 140) + "”, the problem maker said “" + it.pr.answer + "”", link); }
             else { stats.lp++; pass(); }
@@ -797,6 +940,13 @@
   });
   $("runBtn").addEventListener("click", run);
   rows(); summary();
+  // ?pages=ratios,stats runs just those
+  var only = /[?&]pages=([^&]+)/.exec(location.search);
+  if (only){
+    var want = decodeURIComponent(only[1]).split(",").map(function(x){ return x.replace(/\.html$/, "") + ".html"; });
+    PAGES.forEach(function(T){ chosen[T.page] = want.indexOf(T.page) >= 0; });
+    rows();
+  }
   if (/[?&]depth=thorough/.test(location.search)) document.querySelector('[data-depth="thorough"]').click();
   if (/[?&]run=1/.test(location.search)) run();
   window.__selfTest = { tokens:tokens, evaluate:evaluate, has:has, num:num };

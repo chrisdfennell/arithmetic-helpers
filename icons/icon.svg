@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#19211D"/>
+  <g font-family="'Segoe UI', Arial, Helvetica, sans-serif" font-weight="700" font-size="62" fill="#19211D" text-anchor="middle" dominant-baseline="central">
+    <!-- the four operations -->
+    <rect x="56"  y="100" width="88" height="88" rx="20" fill="#4FCCB0"/><text x="100" y="146">+</text>
+    <rect x="156" y="100" width="88" height="88" rx="20" fill="#F08A6E"/><text x="200" y="142">−</text>
+    <rect x="256" y="100" width="88" height="88" rx="20" fill="#A99CF0"/><text x="300" y="142">×</text>
+    <rect x="356" y="100" width="88" height="88" rx="20" fill="#F2A85C"/><text x="400" y="142">÷</text>
+    <!-- fractions, percents, roots, pi -->
+    <rect x="56"  y="212" width="88" height="88" rx="20" fill="#5FC9DE"/><text x="100" y="256" font-size="56">½</text>
+    <rect x="156" y="212" width="88" height="88" rx="20" fill="#E3C04D"/><text x="200" y="256" font-size="54">%</text>
+    <rect x="256" y="212" width="88" height="88" rx="20" fill="#C9A0EE"/><text x="300" y="258">√</text>
+    <rect x="356" y="212" width="88" height="88" rx="20" fill="#7DB8E8"/><text x="400" y="254">π</text>
+    <!-- equals, plus-or-minus, x, triangle -->
+    <rect x="56"  y="324" width="88" height="88" rx="20" fill="#F27D8F"/><text x="100" y="366">=</text>
+    <rect x="156" y="324" width="88" height="88" rx="20" fill="#F08CC0"/><text x="200" y="368">±</text>
+    <rect x="256" y="324" width="88" height="88" rx="20" fill="#6FD38E"/><text x="300" y="362" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="700" font-size="66">x</text>
+    <rect x="356" y="324" width="88" height="88" rx="20" fill="#B5D06A"/>
+    <path d="M400 343 L425 391 H375 Z" fill="none" stroke="#19211D" stroke-width="9" stroke-linejoin="round"/>
+  </g>
+</svg>

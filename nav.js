@@ -1,24 +1,35 @@
 /* The bar across the top of every helper page: back to the home page, and a link to each of the others.
-   To add a page, add a line to PAGES. A page opened without this file still works; it just has no bar. */
+   To add a page, add a line to PAGES (helpers) or TOOLS. A page opened without this file still works; it just has no bar.
+   This file also lets the site be installed as an app and work offline (manifest + sw.js). */
 (function(){
   "use strict";
   var PAGES = [
-    { href:"addition.html",       sign:"+",      name:"Add",      title:"The Carry Column",   c:"add" },
-    { href:"subtraction.html",    sign:"−", name:"Subtract", title:"The Borrow Bank",    c:"sub" },
-    { href:"multiplication.html", sign:"×", name:"Multiply", title:"The Product Ladder", c:"mul" },
-    { href:"division.html",       sign:"÷", name:"Divide",   title:"The Division House", c:"div" },
-    { href:"fractions.html",      sign:"½", name:"Fractions", title:"The Fraction Bar",  c:"fra" },
-    { href:"percents.html",       sign:"%",      name:"Percents", title:"The Hundred Grid",   c:"pct" },
-    { href:"factors.html",        sign:"⋔", name:"Factors",  title:"The Factor Tree",    c:"fac" },
-    { href:"integers.html",       sign:"±", name:"Integers", title:"The Number Line",    c:"int" },
-    { href:"pemdas.html",         sign:"( )",    name:"Order",    title:"The Order Stack",    c:"ord" },
-    { href:"algebra.html",        sign:"x",      name:"Algebra",  title:"The Balance Scale",  c:"alg", italic:true },
-    { href:"geometry.html",       sign:"△", name:"Geometry", title:"The Shape Shop",     c:"geo" },
-    { href:"worksheet.html",      sign:"▤", name:"Worksheets", title:"The Worksheet Maker", c:"wks" }
+    { href:"addition.html",       sign:"+",  name:"Add",       title:"The Carry Column",   c:"add" },
+    { href:"subtraction.html",    sign:"−",  name:"Subtract",  title:"The Borrow Bank",    c:"sub" },
+    { href:"multiplication.html", sign:"×",  name:"Multiply",  title:"The Product Ladder", c:"mul" },
+    { href:"division.html",       sign:"÷",  name:"Divide",    title:"The Division House", c:"div" },
+    { href:"fractions.html",      sign:"½",  name:"Fractions", title:"The Fraction Bar",   c:"fra" },
+    { href:"percents.html",       sign:"%",  name:"Percents",  title:"The Hundred Grid",   c:"pct" },
+    { href:"factors.html",        sign:"⋔",  name:"Factors",   title:"The Factor Tree",    c:"fac" },
+    { href:"integers.html",       sign:"±",  name:"Integers",  title:"The Number Line",    c:"int" },
+    { href:"ratios.html",         sign:"∶",  name:"Ratios",    title:"The Ratio Table",    c:"rat" },
+    { href:"pemdas.html",         sign:"( )", name:"Order",    title:"The Order Stack",    c:"ord" },
+    { href:"algebra.html",        sign:"x",  name:"Algebra",   title:"The Balance Scale",  c:"alg", italic:true },
+    { href:"lines.html",          sign:"↗",  name:"Lines",     title:"The Slope Grid",     c:"lin" },
+    { href:"geometry.html",       sign:"△",  name:"Geometry",  title:"The Shape Shop",     c:"geo" },
+    { href:"stats.html",          sign:"⁘",  name:"Statistics", title:"The Dot Plot",      c:"sta" }
+  ];
+  var TOOLS = [
+    { href:"worksheet.html", name:"Worksheets", title:"The Worksheet Maker" },
+    { href:"practice.html",  name:"Practice",   title:"Practice sets" },
+    { href:"progress.html",  name:"Progress",   title:"Your progress" },
+    { href:"glossary.html",  name:"Definitions", title:"The Word List: what the math words mean" }
   ];
 
-  var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-wks:var(--ink-2);";
-  var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-wks:var(--ink-2);";
+  var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;"
+            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;";
+  var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;"
+            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;";
   var CSS =
     ":root{" + LIGHT + "}" +
     "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + DARK + "}}" +
@@ -39,11 +50,43 @@
     ".sitenav .sn-links a:hover{color:var(--ink);border-color:var(--rule);background:var(--surface)}" +
     ".sitenav .sn-links a[aria-current=\"page\"]{color:var(--ink);font-weight:600;background:var(--surface);" +
       "border-color:var(--nv);box-shadow:inset 0 0 0 1px var(--nv)}" +
+    ".sitenav .sn-tools{display:flex;gap:4px 12px;flex-wrap:wrap;margin:0 0 0 auto;padding:0;list-style:none;font-size:13px}" +
+    ".sitenav .sn-tools a{padding:5px 2px;color:var(--ink-3);font-weight:600}" +
+    ".sitenav .sn-tools a:hover{color:var(--ink);text-decoration:underline}" +
+    ".sitenav .sn-tools a[aria-current=\"page\"]{color:var(--ink)}" +
     ".sitenav a:focus-visible{outline:2.5px solid var(--focus,var(--ink));outline-offset:2px}" +
-    "@media (max-width:560px){.sitenav .sn-links a{padding:5px 9px;font-size:12.5px}}" +
+    "@media (max-width:560px){.sitenav .sn-links a{padding:5px 9px;font-size:12.5px}.sitenav .sn-tools{margin-left:0}}" +
     "@media print{.sitenav{display:none !important}}";
 
+  // inside a practice set: the page marks itself, because by now it may already have rewritten its address
+  function embedded(){ return /[?&]embed=1(&|$)/.test(location.search) || document.documentElement.classList.contains("embed"); }
+
+  /* installable and offline: the app manifest, its icons, and the service worker that saves the pages */
+  function appBits(){
+    var head = document.head;
+    if (!head.querySelector('link[rel="manifest"]')){
+      var m = document.createElement("link"); m.rel = "manifest"; m.href = "manifest.webmanifest"; head.appendChild(m);
+    }
+    if (!head.querySelector('link[rel="apple-touch-icon"]')){
+      var a = document.createElement("link"); a.rel = "apple-touch-icon"; a.href = "icons/apple-touch-icon.png"; head.appendChild(a);
+    }
+    if (!head.querySelector('link[rel="icon"]')){
+      var f = document.createElement("link"); f.rel = "icon"; f.type = "image/svg+xml"; f.href = "icons/icon.svg"; head.appendChild(f);
+    }
+    if (!head.querySelector('meta[name="theme-color"]')){
+      var t = document.createElement("meta"); t.name = "theme-color"; t.content = "#19211D"; head.appendChild(t);
+    }
+    // the definitions popups: jargon in the explanations links to the Word List
+    if (!window.HelperGlossary && !head.querySelector('script[src="glossary.js"]')){
+      var g = document.createElement("script"); g.src = "glossary.js"; g.defer = true; head.appendChild(g);
+    }
+    if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+      window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+    }
+  }
+
   function build(){
+    if (embedded()) return;               // a page shown inside a practice set gets no bar
     var page = document.querySelector(".page");
     if (!page || document.querySelector(".sitenav")) return;
     var here = (location.pathname.split("/").pop() || "index.html").toLowerCase();
@@ -61,10 +104,15 @@
             + (p.href === here ? ' aria-current="page"' : "") + '><b' + (p.italic ? ' class="it"' : "")
             + ' aria-hidden="true">' + p.sign + "</b>" + p.name + "</a></li>";
     });
+    html += '</ul><ul class="sn-tools" aria-label="Tools">';
+    TOOLS.forEach(function(p){
+      html += '<li><a href="' + p.href + '" title="' + p.title + '"' + (p.href === here ? ' aria-current="page"' : "") + ">" + p.name + "</a></li>";
+    });
     nav.innerHTML = html + "</ul>";
     page.insertBefore(nav, page.firstChild);
   }
 
+  appBits();
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", build);
   else build();
 })();
