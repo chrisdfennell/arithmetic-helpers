@@ -14,6 +14,7 @@
 <meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
 <meta name="twitter:card" content="summary_large_image">
 <script src="nav.js" defer></script>
+<script src="qr.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -24,7 +25,7 @@
     --key:#33463F; --key-bg:#DDE6E1; --key-line:#8BA398;
     --warm:#9A5410; --warm-bg:#F6E5D2;
     --focus:#33463F;
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --exp:#BE185D; --pro:#A21CAF; --fla:#C2410C;
     --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
     --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -38,7 +39,7 @@
       --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
       --warm:#E8A45C; --warm-bg:#37270F;
       --focus:#B8C9C1;
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C;
       --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     }
@@ -49,7 +50,7 @@
     --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
     --warm:#E8A45C; --warm-bg:#37270F;
     --focus:#B8C9C1;
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C;
     --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
   }
@@ -229,6 +230,7 @@
           <textarea id="linkOut" readonly rows="3" aria-label="The practice link"></textarea>
           <div class="actions">
             <button type="button" class="go" id="copyBtn">Copy link</button>
+            <button type="button" class="ghost" id="qrBtn" aria-haspopup="dialog" hidden title="Show the link as a QR code, for the projector">QR code</button>
             <a class="ghost" id="startLink" href="#">Start it now <span aria-hidden="true">→</span></a>
             <span class="msg" id="copyMsg" role="status" aria-live="polite"></span>
           </div>
@@ -341,7 +343,7 @@
     ["ratios.html","Ratios & rates","The Ratio Table","rat"], ["pemdas.html","Order of operations","The Order Stack","ord"],
     ["algebra.html","Algebra","The Balance Scale","alg"], ["lines.html","Lines & slope","The Slope Grid","lin"],
     ["geometry.html","Geometry","The Shape Shop","geo"], ["stats.html","Statistics","The Dot Plot","sta"],
-    ["wordproblems.html","Story problems","The Story Problem","wrd"], ["flashcards.html","Flash cards","The Flash Cards","fla"]
+    ["probability.html","Probability","The Chance Spinner","pro"], ["exponents.html","Exponents","The Power Tower","exp"], ["wordproblems.html","Story problems","The Story Problem","wrd"], ["flashcards.html","Flash cards","The Flash Cards","fla"]
   ];
   function topic(page){
     if (!/\.html$/.test(page)) page += ".html";
@@ -771,7 +773,7 @@
      THE BUILDER — it talks to the helpers the same way the worksheet maker does
      ====================================================================== */
   var B = { title:"Math practice", mix:false, secs:[ { page:"fractions.html", count:5, opts:{} }, { page:"pemdas.html", count:5, opts:{} } ] };
-  var PROBS = [], SCHEMA = {}, mixOrder = null;
+  var PROBS = [], SCHEMA = {}, mixOrder = null, MADE = { title:"", n:0 };
   var frames = {}, waiting = {}, seq = 0;
   window.addEventListener("message", function(e){
     var d = e.data;
@@ -937,12 +939,24 @@
       $("linkOut").value = url;
       $("startLink").href = "practice.html?set=" + code;
       $("linkInfo").textContent = list.length + " problems · " + url.length + " characters";
+      MADE = { title:B.title || "Math practice", n:list.length };
       $("linkPanel").hidden = false; $("copyMsg").textContent = "";
       rememberSet(code, B.title || "Math practice", list.length);
       try { $("linkOut").focus(); $("linkOut").select(); } catch (e){}
     }, function(){ status("Couldn’t make the link in this browser.", true); });
   });
   $("copyBtn").addEventListener("click", function(){ copyText($("linkOut").value, $("copyMsg"), "Link copied ✓"); });
+  // the set's link as a QR code, to put on the projector (qr.js; if it didn't load, the button stays hidden)
+  function qrReady(){ if (window.HelperQR) $("qrBtn").hidden = false; }
+  document.addEventListener("DOMContentLoaded", qrReady);
+  window.addEventListener("load", qrReady);
+  $("qrBtn").addEventListener("click", function(){
+    if (!window.HelperQR || !$("linkOut").value) return;
+    window.HelperQR.show($("linkOut").value, {
+      title:MADE.title || "Practice set", sub:MADE.n + " problem" + (MADE.n === 1 ? "" : "s") + " · scan to start the practice set",
+      filename:"practice-set-qr.svg", tooLongHint:"Make a set with fewer problems, or copy the link and send it instead."
+    });
+  });
   /* the sets made here are kept on this device (newest first, 40 at most), so Class results (results.html) can show
      each problem: localStorage["practice-sets"] = [{ c:code, t:title, n:problems, at:time made }] */
   function rememberSet(code, title, n){

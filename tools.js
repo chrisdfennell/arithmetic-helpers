@@ -6,6 +6,8 @@
    - keyboard shortcuts (press ? to see them)
    - "Next problem" after a right answer in Check my answer
    - the "type any problem" search box in the bar at the top
+   - a QR code for this page's address, to open the same problem on a phone (button QR, key Q); qr.js, next to this
+     file, is only fetched the first time it's needed
    Everything is wrapped so a problem here can never break a helper page. */
 (function(){
   "use strict";
@@ -14,6 +16,7 @@
   var KEY = "helpers-settings", RECENT = "helpers-recent";
   var SCALES = [0.9, 1, 1.15, 1.3, 1.5];
   var root = document.documentElement;
+  var SELF = (document.currentScript && document.currentScript.src) || "";
   var page = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   var framed = true;
   try { framed = window.top !== window.self; } catch (e){}
@@ -273,6 +276,7 @@
       "<tr><td><kbd>D</kbd></td><td>Switch light and dark</td></tr>" +
       "<tr><td><kbd>+</kbd> <kbd>−</kbd></td><td>Bigger or smaller text</td></tr>" +
       "<tr><td><kbd>B</kbd></td><td>Big screen, for a projector</td></tr>" +
+      "<tr><td><kbd>Q</kbd></td><td>A QR code for this page, to open it on a phone</td></tr>" +
       "<tr><td><kbd>K</kbd></td><td>Show or hide the math keys (they come up by themselves on phones)</td></tr>" +
       "<tr><td><kbd>Esc</kbd></td><td>Close this, or leave big screen</td></tr>" +
       "<tr><td><kbd>?</kbd></td><td>Show this list</td></tr></table></div>");
@@ -307,6 +311,7 @@
     else if (k === "r" || k === "R"){ if (readBtn){ e.preventDefault(); readAloud(); } }
     else if (k === "d" || k === "D"){ var tb = document.getElementById("themeBtn"); if (tb){ e.preventDefault(); tb.click(); } }
     else if (k === "b" || k === "B"){ e.preventDefault(); setBig(!root.classList.contains("ht-big")); }
+    else if (k === "q" || k === "Q"){ e.preventDefault(); closeMenu(); showQR(); }
     else if (k === "+" || k === "="){ e.preventDefault(); setScale(1); }
     else if (k === "-" || k === "_"){ e.preventDefault(); setScale(-1); }
     else if (k === "k" || k === "K"){ e.preventDefault(); togglePad(); }
@@ -442,6 +447,38 @@
     announce(S.keypad ? "Math keys on" : "Math keys off");
   }
 
+  /* ===================== a QR code for this page ===================== */
+  // qr.js sits next to this file; it's fetched the first time a QR code is wanted, not on every page load
+  var qrWait = null;
+  function qrSrc(){
+    var src = SELF;
+    if (!src){ var s = document.querySelector('script[src$="tools.js"], script[src*="tools.js?"]'); src = s ? s.src : "tools.js"; }
+    return src.replace(/tools\.js([?#].*)?$/, "qr.js");
+  }
+  function withQR(done){
+    if (window.HelperQR){ done(); return; }
+    if (qrWait){ qrWait.push(done); return; }
+    qrWait = [done];
+    var sc = document.createElement("script");
+    sc.src = qrSrc(); sc.async = true;
+    sc.onload = function(){
+      var w = qrWait || []; qrWait = null;
+      if (window.HelperQR) w.forEach(function(f){ safe(f)(); }); else announce("Couldn’t load the QR code maker");
+    };
+    sc.onerror = function(){ qrWait = null; sc.remove(); announce("Couldn’t load the QR code maker. Check the connection and try again."); };
+    document.head.appendChild(sc);
+  }
+  function showQR(){
+    withQR(function(){
+      var h1 = document.querySelector(".page h1") || document.querySelector("h1"), label = labelFor(location.search);
+      window.HelperQR.show(location.href, {
+        title:(h1 && h1.textContent.replace(/\s+/g, " ").trim()) || document.title,
+        sub:label ? "This problem: " + label.slice(0, 80) : "Open this page on a phone",
+        filename:page.replace(/\.html$/, "") + "-qr.svg"
+      });
+    });
+  }
+
   /* ===================== the bar: search, recent, text size, big screen, shortcuts ===================== */
   function goSearch(text){
     var r = window.HelperSearch && window.HelperSearch.route(text);
@@ -464,12 +501,14 @@
       '<button type="button" class="ht-btn" id="htSmaller" aria-label="Smaller text" title="Smaller text (−)">A−</button>' +
       '<button type="button" class="ht-btn" id="htBigger" aria-label="Bigger text" title="Bigger text (+)">A+</button>' +
       '<button type="button" class="ht-btn" id="htBig" aria-pressed="false" title="Big screen, for a projector (B)">Big screen</button>' +
+      '<button type="button" class="ht-btn" id="htQR" aria-haspopup="dialog" aria-label="QR code for this page" title="A QR code for this page, to open it on a phone (Q)">QR</button>' +
       '<button type="button" class="ht-btn" id="htKeys" aria-haspopup="dialog" aria-label="Keyboard shortcuts" title="Keyboard shortcuts (?)">?</button>';
     nav.insertBefore(bar, f.nextSibling);
     document.getElementById("htRecent").addEventListener("click", function(e){ e.stopPropagation(); if (openMenu) closeMenu(); else recentMenu(this); });
     document.getElementById("htSmaller").addEventListener("click", function(){ setScale(-1); });
     document.getElementById("htBigger").addEventListener("click", function(){ setScale(1); });
     document.getElementById("htBig").addEventListener("click", function(){ setBig(!root.classList.contains("ht-big")); });
+    document.getElementById("htQR").addEventListener("click", safe(showQR));
     document.getElementById("htKeys").addEventListener("click", function(e){ e.stopPropagation(); if (openMenu) closeMenu(); else helpMenu(this); });
   }
   var live = null;
@@ -505,7 +544,7 @@
     })();
   });
 
-  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, words:words, togglePad:togglePad };
+  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, showQR:showQR, words:words, togglePad:togglePad };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
   else main();
 })();

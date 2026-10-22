@@ -14,6 +14,7 @@
 <meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
 <meta name="twitter:card" content="summary_large_image">
 <script src="nav.js" defer></script>
+<script src="qr.js" defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -123,6 +124,16 @@
   .sh-lines span{display:inline-flex;gap:6px;align-items:flex-end}
   .sh-lines i{display:inline-block;border-bottom:1px solid #333;width:150px;height:1em}
   .sh-lines i.short{width:90px}
+  .sh-top .sh-lines{margin-left:auto}
+  /* the QR code sits in the sheet's top-right corner, beside the header (whose rule stops short of it) and above the
+     first problems; --qrx adds room under the header only when the code is taller than the gap there */
+  .sheet.has-qr .sh-top{margin-right:calc(var(--qrw, 18mm) + 62px);margin-bottom:calc(14px + var(--qrx, 0px))}
+  .sh-qr{position:absolute;top:44px;right:48px;display:flex;align-items:center;gap:6px;font-size:9.5px;line-height:1.25;color:#333;text-align:right}
+  @media (max-width:640px){.sh-qr{top:26px;right:20px}}
+  .sh-qr-c{display:block;flex:none;line-height:0;background:#fff}
+  .sh-qr-c svg{display:block;width:100%;height:auto}
+  .chk{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--ink-2);cursor:pointer}
+  .chk input{width:16px;height:16px;margin:0;accent-color:var(--key)}
   .sh-sec{margin:14px 0 6px;font-size:12.5px;font-weight:600;color:#333;letter-spacing:.02em}
   .sh-sec small{font-weight:400;color:#666}
   .probs{display:grid;gap:0 28px}
@@ -155,6 +166,7 @@
     .sheet{box-shadow:none;border-radius:0;padding:0;max-width:none;aspect-ratio:auto;overflow:visible;break-after:page}
     .sheet:last-child{break-after:auto}
     .sh-foot{position:static;margin-top:18px}
+    .sh-qr{top:0;right:0}
     .key .steps{display:none}
     /* keep each section heading on the same page as its first problems */
     .sh-sec{break-after:avoid;page-break-after:avoid}
@@ -185,6 +197,8 @@
           <button type="button" class="tog" id="keyT">Answer key</button>
           <button type="button" class="tog" id="mixT">Mix the sections</button>
         </div>
+        <label class="chk" id="qrWrap" hidden><input type="checkbox" id="qrT"> QR code to practise on screen</label>
+        <span class="sec-msg" id="qrMsg" role="status" aria-live="polite"></span>
         <div class="row">
           <div class="field"><span class="lbl">Columns</span><div class="modes" id="colsT"></div></div>
           <div class="field"><span class="lbl">Room to work</span><div class="modes" id="spaceT"></div></div>
@@ -208,6 +222,7 @@
           <textarea id="setOut" readonly rows="3" aria-label="Practice link"></textarea>
           <div class="actions">
             <button type="button" class="go" id="setCopy">Copy link</button>
+            <button type="button" class="ghost" id="setQR" aria-haspopup="dialog" hidden title="Show the link as a QR code, for the projector">QR code</button>
             <a class="ghost" id="setOpen" href="#" target="_blank" rel="noopener">Open it</a>
             <span class="sec-msg" id="setMsg" role="status" aria-live="polite"></span>
           </div>
@@ -233,11 +248,11 @@
     ["ratios.html","Ratios & rates","The Ratio Table"], ["pemdas.html","Order of operations","The Order Stack"],
     ["algebra.html","Algebra","The Balance Scale"], ["lines.html","Lines & slope","The Slope Grid"],
     ["geometry.html","Geometry","The Shape Shop"], ["stats.html","Statistics","The Dot Plot"],
-    ["wordproblems.html","Story problems","The Story Problem"], ["flashcards.html","Flash cards","The Flash Cards"]
+    ["probability.html","Probability","The Chance Spinner"], ["exponents.html","Exponents","The Power Tower"], ["wordproblems.html","Story problems","The Story Problem"], ["flashcards.html","Flash cards","The Flash Cards"]
   ];
   function topic(page){ for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i][0] === page) return TOPICS[i]; return TOPICS[0]; }
 
-  var S = { title:"Math practice", name:true, key:true, mix:false, cols:2, space:"md",
+  var S = { title:"Math practice", name:true, key:true, mix:false, qr:false, cols:2, space:"md",
             secs:[ { page:"addition.html", count:6, opts:{} }, { page:"pemdas.html", count:4, opts:{} } ] };
   var PROBS = [];          // one list per section: [{text, html, params, answer, answerHtml}]
   var SCHEMA = {};         // page -> options schema
@@ -429,12 +444,19 @@
       }, function(){ return plain; });
     } catch (e){ return Promise.resolve(plain); }
   }
+  // the sheet's problems as a practice set: the Practice link button and the QR code on the sheet both use these
+  function practiceList(){
+    return items().filter(function(it){ return it.p && it.p.params; }).slice(0, 100).map(function(it){ return [it.page, it.p.params]; });
+  }
+  function practiceLink(list){
+    return setCode(S.title, list).then(function(code){ return new URL("practice.html?set=" + code, location.href).href; });
+  }
   $("setBtn").addEventListener("click", function(){
-    var list = items().filter(function(it){ return it.p && it.p.params; }).slice(0, 100).map(function(it){ return [it.page, it.p.params]; });
+    var list = practiceList();
     if (!list.length){ status("Make some problems first."); return; }
-    setCode(S.title, list).then(function(code){
-      var url = new URL("practice.html?set=" + code, location.href).href;
+    practiceLink(list).then(function(url){
       $("setOut").value = url; $("setOpen").href = url; $("setMsg").textContent = list.length + " problems";
+      $("setOut").setAttribute("data-n", String(list.length));
       $("setBox").hidden = false;
       try { $("setOut").focus(); $("setOut").select(); } catch (e){}
     });
@@ -451,6 +473,53 @@
     } catch (e){}
     old();
   });
+  $("setQR").addEventListener("click", function(){
+    if (!window.HelperQR || !$("setOut").value) return;
+    var n = +$("setOut").getAttribute("data-n") || 0;
+    window.HelperQR.show($("setOut").value, {
+      title:S.title || "Math practice", sub:n + " problem" + (n === 1 ? "" : "s") + " · scan to practise them on screen",
+      filename:"worksheet-practice-qr.svg", tooLongHint:"Use fewer problems, or copy the link and send it instead."
+    });
+  });
+
+  /* the small QR code in the sheet's header: the practice-set link for the same problems, printed black on white.
+     It's drawn after the sheet (making the link is async); the newest drawing wins. */
+  var qrSeq = 0;
+  function fillQR(){
+    var my = ++qrSeq, box = $("shQR");
+    $("qrMsg").textContent = "";
+    if (!box || !window.HelperQR) return;
+    var sheet = box.parentNode.parentNode;
+    function drop(){ if (box.parentNode){ box.parentNode.remove(); sheet.classList.remove("has-qr"); } }
+    var list = practiceList();
+    if (!list.length){ drop(); return; }
+    practiceLink(list).then(function(url){
+      if (my !== qrSeq || !document.body.contains(box)) return;
+      var ecc = "M", v = window.HelperQR.version(url, ecc);
+      if (!v){ ecc = "L"; v = window.HelperQR.version(url, ecc); }
+      if (!v){
+        drop();
+        $("qrMsg").textContent = "Too many problems for a QR code (the link has " + url.length + " characters), so the sheet prints without one.";
+        return;
+      }
+      var mods = v * 4 + 17 + 8, mm = Math.max(18, Math.min(36, mods * 0.28));   // about 0.28 mm a module, 1.8–3.6 cm across
+      // the first problems start about 50px (mixed) or 75px (under a section heading) below the top of a one-line header
+      var extra = Math.max(0, Math.ceil(mm * 96 / 25.4 + 6 - (S.mix ? 50 : 75)));
+      sheet.style.setProperty("--qrw", mm.toFixed(1) + "mm");
+      sheet.style.setProperty("--qrx", extra + "px");
+      box.style.width = mm.toFixed(1) + "mm";
+      box.innerHTML = window.HelperQR.svg(url, { ecc:ecc, label:"QR code: practise these problems on screen" });
+      if (mm / mods < 0.25) $("qrMsg").textContent = "That’s a lot of problems for one QR code: it prints small and dense. Fewer problems make it easier to scan.";
+    }, function(){ if (my === qrSeq) drop(); });
+  }
+  function qrReady(){
+    if (!window.HelperQR) return;
+    $("qrWrap").hidden = false; $("setQR").hidden = false;
+    if (S.qr && !$("shQR")) draw();
+  }
+  $("qrT").addEventListener("change", function(){ S.qr = $("qrT").checked; draw(); save(); });
+  document.addEventListener("DOMContentLoaded", qrReady);
+  window.addEventListener("load", qrReady);
 
   function shuffled(list){
     var a = list.slice();
@@ -476,11 +545,15 @@
     if (!list.length){
       host.innerHTML = '<p class="preview-note">Your worksheet will show up here.</p><div class="sheet grow"><div class="empty">'
         + (busy ? "Making problems…" : "Add a section to get started.") + "</div></div>";
+      fillQR();
       return;
     }
     var title = esc(S.title || "Math practice");
-    var head = '<div class="sh-top"><h2 class="sh-title">' + title + "</h2>"
-      + (S.name ? '<div class="sh-lines"><span>Name <i></i></span><span>Date <i class="short"></i></span></div>' : "") + "</div>";
+    var withQR = S.qr && window.HelperQR;
+    var head = (withQR ? '<div class="sh-qr"><span>Practise<br>on screen:<br>scan me</span><span class="sh-qr-c" id="shQR" style="width:18mm"></span></div>' : "")
+      + '<div class="sh-top"><h2 class="sh-title">' + title + "</h2>"
+      + (S.name ? '<div class="sh-lines"><span>Name <i></i></span><span>Date <i class="short"></i></span></div>' : "")
+      + "</div>";
     var cols = "grid-template-columns:repeat(" + S.cols + ",minmax(0,1fr))";
     var body = "", n = 0, lastSec = -1;
     if (S.mix){
@@ -501,7 +574,7 @@
       body += "</div></div>";
     }
     var html = '<p class="preview-note">This is what prints. The answer key prints on its own page.</p>'
-      + '<div class="sheet grow">' + head + body + footer() + "</div>";
+      + '<div class="sheet grow' + (withQR ? " has-qr" : "") + '">' + head + body + footer() + "</div>";
     if (S.key){
       var key = "", m = 0;
       list.forEach(function(it){
@@ -517,6 +590,7 @@
         + footer() + "</div>";
     }
     host.innerHTML = html;
+    fillQR();
   }
   function probHTML(n, p, withSpace){
     return '<div class="prob"><span class="n">' + n + '.</span><span class="q">' + (p.html || esc(p.text || "")) + "</span>"
@@ -538,7 +612,7 @@
       if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
       var s = v.s || {};
       if (typeof s.title === "string") S.title = s.title;
-      ["name","key","mix"].forEach(function(k){ if (typeof s[k] === "boolean") S[k] = s[k]; });
+      ["name","key","mix","qr"].forEach(function(k){ if (typeof s[k] === "boolean") S[k] = s[k]; });
       if ([1,2,3].indexOf(s.cols) >= 0) S.cols = s.cols;
       if (SPACE[s.space]) S.space = s.space;
       if (Array.isArray(s.secs) && s.secs.length){
@@ -563,6 +637,7 @@
 
   load();
   $("titleIn").value = S.title;
+  $("qrT").checked = S.qr;
   paintToggles(); paint();
   segs($("colsT"), [1, 2, 3], function(v){ return v + (v === 1 ? " column" : ""); }, function(){ return S.cols; }, function(v){ S.cols = v; });
   segs($("spaceT"), ["sm", "md", "lg"], function(v){ return { sm:"A little", md:"Some", lg:"Lots" }[v]; },
