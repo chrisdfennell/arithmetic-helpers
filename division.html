@@ -114,6 +114,9 @@
   /* the plain-words hint sits under the label, so each column is only as wide as its number */
   .num-field > label .what{display:block;margin-top:2px;font-family:var(--f-body);font-size:12px;font-weight:400;
     letter-spacing:0;text-transform:none;color:var(--ink-3)}
+  /* the dividend's hint is the longer one, so its column lines up on the right: both numbers sit the same gap from ÷ */
+  #decEntry > .num-field:first-child{align-items:flex-end;text-align:right}
+  #decEntry > .num-field:first-child input{text-align:right}
   .num-field input{
     font-family:var(--f-mono);font-size:clamp(26px,5vw,34px);font-weight:600;
     font-variant-numeric:tabular-nums;
