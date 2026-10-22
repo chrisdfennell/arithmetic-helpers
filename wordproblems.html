@@ -4489,7 +4489,9 @@
     el.className = "notice";
     el.innerHTML = msg + (picks && !EMBED ? '<div class="picks">' + TYPES.map(function(t){ return '<button type="button" class="ghost" data-pick="' + t + '">' + esc(TLABEL[t]) + "</button>"; }).join("") + "</div>" : "");
     $("board").parentNode.insertBefore(el, $("board"));
-    $("statusLine").textContent = el.textContent;
+    var said = el.cloneNode(true), pk = said.querySelector(".picks");      // the message, without the kind buttons' labels
+    if (pk) pk.parentNode.removeChild(pk);
+    $("statusLine").textContent = said.textContent;
     Array.prototype.forEach.call(el.querySelectorAll("[data-pick]"), function(b){
       b.addEventListener("click", function(){ S.ov = { type:b.getAttribute("data-pick") }; S.step = 1; render(); save(); $("readBox").open = true; });
     });

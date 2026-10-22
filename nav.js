@@ -65,6 +65,8 @@
     ".sitenav .sn-tools a[aria-current=\"page\"]{color:var(--ink)}" +
     ".sitenav a:focus-visible{outline:2.5px solid var(--focus,var(--ink));outline-offset:2px}" +
     "@media (max-width:560px){.sitenav .sn-links a{padding:5px 9px;font-size:12.5px}.sitenav .sn-tools{margin-left:0}}" +
+    // each helper's #statusLine is for screen readers only: the same message is already on screen
+    "#statusLine{position:absolute !important;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}" +
     "@media print{.sitenav{display:none !important}}";
 
   // inside a practice set: the page marks itself, because by now it may already have rewritten its address
