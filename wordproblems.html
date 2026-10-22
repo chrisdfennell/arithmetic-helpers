@@ -322,6 +322,15 @@
   .opchip b{font-family:var(--f-mono);font-size:1.15em}
   .weq{font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--ink-2);display:flex;flex-wrap:wrap;align-items:center;gap:4px .5ch}
   .weq .qm{display:inline-flex;justify-content:center;min-width:1.4em;border:2px dashed var(--key);border-radius:6px;color:var(--key);padding:0 .2ch}
+  .mv{font-family:var(--f-body);font-size:12px;font-weight:600;color:var(--m);background:var(--m-bg);border-radius:999px;padding:2px 9px;margin-right:10px;white-space:nowrap}
+  .tr{display:grid;grid-template-columns:minmax(0,max-content) auto minmax(0,max-content);gap:4px 10px;align-items:baseline;font-size:14.5px;margin:4px 0}
+  .tr .w{color:var(--ink-2)} .tr .ar{color:var(--ink-3)} .tr .s{font-family:var(--f-mono);font-weight:600;color:var(--e);overflow-wrap:anywhere}
+  .eqbig{font-family:var(--f-mono);font-weight:600;font-size:clamp(17px,3vw,21px);color:var(--ink);line-height:1.5}
+  .eqbig i,.expr i,.tr i,.log i{font-style:italic;color:var(--key)}
+  .tb-h{fill:var(--surface-2);stroke:var(--ink-3);stroke-width:1}
+  .tb-c{fill:var(--surface);stroke:var(--ink-3);stroke-width:1}
+  .tb-k{fill:var(--key-bg);stroke:var(--key);stroke-width:2}
+  .fig svg + svg{margin-top:10px}
   .ansline{font-family:var(--f-display);font-stretch:106%;font-weight:700;font-size:clamp(16px,2.6vw,19px);color:var(--ink);line-height:1.4}
   .ansline b{font-family:var(--f-mono);color:var(--a)}
 
@@ -455,6 +464,7 @@
     .ask,.ansline{font-size:13px}
     .kn{font-size:11px}
     .opchip{font-size:12.5px;padding:2px 8px}
+    .tr{font-size:10.5px} .eqbig{font-size:13px} .mv{font-size:9.5px;padding:1px 6px}
     .weq{font-size:11.5px}
     .wtext,.figcap,.golink{font-size:10.5px}
     .wrow.veil,.log > li.veil{opacity:1}
@@ -618,6 +628,20 @@
                                               kind=comparetotal a=first b=how many more the second has (then altogether)
                                               kind=shareleft  a=start b=given away c=friends who share the rest
                                               kind=multi      a=packs b=in each c=extra d=given away
+         algebra     stories solved with an equation; kind=, form= and the numbers:
+                       number       form=more|less|sum|diff (a=times, b=added/taken, c=result) · div (a=divided by, b=minus,
+                                    c=result) · sides (a=times, b=more than the number) · gen (a·n + b = c·n + d)
+                       consecutive  form=all|even|odd, a=how many numbers, c=their sum
+                       age          form=sum (a=years older, c=ages together, ask=both|older|younger)
+                                    · times (a=times as old now, b=years from now, c=times as old then)
+                       perimeter    form=more|times (a=length vs width, c=perimeter, ask=length|width|both)
+                                    · tri (a=second angle ÷ first, b=third angle − first; the angles make 180°)
+                       plans        a, b = plan A's start and amount each time; c, d = plan B's (ctx=gym|savings|bikes)
+                       twounknown   form=tickets (a, b prices, c=how many, d=total) · coins (c=how many, d=total, ctx=dq|nd)
+                                    · numbers (c=sum, d=difference)
+                       motion       form=opposite (a, b speeds, c=distance apart) · catchup (a slower, b faster, c=head start
+                                    in hours) · roundtrip (a speed there, b speed back, c=total hours)
+                       percentback  form=off|raise, p=the percent, c=the amount after the change
          remainder   the leftover matters     a=total b=the size of one group; kind=up|down|left
                                               (up: vans needed · down: full boxes, whole bows · left: the leftover ·
                                                both: each share and the leftover, 6 R 1)
@@ -895,6 +919,7 @@
     if (f === "f") return mark(P.fn + "/" + P.fd);
     if (f === "u") return mark(nt(v)) + " " + (W.u || "");
     if (f === "q") return mark(qPart(v, W.it));
+    if (f === "w") return mark(isInt(v) && v.n >= 0n && v.n <= 6n ? ["zero", "one", "two", "three", "four", "five", "six"][Number(v.n)] : nt(v));
     if (f === "qa") return mark(qText(v, W.it));
     return mark(nt(v)) + " " + noun(v, W[f] || f);
   }
@@ -2102,12 +2127,612 @@
     }
   };
 
+  /* ===================== Algebra stories: write an equation, then solve it ===================== */
+  // A linear expression a·v + b (one letter), kept exact. The equation is solved the way the Balance Scale does it:
+  // the same move on both sides, one move per line.
+  function LX(a, b){ return { a:a || ZERO, b:b || ZERO }; }
+  function lxAdd(p, q){ return LX(add(p.a, q.a), add(p.b, q.b)); }
+  function lxSub(p, q){ return LX(sub(p.a, q.a), sub(p.b, q.b)); }
+  function lxMul(p, k){ return LX(mul(p.a, k), mul(p.b, k)); }
+  function lxVal(p, x){ return add(mul(p.a, x), p.b); }
+  function blcmB(a, b){ return a / bgcd(a, b) * b; }
+  function coefT(a, v){
+    if (eqR(a, ONE)) return v;
+    if (eqR(a, R(-1))) return "−" + v;
+    if (!isInt(a) && absR(a).n === 1n && a.d <= 12n) return (sgn(a) < 0 ? "−" : "") + v + "/" + a.d;
+    return nt(a) + v;
+  }
+  function lxT(p, v){
+    var s = "";
+    if (sgn(p.a)) s = coefT(p.a, v);
+    if (sgn(p.b)) s += s ? (sgn(p.b) < 0 ? " − " : " + ") + nt(absR(p.b)) : nt(p.b);
+    return s || "0";
+  }
+  function vH(s, vs){                            // an equation as html, its letters in italics
+    var h = esc(s);
+    (vs || []).forEach(function(v){ h = h.replace(new RegExp("(^|[^A-Za-z<])" + v + "(?![A-Za-z>])", "g"), "$1<i>" + v + "</i>"); });
+    return h;
+  }
+  function mvH(s){ return '<span class="mv">' + esc(s) + "</span>"; }
+  function solveSteps(lhs, rhs, v, opt){
+    var st = [], m;
+    opt = opt || {};
+    if (opt.clear){
+      var den = [lhs.a, lhs.b, rhs.a, rhs.b].reduce(function(acc, x){ return blcmB(acc, x.d); }, 1n);
+      if (den > 1n){ lhs = lxMul(lhs, R(den)); rhs = lxMul(rhs, R(den)); st.push({ lab:"× " + bs(den) + " on both sides", why:"multiply both sides by " + bs(den) + " to clear the fractions", l:lhs, r:rhs }); }
+    }
+    if (sgn(rhs.a) && cmpR(rhs.a, lhs.a) > 0){ m = lhs; lhs = rhs; rhs = m; st.push({ lab:"Swap the sides", why:"write it the other way round, so the side with more " + v + "’s is on the left", l:lhs, r:rhs }); }
+    if (sgn(rhs.a)){
+      m = rhs.a; lhs = LX(sub(lhs.a, m), lhs.b); rhs = LX(ZERO, rhs.b);
+      st.push({ lab:(sgn(m) > 0 ? "− " + coefT(m, v) : "+ " + coefT(absR(m), v)) + " on both sides", why:(sgn(m) > 0 ? "take " + coefT(m, v) + " away from" : "add " + coefT(absR(m), v) + " to") + " both sides, so the letter is on one side only", l:lhs, r:rhs });
+    }
+    if (!sgn(lhs.a)) throw new UserErr(eqR(lhs.b, rhs.b) ? "Every number works in that equation — the story doesn’t pin down one answer. Check the numbers in <b>What the story says</b>." : "That equation has no answer — the two sides can never be equal. Check the numbers in <b>What the story says</b>.");
+    if (sgn(lhs.b)){
+      m = lhs.b; rhs = LX(ZERO, sub(rhs.b, m)); lhs = LX(lhs.a, ZERO);
+      st.push({ lab:(sgn(m) > 0 ? "− " + nt(m) : "+ " + nt(absR(m))) + " on both sides", why:(sgn(m) > 0 ? "take " + nt(m) + " away from" : "add " + nt(absR(m)) + " to") + " both sides, to undo the " + (sgn(m) > 0 ? "+ " : "− ") + nt(absR(m)), l:lhs, r:rhs });
+    }
+    if (!eqR(lhs.a, ONE)){
+      var c = lhs.a, byRecip = !isInt(c) && c.n === 1n, lab = byRecip ? "× " + bs(c.d) + " on both sides" : "÷ " + (sgn(c) < 0 ? "(" + nt(c) + ")" : nt(c)) + " on both sides";
+      rhs = LX(ZERO, dvd(rhs.b, c)); lhs = LX(ONE, ZERO);
+      st.push({ lab:lab, why:byRecip ? "multiply both sides by " + bs(c.d) + " to undo the ÷ " + bs(c.d) : "divide both sides by " + nt(c) + " to undo the × " + nt(c), l:lhs, r:rhs });
+    }
+    return { steps:st, val:rhs.b };
+  }
+  function stepRows(steps, vs){
+    return steps.map(function(s){
+      return { o:"=", h:mvH(s.lab) + vH(lxT(s.l, vs[0]) + " = " + lxT(s.r, vs[0]), vs), say:cap1(esc(s.why)) + ": " + Be(lxT(s.l, vs[0]) + " = " + lxT(s.r, vs[0])) + "." };
+    });
+  }
+  var ALINK = "algebra.html";
+  function solveLink(eqText, label){
+    return '<span class="golink"><a href="' + esc(ALINK + "?mode=solve&q=" + encodeURIComponent(eqText.replace(/−/g, "-"))) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">" + esc(label || "Solve it on the Balance Scale") + " →</a></span>";
+  }
+  function sysLink(e1, e2, note){
+    return '<span class="golink"><a href="' + esc(ALINK + "?mode=sys&q=" + encodeURIComponent((e1 + ";" + e2).replace(/−/g, "-"))) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">Solve the system on the Balance Scale →</a> " + esc(note || "") + "</span>";
+  }
+  function lineLink(m, b, label){
+    var q = "graph y=" + (eqR(m, ZERO) ? "" : nt(m) + "x") + (sgn(b) ? (sgn(m) ? (sgn(b) < 0 ? "-" : "+") : (sgn(b) < 0 ? "-" : "")) + plainN(absR(b)) : (sgn(m) ? "" : "0"));
+    return '<a href="' + esc("lines.html?mode=graph&q=" + encodeURIComponent(q)) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">" + esc(label) + " →</a>";
+  }
+  // a small table, drawn as a picture
+  function tableSVG(head, rows, hl, label){
+    var cw = head.map(function(h, j){ var w = tw(h, 7.2) + 20; rows.forEach(function(r){ w = Math.max(w, tw(String(r[j]), 8.4) + 20); }); return Math.max(w, 52); });
+    var rh = 30, out = "", y = 0, W = cw.reduce(function(a, b){ return a + b; }, 0) + 2;
+    var row = function(cells, cls, tcls){
+      var x = 1;
+      cells.forEach(function(t, j){ out += rect(x, y + 1, cw[j], rh, cls); out += svgT(x + cw[j] / 2, y + 20, String(t), j === 0 && tcls !== "bm-n" ? "bm-n" : tcls); x += cw[j]; });
+      y += rh;
+    };
+    row(head, "tb-h", "bm-n");
+    rows.forEach(function(r, i){ row(r, i === hl ? "tb-k" : "tb-c", "bm-v"); });
+    return svgWrap(W, y + 3, label, out);
+  }
+  function rectSVG(lw, ww, lLab, wLab, label){
+    var sc = Math.min(260 / lw, 120 / ww, 30), L0 = 74, T0 = 30, Wd = Math.max(40, lw * sc), Hd = Math.max(26, ww * sc), out = "";
+    out += rect(L0, T0, Wd, Hd, "bm k");
+    out += svgT(L0 + Wd / 2, T0 - 10, lLab, "bm-v q");
+    out += svgT(L0 - 10, T0 + Hd / 2 + 5, wLab, "bm-v q", "end");
+    out += svgT(L0 + Wd / 2, T0 + Hd + 20, lLab, "bm-s");
+    out += svgT(L0 + Wd + 10, T0 + Hd / 2 + 5, wLab, "bm-s", "start");
+    return svgWrap(L0 + Wd + 14 + tw(wLab, 6.6), T0 + Hd + 30, label, out);
+  }
+  function triSVG(labs, label){
+    var out = '<path class="bm k" d="M30 170 L330 170 L120 30 Z"/>';
+    out += svgT(66, 160, labs[0], "bm-v q", "start") + svgT(300, 160, labs[1], "bm-v q", "end") + svgT(122, 62, labs[2], "bm-v q");
+    return svgWrap(360, 182, label, out);
+  }
+  function motionSVG(kind, labA, labB, labT, label){
+    var out = "", W = 470;
+    if (kind === "opposite"){
+      out += line(40, 50, 430, 50, "tl-axis") + '<circle class="ar-dot" cx="215" cy="50" r="6"/>' + svgT(215, 78, "start", "bm-s");
+      out += '<path class="tl-arc" d="M215 36 L48 36"/>' + arrowTip(48, 36, Math.PI) + svgT(130, 28, labA, "tl-j");
+      out += '<path class="tl-arc" d="M215 36 L422 36"/>' + arrowTip(422, 36, 0) + svgT(318, 28, labB, "tl-j");
+      out += brace(44, 426, 92, false, "k") + svgT(235, 116, labT, "brk-t k");
+      return svgWrap(W, 124, label, out);
+    }
+    if (kind === "catchup"){
+      out += line(30, 40, 440, 40, "tl-axis") + line(30, 90, 440, 90, "tl-axis");
+      out += '<path class="tl-arc" d="M30 26 L380 26"/>' + arrowTip(380, 26, 0) + svgT(205, 18, labA, "tl-j");
+      out += '<path class="tl-arc" d="M30 76 L380 76"/>' + arrowTip(380, 76, 0) + svgT(205, 68, labB, "tl-j");
+      out += line(380, 30, 380, 96, "nl-guide") + svgT(380, 112, labT, "brk-t k");
+      return svgWrap(W, 120, label, out);
+    }
+    out += line(40, 60, 420, 60, "tl-axis") + '<circle class="ar-dot" cx="40" cy="60" r="6"/><circle class="ar-dot" cx="420" cy="60" r="6"/>';
+    out += svgT(40, 86, "home", "bm-s") + svgT(420, 86, "there", "bm-s");
+    out += '<path class="tl-arc" d="M44 44 Q230 4 416 44"/>' + arrowTip(416, 44, 0.2) + svgT(230, 18, labA, "tl-j");
+    out += '<path class="tl-arc" d="M416 76 Q230 116 44 76"/>' + arrowTip(44, 76, Math.PI - 0.2) + svgT(230, 112, labB, "tl-j");
+    out += svgT(230, 138, labT, "brk-t k");
+    return svgWrap(W, 146, label, out);
+  }
+  function arrowTip(x, y, ang){
+    var L = 8, Wd = 4.5, bx = x - L * Math.cos(ang), by = y - L * Math.sin(ang), px = -Math.sin(ang) * Wd, py = Math.cos(ang) * Wd;
+    return '<path class="tl-tip" d="M' + f1(x) + " " + f1(y) + "L" + f1(bx + px) + " " + f1(by + py) + "L" + f1(bx - px) + " " + f1(by - py) + 'Z"/>';
+  }
+  function kw(k){ return eqR(k, R(2)) ? "twice" : eqR(k, ONE) ? "" : nt(k) + " times"; }
+  var COUNTW = ["zero", "one", "two", "three", "four", "five", "six"];
+  function vT(v, k, w){ return k === "$" ? fmtK(v, "$") : isInt(v) ? qty(v, w) : qText(v, w); }
+  // the answer: one value, or a list ("12 adult tickets and 8 child tickets")
+  function listAns(items, say){
+    return { v:items[0].v, k:"list", list:items, w:"", say:say };
+  }
+  function listText(items){ return items.map(function(it){ return it.t; }).join(items.length === 2 ? " and " : ", ").replace(/, ([^,]*)$/, ", and $1"); }
+
+  TY.algebra = {
+    label:"Algebra stories", group:"algebra",
+    kinds:[["number", "Number puzzles"], ["consecutive", "Consecutive numbers"], ["age", "Ages"], ["perimeter", "Perimeter and angles"],
+           ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (a system)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"]],
+    forms:function(kind){
+      return { number:[["more", "… more than … times a number"], ["less", "… less than … times a number"], ["sum", "The sum of a number and …"], ["diff", "The difference between … and …"],
+                       ["div", "A number divided by …, minus …"], ["sides", "A number on both sides"], ["gen", "Any equation"]],
+               consecutive:[["all", "Consecutive numbers"], ["even", "Consecutive even numbers"], ["odd", "Consecutive odd numbers"]],
+               age:[["sum", "Older by …, ages add up to …"], ["times", "Times as old, in … years"]],
+               perimeter:[["more", "Length is … more than the width"], ["times", "Length is … times the width"], ["tri", "Triangle angles"]],
+               plans:[["plans", "Two plans"]],
+               twounknown:[["tickets", "Two prices, a count and a total"], ["coins", "Coins"], ["numbers", "Two numbers: sum and difference"]],
+               motion:[["opposite", "Opposite directions"], ["catchup", "Catching up"], ["roundtrip", "There and back"]],
+               percentback:[["off", "After a discount"], ["raise", "After an increase"]] }[kind] || [];
+    },
+    fields:function(P){
+      var f = P.form;
+      switch (P.kind){
+        case "number": return f === "sides" ? [["a", "Times the number", "n"], ["b", "More than the number", "n"]] : f === "gen" ? [["a", "Left: number of n’s", "n"], ["b", "Left: plus", "n"], ["c", "Right: number of n’s", "n"], ["d", "Right: plus", "n"]]
+          : f === "div" ? [["a", "Divided by", "n"], ["b", "Minus", "n"], ["c", "Result", "n"]] : f === "sum" ? [["a", "Times the number (1 if just “a number”)", "n"], ["b", "Plus", "n"], ["c", "Result", "n"]]
+          : [["a", "Times the number", "n"], ["b", f === "more" ? "More than" : f === "less" ? "Less than" : "Minus", "n"], ["c", "Result", "n"]];
+        case "consecutive": return [["a", "How many numbers", "n"], ["c", "Their sum", "n"]];
+        case "age": return f === "times" ? [["a", "Times as old now", "x"], ["b", "Years from now", "n"], ["c", "Times as old then", "x"]] : [["a", "Years older", "n"], ["c", "Ages add up to", "n"]];
+        case "perimeter": return f === "tri" ? [["a", "Second angle: times the first", "x"], ["b", "Third angle: degrees more than the first", "n"]]
+          : [["a", f === "times" ? "Length: times the width" : "Length: more than the width", f === "times" ? "x" : "n"], ["c", "Perimeter", "n"]];
+        case "plans": return [["a", "Plan A: starts at", "$"], ["b", "Plan A: each time", "$"], ["c", "Plan B: starts at (0 if nothing)", "$"], ["d", "Plan B: each time", "$"]];
+        case "twounknown": return f === "numbers" ? [["c", "Sum", "n"], ["d", "Difference", "n"]] : f === "coins" ? [["c", "How many coins", "n"], ["d", "What they’re worth", "$"]]
+          : [["a", "First price", "$"], ["b", "Second price", "$"], ["c", "How many in all", "n"], ["d", "Total money", "$"]];
+        case "motion": return f === "roundtrip" ? [["a", "Speed there", "n"], ["b", "Speed back", "n"], ["c", "Total hours", "n"]]
+          : f === "catchup" ? [["a", "First speed", "n"], ["b", "Second (faster) speed", "n"], ["c", "Hours’ head start", "n"]] : [["a", "First speed", "n"], ["b", "Second speed", "n"], ["c", "Distance apart", "n"]];
+        case "percentback": return [["p", f === "raise" ? "Percent increase" : "Percent off", "%"], ["c", f === "raise" ? "Amount after the increase" : "Price after the discount", "$"]];
+      }
+      return [];
+    },
+    ctxs:[
+      { id:"gym", plans:true, A:"Gym A", B:"Gym B", unit:"visits", per:"a visit", fixA:"to join plus", fixB:"to join plus", zeroB:"and nothing to join", Q:"After how many visits do the two gyms cost the same?" },
+      { id:"savings", plans:true, saving:true, unit:"weeks", per:"a week", Q:"After how many weeks will they have the same amount of money?" },
+      { id:"bikes", plans:true, A:"Bike shop A", B:"Bike shop B", unit:"hours", per:"an hour", fixA:"plus", fixB:"plus", zeroB:"and no starting fee", Q:"After how many hours do the two shops cost the same?" },
+      { id:"tickets", tk:true, k1:"adult", k2:"child", it:"tickets", sold:"tickets were sold" },
+      { id:"pizzas", tk:true, k1:"large", k2:"small", it:"pizzas", sold:"pizzas were bought" },
+      { id:"seats", tk:true, k1:"front-row", k2:"back-row", it:"seats", sold:"seats were sold" },
+      { id:"dq", coins:true, k1:"dimes", k2:"quarters", v1:10, v2:25 }, { id:"nd", coins:true, k1:"nickels", k2:"dimes", v1:5, v2:10 },
+      { id:"trains", mv:true, T1:"train", T2:"train", u:"miles", s:"mph", place:"station" }, { id:"cars", mv:true, T1:"truck", T2:"car", u:"miles", s:"mph", place:"town" },
+      { id:"bikes2", mv:true, T1:"cyclist", T2:"cyclist", u:"kilometers", s:"km/h", place:"park" },
+      { id:"jacket", pb:true, i1:"jacket" }, { id:"bike", pb:true, i1:"bike" }, { id:"game", pb:true, i1:"video game" }, { id:"wage", pb:true, wage:true },
+      { id:"rect", u:"cm" }, { id:"garden", u:"m" }, { id:"yard", u:"ft" }
+    ],
+    typed:{},
+    story:function(P, W){
+      var f = P.form, k = P.kind;
+      if (k === "number"){
+        var K = function(key){ var v = P[key]; return v && eqR(v, ONE) ? "" : "{" + key + ":x} "; };
+        if (f === "more") return ["{b} more than " + K("a") + "a number is {c}.", "What is the number?"];
+        if (f === "less") return ["{b} less than " + K("a") + "a number is {c}.", "What is the number?"];
+        if (f === "sum") return ["The sum of " + K("a") + "a number and {b} is {c}.", "Find the number."];
+        if (f === "diff") return ["The difference between " + K("a") + "a number and {b} is {c}.", "Find the number."];
+        if (f === "div") return ["A number divided by {a}, minus {b}, is {c}.", "What is the number?"];
+        if (f === "sides") return [cap1(K("a")) + "a number is {b} more than the number.", "What is the number?"];
+        return ["{a} times a number plus {b} is {c} times the number plus {d}.", "What is the number?"];
+      }
+      if (k === "consecutive") return ["{a:w} consecutive " + (f === "even" ? "even " : f === "odd" ? "odd " : "") + "numbers add up to {c}.", "What are the numbers?"];
+      if (k === "age"){
+        if (f === "times") return ["{N2} is {a:x} as old as {N}.", "In {b:years}, {N2} will be {c:x} as old as {N}.", "How old is {N} now?"];
+        var q = P.ask === "older" ? "How old is {N2}?" : P.ask === "younger" ? "How old is {N}?" : "How old is each of them?";
+        return ["{N2} is {a} years older than {N}.", "Together their ages add up to {c}.", q];
+      }
+      if (k === "perimeter"){
+        if (f === "tri") return ["In a triangle, the second angle is {a:x} the first angle.", "The third angle is {b} degrees more than the first angle.", "Find the three angles."];
+        var q2 = P.ask === "width" ? "How wide is the rectangle?" : P.ask === "both" ? "Find the length and the width." : "How long is the rectangle?";
+        return [f === "times" ? "The length of a rectangle is {a:x} its width." : "The length of a rectangle is {a} {u} more than its width.", "The perimeter is {c} {u}.", q2];
+      }
+      if (k === "plans"){
+        if (W.saving) return ["{N} has {a:$} and saves {b:$} a week.", P.c && sgn(P.c) ? "{N2} has {c:$} and saves {d:$} a week." : "{N2} has nothing saved yet and saves {d:$} a week.", W.Q];
+        return ["{A} charges {a:$} " + W.fixA + " {b:$} " + W.per + ".", P.c && sgn(P.c) ? "{B} charges {c:$} " + W.fixB + " {d:$} " + W.per + "." : "{B} charges {d:$} " + W.per + " " + W.zeroB + ".", W.Q];
+      }
+      if (k === "twounknown"){
+        if (f === "numbers") return ["Two numbers add up to {c}.", "Their difference is {d}.", "What are the two numbers?"];
+        if (f === "coins") return ["{N} has {c} coins, all {k1} and {k2}.", "They are worth {d:$} in all.", "How many of each coin does {N} have?"];
+        return [cap1(W.k1) + " {it} cost {a:$} each and " + W.k2 + " {it} cost {b:$} each.", "{c} " + W.sold + " for {d:$} in all.", "How many of each kind were " + W.sold.split(" ").pop() + "?"];
+      }
+      if (k === "motion"){
+        if (f === "catchup") return ["A {T1} leaves a {place} going {a} {s}.", "{c} hours later, a {T2} leaves the same {place} on the same road going {b} {s}.", "How many hours after it leaves will the {T2} catch up with the {T1}?"];
+        if (f === "roundtrip") return ["{N} rides to a lake at {a} {s} and rides home on the same road at {b} {s}.", "The round trip takes {c} hours.", "How far away is the lake?"];
+        return ["Two {T2}s leave the same {place} at the same time and travel in opposite directions.", "One goes {a} {s} and the other goes {b} {s}.", "After how many hours will they be {c} {u} apart?"];
+      }
+      if (W.wage) return f === "raise" ? ["After a {p:%} raise, {N} earns {c:$} an hour.", "How much did {N} earn an hour before the raise?"]
+        : ["After a {p:%} pay cut, {N} earns {c:$} an hour.", "How much did {N} earn an hour before the cut?"];
+      return f === "raise" ? ["After a {p:%} price increase, {i1a} costs {c:$}.", "What was the original price?"] : ["After a {p:%} discount, {i1a} costs {c:$}.", "What was the original price?"];
+    },
+    model:function(P, W){ return ALG[P.kind](P, W); }
+  };
+  var ALG = {};
+  function algIdea(h, trap, eq){ return { tag:"Equation", sym:"=", h:h, eq:eq || "letter → equation → solve", trap:trap }; }
+  function eqnStep(lets, pieces, eqT, vs){ return { lets:lets, pieces:pieces, eqT:eqT, eqH:vH(eqT, vs), vs:vs }; }
+  function chkV(v){ return isInt(v) ? nt(v) : mixT(v); }
+
+  /* ---- number puzzles ---- */
+  ALG.number = function(P, W){
+    var f = P.form || "more", v = "n", L, Rr, pcs, wEq;
+    if (P.pz){ L = P.pz.L; Rr = P.pz.R; pcs = P.pz.pieces.slice(); wEq = P.pz.w; }
+    else {
+      var k = P.a || ONE, b = P.b || ZERO, c = P.c || ZERO, Kw = kw(k), base = (Kw ? Kw + " " : "") + "a number", kn = coefT(k, v);
+      pcs = [["a number", v, LX(ONE, ZERO)]];
+      if (Kw && f !== "div" && f !== "gen") pcs.push([base, kn, LX(k, ZERO)]);
+      if (f === "more"){ L = LX(k, b); pcs.push([nt(b) + " more than " + base, kn + " + " + nt(b), L]); }
+      else if (f === "less"){ L = LX(k, R(-1n * b.n, b.d)); pcs.push([nt(b) + " less than " + base, kn + " − " + nt(b), L]); }
+      else if (f === "sum"){ L = LX(k, b); pcs.push(["the sum of " + base + " and " + nt(b), kn + " + " + nt(b), L]); }
+      else if (f === "diff"){ L = LX(k, R(-1n * b.n, b.d)); pcs.push(["the difference between " + base + " and " + nt(b), kn + " − " + nt(b), L]); }
+      else if (f === "div"){ L = LX(dvd(ONE, k), R(-1n * b.n, b.d)); pcs.push(["a number divided by " + nt(k), v + "/" + nt(k), LX(dvd(ONE, k), ZERO)]); pcs.push(["…, minus " + nt(b), v + "/" + nt(k) + " − " + nt(b), L]); }
+      else if (f === "sides"){ L = LX(k, ZERO); }
+      else { L = LX(P.a || ZERO, P.b || ZERO); pcs.push([nt(P.a || ZERO) + " times a number plus " + nt(P.b || ZERO), lxT(L, v), L]); }
+      if (f === "sides"){ Rr = LX(ONE, b); pcs.push(["is", "=", null], [nt(b) + " more than the number", v + " + " + nt(b), Rr]); }
+      else if (f === "gen"){ Rr = LX(P.c || ZERO, P.d || ZERO); pcs.push(["is", "=", null], [nt(P.c || ZERO) + " times the number plus " + nt(P.d || ZERO), lxT(Rr, v), Rr]); }
+      else { Rr = LX(ZERO, c); pcs.push(["is", "=", null], [nt(c), nt(c), Rr]); }
+      wEq = lxT(L, v) + " = " + lxT(Rr, v);
+    }
+    var sol = solveSteps(L, Rr, v), n = sol.val, M = { unit:"" };
+    M.known = pcs.filter(function(p){ return p[2] && !sgn(p[2].a); }).map(function(p){ return { q:p[0], w:"a number in the story" }; });
+    if (!M.known.length) M.known = [{ q:wEq, w:"the story, as an equation" }];
+    M.ask = "the number";
+    M.idea = algIdea("The number we want is hidden inside the sentence — something is done to it, and we’re told the result. So call it " + v + ", turn the words into an equation, and solve the equation by doing the same thing to both sides.",
+      "Order matters in the translation: “" + (f === "less" ? nt(P.b || ZERO) + " less than " + (kw(P.a || ONE) || "") + " a number” is " + lxT(L, v) + ", not " + nt(P.b || ZERO) + " − " + coefT(P.a || ONE, v) : "5 more than twice a number” is 2n + 5, not 2(n + 5) — the 5 is added after doubling") + ".");
+    M.eqn = eqnStep([[v, "the number"]], pcs.map(function(p){ return [p[0], p[1]]; }), wEq, [v]);
+    var lin = lxT(L, v) + " = " + lxT(Rr, v);
+    M.fig = { svg:barsSVG({ rows:[{ name:"left", segs:[sg(absR(lxVal(L, n)), lxT(L, v), "k")] }, { name:"right", segs:[sg(absR(lxVal(Rr, n)), lxT(Rr, v), "b")] }] }, "The two sides of the equation balance"),
+      lead:"An equation is a balance: both sides are worth the same. Whatever we do to one side, we do to the other." };
+    if (isInt(L.a) && sgn(L.a) > 0 && Number(L.a.n) <= 8 && !sgn(Rr.a) && sgn(L.b) >= 0 && isInt(n) && sgn(n) > 0){
+      M.fig = { svg:barsSVG({ rows:[{ segs:[sg(n, v, "q", null, Number(L.a.n))].concat(sgn(L.b) ? [sg(L.b, nt(L.b), "b")] : []) }], tops:[{ row:0, from:0, to:sgn(L.b) ? 1 : 0, lab:nt(Rr.b) }] }, "Bar model: " + lin),
+        lead:"A bar model of the equation: " + nt(L.a) + " equal boxes, each one the number " + v + (sgn(L.b) ? ", plus " + nt(L.b) : "") + ", make " + nt(Rr.b) + "." };
+    }
+    var rows = (lin !== wEq ? [{ o:"=", h:mvH("Simplify") + vH(lin, [v]), say:"Simplify each side: " + Be(lin) + "." }] : []).concat(stepRows(sol.steps, [v]));
+    if (!rows.length) rows = [{ o:"=", h:vH(lin, [v]), say:"It is already solved: " + Be(lin) + "." }];
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    M.ans = { v:n, k:isInt(n) ? "n" : "q", w:"", say:"The number is " + Be(isInt(n) ? nt(n) : qText(n, "")) + "." };
+    var ex = pcs.filter(function(p){ return p[2] && sgn(p[2].a) && !(eqR(p[2].a, ONE) && !sgn(p[2].b)); }).slice(-2);
+    M.sense = "Put " + Be(chkV(n)) + " back into the story: " + (ex.length ? ex.map(function(p){ return esc(p[0].replace(/\b(a|the) number\b/, chkV(n))) + " is " + Be(chkV(lxVal(p[2], n))); }).join("; ") : esc(lin.replace(new RegExp(v, "g"), "(" + chkV(n) + ")")))
+      + (sgn(Rr.a) ? ", and the other side is " + Be(chkV(lxVal(Rr, n))) : ", and the story says " + Be(chkV(Rr.b))) + " ✓";
+    M.diag = [];
+    if (P.c && P.a && (f === "more" || f === "sum")){ var kk = P.a || ONE, bb = P.b || ZERO, cc = P.c || ZERO;
+      M.diag.push({ v:sub(dvd(cc, kk), bb), msg:"That solves " + coefT(kk, "") + "(n + " + nt(bb) + ") = " + nt(cc) + " — the equation backwards. “" + nt(bb) + " more than " + (kw(kk) || "") + " a number” adds " + nt(bb) + " <i>after</i> multiplying: " + coefT(kk, v) + " + " + nt(bb) + "." },
+        { v:dvd(add(cc, bb), kk), msg:"You added " + nt(bb) + " to both sides. To undo + " + nt(bb) + ", take " + nt(bb) + " away." }, { v:sub(cc, bb), msg:"Nearly: that’s " + coefT(kk, v) + ". Now divide both sides by " + nt(kk) + "." }, { v:dvd(cc, kk), msg:"You divided first and forgot the + " + nt(bb) + "." }); }
+    if (P.c && P.a && (f === "less" || f === "diff")){ var k2 = P.a || ONE, b2 = P.b || ZERO, c2 = P.c || ZERO;
+      M.diag.push({ v:dvd(sub(c2, b2), k2), msg:"To undo − " + nt(b2) + ", <i>add</i> " + nt(b2) + " to both sides, not subtract." }, { v:add(c2, b2), msg:"Nearly: that’s " + coefT(k2, v) + ". Now divide both sides by " + nt(k2) + "." }, { v:dvd(sub(b2, c2), k2), msg:"“" + nt(b2) + " less than” comes <i>after</i> the number: " + coefT(k2, v) + " − " + nt(b2) + ", not " + nt(b2) + " − " + coefT(k2, v) + "." }); }
+    if (P.c && P.a && f === "div"){ var k3 = P.a || ONE, b3 = P.b || ZERO, c3 = P.c || ZERO;
+      M.diag.push({ v:mul(sub(c3, b3), k3), msg:"To undo − " + nt(b3) + ", add " + nt(b3) + " to both sides first." }, { v:dvd(add(c3, b3), k3), msg:"To undo ÷ " + nt(k3) + ", <i>multiply</i> by " + nt(k3) + "." }, { v:add(c3, b3), msg:"Nearly: that’s n/" + nt(k3) + ". Multiply both sides by " + nt(k3) + "." }); }
+    M.hint = "Let n be the number. Write the sentence as an equation piece by piece, then undo each step in reverse order.";
+    return M;
+  };
+
+  /* ---- consecutive numbers ---- */
+  ALG.consecutive = function(P, W){
+    var f = P.form || "all", s = f === "all" ? ONE : R(2), cnt = P.a ? Number(P.a.n) : 3, c = P.c, v = "n";
+    if (!c) throw new UserErr("This story needs the sum of the numbers.");
+    if (cnt < 2 || cnt > 6) throw new UserErr("Use 2 to 6 consecutive numbers.");
+    var terms = [], L = LX(ZERO, ZERO);
+    for (var i = 0; i < cnt; i++){ var t = LX(ONE, mul(s, R(i))); terms.push(t); L = lxAdd(L, t); }
+    var wEq = terms.map(function(t, i){ return i ? "(" + lxT(t, v) + ")" : lxT(t, v); }).join(" + ") + " = " + nt(c);
+    var sol = solveSteps(L, LX(ZERO, c), v), n = sol.val;
+    if (!isInt(n)) throw new UserErr("No " + (f === "all" ? "" : f + " ") + "whole numbers in a row add up to " + Be(nt(c)) + ". Check the sum.");
+    if (f !== "all" && (n.n % 2n === 0n) !== (f === "even")) throw new UserErr("Those would be " + (f === "even" ? "odd" : "even") + " numbers — no " + f + " numbers in a row add up to " + Be(nt(c)) + ".");
+    var vals = terms.map(function(t){ return lxVal(t, n); }), M = { unit:"" }, gap = f === "all" ? "1" : "2";
+    M.known = [{ q:COUNTW[cnt] + " numbers", w:"in a row" + (f === "all" ? "" : ", all " + f + " — each one is 2 more than the last") }, { q:nt(c), w:"what they add up to" }];
+    M.ask = "the " + COUNTW[cnt] + " numbers";
+    M.idea = algIdea("All the numbers are tied to the first one: each is " + gap + " more than the one before. So call the first one " + v + ", write every number with " + v + ", and add them up.",
+      f === "all" ? "Consecutive means next to each other: n, n + 1, n + 2. Don’t divide " + nt(c) + " by " + cnt + " and stop — that gives the middle of the numbers, not all of them." : "Consecutive " + f + " numbers go up by 2 (like 12, 14, 16), so they are n, n + 2, n + 4 — not n + 1.");
+    M.eqn = eqnStep([[v, "the first (smallest) number"]], terms.map(function(t, i){ return [i === 0 ? "the first number" : "the " + ["", "second", "third", "fourth", "fifth", "sixth"][i] + " number", lxT(t, v)]; }).concat([["add up to", "="], [nt(c), nt(c)]]), wEq, [v]);
+    M.fig = { svg:barsSVG({ rows:[{ segs:terms.map(function(t, i){ return sg(lxVal(t, n), lxT(t, v), i % 2 ? "b" : "k"); }) }], tops:[{ row:0, from:0, to:cnt - 1, lab:nt(c) + " in all" }] }, "Bar model: consecutive numbers"),
+      lead:"Each box is one of the numbers; every box is " + gap + " longer than the one before." };
+    var lin = lxT(L, v) + " = " + nt(c), rows = [{ o:"=", h:mvH("Combine like terms") + vH(lin, [v]), say:"Collect the " + v + "’s and the numbers: " + Be(lin) + "." }].concat(stepRows(sol.steps, [v]));
+    rows.push({ o:"+", h:mvH("The others") + esc(vals.map(nt).join(", ")), say:"Then the numbers are " + Be(vals.map(nt).join(", ")) + "." });
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    var items = vals.map(function(x){ return { v:x, t:nt(x), lab:[] }; });
+    M.ans = listAns(items, "The numbers are " + Be(listText(items)) + ".");
+    M.sense = "Check in the story: " + Be(vals.map(nt).join(" + ") + " = " + nt(c)) + " ✓, and they are " + (f === "all" ? "consecutive" : "consecutive " + f + " numbers") + " ✓";
+    M.diag = [];
+    M.hint = "Let n be the first number. The next ones are n + " + gap + (cnt > 2 ? ", n + " + (2 * Number(gap)) : "") + "…";
+    return M;
+  };
+
+  /* ---- ages ---- */
+  ALG.age = function(P, W){
+    var N = W.N, N2 = W.N2, M = { unit:"years" }, f = P.form || "sum";
+    if (f === "times"){
+      var a = P.a, b = P.b, c = P.c, v = "k";
+      if (!a || !b || !c) throw new UserErr("This story needs: how many times as old now, how many years from now, and how many times as old then.");
+      var L = LX(a, b), Rr = LX(c, mul(c, b)), sol = solveSteps(L, Rr, v), k = sol.val;
+      if (sgn(k) <= 0) throw new UserErr("Those numbers don’t give a sensible age. Check them in <b>What the story says</b>.");
+      var wEq = coefT(a, v) + " + " + nt(b) + " = " + nt(c) + "(" + v + " + " + nt(b) + ")";
+      M.known = [{ q:nt(a) + " times", w:N2 + "’s age now, compared with " + N + "’s" }, { q:nt(b) + " years", w:"how far ahead we look" }, { q:nt(c) + " times", w:N2 + "’s age then, compared with " + N + "’s" }];
+      M.ask = "how old " + N + " is now";
+      M.idea = algIdea("Both ages depend on " + N + "’s age now. Call it " + v + ": then " + N2 + " is " + coefT(a, v) + ". In " + nt(b) + " years, <em>both</em> get " + nt(b) + " years older — and that future fact gives the equation.",
+        "Add the " + nt(b) + " years to both people: " + coefT(a, v) + " + " + nt(b) + " and " + v + " + " + nt(b) + ". The “" + nt(c) + " times” multiplies " + N + "’s whole future age, so it needs brackets: " + nt(c) + "(" + v + " + " + nt(b) + ").");
+      M.eqn = eqnStep([[v, N + "’s age now, in years"]], [[N + "’s age now", v], [N2 + "’s age now: " + nt(a) + " times as old", coefT(a, v)], [N + " in " + nt(b) + " years", v + " + " + nt(b)], [N2 + " in " + nt(b) + " years", coefT(a, v) + " + " + nt(b)], ["will be " + nt(c) + " times as old", "= " + nt(c) + "(" + v + " + " + nt(b) + ")"]], wEq, [v]);
+      M.fig = { svg:tableSVG(["", "now", "in " + nt(b) + " years"], [[N, v, v + " + " + nt(b)], [N2, coefT(a, v), coefT(a, v) + " + " + nt(b)]], -1, "Ages now and in " + nt(b) + " years"),
+        lead:"A table keeps the two times apart: everyone’s age goes up by the same " + nt(b) + " years." };
+      var lin = lxT(L, v) + " = " + lxT(Rr, v), rows = [{ o:"=", h:mvH("Multiply out") + vH(lin, [v]), say:"Multiply out the brackets: " + Be(lin) + "." }].concat(stepRows(sol.steps, [v]));
+      rows[0].h += solveLink(wEq);
+      M.calc = rows;
+      M.ans = { v:k, k:isInt(k) ? "n" : "q", w:"years", say:cap1(N) + " is " + Be(vT(k, "n", "years")) + " old now." };
+      M.sense = "Check in the story: " + N + " is " + Be(chkV(k)) + " and " + N2 + " is " + nt(a) + " × " + chkV(k) + " = " + Be(chkV(mul(a, k))) + ". In " + nt(b) + " years they’ll be " + Be(chkV(add(k, b))) + " and " + Be(chkV(add(mul(a, k), b))) + ", and " + chkV(add(mul(a, k), b)) + " = " + nt(c) + " × " + chkV(add(k, b)) + " ✓";
+      M.diag = [{ v:mul(a, k), msg:"That’s " + N2 + "’s age. The question asks about " + N + "." }, { v:dvd(sub(mul(c, b), b), sub(a, ONE)), msg:"Did you forget to add the " + nt(b) + " years to " + N + " too? Both people get older." }, { v:dvd(sub(b, mul(c, b)), sub(c, a)), msg:"Check the brackets: " + nt(c) + " times as old means " + nt(c) + "(" + v + " + " + nt(b) + ")." }];
+      M.hint = "Let k be " + N + "’s age now. Make a table: now, and in " + nt(b) + " years.";
+      return M;
+    }
+    var d = P.a, s = P.c, y = "y";
+    if (!d || !s) throw new UserErr("This story needs how many years older, and what the ages add up to.");
+    var L2 = LX(R(2), d), sol2 = solveSteps(L2, LX(ZERO, s), y), yv = sol2.val, ov = add(yv, d);
+    if (sgn(yv) <= 0) throw new UserErr("Those numbers don’t give sensible ages. Check them in <b>What the story says</b>.");
+    var wEq2 = y + " + (" + y + " + " + nt(d) + ") = " + nt(s);
+    M.known = [{ q:nt(d) + " years", w:"how much older " + N2 + " is than " + N }, { q:nt(s) + " years", w:"both ages added together" }];
+    M.ask = P.ask === "older" ? "how old " + N2 + " is" : P.ask === "younger" ? "how old " + N + " is" : "how old each of them is";
+    M.idea = algIdea("Both ages depend on the younger one. Call " + N + "’s age " + y + "; then " + N2 + " is " + y + " + " + nt(d) + ". Their total gives the equation.",
+      "Don’t just halve " + nt(s) + " — that would make them the same age. And “" + nt(d) + " years older” is added to " + N + "’s age, not multiplied.");
+    M.eqn = eqnStep([[y, N + "’s age (the younger one), in years"]], [[N + "’s age", y], [N2 + " is " + nt(d) + " years older", y + " + " + nt(d)], ["together their ages add up to", y + " + (" + y + " + " + nt(d) + ") ="], [nt(s), nt(s)]], wEq2, [y]);
+    M.fig = { svg:barsSVG({ rows:[{ name:N, segs:[sg(yv, y, "q")] }, { name:N2, segs:[sg(yv, y, "q"), sg(d, nt(d), "d")] }], right:{ from:0, to:1, lab:nt(s) + " together" } }, "Bar model of the two ages"),
+      lead:"Two bars: " + N2 + "’s is the same as " + N + "’s plus " + nt(d) + " more. Together they make " + nt(s) + "." };
+    var lin2 = lxT(L2, y) + " = " + nt(s), rows2 = [{ o:"=", h:mvH("Combine like terms") + vH(lin2, [y]), say:"Collect the " + y + "’s: " + Be(lin2) + "." }].concat(stepRows(sol2.steps, [y]));
+    rows2.push({ o:"+", h:mvH(N2) + esc(chkV(yv) + " + " + nt(d) + " = " + chkV(ov)), say:"Then " + N2 + " is " + Be(chkV(yv) + " + " + nt(d) + " = " + chkV(ov)) + "." });
+    rows2[0].h += solveLink(wEq2);
+    M.calc = rows2;
+    var both = [{ v:ov, t:N2 + " " + vT(ov, "n", "years"), lab:[N2.toLowerCase()] }, { v:yv, t:N + " " + vT(yv, "n", "years"), lab:[N.toLowerCase()] }];
+    if (P.ask === "older") M.ans = { v:ov, k:isInt(ov) ? "n" : "q", w:"years", say:cap1(N2) + " is " + Be(vT(ov, "n", "years")) + " old." };
+    else if (P.ask === "younger") M.ans = { v:yv, k:isInt(yv) ? "n" : "q", w:"years", say:cap1(N) + " is " + Be(vT(yv, "n", "years")) + " old." };
+    else M.ans = listAns(both, cap1(N2) + " is " + Be(vT(ov, "n", "years")) + " old and " + N + " is " + Be(vT(yv, "n", "years")) + " old.");
+    M.sense = "Check in the story: " + chkV(ov) + " is " + nt(d) + " more than " + chkV(yv) + " ✓, and " + Be(chkV(ov) + " + " + chkV(yv) + " = " + nt(s)) + " ✓";
+    M.diag = [{ v:dvd(s, R(2)), msg:"Halving " + nt(s) + " makes them the same age — but " + N2 + " is " + nt(d) + " years older. Write " + N2 + "’s age as y + " + nt(d) + "." },
+              { v:P.ask === "older" ? yv : ov, msg:"That’s the other person’s age — check who the question asks about." }];
+    M.hint = "Let y be " + N + "’s age. Then " + N2 + " is y + " + nt(d) + ", and y + (y + " + nt(d) + ") = " + nt(s) + ".";
+    return M;
+  };
+
+  /* ---- perimeter and angles ---- */
+  ALG.perimeter = function(P, W){
+    var f = P.form || "more", M = {}, u = W.u || "units";
+    if (f === "tri"){
+      var k = P.a || R(2), d = P.b || ZERO, v = "x", L = LX(add(k, R(2)), d), sol = solveSteps(L, LX(ZERO, R(180)), v), x = sol.val;
+      var e2 = coefT(k, v), e3 = lxT(LX(ONE, d), v), vals = [x, mul(k, x), add(x, d)];
+      if (vals.some(function(t){ return sgn(t) <= 0; })) throw new UserErr("Those numbers don’t make a triangle: every angle has to be more than 0°.");
+      var wEq = v + " + " + e2 + " + (" + e3 + ") = 180";
+      M.unit = "degrees";
+      M.known = [{ q:nt(k) + " times", w:"the second angle, compared with the first" }, { q:nt(absR(d)) + "°", w:"how much " + (sgn(d) < 0 ? "smaller" : "bigger") + " the third angle is than the first" }, { q:"180°", w:"the angles of any triangle add up to this" }];
+      M.ask = "the three angles";
+      M.idea = algIdea("All three angles depend on the first one. Call it " + v + " and write the others with " + v + ". The fact every triangle shares — its angles add up to 180° — gives the equation.", "The 180° isn’t in the story: it’s true of every triangle, so you have to bring it.");
+      M.eqn = eqnStep([[v, "the first angle, in degrees"]], [["the first angle", v], ["the second angle, " + kw(k) + " the first", e2], ["the third, " + nt(absR(d)) + "° " + (sgn(d) < 0 ? "less" : "more") + " than the first", e3], ["the angles of a triangle add up to 180°", "… = 180"]], wEq, [v]);
+      M.fig = { svg:triSVG([v, e2, e3], "Triangle with angles " + v + ", " + e2 + ", " + e3), lead:"The triangle with each angle written in terms of " + v + " (not to scale)." };
+      var lin = lxT(L, v) + " = 180", rows = [{ o:"=", h:mvH("Combine like terms") + vH(lin, [v]), say:"Collect the " + v + "’s: " + Be(lin) + "." }].concat(stepRows(sol.steps, [v]));
+      rows.push({ o:"×", h:mvH("The others") + esc(chkV(vals[1]) + "° and " + chkV(vals[2]) + "°"), say:"Then the second angle is " + Be(chkV(vals[1]) + "°") + " and the third is " + Be(chkV(vals[2]) + "°") + "." });
+      rows[0].h += solveLink(wEq);
+      M.calc = rows;
+      var items = vals.map(function(t, i){ return { v:t, t:chkV(t) + "°", lab:[["first"], ["second"], ["third"]][i] }; });
+      M.ans = listAns(items, "The angles are " + Be(listText(items)) + ".");
+      M.sense = "Check in the story: " + chkV(vals[1]) + " is " + nt(k) + " × " + chkV(x) + " ✓, " + chkV(vals[2]) + " is " + chkV(x) + " + " + nt(d) + " ✓, and " + Be(vals.map(chkV).join(" + ") + " = 180") + " ✓";
+      M.diag = [{ v:dvd(R(180), R(3)), msg:"60° each would be a triangle with three equal angles. Here the angles are different: write each one with x." }];
+      M.hint = "Let x be the first angle. The angles add up to 180°.";
+      return M;
+    }
+    var a = P.a, c = P.c, w = "w";
+    if (!a || !c) throw new UserErr("This story needs how the length compares with the width, and the perimeter.");
+    var lenE = f === "times" ? LX(a, ZERO) : LX(ONE, a), L2 = lxAdd(lxMul(lenE, R(2)), LX(R(2), ZERO)), sol2 = solveSteps(L2, LX(ZERO, c), w), wv = sol2.val, lv = lxVal(lenE, wv);
+    if (sgn(wv) <= 0) throw new UserErr("Those numbers don’t make a rectangle. Check them in <b>What the story says</b>.");
+    var lenT = lxT(lenE, w), wEq2 = "2(" + lenT + ") + 2" + w + " = " + nt(c);
+    if (f === "times") wEq2 = "2(" + lenT + ") + 2" + w + " = " + nt(c);
+    M.unit = u;
+    M.known = [{ q:f === "times" ? nt(a) + " times" : nt(a) + " " + u, w:f === "times" ? "the length, compared with the width" : "how much longer the length is than the width" }, { q:nt(c) + " " + u, w:"the perimeter — all the way around" }];
+    M.ask = P.ask === "width" ? "the width" : P.ask === "both" ? "the length and the width" : "the length";
+    M.idea = algIdea("The length is described using the width, so call the width " + w + ". The perimeter is all four sides added: two lengths and two widths. That gives the equation.",
+      "The perimeter has <em>two</em> lengths and <em>two</em> widths. " + lenT + " + " + w + " = " + nt(c) + " is only half the way around.");
+    M.eqn = eqnStep([[w, "the width, in " + u]], [["the width", w], ["the length is " + (f === "times" ? kw(a) + " the width" : nt(a) + " " + u + " more than the width"), lenT], ["the perimeter: two lengths and two widths", "2(" + lenT + ") + 2" + w], ["is " + nt(c) + " " + u, "= " + nt(c)]], wEq2, [w]);
+    M.fig = { svg:rectSVG(toN(lv), toN(wv), lenT, w, "Rectangle with length " + lenT + " and width " + w), lead:"The rectangle with its sides written in terms of " + w + ". Going all the way around: " + lenT + ", " + w + ", " + lenT + ", " + w + "." };
+    var lin2 = lxT(L2, w) + " = " + nt(c), rows2 = [{ o:"=", h:mvH("Multiply out, combine") + vH(lin2, [w]), say:"Multiply out and collect the " + w + "’s: " + Be(lin2) + "." }].concat(stepRows(sol2.steps, [w]));
+    rows2.push({ o:f === "times" ? "×" : "+", h:mvH("The length") + esc((f === "times" ? nt(a) + " × " + chkV(wv) : chkV(wv) + " + " + nt(a)) + " = " + chkV(lv)), say:"Then the length is " + Be(chkV(lv) + " " + u) + "." });
+    rows2[0].h += solveLink(wEq2);
+    M.calc = rows2;
+    var lI = { v:lv, t:"length " + vT(lv, "n", u), lab:["length", "long", "l"] }, wI = { v:wv, t:"width " + vT(wv, "n", u), lab:["width", "wide", "w"] };
+    if (P.ask === "width") M.ans = { v:wv, k:isInt(wv) ? "n" : "q", w:u, say:"The rectangle is " + Be(vT(wv, "n", u)) + " wide." };
+    else if (P.ask === "both") M.ans = listAns([lI, wI], "The length is " + Be(vT(lv, "n", u)) + " and the width is " + Be(vT(wv, "n", u)) + ".");
+    else M.ans = { v:lv, k:isInt(lv) ? "n" : "q", w:u, say:"The rectangle is " + Be(vT(lv, "n", u)) + " long." };
+    M.sense = "Check in the story: the length " + chkV(lv) + " is " + (f === "times" ? nt(a) + " × " + chkV(wv) : chkV(wv) + " + " + nt(a)) + " ✓, and all the way around " + Be(chkV(lv) + " + " + chkV(wv) + " + " + chkV(lv) + " + " + chkV(wv) + " = " + nt(c)) + " ✓";
+    M.diag = [{ v:P.ask === "width" ? lv : wv, msg:"That’s the " + (P.ask === "width" ? "length" : "width") + " — the question asks for the " + (P.ask === "width" ? "width" : "length") + "." },
+              { v:dvd(c, R(4)), msg:"That would be a square. This rectangle’s length is " + (f === "times" ? kw(a) : nt(a) + " " + u + " more than") + " its width." },
+              { v:f === "times" ? dvd(c, add(a, ONE)) : dvd(sub(c, a), R(2)), msg:"That uses only one length and one width — the perimeter goes all the way around: two of each." }];
+    if (P.ask === "both") M.diag = [];
+    M.hint = "Let w be the width. The length is " + lenT + ". Perimeter = 2 × length + 2 × width.";
+    return M;
+  };
+
+  /* ---- two plans that cost the same ---- */
+  ALG.plans = function(P, W){
+    var a = P.a || ZERO, b = P.b, c = P.c || ZERO, d = P.d, unit = W.unit || "times", u1 = singular(unit), v = u1.charAt(0) === "w" ? "w" : u1.charAt(0) === "h" ? "h" : u1.charAt(0) === "v" ? "v" : "n";
+    if (!b || !d) throw new UserErr("This story needs how much each plan adds each time.");
+    var A = W.A || W.N || "Plan A", Bn = W.B || W.N2 || "Plan B", L = LX(b, a), Rr = LX(d, c), sol = solveSteps(L, Rr, v), n = sol.val, M = { unit:unit };
+    if (sgn(n) < 0) throw new UserErr("Those two plans never cost the same after you start — check the numbers in <b>What the story says</b>.");
+    var eA = lxT(LX(b, a), v).replace(/(\d)/g, "$1"), wEq = usd(a).replace("$", "") + " + " + nt(b) + v + " = " + (sgn(c) ? nt(c) + " + " : "") + nt(d) + v;
+    wEq = (sgn(a) ? nt(a) + " + " : "") + coefT(b, v) + " = " + (sgn(c) ? nt(c) + " + " : "") + coefT(d, v);
+    var sv = !!W.saving, money = function(x){ return usd(x); };
+    M.known = [{ q:money(a) + " + " + money(b) + " " + (W.per || "each time"), w:A }, { q:(sgn(c) ? money(c) + " + " : "") + money(d) + " " + (W.per || "each time"), w:Bn }];
+    M.ask = "after how many " + unit + " the two are the same";
+    M.idea = algIdea("Each plan’s total depends on the number of " + unit + ". Call it " + v + " and write each total with " + v + ". “The same” is an equals sign between them.",
+      "The starting amounts and the amounts per " + u1 + " can’t be mixed: " + money(a) + " is paid once, " + money(b) + " is paid every " + u1 + ".");
+    M.eqn = eqnStep([[v, "the number of " + unit]], [[A + "’s total", (sgn(a) ? nt(a) + " + " : "") + coefT(b, v)], [Bn + "’s total", (sgn(c) ? nt(c) + " + " : "") + coefT(d, v)], [sv ? "the same amount" : "cost the same", "="]], wEq, [v]);
+    var nn = isInt(n) ? Number(n.n) : Math.ceil(toN(n)), start = Math.max(0, nn - 3), rowsT = [], hl = -1;
+    for (var i = start; i <= nn + 2; i++){ var ai = lxVal(L, R(i)), bi = lxVal(Rr, R(i)); if (isInt(n) && i === nn) hl = rowsT.length; rowsT.push([String(i), usd(ai), usd(bi)]); }
+    M.fig = { svg:tableSVG([unit, A, Bn], rowsT, hl, "Table of values for both plans"), lead:"A table of values: one row for each number of " + unit + ". Look for the row where the two totals match." };
+    var rows = stepRows(sol.steps, [v]);
+    if (!rows.length) rows = [{ o:"=", h:vH(wEq, [v]), say:Be(wEq) }];
+    rows[0].h += solveLink(wEq);
+    rows.push({ o:"=", h:mvH("Graph it") + '<span class="golink">Each plan is a straight line: ' + lineLink(b, a, A + " on the Slope Grid") + " · " + lineLink(d, c, Bn + " on the Slope Grid") + "</span>", say:"Each plan graphs as a straight line; they cross at " + Be(v + " = " + chkV(n)) + "." });
+    M.calc = rows;
+    var tot = lxVal(L, n);
+    M.ans = { v:n, k:isInt(n) ? "n" : "q", w:unit, say:"After " + Be(vT(n, "n", unit)) + ", both " + (sv ? "have " : "cost ") + Be(isCents(tot) ? usd(tot) : money(roundK(tot, 2))) + "." };
+    M.sense = "Check in the story: " + A + " " + (sv ? "has " : "costs ") + Be(usd(a) + " + " + chkV(n) + " × " + usd(b) + " = " + usd(roundK(tot, 2))) + " and " + Bn + " " + (sv ? "has " : "costs ") + Be((sgn(c) ? usd(c) + " + " : "") + chkV(n) + " × " + usd(d) + " = " + usd(roundK(lxVal(Rr, n), 2))) + " ✓";
+    M.diag = [{ v:dvd(sub(a, c), add(b, d)), msg:"Check the equation: the per-" + u1 + " amounts are on opposite sides, so they come together by subtracting (" + nt(d) + v + " − " + nt(b) + v + "), not adding." },
+              { v:dvd(a, d), msg:"Don’t forget " + A + "’s " + usd(b) + " per " + u1 + " — both plans grow." }, { v:tot, msg:"That’s the cost when they match. The question asks how many " + unit + "." }];
+    M.hint = "Let " + v + " be the number of " + unit + ". Write each plan’s total, then set them equal.";
+    return M;
+  };
+
+  /* ---- two unknowns: a system ---- */
+  ALG.twounknown = function(P, W){
+    var f = P.form || "tickets", M = {};
+    if (f === "numbers"){
+      var s = P.c, d = P.d;
+      if (!s || !d) throw new UserErr("This story needs the sum and the difference.");
+      var x = dvd(add(s, d), R(2)), y = sub(s, x), e1 = "x + y = " + nt(s), e2 = "x − y = " + nt(d);
+      M.unit = "";
+      M.known = [{ q:nt(s), w:"what the two numbers add up to" }, { q:nt(d), w:"their difference — how much bigger one is" }];
+      M.ask = "the two numbers";
+      M.idea = algIdea("There are two unknown numbers and two facts about them. Call them x (the bigger) and y (the smaller): each fact is an equation, and together they make a <em>system</em>.",
+        "Don’t halve " + nt(s) + ": that makes two equal numbers, but they differ by " + nt(d) + ".");
+      M.eqn = { lets:[["x", "the bigger number"], ["y", "the smaller number"]], pieces:[["two numbers add up to " + nt(s), e1], ["their difference is " + nt(d), e2]], eqT:e1 + "; " + e2, eqH:vH(e1, ["x", "y"]) + "<br>" + vH(e2, ["x", "y"]), vs:["x", "y"] };
+      M.fig = { svg:barsSVG({ rows:[{ name:"bigger", segs:[sg(y, "y", "k"), sg(d, nt(d), "d")] }, { name:"smaller", segs:[sg(y, "y", "k")] }], right:{ from:0, to:1, lab:nt(s) + " together" } }, "Bar model of the two numbers"),
+        lead:"The bigger number is the smaller one plus " + nt(d) + ". Both bars together make " + nt(s) + "." };
+      M.calc = [{ o:"+", h:mvH("Add the equations") + vH("2x = " + nt(add(s, d)), ["x"]) + sysLink("x+y=" + plainN(s), "x-y=" + plainN(d)), say:"Add the two equations — the y’s cancel: " + Be("2x = " + nt(add(s, d))) + "." },
+                { o:"÷", h:mvH("÷ 2 on both sides") + vH("x = " + chkV(x), ["x"]), say:"Divide both sides by 2: " + Be("x = " + chkV(x)) + "." },
+                { o:"−", h:mvH("Back into x + y = " + nt(s)) + vH("y = " + nt(s) + " − " + chkV(x) + " = " + chkV(y), ["y"]), say:"Then " + Be("y = " + nt(s) + " − " + chkV(x) + " = " + chkV(y)) + "." }];
+      var it = [{ v:x, t:chkV(x), lab:["bigger", "larger", "x"] }, { v:y, t:chkV(y), lab:["smaller", "y"] }];
+      M.ans = listAns(it, "The numbers are " + Be(chkV(x)) + " and " + Be(chkV(y)) + ".");
+      M.sense = "Check in the story: " + Be(chkV(x) + " + " + chkV(y) + " = " + nt(s)) + " ✓ and " + Be(chkV(x) + " − " + chkV(y) + " = " + nt(d)) + " ✓";
+      M.diag = [];
+      M.hint = "Let x and y be the numbers: x + y = " + nt(s) + " and x − y = " + nt(d) + ". Add the two equations.";
+      return M;
+    }
+    var coins = f === "coins", a = coins ? R(W.v1 || 10) : P.a, b = coins ? R(W.v2 || 25) : P.b, c = P.c, tot = coins && P.d ? mul(P.d, H100) : P.d;
+    if (!a || !b || !c || !tot) throw new UserErr("This story needs two prices (or coin values), how many in all, and the total.");
+    var k1 = coins ? W.k1 || "dimes" : W.k1 || "first kind", k2 = coins ? W.k2 || "quarters" : W.k2 || "second kind", it2 = coins ? "" : W.it || "items";
+    var u1 = (k1.charAt(0) || "a").toLowerCase(), u2 = (k2.charAt(0) || "b").toLowerCase();
+    if (u1 === u2) u2 = u1 === "x" ? "y" : "y";
+    if (/^[^a-z]$/.test(u1) || u1 === u2) { u1 = "x"; u2 = "y"; }
+    var E1 = u1 + " + " + u2 + " = " + nt(c), E2 = nt(a) + u1 + " + " + nt(b) + u2 + " = " + nt(tot);
+    // substitution: u1 = c − u2 → a(c − u2) + b·u2 = tot → (b − a)u2 + ac = tot
+    var Lx = LX(sub(b, a), mul(a, c)), sol = solveSteps(Lx, LX(ZERO, tot), u2), y2 = sol.val, x2 = sub(c, y2);
+    if (sgn(y2) < 0 || sgn(x2) < 0) throw new UserErr("Those numbers don’t work — one of the counts comes out below zero. Check them in <b>What the story says</b>.");
+    var lab1 = coins ? k1 : k1 + " " + it2, lab2 = coins ? k2 : k2 + " " + it2;
+    M.unit = coins ? "coins" : it2;
+    M.known = [{ q:coins ? nt(a) + "¢" : usd(a), w:"one " + singular(lab1) }, { q:coins ? nt(b) + "¢" : usd(b), w:"one " + singular(lab2) }, { q:nt(c), w:"how many " + (coins ? "coins" : it2) + " in all" }, { q:coins ? usd(P.d) + " = " + nt(tot) + "¢" : usd(tot), w:"what they " + (coins ? "are worth" : "cost") + " in all" }];
+    M.ask = "how many of each";
+    M.idea = algIdea("There are two unknown counts — call them " + u1 + " (" + lab1 + ") and " + u2 + " (" + lab2 + "). The story gives two facts: how many in all, and how much they " + (coins ? "are worth" : "cost") + ". Two facts, two equations: a <em>system</em>." + (coins ? " Work in cents, so there are no decimals." : ""),
+      "Each kind is multiplied by its own " + (coins ? "value" : "price") + ". Don’t split " + nt(c) + " in half — the totals only match one way.");
+    M.eqn = { lets:[[u1, "the number of " + lab1], [u2, "the number of " + lab2]],
+      pieces:[[nt(c) + " in all", E1], ["each " + singular(lab1) + " is " + (coins ? nt(a) + "¢" : usd(a)) + ", each " + singular(lab2) + " " + (coins ? nt(b) + "¢" : usd(b)) + ", " + (coins ? nt(tot) + "¢" : usd(tot)) + " in all", E2]],
+      eqT:E1 + "; " + E2, eqH:vH(E1, [u1, u2]) + "<br>" + vH(E2, [u1, u2]), vs:[u1, u2] };
+    M.fig = { svg:tableSVG(["", "how many", coins ? "each" : "price", coins ? "worth" : "money"], [[k1, u1, coins ? nt(a) + "¢" : usd(a), coefT(a, u1)], [k2, u2, coins ? nt(b) + "¢" : usd(b), coefT(b, u2)], ["in all", nt(c), "", coins ? nt(tot) + "¢" : usd(tot)]], 2, "Table of the two kinds"),
+      lead:"A table: each row is one kind. The “how many” column adds up to " + nt(c) + "; the last column adds up to " + (coins ? nt(tot) + "¢" : usd(tot)) + "." };
+    var sub1 = u1 + " = " + nt(c) + " − " + u2, sub2 = nt(a) + "(" + nt(c) + " − " + u2 + ") + " + coefT(b, u2) + " = " + nt(tot), exp = lxT(Lx, u2) + " = " + nt(tot);
+    var rows = [{ o:"−", h:mvH("From the first equation") + vH(sub1, [u1, u2]) + sysLink("x+y=" + plainN(c), plainN(a) + "x+" + plainN(b) + "y=" + plainN(tot), "(x = " + lab1 + ", y = " + lab2 + ")"), say:"Get " + u1 + " by itself in the first equation: " + Be(sub1) + "." },
+                { o:"=", h:mvH("Substitute") + vH(sub2, [u2]), say:"Put that into the second equation: " + Be(sub2) + "." },
+                { o:"=", h:mvH("Multiply out, combine") + vH(exp, [u2]), say:"Multiply out and collect the " + u2 + "’s: " + Be(exp) + "." }].concat(stepRows(sol.steps, [u2]));
+    rows.push({ o:"−", h:mvH("Back to the first") + vH(u1 + " = " + nt(c) + " − " + chkV(y2) + " = " + chkV(x2), [u1]), say:"Then " + Be(u1 + " = " + nt(c) + " − " + chkV(y2) + " = " + chkV(x2)) + "." });
+    M.calc = rows;
+    var items = [{ v:x2, t:chkV(x2) + " " + lab1, lab:[k1.toLowerCase(), singular(k1.toLowerCase()), u1] }, { v:y2, t:chkV(y2) + " " + lab2, lab:[k2.toLowerCase(), singular(k2.toLowerCase()), u2] }];
+    M.ans = listAns(items, "There are " + Be(items[0].t) + " and " + Be(items[1].t) + ".");
+    M.sense = "Check in the story: " + Be(chkV(x2) + " + " + chkV(y2) + " = " + nt(c)) + " ✓, and " + Be(chkV(x2) + " × " + (coins ? nt(a) + "¢" : usd(a)) + " + " + chkV(y2) + " × " + (coins ? nt(b) + "¢" : usd(b)) + " = " + (coins ? nt(tot) + "¢" : usd(tot))) + " ✓";
+    M.diag = [];
+    M.hint = "Let " + u1 + " and " + u2 + " be the two counts: " + E1 + " and " + E2 + ". Get " + u1 + " by itself and substitute.";
+    return M;
+  };
+
+  /* ---- distance, rate and time ---- */
+  ALG.motion = function(P, W){
+    var f = P.form || "opposite", a = P.a, b = P.b, c = P.c, s = W.s || "mph", u = W.u || "miles", M = {};
+    if (!a || !b || !c) throw new UserErr("This story needs both speeds and " + (f === "roundtrip" ? "the total time" : f === "catchup" ? "the head start" : "the distance apart") + ".");
+    var T1 = W.T1 || "first", T2 = W.T2 || "second", v, L, Rr, wEq, sol, val, rows, tbl;
+    if (f === "roundtrip"){
+      v = "d"; L = LX(add(dvd(ONE, a), dvd(ONE, b)), ZERO); Rr = LX(ZERO, c); wEq = v + "/" + nt(a) + " + " + v + "/" + nt(b) + " = " + nt(c);
+      sol = solveSteps(L, Rr, v, { clear:true }); val = sol.val;
+      M.unit = u;
+      M.known = [{ q:nt(a) + " " + s, w:"the speed there" }, { q:nt(b) + " " + s, w:"the speed back" }, { q:nt(c) + " hours", w:"the whole trip, there and back" }];
+      M.ask = "how far away it is";
+      M.idea = algIdea("The distance is the same both ways but the speeds differ, so the two times differ. Time = distance ÷ speed, so call the distance " + v + ": the times are " + v + "/" + nt(a) + " and " + v + "/" + nt(b) + ", and they add up to " + nt(c) + " hours.",
+        "Don’t average the speeds: the slower part of the trip takes longer, so the average isn’t " + nt(dvd(add(a, b), R(2))) + " " + s + ".");
+      M.eqn = eqnStep([[v, "the distance one way, in " + u]], [["the time there: distance ÷ speed", v + "/" + nt(a)], ["the time back", v + "/" + nt(b)], ["the round trip takes " + nt(c) + " hours", "… = " + nt(c)]], wEq, [v]);
+      tbl = tableSVG(["", "rate", "time", "distance"], [["there", nt(a) + " " + s, v + "/" + nt(a), v], ["back", nt(b) + " " + s, v + "/" + nt(b), v], ["in all", "", nt(c) + " h", ""]], 2, "Distance, rate and time table");
+      M.fig = { svg:tbl + motionSVG("roundtrip", v + " at " + nt(a) + " " + s, v + " at " + nt(b) + " " + s, nt(c) + " hours in all", "There and back"), lead:"A d = r · t table, then the trip itself: the same distance each way, at two speeds." };
+      rows = stepRows(sol.steps, [v]);
+      rows[0].h += solveLink(wEq);
+      M.calc = rows;
+      M.ans = { v:val, k:isInt(val) ? "n" : "q", w:u, say:"It is " + Be(vT(val, "n", u)) + " away." };
+      M.sense = "Check in the story: there takes " + chkV(val) + " ÷ " + nt(a) + " = " + Be(chkV(dvd(val, a)) + " h") + ", back takes " + chkV(val) + " ÷ " + nt(b) + " = " + Be(chkV(dvd(val, b)) + " h") + ", and together that’s " + Be(chkV(add(dvd(val, a), dvd(val, b))) + " h") + " ✓";
+      M.diag = [{ v:dvd(mul(c, add(a, b)), R(4)), msg:"That uses the average of the two speeds. The slower part of the trip takes longer, so write each time as distance ÷ speed." }, { v:mul(c, a), msg:"That’s as if the whole trip went at " + nt(a) + " " + s + ", one way. Write the time each way." }];
+      M.hint = "Let d be the distance. Time there = d/" + nt(a) + ", time back = d/" + nt(b) + "; they add up to " + nt(c) + ".";
+      return M;
+    }
+    v = "t";
+    if (f === "catchup"){
+      L = LX(a, mul(a, c)); Rr = LX(b, ZERO); wEq = nt(a) + "(" + v + " + " + nt(c) + ") = " + coefT(b, v);
+      M.known = [{ q:nt(a) + " " + s, w:"the " + T1 + "’s speed — it leaves first" }, { q:nt(c) + " hours", w:"the " + T1 + "’s head start" }, { q:nt(b) + " " + s, w:"the " + T2 + "’s speed" }];
+      M.ask = "how many hours until the " + T2 + " catches up";
+      M.idea = algIdea("When the " + T2 + " catches up, both have gone the same distance. Call the " + T2 + "’s time " + v + "; the " + T1 + " has been going " + nt(c) + " hours longer, " + v + " + " + nt(c) + ". Distance = rate × time for each, and the distances are equal.",
+        "The " + T1 + " drives for " + v + " + " + nt(c) + " hours, not " + v + " — it had a head start.");
+      M.eqn = eqnStep([[v, "the " + T2 + "’s time, in hours"]], [["the " + T1 + "’s distance: " + nt(a) + " " + s + " for " + v + " + " + nt(c) + " hours", nt(a) + "(" + v + " + " + nt(c) + ")"], ["the " + T2 + "’s distance", coefT(b, v)], ["catches up: the distances are equal", "="]], wEq, [v]);
+      tbl = tableSVG(["", "rate", "time", "distance"], [[T1, nt(a), v + " + " + nt(c), nt(a) + "(" + v + " + " + nt(c) + ")"], [T2, nt(b), v, coefT(b, v)]], -1, "Distance, rate and time table");
+      M.fig = { svg:tbl + motionSVG("catchup", T1 + ": " + nt(a) + "(" + v + " + " + nt(c) + ")", T2 + ": " + nt(b) + v, "they meet here", "Catching up"), lead:"A d = r · t table, then the two trips: they end at the same place, so the distances are equal." };
+    } else {
+      L = LX(add(a, b), ZERO); Rr = LX(ZERO, c); wEq = coefT(a, v) + " + " + coefT(b, v) + " = " + nt(c);
+      M.known = [{ q:nt(a) + " " + s, w:"one speed" }, { q:nt(b) + " " + s, w:"the other speed" }, { q:nt(c) + " " + u, w:"how far apart they will be" }];
+      M.ask = "how many hours until they are " + nt(c) + " " + u + " apart";
+      M.idea = algIdea("They go opposite ways for the same time — call it " + v + " hours. Each distance is rate × time, and the two distances together make the gap of " + nt(c) + " " + u + ".",
+        "Going opposite ways, the gap grows by <em>both</em> speeds each hour: add them. (Subtract them only when one is catching up with the other.)");
+      M.eqn = eqnStep([[v, "the time, in hours"]], [["one goes " + nt(a) + " " + s + " for " + v + " hours", coefT(a, v)], ["the other goes " + nt(b) + " " + s, coefT(b, v)], ["together they are " + nt(c) + " " + u + " apart", "… = " + nt(c)]], wEq, [v]);
+      tbl = tableSVG(["", "rate", "time", "distance"], [["one", nt(a), v, coefT(a, v)], ["other", nt(b), v, coefT(b, v)], ["apart", "", "", nt(c)]], 2, "Distance, rate and time table");
+      M.fig = { svg:tbl + motionSVG("opposite", coefT(a, v) + " " + u, coefT(b, v) + " " + u, nt(c) + " " + u + " apart", "Opposite directions"), lead:"A d = r · t table, then the trips: from the same start, one each way; the two distances make the gap." };
+    }
+    sol = solveSteps(L, Rr, v); val = sol.val;
+    if (sgn(val) <= 0) throw new UserErr("Those speeds never give a meeting — check them in <b>What the story says</b>.");
+    var lin = lxT(L, v) + " = " + lxT(Rr, v);
+    rows = (lin !== wEq ? [{ o:"=", h:mvH(f === "catchup" ? "Multiply out" : "Combine like terms") + vH(lin, [v]), say:(f === "catchup" ? "Multiply out: " : "Collect the " + v + "’s: ") + Be(lin) + "." }] : []).concat(stepRows(sol.steps, [v]));
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    M.unit = "hours";
+    M.ans = { v:val, k:isInt(val) ? "n" : "q", w:"hours", say:(f === "catchup" ? "The " + T2 + " catches up after " : "They are " + nt(c) + " " + u + " apart after ") + Be(vT(val, "n", "hours")) + "." };
+    M.sense = f === "catchup" ? "Check in the story: the " + T1 + " goes " + nt(a) + " × " + chkV(add(val, c)) + " = " + Be(chkV(mul(a, add(val, c))) + " " + u) + " and the " + T2 + " goes " + nt(b) + " × " + chkV(val) + " = " + Be(chkV(mul(b, val)) + " " + u) + " — the same ✓"
+      : "Check in the story: " + nt(a) + " × " + chkV(val) + " + " + nt(b) + " × " + chkV(val) + " = " + Be(chkV(mul(add(a, b), val)) + " " + u) + " apart ✓";
+    M.diag = f === "catchup" ? [{ v:dvd(mul(a, c), add(a, b)), msg:"Catching up, the gap shrinks by the <i>difference</i> of the speeds each hour, not the sum." }, { v:add(val, c), msg:"That’s the " + T1 + "’s time. The question asks how long after the " + T2 + " leaves." }]
+      : (eqR(a, b) ? [] : [{ v:dvd(c, absR(sub(a, b))), msg:"Going opposite ways, the gap grows by <i>both</i> speeds: add them, don’t subtract." }]).concat([{ v:dvd(c, a), msg:"Both are moving, so the gap grows by " + nt(a) + " + " + nt(b) + " every hour." }]);
+    M.hint = f === "catchup" ? "Let t be the " + T2 + "’s time. The " + T1 + "’s time is t + " + nt(c) + ". Set the distances equal." : "Let t be the time. Distance apart = " + nt(a) + "t + " + nt(b) + "t.";
+    return M;
+  };
+
+  /* ---- percent change backwards ---- */
+  ALG.percentback = function(P, W){
+    var f = P.form || "off", p = P.p, c = P.c, M = { unit:"dollars" }, wage = !!W.wage, v = wage ? "w" : "p";
+    if (!p || !c) throw new UserErr("This story needs the percent and the amount after the change.");
+    var up = f === "raise", k = up ? add(ONE, dvd(p, H100)) : sub(ONE, dvd(p, H100)), x = dvd(c, k), pT = nt(p) + "%", kD = nt(dvd(p, H100));
+    if (sgn(k) <= 0) throw new UserErr("A discount of 100% or more leaves nothing to pay.");
+    var wEq = coefT(k, v) + " = " + nt(c), what = wage ? "the pay before" : "the original price", item = W.i1 || "it";
+    M.known = [{ q:pT, w:up ? "the increase — a part of the original amount" : "the discount — a part of the original price" }, { q:usd(c), w:"the amount after the change" }];
+    M.ask = wage ? "the pay before the change" : "the original price";
+    M.idea = algIdea("The " + pT + " is a percent of the <em>original</em> amount — the one we don’t know. So call the original " + v + ". After the change it is " + v + " " + (up ? "+" : "−") + " " + kD + v + " = " + coefT(k, v) + ", and that equals " + usd(c) + ".",
+      "Don’t take " + pT + " of " + usd(c) + " and " + (up ? "take it away" : "add it on") + ": the " + pT + " was worked out on the original amount, not on " + usd(c) + ".");
+    M.eqn = eqnStep([[v, what + ", in dollars"]], [[what, v], [(up ? "a " + pT + " increase: add " : "a " + pT + " discount: take away ") + pT + " of " + v, v + " " + (up ? "+" : "−") + " " + kD + v], ["that leaves", coefT(k, v)], ["is " + usd(c), "= " + nt(c)]], wEq, [v]);
+    var keep = up ? add(H100, p) : sub(H100, p);
+    M.fig = { svg:barsSVG({ rows:[{ name:"percent", segs:up ? [sg(H100, "100%", "q"), sg(p, "+" + pT, "b")] : [sg(keep, nt(keep) + "%", "k"), sg(p, pT, "x")] }, { name:"dollars", segs:up ? [sg(H100, "? (" + v + ")", "q"), sg(p, "", "b")] : [sg(keep, usd(c), "k"), sg(p, "", "x")] }],
+        tops:[{ row:0, from:0, to:up ? 0 : 1, lab:"100% = " + v + " = ?" }], bots:[{ row:1, from:0, to:up ? 1 : 0, lab:usd(c) + " = " + nt(keep) + "% of " + v }] }, "Percent bar: " + nt(keep) + "% is " + usd(c)),
+      lead:"The whole bar is the original amount, 100%. After the change, " + nt(keep) + "% of it is " + usd(c) + "." };
+    var sol = solveSteps(LX(k, ZERO), LX(ZERO, c), v);
+    var rows = [{ o:"=", h:mvH("Combine like terms") + vH(v + " " + (up ? "+" : "−") + " " + kD + v + " = " + nt(c), [v]), say:Be(v + " " + (up ? "+" : "−") + " " + kD + v + " = " + coefT(k, v)) + " — " + nt(keep) + "% of " + v + "." }].concat(stepRows(sol.steps, [v]));
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    M.ans = { v:x, k:"$", w:"", say:wage ? cap1(W.N) + " earned " + Be(fmtK(x, "$")) + " an hour before." : "The original price was " + Be(fmtK(x, "$")) + "." };
+    var chg = mul(x, dvd(p, H100));
+    M.sense = "Check in the story: " + pT + " of " + usd(roundK(x, 2)) + " is " + Be(usd(roundK(chg, 2))) + ", and " + usd(roundK(x, 2)) + (up ? " + " : " − ") + usd(roundK(chg, 2)) + " = " + Be(usd(c)) + " ✓";
+    M.diag = [{ v:up ? sub(c, mul(c, dvd(p, H100))) : add(c, mul(c, dvd(p, H100))), msg:"That takes " + pT + " of " + usd(c) + " and " + (up ? "subtracts" : "adds") + " it. But the " + pT + " was a percent of the <i>original</i> amount, which is bigger" + (up ? "" : " than " + usd(c)) + ". Solve " + wEq + "." },
+              { v:dvd(c, dvd(p, H100)), msg:"Dividing by " + kD + " treats " + usd(c) + " as the " + pT + " part. It’s the part that’s left: " + nt(keep) + "%." },
+              { v:mul(c, k), msg:"You multiplied by " + nt(k) + ". " + usd(c) + " is already the amount after the change — divide by " + nt(k) + " to go back." }];
+    M.hint = "Let " + v + " be the original. After the change it’s " + coefT(k, v) + " = " + nt(c) + ".";
+    return M;
+  };
+
   /* ===================== the setting and the words of a story ===================== */
-  var TYPES = ["join", "separate", "parts", "compare", "groups", "array", "times", "rate", "money", "time", "fraction", "percent", "twostep", "remainder"];
+  var TYPES = ["join", "separate", "parts", "compare", "groups", "array", "times", "rate", "money", "time", "fraction", "percent", "twostep", "remainder", "algebra"];
   var GROUPS = [["any", "Any kind", "?"], ["addsub", "Put together / take apart", "+ −"], ["compare", "Compare", "−"], ["groups", "Equal groups", "×"],
                 ["array", "Arrays & area", "▦"], ["times", "Times as many", "×"], ["rate", "Rates & unit price", "÷"], ["money", "Money & change", "$"],
-                ["time", "Elapsed time", "⏱"], ["fraction", "Fraction of", "⅖"], ["percent", "Percent & discount", "%"], ["twostep", "Two-step", "2×"], ["remainder", "Remainders", "R"]];
-  var DEFKIND = { groups:"count", array:"array", rate:"price", money:"one", fraction:"part", percent:"of", twostep:"addsub", remainder:"up" };
+                ["time", "Elapsed time", "⏱"], ["fraction", "Fraction of", "⅖"], ["percent", "Percent & discount", "%"], ["twostep", "Two-step", "2×"], ["remainder", "Remainders", "R"], ["algebra", "Algebra stories", "x ="]];
+  var DEFKIND = { algebra:"number", groups:"count", array:"array", rate:"price", money:"one", fraction:"part", percent:"of", twostep:"addsub", remainder:"up" };
   function groupOf(type){ return TY[type] ? TY[type].group : "any"; }
   function kindsOf(type){ return TY[type] && TY[type].kinds ? TY[type].kinds.map(function(k){ return k[0]; }) : []; }
   function ctxFits(type, kind, c){
@@ -2118,9 +2743,16 @@
     if (type === "remainder") return c.kind === kind;
     return true;
   }
+  var ALGCTX = { plans:function(c){ return c.plans; }, motion:function(c){ return c.mv; }, percentback:function(c){ return c.pb; } };
   function ctxOf(P){
     var T = TY[P.type];
     if (!T || !T.ctxs) return null;
+    if (P.type === "algebra"){
+      var fit = ALGCTX[P.kind] || (P.kind === "twounknown" ? function(c){ return P.form === "coins" ? c.coins : P.form === "tickets" ? c.tk : false; } : P.kind === "perimeter" && P.form !== "tri" ? function(c){ return !!c.u && !c.mv; } : null);
+      if (!fit) return null;
+      var hits = T.ctxs.filter(fit);
+      return hits.filter(function(c){ return c.id === P.ctx; })[0] || hits[0] || null;
+    }
     var hit = T.ctxs.filter(function(c){ return c.id === P.ctx && ctxFits(P.type, P.kind, c); })[0];
     return hit || T.ctxs.filter(function(c){ return ctxFits(P.type, P.kind, c); })[0] || T.ctxs[0];
   }
@@ -2196,6 +2828,7 @@
   }
   // the answer as plain words: 38 shells · $4.50 · 5:35 p.m. · 1 hour 50 minutes · 24 square meters
   function ansText(A){
+    if (A.k === "list") return listText(A.list);
     if (A.k === "q") return qText(A.v, A.w);
     if (A.k === "qr") return qty(A.v, A.w) + " each, " + nt(A.r) + " left over";
     if (A.k === "$") return isCents(A.v) ? usd(A.v) : usd(roundK(A.v, 2));
@@ -2204,10 +2837,11 @@
     return nt(A.v) + (A.w ? " " + noun(A.v, A.w) : "");
   }
   function ansHtml(A){
+    if (A.k === "list") return A.list.map(function(it, i){ return (i ? '<span class="word">' + (i === A.list.length - 1 ? (A.list.length > 2 ? ", and" : "and") : ",") + "</span>" : "") + "<span>" + esc(it.t) + "</span>"; }).join("");
     if (A.k === "q"){
       if (isInt(A.v)) return "<span>" + nh(A.v) + "</span>" + (A.w ? '<span class="word">' + esc(noun(A.v, A.w)) + "</span>" : "");
       var wq = !A.w ? "" : ABBR[A.w] ? A.w : cmpR(A.v, ONE) < 0 ? "of " + an(singular(A.w)) : A.w;
-      return "<span>" + mixH(A.v) + "</span>" + (wq ? '<span class="word">' + esc(wq) + "</span>" : "") + '<span class="apx">= ' + esc(decT(A.v)) + "</span>";
+      return "<span>" + mixH(A.v) + "</span>" + (wq ? '<span class="word">' + esc(wq) + "</span>" : "") + '<span class="apx">' + (/^≈/.test(decT(A.v)) ? "" : "= ") + esc(decT(A.v)) + "</span>";
     }
     if (A.k === "qr") return "<span>" + nh(A.v) + '</span><span class="word">' + esc(noun(A.v, A.w)) + ' each,</span><span>' + nh(A.r) + '</span><span class="word">left over</span>';
     if (A.k === "$") return "<span>" + esc(isCents(A.v) ? usd(A.v) : usdX(A.v)) + "</span>" + (isCents(A.v) ? "" : '<span class="apx">≈ ' + esc(usd(roundK(A.v, 2))) + "</span>");
@@ -2216,6 +2850,7 @@
     return "<span>" + nh(A.v) + "</span>" + (A.w ? '<span class="word">' + esc(noun(A.v, A.w)) + "</span>" : "");
   }
   function whatKind(A, M){
+    if (A.k === "list") return A.list.length === 2 ? "two numbers" : A.list.length + " numbers";
     if (A.k === "$") return "an amount of money";
     if (A.k === "t") return "a time of day";
     if (A.k === "dur") return "a length of time, in hours and minutes";
@@ -2293,8 +2928,15 @@
     // 4. pick the operation, and why
     c.add([["e", M.idea.tag, M.idea.h]], M.idea.trap ? "<strong>Watch the key words.</strong> " + M.idea.trap : null,
       [["Choose", "e", '<span class="opchip"><b>' + esc(M.idea.sym) + "</b> " + esc(M.idea.tag) + '</span><div class="weq">' + M.idea.eq + "</div>"]]);
+    // 4½. algebra stories: write an equation — a letter for the unknown, the story phrase by phrase, the equation
+    if (M.eqn){
+      var E = M.eqn, lets = E.lets.map(function(l){ return "Let <i>" + esc(l[0]) + "</i> = " + esc(l[1]) + "."; }).join(" ");
+      var trH = '<div class="tr">' + E.pieces.map(function(pc){ return '<span class="w">' + esc(pc[0]) + '</span><span class="ar" aria-hidden="true">→</span><span class="s">' + vH(pc[1], E.vs) + "</span>"; }).join("") + "</div>";
+      c.add([["e", "Letter", lets], ["e", "Translate", "Phrase by phrase: " + E.pieces.map(function(pc){ return "“" + esc(pc[0]) + "” → " + B(vH(pc[1], E.vs)); }).join(", ") + "."], ["e", "Equation", "So the equation is " + B(E.eqH) + "."]], null,
+        [["Equation", "e", '<div class="wtext">' + lets + "</div>" + trH + '<div class="eqbig">' + E.eqH + "</div>", true]]);
+    }
     // 5. draw it
-    var cap = P.type === "time" ? "Timeline, to scale" : P.type === "array" && P.kind === "area" ? "Rectangle, to scale" : /class="ar-dot"/.test(M.fig.svg) ? "Array" : "Bar model, to scale";
+    var cap = P.type === "algebra" ? "Picture" : P.type === "time" ? "Timeline, to scale" : P.type === "array" && P.kind === "area" ? "Rectangle, to scale" : /class="ar-dot"/.test(M.fig.svg) ? "Array" : "Bar model, to scale";
     c.add([["m", "Draw", M.fig.lead]], null, [["Draw it", "m", '<figure class="fig">' + M.fig.svg + '<figcaption class="cap">' + cap + "</figcaption></figure>", true]]);
     // 6. solve, one operation per line
     c.add(M.calc.map(function(x){ return ["m", x.o || (x.h ? "=" : "="), calcSay(x)]; }), null,
@@ -2306,15 +2948,17 @@
     c.rows.forEach(function(r){ r.html = dotfix(r.html); });
     M.ans.say = dotfix(M.ans.say); M.sense = dotfix(M.sense);
     var text = sents ? sents.map(plainOf).join(" ") : P.text, answer = ansText(A) + (A.sq ? "" : "");
-    var fieldKind = M.field && M.field.kind ? M.field.kind : A.k === "$" ? "money" : A.k === "t" ? "clock" : A.k === "dur" ? "dur" : "num";
-    var field = { key:"ans", kind:fieldKind, label:"Your answer", v:A.v, w:A.w || "", sq:!!A.sq, diag:M.diag || [], rem:M.field && M.field.rem, both:A.k === "qr", other:M.other || [], type:P.type };
-    var ph = { money:"e.g. 4.50", clock:"e.g. 5:35 pm", dur:"e.g. 1 h 25 min", num:A.k === "q" ? "e.g. 2 1/4 or 2.25" : A.k === "qr" ? "e.g. 6 R 1" : A.w ? "e.g. 24 " + (A.sq ? "square " + (W.uw || "units") : A.w) : "e.g. 24" }[fieldKind];
+    var fieldKind = M.field && M.field.kind ? M.field.kind : A.k === "list" ? "list" : A.k === "$" ? "money" : A.k === "t" ? "clock" : A.k === "dur" ? "dur" : "num";
+    if (A.list) M.diag = (M.diag || []).filter(function(dg){ return !A.list.some(function(it){ return eqR(it.v, dg.v); }); });
+    var field = { key:"ans", kind:fieldKind, label:"Your answer", v:A.v, w:A.w || "", sq:!!A.sq, diag:M.diag || [], rem:M.field && M.field.rem, both:A.k === "qr", other:M.other || [], type:P.type, list:A.list || null };
+    var ph = { list:A.list ? "e.g. " + A.list.map(function(it, i){ return String(i + 3) + (it.lab && it.lab[0] && it.lab[0].length > 1 ? " " + it.lab[0] : ""); }).join(", ") : "", money:"e.g. 4.50", clock:"e.g. 5:35 pm", dur:"e.g. 1 h 25 min", num:A.k === "q" ? "e.g. 2 1/4 or 2.25" : A.k === "qr" ? "e.g. 6 R 1" : A.w ? "e.g. 24 " + (A.sq ? "square " + (W.uw || "units") : A.w) : "e.g. 24" }[fieldKind];
     field.ph = ph;
     var opWord = M.idea.tag === "Add" ? "add (+)" : M.idea.tag === "Subtract" ? "subtract (−)" : M.idea.tag === "Multiply" ? "multiply (×)" : M.idea.tag === "Divide" ? "divide (÷)" : esc(M.idea.tag) + " (" + esc(M.idea.sym) + ")";
     return {
       ctx:c, P:P, W:W, M:M,
       band:{ pairs:[{ k:"Answer", v:ansHtml(A) }], facts:[M.ans.say, "The operation: " + B(opWord) + " — " + esc(plainOf(M.idea.eq.replace(/<[^>]+>/g, "")).replace(/\?/g, "?"))] },
-      closer:"<b>Answer:</b> " + M.ans.say + ' <span class="ok">✓</span> The same seven steps work on every story problem: read it, say what’s asked, list what you know, pick the operation and say why, draw it, solve, then answer in a sentence and check.',
+      closer:"<b>Answer:</b> " + M.ans.say + ' <span class="ok">✓</span> ' + (M.eqn ? "The same steps as every story problem, with one more in the middle: read it, say what’s asked, list what you know, choose, <b>write an equation</b>, draw it, solve it like a balance, then answer in a sentence and check it in the story."
+        : "The same seven steps work on every story problem: read it, say what’s asked, list what you know, pick the operation and say why, draw it, solve, then answer in a sentence and check."),
       fields:[field], hint:M.hint,
       api:{ text:text, html:sents ? inlineHtml(sents) : esc(text), answer:answer, answerHtml:"<b>" + esc(answer) + "</b>" },
       short:text.length > 120 ? text.slice(0, 117) + "…" : text,
@@ -2490,7 +3134,7 @@
     A.toks.forEach(function(t){
       if (t.k !== "n") return;
       if (/^\s*days?\s+(?:left\s+)?(?:until|till|before|to go)\b/.test(t.after)) { t.x0 = true; t.what0 = "how long until something else"; }
-      else if ((/^(years?|year-old|grade|graders?|degrees?|°)/.test(t.unit) && !/^years? (older|younger)\b/.test(t.unit)) || /^\s*-?years?[\s-]old\b/.test(t.after)) { t.x0 = true; t.what0 = /grade/.test(t.unit) ? "a grade" : /degree|°/.test(t.unit) ? "a temperature" : "an age"; }
+      else if ((/^(years?|year-old|grade|graders?|degrees?|°)/.test(t.unit) && !/^years? (older|younger)\b/.test(t.unit) && !(/^(degrees?|°)/.test(t.unit) && (/^\s*(?:degrees?|°)\s*(more|less|greater|smaller|bigger|than)\b/.test(t.after) || /\bangle/.test(A.L.slice(Math.max(0, t.i - 80), t.end + 80))))) || /^\s*-?years?[\s-]old\b/.test(t.after)) { t.x0 = true; t.what0 = /grade/.test(t.unit) ? "a grade" : /degree|°/.test(t.unit) ? "a temperature" : "an age"; }
       else if (/\b(grade|room|page|bus|number|no\.|#|chapter|level|aged?|route|channel|floor|apartment|lane|locker|seat|gate|track|row)\s*$/.test(t.before) && !/^\s*(of|in|more|times)\b/.test(t.after)) { t.x0 = true; t.what0 = "a name or label, not an amount"; }
       else if (isInt(t.v) && t.v.n >= 1900n && t.v.n <= 2099n && /\b(in|since|year)\s*$/.test(t.before) && !t.unit) { t.x0 = true; t.what0 = "a year"; }
     });
@@ -2891,10 +3535,288 @@
       return P;
     }
   };
+  /* ---- reading algebra stories ---- */
+  // number words to digits, inside a number puzzle ("five more than twice a number is twenty-three")
+  function numify(s){
+    s = s.replace(new RegExp("\\b(" + NW10 + ")[\\s-](one|two|three|four|five|six|seven|eight|nine)\\b", "g"), function(m, a, b){ return String(NUMW[a] + NUMW[b]); });
+    return s.replace(new RegExp("\\b(" + NW10 + "|" + NW1 + ")\\b", "g"), function(m){ return String(NUMW[m]); });
+  }
+  var PZNUM = /^\$?(\d+(?:\.\d+)?(?:\s+\d+\/\d+)?|\d+\/\d+)$/;
+  function pzNum(t){ t = t.trim(); if (!PZNUM.test(t)) return null; var p = parseNum(t.replace(/^\$/, "")); return p && !p.zero ? p.v : null; }
+  function par(e){ return e.atom ? e.w : "(" + e.w + ")"; }
+  // a phrase → { lx, w (as written), atom }; every phrase it understands goes into pcs: [words, symbols, lx]
+  function pzParse(s, v, pcs, depth){
+    s = s.trim().replace(/^(?:the result of|the value of)\s+/, "").replace(/[,.;:]+$/, "").trim();
+    if ((depth || 0) > 12 || !s) return null;
+    var d = (depth || 0) + 1, m, A2, B2, k, e;
+    var sub2 = function(x){ return pzParse(x, v, pcs, d); };
+    var out = function(lx, w, atom, words){ var r = { lx:lx, w:w, atom:!!atom }; if (words) pcs.push([words, w, lx]); return r; };
+    if (/^(?:a|the|this|that|my|some|the same|the original|an unknown|one) number$|^it$|^the number$/.test(s)){
+      if (!pcs.some(function(p){ return p[1] === v; })) pcs.push(["a number", v, LX(ONE, ZERO)]);
+      return { lx:LX(ONE, ZERO), w:v, atom:true };
+    }
+    if ((k = pzNum(s))) return { lx:LX(ZERO, k), w:nt(k), atom:true };
+    if ((m = /^(?:the )?sum of (.+?) and (.+)$/.exec(s))){ A2 = sub2(m[1]); B2 = sub2(m[2]); if (!A2 || !B2) return null; return out(lxAdd(A2.lx, B2.lx), A2.w + " + " + B2.w, false, s); }
+    if ((m = /^(?:the )?difference (?:between|of) (.+?) and (.+)$/.exec(s))){ A2 = sub2(m[1]); B2 = sub2(m[2]); if (!A2 || !B2) return null; return out(lxSub(A2.lx, B2.lx), A2.w + " − " + par(B2), false, s); }
+    if ((m = /^(?:the )?product of (.+?) and (.+)$/.exec(s))){ A2 = sub2(m[1]); B2 = sub2(m[2]); if (!A2 || !B2) return null;
+      if (!sgn(A2.lx.a)){ e = A2; A2 = B2; B2 = e; } if (sgn(B2.lx.a)) return null; return out(lxMul(A2.lx, B2.lx.b), nt(B2.lx.b) + par(A2), true, s); }
+    if ((m = /^(?:the )?quotient of (.+?) and (.+)$/.exec(s))){ A2 = sub2(m[1]); B2 = sub2(m[2]); if (!A2 || !B2 || sgn(B2.lx.a) || !sgn(B2.lx.b)) return null; return out(lxMul(A2.lx, dvd(ONE, B2.lx.b)), par(A2) + "/" + B2.w, true, s); }
+    if ((m = /^(.+?) added to (.+)$/.exec(s))){ A2 = sub2(m[2]); B2 = sub2(m[1]); if (!A2 || !B2) return null; return out(lxAdd(A2.lx, B2.lx), A2.w + " + " + B2.w, false, s); }
+    if ((m = /^(.+?) subtracted from (.+)$/.exec(s))){ A2 = sub2(m[2]); B2 = sub2(m[1]); if (!A2 || !B2) return null; return out(lxSub(A2.lx, B2.lx), A2.w + " − " + par(B2), false, s); }
+    if ((m = /^(.+),\s*(?:and\s+)?(?:then\s+)?(minus|plus|take away|add|subtract)\s+(.+)$/.exec(s))){
+      A2 = sub2(m[1]); B2 = sub2(m[3]); if (!A2 || !B2) return null;
+      var pl = /plus|add/.test(m[2]);
+      return out(pl ? lxAdd(A2.lx, B2.lx) : lxSub(A2.lx, B2.lx), A2.w + (pl ? " + " : " − ") + par(B2), false, "…, " + m[2] + " " + m[3]);
+    }
+    if ((m = /^(.+?)\s+(increased by|plus|decreased by|reduced by|minus|take away)\s+(.+)$/.exec(s))){
+      A2 = sub2(m[1]); B2 = sub2(m[3]); if (!A2 || !B2) return null;
+      var pl2 = /increased|plus/.test(m[2]);
+      return out(pl2 ? lxAdd(A2.lx, B2.lx) : lxSub(A2.lx, B2.lx), A2.w + (pl2 ? " + " : " − ") + par(B2), false, s);
+    }
+    if ((m = /^(\$?\d[\d.\/]*(?:\s+\d+\/\d+)?) (more|greater|bigger) than (.+)$/.exec(s))){ k = pzNum(m[1]); A2 = sub2(m[3]); if (!k || !A2) return null; return out(lxAdd(A2.lx, LX(ZERO, k)), A2.w + " + " + nt(k), false, s); }
+    if ((m = /^(\$?\d[\d.\/]*(?:\s+\d+\/\d+)?) (less|fewer|smaller) than (.+)$/.exec(s))){ k = pzNum(m[1]); A2 = sub2(m[3]); if (!k || !A2) return null; return out(lxSub(A2.lx, LX(ZERO, k)), A2.w + " − " + nt(k), false, s); }
+    if ((m = /^(.+?) (?:divided by|over|split into) (\$?\d[\d.\/]*)(?: (?:equal )?(?:parts|groups|pieces))?$/.exec(s))){ k = pzNum(m[2]); A2 = sub2(m[1]); if (!k || !A2) return null; return out(lxMul(A2.lx, dvd(ONE, k)), (A2.atom ? A2.w : "(" + A2.w + ")") + "/" + nt(k), true, s); }
+    if ((m = /^(.+?) (?:multiplied by|times) (\$?\d[\d.\/]*)$/.exec(s))){ k = pzNum(m[2]); A2 = sub2(m[1]); if (!k || !A2) return null; return out(lxMul(A2.lx, k), nt(k) + par(A2), true, s); }
+    if ((m = /^(twice|double|triple|half of|half|one half of|a third of|a quarter of) (.+)$/.exec(s))){
+      k = { twice:R(2), "double":R(2), triple:R(3), "half of":R(1, 2), half:R(1, 2), "one half of":R(1, 2), "a third of":R(1, 3), "a quarter of":R(1, 4) }[m[1]]; A2 = sub2(m[2]); if (!A2) return null;
+      return out(lxMul(A2.lx, k), isInt(k) ? nt(k) + par(A2) : par(A2) + "/" + bs(k.d), true, s);
+    }
+    if ((m = /^(\d[\d.\/]*) times (.+)$/.exec(s))){ k = pzNum(m[1]); A2 = sub2(m[2]); if (!k || !A2) return null; return out(lxMul(A2.lx, k), nt(k) + par(A2), true, s); }
+    if ((m = /^(\d+\/\d+) of (.+)$/.exec(s))){ k = pzNum(m[1]); A2 = sub2(m[2]); if (!k || !A2) return null; return out(lxMul(A2.lx, k), nt(k) + par(A2), true, s); }
+    return null;
+  }
+  // "think of a number, double it and add 5: the answer is 23" — a list of steps done to the number
+  function pzSequence(s, v, pcs){
+    var m = /(?:think of|thinking of|picks?|chooses?|takes?|start with|starts? with) (?:a|some) number[,.]?\s*(.*)$/.exec(s);
+    if (!m) return null;
+    var rest = m[1].replace(/\b(what|which|find)\b.*$/, ""), fre = /(?:,|\.|and|then)?\s*(?:to get|you get|i get|we get|they get|he gets|she gets|gets?|the answer is|the result is|ends? up with|it (?:is|equals|makes|gives)|equals|makes|is|gives)\s+(\$?\d+(?:\.\d+)?(?:\/\d+)?)/g, fin = null, fm;
+    while ((fm = fre.exec(rest))) fin = fm;
+    if (!fin) return null;
+    var c = pzNum(fin[1]), ops = rest.slice(0, fin.index).split(/,|\.|\band then\b|\bthen\b|\band\b/).map(function(x){ return x.trim().replace(/^(?:if|when|first|next|last|finally)\s+/, "").replace(/^(?:i|you|he|she|they|we)\s+/, "").trim(); }).filter(Boolean);
+    if (!c || !ops.length) return null;
+    var lx = LX(ONE, ZERO), w = v, atom = true;
+    pcs.push(["a number", v, lx]);
+    for (var i = 0; i < ops.length; i++){
+      var o = ops[i], k, mm;
+      if (/^(double|doubles) it$|^multipl(y|ies) it by 2$/.test(o)){ k = R(2); lx = lxMul(lx, k); w = "2" + (atom ? w : "(" + w + ")"); atom = true; }
+      else if (/^(triple|triples) it$/.test(o)){ k = R(3); lx = lxMul(lx, k); w = "3" + (atom ? w : "(" + w + ")"); atom = true; }
+      else if (/^halve(s)? it$/.test(o)){ lx = lxMul(lx, R(1, 2)); w = (atom ? w : "(" + w + ")") + "/2"; atom = true; }
+      else if ((mm = /^(?:multipl(?:y|ies)(?: it)? by|times) (\d[\d.\/]*)$/.exec(o))){ k = pzNum(mm[1]); if (!k) return null; lx = lxMul(lx, k); w = nt(k) + (atom ? w : "(" + w + ")"); atom = true; }
+      else if ((mm = /^divides?(?: it)? by (\d[\d.\/]*)$/.exec(o))){ k = pzNum(mm[1]); if (!k) return null; lx = lxMul(lx, dvd(ONE, k)); w = (atom ? w : "(" + w + ")") + "/" + nt(k); atom = true; }
+      else if ((mm = /^(?:adds?|plus) (\$?\d[\d.\/]*)(?: to it)?$/.exec(o))){ k = pzNum(mm[1]); if (!k) return null; lx = lxAdd(lx, LX(ZERO, k)); w = w + " + " + nt(k); atom = false; }
+      else if ((mm = /^(?:subtracts?|takes? away|minus) (\$?\d[\d.\/]*)(?: from it)?$/.exec(o))){ k = pzNum(mm[1]); if (!k) return null; lx = lxSub(lx, LX(ZERO, k)); w = w + " − " + nt(k); atom = false; }
+      else return null;
+      pcs.push([o, w, lx]);
+    }
+    pcs.push(["the answer is", "=", null], [nt(c), nt(c), LX(ZERO, c)]);
+    return { L:lx, R:LX(ZERO, c), w:w + " = " + nt(c) };
+  }
+  // a number puzzle, as an equation
+  function readPuzzle(D){
+    var t = numify(D.toLowerCase()).replace(/[“”"]/g, ""), v = "n", pcs = [];
+    // passive steps ("if a number is doubled and then 5 is added, the result is 23") → think-of-a-number steps
+    if (/\b(?:if|when)\s+(?:a|some) number is (?:doubled|tripled|halved|multiplied|divided|increased|decreased)/.test(t)){
+      t = t.replace(/\b(?:if|when)\s+(?:a|some) number is\s+/, "think of a number, ")
+        .replace(/\bdoubled\b/, "double it").replace(/\btripled\b/, "triple it").replace(/\bhalved\b/, "halve it")
+        .replace(/\bmultiplied by (\S+)/, "multiply by $1").replace(/\bdivided by (\S+)/, "divide by $1").replace(/\bincreased by (\S+)/, "add $1").replace(/\bdecreased by (\S+)/, "subtract $1")
+        .replace(/(\S+) is added/g, "add $1").replace(/(\S+) is subtracted/g, "subtract $1");
+    }
+    var sents = t.split(/(?<=[.?!])\s+/), sq = null, i;
+    for (i = 0; i < sents.length; i++){ var r0 = []; var sq0 = pzSequence(sents.slice(i).join(" "), v, r0); if (sq0){ sq = sq0; pcs = r0; break; } }
+    if (sq) return { L:sq.L, R:sq.R, w:sq.w, pieces:pcs };
+    for (i = 0; i < sents.length; i++){
+      var s = sents[i].replace(/[.?!]+$/, "").trim(), m;
+      if (!/\bnumber\b/.test(s) || /^(?:what|find|which|how)\b/.test(s)) continue;
+      s = s.replace(/^(?:if|when|suppose)\s+/, "").replace(/^(?:i am thinking of|i'm thinking of|there is)\s+/, "");
+      pcs = [];
+      var L2 = null, R2 = null;
+      if ((m = /^(.+?)\s+is\s+(added to|subtracted from|multiplied by|divided by)\s+(.+?),\s*(?:the result is|you get|the answer is|it (?:is|equals|makes|gives)|the total is)\s+(.+)$/.exec(s))){
+        var ph = m[2] === "added to" ? m[1] + " added to " + m[3] : m[2] === "subtracted from" ? m[1] + " subtracted from " + m[3] : m[1] + " " + m[2] + " " + m[3];
+        L2 = pzParse(ph, v, pcs); R2 = L2 ? pzParse(m[4], v, pcs) : null;
+      } else {
+        var sp = /\s(?:is equal to|equals|is|gives|makes|was|will be|results in|is the same as)\s/.exec(s);
+        if (!sp) continue;
+        L2 = pzParse(s.slice(0, sp.index), v, pcs);
+        if (L2){ pcs.push(["is", "=", null]); R2 = pzParse(s.slice(sp.index + sp[0].length), v, pcs); if (R2 && !sgn(R2.lx.a) && !pcs.some(function(p){ return p[0] === nt(R2.lx.b); })) pcs.push([nt(R2.lx.b), nt(R2.lx.b), R2.lx]); }
+      }
+      if (L2 && R2 && (sgn(L2.lx.a) || sgn(R2.lx.a)) && !eqR(L2.lx.a, R2.lx.a)) return { L:L2.lx, R:R2.lx, w:L2.w + " = " + R2.w, pieces:pcs };
+    }
+    return null;
+  }
+  // the form of a typed number puzzle, so the reader's boxes show its numbers
+  function pzForm(pz){
+    var L = pz.L, Rr = pz.R;
+    if (!sgn(Rr.a)){
+      if (isInt(L.a) && sgn(L.a) > 0) return sgn(L.b) >= 0 ? { form:"more", a:L.a, b:L.b, c:Rr.b } : { form:"less", a:L.a, b:absR(L.b), c:Rr.b };
+      if (!isInt(L.a) && L.a.n === 1n && sgn(L.b) <= 0) return { form:"div", a:R(L.a.d), b:absR(L.b), c:Rr.b };
+    }
+    if (eqR(Rr.a, ONE) && !sgn(L.b) && isInt(L.a) && sgn(Rr.b) > 0) return { form:"sides", a:L.a, b:Rr.b };
+    return { form:"gen", a:L.a, b:L.b, c:Rr.a, d:Rr.b };
+  }
+  var ALGCUE = /\b(a|the|some|one) number\b|\bthink of a number\b|\bthinking of a number\b|\bconsecutive\b|\byears? (older|younger)\b|\btimes as old\b|\btwice as old\b|\bperimeter\b|\b(angles?) of a triangle\b|\btriangle\b.*\bangle\b|\b(cost|costs|charge|charges|pay|be|have|cost them) the same\b|\bsame (amount|cost|price|total)\b|\bhow many of each\b|\bopposite directions\b|\bcatch(es)? up\b|\bround trip\b|\b(original|regular) (price|amount|cost|salary|pay)\b|\bbefore the (raise|discount|sale|increase|cut)\b|\b(dimes|quarters|nickels|pennies)\b|\btwo numbers\b/;
+  var COINV = { pennies:1, penny:1, nickels:5, nickel:5, dimes:10, dime:10, quarters:25, quarter:25 };
+  ASSIGN.algebra = function(A){
+    var L = A.L, Q = A.Q, ns = A.use.filter(function(t){ return (t.k === "n" || t.k === "$") && !/^\s*(?:of the )?(numbers?|integers?)\b/.test(t.after); }), ms = A.use.filter(function(t){ return t.k === "$"; });
+    var P = function(kind, form, extra){ var o = base("algebra", A, { kind:kind, form:form }); for (var k in extra) o[k] = extra[k]; return o; };
+    var speed = function(t){ return /^\s*(mph|km\/h|kph|kilometers? (per|an|a) hour|km (per|an|a) hour|miles? (per|an|a) hour|meters? (per|a) second|feet (per|a) second)/.test(t.after); };
+    // percent change backwards
+    var pc = A.use.filter(function(t){ return t.k === "%"; })[0];
+    if (pc && (/\b(original|regular|before|used to|at first|to start)\b/.test(Q) || /\bafter (a|an|the)\b/.test(L) && /\bwhat (was|were|did)\b/.test(Q))){
+      var amt = ns.filter(function(t){ return t !== pc; }).slice(-1)[0];
+      if (!amt) return null;
+      var up = /\b(raise|increase|increased|more|went up|goes up|rose|grew|markup|marked up|higher)\b/.test(L) && !/\b(discount|off|sale|cut|decrease|decreased|less|reduced|lower|dropped|fell)\b/.test(L);
+      var pb = P("percentback", up ? "raise" : "off", { p:pc.v, c:amt.v });
+      var im = /\b(?:a|an|the)\s+((?:[a-z-]+\s){0,2}?[a-z-]+)\s+(?:costs?|is|sells for|now costs)\b/.exec(A.L);
+      pb.rw = /\b(earn|earns|earned|pay|paid|wage|salary|makes)\b/.test(L) && !/\bprice\b/.test(Q) ? { wage:true } : { i1:im ? im[1] : "it" };
+      return pb;
+    }
+    // consecutive numbers
+    if (/\bconsecutive\b/.test(L)){
+      var cw = /\b(two|three|four|five|six|2|3|4|5|6)\s+consecutive\b/.exec(L), cnt = cw ? (NUMW[cw[1]] || +cw[1]) : 2;
+      var sumT = ns.filter(function(t){ return !(cw && t.i <= A.L.indexOf(cw[0]) + cw[1].length && t.end >= A.L.indexOf(cw[0])); }).slice(-1)[0];
+      if (!sumT) return null;
+      return P("consecutive", /\beven\b/.test(L) ? "even" : /\bodd\b/.test(L) ? "odd" : "all", { a:R(cnt), c:sumT.v });
+    }
+    // two numbers: a sum and a difference
+    if (/\btwo numbers\b/.test(L) && ns.length >= 2){
+      var sT = ns.filter(function(t){ return /\b(sum|add up to|adds up to|total|together)\b/.test(A.L.slice(Math.max(0, t.i - 30), t.i)) || /\b(add up to|adds up to|sum)\b/.test(A.L.slice(A.sents[t.s].i, t.i)); })[0];
+      var dT = ns.filter(function(t){ return t !== sT && (/\b(difference|differ by|more than|bigger than|larger than|greater than)\b/.test(A.L.slice(A.sents[t.s].i, A.sents[t.s].end))); })[0];
+      if (!sT) sT = ns.filter(function(t){ return t !== dT; })[0];
+      if (!dT) dT = ns.filter(function(t){ return t !== sT; })[0];
+      if (!sT || !dT || cmpR(dT.v, sT.v) >= 0) return null;
+      return P("twounknown", "numbers", { c:sT.v, d:dT.v });
+    }
+    // coins
+    var coinW = [];
+    var CANON = { penny:"pennies", pennies:"pennies", nickel:"nickels", nickels:"nickels", dime:"dimes", dimes:"dimes", quarter:"quarters", quarters:"quarters" };
+    (L.match(/\b(pennies|penny|nickels|nickel|dimes|dime|quarters|quarter)\b/g) || []).forEach(function(w){ var p0 = CANON[w]; if (coinW.indexOf(p0) < 0) coinW.push(p0); });
+    if (coinW.length === 2 && ms.length >= 1){
+      var cntT = ns.filter(function(t){ return t.k === "n" && /^(coins?)\b/.test(t.unit); })[0] || ns.filter(function(t){ return t.k === "n"; })[0], tv = ms[ms.length - 1];
+      if (!cntT || !tv) return null;
+      var o2 = COINV[coinW[0]] < COINV[coinW[1]] ? [coinW[0], coinW[1]] : [coinW[1], coinW[0]];
+      var cp = P("twounknown", "coins", { c:cntT.v, d:tv.v });
+      cp.rw = { coins:true, k1:o2[0], k2:o2[1], v1:COINV[o2[0]], v2:COINV[o2[1]] };
+      return cp;
+    }
+    // two prices, a count and a total: how many of each
+    if (ms.length >= 3 && /\bhow many\b/.test(Q) && (/\bof each\b|\beach kind\b|\beach type\b/.test(Q) || /\band how many\b/.test(Q))){
+      var tot = sorted(ms)[ms.length - 1], prices = ms.filter(function(t){ return t !== tot; }).slice(0, 2), cnt2 = ns.filter(function(t){ return t.k === "n"; })[0];
+      if (!cnt2 || prices.length < 2) return null;
+      var nm = function(t){ var m1 = /\b([a-z-]+)\s+(?:tickets?|pizzas?|seats?|shirts?|books?|plants?|passes|cups?)?\s*(?:cost|costs|are|were|is|for)\s*\$?\s*$/.exec(t.before), m2 = /^\s*(?:each\s+)?(?:for|per)\s+(?:each\s+|an?\s+)?([a-z-]+)/.exec(t.after); return m1 ? m1[1] : m2 ? m2[1] : ""; };
+      var k1 = nm(prices[0]) || "first", k2 = nm(prices[1]) || "second";
+      var tp = P("twounknown", "tickets", { a:prices[0].v, b:prices[1].v, c:cnt2.v, d:tot.v });
+      tp.rw = { k1:k1, k2:k2, it:cnt2.unit || (/^\s*([a-z-]+)/.exec(cnt2.after) || [])[1] || itemOf(A) || "items", sold:"were sold" };
+      return tp;
+    }
+    // ages
+    var older = ns.filter(function(t){ return /^\s*years?\s+(older|younger)\b/.test(t.after); })[0];
+    if (older && /\b(together|sum|total|add up|adds up|combined|altogether)\b/.test(L)){
+      var sT2 = ns.filter(function(t){ return t !== older; }).slice(-1)[0];
+      if (!sT2) return null;
+      var oS = A.D.slice(A.sents[older.s].i, A.sents[older.s].end), subj = (A.names.filter(function(n){ return oS.indexOf(n) >= 0 && oS.indexOf(n) < older.i - A.sents[older.s].i; })[0]) || A.names[0];
+      var thanN = (/\bthan\s+([A-Z][a-z]+)/.exec(A.D.slice(older.end, A.sents[older.s].end)) || [])[1] || A.names.filter(function(n){ return n !== subj; })[0];
+      var isY = /^\s*years?\s+younger/.test(older.after), oldN = isY ? thanN : subj, youN = isY ? subj : thanN;
+      var ap = P("age", "sum", { a:older.v, c:sT2.v });
+      if (youN) ap.name = youN; if (oldN) ap.name2 = oldN;
+      var qn = A.names.filter(function(n){ return A.D.slice(A.q[0], A.q[1]).indexOf(n) >= 0; });
+      ap.ask = qn.length === 1 && !/\beach\b|\bboth\b|\btheir ages\b/.test(Q) ? (qn[0] === oldN ? "older" : "younger") : "both";
+      return ap;
+    }
+    if (/\b(times as old|twice as old)\b/.test(L) && /\bin\s+\d+\s+years?\b/.test(L)){
+      var tt = /\b(\d+|twice)\s*(?:times)?\s*as old as\b/g, fm = [], mt;
+      while ((mt = tt.exec(L))) fm.push(mt[1] === "twice" ? R(2) : R(+mt[1]));
+      var yrs = /\bin\s+(\d+)\s+years?\b/.exec(L);
+      if (fm.length < 2 || !yrs) return null;
+      var s0 = A.sents[0] ? A.D.slice(A.sents[0].i, A.sents[0].end) : "", bigN = A.names.filter(function(n){ return s0.indexOf(n) === 0 || s0.indexOf(n) < s0.indexOf("as old"); })[0], smN = (/\bas old as\s+([A-Z][a-z]+)/.exec(A.D) || [])[1];
+      var tp2 = P("age", "times", { a:fm[0], b:R(+yrs[1]), c:fm[1] });
+      if (smN) tp2.name = smN; if (bigN && bigN !== smN) tp2.name2 = bigN;
+      return tp2;
+    }
+    // perimeter of a rectangle, angles of a triangle
+    if (/\bperimeter\b/.test(L) && /\b(length|long)\b/.test(L) && /\b(width|wide)\b/.test(L)){
+      var perT = ns.filter(function(t){ return /\bperimeter\b/.test(A.L.slice(A.sents[t.s].i, t.i)) || /\bperimeter\b/.test(A.L.slice(Math.max(0, t.i - 25), t.i)); })[0], other = ns.filter(function(t){ return t !== perT; })[0];
+      var timesM = /\b(?:length|it)(?: of (?:a|the) (?:[a-z]+ )?[a-z]+)? is (twice|double|triple|(\d+) times)\b(?: (?:as long as|its| the))?/.exec(L) || /\b(twice|(\d+) times) as long as\b/.exec(L) || /\bwidth is half\b/.exec(L);
+      if (!perT || (!other && !timesM)) return null;
+      var mu = measureOf(A, [perT].concat(other ? [other] : []));
+      var ask = /\b(length and (the )?width|width and (the )?length|dimensions|both)\b/.test(Q) ? "both" : /\b(width|wide)\b/.test(Q) ? "width" : "length";
+      var pp;
+      if (timesM){ var k3 = /half/.test(timesM[0]) ? R(2) : /twice|double/.test(timesM[1]) ? R(2) : /triple/.test(timesM[1]) ? R(3) : R(+timesM[2]); pp = P("perimeter", "times", { a:k3, c:perT.v }); }
+      else pp = P("perimeter", "more", { a:other.v, c:perT.v });
+      pp.ask = ask; pp.rw = { u:mu ? UNIT_SHORT[mu.u] || mu.u : "units" };
+      return pp;
+    }
+    if (/\btriangle\b/.test(L) && /\bangle/.test(L)){
+      var kT = /\bsecond (?:angle )?is (twice|double|triple|(\d+) times)\b/.exec(L), dT2 = ns.filter(function(t){ return /^\s*(?:degrees?|°)?\s*(more|less|greater|smaller|bigger) than\b/.test(t.after) || /^\s*°/.test(t.after) && /\b(more|less) than\b/.test(t.after); })[0];
+      if (!kT || !dT2) return null;
+      var neg = /^\s*(?:degrees?|°)?\s*(less|smaller) than/.test(dT2.after);
+      return P("perimeter", "tri", { a:/twice|double/.test(kT[1]) ? R(2) : /triple/.test(kT[1]) ? R(3) : R(+kT[2]), b:neg ? R(-dT2.v.n, dT2.v.d) : dT2.v });
+    }
+    // distance, rate and time
+    var sp = ns.filter(speed);
+    if (sp.length >= 2 && (/\bopposite directions\b/.test(L) || /\bcatch(es)? up\b/.test(L) || /\b(round trip|back|home|returns?)\b/.test(L))){
+      var su = /km|kilomet/.test(sp[0].after) ? { s:"km/h", u:"kilometers" } : { s:"mph", u:"miles" };
+      var nouns = (A.L.match(/\b(a|the)\s+(train|truck|car|bus|cyclist|runner|plane|boat|bike|van|jogger|walker)\b/g) || []).map(function(w){ return w.split(" ").pop(); });
+      if (/\bcatch(es)? up\b/.test(L)){
+        var head = A.use.filter(function(t){ return t.k === "dur" && /^\s*later\b/.test(t.after); })[0] || ns.filter(function(t){ return !speed(t) && /^\s*hours?\s+later\b/.test(t.after); })[0];
+        if (!head) return null;
+        var mp = P("motion", "catchup", { a:sp[0].v, b:sp[1].v, c:head.k === "dur" ? dvd(head.v, R60) : head.v });
+        mp.rw = { s:su.s, u:su.u, T1:nouns[0] || "first", T2:nouns[1] || nouns[0] || "second" };
+        return mp;
+      }
+      if (/\bopposite directions\b/.test(L)){
+        var apart = ns.filter(function(t){ return !speed(t) && /^\s*(?:miles?|km|kilometers?)?\s*apart\b/.test(t.after); })[0] || ns.filter(function(t){ return !speed(t); })[0];
+        if (!apart) return null;
+        var op2 = P("motion", "opposite", { a:sp[0].v, b:sp[1].v, c:apart.v });
+        op2.rw = { s:su.s, u:su.u, T1:nouns[0] || "train", T2:nouns[0] || "train" };
+        return op2;
+      }
+      var tt2 = A.use.filter(function(t){ return t.k === "dur"; })[0] || ns.filter(function(t){ return !speed(t) && /^\s*hours?\b/.test(t.after); })[0];
+      if (!tt2) return null;
+      var rp = P("motion", "roundtrip", { a:sp[0].v, b:sp[1].v, c:tt2.k === "dur" ? dvd(tt2.v, R60) : tt2.v });
+      rp.rw = { s:su.s, u:su.u };
+      return rp;
+    }
+    // two plans that end up the same
+    if (/\b(cost|costs|charge|charges|pay|be|have|cost them) the same\b|\bsame (amount|cost|price|total)\b|\bequal\b/.test(L)){
+      var plans = [], cur = null;
+      A.sents.forEach(function(s, si){
+        if (si === A.qi) return;
+        var ts = ns.filter(function(t){ return t.s === si; });
+        if (!ts.length) return;
+        var pl = { fix:ZERO, rate:null, unit:"" };
+        ts.forEach(function(t){
+          var rm = /^\s*(?:a|an|per|each|every|for each)\s+([a-z]+)/.exec(t.after);
+          if (rm && !/^(day|time)$/.test("")){ pl.rate = t.v; pl.unit = rm[1]; } else pl.fix = add(pl.fix, t.v);
+        });
+        if (pl.rate) plans.push(pl);
+        void cur;
+      });
+      if (plans.length !== 2) return null;
+      var pu = plural(plans[0].unit), pp2 = P("plans", "plans", { a:plans[0].fix, b:plans[0].rate, c:plans[1].fix, d:plans[1].rate });
+      var nmA = /^([A-Z][a-z]+(?:\s[A-Z])?)\b/.exec(A.D.slice(A.sents[0].i)) ;
+      pp2.rw = { unit:pu === "visites" ? "visits" : pu, per:"a " + plans[0].unit, A:"Plan A", B:"Plan B" };
+      var heads = A.sents.filter(function(s, si){ return si !== A.qi && ns.some(function(t){ return t.s === si; }); }).map(function(s){ var m3 = /^(?:the\s+)?([A-Z][A-Za-z]*(?:\s+[A-Z0-9][A-Za-z]*)?|[A-Za-z]+\s+[A-Z])\b/.exec(A.D.slice(s.i, s.end)); return m3 ? m3[1] : null; });
+      if (heads[0] && heads[1] && heads[0] !== heads[1]){ pp2.rw.A = heads[0]; pp2.rw.B = heads[1]; }
+      if (/\bsaves?\b|\bsaving\b/.test(L)) pp2.rw.saving = true;
+      void nmA;
+      return pp2;
+    }
+    // number puzzles
+    if (/\bnumber\b/.test(L)){
+      var pz = readPuzzle(A.D);
+      if (!pz) return null;
+      var pf = pzForm(pz), np = P("number", pf.form, { a:pf.a, b:pf.b, c:pf.c, d:pf.d });
+      np.pz = pz;
+      return np;
+    }
+    return null;
+  };
+
   // which kind of story this is, from the cue phrases
   function classify(A){
     var u = A.use, cnt = function(k){ return u.filter(function(t){ return t.k === k; }).length; }, nums = u.filter(function(t){ return t.k === "n" || t.k === "$"; }).length;
     var Q = A.Q, L = A.L, tries = [];
+    if (ALGCUE.test(L)) tries.push("algebra");
     if (cnt("t") >= 1 && cnt("t") + cnt("dur") >= 2 && /\b(what time|when|how long|how many (minutes|hours)|how much time)\b/.test(Q)) tries.push("time");
     if (cnt("%")) tries.push("percent");
     if (u.some(function(t){ return t.k === "f" && t.fn && (/^\s*of\b/.test(t.after) || /\bof (?:the |all )?\d+\b[^.?!]*,?\s*$/.test(t.before)); })) tries.push("fraction");
@@ -2940,6 +3862,8 @@
   function asksAmount(A){
     var Q = A.Q;
     if (AMOUNTQ.test(Q)) return true;
+    if (/\bwhat (is|are|was|were) (the |each |both |its |their |these |those )?(\w+\s+){0,2}?(numbers|integers|angles|ages|dimensions|speeds|prices|lengths)\b/.test(Q)) return true;
+    if (/\bwhen (will|do|does|did|would)\b.*\b(same|catch|meet|equal|apart|pass)\b/.test(Q)) return true;
     // "When does the movie end?" asks for a time, when the story has clock times or lengths of time
     if (/\bwhen\b/.test(Q) && A.toks.some(function(t){ return t.k === "t" || t.k === "dur"; })) return true;
     // "Which is the better buy?" / "Which box holds more?": a comparison of amounts
@@ -2963,7 +3887,7 @@
     ["a", "b", "c", "d", "n", "pay", "p"].forEach(function(k){ if (P[k]) used.push(P[k]); });
     A.toks.forEach(function(t){
       var hit = !t.x0 && (used.some(function(v){ return eqR(v, t.v) || (t.num && eqR(v, t.num)) || (t.k === "t" && isInt(v) && Number(v.n) % 720 === Number(t.v.n) % 720); })
-        || (t.k === "f" && P.fn && t.fn === P.fn && t.fd === P.fd) || (t.twice && P.b && eqR(P.b, R(2))));
+        || (t.k === "f" && P.fn && t.fn === P.fn && t.fd === P.fd) || (t.twice && used.some(function(v){ return eqR(v, R(2)); })));
       t.extra = !hit;
       t.what = t.x0 ? t.what0 : "the story doesn’t need it for this question";
     });
@@ -3095,8 +4019,46 @@
     for (var i = 0; i < f.diag.length; i++){ var d = f.diag[i]; if (d.v && sgn(d.v) >= 0 && Number(d.v.n) === v && v !== x) return { st:"bad", msg:d.msg }; }
     return { st:"bad" };
   }
+  // several answers at once: "12 adult, 8 child", "a = 12, c = 8", "23, 24, 25"
+  function judgeList(f, raw){
+    var s = cleanStory(raw).toLowerCase().replace(/\$/g, "").replace(/°/g, " ").replace(/^(the answer is|answer:|it is|they are)\s*/, ""), ns = numsIn(s), L = f.list;
+    var eg = L.map(function(it){ return it.t; }).join(", ");
+    if (!ns.length) return { st:"bad", msg:"Type all " + L.length + " answers, like <b>" + esc(f.ph.replace(/^e\.g\. /, "")) + "</b>." };
+    // labels go either before the numbers ("width 12, length 15", "a = 10") or after them ("10 adult, 10 child"): decide from the first one
+    var segB = function(i){ return s.slice(i ? ns[i - 1].end : 0, ns[i].i); }, segA = function(i){ return s.slice(ns[i].end, i < ns.length - 1 ? ns[i + 1].i : s.length); };
+    var words = function(t){ return t.trim().split(/[\s,;=:]+/).filter(function(w){ return w && !/^(and|is|are|the|of|each|years?|old|°|degrees?|=|:)$/.test(w); }); };
+    var labelFirst = words(segB(0)).length > 0;
+    var lab = ns.map(function(x, i){ var ws = labelFirst ? words(segB(i)) : words(segA(i)); return labelFirst ? ws[ws.length - 1] || "" : ws[0] || ""; });
+    var hit = lab.map(function(w){
+      if (!w) return -1;
+      for (var j = 0; j < L.length; j++) if ((L[j].lab || []).some(function(l){ return l === w || singular(l) === singular(w) || (l.length > 2 && w.indexOf(l) === 0); })) return j;
+      return -1;
+    });
+    if (ns.length < L.length){
+      if (ns.length === 1){
+        var one = ns[0].p.v, j1 = hit[0] >= 0 ? hit[0] : -1, k1 = L.map(function(it){ return eqR(it.v, one); }).indexOf(true);
+        if (k1 >= 0 && (j1 < 0 || j1 === k1)) return { st:"part", msg:"Right — <b>" + esc(L[k1].t) + "</b>. The question asks for " + (L.length === 2 ? "both" : "all " + L.length) + ": give the other" + (L.length > 2 ? "s" : "") + " too." };
+        var dm = diagFor(f, one);
+        if (dm) return { st:"bad", msg:dm };
+      }
+      return { st:"bad", msg:"The question asks for " + L.length + " answers — type them all, like <b>" + esc(f.ph.replace(/^e\.g\. /, "")) + "</b>." };
+    }
+    if (ns.length > L.length) return { st:"bad", msg:"That’s more numbers than the question asks for. Give " + L.length + ", like <b>" + esc(f.ph.replace(/^e\.g\. /, "")) + "</b>." };
+    var mapped = hit.every(function(x){ return x >= 0; }) && hit.filter(function(x, i){ return hit.indexOf(x) === i; }).length === hit.length;
+    var got = new Array(L.length);
+    ns.forEach(function(x, i){ got[mapped ? hit[i] : i] = x.p.v; });
+    var same = function(a, b){ return eqR(a, b) || (!isTermD(b.d) && within(a, 2, b)); };
+    if (L.every(function(it, j){ return same(got[j], it.v); })) return { st:"ok" };
+    var multiset = L.map(function(it){ return it.v; }), used = [];
+    var allThere = got.every(function(v){ var k = multiset.map(function(m, ii){ return used.indexOf(ii) < 0 && same(v, m) ? ii : -1; }).filter(function(ii){ return ii >= 0; })[0]; if (k === undefined) return false; used.push(k); return true; });
+    if (allThere) return { st:"bad", msg:"Those are the right numbers, but check which is which: " + esc(eg) + "." };
+    var right = L.filter(function(it, j){ return same(got[j], it.v); }).length;
+    for (var i = 0; i < got.length; i++){ var dm2 = diagFor(f, got[i]); if (dm2) return { st:"bad", msg:dm2 }; }
+    return { st:"bad", msg:right ? "One of them is right — check the other" + (L.length > 2 ? "s" : "") + " in the story." : "" };
+  }
   function judge(f, raw){
     if (!String(raw == null ? "" : raw).trim()) return { st:"empty" };
+    if (f.kind === "list") return judgeList(f, raw);
     if (f.kind === "money") return judgeMoney(f, raw);
     if (f.kind === "clock") return judgeClock(f, raw);
     if (f.kind === "dur") return judgeDur(f, raw);
@@ -3225,6 +4187,52 @@
       else { var fr = rint(2, 6), each = rint(2, m <= 20 ? 4 : 10), gv = rint(2, m <= 20 ? 6 : 15); P.a = RN(fr * each + gv); P.b = RN(gv); P.c = RN(fr); }
       return P;
     },
+    algebra:function(o, z){
+      var kind = mixOf(o.algebraKind, ["number", "consecutive", "age", "perimeter", "plans", "twounknown", "motion", "percentback"]);
+      var forms = TY.algebra.forms(kind).map(function(f){ return f[0]; }).filter(function(f){ return f !== "gen"; });
+      var form = o.algebraForm && forms.indexOf(o.algebraForm) >= 0 ? o.algebraForm : pickOf(forms), P = { type:"algebra", kind:kind, form:form }, big = z.max > 20, t, n, k, b;
+      if (kind === "number"){
+        n = rint(2, big ? 30 : 12); k = rint(form === "sum" ? 1 : 2, 6); b = rint(2, big ? 30 : 12);
+        if (form === "more" || form === "sum"){ P.a = RN(k); P.b = RN(b); P.c = RN(k * n + b); }
+        else if (form === "less" || form === "diff"){ if (k * n - b < 1) b = rint(1, k * n - 1); P.a = RN(k); P.b = RN(b); P.c = RN(k * n - b); }
+        else if (form === "div"){ var mq = b + rint(1, 10); P.a = RN(k); P.b = RN(b); P.c = RN(mq - b); }
+        else { P.a = RN(k); P.b = RN((k - 1) * n); }
+      } else if (kind === "consecutive"){
+        var cnt = rint(2, 4), st = form === "all" ? 1 : 2; n = rint(1, big ? 60 : 25);
+        if (form === "even" && n % 2) n++; if (form === "odd" && n % 2 === 0) n++;
+        P.a = RN(cnt); P.c = RN(cnt * n + st * cnt * (cnt - 1) / 2);
+      } else if (kind === "age"){
+        if (form === "times"){
+          for (t = 0; t < 400; t++){ var k0 = rint(2, 14), aa = rint(3, 5), cc = rint(2, aa - 1), bb = k0 * (aa - cc) / (cc - 1); if (bb % 1 === 0 && bb >= 1 && bb <= 30){ P.a = RN(aa); P.b = RN(bb); P.c = RN(cc); break; } }
+          if (!P.a){ P.a = RN(3); P.b = RN(6); P.c = RN(2); }
+        } else { var y = rint(4, 30), dd = rint(2, 12); P.a = RN(dd); P.c = RN(2 * y + dd); P.ask = pickOf(["both", "older", "younger"]); }
+      } else if (kind === "perimeter"){
+        if (form === "tri"){ for (t = 0; t < 200; t++){ var ka = rint(2, 3), db = 5 * rint(1, 8), xv = (180 - db) / (ka + 2); if (xv % 1 === 0){ P.a = RN(ka); P.b = RN(db); break; } } if (!P.a){ P.a = RN(2); P.b = RN(20); } }
+        else { var wv = rint(2, big ? 25 : 12), av = form === "times" ? rint(2, 4) : rint(1, 10); P.a = RN(av); P.c = RN(form === "times" ? 2 * av * wv + 2 * wv : 4 * wv + 2 * av); P.ask = pickOf(["length", "width", "both"]); }
+      } else if (kind === "plans"){
+        n = rint(2, 12); var rb = rint(2, 10), rd = rb + rint(1, 5), cB = Math.random() < 0.5 ? 0 : rint(1, 20);
+        P.a = RN(cB + (rd - rb) * n); P.b = RN(rb); P.c = cB ? RN(cB) : null; P.d = RN(rd);
+      } else if (kind === "twounknown"){
+        var xx = rint(2, 20), yy = rint(2, 20);
+        if (form === "numbers"){ xx = rint(10, 60); yy = rint(2, xx - 1); P.c = RN(xx + yy); P.d = RN(xx - yy); }
+        else if (form === "coins"){ var cx = ctxPick("algebra", null, function(c){ return c.coins; }); P.ctx = cx.id; P.c = RN(xx + yy); P.d = R(cx.v1 * xx + cx.v2 * yy, 100); }
+        else { var pa = rint(6, 15), pb2 = rint(3, pa - 1); P.a = RN(pa); P.b = RN(pb2); P.c = RN(xx + yy); P.d = RN(pa * xx + pb2 * yy); }
+      } else if (kind === "motion"){
+        if (form === "opposite"){ var sa = 5 * rint(6, 14), sb = 5 * rint(6, 16), tt = rint(2, 6); P.a = RN(sa); P.b = RN(sb); P.c = RN((sa + sb) * tt); }
+        else if (form === "catchup"){ for (t = 0; t < 400; t++){ var s1 = 5 * rint(6, 10), s2 = s1 + 5 * rint(2, 6), hh = rint(1, 4), tq = s1 * hh / (s2 - s1); if (tq % 1 === 0){ P.a = RN(s1); P.b = RN(s2); P.c = RN(hh); break; } } if (!P.a){ P.a = RN(40); P.b = RN(60); P.c = RN(2); } }
+        else { var r1 = 10 * rint(3, 7), r2 = 10 * rint(2, 6); if (r2 === r1) r2 += 10; var lc = r1 * r2 / gcdN(r1, r2), dist = lc * rint(1, Math.max(1, Math.floor(600 / lc))); P.a = RN(r1); P.b = RN(r2); P.c = R(dist * (r1 + r2), r1 * r2); }
+      } else {
+        var pp = pickOf([10, 20, 25, 30, 40, 50, 15, 5]);
+        if (form === "raise"){ var xw = rint(10, 40); P.p = RN(pp); P.c = R(xw * (100 + pp), 100); }
+        else { var xo = 5 * rint(4, 40); P.p = RN(pp); P.c = R(xo * (100 - pp), 100); }
+      }
+      if (!P.ctx){ var cx2 = ctxOf(P); if (cx2) P.ctx = (kind === "percentback" ? ctxPick("algebra", null, function(c){ return c.pb; }) : cx2) .id; }
+      if (kind === "plans"){ P.ctx = ctxPick("algebra", null, function(c){ return c.plans; }).id; }
+      if (kind === "motion"){ P.ctx = ctxPick("algebra", null, function(c){ return c.mv; }).id; }
+      if (kind === "perimeter" && form !== "tri"){ P.ctx = ctxPick("algebra", null, function(c){ return !!c.u && !c.mv; }).id; }
+      if (kind === "twounknown" && form === "tickets"){ P.ctx = ctxPick("algebra", null, function(c){ return c.tk; }).id; }
+      return P;
+    },
     remainder:function(o){
       var kind = mixOf(o.remainderKind, ["up", "down", "left", "both"]), cx = ctxPick("remainder", kind);
       var b = cx.id === "eggs" ? pickOf([6, 12]) : cx.id === "teams" ? rint(4, 6) : cx.id === "comics" ? rint(2, 8) : cx.id === "tables" ? pickOf([4, 6, 8]) : kind === "both" ? rint(3, 8) : rint(3, 15);
@@ -3232,14 +4240,14 @@
       return { type:"remainder", kind:kind, a:RN(b * q + r), b:RN(b), ctx:cx.id };
     }
   };
-  var NAMED = { join:1, separate:1, compare:2, groups:1, times:2, money:1, twostep:2, fraction:1, percent:1, remainder:1, rate:0, parts:0, array:0, time:0 };
+  var NAMED = { algebra:2, join:1, separate:1, compare:2, groups:1, times:2, money:1, twostep:2, fraction:1, percent:1, remainder:1, rate:0, parts:0, array:0, time:0 };
   function genProblem(group, o){
     o = o || {};
     var g = group === "any" || !GEN[group] ? pickOf(["addsub", "compare", "groups", "array", "times", "rate", "money", "time", "fraction", "percent", "twostep", "remainder"]) : group;
     var z = SZ[o.size] || SZ.medium, P = GEN[g](o, z), nm = names2();
     if (TY[P.type].kinds && !P.kind) P.kind = DEFKIND[P.type];
     if (NAMED[P.type]){ P.name = nm[0]; if (NAMED[P.type] > 1) P.name2 = nm[1]; }
-    if (o.extra === true){
+    if (o.extra === true && P.type !== "algebra"){
       var hasN = !!NAMED[P.type], xt = hasN ? pickOf(["age", "grade", "temp", "days"]) : pickOf(["temp", "days"]);
       var x = xt === "age" ? rint(7, 13) : xt === "grade" ? rint(2, 7) : xt === "temp" ? rint(45, 88) : rint(3, 20), vals = ["a", "b", "c", "d", "n", "pay", "p"].map(function(k){ return P[k] ? toN(P[k]) : null; });
       while (vals.indexOf(x) >= 0) x++;
@@ -3264,6 +4272,8 @@
     VALKEYS.forEach(function(k){ if (P[k]) q.set(k, valURL(P, k)); });
     if (P.fn) q.set("f", P.fn + "/" + P.fd);
     if (P.ops) q.set("ops", P.ops);
+    if (P.form) q.set("form", P.form);
+    if (P.ask) q.set("ask", P.ask);
     if (P.v) q.set("v", "1");
     if (!P.text && P.ctx) q.set("ctx", P.ctx);
     if (P.name) q.set("name", P.name);
@@ -3310,6 +4320,9 @@
       values:vl([["addsub", "Add, then take away"], ["timestotal", "Times as many, then altogether"], ["groupsplus", "Equal groups plus extra"], ["groupsless", "Equal groups, then some taken away"], ["comparetotal", "More than, then altogether"], ["shareleft", "Take away, then share"], ["multi", "Three steps"], ["mix", "Any of them"]]) },
     { key:"remainderKind", modes:["remainder"], label:"What to do with the leftover", type:"choice", "default":"mix",
       values:vl([["up", "Round up (vans needed)"], ["down", "Ignore it (full boxes)"], ["left", "It’s the answer (how many left over)"], ["both", "Each share and the leftover (6 R 1)"], ["mix", "Any of them"]]) },
+    { key:"algebraKind", modes:["algebra"], label:"What kind of algebra story", type:"choice", "default":"mix",
+      values:vl([["number", "Number puzzles (5 more than twice a number …)"], ["consecutive", "Consecutive numbers"], ["age", "Ages"], ["perimeter", "Perimeter and triangle angles"],
+                 ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (tickets, coins, two numbers)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"], ["mix", "Any of them"]]) },
     { key:"extra", modes:["any", "addsub", "compare", "groups", "array", "times", "rate", "money", "time", "fraction", "percent", "twostep", "remainder"], label:"Add a number the story doesn’t need", type:"toggle", "default":false, values:TOG }
   ];
   function optOf(o, key){
@@ -3355,7 +4368,7 @@
                  groups:"groups", group:"groups", equal:"groups", multiply:"groups", array:"array", arrays:"array", area:"array", rows:"array",
                  times:"times", multiplicative:"times", rate:"rate", rates:"rate", unit:"rate", unitprice:"rate", money:"money", change:"money",
                  time:"time", elapsed:"time", fraction:"fraction", fractions:"fraction", percent:"percent", percents:"percent", discount:"percent",
-                 twostep:"twostep", "two-step":"twostep", multistep:"twostep", "multi-step":"twostep", remainder:"remainder", remainders:"remainder" };
+                 twostep:"twostep", "two-step":"twostep", multistep:"twostep", "multi-step":"twostep", remainder:"remainder", remainders:"remainder", algebra:"algebra", equation:"algebra", equations:"algebra" };
   function valIn(type, k, s){
     s = String(s).trim();
     if (!s) return null;
@@ -3376,6 +4389,9 @@
     var ops = (p.get("ops") || "").replace(/−/g, "-").replace(/ /g, "+");
     if (/^[+-]{2}$/.test(ops)) F.ops = ops;
     if (p.get("v") === "1") F.v = 1;
+    var fm = (p.get("form") || "").toLowerCase().trim(), ak = (p.get("ask") || "").toLowerCase().trim();
+    if (/^[a-z]{2,12}$/.test(fm)) F.form = fm;
+    if (/^(both|length|width|older|younger)$/.test(ak)) F.ask = ak;
     ["ctx", "name", "name2", "item", "unit", "xt"].forEach(function(key){ var v = p.get(key); if (v && v.trim()) F[key] = v.trim().slice(0, 40); });
     if (p.has("x")){ var x = valIn(null, "x", p.get("x")); if (x) F.x = x; }
     if (F.xt && !XT[F.xt]) delete F.xt;
@@ -3389,6 +4405,8 @@
     VALKEYS.forEach(function(k){ if (has(ov, k)) q.set(k, ov[k] ? (ov.type === "time" && (k === "a" || k === "c") ? clockURL(ov[k]) : plainN(ov[k])) : ""); });
     if (ov.fn) q.set("f", ov.fn + "/" + ov.fd);
     if (ov.ops) q.set("ops", ov.ops);
+    if (ov.form) q.set("form", ov.form);
+    if (ov.ask) q.set("ask", ov.ask);
     ["name", "name2", "item", "unit"].forEach(function(k){ if (ov[k]) q.set(k, ov[k]); });
     return q;
   }
@@ -3409,7 +4427,8 @@
   function applyOv(P, ov){
     VALKEYS.forEach(function(k){ if (has(ov, k)) P[k] = ov[k]; });
     if (ov.fn){ P.fn = ov.fn; P.fd = ov.fd; }
-    ["ops", "name", "name2", "item", "unit"].forEach(function(k){ if (ov[k]) P[k] = ov[k]; });
+    ["ops", "name", "name2", "item", "unit", "form", "ask"].forEach(function(k){ if (ov[k]) P[k] = ov[k]; });
+    if (P.pz && (VALKEYS.some(function(k){ return has(ov, k); }) || ov.form && ov.form !== pzForm(P.pz).form)) delete P.pz;     // the boxes were changed: the story's own equation no longer applies
     if (has(ov, "v")) P.v = ov.v;
   }
   function curP(){
@@ -3561,7 +4580,7 @@
     return p && !p.zero && p.v.n > 0n ? p.v : null;
   }
   var RKEY = null;
-  function readerShape(P){ return P ? [S.src, P.type, P.kind || "", TY[P.type].three ? unkSafe(P) : "", P.ops || ""].join("|") : "none|" + S.src; }
+  function readerShape(P){ return P ? [S.src, P.type, P.kind || "", P.form || "", P.ask || "", TY[P.type].three ? unkSafe(P) : "", P.ops || ""].join("|") : "none|" + S.src; }
   function unkSafe(P){ try { return unk3(P); } catch (e){ return "?"; } }
   function numsLine(P){
     return fieldsOfP(P).map(function(f){ var t = fmtIn(P, f[0], f[2]); return t ? Be(t) : null; }).filter(Boolean).join(", ");
@@ -3594,6 +4613,8 @@
       : "This story is written from these numbers. Change any of them, or what’s missing, and the story is rewritten to match.") + "</p>";
     h += '<div class="rd-grid"><div class="rd-f"><label for="rdType">Kind of story</label><select id="rdType">' + TYPES.map(function(t){ return '<option value="' + t + '"' + (t === P.type ? " selected" : "") + ">" + esc(TLABEL[t]) + "</option>"; }).join("") + "</select></div>";
     if (T.kinds) h += '<div class="rd-f"><label for="rdKind">Which kind</label><select id="rdKind">' + T.kinds.map(function(k){ return '<option value="' + k[0] + '"' + (k[0] === P.kind ? " selected" : "") + ">" + esc(k[1]) + "</option>"; }).join("") + "</select></div>";
+    if (T.forms && T.forms(P.kind).length > 1) h += '<div class="rd-f"><label for="rdForm">Which form</label><select id="rdForm">' + T.forms(P.kind).map(function(f){ return '<option value="' + f[0] + '"' + (f[0] === P.form ? " selected" : "") + ">" + esc(f[1]) + "</option>"; }).join("") + "</select></div>";
+    if (P.type === "algebra" && ((P.kind === "perimeter" && P.form !== "tri") || (P.kind === "age" && P.form !== "times"))) h += '<div class="rd-f"><label for="rdAsk">What’s asked</label><select id="rdAsk">' + (P.kind === "age" ? [["both", "Both ages"], ["older", "The older one"], ["younger", "The younger one"]] : [["length", "The length"], ["width", "The width"], ["both", "Both"]]).map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === (P.ask || (P.kind === "age" ? "both" : "length")) ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select></div>";
     var u = T.three ? unkSafe(P) : null, F = fieldsOfP(P);
     if (T.three) h += '<div class="rd-f"><label for="rdUnk">What’s missing</label><select id="rdUnk">' + F.map(function(f){ return '<option value="' + f[0] + '"' + (f[0] === u ? " selected" : "") + ">" + esc(f[1]) + "</option>"; }).join("") + "</select></div>";
     if (P.type === "twostep" && P.kind === "addsub") h += '<div class="rd-f"><label for="rdOps">The two changes</label><select id="rdOps">' + [["+-", "added, then taken away"], ["-+", "taken away, then added"], ["++", "added, then added"], ["--", "taken away, then taken away"]].map(function(o){ return '<option value="' + o[0] + '"' + (o[0] === (P.ops || "+-") ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select></div>";
@@ -3609,6 +4630,8 @@
     body.innerHTML = h;
     $("rdType").addEventListener("change", function(){ changeType($("rdType").value); });
     if ($("rdKind")) $("rdKind").addEventListener("change", function(){ changeKind($("rdKind").value); });
+    if ($("rdForm")) $("rdForm").addEventListener("change", function(){ changeForm($("rdForm").value); });
+    if ($("rdAsk")) $("rdAsk").addEventListener("change", function(){ setVal({ ask:$("rdAsk").value }); });
     if ($("rdUnk")) $("rdUnk").addEventListener("change", function(){ changeUnk($("rdUnk").value); });
     if ($("rdOps")) $("rdOps").addEventListener("change", function(){ setVal({ ops:$("rdOps").value }); });
     if ($("rdReset")) $("rdReset").addEventListener("click", function(){ S.ov = {}; S.step = 1; render(); save(); });
@@ -3625,7 +4648,7 @@
       });
     });
   }
-  function pinned(){ var P = CURP; if (!P) return {}; var o = { type:P.type }; if (P.kind) o.kind = P.kind; VALKEYS.forEach(function(k){ o[k] = P[k] || null; }); if (P.fn){ o.fn = P.fn; o.fd = P.fd; } if (P.ops) o.ops = P.ops; if (P.v) o.v = P.v; return o; }
+  function pinned(){ var P = CURP; if (!P) return {}; var o = { type:P.type }; if (P.kind) o.kind = P.kind; VALKEYS.forEach(function(k){ o[k] = P[k] || null; }); if (P.fn){ o.fn = P.fn; o.fd = P.fd; } if (P.ops) o.ops = P.ops; if (P.v) o.v = P.v; if (P.form) o.form = P.form; if (P.ask) o.ask = P.ask; return o; }
   function setVal(o){
     var k;
     if (S.src === "text"){
@@ -3636,7 +4659,7 @@
     } else if (S.P){ for (k in o) S.P[k] = o[k]; }
     S.step = 1; render(); save();
   }
-  var KINDOPT = { groups:function(k){ return { groupsMoney:k === "money", groupsSplit:k === "share" }; }, array:function(k){ return { arrayKind:k }; }, rate:function(k){ return { rateKind:k }; }, money:function(k){ return { moneyKind:k }; },
+  var KINDOPT = { algebra:function(k){ return { algebraKind:k }; }, groups:function(k){ return { groupsMoney:k === "money", groupsSplit:k === "share" }; }, array:function(k){ return { arrayKind:k }; }, rate:function(k){ return { rateKind:k }; }, money:function(k){ return { moneyKind:k }; },
                   fraction:function(k){ return { fractionAsk:k }; }, percent:function(k){ return { percentKind:k }; }, twostep:function(k){ return { twostepKind:k }; }, remainder:function(k){ return { remainderKind:k }; } };
   function genOf(type, kind){
     var o = cloneP(S.gen), g = groupOf(type);
@@ -3649,6 +4672,11 @@
     if (!TY[t]) return;
     if (S.src === "text") S.ov = { type:t };
     else { S.P = genOf(t); S.group = groupOf(t); }
+    S.step = 1; render(); save();
+  }
+  function changeForm(fm){
+    if (S.src === "text"){ var pin = Object.keys(S.ov).length ? S.ov : pinned(); pin.form = fm; S.ov = pin; }
+    else if (S.P){ var o = cloneP(S.gen); o.algebraKind = S.P.kind; o.algebraForm = fm; S.P = genProblem("algebra", o); }
     S.step = 1; render(); save();
   }
   function changeKind(k){
@@ -3761,7 +4789,7 @@
       if (F.type) S.ov.type = F.type;
       if (F.kind) S.ov.kind = F.kind;
       VALKEYS.forEach(function(k){ if (has(F, k)) S.ov[k] = F[k]; });
-      ["fn", "fd", "ops", "v", "name", "name2", "item", "unit"].forEach(function(k){ if (has(F, k)) S.ov[k] = F[k]; });
+      ["fn", "fd", "ops", "v", "name", "name2", "item", "unit", "form", "ask"].forEach(function(k){ if (has(F, k)) S.ov[k] = F[k]; });
     } else if (F.type){
       S.src = "gen"; S.P = F; S.group = groupOf(F.type);
       if (TY[F.type].kinds && kindsOf(F.type).indexOf(F.kind) < 0) F.kind = DEFKIND[F.type];
