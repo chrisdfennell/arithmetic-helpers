@@ -26,7 +26,7 @@
     --key:#4338CA; --key-bg:#E2E3F6; --key-line:#9EA3E0;
     --warm:#9A5410; --warm-bg:#F6E5D2;
     --focus:#4338CA;
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C; --pro:#A21CAF; --exp:#BE185D;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C; --pro:#A21CAF; --exp:#BE185D; --gra:#0369A1;
     --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
     --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -40,7 +40,7 @@
       --key:#A5B4FC; --key-bg:#23264A; --key-line:#4F55A0;
       --warm:#E8A45C; --warm-bg:#37270F;
       --focus:#A5B4FC;
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF; --gra:#7DD3FC;
       --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     }
@@ -51,7 +51,7 @@
     --key:#A5B4FC; --key-bg:#23264A; --key-line:#4F55A0;
     --warm:#E8A45C; --warm-bg:#37270F;
     --focus:#A5B4FC;
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF; --gra:#7DD3FC;
     --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
   }
@@ -321,7 +321,7 @@
      number), so a week mixes five different helpers and every helper comes up once per round. Weekends do the same
      with the topics that have weekend:true. A round never starts with the topic the last round ended on.
 
-   ADDING A TOPIC: add an entry to TOPICS below (probability and exponents were added this way, from 2026-10-26):
+   ADDING A TOPIC: add an entry to TOPICS below (probability and exponents were added this way from 2026-10-26, graphing from 2026-11-02):
        { id:"probability", page:"probability.html", name:"Probability", title:"…", c:"pro",     // c: a colour token (--pro)
          weekday:true, weekend:true, from:"2026-11-02",
          make:function(r, L){ … return Q([["mode", "…"], ["q", "…"]], "the problem as text", "the answer"); } }
@@ -873,7 +873,9 @@
     { id:"probability", page:"probability.html", name:"Probability", title:"The Chance Spinner", c:"pro", weekday:true, weekend:true, from:NEW_FROM,
       make:function(r, L){ return probability(r, L); } },
     { id:"exponents", page:"exponents.html", name:"Exponents", title:"The Power Tower", c:"exp", weekday:true, weekend:true, from:NEW_FROM,
-      make:function(r, L){ return exponents(r, L); } }
+      make:function(r, L){ return exponents(r, L); } },
+    { id:"graphing", page:"graphing.html", name:"Graphing", title:"The Graph Paper", c:"gra", weekday:true, weekend:true, from:"2026-11-02",
+      make:function(r, L){ return graphing(r, L); } }
   ];
   var BY = {};
   TOPICS.forEach(function(t){ BY[t.id] = t; BY[t.page] = t; });
@@ -1220,6 +1222,124 @@
     var ma = dec(m2 * t, 1), mb = dec(m2, 1);
     return Q([["mode", "scicalc"], ["op", "times"], ["a", ma + "e" + (kb + dd)], ["b", mb + "e" + kb]],
       "How many times bigger is " + sciS(ma, kb + dd) + " than " + sciS(mb, kb) + "?", commas(String(t * Math.pow(10, dd))));
+  }
+
+  /* ---- graphing (graphing.html, the structured forms). Every task here is typed in the embedded check
+     (a point, numbers or an equation); graphing an inequality needs buttons, so it isn't used. ---- */
+  function P2(p){ return pt(p[0], p[1]); }
+  function ptsA(ps){ return ps.map(function(p){ return p[0] + "," + p[1]; }).join(";"); }
+  var MOVES = {
+    "reflect:x-axis":["Reflect over the x-axis", function(p){ return [p[0], -p[1]]; }],
+    "reflect:y-axis":["Reflect over the y-axis", function(p){ return [-p[0], p[1]]; }],
+    "reflect:y=x":["Reflect over the line y = x", function(p){ return [p[1], p[0]]; }],
+    "reflect:y=-x":["Reflect over the line y = −x", function(p){ return [-p[1], -p[0]]; }],
+    "rotate:90cw":["Rotate 90° clockwise about the origin", function(p){ return [p[1], -p[0]]; }],
+    "rotate:90ccw":["Rotate 90° counter-clockwise about the origin", function(p){ return [-p[1], p[0]]; }],
+    "rotate:180":["Rotate 180° about the origin", function(p){ return [-p[0], -p[1]]; }]
+  };
+  function move(r, kinds){
+    var m = pick(r, kinds), a, b;
+    if (m === "translate"){ a = nz(r, -5, 5); b = nz(r, -5, 5); return ["translate:" + a + "," + b, "Translate by " + pt(a, b), function(p){ return [p[0] + a, p[1] + b]; }]; }
+    if (m === "reflect:x=k"){ a = nz(r, -3, 4); return ["reflect:x=" + a, "Reflect over the line x = " + M(a), function(p){ return [2 * a - p[0], p[1]]; }]; }
+    if (m === "reflect:y=k"){ a = nz(r, -3, 4); return ["reflect:y=" + a, "Reflect over the line y = " + M(a), function(p){ return [p[0], 2 * a - p[1]]; }]; }
+    return [m, MOVES[m][0], MOVES[m][1]];
+  }
+  function triangle(r, lo, hi){
+    var ps;
+    do { ps = [[ri(r, lo, hi), ri(r, lo, hi)], [ri(r, lo, hi), ri(r, lo, hi)], [ri(r, lo, hi), ri(r, lo, hi)]]; }
+    while ((ps[1][0] - ps[0][0]) * (ps[2][1] - ps[0][1]) === (ps[2][0] - ps[0][0]) * (ps[1][1] - ps[0][1]));
+    return ps;
+  }
+  function images(ps, f, primes){ var nm = ["A", "B", "C", "D"]; return ps.map(function(p, i){ return nm[i] + primes + " " + P2(f(p)); }).join(", "); }
+  function graphing(r, L){
+    var a, b, x0, y0, k, ps;
+    if (L <= 1){
+      if (chance(r, .5)){
+        a = [ri(r, -8, 8), ri(r, -8, 8)];
+        do { b = [ri(r, -8, 8), ri(r, -8, 8)]; } while ((a[0] + b[0]) % 2 || (a[1] + b[1]) % 2 || (a[0] === b[0] && a[1] === b[1]));
+        return Q([["mode", "points"], ["task", "midpoint"], ["pts", ptsA([a, b])]], "Find the midpoint of " + P2(a) + " and " + P2(b) + ".", P2([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]));
+      }
+      var m = nz(r, -4, 4), c = ri(r, -6, 6), xs = [-2, -1, 0, 1, 2];
+      var rule = lin([[m, "x"], [c, ""]], true), ys = xs.map(function(x){ return M(m * x + c); });
+      return Q([["mode", "table"], ["task", "fill"], ["rule", rule], ["xs", xs.join(",")]],
+        "Fill in the table for y = " + lin([[m, "x"], [c, ""]]) + " at x = −2, −1, 0, 1, 2.", ys.join(", "));
+    }
+    if (L === 2){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        var tr = pick(r, [[3, 4, 5], [4, 3, 5], [6, 8, 10], [8, 6, 10], [5, 12, 13], [12, 5, 13], [0, 7, 7], [9, 0, 9]]);
+        a = [ri(r, -6, 4), ri(r, -6, 4)]; b = [a[0] + tr[0] * (chance(r, .5) ? -1 : 1), a[1] + tr[1] * (chance(r, .5) ? -1 : 1)];
+        return Q([["mode", "points"], ["task", "distance"], ["pts", ptsA([a, b])]], "Find the distance between " + P2(a) + " and " + P2(b) + ".", String(tr[2]));
+      }
+      if (k === 1){
+        var mv = move(r, ["translate", "reflect:x-axis", "reflect:y-axis", "rotate:90cw", "rotate:90ccw", "rotate:180"]);
+        ps = chance(r, .6) ? triangle(r, -5, 5) : [[nz(r, -6, 6), nz(r, -6, 6)]];
+        return Q([["mode", "transform"], ["pts", ptsA(ps)], ["t", mv[0]]],
+          mv[1] + ": " + (ps.length === 1 ? "the point A " + P2(ps[0]) + ". Give the image." : "the triangle A " + P2(ps[0]) + ", B " + P2(ps[1]) + ", C " + P2(ps[2]) + ". Give the image of each point."),
+          images(ps, mv[2], "′"));
+      }
+      x0 = ri(r, -5, 5); y0 = ri(r, -5, 5);
+      var m1, m2;
+      do { m1 = nz(r, -3, 3); m2 = nz(r, -3, 3); } while (m1 === m2);
+      var b1 = y0 - m1 * x0, b2 = y0 - m2 * x0;
+      if (chance(r, .5)) return Q([["mode", "systems"], ["e1", "y=" + lin([[m1, "x"], [b1, ""]], true)], ["e2", "y=" + lin([[m2, "x"], [b2, ""]], true)]],
+        "Solve by graphing: y = " + lin([[m1, "x"], [b1, ""]]) + " and y = " + lin([[m2, "x"], [b2, ""]]) + ".", P2([x0, y0]));
+      var A1, B1, A2, B2;
+      do { A1 = nz(r, -3, 3); B1 = nz(r, -3, 3); A2 = nz(r, -3, 3); B2 = nz(r, -3, 3); } while (A1 * B2 === A2 * B1);
+      var e1 = [[A1, "x"], [B1, "y"]], e2 = [[A2, "x"], [B2, "y"]];
+      return Q([["mode", "systems"], ["e1", lin(e1, true) + "=" + (A1 * x0 + B1 * y0)], ["e2", lin(e2, true) + "=" + (A2 * x0 + B2 * y0)]],
+        "Solve by graphing: " + lin(e1) + " = " + M(A1 * x0 + B1 * y0) + " and " + lin(e2) + " = " + M(A2 * x0 + B2 * y0) + ".", P2([x0, y0]));
+    }
+    if (L === 3){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        var area2;
+        if (chance(r, .5)){
+          var x1 = ri(r, -6, 0), y1 = ri(r, -6, 0), w, h, x3;
+          do { w = ri(r, 3, 8); h = ri(r, 2, 7); } while (w * h % 2);
+          x3 = x1 + ri(r, 0, w);
+          ps = [[x1, y1], [x1 + w, y1], [x3, y1 + h]]; area2 = w * h;
+        } else {
+          var px = ri(r, -6, 0), py = ri(r, -6, 0), lo = ri(r, 3, 8), up, hh = ri(r, 2, 6), sh;
+          do { up = ri(r, 2, 7); sh = ri(r, 0, 3); } while ((lo + up) * hh % 2 || up === lo || sh + up > lo + 3);
+          ps = [[px, py], [px + lo, py], [px + sh + up, py + hh], [px + sh, py + hh]]; area2 = (lo + up) * hh;
+        }
+        return Q([["mode", "points"], ["task", "polygon"], ["pts", ptsA(ps)], ["ask", "area"]],
+          "Find the area of the " + (ps.length === 3 ? "triangle " : "quadrilateral ") + ps.map(P2).join(" ") + " (in square units).", String(area2 / 2));
+      }
+      if (k === 1){
+        var sa = chance(r, .7) ? 1 : -1, r1, r2;
+        do { r1 = ri(r, -6, 5); r2 = ri(r, -5, 6); } while (r1 >= r2 || (r1 + r2) % 2);
+        var hv = (r1 + r2) / 2, kv = sa * (hv - r1) * (hv - r2), bq = -sa * (r1 + r2), cq = sa * r1 * r2;
+        var fx = lin([[sa, "x^2"], [bq, "x"], [cq, ""]], true), ft = lin([[sa, "x²"], [bq, "x"], [cq, ""]]);
+        return Q([["mode", "functions"], ["f", fx]], "Graph y = " + ft + ". Find its vertex, its x-intercepts and its y-intercept.",
+          "vertex " + P2([hv, kv]) + "; x-intercepts " + M(r1) + " and " + M(r2) + "; y-intercept " + P2([0, cq]));
+      }
+      var m1s = move(r, ["reflect:x-axis", "reflect:y-axis", "rotate:90cw", "rotate:180"]), m2s = move(r, ["translate"]);
+      ps = triangle(r, -4, 4);
+      return Q([["mode", "transform"], ["pts", ptsA(ps)], ["t", m1s[0]], ["t2", m2s[0]]],
+        m1s[1] + ", then " + m2s[1].charAt(0).toLowerCase() + m2s[1].slice(1) + ": the triangle A " + P2(ps[0]) + ", B " + P2(ps[1]) + ", C " + P2(ps[2]) + ". Give the image of each point.",
+        images(ps, function(p){ return m2s[2](m1s[2](p)); }, "″"));
+    }
+    if (chance(r, .55)){
+      var rm = move(r, ["reflect:y=x", "reflect:y=-x", "reflect:x=k", "reflect:y=k"]);
+      do { a = [nz(r, -6, 6), nz(r, -6, 6)]; b = rm[2](a); } while (a[0] === b[0] && a[1] === b[1]);
+      return Q([["mode", "transform"], ["pts", ptsA([a])], ["t", rm[0]]],
+        rm[1] + ": the point A " + P2(a) + ". Where does it land? (Give the image A′.)", "A′ " + P2(b));
+    }
+    // a scatter plot whose line of best fit comes out exactly (the wobbles add to 0 and don't tilt it)
+    var sm = nz(r, -6, 6), x0s = ri(r, 1, 3), s = ri(r, 1, 2) * (chance(r, .5) ? -1 : 1), wob = [1, -2, 0, 2, -1], bb, data, pxv;
+    if (Math.abs(sm) < 2) sm = sm * 2;
+    bb = ri(r, 2, 20); if (sm < 0) bb += -sm * (x0s + 4) + 4;
+    data = wob.map(function(wv, i){ var x = x0s + i; return [x, sm * x + bb + s * wv]; });
+    pxv = x0s + 4 + ri(r, 2, 5);
+    var mx = 0, my = 0, sxy = 0, sxx = 0, syy = 0;
+    data.forEach(function(d){ mx += d[0] / 5; my += d[1] / 5; });
+    data.forEach(function(d){ sxy += (d[0] - mx) * (d[1] - my); sxx += (d[0] - mx) * (d[0] - mx); syy += (d[1] - my) * (d[1] - my); });
+    var rr = Math.abs(sxy / Math.sqrt(sxx * syy));
+    return Q([["mode", "scatter"], ["data", ptsA(data)], ["px", pxv]],
+      "Make a scatter plot of " + data.map(P2).join(" ") + ", describe the association and predict y when x = " + pxv + ".",
+      (rr >= 0.7 ? "strong " : "weak ") + (sm > 0 ? "positive" : "negative") + "; y ≈ " + M(sm * pxv + bb) + " when x = " + pxv);
   }
 
   function repeating(n, d){                   // n/d (0 < n < d) as a decimal with the repeating digits in brackets: 5/12 → 0.41(6)

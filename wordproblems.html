@@ -2190,9 +2190,11 @@
   function sysLink(e1, e2, note){
     return '<span class="golink"><a href="' + esc(ALINK + "?mode=sys&q=" + encodeURIComponent((e1 + ";" + e2).replace(/−/g, "-"))) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">Solve the system on the Balance Scale →</a> " + esc(note || "") + "</span>";
   }
-  function lineLink(m, b, label){
-    var q = "graph y=" + (eqR(m, ZERO) ? "" : nt(m) + "x") + (sgn(b) ? (sgn(m) ? (sgn(b) < 0 ? "-" : "+") : (sgn(b) < 0 ? "-" : "")) + plainN(absR(b)) : (sgn(m) ? "" : "0"));
-    return '<a href="' + esc("lines.html?mode=graph&q=" + encodeURIComponent(q)) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">" + esc(label) + " →</a>";
+  // both plans as two lines on one graph, crossing where they cost the same (The Graph Paper)
+  function plansLink(a, b, c, d, unit, label){
+    var ex = function(start, each){ return (sgn(start) ? plainN(start) + "+" : "") + plainN(each) + "x"; };
+    var q = "mode=systems&e1=" + encodeURIComponent(ex(a, b)) + "&e2=" + encodeURIComponent(ex(c, d)) + "&plan=1&unit=" + encodeURIComponent(unit);
+    return '<a href="' + esc("graphing.html?" + q) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">" + esc(label) + " →</a>";
   }
   // a small table, drawn as a picture
   function tableSVG(head, rows, hl, label){
@@ -2565,7 +2567,7 @@
     var rows = stepRows(sol.steps, [v]);
     if (!rows.length) rows = [{ o:"=", h:vH(wEq, [v]), say:Be(wEq) }];
     rows[0].h += solveLink(wEq);
-    rows.push({ o:"=", h:mvH("Graph it") + '<span class="golink">Each plan is a straight line: ' + lineLink(b, a, A + " on the Slope Grid") + " · " + lineLink(d, c, Bn + " on the Slope Grid") + "</span>", say:"Each plan graphs as a straight line; they cross at " + Be(v + " = " + chkV(n)) + "." });
+    rows.push({ o:"=", h:mvH("Graph it") + '<span class="golink">Each plan is a straight line, and they cross where the totals match: ' + plansLink(a, b, c, d, unit, "Graph both on the Graph Paper") + "</span>", say:"Each plan graphs as a straight line; they cross at " + Be(v + " = " + chkV(n)) + "." });
     M.calc = rows;
     var tot = lxVal(L, n);
     M.ans = { v:n, k:isInt(n) ? "n" : "q", w:unit, say:"After " + Be(vT(n, "n", unit)) + ", both " + (sv ? "have " : "cost ") + Be(isCents(tot) ? usd(tot) : money(roundK(tot, 2))) + "." };
