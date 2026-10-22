@@ -66,6 +66,16 @@
     ".ht-exit{position:fixed;top:12px;right:12px;z-index:70;font-family:var(--f-body,Arial,sans-serif);font-size:14px;font-weight:600;" +
       "color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:8px 14px;cursor:pointer;" +
       "box-shadow:0 10px 24px -14px rgba(0,0,0,.6)}" +
+    ".ht-byhand{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:12px 0 0;padding:12px 16px;border-radius:12px;" +
+      "background:color-mix(in srgb, #B45309 12%, var(--surface));border:1.5px solid color-mix(in srgb, #B45309 45%, var(--rule))}" +
+    ".ht-byhand a{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-body,Arial,sans-serif);font-size:15.5px;font-weight:700;" +
+      "text-decoration:none;color:#fff;background:#B45309;border-radius:10px;padding:9px 16px}" +
+    ".ht-byhand a:hover{filter:brightness(1.1)}" +
+    ".ht-byhand a:focus-visible{outline:2.5px solid var(--ink);outline-offset:2px}" +
+    ".ht-byhand span{font-size:14px;color:var(--ink-2)}" +
+    "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]) .ht-byhand a{background:#FCD34D;color:#231A05}}" +
+    ":root[data-theme=\"dark\"] .ht-byhand a{background:#FCD34D;color:#231A05}" +
+    "@media print{.ht-byhand{display:none !important}}" +
     ".ht-pad{position:fixed;left:0;right:0;bottom:0;z-index:80;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;" +
       "padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:var(--surface-2,#e3e7df);border-top:1px solid var(--rule);" +
       "box-shadow:0 -10px 24px -16px rgba(0,0,0,.5)}" +
@@ -561,6 +571,46 @@
     });
   }
 
+  /* ===================== "Now try it by hand": the four written methods go on to the Scratch Paper ===================== */
+  var BYHAND = { "addition.html":"add", "subtraction.html":"sub", "multiplication.html":"mul", "division.html":"div" };
+  function byHandHref(){
+    var op = BYHAND[page], u = new URLSearchParams(location.search), q = String(u.get("q") || "").replace(/\s+/g, "").replace(/,/g, "");
+    if (!op || !q) return null;
+    if (op !== "div" && /\//.test(q)) return null;                                          // 2 3/4 + 1 5/6: fractions stay on the helper
+    if (op === "div" && /[÷:]/.test(q) && /\//.test(q)) return null;                          // 3/4 ÷ 1/2
+    var nums = q.split({ add:/\+/, sub:/[\-−]/, mul:/[×x*]/, div:/[÷:\/]/ }[op]), ints = nums.every(function(n){ return /^\d+$/.test(n); });
+    if (!nums.every(function(n){ return /^\d*\.?\d+$/.test(n); })) return null;          // fractions and negatives stay on the helper
+    var digits = function(n){ return n.replace(".", "").replace(/^0+(?=\d)/, "").length; };
+    if (op === "add" && (nums.length < 2 || nums.length > 4)) return null;
+    if (op === "sub" && nums.length !== 2) return null;
+    if (op === "mul" && (nums.length !== 2 || digits(nums[0]) > 4 || digits(nums[1]) > 3)) return null;
+    if (op === "div" && (nums.length !== 2 || !ints || nums[0].length > 6 || nums[1].length > 3 || +nums[1] === 0)) return null;
+    var sign = { add:"+", sub:"-", mul:"*", div:"/" }[op], ans = u.get("ans");
+    return "scratch.html?op=" + op + "&q=" + encodeURIComponent(nums.join(sign)) + (op === "div" ? "&ans=" + (ans === "decimal" ? "decimal" : "remainder") : "");
+  }
+  function byHand(){
+    if (!BYHAND[page]) return;
+    var band = document.querySelector(".answer"), href = byHandHref(), box = document.getElementById("htByHand");
+    if (!band || !href){ if (box) box.remove(); return; }
+    if (!box || box.previousElementSibling !== band){
+      if (box) box.remove();
+      box = document.createElement("div"); box.id = "htByHand"; box.className = "ht-byhand";
+      box.innerHTML = '<a href="#">✍ Now try it by hand →</a><span>Work this same problem yourself on the Scratch Paper: carry, borrow and write each digit, checked square by square.</span>';
+      band.insertAdjacentElement("afterend", box);
+    }
+    box.querySelector("a").setAttribute("href", href);
+  }
+  function watchByHand(){
+    if (!BYHAND[page]) return;
+    ["replaceState", "pushState"].forEach(function(name){
+      var orig = history[name];
+      if (typeof orig !== "function") return;
+      history[name] = function(){ var r = orig.apply(this, arguments); setTimeout(safe(byHand), 60); return r; };
+    });
+    setInterval(safe(byHand), 1200);           // the page redraws its answer band; put the button back beside it
+    setTimeout(safe(byHand), 300);
+  }
+
   /* ===================== the bar: search, recent, text size, big screen, shortcuts ===================== */
   function goSearch(text){
     var r = window.HelperSearch && window.HelperSearch.route(text);
@@ -617,6 +667,7 @@
     if (!document.querySelector(".page")) return;   // the home page: settings only
     addReadButton();
     watchAddress();
+    watchByHand();
     // the bar is drawn by nav.js; wait for it briefly
     var tries = 0;
     (function waitBar(){

@@ -8,6 +8,7 @@
     { href:"subtraction.html",    sign:"−",  name:"Subtract",  title:"The Borrow Bank",    c:"sub" },
     { href:"multiplication.html", sign:"×",  name:"Multiply",  title:"The Product Ladder", c:"mul" },
     { href:"division.html",       sign:"÷",  name:"Divide",    title:"The Division House", c:"div" },
+    { href:"scratch.html",        sign:"✍",  name:"By hand",   title:"The Scratch Paper: do + − × ÷ yourself", c:"scr" },
     { href:"fractions.html",      sign:"½",  name:"Fractions", title:"The Fraction Bar",   c:"fra" },
     { href:"percents.html",       sign:"%",  name:"Percents",  title:"The Hundred Grid",   c:"pct" },
     { href:"factors.html",        sign:"⋔",  name:"Factors",   title:"The Factor Tree",    c:"fac" },
@@ -26,7 +27,6 @@
   var TOOLS = [
     { href:"worksheet.html", name:"Worksheets", title:"The Worksheet Maker" },
     { href:"practice.html",  name:"Practice",   title:"Practice sets" },
-    { href:"scratch.html",   name:"By hand",    title:"The Scratch Paper: do the written method yourself" },
     { href:"flashcards.html", name:"Flash cards", title:"The Flash Cards: times tables and other facts" },
     { href:"daily.html",     name:"Daily",      title:"Problem of the day" },
     { href:"progress.html",  name:"Progress",   title:"Your progress" },
@@ -36,9 +36,9 @@
   ];
 
   var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;"
-            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-gra:#0369A1;--nv-exp:#BE185D;--nv-pro:#A21CAF;";
+            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-gra:#0369A1;--nv-exp:#BE185D;--nv-pro:#A21CAF;--nv-scr:#B45309;";
   var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;"
-            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-gra:#7DD3FC;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;";
+            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-gra:#7DD3FC;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;--nv-scr:#FCD34D;";
   var CSS =
     ":root{" + LIGHT + "}" +
     "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + DARK + "}}" +
