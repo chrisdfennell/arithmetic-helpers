@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Open the site
+    url: https://chrisdfennell.github.io/arithmetic-helpers/
+    about: Try a problem first; every page shows the steps and can check your answer.
+  - name: Report a security problem privately
+    url: https://github.com/chrisdfennell/arithmetic-helpers/security/advisories/new
+    about: Please don't open a public issue for security problems.

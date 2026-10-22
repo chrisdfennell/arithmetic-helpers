@@ -1,0 +1,43 @@
+name: Wrong answer or confusing step
+description: A page got a problem wrong, skipped a step, or explained it in a way that doesn't make sense.
+title: "Wrong or confusing: "
+labels: ["math", "bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you! Every page keeps the exact problem in its address, so the link is the most useful part: press **Copy link** on the page and paste it below.
+  - type: input
+    id: link
+    attributes:
+      label: Link to the problem
+      description: Press "Copy link" on the page and paste it here.
+      placeholder: https://chrisdfennell.github.io/arithmetic-helpers/helpers/order-of-operations?q=3%2B4%C3%972
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What's wrong?
+      options:
+        - The answer is wrong
+        - A step is wrong or missing
+        - The explanation is confusing
+        - Check my answer marked a right answer wrong (or a wrong one right)
+        - The picture or graph is wrong
+        - It wouldn't read my problem
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What it says, and what it should say
+      description: Copy the step or answer it shows, and tell us what you expected (and why, if you can).
+    validations:
+      required: true
+  - type: input
+    id: level
+    attributes:
+      label: Grade or course (optional)
+      description: Helps us pitch the explanation right, e.g. "grade 6" or "Algebra 1".

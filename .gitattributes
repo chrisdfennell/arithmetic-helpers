@@ -1,0 +1,25 @@
+# Text files are stored with LF line endings and checked out as LF everywhere, so diffs stay clean on Windows too.
+* text=auto eol=lf
+
+*.html  text diff=html
+*.js    text
+*.css   text
+*.json  text
+*.md    text diff=markdown
+*.yml   text
+*.svg   text
+*.webmanifest text
+
+# Binary files: never touch their line endings, never try to diff them.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.pdf   binary
+*.woff  binary
+*.woff2 binary
+
+# Screenshots and demos for the README don't count towards the repo's language stats.
+docs/** linguist-documentation

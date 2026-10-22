@@ -1,0 +1,32 @@
+# Operating systems
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs and local tools
+*.log
+__pycache__/
+*.pyc
+node_modules/
+.env
+
+# The published site is built by the workflow into _site/; never commit it
+_site/
+
+# Temporary test pages made while working on a page (e.g. _qr_ui.html, _alg_test.html)
+/_*.html
+/*/_*.html
+
+# Chrome profiles and dumps from headless test runs
+prof/
+prof*/
+dom.html
+err.txt
