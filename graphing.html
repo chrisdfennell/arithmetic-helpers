@@ -385,6 +385,14 @@
   .gr-cur{fill:none;stroke:var(--focus);stroke-width:2.2;stroke-dasharray:4 3}
   .gr-pt-lbl{fill:var(--ink);font-size:13px}
   .gr-pt-bg{fill:var(--surface);opacity:.9}
+  .gr-hit{fill:transparent;stroke:none;cursor:pointer;outline:none}
+  .gr-hit:focus-visible{stroke:var(--focus);stroke-width:2.5;stroke-dasharray:4 3}
+  .gsvg-host.plot .gr-hit{cursor:crosshair}
+  .gr-tip{position:absolute;z-index:5;left:0;top:0;pointer-events:none;max-width:min(260px,calc(100% - 8px));background:var(--ink);color:var(--surface);
+    font-family:var(--f-body);font-size:12.5px;font-weight:600;line-height:1.35;padding:5px 9px;border-radius:7px;white-space:pre-line;
+    box-shadow:0 4px 14px -6px rgba(0,0,0,.55)}
+  .gr-tdot{position:absolute;z-index:4;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--surface);border:3px solid var(--focus);pointer-events:none}
+  .gr-tip[hidden],.gr-tdot[hidden]{display:none}
   .gr-halo{paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round;stroke-opacity:.95}
   .gr-ra{fill:none;stroke:var(--ink-2);stroke-width:1.8}
   .gr-reveal.veil{opacity:0}
@@ -444,6 +452,67 @@
     border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
   .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
 
+
+  /* ---- Free plot ---- */
+  .page.freemode .entry,.page.freemode .hint,.page.freemode #ask,.page.freemode #maker,.page.freemode .practice,
+  .page.freemode #board,.page.freemode .answer,.page.freemode .notice,.page.freemode #checkBox{display:none !important}
+  .free{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);padding:16px 18px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .free[hidden]{display:none}
+  @media (max-width:520px){.free{padding:12px 10px 14px}}
+  .fr-bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+  .fr-bar2{justify-content:flex-start}
+  .fr-tools,.fr-acts,.fr-cols{display:flex;flex-wrap:wrap;gap:6px}
+  .fr-tools button,.fr-acts button{font-family:var(--f-body);font-size:14.5px;font-weight:600;min-height:44px;min-width:44px;padding:6px 12px;border-radius:10px;
+    border:1px solid var(--rule);background:var(--surface-2);color:var(--ink);cursor:pointer}
+  .fr-tools button span{font-family:var(--f-mono);color:var(--key)}
+  .fr-tools button[aria-pressed="true"]{background:var(--key);border-color:var(--key);color:var(--surface)}
+  .fr-tools button[aria-pressed="true"] span{color:var(--surface)}
+  .fr-acts button:disabled{opacity:.45;cursor:not-allowed}
+  .fr-lab{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+  .fr-cols button{min-width:40px;min-height:36px;border-radius:8px;border:1px solid var(--rule);background:var(--surface);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+  .fr-cols button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+  .fr-sw span{display:block;width:18px;height:18px;border-radius:50%}
+  .fr-swk0 span{background:var(--key)} .fr-swk1 span{background:var(--e)} .fr-swk2 span{background:var(--m)} .fr-swk3 span{background:var(--a)} .fr-swk4 span{background:var(--r)}
+  .fr-eqrow{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+  .fr-eqrow .ck-in{flex:1 1 220px;font-size:17px}
+  .fr-msg{margin:0;min-height:1.3em;font-size:13.5px;color:var(--ink-2)}
+  .fr-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+  @media (max-width:820px){.fr-main{grid-template-columns:minmax(0,1fr)}}
+  .fr-sheet .gsvg-host{max-width:640px}
+  .fr-side h3{font-family:var(--f-display);font-stretch:112%;font-size:14px;margin:0 0 6px}
+  .fr-tbl{border-collapse:collapse;font-family:var(--f-mono);font-size:14px;width:100%}
+  .fr-tbl th{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:2px 4px}
+  .fr-tbl td{padding:2px 4px}
+  .fr-tbl tr.sel td{background:var(--key-bg)}
+  .fr-in{font-family:var(--f-mono);font-size:15px;font-weight:600;color:var(--ink);background:transparent;border:0;border-bottom:2px solid var(--rule);width:100%;min-width:0;padding:2px 3px;border-radius:0}
+  .fr-in:focus{border-bottom-color:var(--focus);outline:none}
+  .fr-nm{width:4.5em}
+  .fr-custom{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:13.5px;color:var(--ink-2)}
+  .fr-custom[hidden]{display:none}
+  .fr-custom .fr-in{width:4.5em}
+  .fr-custom select{font-family:var(--f-mono);font-size:14px;background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:6px;padding:3px 6px}
+  .fr-x{border:0;background:transparent;color:var(--ink-3);font-size:18px;cursor:pointer;min-width:32px;min-height:32px;border-radius:6px}
+  .fr-x:hover{color:var(--e);background:var(--e-bg)}
+  .fr-meas{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:13.5px;color:var(--ink-2)}
+  .fr-meas li{padding:3px 4px;border-radius:6px}
+  .fr-meas li.sel{background:var(--key-bg)}
+  .fr-meas b{font-family:var(--f-mono);color:var(--ink)}
+  .fr-texts{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+  .fr-trow{display:flex;gap:6px;align-items:center}
+  .fr-empty{font-size:13.5px;color:var(--ink-3);margin:0}
+  .fr-w{stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .fr-k0{stroke:var(--key)} .fr-k1{stroke:var(--e)} .fr-k2{stroke:var(--m)} .fr-k3{stroke:var(--a)} .fr-k4{stroke:var(--r)}
+  .fr-d0{stroke-dasharray:none} .fr-d1{stroke-dasharray:10 6} .fr-d2{stroke-dasharray:1.5 6}
+  .fr-poly{stroke-width:2.6;stroke-linejoin:round;fill-opacity:.12}
+  .fr-poly.fr-k0{fill:var(--key)} .fr-poly.fr-k1{fill:var(--e)} .fr-poly.fr-k2{fill:var(--m)} .fr-poly.fr-k3{fill:var(--a)} .fr-poly.fr-k4{fill:var(--r)}
+  .fr-sel{stroke-width:5}
+  .gr-pt.fr-pt0{fill:var(--key)} .gr-pt.fr-pt1{fill:var(--e)} .gr-pt.fr-pt2{fill:var(--m)} .gr-pt.fr-pt3{fill:var(--a)} .gr-pt.fr-pt4{fill:var(--r)}
+  .fr-tk0{fill:var(--key)} .fr-tk1{fill:var(--e)} .fr-tk2{fill:var(--m)} .fr-tk3{fill:var(--a)} .fr-tk4{fill:var(--r)}
+  .gr-grid5{stroke:var(--ink-3);stroke-width:1.2;opacity:.55}
+  .gr-gdot{fill:var(--ink-3);opacity:.6}
+  .gr-gdot5{opacity:.95}
+  .tofree{font-family:var(--f-body) !important;font-size:12.5px !important}
+
   /* ---- shown inside another page (embed=1) ---- */
   html.embed body{background:var(--paper)}
   html.embed .page{padding:14px 14px 18px;gap:14px}
@@ -470,7 +539,7 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;color:#000;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,#modeTabs,#statusLine,.check,.gctl{display:none !important}
+    .theme-btn,.examples,.maker,.keys,.hint,.footnote,.stepper,#modeTabs,#statusLine,.check,.gctl,.gr-tip,.gr-tdot{display:none !important}
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px}
     .eyebrow{font-size:9px}
@@ -519,6 +588,16 @@
     .closer{font-size:11px;padding:8px 10px}
     .more{border:0}
     .more > div{display:block}
+    .page.freemode .free{border:0;box-shadow:none;padding:0}
+    .free .fr-bar,.free .fr-eqrow,.free .fr-msg,.free .fr-paper,.fr-x,.tofree{display:none !important}
+    .page.freemode #modeTabs,.page.freemode .examples{display:none !important}
+    .fr-main{display:flex !important;gap:12px;align-items:flex-start}
+    .fr-sheet{flex:0 1 62%}
+    .fr-side{flex:1 1 36%;font-size:10.5px}
+    .fr-sheet .gsvg-host{max-width:none}
+    .fr-in{border:0;font-size:11px}
+    .gr-grid5{stroke:#777;opacity:1}
+    .gr-gdot{fill:#666}
   }
 </style>
 
@@ -544,6 +623,7 @@
       <button type="button" data-mode="inequalities" aria-pressed="false">Inequalities</button>
       <button type="button" data-mode="transform" aria-pressed="false">Transformations</button>
       <button type="button" data-mode="scatter" aria-pressed="false">Scatter plots</button>
+      <button type="button" data-mode="free" aria-pressed="false">Free plot</button>
     </div>
     <div class="entry">
       <div class="numfield">
@@ -586,6 +666,57 @@
         </div>
       </span>
     </div>
+  </section>
+
+  <section class="free" id="freeBox" hidden aria-labelledby="frTitle">
+    <h2 id="frTitle" class="sr-only">Free plot: a sheet of graph paper</h2>
+    <div class="fr-bar">
+      <div class="fr-tools" id="frTools" role="group" aria-label="Drawing tools"></div>
+      <div class="fr-acts" role="group" aria-label="Undo and clear">
+        <button type="button" id="frUndo">↶ Undo</button><button type="button" id="frRedo">↷ Redo</button><button type="button" id="frClear">Clear all</button>
+      </div>
+    </div>
+    <div class="fr-bar fr-bar2">
+      <span class="fr-lab">Colour</span><div class="fr-cols" id="frCols" role="group" aria-label="Colour"></div>
+      <span class="fr-lab">Line</span><div class="fr-cols" id="frDash" role="group" aria-label="Line style"></div>
+      <span class="fr-lab">Snap</span><div class="modes small" id="frSnap" role="group" aria-label="Snap to"><button type="button" data-snap="grid" aria-pressed="true">Grid</button><button type="button" data-snap="half" aria-pressed="false">Half steps</button><button type="button" data-snap="off" aria-pressed="false">Off</button></div>
+    </div>
+    <div class="fr-eqrow">
+      <label for="frEq" class="fr-lab">Graph <i class="vr">y</i> =</label>
+      <input class="ck-in" id="frEq" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. x^2 − 4;  2x + 1">
+      <button type="button" class="go" id="frEqGo">Graph</button>
+    </div>
+    <p class="fr-msg" id="frMsg" role="status"></p>
+    <div class="fr-main">
+      <div class="fr-sheet gridbox" id="frSheet"></div>
+      <div class="fr-side">
+        <h3>On the paper</h3>
+        <div id="frList"></div>
+      </div>
+    </div>
+    <details class="maker fr-paper" id="frPaper">
+      <summary>Paper settings <span>&mdash; ranges, grid, axes</span></summary>
+      <div class="maker-body">
+        <span class="lbl">Range</span>
+        <div><div class="modes small" id="frRange" role="group" aria-label="Range"></div>
+          <div class="fr-custom" id="frCustom" hidden>
+            <label><i class="vr">x</i> from <input class="fr-in" id="fr_x0" inputmode="decimal"></label><label>to <input class="fr-in" id="fr_x1" inputmode="decimal"></label>
+            <label><i class="vr">y</i> from <input class="fr-in" id="fr_y0" inputmode="decimal"></label><label>to <input class="fr-in" id="fr_y1" inputmode="decimal"></label>
+          </div></div>
+        <span class="lbl">Grid</span>
+        <div class="fr-custom"><label>Lines every <select id="frStep"><option>0.5</option><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
+          <label>Numbers every <select id="frLbl"><option>0.5</option><option>1</option><option>2</option><option>5</option><option>10</option><option>20</option></select></label></div>
+        <span class="lbl">Show</span>
+        <div class="toggles">
+          <button type="button" class="tog" id="frFirst" aria-pressed="false"><b>I</b> First quadrant only</button>
+          <button type="button" class="tog" id="frAxes" aria-pressed="true"><b>+</b> Axes</button>
+          <button type="button" class="tog" id="frNums" aria-pressed="true"><b>1</b> Numbers</button>
+          <button type="button" class="tog" id="frDots" aria-pressed="false"><b>⁘</b> Dots, not lines</button>
+          <button type="button" class="tog" id="frFifth" aria-pressed="true"><b>5</b> Darker every 5th line</button>
+          <button type="button" class="tog" id="frSquare" aria-pressed="true"><b>□</b> Square units</button>
+        </div>
+      </div>
+    </details>
   </section>
 
   <section class="check" id="checkBox" hidden aria-labelledby="ckTitle">
@@ -1432,7 +1563,13 @@
     if (/^-?0$/.test(s)) s = "0";
     return s.charAt(0) === "-" ? "−" + s.slice(1) : s;
   }
+  function paperSteps(PP, v){
+    var s0 = PP.step, s = s0, span = Math.max(v.x1 - v.x0, v.y1 - v.y0), i = 0;
+    while (span / s > 80 && i++ < 20) s = s * (String(s / s0).charAt(0) === "2" ? 2.5 : 2);
+    return { sx:s, sy:s };
+  }
   function autoView(spec){
+    if (spec.paper) return { x0:spec.paper.x0, x1:spec.paper.x1, y0:spec.paper.y0, y1:spec.paper.y1 };
     var F = spec.focus || {}, xs = (F.xs || []).filter(isFinite), ys = (F.ys || []).filter(isFinite);
     if (spec.kind === "data"){
       if (!xs.length){ xs = [0, 10]; ys = [0, 10]; }
@@ -1538,13 +1675,20 @@
     return pieces;
   }
 
+  // what a point's tooltip says: its own words, or its label and coordinates
+  function tipOf(p){
+    if (p.tip) return p.tip;
+    var c = "(" + rd(p.x) + ", " + rd(p.y) + ")";
+    return p.lbl ? (p.lbl.indexOf("(") >= 0 ? p.lbl : p.lbl + " " + c) : "Point " + c;
+  }
   function gridSVG(spec, view, o){
     o = o || {};
     var inline = !!o.inline, uid = o.uid || ("g" + (++UID));
     function C(cls){ return inline ? (INL[cls] || INL[cls.split(" ")[0]] || "") : 'class="' + cls + '"'; }
     function G(step){ return step >= 0 && !inline ? '<g class="gr-reveal" data-step="' + step + '">' : "<g>"; }
-    var v = view, kind = spec.kind || "plane", st = stepsOf(v, kind);
-    var L = PAD, Rr = SZ - PAD, T = PAD, Bt = SZ - PAD;
+    var PP = spec.paper || null, SH = PP && PP.H ? PP.H : SZ;
+    var v = view, kind = spec.kind || "plane", st = PP ? paperSteps(PP, v) : stepsOf(v, kind);
+    var L = PAD, Rr = SZ - PAD, T = PAD, Bt = SH - PAD;
     if (kind === "data"){ L = 52; Bt = SZ - 44; T = 16; Rr = SZ - 14; }
     function X(x){ return L + (x - v.x0) / (v.x1 - v.x0) * (Rr - L); }
     function Y(y){ return Bt - (y - v.y0) / (v.y1 - v.y0) * (Bt - T); }
@@ -1559,11 +1703,18 @@
       + "</defs>";
     s += '<rect ' + C("gr-bg") + ' x="' + L + '" y="' + T + '" width="' + (Rr - L) + '" height="' + (Bt - T) + '"/>';
     var k, g, gx0 = Math.ceil(v.x0 / st.sx - 1e-9), gx1 = Math.floor(v.x1 / st.sx + 1e-9), gy0 = Math.ceil(v.y0 / st.sy - 1e-9), gy1 = Math.floor(v.y1 / st.sy + 1e-9);
-    for (k = gx0; k <= gx1; k++){ g = k * st.sx; s += '<line ' + C("gr-grid") + ' x1="' + f1(X(g)) + '" y1="' + T + '" x2="' + f1(X(g)) + '" y2="' + Bt + '"/>'; }
-    for (k = gy0; k <= gy1; k++){ g = k * st.sy; s += '<line ' + C("gr-grid") + ' x1="' + L + '" y1="' + f1(Y(g)) + '" x2="' + Rr + '" y2="' + f1(Y(g)) + '"/>'; }
+    if (PP && PP.style === "dots" && (gx1 - gx0 + 1) * (gy1 - gy0 + 1) <= 9000){
+      for (k = gx0; k <= gx1; k++) for (var k2 = gy0; k2 <= gy1; k2++)
+        s += '<circle ' + C(PP.fifth && (k % 5 === 0 || k2 % 5 === 0) ? "gr-gdot gr-gdot5" : "gr-gdot") + ' cx="' + f1(X(k * st.sx)) + '" cy="' + f1(Y(k2 * st.sy)) + '" r="' + (PP.fifth && k % 5 === 0 && k2 % 5 === 0 ? 2.2 : 1.5) + '"/>';
+    } else {
+      var five = function(kk){ return PP && PP.fifth && kk % 5 === 0 ? "gr-grid gr-grid5" : "gr-grid"; };
+      for (k = gx0; k <= gx1; k++){ g = k * st.sx; s += '<line ' + C(five(k)) + ' x1="' + f1(X(g)) + '" y1="' + T + '" x2="' + f1(X(g)) + '" y2="' + Bt + '"/>'; }
+      for (k = gy0; k <= gy1; k++){ g = k * st.sy; s += '<line ' + C(five(k)) + ' x1="' + L + '" y1="' + f1(Y(g)) + '" x2="' + Rr + '" y2="' + f1(Y(g)) + '"/>'; }
+    }
     var ax = Math.min(Math.max(Y(0), T), Bt), ay = Math.min(Math.max(X(0), L), Rr);
     if (kind === "data"){ ax = Bt; ay = L; }
     var every = (gx1 - gx0) > 14 ? 2 : 1, everyY = (gy1 - gy0) > 14 ? 2 : 1;
+    if (PP){ every = everyY = Math.max(1, Math.round(PP.lbl / st.sx)); while ((gx1 - gx0) / every > 24) every *= 2; while ((gy1 - gy0) / everyY > 24) everyY *= 2; }
     var TICKS = [];
     if (kind === "data"){
       s += '<line ' + C("gr-axis") + ' x1="' + L + '" y1="' + Bt + '" x2="' + (Rr + 4) + '" y2="' + Bt + '"/>' + '<line ' + C("gr-axis") + ' x1="' + L + '" y1="' + (Bt) + '" x2="' + L + '" y2="' + (T - 4) + '"/>';
@@ -1572,12 +1723,13 @@
       s += '<text ' + C("gr-axl") + ' x="' + f1((L + Rr) / 2) + '" y="' + (SZ - 8) + '" text-anchor="middle">' + esc(spec.xl || "x") + "</text>"
          + '<text ' + C("gr-axl") + ' x="12" y="' + f1((T + Bt) / 2) + '" text-anchor="middle" transform="rotate(-90 12 ' + f1((T + Bt) / 2) + ')">' + esc(spec.yl || "y") + "</text>";
     } else {
-      s += '<line ' + C("gr-axis") + ' x1="' + (L - 8) + '" y1="' + f1(ax) + '" x2="' + (Rr + 8) + '" y2="' + f1(ax) + '"/>'
-         + '<line ' + C("gr-axis") + ' x1="' + f1(ay) + '" y1="' + (Bt + 8) + '" x2="' + f1(ay) + '" y2="' + (T - 8) + '"/>'
-         + head(0, ax, Rr + 12, ax, "gr-axhead", 9) + head(SZ, ax, L - 12, ax, "gr-axhead", 9)
-         + head(ay, SZ, ay, T - 12, "gr-axhead", 9) + head(ay, 0, ay, Bt + 12, "gr-axhead", 9)
-         + '<text ' + C("gr-ax") + ' x="' + (SZ - 12) + '" y="' + f1(ax - 8) + '" text-anchor="middle">x</text>'
-         + '<text ' + C("gr-ax") + ' x="' + f1(ay + 13) + '" y="' + (T - 8) + '" text-anchor="middle">y</text>';
+      if (!PP || PP.axes !== false) s += '<line ' + C("gr-axis") + ' x1="' + (L - 8) + '" y1="' + f1(ax) + '" x2="' + (Rr + 8) + '" y2="' + f1(ax) + '"/>'
+         + (PP && PP.axes === false ? "" : '<line ' + C("gr-axis") + ' x1="' + f1(ay) + '" y1="' + (Bt + 8) + '" x2="' + f1(ay) + '" y2="' + (T - 8) + '"/>')
+         + (PP && PP.axes === false ? "" : head(0, ax, Rr + 12, ax, "gr-axhead", 9) + head(SZ, ax, L - 12, ax, "gr-axhead", 9))
+         + (PP && PP.axes === false ? "" : head(ay, SZ, ay, T - 12, "gr-axhead", 9) + head(ay, 0, ay, Bt + 12, "gr-axhead", 9))
+         + (PP && PP.axes === false ? "" : '<text ' + C("gr-ax") + ' x="' + (SZ - 12) + '" y="' + f1(ax - 8) + '" text-anchor="middle">x</text>'
+         + '<text ' + C("gr-ax") + ' x="' + f1(ay + 13) + '" y="' + (T - 8) + '" text-anchor="middle">y</text>');
+      if (PP && PP.nums === false) TICKS.noNums = true;
       // the axis numbers are placed last, so they can step aside for points, labels and lines (see below)
       var tyX = Math.min(Bt - 4, Math.max(T + 14, ax + 16)), txY = Math.min(Rr - 4, Math.max(L + 22, ay - 6));
       for (k = gx0; k <= gx1; k++){
@@ -1590,7 +1742,8 @@
         if (k !== 0 && k % everyY === 0 && Y(g) > T + 6 && Y(g) < Bt - 6)
           TICKS.push({ t:numLbl(g, st.sy), x:txY, y:Y(g) + 4.5, a:"end", alt:ay + 6 < Rr - 14 ? { x:ay + 6, y:Y(g) + 4.5, a:"start" } : null });
       }
-      if (v.x0 < 0 && v.x1 > 0 && v.y0 < 0 && v.y1 > 0) TICKS.push({ t:"0", x:ay - 6, y:ax + 16, a:"end", alt:{ x:ay + 6, y:ax + 16, a:"start" } });
+      if (TICKS.noNums) TICKS.length = 0;
+      if (!TICKS.noNums && v.x0 < 0 && v.x1 > 0 && v.y0 < 0 && v.y1 > 0) TICKS.push({ t:"0", x:ay - 6, y:ax + 16, a:"end", alt:{ x:ay + 6, y:ax + 16, a:"start" } });
     }
     var box = { x0:v.x0, x1:v.x1, y0:v.y0, y1:v.y1 }, placed = [], segsPx = [];
     var body = "";
@@ -1675,7 +1828,7 @@
         c += dO * 1.3;
         dots.forEach(function(d){ if ((d[0] !== own[0] || d[1] !== own[1]) && Math.sqrt((mx - d[0]) * (mx - d[0]) + (my - d[1]) * (my - d[1])) < dO - 2) c += 260; });
       }
-      if (b[0] < 2 || b[1] < 2 || b[0] + b[2] > SZ - 2 || b[1] + b[3] > SZ - 2) c += 1e5;
+      if (b[0] < 2 || b[1] < 2 || b[0] + b[2] > SZ - 2 || b[1] + b[3] > SH - 2) c += 1e5;
       if (b[0] < L - 4 || b[1] < T - 4 || b[0] + b[2] > Rr + 4 || b[1] + b[3] > Bt + 4) c += 60;
       placed.forEach(function(o2){ if (hit(o2, [b[0] - 3, b[1] - 3, b[2] + 6, b[3] + 6])) c += 1000; });
       dots.forEach(function(d){ if (dotIn(d, b, 3)) c += 500; });
@@ -1743,20 +1896,27 @@
       if (pick) s += '<text ' + C(haloCls("gr-num")) + HALO + ' x="' + f1(pick.x) + '" y="' + f1(pick.y) + '" text-anchor="' + pick.a + '">' + tk.t + "</text>";
     });
     tagsOut.forEach(function(o2){ s += G(o2.tg.step) + textAt(o2.b, o2.tg.t, haloCls(o2.tg.cls)) + "</g>"; });
+    (spec.texts || []).forEach(function(tx){
+      s += '<text ' + C(haloCls("gr-pt-lbl " + (tx.cls || ""))) + HALO + ' x="' + f1(X(tx.x)) + '" y="' + f1(Y(tx.y)) + '" text-anchor="start"' + (tx.sel ? ' text-decoration="underline"' : "") + ">" + esc(tx.t) + "</text>";
+    });
     (spec.pts || []).forEach(function(p, pi){
       var px = X(p.x), py = Y(p.y);
       if (px < L - 3 || px > Rr + 3 || py < T - 3 || py > Bt + 3) return;
       var r = p.r || (p.cls === "sm" ? 4.5 : kind === "data" ? 6 : 7);
-      s += G(p.step) + '<circle ' + C("gr-pt" + (p.cls ? " " + p.cls : "")) + ' cx="' + f1(px) + '" cy="' + f1(py) + '" r="' + r + '"' + (p.data ? ' data-pt="' + esc(p.data) + '"' : "") + "/>"
+      var tp = tipOf(p);
+      s += G(p.step) + (p.hidden ? "" : '<circle ' + C("gr-pt" + (p.cls ? " " + p.cls : "")) + ' cx="' + f1(px) + '" cy="' + f1(py) + '" r="' + r + '"' + (p.data ? ' data-pt="' + esc(p.data) + '"' : "") + "/>")
         + (p.ring ? '<circle ' + C("gr-ring") + ' cx="' + f1(px) + '" cy="' + f1(py) + '" r="' + (r + 6) + '"/>' : "")
-        + (labelsOut[pi] ? textAt(labelsOut[pi], p.lbl, haloCls("gr-pt-lbl")) : "") + "</g>";
+        + (labelsOut[pi] ? textAt(labelsOut[pi], p.lbl, haloCls("gr-pt-lbl")) : "")
+        // a fingertip-sized (22 px) invisible target, focusable, with the same words as the tooltip
+        + (inline ? "" : '<circle class="gr-hit" cx="' + f1(px) + '" cy="' + f1(py) + '" r="22" tabindex="0" role="img" aria-label="' + esc(tp) + '" data-tip="' + esc(tp) + '" data-pi="' + pi + '"' + (p.own ? ' data-own="1"' : "") + "/>")
+        + "</g>";
     });
     if (o.cursor){
       var cx = X(o.cursor.x), cy = Y(o.cursor.y);
       if (cx >= L - 1 && cx <= Rr + 1 && cy >= T - 1 && cy <= Bt + 1) s += '<circle ' + C("gr-cur") + ' cx="' + f1(cx) + '" cy="' + f1(cy) + '" r="12"/>';
     }
     var size = inline ? ' width="' + (o.size || 190) + '" height="' + (o.size || 190) + '" style="display:block;max-width:100%;height:auto"' : ' class="grid-svg"';
-    return "<svg" + size + ' viewBox="0 0 ' + SZ + " " + SZ + '" role="img" aria-label="' + esc(spec.aria || "Coordinate grid") + '" data-kind="' + kind
+    return "<svg" + size + ' viewBox="0 0 ' + SZ + " " + SH + '" role="' + (inline ? "img" : "group") + '" aria-label="' + esc(spec.aria || "Coordinate grid") + '" data-kind="' + kind
       + '" data-view="' + [v.x0, v.x1, v.y0, v.y1].map(function(n){ return Math.round(n * 1e6) / 1e6; }).join(",") + '" data-box="' + [L, Rr, T, Bt].join(",") + '">' + s + "</svg>";
   }
   // a blank grid, for a worksheet answer
@@ -1806,6 +1966,7 @@
     var spec = this.spec;
     if (this.opt.mine){ spec = {}; for (var k in this.spec) spec[k] = this.spec[k]; spec.pts = (this.spec.pts || []).concat(this.opt.mine()); }
     this.svgHost.innerHTML = gridSVG(spec, this.view, o);
+    if (this.tipEl){ this.tipEl.hidden = true; this.dotEl.hidden = true; this.svgHost.appendChild(this.tipEl); this.svgHost.appendChild(this.dotEl); }
     if (this.opt.after) this.opt.after(this.svgHost);
   };
   Fig.prototype.zoom = function(f){
@@ -1819,10 +1980,12 @@
   Fig.prototype.toUnits = function(ev){
     var svg = this.svgHost.querySelector("svg"); if (!svg) return null;
     var r = svg.getBoundingClientRect(), bx = svg.getAttribute("data-box").split(",").map(Number);
-    var px = (ev.clientX - r.left) * SZ / r.width, py = (ev.clientY - r.top) * SZ / r.height, v = this.view;
+    var vbH = svg.viewBox && svg.viewBox.baseVal ? svg.viewBox.baseVal.height : SZ;
+    var px = (ev.clientX - r.left) * SZ / r.width, py = (ev.clientY - r.top) * vbH / r.height, v = this.view;
     return { x:v.x0 + (px - bx[0]) / (bx[1] - bx[0]) * (v.x1 - v.x0), y:v.y1 - (py - bx[2]) / (bx[3] - bx[2]) * (v.y1 - v.y0), px:px, py:py };
   };
   Fig.prototype.snap = function(u){
+    if (this.opt.snap) return this.opt.snap(u);
     var st = stepsOf(this.view, this.spec.kind).sx, sn = st >= 1 ? 1 : st;
     if (st > 1) sn = st;
     return { x:Math.round(u.x / sn) * sn, y:Math.round(u.y / sn) * sn };
@@ -1832,50 +1995,204 @@
     var self = this;
     this.host = host;
     host.innerHTML = '<div class="gsvg-host pan' + (this.opt.plot ? " plot" : "") + '" tabindex="0" role="group" aria-label="'
-      + esc(this.opt.plot ? "Answer grid. Tap a grid point to plot it, tap it again to take it away. Keys: arrows move the cursor, Enter plots or removes, Backspace removes the last point, plus and minus zoom."
-        : "Graph. Drag to move around it; plus and minus keys zoom; arrow keys move.") + '"></div>'
+      + esc(this.opt.plot ? "Answer grid. Tap a grid point to plot it, tap it again to take it away; press and hold a point to see what it is. Keys: arrows move the cursor, Enter plots or removes, Backspace removes the last point, plus and minus zoom, Tab visits the points."
+        : "Graph. Point at, tap or Tab to a point to see what it is; point along a line or curve to trace it. Drag to move around; plus and minus keys zoom; arrow keys move.") + '"></div>'
       + '<div class="gctl"><button type="button" data-z="out" aria-label="Zoom out">−</button><button type="button" data-z="in" aria-label="Zoom in">+</button>'
-      + '<button type="button" data-z="home" aria-label="Reset the view">Reset</button><span class="rd"' + (this.opt.plot ? ' role="status"' : "") + "></span></div>";
+      + '<button type="button" data-z="home" aria-label="Reset the view">Reset</button>' + (this.opt.toFree ? '<button type="button" data-z="free" class="tofree">Open this on blank paper</button>' : "")
+      + '<span class="rd"' + (this.opt.plot ? ' role="status"' : "") + "></span></div>";
     this.svgHost = host.firstChild;
     this.rd = host.querySelector(".rd");
+    var tip = document.createElement("div"); tip.className = "gr-tip"; tip.setAttribute("role", "tooltip"); tip.id = this.uid + "-tip"; tip.hidden = true;
+    var tdot = document.createElement("div"); tdot.className = "gr-tdot"; tdot.hidden = true; tdot.setAttribute("aria-hidden", "true");
+    this.tipEl = tip; this.dotEl = tdot;
     this.draw();
     Array.prototype.forEach.call(host.querySelectorAll(".gctl button"), function(b){
-      b.addEventListener("click", function(){ var z = b.getAttribute("data-z"); if (z === "in") self.zoom(1 / 1.5); else if (z === "out") self.zoom(1.5); else self.reset(); });
+      b.addEventListener("click", function(){ var z = b.getAttribute("data-z"); if (z === "in") self.zoom(1 / 1.5); else if (z === "out") self.zoom(1.5); else if (z === "free") self.opt.toFree(self); else self.reset(); });
     });
-    var drag = null, sh = this.svgHost;
+    var drag = null, sh = this.svgHost, shown = null;      // shown: {key, pinned}
+    function geo(){
+      var svg = sh.querySelector("svg"); if (!svg) return null;
+      var r = svg.getBoundingClientRect(), hr = sh.getBoundingClientRect(), bx = svg.getAttribute("data-box").split(",").map(Number);
+      return { r:r, hr:hr, bx:bx, k:r.width / SZ };
+    }
+    function css(gm, vx, vy){ return { x:vx * gm.k + gm.r.left - gm.hr.left, y:vy * gm.k + gm.r.top - gm.hr.top }; }
+    function hits(){
+      return Array.prototype.filter.call(sh.querySelectorAll(".gr-hit"), function(el){ return !(el.closest && el.closest(".veil")); }).map(function(el){
+        return { el:el, cx:Number(el.getAttribute("cx")), cy:Number(el.getAttribute("cy")), tip:el.getAttribute("data-tip"), own:el.getAttribute("data-own") === "1", key:el.getAttribute("data-pi") };
+      });
+    }
+    // the nearest point within a fingertip (22 px), and any others on the same spot
+    function nearest(u){
+      var gm = geo(); if (!gm || !u) return null;
+      var lim = 22 / gm.k, best = null, bd = Infinity;
+      var hs = hits();
+      hs.forEach(function(h){ var d = Math.sqrt((h.cx - u.px) * (h.cx - u.px) + (h.cy - u.py) * (h.cy - u.py)); if (d < bd){ bd = d; best = h; } });
+      if (!best || bd > lim) return null;
+      var same = hs.filter(function(h){ return Math.abs(h.cx - best.cx) < 2 && Math.abs(h.cy - best.cy) < 2; });
+      var seen = {}, texts = [];
+      same.forEach(function(h){ if (!seen[h.tip]){ seen[h.tip] = 1; texts.push(h.tip); } });
+      return { h:best, text:texts.join("\n"), own:same.some(function(h){ return h.own; }), key:"p" + best.key };
+    }
+    // a trace along a named curve or line, near the pointer
+    function trace(u){
+      var gm = geo(); if (!gm || !u) return null;
+      var v = self.view, bx = gm.bx, spec = self.spec, lim = 16 / gm.k, best = null, bd = Infinity;
+      function Yp(y){ return bx[3] - (y - v.y0) / (v.y1 - v.y0) * (bx[3] - bx[2]); }
+      function Xp(x){ return bx[0] + (x - v.x0) / (v.x1 - v.x0) * (bx[1] - bx[0]); }
+      if (u.px < bx[0] || u.px > bx[1] || u.py < bx[2] || u.py > bx[3]) return null;
+      var s = niceStep(v.x1 - v.x0, 40), xs = Math.round(u.x / s) * s, snap = Math.abs(u.x - xs) < s * 0.3, xu = snap ? xs : u.x;
+      function consider(name, yf, exact, approx){
+        if (!isFinite(yf)) return;
+        var d = Math.abs(Yp(yf) - u.py);
+        if (d < bd && d < lim){ bd = d; best = { name:name, y:yf, exact:exact, approx:approx }; }
+      }
+      (spec.curves || []).forEach(function(cv){
+        if (!cv.name) return;
+        var yf; try { yf = cv.f(xu); } catch (e){ yf = NaN; }
+        var ex2 = null;
+        if (snap && cv.ast){ var XR = fromNum(xu), yv = fexact(cv.ast, XR, ZERO); if (yv && yv !== UNDEF) ex2 = isTermD(yv.d) ? decOf(yv) : numT(yv); }
+        consider(cv.name, yf, ex2, false);
+      });
+      (spec.lines || []).forEach(function(l){
+        if (!l.name || Math.abs(l.B) < 1e-12) return;
+        var yf = (l.C - l.A * xu) / l.B, ex2 = null;
+        if (snap && l.E && !isZ(l.E.B) && !l.approx){ var XR = fromNum(xu); var yl = dvd(sub(l.E.C, mul(l.E.A, XR)), l.E.B); ex2 = isTermD(yl.d) ? decOf(yl) : numT(yl); }
+        consider(l.name, yf, ex2, !!l.approx);
+      });
+      if (!best) return null;
+      var xT = snap ? decOf(fromNum(xu)) : rd(u.x);
+      var yT = best.exact !== null && !best.approx ? "= " + best.exact : "≈ " + (spec.kind === "data" ? sig(best.y) : rd(best.y));
+      return { text:best.name + " at x = " + xT + ": y " + yT, vx:Xp(xu), vy:Yp(best.y), key:"t" + best.name };
+    }
+    function place(text, vx, vy, dot){
+      var gm = geo(); if (!gm) return;
+      if (tip.parentNode !== sh) sh.appendChild(tip);
+      if (tdot.parentNode !== sh) sh.appendChild(tdot);
+      tip.textContent = text; tip.hidden = false;
+      var p = css(gm, vx, vy), W = sh.clientWidth, H = sh.clientHeight, tw = tip.offsetWidth, th = tip.offsetHeight;
+      var left = p.x + 14, top = p.y - th - 12;
+      if (left + tw > W - 4) left = p.x - tw - 14;
+      if (left < 4) left = Math.max(4, Math.min(W - tw - 4, p.x - tw / 2));
+      if (top < 4) top = p.y + 16;
+      if (top + th > H - 4) top = Math.max(4, H - th - 4);
+      tip.style.left = left + "px"; tip.style.top = top + "px";
+      if (dot){ tdot.hidden = false; tdot.style.left = p.x + "px"; tdot.style.top = p.y + "px"; } else tdot.hidden = true;
+    }
+    function hide(){ tip.hidden = true; tdot.hidden = true; shown = null; }
+    self.hideTip = hide;
+    function showPoint(n, pinned){ place(n.text, n.h.cx, n.h.cy, false); shown = { key:n.key, pinned:pinned }; }
+    function showTrace(t, pinned){ place(t.text, t.vx, t.vy, true); shown = { key:t.key, pinned:pinned }; }
+    var ptrs = {};
+    function pinchStart(e){
+      var ids = Object.keys(ptrs), a = ptrs[ids[0]], b = ptrs[ids[1]];
+      if (drag && drag.timer) clearTimeout(drag.timer);
+      var mid = { clientX:(a.x + b.x) / 2, clientY:(a.y + b.y) / 2 }, m = self.toUnits(mid);
+      drag = { mode:"pinch", moved:true, id:e.pointerId, d0:Math.max(10, Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))), c0:mid, m:m,
+               v:{ x0:self.view.x0, x1:self.view.x1, y0:self.view.y0, y1:self.view.y1, sx:self.view.sx, sy:self.view.sy } };
+      hide();
+    }
+    function pinchMove(){
+      var ids = Object.keys(ptrs); if (ids.length < 2 || !drag.m) return;
+      var a = ptrs[ids[0]], b = ptrs[ids[1]], d = Math.max(10, Math.sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y))), f = drag.d0 / d, V = drag.v, m = drag.m;
+      var w = (V.x1 - V.x0) * f, h = (V.y1 - V.y0) * f;
+      if (w < 1.2 || w > 10000) return;
+      var x0 = m.x - (m.x - V.x0) * f, y0 = m.y - (m.y - V.y0) * f;
+      var gm = geo(); if (!gm) return;
+      var bw = (gm.bx[1] - gm.bx[0]) * gm.k, bh = (gm.bx[3] - gm.bx[2]) * gm.k;
+      var ux = ((a.x + b.x) / 2 - drag.c0.clientX) * w / bw, uy = ((a.y + b.y) / 2 - drag.c0.clientY) * h / bh;
+      self.view = { x0:x0 - ux, x1:x0 + w - ux, y0:y0 + uy, y1:y0 + h + uy };
+      if (!self.raf){ self.raf = true; (window.requestAnimationFrame || setTimeout)(function(){ self.raf = false; self.draw(); }); }
+    }
     sh.addEventListener("pointerdown", function(e){
       if (e.button !== undefined && e.button !== 0) return;
-      drag = { x:e.clientX, y:e.clientY, v:{ x0:self.view.x0, x1:self.view.x1, y0:self.view.y0, y1:self.view.y1, sx:self.view.sx, sy:self.view.sy }, moved:false, id:e.pointerId };
+      ptrs[e.pointerId] = { x:e.clientX, y:e.clientY };
+      if (Object.keys(ptrs).length >= 2){ pinchStart(e); try { sh.setPointerCapture(e.pointerId); } catch (x0){} return; }
+      var u = self.toUnits(e), touch = e.pointerType === "touch" || e.pointerType === "pen";
+      drag = { x:e.clientX, y:e.clientY, v:{ x0:self.view.x0, x1:self.view.x1, y0:self.view.y0, y1:self.view.y1, sx:self.view.sx, sy:self.view.sy }, moved:false, id:e.pointerId, mode:"pan", touch:touch, long:false };
+      // a finger that starts on a line or curve (and not on a point) traces it instead of panning
+      if (touch && !self.opt.plot && !nearest(u)){ var t = trace(u); if (t){ drag.mode = "trace"; showTrace(t, true); } }
+      // the Move tool: a drag that starts on one of your points moves it
+      if (self.opt.canMove && self.opt.canMove()){ var nm = nearest(u); if (nm && nm.own){ drag.mode = "move"; drag.key = nm.h.key; } }
+      if (touch && self.opt.plot && drag.mode !== "move"){
+        var d0 = drag;
+        d0.timer = setTimeout(function(){ if (drag === d0 && !d0.moved){ var n = nearest(self.toUnits(e)); if (n){ d0.long = true; showPoint(n, true); } } }, 500);
+      }
       try { sh.setPointerCapture(e.pointerId); } catch (x){}
     });
     sh.addEventListener("pointermove", function(e){
+      if (ptrs[e.pointerId]){ ptrs[e.pointerId].x = e.clientX; ptrs[e.pointerId].y = e.clientY; }
+      if (drag && drag.mode === "pinch"){ pinchMove(); return; }
       var u = self.toUnits(e);
       if (u) self.say((self.opt.plot ? "Grid point " + ptF(self.snap(u)) : "(" + fmtU(u.x) + ", " + fmtU(u.y) + ")"));
-      if (!drag) return;
+      if (!drag){
+        if (e.pointerType === "touch") return;
+        var n = nearest(u);
+        if (n){ if (!shown || shown.key !== n.key) showPoint(n, false); return; }
+        var t = self.opt.plot ? null : trace(u);
+        if (t){ showTrace(t, false); return; }
+        if (shown && !shown.pinned) hide();
+        return;
+      }
+      if (drag.mode === "trace"){ var t2 = trace(u); if (t2) showTrace(t2, true); return; }
+      if (drag.mode === "move"){
+        if (!drag.moved && Math.abs(e.clientX - drag.x) + Math.abs(e.clientY - drag.y) < 5) return;
+        drag.moved = true; hide();
+        var qm = self.snap(u); if (self.opt.onMove) self.opt.onMove(drag.key, qm);
+        return;
+      }
       var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 7) return;
-      drag.moved = true; sh.classList.add("dragging");
+      drag.moved = true; sh.classList.add("dragging"); hide();
       var svg = sh.querySelector("svg"), r = svg.getBoundingClientRect(), bx = svg.getAttribute("data-box").split(",").map(Number);
-      var ux = dx * SZ / r.width / (bx[1] - bx[0]) * (drag.v.x1 - drag.v.x0), uy = dy * SZ / r.height / (bx[3] - bx[2]) * (drag.v.y1 - drag.v.y0);
+      var vbH = svg.viewBox && svg.viewBox.baseVal ? svg.viewBox.baseVal.height : SZ;
+      var ux = dx * SZ / r.width / (bx[1] - bx[0]) * (drag.v.x1 - drag.v.x0), uy = dy * vbH / r.height / (bx[3] - bx[2]) * (drag.v.y1 - drag.v.y0);
       self.view = { x0:drag.v.x0 - ux, x1:drag.v.x1 - ux, y0:drag.v.y0 + uy, y1:drag.v.y1 + uy, sx:drag.v.sx, sy:drag.v.sy };
       if (!self.raf){ self.raf = true; (window.requestAnimationFrame || setTimeout)(function(){ self.raf = false; self.draw(); }); }
     });
     function end(e, cancel){
+      delete ptrs[e.pointerId];
       if (!drag) return;
+      if (drag.mode === "pinch"){ if (Object.keys(ptrs).length < 1){ drag = null; self.draw(); } else if (Object.keys(ptrs).length < 2){ drag.m = null; } return; }
       var was = drag; drag = null; sh.classList.remove("dragging");
+      if (was.mode === "move" && was.moved){ if (was.timer) clearTimeout(was.timer); try { sh.releasePointerCapture(was.id); } catch (x1){} if (self.opt.onMoveEnd) self.opt.onMoveEnd(was.key); return; }
+      if (was.timer) clearTimeout(was.timer);
       try { sh.releasePointerCapture(was.id); } catch (x){}
       if (was.moved) self.draw();
-      if (!was.moved && !cancel){
-        var u = self.toUnits(e);
-        if (!u) return;
-        if (self.opt.plot){ var q = self.snap(u); self.cursor = q; self.opt.onPlot(q); self.say("Grid point " + ptF(q)); }
-        else self.say("(" + fmtU(u.x) + ", " + fmtU(u.y) + ")");
+      if (was.moved || cancel || was.mode === "trace") return;
+      var u = self.toUnits(e);
+      if (!u) return;
+      var n = nearest(u);
+      if (self.opt.plot){
+        if (was.long) return;                                   // a long press only shows what the point is
+        // a point the page drew (not yours): the first tap says what it is; a second tap plots there
+        if (n && !n.own && !(shown && shown.key === n.key && !tip.hidden)){ showPoint(n, true); return; }
+        hide();
+        var q = self.snap(u); self.cursor = q; self.opt.onPlot(q, u, n); self.say("Grid point " + ptF(q));
+        return;
       }
+      if (n){ showPoint(n, true); return; }
+      var t = trace(u);
+      if (t){ showTrace(t, true); return; }
+      hide();
+      self.say("(" + fmtU(u.x) + ", " + fmtU(u.y) + ")");
     }
     sh.addEventListener("pointerup", function(e){ end(e, false); });
     sh.addEventListener("pointercancel", function(e){ end(e, true); });
+    sh.addEventListener("pointerleave", function(e){ if (!drag && shown && !shown.pinned) hide(); });
+    sh.addEventListener("focusin", function(e){
+      var el = e.target;
+      if (el && el.classList && el.classList.contains("gr-hit")){
+        if (el.closest(".veil")) return;
+        var cx = Number(el.getAttribute("cx")), cy = Number(el.getAttribute("cy"));
+        var n = nearest({ px:cx, py:cy });
+        if (n) showPoint(n, true);
+      }
+    });
+    sh.addEventListener("focusout", function(e){ var el = e.target; if (el && el.classList && el.classList.contains("gr-hit")) hide(); });
     sh.addEventListener("keydown", function(e){
-      var k = e.key, v = self.view, st = stepsOf(v, self.spec.kind).sx, sn = st >= 1 ? st : st;
+      var k = e.key, v = self.view, st = self.opt.snapStep ? self.opt.snapStep() : stepsOf(v, self.spec.kind).sx, sn = st;
+      if (k === "Escape"){ if (!tip.hidden){ e.preventDefault(); hide(); } return; }
+      if (e.target && e.target.classList && e.target.classList.contains("gr-hit") && (k === "Enter" || k === " ")){ e.preventDefault(); return; }
       if (k === "+" || k === "="){ e.preventDefault(); self.zoom(1 / 1.5); return; }
       if (k === "-" || k === "_"){ e.preventDefault(); self.zoom(1.5); return; }
       if (k === "0" || k === "Home"){ e.preventDefault(); self.reset(); return; }
@@ -1889,8 +2206,8 @@
           if (c.x < v.x0 + m || c.x > v.x1 - m || c.y < v.y0 + m || c.y > v.y1 - m){ var hx = (v.x1 - v.x0) / 2, hy = (v.y1 - v.y0) / 2; self.view = { x0:c.x - hx, x1:c.x + hx, y0:c.y - hy, y1:c.y + hy }; }
           self.draw(); self.say("Cursor at " + ptF(self.cursor)); return;
         }
-        if (k === "Enter" || k === " "){ e.preventDefault(); self.kbd = true; self.opt.onPlot(self.cursor); self.draw(); self.say("Grid point " + ptF(self.cursor)); return; }
-        if (k === "Backspace" || k === "Delete"){ e.preventDefault(); if (self.opt.onUndo) self.opt.onUndo(); return; }
+        if (k === "Enter" || k === " "){ e.preventDefault(); self.kbd = true; self.opt.onPlot(self.cursor, null, null); self.draw(); self.say("Grid point " + ptF(self.cursor)); return; }
+        if (k === "Backspace" || k === "Delete"){ e.preventDefault(); if (self.opt.onDelete) self.opt.onDelete(); else if (self.opt.onUndo) self.opt.onUndo(); return; }
         return;
       }
       if (dir){
@@ -1903,6 +2220,17 @@
     sh.addEventListener("focus", function(){ if (self.opt.plot){ self.kbd = true; if (!self.cursor) self.cursor = { x:0, y:0 }; self.draw(); self.say("Cursor at " + ptF(self.cursor)); } });
     sh.addEventListener("blur", function(){ if (self.opt.plot){ self.kbd = false; self.draw(); } });
   };
+  // a tap anywhere else, or Esc, closes an open tooltip
+  document.addEventListener("pointerdown", function(e){
+    Array.prototype.forEach.call(document.querySelectorAll(".gr-tip:not([hidden])"), function(t){
+      var h = t.parentNode;
+      if (h && !h.contains(e.target)){ t.hidden = true; var d = h.querySelector(".gr-tdot"); if (d) d.hidden = true; }
+    });
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Escape") return;
+    Array.prototype.forEach.call(document.querySelectorAll(".gr-tip:not([hidden]), .gr-tdot:not([hidden])"), function(t){ t.hidden = true; });
+  });
   Fig.prototype.say = function(t){ if (this.rd) this.rd.textContent = t; };
 
   /* ===================== small pieces shared by the solvers ===================== */
@@ -1951,7 +2279,7 @@
         + (qd.n ? "Both signs together, (" + (sgn(Q.x) > 0 ? "+" : "−") + ", " + (sgn(Q.y) > 0 ? "+" : "−") + "), put it in <strong>" + qd.name + "</strong>."
           : qd.short === "origin" ? "Both are 0, so it’s the origin itself — it isn’t in any quadrant." : "One coordinate is 0, so the point sits right <strong>on " + qd.name + "</strong> — points on an axis aren’t in any quadrant.")]],
         null, [[nm || "plot", "e", ex(ptH(Q) + opS("→") + wd(moveX(Q.x) + ", " + moveY(Q.y)), "mvline") + ex(wd(qd.n ? qd.name : "on " + qd.name), "res")]]);
-      spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:(nm ? nm + " " : "") + ptT(Q), step:s });
+      spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:(nm ? nm + " " : "") + ptT(Q), step:s, tip:(nm ? nm + " " : "") + ptT(Q) + " · " + (qd.n ? qd.name : "on " + qd.name) });
       if (pts.length <= 3){
         if (!isZ(Q.x)) spec.segs.push({ x1:0, y1:0, x2:F(Q.x), y2:0, cls:"gr-leg1", step:s, arrow:true });
         if (!isZ(Q.y)) spec.segs.push({ x1:F(Q.x), y1:0, x2:F(Q.x), y2:F(Q.y), cls:"gr-leg2", step:s, arrow:true });
@@ -1978,7 +2306,7 @@
   function gridHalf(list){ var m = 5; list.forEach(function(Q){ m = Math.max(m, Math.ceil(Math.abs(F(Q.x))), Math.ceil(Math.abs(F(Q.y)))); }); return m + 1; }
   function solveRead(pr){
     var ctx = new Ctx(), pts = pr.pts, names = true, spec = { kind:"plane", focus:fpts(pts), pts:[], segs:[] }, given = { kind:"plane", focus:fpts(pts), pts:[] };
-    pts.forEach(function(Q, i){ given.pts.push({ x:F(Q.x), y:F(Q.y), lbl:vName(i) }); });
+    pts.forEach(function(Q, i){ given.pts.push({ x:F(Q.x), y:F(Q.y), lbl:vName(i), tip:"Point " + vName(i) + " — what are its coordinates?" }); });
     ctx.add([["p", "Order", "Coordinates are written <b>(" + vH("x") + ", " + vH("y") + ")</b>: " + vH("x") + " first — how far across from the origin — then " + vH("y") + " — how far up or down."]], null,
       [["(x, y)", "p", ex("(" + vH("x") + ",&nbsp;" + vH("y") + ")" + opS("→") + wd("across, then up or down"))]]);
     pts.forEach(function(Q, i){
@@ -1991,7 +2319,7 @@
         + ". So <b>" + nm + " = " + ptH(Q) + "</b>."]], null, [[nm + ": y", "e", ex(vH("y") + opS("=") + nH(Q.y)) + ex(nm + opS("=") + ptH(Q), "res")]]);
       if (!isZ(Q.y)) spec.segs.push({ x1:F(Q.x), y1:F(Q.y), x2:F(Q.x), y2:0, cls:"gr-leg1", step:s1, tag:null });
       if (!isZ(Q.x)) spec.segs.push({ x1:F(Q.x), y1:F(Q.y), x2:0, y2:F(Q.y), cls:"gr-leg2", step:s2 });
-      spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:nm + " " + ptT(Q), step:s2 });
+      spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:nm + " " + ptT(Q), step:s2, tip:nm + " " + ptT(Q) + " · " + (quadOf(Q).n ? quadOf(Q).name : "on " + quadOf(Q).name) });
     });
     spec.aria = "Coordinate grid: " + pts.map(function(Q, i){ return vName(i) + " is at " + ptT(Q); }).join("; ");
     given.aria = "Coordinate grid with " + (pts.length > 1 ? "points " + pts.map(function(Q, i){ return vName(i); }).join(", ") : "point A") + " plotted";
@@ -2010,7 +2338,7 @@
   /* ===================== Distance ===================== */
   function solveDistance(pr){
     var A = pr.pts[0], B = pr.pts[1], ctx = new Ctx(), Ln = lenOf(A, B), dx = Ln.dx, dy = Ln.dy, ax = absR(dx), ay = absR(dy);
-    var spec = { kind:"plane", focus:fpts([A, B]), pts:[{ x:F(A.x), y:F(A.y), lbl:"A " + ptT(A) }, { x:F(B.x), y:F(B.y), lbl:"B " + ptT(B), cls:"p2" }], segs:[], ra:[] };
+    var spec = { kind:"plane", focus:fpts([A, B]), pts:[{ x:F(A.x), y:F(A.y), lbl:"A " + ptT(A), tip:"A " + ptT(A) }, { x:F(B.x), y:F(B.y), lbl:"B " + ptT(B), cls:"p2", tip:"B " + ptT(B) }], segs:[], ra:[] };
     var d, dT, dH, facts = [], fieldCtx = { dx:dx, dy:dy, d2:Ln.d2 };
     ctx.add([["p", "Plot", "Plot <b>A " + ptH(A) + "</b> and <b>B " + ptH(B) + "</b>. The distance is the length of the straight segment joining them."]], null, [["A, B", "p", ex(ptH(A) + opS("&nbsp;") + ptH(B))]]);
     if (isZ(dx) || isZ(dy)){
@@ -2030,6 +2358,7 @@
       spec.segs.push({ x1:F(A.x), y1:F(A.y), x2:F(Cn.x), y2:F(Cn.y), cls:"gr-leg1", step:s1b, tag:{ t:numT(ax), cls:"gr-t2", side:sgn(dy) > 0 ? -1 : 1 } });
       spec.segs.push({ x1:F(Cn.x), y1:F(Cn.y), x2:F(B.x), y2:F(B.y), cls:"gr-leg2", step:s1b, tag:{ t:numT(ay), cls:"gr-t3", side:sgn(dx) > 0 ? 1 : -1 } });
       spec.ra.push({ x:F(Cn.x), y:F(Cn.y), ux:sgn(dx) > 0 ? -1 : 1, uy:0, vx:0, vy:sgn(dy) > 0 ? 1 : -1, step:s1b });
+      spec.pts.push({ x:F(Cn.x), y:F(Cn.y), hidden:true, step:s1b, tip:"Right-angle corner " + ptT(Cn) + ": across " + numT(ax) + ", then " + (sgn(dy) > 0 ? "up " : "down ") + numT(ay) });
       var s2 = ctx.add([["e", "Pythagoras", "The distance AB is the long side (the hypotenuse). The <strong>Pythagorean theorem</strong> says <b>a² + b² = c²</b>: "
         + "<b>" + nP(ax) + "² + " + nP(ay) + "² = " + nH(sq(ax)) + " + " + nH(sq(ay)) + " = " + nH(Ln.d2) + "</b>."]],
         ctx.once("pyth") ? "Squaring makes every length positive, so it doesn’t matter which point you start from." : null,
@@ -2060,7 +2389,7 @@
   /* ===================== Midpoint ===================== */
   function solveMidpoint(pr){
     var A = pr.pts[0], B = pr.pts[1], ctx = new Ctx(), M = P(dvd(add(A.x, B.x), TWO), dvd(add(A.y, B.y), TWO));
-    var spec = { kind:"plane", focus:fpts([A, B]), pts:[{ x:F(A.x), y:F(A.y), lbl:"A " + ptT(A) }, { x:F(B.x), y:F(B.y), lbl:"B " + ptT(B) }], segs:[] };
+    var spec = { kind:"plane", focus:fpts([A, B]), pts:[{ x:F(A.x), y:F(A.y), lbl:"A " + ptT(A), tip:"A " + ptT(A) }, { x:F(B.x), y:F(B.y), lbl:"B " + ptT(B), tip:"B " + ptT(B) }], segs:[] };
     var s0 = ctx.add([["p", "Plot", "Plot <b>A " + ptH(A) + "</b> and <b>B " + ptH(B) + "</b> and join them. The <strong>midpoint</strong> is the point exactly halfway along."]], null, [["A, B", "p", ex(ptH(A) + opS("&nbsp;") + ptH(B))]]);
     spec.segs.push({ x1:F(A.x), y1:F(A.y), x2:F(B.x), y2:F(B.y), cls:"gr-s1", step:s0 });
     var sx = add(A.x, B.x), sy = add(A.y, B.y);
@@ -2069,12 +2398,12 @@
       [["x", "m", ex(frH(nH(A.x) + opS("+") + nP(B.x), "2") + opS("=") + frH(nH(sx), "2") + opS("=") + nH(M.x))]]);
     var s2 = ctx.add([["e", "Halfway y", "Do the same for " + vH("y") + ": <b>(" + nH(A.y) + " + " + nP(B.y) + ") ÷ 2 = " + nH(sy) + " ÷ 2 = " + nH(M.y) + "</b>. So the midpoint is <b>" + ptH(M) + "</b>."]], null,
       [["y", "e", ex(frH(nH(A.y) + opS("+") + nP(B.y), "2") + opS("=") + frH(nH(sy), "2") + opS("=") + nH(M.y)) + ex(vH("M") + opS("=") + ptH(M), "res")]]);
-    spec.pts.push({ x:F(M.x), y:F(M.y), lbl:"M " + ptT(M), cls:"p2", step:s2 });
+    spec.pts.push({ x:F(M.x), y:F(M.y), lbl:"M " + ptT(M), cls:"p2", step:s2, tip:"M " + ptT(M) + ", halfway between A and B" });
     spec.segs.push({ x1:F(A.x), y1:F(A.y), x2:F(M.x), y2:F(A.y), cls:"gr-aux", step:s1 }, { x1:F(M.x), y1:F(A.y), x2:F(M.x), y2:F(M.y), cls:"gr-aux", step:s1 });
     spec.aria = "Coordinate grid: A " + ptT(A) + ", B " + ptT(B) + ", and the midpoint M " + ptT(M);
     ctx.fig(CAP + "M is halfway across and halfway up (or down).", spec);
     var L = gridHalf([A, B]);
-    var given = { kind:"plane", focus:{ xs:[-L, L], ys:[-L, L] }, pts:[{ x:F(A.x), y:F(A.y), lbl:"A" }, { x:F(B.x), y:F(B.y), lbl:"B" }], aria:"Answer grid with A " + ptT(A) + " and B " + ptT(B) };
+    var given = { kind:"plane", focus:{ xs:[-L, L], ys:[-L, L] }, pts:[{ x:F(A.x), y:F(A.y), lbl:"A", tip:"A " + ptT(A) }, { x:F(B.x), y:F(B.y), lbl:"B", tip:"B " + ptT(B) }], aria:"Answer grid with A " + ptT(A) + " and B " + ptT(B) };
     var ask = "Find the midpoint of <b>" + ptH(A) + "</b> and <b>" + ptH(B) + "</b>.";
     var askT = "Find the midpoint of " + ptT(A) + " and " + ptT(B) + ".";
     return { ctx:ctx, band:{ k:"Midpoint", v:"<span>" + ptH(M) + "</span>", facts:["Average the " + vH("x") + "’s and average the " + vH("y") + "’s"] },
@@ -2147,7 +2476,7 @@
     var s0 = ctx.add([["p", "Plot", "Plot the corners " + pts.map(function(Q, i){ return "<b>" + vName(i) + " " + ptH(Q) + "</b>"; }).join(", ") + " and join them in order, back to " + vName(0) + ". That makes a <strong>" + nm + "</strong>."]], null,
       [["plot", "p", ex(pts.map(function(Q, i){ return vName(i) + ptH(Q); }).join(opS("→")) + opS("→") + vName(0))]]);
     spec.polys.push({ pts:pts.map(function(Q){ return [F(Q.x), F(Q.y)]; }), cls:"gr-poly1", step:s0 });
-    pts.forEach(function(Q, i){ spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:vName(i) + " " + ptT(Q), step:s0 }); });
+    pts.forEach(function(Q, i){ spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:vName(i) + " " + ptT(Q), step:s0, tip:"Corner " + vName(i) + " " + ptT(Q) }); });
     var per = {}, sideT = [], sideH = [], lens = [];
     var sP = -1;
     if (want !== "area"){
@@ -2291,14 +2620,14 @@
     var spec = { kind:"plane", focus:{ xs:good.map(function(g){ return F(g.x); }), ys:good.map(function(g){ return g.f; }) }, pts:[], curves:[], asym:[] };
     var sP = ctx.add([["m", "Plot", "Each row is a point <b>(" + vH("x") + ", " + vH("y") + ")</b>. Plot them all: " + good.map(function(g){ return g.v ? ptH(P(g.x, g.v)) : "(" + nH(g.x) + ", ≈" + esc(rd(g.f)) + ")"; }).join(", ") + "."]], null,
       [["plot", "m", ex(good.map(function(g){ return g.v ? ptH(P(g.x, g.v)) : "(" + nH(g.x) + ", ≈" + esc(rd(g.f)) + ")"; }).join(opS("&nbsp;")))]]);
-    good.forEach(function(g){ spec.pts.push({ x:F(g.x), y:g.f, step:sP }); });
+    good.forEach(function(g){ spec.pts.push({ x:F(g.x), y:g.f, step:sP, tip:"x = " + numT(g.x) + ": y = " + (g.v ? numT(g.v) : "≈ " + rd(g.f)) + (g.v ? ", the point " + ptT(P(g.x, g.v)) : "") }); });
     var joinTxt;
     if (fam.kind === "linear" || fam.kind === "const") joinTxt = "The points line up, so join them with a <strong>straight line</strong> — the rule works for every " + vH("x") + " in between too.";
     else if (fam.kind === "quad") joinTxt = "The points make a U shape, a <strong>parabola</strong>, so join them with a smooth curve, not straight pieces.";
     else if (fam.kind === "recip") joinTxt = "There’s no point at " + vH("x") + " = " + nH(fam.h) + " (you can’t divide by zero), so the graph comes in <strong>two separate pieces</strong> — never join across " + vH("x") + " = " + nH(fam.h) + ".";
     else joinTxt = "Join them with a smooth curve, following the rule between the points.";
     var sJ = ctx.add([["p", "Join", joinTxt]], null, [["join", "p", ex(vH("y") + opS("=") + ruleH, "res")]]);
-    spec.curves.push({ f:fam.f, cls:"gr-s1", step:sJ, sp:fam.sp });
+    spec.curves.push({ f:fam.f, cls:"gr-s1", step:sJ, sp:fam.sp, name:"y = " + ruleT, ast:ast });
     if (fam.kind === "recip"){ spec.asym.push({ x:F(fam.h), step:sJ }); spec.asym.push({ y:F(fam.k), step:sJ }); }
     spec.aria = "Graph of y = " + ruleT + " through " + good.map(function(g){ return g.v ? ptT(P(g.x, g.v)) : "(" + numT(g.x) + ", " + rd(g.f) + ")"; }).join(", ");
     ctx.fig(CAP + "The table’s points, joined" + (fam.kind === "recip" ? " in two pieces." : "."), spec);
@@ -2348,7 +2677,7 @@
       : vH("x") + " doesn’t go up by the same amount each time, so compare <b>change in " + vH("y") + " ÷ change in " + vH("x") + "</b> (the rate) instead.")]],
       ctx.once("lin") ? "A table is <strong>linear</strong> when " + vH("y") + " changes by the same amount every time " + vH("x") + " goes up by 1 — a constant rate of change. That’s what makes the points line up." : null,
       [["Δ", "m", head]]);
-    var spec = { kind:"plane", focus:fpts(tbl), pts:tbl.map(function(r){ return { x:F(r.x), y:F(r.y), step:s1 }; }), lines:[] };
+    var spec = { kind:"plane", focus:fpts(tbl), pts:tbl.map(function(r){ return { x:F(r.x), y:F(r.y), step:s1, tip:"Row x = " + numT(r.x) + ", y = " + numT(r.y) + ": the point " + ptT(r) }; }), lines:[] };
     var band, ansT, facts = [];
     if (c.kind === "neither"){
       var why = evenX ? "The changes in " + vH("y") + " aren’t all the same, so the rate isn’t constant: it’s <strong>not linear</strong>." : "The rates aren’t all the same, so it’s <strong>not linear</strong>.";
@@ -2379,7 +2708,7 @@
           + "So it’s <strong>linear but not proportional</strong>."]], null, [["linear", "p", ex(ruleLinH(m, b), "res")]]);
         band = '<span class="word">Linear;</span><span>' + esc(ruleLinT(m, b)) + "</span>"; ansT = "linear; " + ruleLinT(m, b); facts.push("Constant rate " + nH(m) + ", starts at " + nH(b) + " (not through the origin)");
       }
-      spec.lines.push({ A:-F(m), B:1, C:F(b), cls:"gr-s1", step:ctx.steps.length - 1 });
+      spec.lines.push({ A:-F(m), B:1, C:F(b), cls:"gr-s1", step:ctx.steps.length - 1, name:ruleLinT(m, b), E:{ A:neg(m), B:ONE, C:b } });
     }
     spec.aria = "The table’s points plotted: " + tbl.map(ptT).join(", ") + (c.kind === "neither" ? "; they don’t line up" : "; they line up on " + ruleLinT(c.m, c.b));
     ctx.fig(CAP + (c.kind === "neither" ? "The points don’t line up." : "The points line up" + (c.kind === "proportional" ? ", on a line through the origin." : ", but the line misses the origin.")), spec);
@@ -2631,7 +2960,7 @@
       return sId([[badge, lab + "y-int", pre + "The <strong>" + vH("y") + "-intercept</strong> is where the graph crosses the " + vH("y") + "-axis, where " + vH("x") + " = 0. Put 0 in: <b>" + nmH + " = " + subShow(ast, ZERO, "h") + " = " + yiH(yi) + "</b>, the point " + yiPtH(yi) + "."]],
         null, [[lab + "x = 0", badge, ex(nmH + opS("=") + subShow(ast, ZERO, "h") + opS("=") + yiH(yi))]]);
     }
-    if (yi.r) spec.pts.push({ x:0, y:F(yi.r), lbl:yiPtT(yi), cls:pcl, step:-2 });
+    if (yi.r) spec.pts.push({ x:0, y:F(yi.r), lbl:yiPtT(yi), cls:pcl, step:-2, tip:lab + "y-intercept " + yiPtT(yi) });
     var yS, rS, xs = [];
     if (fam.kind === "linear" || fam.kind === "const"){
       var m = fam.kind === "linear" ? fam.m : ZERO, b = fam.kind === "linear" ? fam.b : fam.c, si = ruleLinH(m, b).replace(vH("y"), nmH);
@@ -2643,7 +2972,7 @@
         var xi = roots.vals[0].r;
         rS = sId([[badge, lab + "x-int", pre + "The <strong>" + vH("x") + "-intercept</strong> is where " + vH("y") + " = 0: <b>0 = " + ruleLinH(m, b).split(opS("="))[1] + "</b>, so <b>" + vH("x") + " = " + nH(neg(b)) + " ÷ " + nP(m) + " = " + nH(xi) + "</b>, the point " + ptH(P(xi, ZERO)) + "."]], null,
           [[lab + "y = 0", badge, ex(vH("x") + opS("=") + (isOne(m) || (isInt(b) && isInt(m) && sgn(m) > 0 && numT(xi) === numT(neg(b)) + "/" + numT(m)) ? "" : frH(nH(neg(b)), nH(m)) + opS("=")) + nH(xi))]]);
-        spec.pts.push({ x:F(xi), y:0, lbl:ptT(P(xi, ZERO)), cls:pcl, step:rS }); xs.push(F(xi));
+        spec.pts.push({ x:F(xi), y:0, lbl:ptT(P(xi, ZERO)), cls:pcl, step:rS, tip:lab + "x-intercept " + ptT(P(xi, ZERO)) }); xs.push(F(xi));
       }
       var inc = sgn(m) > 0 ? "increasing (going up from left to right) everywhere" : sgn(m) < 0 ? "decreasing (going down from left to right) everywhere" : "constant — neither going up nor down";
       sId([["m", lab + "Shape", pre + "It’s " + inc + ". Domain: all real numbers. Range: " + (isZ(m) ? vH("y") + " = " + nH(b) + " only" : "all real numbers") + "."]], null, [[lab + "shape", "m", ex(wd(isZ(m) ? "flat" : sgn(m) > 0 ? "uphill" : "downhill"))]]);
@@ -2671,7 +3000,7 @@
           : fam.form === "factored" ? "the numbers in the brackets are where it crosses the " + vH("x") + "-axis (with their signs changed); " + vH("a") + " stretches it and flips it when negative."
           : vH("a") + " stretches it and flips it when negative; " + vH("c") + " is the " + vH("y") + "-intercept; the axis of symmetry is at −" + vH("b") + " ÷ 2" + vH("a") + "."),
         [[lab + "vertex", "p", ex(vH("V") + opS("=") + ptH(V), "res")]]);
-      spec.pts.push({ x:F(h), y:F(k), lbl:"vertex " + ptT(V), cls:pcl, step:vS });
+      spec.pts.push({ x:F(h), y:F(k), lbl:"vertex " + ptT(V), cls:pcl, step:vS, tip:lab + "Vertex " + ptT(V) + ", the " + (sgn(a) > 0 ? "lowest" : "highest") + " point" });
       spec.segs.push({ x1:F(h), y1:-1e4, x2:F(h), y2:1e4, cls:"gr-aux", step:vS });
       sId([["m", lab + "Opens", pre + vH("a") + " = " + nH(a) + " is " + (up ? "positive, so the parabola opens <strong>up</strong> (a U): the vertex is its lowest point" : "negative, so the parabola opens <strong>down</strong> (an upside-down U): the vertex is its highest point") + "."]], null,
         [[lab + "a " + (up ? "> 0" : "< 0"), "m", ex(wd(up ? "opens up ∪" : "opens down ∩"))]]);
@@ -2706,7 +3035,7 @@
       }
       rS = sId([[badge, lab + "x-ints", pre + "The <strong>" + vH("x") + "-intercepts</strong> are where " + vH("y") + " = 0. " + txt]],
         roots.pm && ctx.once("irr") ? "These aren’t whole numbers or fractions: the exact answer keeps the square root, and the decimals are only how far along the axis to look." : null, [[lab + "y = 0", badge, rows]]);
-      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS }); });
+      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS, tip:lab + "x-intercept " + (v.r ? ptT(P(v.r, ZERO)) : "≈ (" + rd(x) + ", 0)") }); });
       sId([["m", lab + "Shape", pre + (up ? "Decreasing for " + vH("x") + " < " + nH(h) + " and increasing for " + vH("x") + " > " + nH(h) : "Increasing for " + vH("x") + " < " + nH(h) + " and decreasing for " + vH("x") + " > " + nH(h)) + ". "
         + "Domain: all real numbers. Range: <b>" + vH("y") + (up ? " ≥ " : " ≤ ") + nH(k) + "</b> — the vertex is the " + (up ? "lowest" : "highest") + " it gets."]], null,
         [[lab + "range", "m", ex(vH("y") + opS(up ? "≥" : "≤") + nH(k))]]);
@@ -2721,7 +3050,7 @@
         + ". The point of the V (the <strong>vertex</strong>) is where the inside is 0: <b>" + ptH(V2) + "</b>. Axis of symmetry: <b>" + vH("x") + " = " + nH(fam.h) + "</b>."]],
         "<strong>What the numbers do:</strong> " + vH("a") + " sets how steep the arms are (their slopes are " + nH(fam.a) + " and " + nH(neg(fam.a)) + ") and flips the V when negative; " + vH("h") + " moves it right; " + vH("k") + " moves it up.",
         [[lab + "vertex", "p", ex(vH("V") + opS("=") + ptH(V2), "res")]]);
-      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"vertex " + ptT(V2), cls:pcl, step:vS2 });
+      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"vertex " + ptT(V2), cls:pcl, step:vS2, tip:lab + "Vertex " + ptT(V2) + ", the point of the V" });
       sId([["m", lab + "Opens", pre + vH("a") + " is " + (up2 ? "positive, so the V opens <strong>up</strong>" : "negative, so it opens <strong>down</strong> (an upside-down V)") + ". Each arm is a straight line with slope " + nH(fam.a) + " on the right and " + nH(neg(fam.a)) + " on the left."]], null,
         [[lab + "arms", "m", ex(wd("slopes ") + nH(neg(fam.a)) + opS(",") + nH(fam.a))]]);
       yS = yStep();
@@ -2729,7 +3058,7 @@
       rS = sId([[badge, lab + "x-ints", pre + "For the " + vH("x") + "-intercepts set " + vH("y") + " = 0: <b>|" + vH("x") + " − " + nP(fam.h) + "| = " + nH(w3) + "</b>. "
         + (sgn(w3) < 0 ? "An absolute value is never negative, so there are <strong>none</strong>." : isZ(w3) ? "Only the vertex touches the axis: " + vH("x") + " = " + nH(fam.h) + "." : "The inside can be " + nH(w3) + " or " + nH(neg(w3)) + ", so <b>" + vH("x") + " = " + xiH(roots) + "</b>.")]], null,
         [[lab + "y = 0", badge, ex(vH("x") + opS("=") + xiH(roots), "res")]]);
-      roots.vals.forEach(function(v){ xs.push(F(v.r)); spec.pts.push({ x:F(v.r), y:0, lbl:ptT(P(v.r, ZERO)), cls:pcl, step:rS }); });
+      roots.vals.forEach(function(v){ xs.push(F(v.r)); spec.pts.push({ x:F(v.r), y:0, lbl:ptT(P(v.r, ZERO)), cls:pcl, step:rS, tip:lab + "x-intercept " + ptT(P(v.r, ZERO)) }); });
       sId([["m", lab + "Shape", pre + (up2 ? "Decreasing for " + vH("x") + " < " + nH(fam.h) + ", increasing for " + vH("x") + " > " + nH(fam.h) : "Increasing for " + vH("x") + " < " + nH(fam.h) + ", decreasing for " + vH("x") + " > " + nH(fam.h)) + ". Domain: all real numbers. Range: <b>" + vH("y") + (up2 ? " ≥ " : " ≤ ") + nH(fam.k) + "</b>."]], null,
         [[lab + "range", "m", ex(vH("y") + opS(up2 ? "≥" : "≤") + nH(fam.k))]]);
       feats = [["Vertex", ptH(V2), ptT(V2)], ["x-intercepts", xiH(roots), xiT(roots)], ["y-intercept", yiPtH(yi), yiPtT(yi)]];
@@ -2742,14 +3071,14 @@
         + "So the graph <strong>starts</strong> at <b>" + ptH(S0) + "</b> and only goes to the " + (right ? "right" : "left") + ": domain <b>" + vH("x") + (right ? " ≥ " : " ≤ ") + nH(fam.h) + "</b>."]],
         "<strong>What the numbers do:</strong> in " + vH("y") + " = " + vH("a") + "√(" + vH("x") + " − " + vH("h") + ") + " + vH("k") + ", (" + vH("h") + ", " + vH("k") + ") is the starting point — " + vH("h") + " moves it right, " + vH("k") + " moves it up — and " + vH("a") + " stretches it (flips it upside down when negative).",
         [[lab + "start", "p", ex(ptH(S0), "res")]]);
-      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"start " + ptT(S0), cls:pcl, step:vS3 });
+      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"start " + ptT(S0), cls:pcl, step:vS3, tip:lab + "Starting point " + ptT(S0) });
       yS = (right ? sgn(fam.h) <= 0 : sgn(fam.h) >= 0) ? yStep() : sId([[badge, lab + "y-int", pre + vH("x") + " = 0 isn’t in the domain, so there’s <strong>no " + vH("y") + "-intercept</strong>."]], null, [[lab + "x = 0", badge, ex(wd("none"))]]);
       if (!(right ? sgn(fam.h) <= 0 : sgn(fam.h) >= 0)) yi = { none:true };
       var w4 = dvd(neg(fam.k), fam.A);
       rS = sId([[badge, lab + "x-int", pre + "For the " + vH("x") + "-intercept set " + vH("y") + " = 0: the square root would have to be <b>" + nH(w4) + "</b>. "
         + (sgn(w4) < 0 ? "A square root is never negative, so there’s <strong>none</strong>." : "Square both sides: the inside is <b>" + nH(sq(w4)) + "</b>, so <b>" + vH("x") + " = " + xiH(roots) + "</b>.")]], null,
         [[lab + "y = 0", badge, ex(vH("x") + opS("=") + xiH(roots), "res")]]);
-      roots.vals.forEach(function(v){ xs.push(F(v.r)); spec.pts.push({ x:F(v.r), y:0, lbl:ptT(P(v.r, ZERO)), cls:pcl, step:rS }); });
+      roots.vals.forEach(function(v){ xs.push(F(v.r)); spec.pts.push({ x:F(v.r), y:0, lbl:ptT(P(v.r, ZERO)), cls:pcl, step:rS, tip:lab + "x-intercept " + ptT(P(v.r, ZERO)) }); });
       var incS = (upS === right);
       sId([["m", lab + "Shape", pre + "It’s " + (incS ? "increasing" : "decreasing") + " all the way along. Domain: <b>" + vH("x") + (right ? " ≥ " : " ≤ ") + nH(fam.h) + "</b>. Range: <b>" + vH("y") + (upS ? " ≥ " : " ≤ ") + nH(fam.k) + "</b>."]], null,
         [[lab + "domain", "m", ex(vH("x") + opS(right ? "≥" : "≤") + nH(fam.h) + opS(",") + vH("y") + opS(upS ? "≥" : "≤") + nH(fam.k))]]);
@@ -2771,7 +3100,7 @@
       rS = sId([[badge, lab + "x-int", pre + (roots.vals.length ? "Set " + vH("y") + " = 0: the power part would have to be <b>" + nH(dvd(neg(fam.k), fam.A)) + "</b>. " + (roots.vals[0].r ? "That’s an exact power of " + nH(fam.base) + ", so <b>" + vH("x") + " = " + nH(roots.vals[0].r) + "</b>." : "That isn’t a whole power of " + nH(fam.base) + ", so read it from the graph: about <b>" + vH("x") + " ≈ " + esc(rd(roots.vals[0].f)) + "</b>.")
         : "The graph stays on one side of its asymptote " + vH("y") + " = " + nH(fam.k) + ", so it never reaches " + vH("y") + " = 0: <strong>no " + vH("x") + "-intercept</strong>.")]], null,
         [[lab + "y = 0", badge, ex(roots.vals.length ? vH("x") + opS("=") + xiH(roots) : wd("none"), "res")]]);
-      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS }); });
+      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS, tip:lab + "x-intercept " + (v.r ? ptT(P(v.r, ZERO)) : "≈ (" + rd(x) + ", 0)") }); });
       sId([["m", lab + "Shape", pre + "It’s " + (incE ? "increasing" : "decreasing") + " everywhere. Domain: all real numbers. Range: <b>" + vH("y") + (sgn(fam.A) > 0 ? " > " : " < ") + nH(fam.k) + "</b>."]], null,
         [[lab + "range", "m", ex(vH("y") + opS(sgn(fam.A) > 0 ? ">" : "<") + nH(fam.k))]]);
       feats = [["y-intercept", yiPtH(yi), yiPtT(yi)], ["Asymptote", vH("y") + " = " + nH(fam.k), "y = " + numT(fam.k)], ["x-intercept", xiH(roots), xiT(roots)]];
@@ -2788,7 +3117,7 @@
       rS = sId([[badge, lab + "x-int", pre + (roots.vals.length ? "Set " + vH("y") + " = 0: <b>" + nH(fam.a) + " ÷ (" + vH("x") + " − " + nP(fam.h) + ") = " + nH(neg(fam.k)) + "</b>, so <b>" + vH("x") + " − " + nP(fam.h) + " = " + nH(dvd(fam.a, neg(fam.k))) + "</b> and <b>" + vH("x") + " = " + nH(roots.vals[0].r) + "</b>."
         : "With " + vH("k") + " = 0 the graph never reaches " + vH("y") + " = 0 (that’s the asymptote): <strong>no " + vH("x") + "-intercept</strong>.")]], null,
         [[lab + "y = 0", badge, ex(roots.vals.length ? vH("x") + opS("=") + xiH(roots) : wd("none"), "res")]]);
-      roots.vals.forEach(function(v){ xs.push(F(v.r)); spec.pts.push({ x:F(v.r), y:0, lbl:ptT(P(v.r, ZERO)), cls:pcl, step:rS }); });
+      roots.vals.forEach(function(v){ xs.push(F(v.r)); spec.pts.push({ x:F(v.r), y:0, lbl:ptT(P(v.r, ZERO)), cls:pcl, step:rS, tip:lab + "x-intercept " + ptT(P(v.r, ZERO)) }); });
       sId([["m", lab + "Shape", pre + "Two separate pieces, one each side of " + vH("x") + " = " + nH(fam.h) + ", each " + (sgn(fam.a) > 0 ? "decreasing" : "increasing") + ". Domain: all real numbers except " + nH(fam.h) + ". Range: all real numbers except " + nH(fam.k) + "."]], null,
         [[lab + "domain", "m", ex(vH("x") + opS("≠") + nH(fam.h) + opS(",") + vH("y") + opS("≠") + nH(fam.k))]]);
       feats = [["Vertical asymptote", vH("x") + " = " + nH(fam.h), "x = " + numT(fam.h)], ["Horizontal asymptote", vH("y") + " = " + nH(fam.k), "y = " + numT(fam.k)], ["x-intercept", xiH(roots), xiT(roots)], ["y-intercept", yiPtH(yi), yiPtT(yi)]];
@@ -2800,11 +3129,11 @@
       var cS = sId([["p", lab + "Centre", pre + "It’s a <strong>cubic</strong> of the form <b>" + vH("y") + " = " + vH("a") + "(" + vH("x") + " − " + vH("h") + ")³ + " + vH("k") + "</b>, with " + vH("a") + " = " + nH(fam.a) + ", " + vH("h") + " = " + nH(fam.h) + ", " + vH("k") + " = " + nH(fam.k) + ". Its centre (where it flattens out and changes how it bends) is <b>" + ptH(Cc) + "</b>."]],
         "<strong>What the numbers do:</strong> " + vH("a") + " stretches it and flips it when negative; " + vH("h") + " moves it right; " + vH("k") + " moves it up.",
         [[lab + "centre", "p", ex(ptH(Cc), "res")]]);
-      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"centre " + ptT(Cc), cls:pcl, step:cS });
+      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"centre " + ptT(Cc), cls:pcl, step:cS, tip:lab + "Centre " + ptT(Cc) });
       yS = yStep();
       rS = sId([[badge, lab + "x-int", pre + "Set " + vH("y") + " = 0: <b>(" + vH("x") + " − " + nP(fam.h) + ")³ = " + nH(dvd(neg(fam.k), fam.a)) + "</b>. Every number has exactly one cube root, so <b>" + vH("x") + " = " + xiH(roots) + "</b>."]], null,
         [[lab + "y = 0", badge, ex(vH("x") + opS("=") + xiH(roots), "res")]]);
-      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS }); });
+      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS, tip:lab + "x-intercept " + (v.r ? ptT(P(v.r, ZERO)) : "≈ (" + rd(x) + ", 0)") }); });
       sId([["m", lab + "Shape", pre + "It’s " + (sgn(fam.a) > 0 ? "increasing" : "decreasing") + " everywhere. Domain and range: all real numbers."]], null, [[lab + "shape", "m", ex(wd(sgn(fam.a) > 0 ? "always uphill" : "always downhill"))]]);
       feats = [["Centre", ptH(Cc), ptT(Cc)], ["x-intercept", xiH(roots), xiT(roots)], ["y-intercept", yiPtH(yi), yiPtT(yi)]];
       fields.push({ key:"yi" + i, kind:"num", label:lab + "y-intercept", v:yi, ctx:{ what:"y-intercept" } });
@@ -2823,14 +3152,14 @@
         rS = sId([[badge, lab + "x-ints", pre + (roots.vals.length ? "Where the graph crosses the " + vH("x") + "-axis: <b>" + vH("x") + " = " + xiH(roots) + "</b>" + (roots.vals.some(function(v){ return !v.r; }) ? " (read from the graph, so approximate)" : "") + "." : "The graph doesn’t cross the " + vH("x") + "-axis in view: <strong>no " + vH("x") + "-intercepts</strong> there.")]], null,
           [[lab + "y = 0", badge, ex(roots.vals.length ? vH("x") + opS("=") + xiH(roots) : wd("none"), "res")]]);
       }
-      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS }); });
+      roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS, tip:lab + "x-intercept " + (v.r ? ptT(P(v.r, ZERO)) : "≈ (" + rd(x) + ", 0)") }); });
       if (fam.kind === "cubic"){
         var dq = quadRoots(mul(R(3), fam.p[3]), mul(TWO, fam.p[2]), fam.p[1]);
         if (dq.vals.length === 2){
           var tps = dq.vals.map(function(v){ var x = v.r ? F(v.r) : v.f; return [x, fam.f(x)]; });
           sId([["m", lab + "Turns", pre + "It turns around twice, at about <b>" + tps.map(function(t){ return "(" + esc(rd(t[0])) + ", " + esc(rd(t[1])) + ")"; }).join("</b> and <b>") + "</b>. Range: all real numbers."]], null,
             [[lab + "turns", "m", ex(tps.map(function(t){ return "(" + esc(rd(t[0])) + ",&nbsp;" + esc(rd(t[1])) + ")"; }).join(opS("&nbsp;")))]]);
-          tps.forEach(function(t){ spec.pts.push({ x:t[0], y:t[1], cls:"sm", step:ctx.steps.length - 1 }); });
+          tps.forEach(function(t){ spec.pts.push({ x:t[0], y:t[1], cls:"sm", step:ctx.steps.length - 1, tip:lab + "Turning point ≈ (" + rd(t[0]) + ", " + rd(t[1]) + ")" }); });
           xs = xs.concat(tps.map(function(t){ return t[0]; }));
           spec.focus.ys = spec.focus.ys.concat(tps.map(function(t){ return Math.max(-30, Math.min(30, t[1])); }));
         }
@@ -2843,7 +3172,7 @@
     spec.pts.forEach(function(p){ if (p.step === -2) p.step = yS; });
     var dS = ctx.add([[badge, lab + "Draw", pre + "Plot the key points, then sketch the " + (fam.kind === "linear" ? "line" : "curve") + " through them" + (many ? " — drawn " + DASHW[i % 5] + " in this colour" : "") + "."
       + (fam.kind === "recip" ? " Never join the two pieces across the asymptote." : "")]], null, [[lab + "draw", badge, ex(eqH, "res")]]);
-    spec.curves.push({ f:fam.f, cls:cls, step:dS, sp:sp.concat(xs) });
+    spec.curves.push({ f:fam.f, cls:cls, step:dS, sp:sp.concat(xs), name:many ? name : "y", ast:ast });
     var fx = spec.focus;
     xs.forEach(function(x){ if (Math.abs(x) < 40){ fx.xs.push(x); fx.ys.push(0); } });
     if (yi.r && Math.abs(F(yi.r)) < 40){ fx.xs.push(0); fx.ys.push(F(yi.r)); }
@@ -2899,7 +3228,7 @@
         else {
           var s = ctx.add([["a", "Crossing", "Where do they meet? Set the rules equal, <b>" + exH(pr.fns[0].ast) + " = " + exH(pr.fns[1].ast) + "</b>, and solve: they cross at " + cps.map(function(c){ return "<b>" + (c.x ? ptH(P(c.x, c.y)) : ptF({ x:c.xf, y:c.yf })) + "</b>"; }).join(" and ") + "."]], null,
             [["meet", "a", ex(cps.map(function(c){ return c.x ? ptH(P(c.x, c.y)) : "≈" + ptF({ x:c.xf, y:c.yf }); }).join(opS("&nbsp;")), "res")]]);
-          cps.forEach(function(c){ spec.pts.push({ x:c.xf, y:c.yf, lbl:c.x ? ptT(P(c.x, c.y)) : "≈" + ptF({ x:c.xf, y:c.yf }), cls:"p4", step:s }); spec.focus.xs.push(c.xf); spec.focus.ys.push(c.yf); });
+          cps.forEach(function(c){ spec.pts.push({ x:c.xf, y:c.yf, lbl:c.x ? ptT(P(c.x, c.y)) : "≈" + ptF({ x:c.xf, y:c.yf }), cls:"p4", step:s, tip:"y₁ and y₂ cross at " + (c.x ? ptT(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf })) }); spec.focus.xs.push(c.xf); spec.focus.ys.push(c.yf); });
           crossT = cps.map(function(c){ return c.x ? ptT(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf }); });
           crossTxt = "They cross at " + cps.map(function(c){ return c.x ? ptH(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf }); }).join(" and ") + ".";
         }
@@ -3008,7 +3337,7 @@
       + "The plans cost the same where their graphs cross — that’s solving the two equations together, a <strong>system</strong>."]], null,
       [["plans", "p", ex(wd("A:") + vH("y") + opS("=") + exH(e1.R)) + ex(wd("B:") + vH("y") + opS("=") + exH(e2.R))]]);
     var s1 = slopeForm(ctx, e1, E1, nA, "p"), s2 = slopeForm(ctx, e2, E2, nB, "e");
-    spec.lines.push(lineF(E1, "gr-s1", s1)); spec.lines.push(lineF(E2, "gr-s2", s2));
+    spec.lines.push(lineF(E1, "gr-s1", s1, { name:nA, E:E1 })); spec.lines.push(lineF(E2, "gr-s2", s2, { name:nB, E:E2 }));
     [E1, E2].forEach(function(E){
       if (!isZ(E.B)){ spec.focus.xs.push(0); spec.focus.ys.push(F(yintOfE(E))); }
       if (!isZ(E.A) && !isZ(E.B)){ var xi = F(dvd(E.C, E.A)); if (Math.abs(xi) < 25){ spec.focus.xs.push(xi); spec.focus.ys.push(0); } }
@@ -3051,7 +3380,8 @@
             [["exact", "m", ex(ptH(I), "res")]]);
         }
       }
-      spec.pts.push({ x:F(I.x), y:F(I.y), lbl:(lattice ? "" : "≈") + (lattice ? ptT(I) : ptF({ x:F(I.x), y:F(I.y) })), cls:"p4", step:sR, ring:true });
+      spec.pts.push({ x:F(I.x), y:F(I.y), lbl:(lattice ? "" : "≈") + (lattice ? ptT(I) : ptF({ x:F(I.x), y:F(I.y) })), cls:"p4", step:sR, ring:true,
+        tip:lattice ? "The lines cross at " + ptT(I) : "The lines cross at about " + ptF({ x:F(I.x), y:F(I.y) }) + " — an estimate from the graph; exactly " + ptT(I) });
       ctx.add([["e", "Check", "Check the point in <i>both</i> original equations. " + nA + ": " + plugEq(e1, I) + ". " + nB + ": " + plugEq(e2, I) + "."]],
         ctx.once("both") ? "Checking just one equation isn’t enough — a point on one line only would pass that one." : null,
         [["check", "e", ex(wd("both true ✓"))]]);
@@ -3254,14 +3584,14 @@
       var st = strict(q);
       var sD = ctx.add([["m", lab + (st ? "Dashed" : "Solid"), st ? "The sign is <b>" + esc(q.rel) + "</b> with no “or equal to”, so points <i>on</i> the line don’t count: draw it <strong>dashed</strong>." : "The sign is <b>" + esc(q.rel) + "</b>, “or equal to”, so points on the line count too: draw it <strong>solid</strong>."]], null,
         [[lab + (st ? "- - -" : "——"), "m", ex(wd(st ? "dashed: < or >" : "solid: ≤ or ≥"))]]);
-      spec.lines.push(lineF(E, cls, sL, st ? { dash:true } : { solid:true }));
+      spec.lines.push(lineF(E, cls, sL, st ? { dash:true, name:"boundary line" + (sys ? " " + (i + 1) : ""), E:E } : { solid:true, name:"boundary line" + (sys ? " " + (i + 1) : ""), E:E }));
       var T = testPt(E), ok = ineqHolds(q, T), lhs = subXY(q.L, T), rhs = subXY(q.R, T), lv = fexact(q.L, T.x, T.y), rv = fexact(q.R, T.x, T.y);
       var side = sideOf(q); sideW.push(side);
       var sT = ctx.add([["e", lab + "Test point", "Which side? A <strong>test point</strong> tells you which side is true. " + (ptEq(T, P(ZERO, ZERO)) ? "(0, 0) is easiest" : "(0, 0) is on the line, so use " + ptH(T)) + ": <b>" + lhs + " " + esc(q.rel) + " " + rhs + "</b> → <b>" + nH(lv) + " " + esc(q.rel) + " " + nH(rv) + "</b>, which is <strong>" + (ok ? "true" : "false") + "</strong>. "
         + (ok ? "So shade the side with " + ptH(T) + " in it" : "So shade the other side, away from " + ptH(T)) + " — that’s <strong>" + side + "</strong> the line."]],
         ctx.once("test") ? "Every point on one side makes the inequality true and every point on the other makes it false, so one test settles the whole side." : null,
         [[lab + "test", "e", ex(lhs + opS(q.rel) + rhs + opS("→") + nH(lv) + opS(q.rel) + nH(rv) + (ok ? OK : BAD))]]);
-      if (!spec.pts.some(function(p){ return p.x === F(T.x) && p.y === F(T.y); })) spec.pts.push({ x:F(T.x), y:F(T.y), cls:ok ? "mine" : "out", step:sT, lbl:"test " + ptT(T) });
+      if (!spec.pts.some(function(p){ return p.x === F(T.x) && p.y === F(T.y); })) spec.pts.push({ x:F(T.x), y:F(T.y), cls:ok ? "mine" : "out", step:sT, lbl:"test " + ptT(T), tip:ptT(T) + " test point: " + numT(lv) + " " + q.rel + " " + numT(rv) + " is " + (ok ? "true, so shade this side" : "false, so shade the other side") });
       spec.shades.push({ hp:[hpOf(q)], cls:sys ? "gr-shade" + (i + 1) : "gr-shade1", hatch:i + 1, step:sT });
       if (!isZ(E.B)){ spec.focus.xs.push(0); spec.focus.ys.push(F(yintOfE(E))); }
       if (!isZ(E.A)){ var xi = F(dvd(E.C, E.A)); if (Math.abs(xi) < 25){ spec.focus.xs.push(xi); spec.focus.ys.push(0); } }
@@ -3278,7 +3608,7 @@
         [["both", "a", ex(inside ? ptH(inside) + wd(" works in both") : wd("no overlap"), "res")]]);
       spec.shades.forEach(function(s){ s.cls = "gr-hfill0"; });
       spec.shades.push({ hp:qs.map(hpOf), cls:"gr-shade3", step:sO });
-      if (inside) spec.pts.push({ x:F(inside.x), y:F(inside.y), cls:"p4", lbl:ptT(inside), step:sO });
+      if (inside) spec.pts.push({ x:F(inside.x), y:F(inside.y), cls:"p4", lbl:ptT(inside), step:sO, tip:ptT(inside) + " is in the overlap: it makes both inequalities true" });
       var partsT = qs.map(function(q, i){ return (strict(q) ? "dashed" : "solid") + " line " + lineT(q.E) + ", shade " + sideW[i]; });
       var lastT = "the solution is the overlap" + (inside ? ", e.g. " + ptT(inside) : " (none)");
       ansT = partsT.join("; ") + "; " + lastT;
@@ -3408,10 +3738,11 @@
       [["pre-image", "p", ex(pts.map(function(Q, i){ return names[i] + ptH(Q); }).join(opS("&nbsp;")))]]);
     if (poly) spec.polys.push({ pts:pts.map(function(Q){ return [F(Q.x), F(Q.y)]; }), cls:"gr-poly1", step:s0 });
     else if (n === 2) spec.segs.push({ x1:F(pts[0].x), y1:F(pts[0].y), x2:F(pts[1].x), y2:F(pts[1].y), cls:"gr-s1", step:s0 });
-    pts.forEach(function(Q, i){ spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:names[i], step:s0 }); });
+    var tipObjs = [];
+    pts.forEach(function(Q, i){ var o = { x:F(Q.x), y:F(Q.y), lbl:names[i], step:s0, tip:names[i] + " " + ptT(Q) }; tipObjs.push(o); spec.pts.push(o); });
     var whole = null;
     moves.forEach(function(mv, mi){
-      var m = mapOf(mv), nxt = cur.map(function(Q){ return mapApply(m, Q); }), pOld = prime; prime += "′";
+      var m = mapOf(mv), nxt = cur.map(function(Q){ return mapApply(m, Q); }), pOld = prime; prime = prime ? "″" : "′";
       maps.push(m); whole = whole ? mapThen(whole, m) : m;
       if (mv.t === "reflect" && mv.ax !== "x-axis" && mv.ax !== "y-axis"){
         var E = mv.ax === "y=x" ? { A:-1, B:1, C:0 } : mv.ax === "y=-x" ? { A:1, B:1, C:0 } : mv.ax === "x=k" ? { A:1, B:0, C:F(mv.k) } : { A:0, B:1, C:F(mv.k) };
@@ -3428,8 +3759,13 @@
       var cls = moves.length > 1 && mi === 0 ? "gr-poly3" : "gr-poly2", pc = moves.length > 1 && mi === 0 ? "p3" : "p4";
       if (poly) spec.polys.push({ pts:nxt.map(function(Q){ return [F(Q.x), F(Q.y)]; }), cls:cls, step:sR });
       else if (n === 2) spec.segs.push({ x1:F(nxt[0].x), y1:F(nxt[0].y), x2:F(nxt[1].x), y2:F(nxt[1].y), cls:moves.length > 1 && mi === 0 ? "gr-s3" : "gr-s4", step:sR });
-      nxt.forEach(function(Q, i){ spec.pts.push({ x:F(Q.x), y:F(Q.y), lbl:names[i] + prime, cls:pc, step:sR }); spec.focus.xs.push(F(Q.x)); spec.focus.ys.push(F(Q.y)); });
-      if (mv.c){ spec.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"centre", step:sR }); spec.focus.xs.push(F(mv.c.x)); spec.focus.ys.push(F(mv.c.y)); }
+      nxt.forEach(function(Q, i){
+        var from = tipObjs[i], arrow = " → " + names[i] + prime + " " + ptT(Q);
+        from.tip += arrow;
+        var o = { x:F(Q.x), y:F(Q.y), lbl:names[i] + prime, cls:pc, step:sR, tip:names[i] + pOld + " " + ptT(cur[i]) + arrow };
+        tipObjs[i] = o; spec.pts.push(o); spec.focus.xs.push(F(Q.x)); spec.focus.ys.push(F(Q.y));
+      });
+      if (mv.c){ spec.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"centre", step:sR, tip:"Centre " + ptT(mv.c) }); spec.focus.xs.push(F(mv.c.x)); spec.focus.ys.push(F(mv.c.y)); }
       if (mv.t === "translate" && n <= 4) cur.forEach(function(Q, i){ spec.segs.push({ x1:F(Q.x), y1:F(Q.y), x2:F(nxt[i].x), y2:F(nxt[i].y), cls:"gr-aux", step:sR }); });
       cur = nxt; stage.push(nxt);
     });
@@ -3444,8 +3780,8 @@
     spec.aria = "Coordinate grid: pre-image " + pts.map(function(Q, i){ return names[i] + ptT(Q); }).join(" ") + "; image after " + moves.map(moveT).join(" then ") + ": " + img.map(function(Q, i){ return lab[i] + ptT(Q); }).join(" ");
     ctx.fig(CAP + "The pre-image (solid) and the image (dashed, " + names[0] + prime + "…)" + (moves.length > 1 ? ", with the halfway image dotted." : "."), spec);
     var vT = img.map(function(Q, i){ return lab[i] + ptT(Q); }).join(" "), vHt = img.map(function(Q, i){ return "<span>" + lab[i] + "&nbsp;" + ptH(Q) + "</span>"; }).join('<span class="sep">·</span>');
-    var L = gridHalf(pts.concat(img)), given = { kind:"plane", focus:{ xs:[-L, L], ys:[-L, L] }, polys:poly ? [{ pts:pts.map(function(Q){ return [F(Q.x), F(Q.y)]; }), cls:"gr-poly1" }] : [], pts:pts.map(function(Q, i){ return { x:F(Q.x), y:F(Q.y), lbl:names[i] }; }), aria:"Answer grid with the pre-image " + pts.map(function(Q, i){ return names[i] + ptT(Q); }).join(" ") };
-    moves.forEach(function(mv){ if (mv.c) given.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"centre" }); });
+    var L = gridHalf(pts.concat(img)), given = { kind:"plane", focus:{ xs:[-L, L], ys:[-L, L] }, polys:poly ? [{ pts:pts.map(function(Q){ return [F(Q.x), F(Q.y)]; }), cls:"gr-poly1" }] : [], pts:pts.map(function(Q, i){ return { x:F(Q.x), y:F(Q.y), lbl:names[i], tip:names[i] + " " + ptT(Q) + " (the pre-image)" }; }), aria:"Answer grid with the pre-image " + pts.map(function(Q, i){ return names[i] + ptT(Q); }).join(" ") };
+    moves.forEach(function(mv){ if (mv.c) given.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"centre", tip:"Centre " + ptT(mv.c) }); });
     var what = poly ? (n === 3 ? "triangle" : n === 4 ? "quadrilateral" : "polygon") + " " : n > 1 ? "points " : "point ";
     var ask = "<b>" + esc(moves.map(moveT).join(", then ")).replace(/^./, function(c){ return c.toUpperCase(); }) + "</b>: the " + what + pts.map(function(Q, i){ return names[i] + ptH(Q); }).join(" ") + ". Give the image" + (n > 1 ? " of each point" : "") + ".";
     var askT = moves.map(moveT).join(", then ").replace(/^./, function(c){ return c.toUpperCase(); }) + ": the " + what + pts.map(function(Q, i){ return names[i] + ptT(Q); }).join(" ") + ". Give the image" + (n > 1 ? " of each point" : "") + ".";
@@ -3484,7 +3820,7 @@
     var spec = { kind:"data", focus:{ xs:xs.slice(), ys:ys.slice() }, pts:[], lines:[], tags:[], xl:xl, yl:yl };
     var sP = ctx.add([["p", "Plot", "Each pair is a point: " + vH("x") + " (" + esc(xl) + ") across, " + vH("y") + " (" + esc(yl) + ") up. Plot all " + data.length + " of them. Each axis gets its own scale to fit the data" + (x0 > 0 && y0 > 0 ? " (and needn’t start at 0)" : "") + "."]], null,
       [["plot", "p", ex(data.slice(0, 8).map(ptH).join(opS("&nbsp;")) + (data.length > 8 ? " …" : ""))]]);
-    data.forEach(function(d, i){ spec.pts.push({ x:F(d.x), y:F(d.y), step:sP, data:String(i) }); });
+    data.forEach(function(d, i){ spec.pts.push({ x:F(d.x), y:F(d.y), step:sP, data:String(i), tip:pr.xl || pr.yl ? xl + " " + numT(d.x) + ", " + yl + " " + numT(d.y) : "Data point " + (i + 1) + ": " + ptT(d) }); });
     var as = assocOf(fit);
     var sA = ctx.add([["m", "Association", as.dir === "none" ? "As " + esc(xl) + " goes up, " + esc(yl) + " doesn’t go up or down in any steady way: the points are scattered, so there’s <strong>no association</strong>."
       : "As " + esc(xl) + " goes up, " + esc(yl) + " tends to go " + (as.dir === "positive" ? "<strong>up</strong> too — a <strong>positive</strong>" : "<strong>down</strong> — a <strong>negative</strong>") + " association. The points stay " + (as.str === "strong" ? "<strong>close</strong> to a line, so it’s <strong>strong</strong>" : "only <strong>loosely</strong> near a line, so it’s <strong>weak</strong>") + "."]],
@@ -3503,7 +3839,7 @@
     if (outs.length){
       sO = ctx.add([["e", "Outlier", "<b>" + outs.map(function(i){ return ptH(data[i]); }).join(", ") + "</b> sits far from the pattern the other points make — an <strong>outlier</strong>. It could be a mistake, or something unusual; it pulls the trend line toward itself a little."]], null,
         [["outlier", "e", ex(outs.map(function(i){ return ptH(data[i]); }).join(opS("&nbsp;")))]]);
-      outs.forEach(function(i){ spec.pts[i].cls = "out"; spec.pts[i].ring = true; spec.pts[i].step = sO; });
+      outs.forEach(function(i){ spec.pts[i].cls = "out"; spec.pts[i].ring = true; spec.pts[i].step = sO; spec.pts[i].tip += " — an outlier"; });
     }
     var m = fit.m, b = fit.b, mT = sig(F(m)), bT = sig(F(b));
     var lineTxt = "y ≈ " + (mT === "0" ? "" : mT + "x") + (bT === "0" && mT !== "0" ? "" : (mT === "0" ? bT : (F(b) < 0 ? " − " + sig(-F(b)) : " + " + bT)));
@@ -3511,8 +3847,8 @@
     var sL = ctx.add([["a", "Trend line", "A <strong>trend line</strong> (line of best fit) goes through the middle of the points, with about as many above it as below, following their direction. "
       + "It passes through the average point <b>(" + esc(sig(F(fit.mx))) + ", " + esc(sig(F(fit.my))) + ")</b>. The best one (the least-squares line) is <b>" + lineHt + "</b>: slope about <b>" + esc(mT) + "</b>, " + vH("y") + "-intercept about <b>" + esc(bT) + "</b>."]],
       null, [["y ≈ mx + b", "a", ex(lineHt, "res")]]);
-    spec.lines.push({ A:-F(m), B:1, C:F(b), cls:"gr-s1", step:sL, noHeads:true });
-    spec.pts.push({ x:F(fit.mx), y:F(fit.my), cls:"sm", step:sL, r:4 });
+    spec.lines.push({ A:-F(m), B:1, C:F(b), cls:"gr-s1", step:sL, noHeads:true, name:"trend line", approx:true });
+    spec.pts.push({ x:F(fit.mx), y:F(fit.my), cls:"sm", step:sL, r:4, tip:"Centre of the data (mean x, mean y): (" + sig(F(fit.mx)) + ", " + sig(F(fit.my)) + ")" });
     var sI = ctx.add([["m", "Meaning", "The slope says: each time " + esc(xl) + " goes up by 1, " + esc(yl) + " " + (F(m) >= 0 ? "goes up" : "goes down") + " by about <b>" + esc(sig(Math.abs(F(m)))) + "</b> on average. "
       + "The intercept says: at " + esc(xl) + " = 0 the line gives about <b>" + esc(bT) + "</b>" + (x0 > 0 && x0 > 0.5 * (x1 - x0) ? " — but 0 is well outside the data, so that may not mean much." : ".")]], null,
       [["meaning", "m", ex(wd("+1 in x → " + (F(m) >= 0 ? "+" : "−") + sig(Math.abs(F(m))) + " in y"))]]);
@@ -3523,7 +3859,7 @@
         + (far ? " <strong>Careful:</strong> " + nH(pr.px) + " is far outside the data (" + esc(sig(x0)) + " to " + esc(sig(x1)) + "). Predicting that far out is <i>extrapolating</i> — the pattern may not keep going, so treat it as a rough guess."
           : out ? " It’s a little outside the data (" + esc(sig(x0)) + " to " + esc(sig(x1)) + "), so it’s less certain than a prediction inside." : " It’s inside the data, so it’s a fair estimate.")]], null,
         [["predict", "p", ex(vH("y") + opS("≈") + esc(sig(yF)), "res")]]);
-      spec.pts.push({ x:pxF, y:yF, cls:"p4", lbl:"predict (" + rd(pxF) + ", " + sig(yF) + ")", step:sPr });
+      spec.pts.push({ x:pxF, y:yF, cls:"p4", lbl:"predict (" + rd(pxF) + ", " + sig(yF) + ")", step:sPr, tip:"Predicted: at x = " + numT(pr.px) + ", y ≈ " + sig(yF) });
       spec.focus.xs.push(pxF); spec.focus.ys.push(yF);
       pred = { x:pr.px, y:yhat, far:far, out:out };
       fields.push({ key:"pr", kind:"pred", label:"Predicted y when x = " + numT(pr.px), v:yF, tol:Math.max(0.1 * yr, Math.abs(F(m)) * 0.5, 0.25), ctx:{ m:F(m), b:F(b), px:pxF } });
@@ -4710,6 +5046,388 @@
     }
   });
 
+  /* ===================== Free plot: a blank sheet of graph paper to draw on (no problem, no grading) =====================
+     The drawing lives in the address bar as  mode=free&paper=<x0,x1,y0,y1,step,label step,flags>&obj=<objects>
+       flags   a = axes, n = numbers, d = dots (not lines), f = darker every 5th line, s = square units, h = snap to half steps, o = snap off
+       objects separated by "~", each a letter and ":"-separated fields; points are numbered in order (0, 1, 2 …):
+         p:name:x:y[:c:d]        a point (c = colour 0–4, d = dash 0–2)
+         s:i:j[:c:d]  l:i:j[:c:d]  r:i:j[:c:d]   a segment, a line through two points, a ray from i through j
+         g:i:j:k…[:c:d]          a polygon (the last two fields are colour and dash when there are 2 more numbers than corners… so they're written as c<n> d<n>)
+         f:<expression in x>[:c:d]      y = … graphed
+         x:x:y:<text>[:c:d]      a label
+     Colour and dash are written c0…c4 and d0…d2 so they can't be mistaken for point numbers. */
+  var FREE = { paper:null, objs:[], tool:"point", col:0, dash:0, pending:[], sel:null, undo:[], redo:[], nextId:1, fig:null, msg:"" };
+  var FR_TOOLS = [["point", "Point", "•"], ["segment", "Segment", "—"], ["polygon", "Polygon", "△"], ["line", "Line", "↔"], ["ray", "Ray", "→"], ["label", "Label", "T"], ["move", "Move", "✥"], ["erase", "Erase", "⌫"]];
+  var FR_PRESETS = [["-5,5", "−5 to 5"], ["-10,10", "−10 to 10"], ["-20,20", "−20 to 20"], ["0,10", "0 to 10"], ["0,20", "0 to 20"], ["custom", "Custom"]];
+  var FR_COLS = ["Blue", "Orange", "Purple", "Green", "Pink"], FR_DASH = ["Solid", "Dashed", "Dotted"];
+  function frDefaultPaper(){ return { x0:-10, x1:10, y0:-10, y1:10, step:1, lbl:2, axes:true, nums:true, style:"lines", fifth:true, square:true, snap:"grid" }; }
+  FREE.paper = frDefaultPaper();
+  function frNum(s){ var v = readNumber(String(s)); return v; }
+  function frPaperEnc(p){
+    return [p.x0, p.x1, p.y0, p.y1, p.step, p.lbl].map(function(n){ return String(n); }).join(",") + "," + (p.axes ? "a" : "") + (p.nums ? "n" : "") + (p.style === "dots" ? "d" : "") + (p.fifth ? "f" : "") + (p.square ? "s" : "") + (p.snap === "half" ? "h" : p.snap === "off" ? "o" : "");
+  }
+  function frPaperDec(s){
+    var b = String(s || "").split(","), p = frDefaultPaper();
+    if (b.length < 6) return p;
+    var n = b.slice(0, 6).map(Number);
+    if (n.some(function(x){ return !isFinite(x); }) || n[1] <= n[0] || n[3] <= n[2] || n[4] <= 0 || n[5] <= 0) return p;
+    if (n[1] - n[0] > 2000 || n[3] - n[2] > 2000) return p;
+    var f = b[6] || "";
+    return { x0:n[0], x1:n[1], y0:n[2], y1:n[3], step:n[4], lbl:n[5], axes:f.indexOf("a") >= 0, nums:f.indexOf("n") >= 0, style:f.indexOf("d") >= 0 ? "dots" : "lines",
+             fifth:f.indexOf("f") >= 0, square:f.indexOf("s") >= 0, snap:f.indexOf("h") >= 0 ? "half" : f.indexOf("o") >= 0 ? "off" : "grid" };
+  }
+  function frSty(o){ return (o.col ? ":c" + o.col : "") + (o.dash ? ":d" + o.dash : ""); }
+  function frEnc(objs){
+    var idx = {}, k = 0;
+    objs.forEach(function(o){ if (o.t === "p") idx[o.id] = k++; });
+    return objs.map(function(o){
+      if (o.t === "p") return "p:" + String(o.name).replace(/[:~]/g, "") + ":" + numA(o.x) + ":" + numA(o.y) + frSty(o);
+      if (o.t === "s" || o.t === "l" || o.t === "r") return o.t + ":" + idx[o.a] + ":" + idx[o.b] + frSty(o);
+      if (o.t === "g") return "g:" + o.pts.map(function(id){ return idx[id]; }).join(":") + frSty(o);
+      if (o.t === "f") return "f:" + o.src.replace(/[:~]/g, "") + frSty(o);
+      return "x:" + numA(o.x) + ":" + numA(o.y) + ":" + String(o.s).replace(/[:~]/g, " ") + frSty(o);
+    }).join("~");
+  }
+  function frDec(s){
+    var objs = [], pts = [], id = 1;
+    String(s || "").split("~").forEach(function(item){
+      if (!item) return;
+      var b = item.split(":"), t = b[0], sty = { col:0, dash:0 };
+      b = b.slice(1).filter(function(f){ var m = /^([cd])([0-4])$/.exec(f); if (m){ if (m[1] === "c") sty.col = Number(m[2]); else sty.dash = Math.min(2, Number(m[2])); return false; } return true; });
+      try {
+        if (t === "p"){ var x = frNum(b[1]), y = frNum(b[2]); if (!x || !y) return; var o = { t:"p", id:id++, name:b[0] || vName(pts.length), x:x, y:y, col:sty.col, dash:sty.dash }; pts.push(o.id); objs.push(o); }
+        else if (t === "s" || t === "l" || t === "r"){ var i = Number(b[0]), j = Number(b[1]); if (pts[i] === undefined || pts[j] === undefined || i === j) return; objs.push({ t:t, id:id++, a:pts[i], b:pts[j], col:sty.col, dash:sty.dash }); }
+        else if (t === "g"){ var ids = b.map(Number).filter(function(i2){ return pts[i2] !== undefined; }).map(function(i2){ return pts[i2]; }); if (ids.length >= 3) objs.push({ t:"g", id:id++, pts:ids, col:sty.col, dash:sty.dash }); }
+        else if (t === "f"){ var src = b.join(":"); exprFrom(src); objs.push({ t:"f", id:id++, src:src, col:sty.col, dash:sty.dash }); }
+        else if (t === "x"){ var tx = frNum(b[0]), ty = frNum(b[1]); if (!tx || !ty) return; objs.push({ t:"x", id:id++, x:tx, y:ty, s:b.slice(2).join(":").slice(0, 60), col:sty.col, dash:sty.dash }); }
+      } catch (e){}
+    });
+    return { objs:objs, nextId:id };
+  }
+  function frParams(){ var p = new URLSearchParams(); p.set("mode", "free"); p.set("paper", frPaperEnc(FREE.paper)); if (FREE.objs.length) p.set("obj", frEnc(FREE.objs)); return p.toString(); }
+  function frLoad(paperS, objS){ FREE.paper = frPaperDec(paperS); var d = frDec(objS); FREE.objs = d.objs; FREE.nextId = d.nextId; FREE.pending = []; FREE.sel = null; }
+  function frPoint(id){ for (var i = 0; i < FREE.objs.length; i++) if (FREE.objs[i].id === id && FREE.objs[i].t === "p") return FREE.objs[i]; return null; }
+  function frSnapshot(){ FREE.undo.push(frPaperEnc(FREE.paper) + "|" + frEnc(FREE.objs)); if (FREE.undo.length > 200) FREE.undo.shift(); FREE.redo = []; }
+  function frRestore(snap){ var b = snap.split("|"); frLoad(b[0], b.slice(1).join("|")); }
+  function frUndo(){ if (!FREE.undo.length) return; FREE.redo.push(frPaperEnc(FREE.paper) + "|" + frEnc(FREE.objs)); frRestore(FREE.undo.pop()); frPaint(); frSay("Undone."); }
+  function frRedo(){ if (!FREE.redo.length) return; FREE.undo.push(frPaperEnc(FREE.paper) + "|" + frEnc(FREE.objs)); frRestore(FREE.redo.pop()); frPaint(); frSay("Redone."); }
+  function frNextName(){
+    var used = {}; FREE.objs.forEach(function(o){ if (o.t === "p") used[o.name] = 1; });
+    for (var k = 0; k < 26 * 9; k++){ var nm = vName(k % 26) + (k >= 26 ? String(Math.floor(k / 26)) : ""); if (!used[nm]) return nm; }
+    return "P";
+  }
+  function frSay(t){ FREE.msg = t; var el = $("frMsg"); if (el) el.textContent = t; }
+  function frLineE(A, B){ var dx = sub(B.x, A.x), dy = sub(B.y, A.y); return { A:dy, B:neg(dx), C:sub(mul(dy, A.x), mul(dx, A.y)) }; }
+  function frColCls(o){ return "fr-k" + (o.col || 0) + " fr-d" + (o.dash || 0); }
+  // the drawing as a grid spec
+  function frSpec(){
+    var P = FREE.paper, spec = { kind:"plane", paper:{}, pts:[], segs:[], polys:[], lines:[], curves:[], texts:[], aria:"" }, ptIds = [];
+    for (var k in P) spec.paper[k] = P[k];
+    var xs = P.x1 - P.x0, ys = P.y1 - P.y0;
+    spec.paper.H = P.square ? Math.max(180, Math.min(820, 2 * PAD + (SZ - 2 * PAD) * ys / xs)) : SZ;
+    var desc = [];
+    FREE.objs.forEach(function(o){
+      if (o.t === "g"){
+        var Q = o.pts.map(frPoint).filter(Boolean);
+        spec.polys.push({ pts:Q.map(function(q){ return [F(q.x), F(q.y)]; }), cls:"fr-poly " + frColCls(o) + (FREE.sel === o.id ? " fr-sel" : "") });
+        desc.push("polygon " + Q.map(function(q){ return q.name; }).join(""));
+      }
+    });
+    FREE.objs.forEach(function(o){
+      var A = o.a ? frPoint(o.a) : null, Bq = o.b ? frPoint(o.b) : null, cls = "fr-w " + frColCls(o) + (FREE.sel === o.id ? " fr-sel" : "");
+      if (o.t === "s" && A && Bq){ spec.segs.push({ x1:F(A.x), y1:F(A.y), x2:F(Bq.x), y2:F(Bq.y), cls:cls }); desc.push("segment " + A.name + Bq.name); }
+      if (o.t === "l" && A && Bq){ var E = frLineE(A, Bq); spec.lines.push({ A:F(E.A), B:F(E.B), C:F(E.C), cls:cls, noHeads:true, name:"line " + A.name + Bq.name, E:E }); desc.push("line " + A.name + Bq.name); }
+      if (o.t === "r" && A && Bq){
+        var dx = F(Bq.x) - F(A.x), dy = F(Bq.y) - F(A.y), Ln = Math.sqrt(dx * dx + dy * dy) || 1, far = 4 * Math.max(xs, ys) + Math.abs(F(A.x)) + Math.abs(F(A.y));
+        spec.segs.push({ x1:F(A.x), y1:F(A.y), x2:F(A.x) + dx / Ln * far, y2:F(A.y) + dy / Ln * far, cls:cls });
+        desc.push("ray " + A.name + Bq.name);
+      }
+      if (o.t === "f"){
+        try { var ast = exprFrom(o.src), fam = analyze(ast); spec.curves.push({ f:fam.f, sp:fam.sp, cls:cls, name:"y = " + exT(ast), ast:ast }); desc.push("y = " + exT(ast)); } catch (e){}
+      }
+      if (o.t === "x"){ spec.texts.push({ x:F(o.x), y:F(o.y), t:o.s, cls:"fr-tk" + (o.col || 0), sel:FREE.sel === o.id }); desc.push("label “" + o.s + "”"); }
+    });
+    // what's being built right now, dotted
+    if (FREE.pending.length > 1){
+      for (var i = 1; i < FREE.pending.length; i++){ var a = frPoint(FREE.pending[i - 1]), b = frPoint(FREE.pending[i]); if (a && b) spec.segs.push({ x1:F(a.x), y1:F(a.y), x2:F(b.x), y2:F(b.y), cls:"gr-aux" }); }
+    }
+    FREE.objs.forEach(function(o){
+      if (o.t !== "p") return;
+      var qd = quadOf(o);
+      ptIds.push(o.id);
+      spec.pts.push({ x:F(o.x), y:F(o.y), lbl:o.name, own:true, cls:"fr-pt" + (o.col || 0), ring:FREE.sel === o.id || FREE.pending.indexOf(o.id) >= 0,
+        tip:o.name + " " + ptT(o) + " · " + (qd.n ? qd.name : "on " + qd.name) });
+      desc.push(o.name + " " + ptT(o));
+    });
+    spec.ptIds = ptIds;
+    spec.aria = "Graph paper from x = " + P.x0 + " to " + P.x1 + " and y = " + P.y0 + " to " + P.y1 + (desc.length ? ", with " + desc.join(", ") : ", blank");
+    return spec;
+  }
+  function frSnap(u){
+    var P = FREE.paper, s = P.snap === "half" ? P.step / 2 : P.step;
+    if (P.snap === "off") return { x:Math.round(u.x * 100) / 100, y:Math.round(u.y * 100) / 100 };
+    return { x:Math.round(u.x / s) * s, y:Math.round(u.y / s) * s };
+  }
+  function frR(x){ return fromNum(Math.round(x * 1e6) / 1e6); }
+  // the point at q (one already there, or a new one)
+  function frPointAt(q, hitKey){
+    if (hitKey !== null && hitKey !== undefined && FREE.fig){ var id = FREE.fig.spec.ptIds[Number(hitKey)]; if (frPoint(id)) return frPoint(id); }
+    var X = frR(q.x), Y = frR(q.y);
+    for (var i = 0; i < FREE.objs.length; i++){ var o = FREE.objs[i]; if (o.t === "p" && eqR(o.x, X) && eqR(o.y, Y)) return o; }
+    var p = { t:"p", id:FREE.nextId++, name:frNextName(), x:X, y:Y, col:FREE.col, dash:FREE.dash };
+    FREE.objs.push(p);
+    return p;
+  }
+  // distance in screen units from a pointer to each object, for Erase and for picking things
+  function frPick(u, hitKey){
+    var fg = FREE.fig; if (!fg || !u) return null;
+    if (hitKey !== null && hitKey !== undefined){ var id = fg.spec.ptIds[Number(hitKey)]; if (frPoint(id)) return frPoint(id); }
+    var svg = fg.svgHost.querySelector("svg"), r = svg.getBoundingClientRect(), k = r.width / SZ, v = fg.view, bx = svg.getAttribute("data-box").split(",").map(Number);
+    function X(x){ return bx[0] + (x - v.x0) / (v.x1 - v.x0) * (bx[1] - bx[0]); }
+    function Y(y){ return bx[3] - (y - v.y0) / (v.y1 - v.y0) * (bx[3] - bx[2]); }
+    function dseg(ax, ay, bx2, by, inf){ var dx = bx2 - ax, dy = by - ay, L2 = dx * dx + dy * dy || 1, t = ((u.px - ax) * dx + (u.py - ay) * dy) / L2; if (inf === 2) t = Math.max(0, t); else if (!inf) t = Math.max(0, Math.min(1, t)); var x = ax + t * dx, y = ay + t * dy; return Math.sqrt((u.px - x) * (u.px - x) + (u.py - y) * (u.py - y)); }
+    var best = null, bd = 14 / k;
+    FREE.objs.forEach(function(o){
+      var d = Infinity, A = o.a ? frPoint(o.a) : null, B = o.b ? frPoint(o.b) : null;
+      if ((o.t === "s" || o.t === "l" || o.t === "r") && A && B) d = dseg(X(F(A.x)), Y(F(A.y)), X(F(B.x)), Y(F(B.y)), o.t === "l" ? 1 : o.t === "r" ? 2 : 0);
+      if (o.t === "g"){ var Q = o.pts.map(frPoint).filter(Boolean); for (var i = 0; i < Q.length; i++){ var a = Q[i], b = Q[(i + 1) % Q.length]; d = Math.min(d, dseg(X(F(a.x)), Y(F(a.y)), X(F(b.x)), Y(F(b.y)), 0)); } }
+      if (o.t === "f"){ try { var ast = exprFrom(o.src), ux = v.x0 + (u.px - bx[0]) / (bx[1] - bx[0]) * (v.x1 - v.x0), yy = fnum(ast, ux, 0); if (isFinite(yy)) d = Math.abs(Y(yy) - u.py); } catch (e){} }
+      if (o.t === "x"){ var tx = X(F(o.x)), ty = Y(F(o.y)); if (u.px >= tx - 4 && u.px <= tx + o.s.length * 7.6 + 4 && u.py >= ty - 16 && u.py <= ty + 5) d = 0; }
+      if (d < bd){ bd = d; best = o; }
+    });
+    return best;
+  }
+  function frRemove(o){
+    if (!o) return;
+    var gone = {}; gone[o.id] = 1;
+    if (o.t === "p") FREE.objs.forEach(function(x){ if ((x.a === o.id || x.b === o.id) || (x.t === "g" && x.pts.indexOf(o.id) >= 0)) gone[x.id] = 1; });
+    FREE.objs = FREE.objs.filter(function(x){ return !gone[x.id]; });
+    FREE.pending = FREE.pending.filter(function(id){ return !gone[id]; });
+    if (gone[FREE.sel]) FREE.sel = null;
+  }
+  function frTap(q, u, hit){
+    var tool = FREE.tool, key = hit ? hit.h.key : null;
+    if (tool === "erase"){
+      var o = frPick(u || frUnitsAt(q), key);
+      if (!o && !u){ for (var i = 0; i < FREE.objs.length; i++){ var p0 = FREE.objs[i]; if (p0.t === "p" && Math.abs(F(p0.x) - q.x) < 1e-9 && Math.abs(F(p0.y) - q.y) < 1e-9) o = p0; } }
+      if (!o){ frSay("Nothing there to erase."); return; }
+      frSnapshot(); frRemove(o); frPaint(); frSay("Erased."); return;
+    }
+    if (tool === "move"){ var o2 = frPick(u || frUnitsAt(q), key); FREE.sel = o2 ? o2.id : null; frPaint(); frSay(o2 ? "Selected. Drag a point to move it." : "Drag a point to move it."); return; }
+    if (tool === "label"){
+      frSnapshot();
+      var tx = { t:"x", id:FREE.nextId++, x:frR(q.x), y:frR(q.y), s:"label", col:FREE.col, dash:FREE.dash };
+      FREE.objs.push(tx); FREE.sel = tx.id; frPaint();
+      var inp = document.querySelector('#frList [data-text="' + tx.id + '"]'); if (inp){ try { inp.focus(); inp.select(); } catch (e){} }
+      frSay("Type the label in the list."); return;
+    }
+    if (tool === "point"){
+      if (key !== null){ var ex = frPoint(FREE.fig.spec.ptIds[Number(key)]); if (ex){ FREE.sel = ex.id; frPaint(); var ni = document.querySelector('#frList [data-name="' + ex.id + '"]'); if (ni){ try { ni.focus(); ni.select(); } catch (e2){} } frSay("Rename " + ex.name + " in the list, or drag it with Move."); return; } }
+      frSnapshot();
+      var np = frPointAt(q, null); FREE.sel = np.id; frPaint(); frSay("Plotted " + np.name + " " + ptT(np) + "."); return;
+    }
+    // segment, line, ray, polygon: points one after another
+    frSnapshot();
+    var pt = frPointAt(q, key);
+    if (tool === "polygon"){
+      if (FREE.pending.length >= 3 && pt.id === FREE.pending[0]){
+        FREE.objs.push({ t:"g", id:FREE.nextId++, pts:FREE.pending.slice(), col:FREE.col, dash:FREE.dash });
+        frSay("Polygon " + FREE.pending.map(function(id){ return frPoint(id).name; }).join("") + " closed."); FREE.pending = [];
+      } else if (FREE.pending.indexOf(pt.id) < 0){ FREE.pending.push(pt.id); frSay(FREE.pending.length < 3 ? "Tap the next corner." : "Tap the next corner, or tap the first corner (" + frPoint(FREE.pending[0]).name + ") to close it."); }
+      frPaint(); return;
+    }
+    if (FREE.pending.length === 1 && FREE.pending[0] !== pt.id){
+      var a = FREE.pending[0];
+      FREE.objs.push({ t:tool === "segment" ? "s" : tool === "line" ? "l" : "r", id:FREE.nextId++, a:a, b:pt.id, col:FREE.col, dash:FREE.dash });
+      frSay((tool === "segment" ? "Segment " : tool === "line" ? "Line " : "Ray ") + frPoint(a).name + pt.name + " drawn."); FREE.pending = [];
+    } else { FREE.pending = [pt.id]; frSay("Now tap the second point."); }
+    frPaint();
+  }
+  function frUnitsAt(q){
+    var fg = FREE.fig; if (!fg) return null;
+    var svg = fg.svgHost.querySelector("svg"), v = fg.view, bx = svg.getAttribute("data-box").split(",").map(Number);
+    return { x:q.x, y:q.y, px:bx[0] + (q.x - v.x0) / (v.x1 - v.x0) * (bx[1] - bx[0]), py:bx[3] - (q.y - v.y0) / (v.y1 - v.y0) * (bx[3] - bx[2]) };
+  }
+  // the side list: points (editable), and what each segment, line and polygon measures
+  function frMeasure(){
+    var out = [];
+    FREE.objs.forEach(function(o){
+      var A = o.a ? frPoint(o.a) : null, B = o.b ? frPoint(o.b) : null;
+      if ((o.t === "s" || o.t === "l" || o.t === "r") && A && B){
+        var Ln = lenOf(A, B), m = isZ(Ln.dx) ? null : dvd(Ln.dy, Ln.dx);
+        var nm = (o.t === "s" ? "Segment " : o.t === "l" ? "Line " : "Ray ") + A.name + B.name;
+        out.push({ o:o, h:"<b>" + esc(nm) + "</b>: " + (o.t === "s" ? "length " + radAnsH(Ln.s) + ", " : "") + "slope " + (m === null ? "undefined (vertical)" : nH(m)),
+                   t:nm + ": " + (o.t === "s" ? "length " + radAns(Ln.s) + ", " : "") + "slope " + (m === null ? "undefined" : numT(m)), len:o.t === "s" ? Ln.s : null, slope:m });
+      }
+      if (o.t === "g"){
+        var Q = o.pts.map(frPoint).filter(Boolean), per = {}, a2 = shoeTwice(Q), area = dvd(absR(a2), TWO);
+        Q.forEach(function(q, i){ sAdd(per, lenOf(q, Q[(i + 1) % Q.length]).s); });
+        var nm2 = "Polygon " + Q.map(function(q){ return q.name; }).join("");
+        out.push({ o:o, h:"<b>" + esc(nm2) + "</b>: perimeter " + sumH(per) + (sumRat(per) ? "" : opS("≈") + esc(rd(sumF(per)))) + ", area " + nH(area) + (selfCross(Q) ? " (the sides cross)" : ""),
+                   t:nm2 + ": perimeter " + sumT(per) + (sumRat(per) ? "" : " ≈ " + rd(sumF(per))) + ", area " + numT(area), per:per, area:area });
+      }
+      if (o.t === "f"){ try { out.push({ o:o, h:"<b>" + esc("y = " + exT(exprFrom(o.src))) + "</b>", t:"y = " + exT(exprFrom(o.src)) }); } catch (e){} }
+    });
+    return out;
+  }
+  function frListHTML(){
+    var h = '<table class="fr-tbl"><caption class="sr-only">Points</caption><tr><th>Name</th><th>x</th><th>y</th><th></th></tr>';
+    FREE.objs.forEach(function(o){
+      if (o.t !== "p") return;
+      h += '<tr' + (FREE.sel === o.id ? ' class="sel"' : "") + '><td><input class="fr-in fr-nm" data-name="' + o.id + '" value="' + esc(o.name) + '" aria-label="Name of point ' + esc(o.name) + '" maxlength="6"></td>'
+        + '<td><input class="fr-in" data-x="' + o.id + '" value="' + esc(numT(o.x)) + '" aria-label="x of ' + esc(o.name) + '" inputmode="decimal"></td>'
+        + '<td><input class="fr-in" data-y="' + o.id + '" value="' + esc(numT(o.y)) + '" aria-label="y of ' + esc(o.name) + '" inputmode="decimal"></td>'
+        + '<td><button type="button" class="fr-x" data-del="' + o.id + '" aria-label="Erase ' + esc(o.name) + '">×</button></td></tr>';
+    });
+    h += "</table>";
+    if (!FREE.objs.some(function(o){ return o.t === "p"; })) h = '<p class="fr-empty">No points yet. Pick <b>Point</b> and tap the paper.</p>';
+    var ms = frMeasure();
+    if (ms.length) h += '<ul class="fr-meas">' + ms.map(function(m){ return '<li' + (FREE.sel === m.o.id ? ' class="sel"' : "") + ">" + m.h + ' <button type="button" class="fr-x" data-del="' + m.o.id + '" aria-label="Erase this">×</button></li>'; }).join("") + "</ul>";
+    var texts = FREE.objs.filter(function(o){ return o.t === "x"; });
+    if (texts.length) h += '<div class="fr-texts">' + texts.map(function(o){ return '<div class="fr-trow"><input class="fr-in" data-text="' + o.id + '" value="' + esc(o.s) + '" aria-label="Label text" maxlength="60"><button type="button" class="fr-x" data-del="' + o.id + '" aria-label="Erase this label">×</button></div>'; }).join("") + "</div>";
+    return h;
+  }
+  function frPaint(){
+    if (S.mode !== "free") return;
+    var host = $("frSheet");
+    if (!FREE.fig || FREE.fig.host !== host || FREE.paperKey !== frPaperEnc(FREE.paper)){
+      var keep = FREE.fig && FREE.paperKey === frPaperEnc(FREE.paper) ? FREE.fig.view : null;
+      FREE.fig = new Fig(frSpec(), { plot:true, onPlot:frTap, snap:frSnap, snapStep:function(){ var P = FREE.paper; return P.snap === "half" ? P.step / 2 : P.snap === "off" ? P.step / 10 : P.step; }, canMove:function(){ return FREE.tool === "move"; },
+        onMove:function(key, q){ var id = FREE.fig.spec.ptIds[Number(key)], p = frPoint(id); if (!p) return; if (!FREE.moving){ frSnapshot(); FREE.moving = true; } p.x = frR(q.x); p.y = frR(q.y); FREE.sel = id; FREE.fig.spec = frSpec(); FREE.fig.draw(); },
+        onMoveEnd:function(){ FREE.moving = false; frPaint(); },
+        onDelete:function(){ if (FREE.sel !== null){ frSnapshot(); frRemove(FREE.objs.filter(function(o){ return o.id === FREE.sel; })[0]); frPaint(); frSay("Erased."); } else frSay("Select something first (Move tool), then Delete erases it."); } });
+      FREE.paperKey = frPaperEnc(FREE.paper);
+      FREE.fig.mount(host);
+      if (keep){ FREE.fig.view = keep; }
+    }
+    FREE.fig.spec = frSpec();
+    FREE.fig.draw();
+    $("frList").innerHTML = frListHTML();
+    Array.prototype.forEach.call(document.querySelectorAll("#frTools [data-tool]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-tool") === FREE.tool)); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frCols [data-col]"), function(b){ b.setAttribute("aria-pressed", String(Number(b.getAttribute("data-col")) === FREE.col)); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frDash [data-dash]"), function(b){ b.setAttribute("aria-pressed", String(Number(b.getAttribute("data-dash")) === FREE.dash)); });
+    $("frUndo").disabled = !FREE.undo.length; $("frRedo").disabled = !FREE.redo.length;
+    frPaintPaper();
+    syncURL(); save();
+  }
+  function frPaintPaper(){
+    var P = FREE.paper, key = P.x0 + "," + P.x1;
+    var pre = FR_PRESETS.filter(function(pr){ return pr[0] === key && P.y0 === P.x0 && P.y1 === P.x1; })[0];
+    Array.prototype.forEach.call(document.querySelectorAll("#frRange [data-r]"), function(b){ b.setAttribute("aria-pressed", String(pre ? b.getAttribute("data-r") === pre[0] : b.getAttribute("data-r") === "custom")); });
+    $("frCustom").hidden = !!pre && !FREE.customOpen;
+    ["x0", "x1", "y0", "y1"].forEach(function(k){ var el = $("fr_" + k); if (document.activeElement !== el) el.value = P[k]; });
+    $("frStep").value = String(P.step); $("frLbl").value = String(P.lbl);
+    [["frAxes", P.axes], ["frNums", P.nums], ["frDots", P.style === "dots"], ["frFifth", P.fifth], ["frSquare", P.square], ["frFirst", P.x0 >= 0 && P.y0 >= 0]].forEach(function(t){ $(t[0]).setAttribute("aria-pressed", String(!!t[1])); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frSnap [data-snap]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-snap") === P.snap)); });
+  }
+  function frSetPaper(ch){ for (var k in ch) FREE.paper[k] = ch[k]; frPaint(); }
+  // copy what a worked problem drew onto a fresh sheet
+  function frFromSpec(spec, view){
+    var objs = [], id = 1, byKey = {};
+    function pt(x, y, name){
+      var X = frR(x), Y = frR(y), k = numT(X) + "," + numT(Y);
+      if (byKey[k]) return byKey[k];
+      var nm = name && /^[A-Z][′″]?$/.test(name) ? name : null;
+      var o = { t:"p", id:id++, name:nm || "", x:X, y:Y, col:0, dash:0 };
+      objs.push(o); byKey[k] = o.id; return o.id;
+    }
+    (spec.pts || []).forEach(function(p){ if (p.hidden || p.cls === "sm") return; var nm = p.lbl ? String(p.lbl).split(" ")[0] : ""; pt(p.x, p.y, nm); });
+    (spec.polys || []).forEach(function(pg){ if (/gr-box|gr-cut/.test(pg.cls || "")) return; var ids = pg.pts.map(function(q){ return pt(q[0], q[1]); }); if (ids.length >= 3) objs.push({ t:"g", id:id++, pts:ids, col:/poly2/.test(pg.cls) ? 3 : 0, dash:/poly2/.test(pg.cls) ? 1 : 0 }); });
+    (spec.segs || []).forEach(function(sg){ if (!/gr-hyp|gr-s1|gr-s3|gr-s4/.test(sg.cls || "")) return; objs.push({ t:"s", id:id++, a:pt(sg.x1, sg.y1), b:pt(sg.x2, sg.y2), col:0, dash:0 }); });
+    (spec.lines || []).forEach(function(l, i){
+      if (!l.E || isZ(l.E.B)) return;
+      var m = neg(dvd(l.E.A, l.E.B)), b = dvd(l.E.C, l.E.B);
+      objs.push({ t:"f", id:id++, src:exA(parseExpr(linS2(m, b))), col:i % 5, dash:i ? 1 : 0 });
+    });
+    (spec.curves || []).forEach(function(c, i){ if (c.ast) objs.push({ t:"f", id:id++, src:exA(c.ast), col:i % 5, dash:i % 3 }); });
+    // name the unnamed points A, B, C … in order
+    var used = {}; objs.forEach(function(o){ if (o.t === "p" && o.name) used[o.name] = 1; });
+    var k2 = 0; objs.forEach(function(o){ if (o.t === "p" && !o.name){ while (used[vName(k2)]) k2++; o.name = vName(k2); used[o.name] = 1; } });
+    var v = view || autoView(spec), lo = Math.floor(Math.min(v.x0, v.y0)), hi = Math.ceil(Math.max(v.x1, v.y1));
+    var P = frDefaultPaper(); P.x0 = Math.floor(v.x0); P.x1 = Math.ceil(v.x1); P.y0 = Math.floor(v.y0); P.y1 = Math.ceil(v.y1);
+    var span = Math.max(P.x1 - P.x0, P.y1 - P.y0); P.step = span > 60 ? 5 : span > 30 ? 2 : 1; P.lbl = span > 30 ? P.step * 2 : span > 12 ? 2 : 1;
+    if (spec.kind === "data") P.square = false;
+    return { paper:P, objs:objs, nextId:id };
+  }
+  function linS2(m, b){ return (isZ(m) ? "" : numA(m) + "*x") + (isZ(b) && !isZ(m) ? "" : (sgn(b) < 0 || isZ(m) ? "" : "+") + numA(b)); }
+  function frOpenFrom(fig){
+    var d = frFromSpec(fig.spec, fig.view);
+    if (FREE.objs.length) FREE.undo.push(frPaperEnc(FREE.paper) + "|" + frEnc(FREE.objs));
+    FREE.paper = d.paper; FREE.objs = d.objs; FREE.nextId = d.nextId; FREE.pending = []; FREE.sel = null; FREE.fig = null;
+    setMode("free");
+    frSay("Copied onto blank paper — draw on it, or change the paper below.");
+  }
+  // the controls (made once)
+  function frBuild(){
+    if ($("frTools").childNodes.length) return;
+    $("frTools").innerHTML = FR_TOOLS.map(function(t){ return '<button type="button" data-tool="' + t[0] + '" aria-pressed="false"><span aria-hidden="true">' + t[2] + "</span> " + t[1] + "</button>"; }).join("");
+    $("frCols").innerHTML = FR_COLS.map(function(c, i){ return '<button type="button" data-col="' + i + '" aria-pressed="false" class="fr-sw fr-swk' + i + '" aria-label="' + c + '"><span></span></button>'; }).join("");
+    $("frDash").innerHTML = FR_DASH.map(function(c, i){ return '<button type="button" data-dash="' + i + '" aria-pressed="false" aria-label="' + c + ' lines"><svg width="30" height="10" viewBox="0 0 30 10" aria-hidden="true"><line class="fr-w fr-k0 fr-d' + i + '" x1="2" y1="5" x2="28" y2="5"/></svg></button>'; }).join("");
+    $("frRange").innerHTML = FR_PRESETS.map(function(p){ return '<button type="button" data-r="' + p[0] + '" aria-pressed="false">' + p[1] + "</button>"; }).join("");
+    Array.prototype.forEach.call(document.querySelectorAll("#frTools [data-tool]"), function(b){ b.addEventListener("click", function(){ FREE.tool = b.getAttribute("data-tool"); FREE.pending = []; frPaint(); frSay({ point:"Tap the paper to plot a point; tap a point to rename it.", segment:"Tap two points.", polygon:"Tap the corners in order; tap the first one again to close.", line:"Tap two points: the line goes on forever both ways.", ray:"Tap where the ray starts, then a point it goes through.", label:"Tap where the label goes.", move:"Drag a point to move it; its segments follow.", erase:"Tap something to erase it." }[FREE.tool]); }); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frCols [data-col]"), function(b){ b.addEventListener("click", function(){ FREE.col = Number(b.getAttribute("data-col")); var o = FREE.objs.filter(function(x){ return x.id === FREE.sel; })[0]; if (o){ frSnapshot(); o.col = FREE.col; } frPaint(); }); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frDash [data-dash]"), function(b){ b.addEventListener("click", function(){ FREE.dash = Number(b.getAttribute("data-dash")); var o = FREE.objs.filter(function(x){ return x.id === FREE.sel; })[0]; if (o){ frSnapshot(); o.dash = FREE.dash; } frPaint(); }); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frRange [data-r]"), function(b){ b.addEventListener("click", function(){
+      var r = b.getAttribute("data-r");
+      if (r === "custom"){ FREE.customOpen = true; frPaintPaper(); try { $("fr_x0").focus(); } catch (e){} return; }
+      FREE.customOpen = false;
+      var lohi = r.split(",").map(Number), span = lohi[1] - lohi[0];
+      frSetPaper({ x0:lohi[0], x1:lohi[1], y0:lohi[0], y1:lohi[1], step:span > 30 ? 2 : 1, lbl:span > 30 ? 5 : span > 12 ? 2 : 1 });
+    }); });
+    ["x0", "x1", "y0", "y1"].forEach(function(k){ $("fr_" + k).addEventListener("change", function(){
+      var v = Number($("fr_" + k).value), P = {}; for (var kk in FREE.paper) P[kk] = FREE.paper[kk];
+      if (!isFinite(v)) return frPaintPaper();
+      P[k] = v;
+      if (P.x1 - P.x0 < 1 || P.y1 - P.y0 < 1 || P.x1 - P.x0 > 1000 || P.y1 - P.y0 > 1000){ frSay("Each range needs to run from a smaller number to a bigger one (up to 1000 apart)."); return frPaintPaper(); }
+      FREE.customOpen = true; frSetPaper(P);
+    }); });
+    $("frStep").addEventListener("change", function(){ var v = Number($("frStep").value); if (v > 0) frSetPaper({ step:v, lbl:Math.max(v, FREE.paper.lbl) }); });
+    $("frLbl").addEventListener("change", function(){ var v = Number($("frLbl").value); if (v > 0) frSetPaper({ lbl:v }); });
+    [["frAxes", "axes"], ["frNums", "nums"], ["frFifth", "fifth"], ["frSquare", "square"]].forEach(function(t){ $(t[0]).addEventListener("click", function(){ var o = {}; o[t[1]] = !FREE.paper[t[1]]; frSetPaper(o); }); });
+    $("frDots").addEventListener("click", function(){ frSetPaper({ style:FREE.paper.style === "dots" ? "lines" : "dots" }); });
+    $("frFirst").addEventListener("click", function(){
+      var P = FREE.paper;
+      if (P.x0 >= 0 && P.y0 >= 0){ var m = Math.max(P.x1, P.y1); frSetPaper({ x0:-m, y0:-m, x1:m, y1:m }); }
+      else frSetPaper({ x0:0, y0:0, x1:Math.max(P.x1, 1), y1:Math.max(P.y1, 1) });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#frSnap [data-snap]"), function(b){ b.addEventListener("click", function(){ frSetPaper({ snap:b.getAttribute("data-snap") }); }); });
+    $("frUndo").addEventListener("click", frUndo);
+    $("frRedo").addEventListener("click", frRedo);
+    $("frClear").addEventListener("click", function(){ if (!FREE.objs.length) return; frSnapshot(); FREE.objs = []; FREE.pending = []; FREE.sel = null; frPaint(); frSay("Cleared. Undo brings it back."); });
+    $("frEqGo").addEventListener("click", frGraphEq);
+    $("frEq").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); frGraphEq(); } });
+    var list = $("frList");
+    list.addEventListener("change", function(e){
+      var t = e.target, id;
+      if ((id = t.getAttribute("data-name"))){ var p = frPoint(Number(id)), nm = t.value.replace(/[:~\s]/g, "").slice(0, 6); if (p && nm){ frSnapshot(); p.name = nm; } frPaint(); }
+      else if ((id = t.getAttribute("data-x")) || (id = t.getAttribute("data-y"))){
+        var p2 = frPoint(Number(id)), v = readNumber(t.value), axis = t.hasAttribute("data-x") ? "x" : "y";
+        if (!p2 || !v || babs(v.n) > 1000000n){ frSay("Type a number like 3, −2, 1/2 or 2.5."); frPaint(); return; }
+        frSnapshot(); p2[axis] = v; frPaint();
+      } else if ((id = t.getAttribute("data-text"))){ var tx = FREE.objs.filter(function(o){ return o.id === Number(id); })[0]; if (tx){ frSnapshot(); tx.s = t.value.replace(/[~]/g, " ").slice(0, 60) || "label"; } frPaint(); }
+    });
+    list.addEventListener("click", function(e){ var b = e.target.closest ? e.target.closest("[data-del]") : null; if (!b) return; var id = Number(b.getAttribute("data-del")), o = FREE.objs.filter(function(x){ return x.id === id; })[0]; if (o){ frSnapshot(); frRemove(o); frPaint(); frSay("Erased."); } });
+    $("freeBox").addEventListener("keydown", function(e){
+      if (e.target && e.target.tagName === "INPUT") return;
+      if ((e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z")){ e.preventDefault(); if (e.shiftKey) frRedo(); else frUndo(); }
+      else if ((e.ctrlKey || e.metaKey) && (e.key === "y" || e.key === "Y")){ e.preventDefault(); frRedo(); }
+    });
+  }
+  function frGraphEq(){
+    var src = $("frEq").value.trim();
+    if (!src){ frSay("Type an equation like y = x^2 − 4 (or several, split by ;)."); return; }
+    var parts = src.split(/\s*;\s*/).filter(Boolean), asts = [];
+    try { parts.forEach(function(p){ asts.push(exprFrom(p)); }); }
+    catch (e){ frSay((e && e.user ? e.user : "I can’t read that.").replace(/<[^>]+>/g, "")); return; }
+    frSnapshot();
+    asts.forEach(function(a, i){ FREE.objs.push({ t:"f", id:FREE.nextId++, src:exA(a), col:(FREE.col + i) % 5, dash:FREE.dash }); });
+    $("frEq").value = "";
+    frPaint(); frSay("Graphed " + asts.map(function(a){ return "y = " + exT(a); }).join(" and ") + ".");
+  }
+  var FR_EX = [["Blank, −10 to 10", "paper=-10,10,-10,10,1,2,anfs"], ["First quadrant, 0 to 20", "paper=0,20,0,20,1,2,anfs"],
+               ["Dot paper", "paper=-10,10,-10,10,1,2,andfs"], ["A triangle", "paper=-2,8,-2,8,1,1,anfs&obj=p:A:0:0~p:B:6:0~p:C:2:5~g:0:1:2"],
+               ["Two lines crossing", "paper=-10,10,-10,10,1,2,anfs&obj=f:2*x-1~f:-x+5:c1:d1"], ["A parabola", "paper=-10,10,-10,10,1,2,anfs&obj=f:x^2-4"]];
+
   /* ===================== drawing the page ===================== */
   var CUR = null, LIVE = [];
   var CK = { key:null, reveal:"none", tries:0, graded:0, hinted:false, done:false };   // reveal: none | step (a hint) | all
@@ -4763,6 +5481,16 @@
   }
   function ckKey(){ return S.mode + "|" + cleanQ(S.inputs[S.mode]) + "|" + (S.struct[S.mode] && S.structText[S.mode] === S.inputs[S.mode] ? S.struct[S.mode] : ""); }
   function render(){
+    var isFree = S.mode === "free";
+    $("page").classList.toggle("freemode", isFree);
+    $("freeBox").hidden = !isFree;
+    if (isFree){
+      CUR = null; LIVE = [];
+      var oldB = document.querySelector(".answer, .notice"); if (oldB) oldB.parentNode.removeChild(oldB);
+      $("checkBox").hidden = true; $("statusLine").textContent = "";
+      frBuild(); frPaint(); postHeight();
+      return;
+    }
     var mode = S.mode, sol = null, msg = "";
     try { sol = solvePR(mode, curProblem()); }
     catch (e){ if (e && e.user) msg = e.user === "zero" ? "Something in there divides by zero — that can’t be done." : e.user === "mixed" ? "That mixes one-variable and two-variable parts. Keep it all in " + vH("x") + ", or write each part with " + vH("y") + "." : e.user; else { msg = "Something went wrong reading that. Try writing it another way."; try { console.error(e); } catch (x){} } }
@@ -4775,7 +5503,7 @@
       Array.prototype.forEach.call($("workHost").querySelectorAll("[data-fig]"), function(host){
         var f = sol.ctx.figs[Number(host.getAttribute("data-fig"))];
         if (f.nl){ host.innerHTML = '<div class="gsvg-host" style="max-width:560px">' + nlSVG(f.nl) + "</div>"; return; }
-        var fg = new Fig(f.spec, { after:veil });
+        var fg = new Fig(f.spec, { after:veil, toFree:EMBED ? null : frOpenFrom });
         fg.mount(host); LIVE.push(fg);
       });
       writeLog(sol.ctx.steps);
@@ -4855,7 +5583,8 @@
       var inp = $("ck_" + pf.key), names = pf.ctx && pf.ctx.names ? pf.ctx.names : null, n = sol.plot.n;
       var cur = function(){ try { return parseTypedPts(inp.value).pts; } catch (e){ return []; } };
       CKFIG = new Fig(sol.plot.spec, { plot:true,
-        mine:function(){ return cur().map(function(Q, i){ return { x:F(Q.x), y:F(Q.y), cls:"mine", lbl:names ? (names[i] || "") : (n > 1 ? String(i + 1) : "") }; }); },
+        mine:function(){ return cur().map(function(Q, i){ return { x:F(Q.x), y:F(Q.y), cls:"mine", own:true, lbl:names ? (names[i] || "") : (n > 1 ? String(i + 1) : ""),
+          tip:"Your point" + (names && names[i] ? " " + names[i] : n > 1 ? " " + (i + 1) : "") + " " + ptT(Q) + " — tap it to take it away" }; }); },
         onPlot:function(q){
           var Q = P(fromNum(q.x), fromNum(q.y)), list = cur(), at = -1;
           list.forEach(function(Z, i){ if (ptEq(Z, Q)) at = i; });
@@ -4935,7 +5664,8 @@
     if (EMBED) return;
     try {
       var base;
-      if (structOn()) base = S.struct[S.mode];
+      if (S.mode === "free") base = frParams();
+      else if (structOn()) base = S.struct[S.mode];
       else { var p = new URLSearchParams(); p.set("mode", S.mode); p.set("q", S.inputs[S.mode]); base = p.toString(); }
       var qs = "?" + base + (S.practice !== "all" ? "&practice=" + S.practice : "");
       if (location.search !== qs) history.replaceState(history.state, "", location.pathname + qs + location.hash);
@@ -4955,6 +5685,11 @@
     try { P0 = new URLSearchParams(location.search); } catch (e){ return; }
     var mode = (P0.get("mode") || "").toLowerCase().trim();
     mode = MODE_ALIAS[mode] || mode;
+    if (mode === "free"){
+      if (P0.get("paper") || P0.get("obj")) frLoad(P0.get("paper"), P0.get("obj"));
+      S.mode = "free";
+      return;
+    }
     var m = MODES.indexOf(mode) >= 0 ? mode : null;
     // the structured form
     var has = STRUCT_KEYS.some(function(k){ return P0.get(k) !== null; });
@@ -5025,6 +5760,15 @@
   function buildChips(){
     var host = $("chips");
     host.innerHTML = "";
+    if (S.mode === "free"){
+      FR_EX.forEach(function(e){
+        var b = document.createElement("button");
+        b.className = "chip"; b.type = "button"; b.textContent = e[0];
+        b.addEventListener("click", function(){ var P1 = new URLSearchParams(e[1]); frSnapshot(); frLoad(P1.get("paper"), P1.get("obj")); FREE.fig = null; frPaint(); frSay(e[0] + " — ready to draw on."); });
+        host.appendChild(b);
+      });
+      return;
+    }
     EX[S.mode].forEach(function(e){
       var b = document.createElement("button");
       b.className = "chip"; b.type = "button"; b.textContent = e;
@@ -5040,6 +5784,7 @@
   function paintMode(){
     Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === S.mode)); });
     Array.prototype.forEach.call(document.querySelectorAll("#keys button[data-only]"), function(b){ b.hidden = b.getAttribute("data-only").split(" ").indexOf(S.mode) < 0; });
+    if (S.mode === "free"){ buildChips(); return; }
     $("lab1").textContent = LABELS[S.mode];
     $("hint").innerHTML = HINTS[S.mode];
     in1.value = S.inputs[S.mode];
@@ -5217,7 +5962,7 @@
   function save(){
     if (EMBED) return;
     try { localStorage.setItem("graph-paper", JSON.stringify({
-      mode:S.mode, inputs:S.inputs, struct:S.struct, structText:S.structText, practice:S.practice, gen:S.gen, maker:$("maker").open,
+      mode:S.mode, inputs:S.inputs, struct:S.struct, structText:S.structText, practice:S.practice, gen:S.gen, maker:$("maker").open, free:frParams(),
       theme:document.documentElement.getAttribute("data-theme") || "" })); } catch (e){}
   }
   function load(){
@@ -5225,7 +5970,8 @@
       var v = JSON.parse(localStorage.getItem("graph-paper") || "null");
       if (!v) return;
       if (v.theme === "light" || v.theme === "dark") document.documentElement.setAttribute("data-theme", v.theme);
-      if (MODES.indexOf(v.mode) >= 0) S.mode = v.mode;
+      if (MODES.indexOf(v.mode) >= 0 || v.mode === "free") S.mode = v.mode;
+      if (typeof v.free === "string"){ var PF = new URLSearchParams(v.free); frLoad(PF.get("paper"), PF.get("obj")); }
       if (v.inputs) MODES.forEach(function(m){ if (typeof v.inputs[m] === "string") S.inputs[m] = v.inputs[m].slice(0, 400); });
       if (v.struct && v.structText) MODES.forEach(function(m){ if (typeof v.struct[m] === "string" && typeof v.structText[m] === "string"){ S.struct[m] = v.struct[m].slice(0, 2000); S.structText[m] = v.structText[m]; } });
       if (PRACTICE.indexOf(v.practice) >= 0) S.practice = v.practice;
@@ -5261,6 +6007,7 @@
   }
   // for the self-test page: work a problem without touching this page
   window.__graphPaper = { parseQ:parseQ, solvePR:solvePR, paramsOf:paramsOf, fromParams:fromParams, textOf:textOf, genOne:genOne, inferMode:inferMode, judge:judge, makeMany:makeMany, exA:exA, analyze:analyze, rootsOf:rootsOf,
+    free:{ FREE:FREE, frEnc:frEnc, frDec:frDec, frPaperEnc:frPaperEnc, frParams:frParams, frMeasure:frMeasure, frLoad:frLoad, frPaint:frPaint },
     k:{ ptT:ptT, numT:numT, ivT:ivT, rootT:rootT, pmT:pmT, ruleLinT:ruleLinT, rd:rd, F:F, R:R, P:P, neg:neg, add:add, sub:sub, mul:mul, dvd:dvd, eqR:eqR, isZ:isZ, isInt:isInt, sgn:sgn, sq:sq, surdNum:surdNum, sumF:sumF, sumT:sumT, mapApply:mapApply, mapOf:mapOf, ZERO:ZERO, ONE:ONE, TWO:TWO } };
 })();
 </script>
