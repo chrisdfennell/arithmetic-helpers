@@ -115,6 +115,14 @@
     padding:10px 13px;outline:none;resize:vertical;min-height:5.4em;display:block}
   .story-in:focus{border-color:var(--focus);box-shadow:0 0 0 2px var(--key-bg)}
   .hint{margin:-6px 0 0;font-size:13px;color:var(--ink-3)}
+  .detected{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin:-4px 0 0;font-size:14.5px;color:var(--ink-2)}
+  .detected b{color:var(--ink);font-weight:600}
+  .detected .dk{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--key)}
+  .detected.unsure .dk{color:var(--warm)}
+  .detected button{font:inherit;font-size:13px;color:var(--ink-2);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+  .kinds button.auto{border-style:dashed;border-color:var(--key)}
+  .kinds button.auto::after{content:"found";margin-left:.6ch;font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--key)}
   .hint b{font-weight:600;color:var(--ink-2)}
 
   /* ---- what the page read in the story ---- */
@@ -398,7 +406,7 @@
   /* ---- shown inside another page (embed=1) ---- */
   html.embed body{background:var(--paper)}
   html.embed .page{padding:10px 12px 14px;gap:14px}
-  html.embed .masthead,html.embed .kinds-row,html.embed .entry,html.embed .hint,html.embed .reader,
+  html.embed .masthead,html.embed .kinds-row,html.embed .entry,html.embed .hint,html.embed .detected,html.embed .reader,
   html.embed .maker,html.embed .examples,html.embed .footnote,html.embed .theme-btn,html.embed .sitenav{display:none !important}
   html.embed .ptext{display:block}
   html.embed .problem{padding:14px 16px}
@@ -419,7 +427,7 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.examples,.maker,.reader,.kinds-row,.hint,.footnote,.stepper,#statusLine,.check,.entry{display:none !important}
+    .theme-btn,.examples,.maker,.reader,.kinds-row,.hint,.detected,.footnote,.stepper,#statusLine,.check,.entry{display:none !important}
     .ptext{display:block !important;font-size:13.5px}
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px}
@@ -480,24 +488,26 @@
   </header>
 
   <section class="problem">
-    <div class="kinds-row">
-      <span class="lbl" id="kindsLbl">Kind of story</span>
-      <div class="kinds" id="typeTabs" role="group" aria-labelledby="kindsLbl"></div>
-    </div>
     <div class="ptext" id="ptext"></div>
     <div class="entry">
       <div class="numfield">
-        <label for="in1" id="lab1">The story problem</label>
+        <label for="in1" id="lab1">Type or paste a story problem</label>
         <textarea class="story-in" id="in1" rows="3" autocomplete="off" spellcheck="true"></textarea>
       </div>
     </div>
-    <p class="hint" id="hint">Type or paste your own one- or two-step story &mdash; I&rsquo;ll read it, show what I understood,
-      and let you fix anything I got wrong. Or pick a kind of story above for a new one.</p>
+    <div class="detected" id="detected" hidden></div>
+    <p class="hint" id="hint">No need to say what kind of story it is &mdash; I&rsquo;ll work that out, show what I understood,
+      and let you fix anything I got wrong.</p>
 
     <details class="reader" id="readBox">
       <summary id="readSum">What the story says</summary>
       <div class="rd-body" id="readBody"></div>
     </details>
+
+    <div class="kinds-row">
+      <span class="lbl" id="kindsLbl">Or I&rsquo;ll write one: pick a kind of story</span>
+      <div class="kinds" id="typeTabs" role="group" aria-labelledby="kindsLbl"></div>
+    </div>
 
     <details class="maker" id="maker">
       <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
@@ -2480,7 +2490,7 @@
     A.toks.forEach(function(t){
       if (t.k !== "n") return;
       if (/^\s*days?\s+(?:left\s+)?(?:until|till|before|to go)\b/.test(t.after)) { t.x0 = true; t.what0 = "how long until something else"; }
-      else if (/^(years?|year-old|grade|graders?|degrees?|°)/.test(t.unit) || /^\s*-?years?[\s-]old/.test(t.after)) { t.x0 = true; t.what0 = /grade/.test(t.unit) ? "a grade" : /degree|°/.test(t.unit) ? "a temperature" : "an age"; }
+      else if ((/^(years?|year-old|grade|graders?|degrees?|°)/.test(t.unit) && !/^years? (older|younger)\b/.test(t.unit)) || /^\s*-?years?[\s-]old\b/.test(t.after)) { t.x0 = true; t.what0 = /grade/.test(t.unit) ? "a grade" : /degree|°/.test(t.unit) ? "a temperature" : "an age"; }
       else if (/\b(grade|room|page|bus|number|no\.|#|chapter|level|aged?|route|channel|floor|apartment|lane|locker|seat|gate|track|row)\s*$/.test(t.before) && !/^\s*(of|in|more|times)\b/.test(t.after)) { t.x0 = true; t.what0 = "a name or label, not an amount"; }
       else if (isInt(t.v) && t.v.n >= 1900n && t.v.n <= 2099n && /\b(in|since|year)\s*$/.test(t.before) && !t.unit) { t.x0 = true; t.what0 = "a year"; }
     });
@@ -2920,11 +2930,28 @@
     }
     return null;
   }
+  // a story problem's question asks for an amount: "how many …", "what is the total …", "what time …", "find …".
+  // "What is the weather?", "Who am I?" or "Which color is better?" don't, so there's nothing to work out.
+  var AMOUNTQ = new RegExp("\\bhow (many|much|far|long|old|tall|short|heavy|high|wide|deep|big|fast|often|thick)\\b"
+    + "|\\bwhat (is|was|are|were|will be|would be|'s)\\s+(the\\s+|his\\s+|her\\s+|their\\s+|its\\s+|my\\s+|your\\s+|our\\s+)?(\\w+\\s+){0,2}?(total|area|perimeter|cost|costs|price|difference|sum|product|quotient|amount|number|length|width|height|depth|distance|time|change|average|mean|value|weight|speed|rate|share|discount|tax|tip|answer|remainder|result|volume|score|balance|age|fraction|percent|percentage)\\b"
+    + "|\\bwhat (time|fraction|percent|percentage|part|portion|number|amount|is \\$?\\d|is \\d|is the \\d)"
+    + "|\\bwhat's\\s+(the\\s+)?(\\w+\\s+)?(total|area|cost|price|difference|sum|time|change)\\b"
+    + "|\\b(find|calculate|work out|figure out|compute|determine|estimate)\\b|\\bhow much more\\b|\\bhow many more\\b");
+  function asksAmount(A){
+    var Q = A.Q;
+    if (AMOUNTQ.test(Q)) return true;
+    // "When does the movie end?" asks for a time, when the story has clock times or lengths of time
+    if (/\bwhen\b/.test(Q) && A.toks.some(function(t){ return t.k === "t" || t.k === "dur"; })) return true;
+    // "Which is the better buy?" / "Which box holds more?": a comparison of amounts
+    if (/\bwhich\b/.test(Q) && /\b(better buy|cheaper|more|fewer|less|most|least|bigger|larger|smaller|longer|shorter|taller|heavier|lighter|faster|slower)\b/.test(Q)) return true;
+    return false;
+  }
   function readStory(raw){
     var A = analyze(raw);
     if (!A.D) return { fail:"empty", A:A };
     if (!A.toks.length) return { fail:"nonum", A:A };
     if (!A.hasQ) return { fail:"noq", A:A };
+    if (!asksAmount(A)) return { fail:"noamount", A:A };
     var P = classify(A);
     if (!P) return { fail:"kind", A:A };
     markExtras(A, P);
@@ -3459,6 +3486,7 @@
     if (!RD) return "Something went wrong with that one — try a new problem.";
     var A = RD.A, nums = A ? A.toks.filter(function(t){ return !t.x0; }).map(function(t){ return Be(t.raw); }) : [];
     if (RD.fail === "empty") return "Type or paste a story problem in the box — or pick a kind of story above and I’ll write one.";
+    if (RD.fail === "noamount") return "I can see " + (nums.length ? "the numbers " + andList(nums) : "a question") + ", but the question doesn’t ask for an amount, so I’m not sure what to work out. Story problems ask things like “How many …?”, “How much …?”, “What time …?” or “What is the total …?”. Change the question — or, if it really is a story problem, pick the kind below.";
     if (RD.fail === "noq") return "I can see the numbers " + andList(nums) + ", but not the question — the sentence that says what to find (it usually ends with a <b>?</b>, like “How many … altogether?”). Add it to the story, or pick the kind of story below.";
     if (RD.fail === "nonum") return "I couldn’t find any numbers in that story, so there’s nothing to work out yet. Check the story — or pick the kind of story below and fill in the numbers in <b>What the story says</b>.";
     return "I found " + (nums.length ? "the numbers " + andList(nums) : "no numbers I could use") + ", but I couldn’t tell what kind of story this is. That’s OK — stories can be written lots of ways. "
@@ -3543,8 +3571,9 @@
     if (EMBED) return;
     var typed = S.src === "text";
     box.classList.toggle("unsure", typed && !sol);
+    paintDetected(P, sol, typed);
     sum.innerHTML = !P ? "What the story says <span>— nothing read yet</span>"
-      : typed ? "What I read: " + esc(TLABEL[P.type]) + (P.kind && TY[P.type].kinds ? " — " + esc(TY[P.type].kinds.filter(function(k){ return k[0] === P.kind; })[0][1].toLowerCase()) : "") + ' <span>· ' + numsLine(P) + " · fix anything here</span>"
+      : typed ? "What I read: " + esc(TLABEL[P.type]) + (P.kind && TY[P.type].kinds ? " — " + esc(TY[P.type].kinds.filter(function(k){ return k[0] === P.kind; })[0][1].toLowerCase().replace(/\s*\([^)]*\)\s*$/, "")) : "") + ' <span>· ' + numsLine(P) + " · fix anything here</span>"
       : "What the story says <span>— change a number, or what’s missing</span>";
     var shape = readerShape(P), focus = document.activeElement && body.contains(document.activeElement);
     if (shape === RKEY && focus){
@@ -3779,11 +3808,27 @@
   }
   function setText(t){ S.src = "text"; S.text = t; S.ov = {}; S.step = 1; in1.value = t; render(); save(); }
   in1.addEventListener("input", function(){ S.src = "text"; S.text = in1.value; S.ov = {}; S.step = 1; render(); save(); });
+  // what kind of story a typed one looks like, said under the box (the details are in "What I read")
+  function paintDetected(P, sol, typed){
+    var el = $("detected"), found = typed && P ? groupOf(P.type) : null;
+    Array.prototype.forEach.call(document.querySelectorAll("#typeTabs button"), function(b){
+      b.classList.toggle("auto", !!found && b.getAttribute("data-g") === found);
+    });
+    if (!el) return;
+    el.hidden = !typed || !String(S.text || "").trim();
+    if (el.hidden) return;
+    el.classList.toggle("unsure", !P || !sol);
+    el.innerHTML = P
+      ? '<span class="dk">Looks like</span> <b>' + esc(TLABEL[P.type]) + (P.kind && TY[P.type].kinds ? " — " + esc(TY[P.type].kinds.filter(function(k){ return k[0] === P.kind; })[0][1].toLowerCase().replace(/\s*\([^)]*\)\s*$/, "")) : "") + "</b>"
+        + ' <button type="button" id="fixRead">Not right? Change it</button>'
+      : '<span class="dk">Not sure</span> I couldn’t tell what kind of story this is. <button type="button" id="fixRead">Pick the kind</button>';
+    $("fixRead").addEventListener("click", function(){ var box = $("readBox"); box.open = true; box.scrollIntoView({ block:"nearest" }); var f = box.querySelector("select, input"); if (f) f.focus(); });
+  }
   function paintKinds(){
     var g = S.src === "gen" && S.P ? groupOf(S.P.type) : S.group, any = S.group === "any";
     Array.prototype.forEach.call(document.querySelectorAll("#typeTabs button"), function(b){
       var bg = b.getAttribute("data-g");
-      b.setAttribute("aria-pressed", String(any ? bg === "any" : bg === S.group));
+      b.setAttribute("aria-pressed", String(S.src === "text" ? false : any ? bg === "any" : bg === S.group));   // a typed story: nothing picked
     });
     void g;
   }
