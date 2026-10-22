@@ -138,6 +138,8 @@
   function spoken(el){
     var c = el.cloneNode(true);
     [].forEach.call(c.querySelectorAll("svg, .sr-only, button"), function(x){ x.remove(); });
+    // a pause after the step label ("Set up"), each tag ("Ignore points") and each line, so they aren't run together
+    [].forEach.call(c.querySelectorAll(".n, .sn, .tag, .line, .aside, .note"), function(x){ x.appendChild(document.createTextNode(". ")); });
     [].forEach.call(c.querySelectorAll(".fr, .frac, .fraction"), function(fr){
       var nu = fr.querySelector(".nu, .num, .top"), de = fr.querySelector(".de, .den, .bot, .bottom");
       if (!nu || !de){ var k = fr.children; if (k.length === 2){ nu = k[0]; de = k[1]; } }
@@ -147,7 +149,7 @@
       var t = s.textContent.trim();
       s.textContent = t === "2" ? " squared " : t === "3" ? " cubed " : " to the power " + t + " ";
     });
-    return words(c.textContent);
+    return words(c.textContent).replace(/\s+\./g, ".").replace(/([.!?:;])(?:\s*\.)+/g, "$1").replace(/^\.\s*/, "");      // no ". ." where a line already ended
   }
   // math symbols said the way a teacher would say them
   function words(t){
@@ -158,7 +160,7 @@
       .replace(/</g, " is less than ").replace(/>/g, " is greater than ").replace(/≈/g, " about ")
       .replace(/=/g, " equals ").replace(/%/g, " percent").replace(/√/g, " the square root of ")
       .replace(/π/g, " pi ").replace(/²/g, " squared").replace(/³/g, " cubed").replace(/°/g, " degrees")
-      .replace(/(\d)\s*\/\s*(\d)/g, "$1 over $2").replace(/\s*…/g, " and so on")
+      .replace(/(\d)\s*\/\s*(\d)/g, "$1 over $2").replace(/\s*…/g, " and so on").replace(/\s*[→⇒]\s*/g, ", so ")
       .replace(/\s+/g, " ").trim();
   }
   function logItems(){
@@ -624,7 +626,7 @@
     })();
   });
 
-  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, showQR:showQR, words:words, togglePad:togglePad, voiceScore:voiceScore };
+  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, showQR:showQR, words:words, togglePad:togglePad, voiceScore:voiceScore, spoken:spoken };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
   else main();
 })();
