@@ -59,6 +59,8 @@
       "background:var(--ink);border:0;border-radius:9px;padding:9px 16px;cursor:pointer}" +
     ".ht-next:hover{filter:brightness(1.15)}" +
     ".ht-reading{outline:3px solid var(--focus,var(--ink-2));outline-offset:2px;border-radius:6px}" +
+    ".ht-read{margin-left:auto}.ht-read + .ht-voice{margin-left:-6px}" +   // Read aloud and Voice side by side, on the right
+    ".ht-menu .ht-row[aria-pressed=\"true\"]{font-weight:600}" +
     "html.ht-big .sitenav,html.ht-big .maker,html.ht-big .examples,html.ht-big .footnote,html.ht-big .theme-btn," +
       "html.ht-big .keys,html.ht-big .hint,html.ht-big .eyebrow,html.ht-big .tagline{display:none !important}" +
     ".ht-exit{position:fixed;top:12px;right:12px;z-index:70;font-family:var(--f-body,Arial,sans-serif);font-size:14px;font-weight:600;" +
@@ -172,10 +174,54 @@
     [].forEach.call(document.querySelectorAll(".ht-reading"), function(x){ x.classList.remove("ht-reading"); });
     if (readBtn){ readBtn.textContent = "Read aloud"; readBtn.setAttribute("aria-pressed", "false"); }
   }
+  /* the voice: the most natural one this device has (Edge's "Natural" voices, Google's, Apple's Enhanced and Siri
+     voices) rather than the browser's default, unless one was picked in the Voice menu (S.voice, S.rate) */
+  var NOVELTY = /\b(albert|bad news|bahh|bells|boing|bubbles|cellos|deranged|good news|hysterical|jester|organ|superstar|trinoids|whisper|wobble|zarvox|fred|junior|ralph|kathy|princess|grandma|grandpa|eddy|flo|reed|rocko|sandy|shelley)\b/i;
+  function voiceScore(v){
+    var n = v.name || "", l = String(v.lang || "").toLowerCase().replace("_", "-"), want = String(root.lang || "en").toLowerCase().split("-")[0];
+    if (l.indexOf(want) !== 0) return -1;                        // another language
+    if (NOVELTY.test(n)) return 0;                               // the joke voices on a Mac
+    var s = 10;
+    if (/natural|neural/i.test(n)) s += 100;                     // Edge on Windows: the closest to a real person
+    if (/siri/i.test(n)) s += 75;
+    if (/premium|enhanced/i.test(n)) s += 70;                    // Apple's downloaded voices
+    if (/^google/i.test(n)) s += 60;                             // Chrome's own voices
+    if (/\b(samantha|ava|allison|zoe|susan|serena|daniel|karen|moira|tessa|evan|nathan|noelle|joelle)\b/i.test(n)) s += 25;
+    if (/desktop|espeak|mbrola|pico/i.test(n)) s -= 30;          // the old robotic ones
+    if (l === "en-us") s += 6; else if (l === "en-gb") s += 4;
+    if (v["default"]) s += 2;
+    return Math.max(1, s);                                       // a robotic voice is still better than none
+  }
+  function rankedVoices(){
+    var all = []; try { all = window.speechSynthesis.getVoices() || []; } catch (e){}
+    return all.map(function(v){ return { v:v, s:voiceScore(v) }; }).filter(function(x){ return x.s > 0; })
+      .sort(function(a, b){ return b.s - a.s || (a.v.name < b.v.name ? -1 : 1); }).map(function(x){ return x.v; });
+  }
+  function pickVoice(){
+    var all = rankedVoices();
+    for (var i = 0; S.voice && i < all.length; i++) if (all[i].voiceURI === S.voice) return all[i];
+    return all[0] || null;
+  }
+  var lastUtter = null;                                          // kept, or Chrome can drop it before onend fires
+  function say(text, done){
+    // a sentence at a time: Chrome stops some voices part-way through a long one
+    var parts = String(text).replace(/([.!?:;])\s+(?=\S)/g, "$1\u0001").split("\u0001").filter(function(x){ return /\w/.test(x); });
+    var v = pickVoice(), k = 0;
+    (function one(){
+      if (k >= parts.length){ if (done) done(); return; }
+      var u = lastUtter = new SpeechSynthesisUtterance(parts[k++]);
+      if (v){ u.voice = v; u.lang = v.lang; }
+      u.rate = S.rate || 1; u.pitch = 1;
+      u.onend = function(){ if (speaking || !done) one(); };
+      u.onerror = function(){ if (done) done(); };
+      window.speechSynthesis.speak(u);
+    })();
+  }
   function readAloud(){
     if (speaking){ stopReading(); return; }
     var items = logItems();
     if (!items.length){ announce("Nothing to read yet"); return; }
+    try { window.speechSynthesis.cancel(); } catch (e){}
     speaking = true;
     readBtn.textContent = "Stop reading"; readBtn.setAttribute("aria-pressed", "true");
     var i = 0;
@@ -185,11 +231,39 @@
       var li = items[i++];
       li.classList.add("ht-reading");
       if (li.scrollIntoView) li.scrollIntoView({ block:"nearest" });
-      var u = new SpeechSynthesisUtterance(spoken(li));
-      u.rate = 0.95;
-      u.onend = u.onerror = function(){ if (speaking) next(); };
-      window.speechSynthesis.speak(u);
+      say(spoken(li), function(){ if (speaking) next(); });
     })();
+  }
+  var SPEEDS = [["Slower", 0.85], ["Normal", 1], ["Faster", 1.15]];
+  function voiceMenu(anchor){
+    var all = rankedVoices().slice(0, 10), cur = pickVoice();
+    var html = "<h3>Voice</h3>" + (all.length
+      ? all.map(function(v){
+          var on = cur && v.voiceURI === cur.voiceURI;
+          return '<button type="button" class="ht-row" data-voice="' + esc(v.voiceURI) + '" aria-pressed="' + on + '">' + (on ? "✓ " : "") + esc(v.name.replace(/^Microsoft\s+/, "").replace(/\s+Online\s+\(Natural\)/, " (natural)")) + "</button>";
+        }).join("")
+      : '<div class="ht-empty">This browser hasn’t listed its voices yet. Try again in a moment.</div>') +
+      "<h3>Speed</h3><div style=\"display:flex;gap:4px;padding:0 4px\">" + SPEEDS.map(function(sp){
+        return '<button type="button" class="ht-btn" data-rate="' + sp[1] + '" aria-pressed="' + ((S.rate || 1) === sp[1]) + '">' + sp[0] + "</button>";
+      }).join("") + "</div>" +
+      '<div class="ht-empty ht-sm" style="white-space:normal">The voices come from this device. Microsoft Edge has the most natural ones; on a phone or tablet, more can be added in its speech settings.</div>';
+    var m = showMenu(anchor, html);
+    [].forEach.call(m.querySelectorAll("[data-voice]"), function(b){
+      b.addEventListener("click", function(){
+        S.voice = b.getAttribute("data-voice"); save(KEY, S);
+        try { window.speechSynthesis.cancel(); } catch (e){}
+        say("This is how the steps will sound.");
+        voiceMenu(anchor);
+      });
+    });
+    [].forEach.call(m.querySelectorAll("[data-rate]"), function(b){
+      b.addEventListener("click", function(){
+        S.rate = Number(b.getAttribute("data-rate")); save(KEY, S);
+        try { window.speechSynthesis.cancel(); } catch (e){}
+        say("This is how the steps will sound.");
+        voiceMenu(anchor);
+      });
+    });
   }
   function addReadButton(){
     if (!("speechSynthesis" in window)) return;
@@ -201,8 +275,14 @@
       readBtn.setAttribute("aria-pressed", "false");
       readBtn.title = "Read the explanation aloud (shortcut: R)";
       readBtn.addEventListener("click", readAloud);
+      var vb = document.createElement("button");
+      vb.type = "button"; vb.className = "ht-btn ht-read ht-voice"; vb.textContent = "Voice";
+      vb.setAttribute("aria-haspopup", "dialog"); vb.title = "Choose the reading voice and speed";
+      vb.addEventListener("click", function(e){ e.stopPropagation(); if (openMenu) closeMenu(); else voiceMenu(vb); });
       h.parentNode.appendChild(readBtn);
+      h.parentNode.appendChild(vb);
     });
+    try { window.speechSynthesis.getVoices(); window.speechSynthesis.addEventListener("voiceschanged", function(){}); } catch (e){}   // start the list loading
     window.addEventListener("beforeunload", function(){ try { window.speechSynthesis.cancel(); } catch (e){} });
   }
 
@@ -544,7 +624,7 @@
     })();
   });
 
-  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, showQR:showQR, words:words, togglePad:togglePad };
+  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, showQR:showQR, words:words, togglePad:togglePad, voiceScore:voiceScore };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
   else main();
 })();

@@ -48,7 +48,7 @@ And across the whole site:
 
 - light/dark and text size are remembered on every page, not one page at a time
 - a **Type any problem** search box in the bar at the top of every page
-- **Big screen** mode for a projector or smartboard, and **Read aloud** for the step-by-step explanation
+- **Big screen** mode for a projector or smartboard, and **Read aloud** for the step-by-step explanation, in the most natural voice the device has (**Voice** picks another voice or speed)
 - **Recent** problems on each page, and keyboard shortcuts (press `?` to see them)
 - a **QR code** for the page on screen (the `QR` button or `Q`), big enough for a projector; practice sets and worksheets have one too
 - a row of **math keys** (×, ÷, −, /, ( ), x, π …) above the phone keyboard when typing an answer, picked for each page (press `K` to turn it on or off on a computer)
