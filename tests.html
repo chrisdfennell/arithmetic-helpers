@@ -262,14 +262,15 @@
     { page:"multiplication.html", name:"The Product Ladder" }, { page:"division.html", name:"The Division House" },
     { page:"fractions.html", name:"The Fraction Bar" }, { page:"percents.html", name:"The Hundred Grid" },
     { page:"factors.html", name:"The Factor Tree" }, { page:"integers.html", name:"The Number Line" },
-    { page:"ratios.html", name:"The Ratio Table" },
+    { page:"ratios.html", name:"The Ratio Table" }, { page:"exponents.html", name:"The Power Tower" },
     { page:"pemdas.html", name:"The Order Stack" }, { page:"algebra.html", name:"The Balance Scale" },
     { page:"lines.html", name:"The Slope Grid" },
     { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" },
-    { page:"wordproblems.html", name:"The Story Problem" },
+    { page:"wordproblems.html", name:"The Story Problem" }, { page:"probability.html", name:"The Chance Spinner" },
     // not step-by-step helpers: each has its own checks (TOOLS below)
     { page:"flashcards.html", name:"The Flash Cards", kind:"cards" },
     { page:"reference.html", name:"Reference sheets", kind:"tool" }, { page:"results.html", name:"Class results", kind:"tool" },
+    { page:"daily.html", name:"Problem of the day", kind:"tool" }, { page:"qr.js", name:"QR codes (qr.js)", kind:"tool" },
     { page:"keypad", name:"Math keys (tools.js)", kind:"tool" }
   ];
 
@@ -306,6 +307,17 @@
                       ["mode=vol&shape=box&l=8&w=3&h=5",["120","158"]], ["mode=right&shape=hyp&a=3&b=4",["5"]],
                       ["mode=right&shape=leg&a=5&c=13",["12"]], ["mode=angle&shape=tri&a=50&b=60",["70"]],
                       ["mode=angle&shape=poly&n=6",["720","120","60"]] ],
+    "exponents.html":[ ["mode=eval&b=2&e=5",["32"]], ["mode=eval&b=-3&e=2",["9"]], ["mode=eval&b=3&e=2&neg=1",["-9"]], ["mode=eval&b=5&e=-2",["1/25"]],
+                       ["mode=eval&b=2%2F3&e=3",["8/27"]], ["q=2%5E60",["1152921504606846976"]],
+                       ["mode=sci&n=45000000",["4.5","~10^7"]], ["mode=sci&n=3.2e-4",["0.00032"]],
+                       ["mode=scicalc&op=mul&a=3e4&b=2e5",["6","~10^9"]], ["mode=roots&r=3&n=64",["4"]],
+                       ["mode=laws&ex=x%5E3*x%5E4",["~x^7"]] ],
+    "probability.html":[ ["mode=simple&x=die6&ev=eq:4",["1/6"]], ["mode=compound&kind=without&x=bag(red:4,blue:6)&ev=is:red&ev2=is:red",["2/15"]],
+                         ["mode=complement&x=die6&ev=eq:6",["5/6"]], ["mode=compound&kind=and&x=coin,coin&ev=is:H&ev2=is:H",["1/4"]],
+                         ["mode=space&x=die6,die6&ev=sum:7&view=grid",["1/6"]], ["mode=expected&kind=predict&x=die6&ev=eq:3&n=60",["10"]],
+                         ["mode=compound&kind=or&x=deck&ev=ace&ev2=suit:hearts",["4/13"]],
+                         ["q=" + encodeURIComponent("probability of red from 3 red 5 blue 2 green"),["3/10"]],
+                         ["q=" + encodeURIComponent("draw 2 without replacement from 4 red 6 blue, both red"),["2/15"]] ],
     "wordproblems.html":[ ["q=" + encodeURIComponent("Ana has 12 shells. That is 5 more than Ben has. How many shells does Ben have?"),["7"]],
                           ["q=" + encodeURIComponent("Sam had 45 stickers. He gave away 17. How many stickers does he have left?"),["28"]],
                           ["q=" + encodeURIComponent("A movie starts at 3:45 pm and lasts 95 minutes. When does it end?"),["~5:20"]],
@@ -316,6 +328,11 @@
                           ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["9/4"]],
                           ["q=" + encodeURIComponent("5 friends share 3 pizzas equally. How much pizza does each friend get?"),["3/5"]],
                           ["q=" + encodeURIComponent("Lily has 25 stickers to share equally among 4 friends. How many stickers does each friend get, and how many are left?"),["6","1"]],
+                          ["q=" + encodeURIComponent("Five more than twice a number is 23. What is the number?"),["9"]],
+                          ["q=" + encodeURIComponent("Three consecutive numbers add up to 72. What are the numbers?"),["23","24","25"]],
+                          ["q=" + encodeURIComponent("Adult tickets cost $8 and child tickets cost $5. 20 tickets cost $130. How many of each were sold?"),["10","10"]],
+                          ["q=" + encodeURIComponent("After a 20% discount, a jacket costs $36. What was the original price?"),["45"]],
+                          ["type=algebra&kind=perimeter&a=3&c=46&form=more&ask=both",["13","10"]],
                           ["type=remainder&kind=up&a=73&b=9",["9"]], ["type=percent&kind=save&a=24&p=25",["6"]],
                           ["type=fraction&kind=rest&a=60&f=2%2F5",["36"]], ["type=twostep&kind=shareleft&a=18&b=10&c=2",["4"]],
                           ["type=time&b=135&c=1%3A20pm",["~11:05"]] ]
@@ -343,9 +360,19 @@
                    ["mode=slope&q=(1,2) (5,4)",["2/4"],"simplify"], ["mode=slope&q=(1,2) (5,4)",["2"],"wrong"] ],
     "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"],"right"], ["mode=area&shape=rect&l=8&w=5",["26","40"],"wrong"],
                       ["mode=area&shape=circle&r=5&rd=r",["25π","10π"],"right"] ],
+    "exponents.html":[ ["mode=eval&b=2&e=3",["8"],"right"], ["mode=eval&b=2&e=3",["6"],"wrong"], ["mode=eval&b=2&e=-3",["0.125"],"right"],
+                       ["mode=sci&n=45000000",["4.5 x 10^7"],"right"], ["mode=sci&n=45000000",["4.5e7"],"right"],
+                       ["mode=sci&n=45000000",["45 x 10^6"],"simplify"], ["mode=sci&n=45000000",["4.5 x 10^-7"],"wrong"],
+                       ["mode=laws&ex=(x%5E2)%5E3",["x^6"],"right"], ["mode=laws&ex=(x%5E2)%5E3",["x^5"],"wrong"] ],
+    "probability.html":[ ["mode=simple&x=die6&ev=eq:4",["1/6"],"right"], ["mode=simple&x=die6&ev=eq:4",["2/12"],"simplify"],
+                         ["mode=simple&x=die6&ev=eq:4",["0.17"],"right"], ["mode=simple&x=die6&ev=eq:4",["1/5"],"wrong"],
+                         ["mode=compound&kind=without&x=bag(red:4,blue:6)&ev=is:red&ev2=is:red",["4/25"],"wrong"],
+                         ["mode=compound&kind=and&x=coin,die6&ev=is:H&ev2=odd",["25%"],"right"] ],
     "wordproblems.html":[ ["type=compare&a=7&b=12&v=1",["5"],"right"], ["type=compare&a=7&b=12&v=1",["5 shells"],"right"],
                           ["type=compare&a=7&b=12&v=1",["19"],"wrong"], ["type=money&kind=one&a=7.45&pay=10",["$2.55"],"right"],
                           ["type=money&kind=one&a=7.45&pay=10",["2.65"],"wrong"],
+                          ["type=algebra&kind=percentback&c=36&p=20&form=off",["45"],"right"], ["type=algebra&kind=percentback&c=36&p=20&form=off",["43.20"],"wrong"],
+                          ["type=algebra&kind=number&a=2&b=5&c=23&form=more",["9"],"right"], ["type=algebra&kind=number&a=2&b=5&c=23&form=more",["14"],"wrong"],
                           ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["2 1/4"],"right"],
                           ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["2.25"],"right"],
                           ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["4/9"],"wrong"] ]
@@ -387,7 +414,147 @@
     return m[1] !== undefined ? Number(m[1]) + Number(m[2]) / Number(m[3]) : m[4] !== undefined ? Number(m[4]) / Number(m[5]) : Number(m[0]);
   }
 
+  /* probability: every outcome listed and counted here, from the problem's own params */
+  var RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"], SUITS = ["hearts","diamonds","clubs","spades"];
+  function probItem(x){                        // → [{ v:value or label, w:weight, card }] (bags: one per marble)
+    var m, out = [];
+    if ((m = /^die(\d+)$/.exec(x)) || (m = /^nums(\d+)$/.exec(x))){ for (var i = 1; i <= +m[1]; i++) out.push({ v:i, w:1 }); return out; }
+    if (x === "coin") return [{ v:"H", w:1 }, { v:"T", w:1 }];
+    if (x === "deck"){ SUITS.forEach(function(su){ RANKS.forEach(function(r){ out.push({ v:r, w:1, card:{ rank:r, suit:su } }); }); }); return out; }
+    if ((m = /^bag\((.*)\)$/.exec(x))){ m[1].split(",").forEach(function(kv){ var q = kv.split(":"); for (var j = 0; j < +q[1]; j++) out.push({ v:q[0], w:1 }); }); return out; }
+    if ((m = /^spin\((.*)\)$/.exec(x))){
+      m[1].split(",").forEach(function(kv){ var q = kv.split(":"), lab = /^\d+$/.test(q[0]) ? +q[0] : q[0]; out.push({ v:lab, w:q[1] === undefined ? 1 : +q[1] }); });
+      return out;
+    }
+    throw new Error("unknown item " + x);
+  }
+  function splitItems(x){ var out = [], depth = 0, cur = ""; for (var i = 0; i < x.length; i++){ var c = x[i]; if (c === "(") depth++; if (c === ")") depth--; if (c === "," && !depth){ out.push(cur); cur = ""; } else cur += c; } out.push(cur); return out; }
+  function probEv(ev, o){                      // does outcome o count?
+    if (/^not:/.test(ev)) return !probEv(ev.slice(4), o);
+    var q = ev.split(":"), v = o.v, n = Number(q[1]), c = o.card;
+    var red = c && (c.suit === "hearts" || c.suit === "diamonds");
+    switch (q[0]){
+      case "eq": return v === n;
+      case "even": return typeof v === "number" && v % 2 === 0;
+      case "odd": return typeof v === "number" && v % 2 === 1;
+      case "prime": return typeof v === "number" && isPrime(v);
+      case "square": return typeof v === "number" && Math.round(Math.sqrt(v)) * Math.round(Math.sqrt(v)) === v;
+      case "mult": return typeof v === "number" && v % n === 0;
+      case "factor": return typeof v === "number" && n % v === 0;
+      case "gt": return v > n; case "lt": return v < n; case "ge": return v >= n; case "le": return v <= n;
+      case "is": return String(v) === q.slice(1).join(":");
+      case "suit": return !!c && c.suit === q[1];
+      case "color": return !!c && (q[1] === "red") === red;
+      case "face": return !!c && /^[JQK]$/.test(c.rank);
+      case "ace": return !!c && c.rank === "A";
+      case "rank": return !!c && c.rank === q[1];
+      case "numcard": return !!c && /^([2-9]|10)$/.test(c.rank);
+      case "card": return !!c && (q[1] === "face" ? /^[JQK]$/.test(c.rank) : c.rank === q[1])
+        && (!q[2] || (SUITS.indexOf(q[2]) >= 0 ? c.suit === q[2] : (q[2] === "red") === red));      // card:Q:spades, card:K:red
+      case "any": return true;
+    }
+    throw new Error("unknown event " + ev);
+  }
+  function probP(items, ev){ var f = 0, t = 0; items.forEach(function(o){ t += o.w; if (probEv(ev, o)) f += o.w; }); return [f, t]; }
+  function fr(f, t){ return num(f + "/" + t); }
+  function probSpace(stages, ev){              // every combination of the stages, weighted
+    var f = 0, t = 0;
+    (function walk(i, picked, w){
+      if (i === stages.length){
+        t += w;
+        var q = ev.split(":"), vs = picked.map(function(o){ return o.v; }), ok;
+        if (q[0] === "sum" || q[0] === "sumgt" || q[0] === "sumlt"){ var sm = vs.reduce(function(a, b){ return a + b; }, 0); ok = q[0] === "sum" ? sm === +q[1] : q[0] === "sumgt" ? sm > +q[1] : sm < +q[1]; }
+        else if (q[0] === "double") ok = vs.every(function(x){ return x === vs[0]; });
+        else if (q[0] === "each"){ var evs = q.slice(1).join(":").split("/"); ok = picked.every(function(o, k){ return probEv(evs[k], o); }); }
+        else {
+          var rest = q[0] === "all" || q[0] === "none" ? q.slice(1).join(":") : q.slice(2).join(":"), hits = picked.filter(function(o){ return probEv(rest, o); }).length;
+          ok = q[0] === "all" ? hits === picked.length : q[0] === "none" ? hits === 0 : q[0] === "exactly" ? hits === +q[1] : q[0] === "atleast" ? hits >= +q[1] : hits <= +q[1];
+        }
+        if (ok) f += w;
+        return;
+      }
+      stages[i].forEach(function(o){ walk(i + 1, picked.concat([o]), w * o.w); });
+    })(0, [], 1);
+    return fr(f, t);
+  }
+
+  /* exponents: worked out here with exact fractions, and exponent laws checked by putting numbers in for the letters */
+  function powQ(b, e){ var r = R(1), k; if (e >= 0) for (k = 0; k < e; k++) r = mul(r, b); else for (k = 0; k < -e; k++) r = div(r, b); return r; }
+  function eNum(t){                            // "4.5e7", "2.83 × 10^−4", "370,000,000", "0.00658" → exact
+    var x = String(t).replace(/[−–]/g, "-").replace(/,/g, ""), m;
+    if ((m = /(-?[\d.]+)\s*(?:×|x|\*)\s*10\s*\^\s*\(?(-?\d+)\)?/.exec(x))) return mul(num(m[1]), powQ(R(10), Number(m[2])));
+    if ((m = /^\s*(-?[\d.]+)e(-?\d+)\s*$/i.exec(x))) return mul(num(m[1]), powQ(R(10), Number(m[2])));
+    if ((m = /-?\d*\.?\d+/.exec(x))) return num(m[0]);
+    return null;
+  }
+  function sciForm(t){ var m = /(-?[\d.]+)\s*×\s*10\^/.exec(String(t).replace(/[−–]/g, "-")); if (!m) return false; var c = Math.abs(Number(m[1])); return c >= 1 && c < 10; }
+
   var ORACLE = {
+    "exponents.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText);
+      switch (o.mode){
+        case "eval":
+          var v = powQ(num(o.b), Number(o.e)); if (o.neg === "1") v = sub(R(0), v);
+          return need(a, [X(v)]);
+        case "laws":
+          if (/\^\s*[−-]/.test(t)) return { ok:false, msg:"the answer still has a negative exponent" };
+          var ex = decodeURIComponent(o.ex), ans = t.split("=").pop();          // "3^8 = 6561": the last form
+          var letters = (ex.match(/[a-z]/gi) || []).filter(function(c, i, all){ return all.indexOf(c) === i; }), bad = 0;
+          [[2, 3, 5, 7], [3, 2, 7, 5], [5, 7, 2, 3]].forEach(function(vals){
+            var env = {}; letters.forEach(function(c, i){ env[c] = R(vals[i % 4]); });
+            if (!eq(evaluate(ex, env), evaluate(ans, env))) bad++;
+          });
+          return bad ? { ok:false, msg:"“" + ans.trim() + "” isn’t equal to " + ex } : { ok:true };
+        case "sci":
+          var given = eNum(o.n), got = eNum(t);
+          if (!got || !eq(given, got)) return { ok:false, msg:"the value changed: " + txt(given) };
+          var toSci = !/e/i.test(o.n) || !/^-?[1-9](\.\d+)?e/i.test(o.n);         // plain, or 45e6 to re-normalize
+          if (toSci && !sciForm(t)) return { ok:false, msg:"not in scientific notation" };
+          if (!toSci && /×\s*10\^/.test(t)) return { ok:false, msg:"expected standard form" };
+          return { ok:true };
+        case "scicalc":
+          var A = eNum(o.a), B = eNum(o.b);
+          if (o.op === "cmp"){ var c = cmp(A, B), sym = c < 0 ? "<" : c > 0 ? ">" : "="; return t.indexOf(sym) >= 0 ? { ok:true } : { ok:false, msg:"expected " + sym }; }
+          if (o.op === "times") return need(a, [X(div(A, B))]);
+          var w = o.op === "mul" ? mul(A, B) : o.op === "div" ? div(A, B) : o.op === "add" ? add(A, B) : sub(A, B), g = eNum(t);
+          if (!g || !eq(g, w)) return /≈/.test(t) && g && Math.abs(F(g) / F(w) - 1) < 0.001 ? { ok:true } : { ok:false, msg:"expected " + F(w) };
+          return sciForm(t) ? { ok:true } : { ok:false, msg:"not in scientific notation" };
+        case "roots":
+          var n = Number(o.n), r = Number(o.r), sg = n < 0 && r % 2 ? -1 : 1, k = sg * Math.round(Math.pow(Math.abs(n), 1 / r));   // ∛−27 = −3
+          if (Math.pow(k, r) === n) return need(a, [X(String(k))]);
+          var m0 = Math.abs(n), lo = Math.floor(Math.pow(m0, 1 / r) + 1e-9); while (Math.pow(lo + 1, r) <= m0) lo++; while (Math.pow(lo, r) > m0) lo--;
+          var near = Math.pow(lo + 0.5, r) > m0 ? lo : lo + 1, hi = lo + 1;
+          if (sg < 0){ var t0 = lo; lo = -hi; hi = -t0; near = -near; }          // ∛−33 is between −4 and −3
+          var mm = /between\s+(-?\d+)\s+and\s+(-?\d+),?\s*nearer\s+(-?\d+)/i.exec(t.replace(/[−–]/g, "-"));
+          return mm && +mm[1] === lo && +mm[2] === hi && +mm[3] === near ? { ok:true } : { ok:false, msg:"expected between " + lo + " and " + hi + ", nearer " + near };
+      }
+      return { skip:true };
+    },
+    "probability.html":function(p, a, ansText){
+      var o = P(p), xs = splitItems(o.x || ""), it = xs.map(probItem), want;
+      switch (o.mode){
+        case "simple": var s1 = probP(it[0], o.ev); want = fr(s1[0], s1[1]); break;
+        case "complement": var s2 = probP(it[0], o.ev); want = fr(s2[1] - s2[0], s2[1]); break;
+        case "compound":
+          if (o.kind === "and" || o.kind === "with"){
+            var A = probP(it[0], o.ev), B = probP(it[1] || it[0], o.ev2); want = fr(A[0] * B[0], A[1] * B[1]);
+          } else if (o.kind === "without"){
+            var u = it[0], f = 0, t = 0;
+            u.forEach(function(x, i){ u.forEach(function(y, j){ if (i === j) return; t++; if (probEv(o.ev, x) && probEv(o.ev2, y)) f++; }); });
+            want = fr(f, t);
+          } else if (o.kind === "or"){
+            var fo = 0, to = 0; it[0].forEach(function(x){ to += x.w; if (probEv(o.ev, x) || probEv(o.ev2, x)) fo += x.w; }); want = fr(fo, to);
+          } else return { skip:true };
+          break;
+        case "space": want = probSpace(it, o.ev); break;
+        case "expected":
+          var pe = probP(it[0], o.ev);
+          if (o.kind === "predict") return need(a, [X(num(Number(o.n) * pe[0] + "/" + pe[1]))]);
+          return need(a, [X(fr(Number(o.k), Number(o.n))), X(fr(pe[0], pe[1]))]);
+        default: return { skip:true };
+      }
+      return need(a, [X(want)]);
+    },
     "wordproblems.html":function(p, a, ansText){
       var o = P(p), g = function(k){ return o[k] === undefined || o[k] === "" ? null : Number(o[k]); };
       var A = g("a"), B = g("b"), C = g("c"), D = g("d"), N = g("n"), pay = g("pay"), pc = g("p"), k = o.kind, want;
@@ -419,6 +586,42 @@
           else if (k === "shareleft") want = (A - B) / C;
           else return { skip:true };
           break;
+        case "algebra":
+          var f = o.form, many;
+          var allNums = (String(ansText).replace(/[$,]/g, "").match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
+          switch (k){
+            case "number":
+              var a1 = A === null ? 1 : A, c1 = C;
+              many = [f === "less" || f === "diff" ? (c1 + B) / a1 : f === "div" ? (c1 + B) * a1 : f === "sides" ? B / (a1 - 1) :
+                      f === "gen" ? (D - B) / (A - C) : (c1 - B) / a1]; break;
+            case "consecutive":
+              var step = f === "all" ? 1 : 2, first = (C - step * A * (A - 1) / 2) / A; many = [];
+              for (var i = 0; i < A; i++) many.push(first + step * i); break;
+            case "age":
+              if (f === "times"){ var y = B * (C - 1) / (A - C); many = [y]; break; }
+              var yo = (C - A) / 2; many = o.ask === "both" ? [yo, yo + A] : o.ask === "older" ? [yo + A] : [yo]; break;
+            case "perimeter":
+              if (f === "tri"){ var x0 = (180 - B) / (A + 2); many = [x0, A * x0, x0 + B]; break; }
+              var W = f === "times" ? C / (2 * (A + 1)) : (C - 2 * A) / 4, L = f === "times" ? A * W : W + A;
+              many = o.ask === "both" ? [L, W] : o.ask === "length" ? [L] : [W]; break;
+            case "plans": many = [(A - (C || 0)) / (D - B)]; break;
+            case "twounknown":
+              if (f === "numbers"){ many = [(C + D) / 2, (C - D) / 2]; break; }
+              if (f === "coins"){
+                var lo = o.ctx === "nd" ? 5 : 10, hi = o.ctx === "nd" ? 10 : 25, yy = (Math.round(D * 100) - lo * C) / (hi - lo);
+                many = [C - yy, yy]; break;
+              }
+              var xx = (D - B * C) / (A - B); many = [xx, C - xx]; break;
+            case "motion":
+              if (f === "opposite"){ many = [C / (A + B)]; break; }
+              if (f === "roundtrip"){ many = [C * A * B / (A + B)]; break; }
+              var tc = A * C / (B - A);                          // catch up: the time, or how far that is
+              return allNums.some(function(v){ return Math.abs(v - tc) < 0.005 || Math.abs(v - B * tc) < 0.005; }) ? { ok:true } : { ok:false, msg:"expected " + tc + " hours (" + B * tc + " away)" };
+            case "percentback": many = [C / (f === "raise" ? 1 + pc / 100 : 1 - pc / 100)]; break;
+            default: return { skip:true };
+          }
+          var missing = many.filter(function(w){ return !allNums.some(function(v){ return Math.abs(v - w) < 0.005; }); });
+          return missing.length ? { ok:false, msg:"expected " + many.map(function(w){ return Math.round(w * 100) / 100; }).join(", ") } : { ok:true };
         case "remainder":
           var q = Math.floor(A / B), r = A % B;
           if (k === "both"){                       // "6 stickers each, 1 left over"
@@ -1146,6 +1349,88 @@
         });
       });
     },
+    "daily.html":function(T){
+      // the same problem for everyone on a date: twice over, and from a second load of the page
+      var DATES = ["2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-24", "2026-10-25", "2027-02-28", "2028-02-29"];
+      return load(T.page + "?date=2026-10-21").then(function(fr){
+        var d = docOf(fr), w = fr.f.contentWindow, probs = [];
+        if (!d.querySelector(".sitenav")) probs.push("no nav bar");
+        if (!w.__daily) probs.push("no daily hooks");
+        if (!d.getElementById("frame")) probs.push("no problem frame");
+        if (fr.errs.length) probs.push("script error: " + fr.errs[0]);
+        if (probs.length){ fail(T.page, "loads", probs.join("; "), T.page); score(T.page, "load", 0, 1); drop(fr); return; }
+        pass(); score(T.page, "load", 1, 0);
+        var first = DATES.map(function(k){ return w.__daily.problemFor(k); }), kp = 0, kf = 0;
+        return load(T.page + "?date=2026-10-22").then(function(fr2){
+          var w2 = fr2.f.contentWindow;
+          DATES.forEach(function(k, i){
+            var a = first[i], b = w2.__daily.problemFor(k), c = w.__daily.problemFor(k);
+            if (a.link === b.link && a.link === c.link && a.text){ kp++; pass(); }
+            else { kf++; fail(T.page, "known answer", k + ": not the same problem each time (" + a.link + " / " + b.link + ")", T.page + "?date=" + k); }
+          });
+          drop(fr2);
+          // a week: five different helpers on the weekdays, and a different problem each day
+          var wk = first.slice(0, 7), tops = wk.slice(0, 5).map(function(p){ return p.topic; }), links = wk.map(function(p){ return p.link; });
+          var distinct = function(a){ return a.filter(function(x, i){ return a.indexOf(x) === i; }).length; };
+          if (distinct(tops) === 5 && distinct(links) === 7){ kp++; pass(); } else { kf++; fail(T.page, "known answer", "the week of 2026-10-19 repeats: " + tops.join(", "), T.page + "?view=week&date=2026-10-19"); }
+          score(T.page, "known", kp, kf);
+          drop(fr);
+          // and each day's problem opens on its helper with the answer the daily page expects
+          var lp = 0, lf = 0;
+          return first.reduce(function(chain, pr){
+            return chain.then(function(){
+              var link = pr.page + "?" + withPractice(pr.params, "all");
+              return load(link).then(function(f3){
+                var text = answerText(docOf(f3), true), want = tokens(String(pr.answer || "")), got = tokens(text);
+                drop(f3);
+                var miss = want.filter(function(x){ return !x.base && !has(got, x.exact && !x.approx ? { exact:x.exact } : { f:x.f, loose:0.002 }); });
+                var sq = function(x){ return String(x).replace(/[\s|]/g, "").replace(/[−–]/g, "-").toLowerCase(); };
+                if (miss.length && sq(text).indexOf(sq(pr.answer)) >= 0) miss = [];      // "y = x − 5" shown in boxes: y | = | x | −5
+                if (text && !miss.length){ lp++; pass(); }
+                else { lf++; fail(T.page, "link", pr.key + " (" + pr.topic + "): the helper shows “" + text.slice(0, 120) + "”, the daily page expects “" + pr.answer + "”", link); }
+                score(T.page, "links", lp, lf);
+              });
+            });
+          }, Promise.resolve());
+        });
+      });
+    },
+    "qr.js":function(T){
+      // checked against modules made by the Python qrcode package (same text, level and mask)
+      var REF = [
+        { text:"https://chrisdfennell.github.io/arithmetic-helpers/pemdas.html?q=3%2B4%C3%972", ecc:"M", mask:3, version:5,
+          rows:["1fd0e2f17f","105a007041","1742515e5d","1753694c5d","17478a1f5d","10405bd941","1fd555557f","17992700","16e613254b","1b8b7e3ca2","25ce839a8","1d3a266bdc","cf7ca5edf","1019f657fb","ac1cfdd16","1d36efa371","1f6f7eb90f","f19d0226b","153f1cf3b","18a048749a","be65ea5b9","1c8216a988","9f1486120","18ad057f9e","1c43e62ef6","5a85707f3","9e173dd36","158e569703","46bf5a9f5","12296315","1fd579d555","1050517711","17480531f8","175c2e2cd1","17559cf1d8","1041d478fc","1fdc287cd7"] },
+        { text:"3 \u00d7 4 \u00f7 \u00bd = 24", ecc:"Q", mask:6, version:2,
+          rows:["1fc377f","1052041","174425d","175a05d","175145d","1046141","1fd557f","15a00","bd5ada","132b15","1f7eae4","1b139e3","b72b07","1d89668","1d45a51","172a416","16665ff","10714","1fc055f","105c513","1754ff1","175491f","1749a2b","1052407","1fca779"] }
+      ];
+      return new Promise(function(ok, bad){
+        if (window.HelperQR) return ok();
+        var sc = document.createElement("script"); sc.src = "qr.js"; sc.onload = ok; sc.onerror = function(){ bad(new Error("qr.js didn’t load")); };
+        document.head.appendChild(sc);
+      }).then(function(){
+        var Q = window.HelperQR;
+        if (!Q || !Q.matrix || !Q.svg){ fail(T.page, "loads", "no HelperQR", "qr.js"); score(T.page, "load", 0, 1); return; }
+        pass(); score(T.page, "load", 1, 0);
+        var kp = 0, kf = 0;
+        REF.forEach(function(r){
+          var m = Q.matrix(r.text, { ecc:r.ecc, mask:r.mask }), bad = [];
+          if (m.version !== r.version) bad.push("version " + m.version + ", expected " + r.version);
+          if (m.size !== r.rows.length) bad.push("size " + m.size);
+          else r.rows.forEach(function(hex, y){
+            var bits = BigInt("0x" + hex).toString(2); while (bits.length < m.size) bits = "0" + bits;
+            for (var x = 0; x < m.size; x++) if ((bits.charAt(x) === "1") !== !!m.get(x, y)){ bad.push("row " + y + " differs"); break; }
+          });
+          if (bad.length){ kf++; fail(T.page, "known answer", JSON.stringify(r.text.slice(0, 30)) + ": " + bad.slice(0, 3).join("; "), "qr.js"); } else { kp++; pass(); }
+        });
+        // a link that is too long says so, rather than making a code a phone can't read
+        var long = new Array(2400).join("a");
+        if (Q.version(long, "M") === 0 && Q.version(long, "L") > 0){ kp++; pass(); } else { kf++; fail(T.page, "known answer", "a 2,399-character link: version at M " + Q.version(long, "M") + ", at L " + Q.version(long, "L"), "qr.js"); }
+        var svg = Q.svg("47+38", {});
+        if (/^<svg[\s\S]*<path[\s\S]*<\/svg>\s*$/.test(svg) && /crispEdges/.test(svg)){ kp++; pass(); } else { kf++; fail(T.page, "known answer", "svg() didn’t make a crisp one-path SVG", "qr.js"); }
+        score(T.page, "known", kp, kf);
+        cell(T.page, "links", '<span class="na">—</span>');
+      });
+    },
     "keypad":function(T){
       // the math keys come up on a phone; here they're switched on in the settings for the test (put back afterwards)
       var st = {}; try { st = JSON.parse(localStorage.getItem("helpers-settings") || "{}") || {}; } catch (e){}
@@ -1186,7 +1471,7 @@
   PAGES.forEach(function(T){ chosen[T.page] = true; });
   function rows(){
     $("rows").innerHTML = PAGES.map(function(T){
-      var href = /\.html$/.test(T.page) ? T.page : "tools.js";
+      var href = /\.(html|js)$/.test(T.page) ? T.page : "tools.js";
       return '<tr data-page="' + T.page + '"><td><a href="' + href + '">' + esc(T.name) + '</a><br><span class="na">' + T.page + "</span></td>"
         + ["load", "known", "check", "made", "links"].map(function(c){ return '<td class="n" data-col="' + c + '"><span class="na">—</span></td>'; }).join("") + "</tr>";
     }).join("");
@@ -1244,7 +1529,7 @@
   // ?pages=ratios,stats runs just those
   var only = /[?&]pages=([^&]+)/.exec(location.search);
   if (only){
-    var want = decodeURIComponent(only[1]).split(",").map(function(x){ return x === "keypad" ? x : x.replace(/\.html$/, "") + ".html"; });
+    var want = decodeURIComponent(only[1]).split(",").map(function(x){ return x === "keypad" ? x : x === "qr" || x === "qr.js" ? "qr.js" : x.replace(/\.html$/, "") + ".html"; });
     PAGES.forEach(function(T){ chosen[T.page] = want.indexOf(T.page) >= 0; });
     rows();
   }

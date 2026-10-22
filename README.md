@@ -1,6 +1,6 @@
 # Arithmetic Helpers
 
-Fifteen single-page tools that work through a math problem step by step, the way it's done on paper, plus tools for practice and for the classroom. It installs like an app and works offline.
+Seventeen single-page tools that work through a math problem step by step, the way it's done on paper, plus tools for practice and for the classroom. It installs like an app and works offline.
 
 | Page | What it does |
 | --- | --- |
@@ -13,17 +13,20 @@ Fifteen single-page tools that work through a math problem step by step, the way
 | [The Factor Tree](factors.html) | Factors and primes: factor pairs, prime factorization, prime or composite, GCF and LCM, divisibility rules |
 | [The Number Line](integers.html) | Integers: adding, subtracting, multiplying and dividing negative numbers, absolute value and ordering |
 | [The Ratio Table](ratios.html) | Ratios: simplifying, unit rates and better buys, proportions, sharing in a ratio, and scale |
+| [The Power Tower](exponents.html) | Exponents: powers (zero, negative, negative bases), the exponent laws with the reason for each, scientific notation both ways, calculating and comparing with it, and square and cube roots |
 | [The Order Stack](pemdas.html) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
 | [The Balance Scale](algebra.html) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
 | [The Slope Grid](lines.html) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
 | [The Shape Shop](geometry.html) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
 | [The Dot Plot](stats.html) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
+| [The Chance Spinner](probability.html) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
 | [The Story Problem](wordproblems.html) | Word problems: paste or type one and see what it tells you, what it asks, which operation the words point to, a picture of the story, the working and a check |
 
 | Tool | What it does |
 | --- | --- |
 | [Practice sets](practice.html) | Build a set of problems from any helpers and share it as one link; students work through it with Check my answer and get a score to hand in |
 | [The Flash Cards](flashcards.html) | Times tables (any of them, mixed together), division, addition and subtraction facts, squares, cubes, fraction–decimal–percent pairs and math words: study, quiz, a speed round, and a Learn mode that brings back the ones you miss |
+| [Problem of the Day](daily.html) | One problem a day, the same for everyone on that date (no sign-up, nothing to set up): easier on Monday, a challenge on Friday, a puzzle at the weekend, with a streak kept on the device and a printable week ahead with answers for teachers |
 | [The Worksheet Maker](worksheet.html) | Printable worksheets mixing any of the topics, with an answer key on its own page (or turn the sheet into a practice link) |
 | [Your progress](progress.html) | A private record, kept on the device, of what's been practised, right first time per topic, and mistakes to revisit |
 | [Class results](results.html) | For teachers: paste the lines students hand in after a practice set and see scores, a heat map of who got which problem, the hardest problems and who needs help, with CSV export; nothing is uploaded |
@@ -46,6 +49,7 @@ And across the whole site:
 - a **Type any problem** search box in the bar at the top of every page
 - **Big screen** mode for a projector or smartboard, and **Read aloud** for the step-by-step explanation
 - **Recent** problems on each page, and keyboard shortcuts (press `?` to see them)
+- a **QR code** for the page on screen (the `QR` button or `Q`), big enough for a projector; practice sets and worksheets have one too
 - a row of **math keys** (×, ÷, −, /, ( ), x, π …) above the phone keyboard when typing an answer, picked for each page (press `K` to turn it on or off on a computer)
 - link previews when a page is shared, and a friendly page for broken links
 
@@ -62,6 +66,8 @@ Every helper reads its problem from the address, so a link opens with that probl
 - `ratios.html?q=share 60 in 2:3`
 - `lines.html?q=(1,2) (5,4)`
 - `stats.html?q=4, 8, 6, 5, 7`
+- `exponents.html?q=(2x^2)^3`
+- `probability.html?q=draw 2 without replacement from 4 red 6 blue, both red`
 - `geometry.html?q=circle radius 5`
 - `wordproblems.html?q=Ana has 12 shells. That is 5 more than Ben has. How many shells does Ben have?`
 - `flashcards.html?deck=times&t=6,7,8&mode=quiz`
@@ -71,7 +77,7 @@ Each page lists the parameters it accepts in a `URL parameters` comment at the t
 
 ## Testing
 
-[`tests.html`](tests.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 7,500 checks). Run it from the live site or a local server (`python -m http.server`, then open `http://localhost:8000/tests.html`); opened as a plain file, the browser won't let it look inside the other pages. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=ratios,stats` tests just those. Your saved settings on each page are put back afterwards.
+[`tests.html`](tests.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 8,800 checks). Run it from the live site or a local server (`python -m http.server`, then open `http://localhost:8000/tests.html`); opened as a plain file, the browser won't let it look inside the other pages. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=ratios,stats` tests just those. Your saved settings on each page are put back afterwards.
 
 ## How it's built
 
@@ -81,6 +87,7 @@ Each page is one self-contained HTML file with no build step. A few shared files
 - `glossary.js` holds every definition, and finds and links the math words on each page.
 - `progress.js` records each Check my answer result in the browser and draws the "Your practice" panel.
 - `tools.js` adds the site-wide settings, big screen, read aloud, recent problems, keyboard shortcuts, the math keys and Next problem.
+- `qr.js` makes QR codes in the browser (no library, works offline), loaded only when one is asked for.
 - `search.js` works out which helper a typed problem belongs to (used by the home page, the bar and `404.html`).
 - Visits are counted with GoatCounter (no cookies, nothing personal); pages shown inside other pages and local testing aren't counted.
 

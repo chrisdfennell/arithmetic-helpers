@@ -28,11 +28,13 @@
     { page:"factors.html",        name:"Factors & primes",    title:"The Factor Tree",    c:"fac" },
     { page:"integers.html",       name:"Integers",            title:"The Number Line",    c:"int" },
     { page:"ratios.html",         name:"Ratios & rates",      title:"The Ratio Table",    c:"rat" },
+    { page:"exponents.html",     name:"Exponents",            title:"The Power Tower",     c:"exp" },
     { page:"pemdas.html",         name:"Order of operations", title:"The Order Stack",    c:"ord" },
     { page:"algebra.html",        name:"Algebra",             title:"The Balance Scale",  c:"alg" },
     { page:"lines.html",          name:"Lines & slope",       title:"The Slope Grid",     c:"lin" },
     { page:"geometry.html",       name:"Geometry",            title:"The Shape Shop",     c:"geo" },
     { page:"stats.html",          name:"Statistics",          title:"The Dot Plot",       c:"sta" },
+    { page:"probability.html",   name:"Probability",          title:"The Chance Spinner",  c:"pro" },
     { page:"wordproblems.html",   name:"Story problems",      title:"The Story Problem",  c:"wrd" },
     { page:"flashcards.html",     name:"Flash cards",         title:"The Flash Cards",    c:"fla" }
   ];

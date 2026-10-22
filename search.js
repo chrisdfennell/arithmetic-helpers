@@ -11,9 +11,9 @@
     "factors.html":["The Factor Tree","c-fac"], "integers.html":["The Number Line","c-int"],
     "pemdas.html":["The Order Stack","c-ord"], "algebra.html":["The Balance Scale","c-alg"],
     "geometry.html":["The Shape Shop","c-geo"], "glossary.html":["the Word List","c-ink"], "ratios.html":["The Ratio Table","c-rat"],
-    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"],
+    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"], "exponents.html":["The Power Tower","c-exp"], "probability.html":["The Chance Spinner","c-pro"],
     "wordproblems.html":["The Story Problem","c-wrd"], "flashcards.html":["The Flash Cards","c-fla"],
-    "reference.html":["the reference sheets","c-ink"]
+    "reference.html":["the reference sheets","c-ink"], "daily.html":["the problem of the day","c-day"]
   };
   function go(page, params, what, alt){ return { page:page, params:params, what:what || "", alt:alt || null }; }
   function qp(s){ return "q=" + encodeURIComponent(s); }
@@ -56,12 +56,31 @@
                  : (low.match(/\d+/g) || []).filter(function(n){ return +n <= 12; }).map(Number).join(",");
       return go("flashcards.html", "deck=" + deck + (tables && (deck === "times" || deck === "div") ? "&t=" + tables : ""), "flash cards");
     }
+    // the problem of the day
+    if (/^\s*(?:today'?s\s+problem|problem\s+of\s+the\s+day|daily(?:\s+problem|\s+challenge)?|daily\s+math)\s*$/.test(low))
+      return go("daily.html", "", "the problem of the day");
     // reference sheets: "formula sheet", "cheat sheet", "multiplication chart"
     if (/\b(reference|cheat ?sheets?|formula sheets?|formulas|(?:multiplication|times table) (?:chart|grid))\b/.test(low))
       return go("reference.html", /multiplication|times/.test(low) ? "#times" : /\b(area|perimeter|volume|geometry|shapes?)\b/.test(low) ? "#geometry" : "",
         "the reference sheets");
+    // exponents: roots, scientific notation, one power on its own, and the exponent laws
+    if (/\b(?:sqrt|square\s+root|cube\s+root)\b|[√∛]\s*\d/.test(low))
+      return go("exponents.html", qp(s), "a root");
+    if (/scientific\s+notation|\d(?:\.\d+)?\s*(?:x|×|\*)\s*10\s*(?:\^|\*\*)|^\s*[−-]?\d+(?:\.\d+)?e[+−-]?\d+\s*$/.test(low) ||
+        (/standard\s+form/.test(low) && !/[a-z]\s*[=+]|=/.test(low.replace(/standard\s+form|to|in|write|as/g, ""))))
+      return go("exponents.html", qp(s), "scientific notation");
+    if (/^\s*(?:\(\s*[−-]?[\d.\/]+\s*\)|[−-]?[\d.]+)\s*(?:\^|\*\*)\s*\(?[−-]?\d+\)?\s*$/.test(s))
+      return go("exponents.html", qp(s), "a power");
+    var noNegExp = s.replace(/(\^|\*\*)\s*\(?[−-]/g, "$1");
+    if (/[a-z]\s*(?:\^|\*\*)|\)\s*(?:\^|\*\*)/i.test(s) && /[a-z]/i.test(s) && !/[+=<>]|[−-]/.test(noNegExp) && !/\b(?:simplify|solve)\b.*[+=]/i.test(s))
+      return go("exponents.html", qp(s.replace(/^\s*simplify\s*:?\s*/i, "")), "the exponent laws");
+    // probability: "P(rolling a 4)", "probability of red from 3 red 5 blue", "two coins both heads", "roll a die 60 times"
+    if (!(/^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s)) &&     // "what is likely": the Word List
+        /\bprobability\b|\bchances?\b|\bodds\b|\bp\s*\(|\b(?:un)?likely\b|without replacement|\bspinner\b|\b(?:roll|rolls|rolling|toss|tosses|flip|flips|flipping)\b[^.?]*\b(?:die|dice|coins?)\b|\b(?:two|2|three|3)\s+coins\b|\bdeck\b|\b(?:pick|picks|draw|draws|drawn)\b[^.?]*\bmarbles?\b/.test(low))
+      return go("probability.html", qp(s), "probability");
     // a story problem, unless it's about shapes (other than a rectangle's area), statistics, a ratio or a line
-    if (isStory(s, low) && !/\b(circles?|triangles?|trapezoids?|parallelograms?|cylinders?|cones?|spheres?|prisms?|pyramids?|hypotenuse|angles?|polygons?|radius|diameter|circumference|volume|surface|mean|median|modes?|average|range|box ?plots?|quartiles?|outliers?|ratios?|proportion|scale|slope|intercepts?|graph)\b/.test(low))
+    var algebraAngles = /\bangles?\b/.test(low) && /\b(?:twice|times|more than|less than)\s+(?:as\s+\w+\s+as\s+)?(?:the\s+)?(?:first|second|smallest)\b/.test(low);
+    if (isStory(s, low) && (algebraAngles || !/\b(circles?|triangles?|trapezoids?|parallelograms?|cylinders?|cones?|spheres?|prisms?|pyramids?|hypotenuse|angles?|polygons?|radius|diameter|circumference|volume|surface|mean|median|modes?|average|range|box ?plots?|quartiles?|outliers?|ratios?|proportion|scale|slope|intercepts?|graph)\b/.test(low)))
       return go("wordproblems.html", qp(s), "a story problem",
         /%|percent/.test(low) ? { page:"percents.html", params:qp(s) } : /\barea\b/.test(low) ? { page:"geometry.html", params:qp(s) } : null);
     // "7 times 8", "12 divided by 4": the words for the signs

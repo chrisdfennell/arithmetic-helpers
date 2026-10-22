@@ -2,17 +2,17 @@
    Pages are fetched fresh whenever there's a connection (so updates show straight away),
    and the saved copy is used when there isn't. Fonts are saved the first time they load.
    Adding a page: put it in PAGES. Change VERSION to throw away everything saved before. */
-var VERSION = "v3";
+var VERSION = "v4";
 var CACHE = "helpers-" + VERSION;
 var FONTS = "helpers-fonts";
 var PAGES = [
   "./", "index.html",
   "addition.html", "subtraction.html", "multiplication.html", "division.html",
   "fractions.html", "percents.html", "factors.html", "integers.html", "ratios.html",
-  "pemdas.html", "algebra.html", "lines.html", "geometry.html", "stats.html",
-  "wordproblems.html", "flashcards.html", "reference.html", "results.html",
+  "pemdas.html", "algebra.html", "lines.html", "geometry.html", "stats.html", "exponents.html", "probability.html",
+  "wordproblems.html", "flashcards.html", "reference.html", "results.html", "daily.html",
   "worksheet.html", "practice.html", "progress.html", "glossary.html", "tests.html",
-  "nav.js", "progress.js", "glossary.js", "search.js", "tools.js", "404.html", "manifest.webmanifest",
+  "nav.js", "progress.js", "glossary.js", "search.js", "tools.js", "qr.js", "404.html", "manifest.webmanifest",
   "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/favicon.svg", "icons/og.png"
 ];
 

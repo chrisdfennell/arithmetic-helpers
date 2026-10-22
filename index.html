@@ -34,7 +34,7 @@
   :root{
     --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
     --grid:rgba(25,33,29,.06);
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --exp:#BE185D; --pro:#A21CAF; --fla:#C2410C; --day:#4338CA;
     --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
     --shadow-up:0 1px 0 rgba(25,33,29,.05), 0 24px 40px -22px rgba(25,33,29,.55);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -45,7 +45,7 @@
     :root:not([data-theme="light"]){
       --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
       --grid:rgba(231,235,228,.05);
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
       --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
     }
@@ -53,7 +53,7 @@
   :root[data-theme="dark"]{
     --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
     --grid:rgba(231,235,228,.05);
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
   }
@@ -73,7 +73,7 @@
   .c-add{--c:var(--add)} .c-sub{--c:var(--sub)} .c-mul{--c:var(--mul)} .c-div{--c:var(--div)}
   .c-ord{--c:var(--ord)} .c-alg{--c:var(--alg)} .c-geo{--c:var(--geo)}
   .c-fra{--c:var(--fra)} .c-pct{--c:var(--pct)} .c-fac{--c:var(--fac)} .c-int{--c:var(--int)} .c-ink{--c:var(--ink)}
-  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)}
+  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)}
   .stripe i{background:var(--c)}
 
   /* ---- top bar ---- */
@@ -261,7 +261,7 @@
   footer .stripe{height:4px;border-radius:2px;overflow:hidden;margin-bottom:22px}
 </style>
 
-<div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-wrd"></i></div>
+<div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-pro"></i><i class="c-wrd"></i></div>
 
 <div class="wrap">
   <header class="top">
@@ -288,7 +288,7 @@
           <div class="ask-to" id="askTo" aria-live="polite"></div>
           <div class="ask-try" id="askTry">Try:</div>
         </form>
-        <p class="alt-links">Or <a href="#helpers">pick a helper</a>, <a href="practice.html">make a practice set</a>,
+        <p class="alt-links">Or try <a href="daily.html">today’s problem</a>, <a href="#helpers">pick a helper</a>, <a href="practice.html">make a practice set</a>,
           <a href="worksheet.html">make a worksheet</a>, or <a href="glossary.html">look up a word</a>.<button type="button" class="install" id="installBtn" hidden>Install the app</button></p>
         <p class="ios-tip" id="iosTip" hidden>To use it like an app on an iPhone or iPad, tap Share, then <b>Add to Home Screen</b>.</p>
       </div>
@@ -540,9 +540,9 @@
   </section>
 
   <section class="group" aria-labelledby="g3">
-    <div class="group-head"><span class="num">04</span><h2 id="g3">Ratios, algebra &amp; lines</h2>
-      <p>Comparing amounts, solving for <i>x</i>, and graphing straight lines.</p></div>
-    <div class="cards three">
+    <div class="group-head"><span class="num">04</span><h2 id="g3">Ratios, powers, algebra &amp; lines</h2>
+      <p>Comparing amounts, powers and scientific notation, solving for <i>x</i>, and graphing straight lines.</p></div>
+    <div class="cards">
       <a class="card c-rat" href="ratios.html">
         <div class="art" aria-hidden="true">
           <svg viewBox="0 0 200 110">
@@ -558,6 +558,24 @@
           <span class="kind"><b>∶</b> Ratios</span>
           <h3>The Ratio Table</h3>
           <p>Simplify ratios, unit rates and better buys, proportions, sharing in a ratio, and scale drawings.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="card c-exp" href="exponents.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <text x="46" y="44" style="font-size:24px">2<tspan class="k" dy="-11" style="font-size:15px">5</tspan></text>
+            <text class="mu" x="80" y="40">=</text>
+            <text class="sm" x="98" y="40">2·2·2·2·2</text>
+            <text class="k" x="100" y="66" text-anchor="middle" style="font-size:15px">4.5 × 10<tspan dy="-7" style="font-size:11px">7</tspan></text>
+            <text class="sm mu" x="100" y="92" text-anchor="middle">45,000,000</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>xⁿ</b> Exponents</span>
+          <h3>The Power Tower</h3>
+          <p>Powers as repeated multiplication (and why a⁰ = 1), the exponent laws, scientific notation both ways,
+            calculating with it, and square and cube roots.</p>
           <span class="go">Open <span aria-hidden="true">→</span></span>
         </div>
       </a>
@@ -604,9 +622,9 @@
   </section>
 
   <section class="group" aria-labelledby="g8">
-    <div class="group-head"><span class="num">05</span><h2 id="g8">Shapes &amp; data</h2>
-      <p>Measuring shapes, and making sense of a list of numbers.</p></div>
-    <div class="cards two">
+    <div class="group-head"><span class="num">05</span><h2 id="g8">Shapes, data &amp; chance</h2>
+      <p>Measuring shapes, making sense of a list of numbers, and how likely something is.</p></div>
+    <div class="cards three">
       <a class="card c-geo" href="geometry.html">
         <div class="art" aria-hidden="true">
           <svg viewBox="0 0 200 110">
@@ -654,12 +672,53 @@
           <span class="go">Open <span aria-hidden="true">→</span></span>
         </div>
       </a>
+      <a class="card c-pro" href="probability.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <circle cx="62" cy="56" r="42" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
+            <path d="M62 56 L62 14 A42 42 0 0 1 104 56 Z" class="fk"/>
+            <path d="M62 56 L62 14 M62 56 L104 56 M62 56 L62 98 M62 56 L20 56" stroke="var(--ink)" stroke-width="1.5"/>
+            <path d="M62 56 L88 30" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="62" cy="56" r="4" fill="var(--ink)"/>
+            <text class="k" x="150" y="50" text-anchor="middle" style="font-size:22px">1/4</text>
+            <text class="sm mu" x="150" y="72" text-anchor="middle">= 25%</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>◔</b> Probability</span>
+          <h3>The Chance Spinner</h3>
+          <p>How likely is it? One event or two (with and without putting it back), tree diagrams and dice tables,
+            and how many times to expect it in 60 rolls.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
     </div>
   </section>
 
   <section class="group" aria-labelledby="g6">
     <div class="group-head"><span class="num">06</span><h2 id="g6">For the classroom</h2>
-      <p>Practice sets to do on screen, worksheets to print, flash cards, reference sheets, and a record of how it’s going.</p></div>
+      <p>A problem every day, practice sets to do on screen, worksheets to print, flash cards, reference sheets, and a record of how it’s going.</p></div>
+    <a class="card wide c-day" href="daily.html">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 260 142">
+          <rect x="62" y="16" width="136" height="112" rx="10" fill="var(--surface)" stroke="var(--c)" stroke-width="2"/>
+          <path d="M62 44 H198" stroke="var(--c)" stroke-width="2"/>
+          <rect x="62" y="16" width="136" height="28" rx="10" fill="var(--c)" opacity=".18"/>
+          <path d="M96 8 V24 M164 8 V24" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+          <text class="k" x="130" y="36" text-anchor="middle" style="font-size:12px;letter-spacing:.12em">TODAY</text>
+          <text x="130" y="84" text-anchor="middle" style="font-size:22px">3x + 2 = 11</text>
+          <text class="sm k" x="130" y="112" text-anchor="middle">✓ ✓ ✓ ✓  4-day streak</text>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="kind"><b>☀</b> Every day</span>
+        <h3>Problem of the Day</h3>
+        <p>One new problem every day, the same for everyone, so a whole class can do it together with nothing to set up.
+          An easy start on Monday, a challenge on Friday, a puzzle at the weekend, and a streak to keep going.</p>
+        <ul class="ticks"><li>same for the whole class</li><li>streaks</li><li>the week ahead, to print</li><li>QR code for the projector</li></ul>
+        <span class="go">Today’s problem <span aria-hidden="true">→</span></span>
+      </div>
+    </a>
     <a class="card wide c-ink" href="worksheet.html">
       <div class="art" aria-hidden="true">
         <svg viewBox="0 0 260 142">
@@ -819,7 +878,7 @@
   </section>
 
   <footer>
-    <div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-wrd"></i></div>
+    <div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-pro"></i><i class="c-wrd"></i></div>
     <div class="row">
       <span>Arithmetic Helpers &middot; light and dark themes, and a print layout on every page.
         Visits are counted with <a href="https://www.goatcounter.com">GoatCounter</a>: no cookies, nothing personal.</span>
