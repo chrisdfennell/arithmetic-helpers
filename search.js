@@ -11,7 +11,7 @@
     "factors.html":["The Factor Tree","c-fac"], "integers.html":["The Number Line","c-int"],
     "pemdas.html":["The Order Stack","c-ord"], "algebra.html":["The Balance Scale","c-alg"],
     "geometry.html":["The Shape Shop","c-geo"], "glossary.html":["the Word List","c-ink"], "ratios.html":["The Ratio Table","c-rat"],
-    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"], "exponents.html":["The Power Tower","c-exp"], "probability.html":["The Chance Spinner","c-pro"],
+    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"], "graphing.html":["The Graph Paper","c-gra"], "exponents.html":["The Power Tower","c-exp"], "probability.html":["The Chance Spinner","c-pro"],
     "wordproblems.html":["The Story Problem","c-wrd"], "flashcards.html":["The Flash Cards","c-fla"],
     "reference.html":["the reference sheets","c-ink"], "daily.html":["the problem of the day","c-day"]
   };
@@ -74,6 +74,18 @@
     var noNegExp = s.replace(/(\^|\*\*)\s*\(?[−-]/g, "$1");
     if (/[a-z]\s*(?:\^|\*\*)|\)\s*(?:\^|\*\*)/i.test(s) && /[a-z]/i.test(s) && !/[+=<>]|[−-]/.test(noNegExp) && !/\b(?:simplify|solve)\b.*[+=]/i.test(s))
       return go("exponents.html", qp(s.replace(/^\s*simplify\s*:?\s*/i, "")), "the exponent laws");
+    // graphing: points on a grid, moving shapes, scatter plots, tables, curves, two lines to graph, shaded inequalities
+    var PT = /\(\s*[−-]?\d+(?:\.\d+)?\s*,\s*[−-]?\d+(?:\.\d+)?\s*\)/;
+    if (/\b(?:scatter|trend\s+line|line\s+of\s+best\s+fit)\b/.test(low) ||
+        (PT.test(s) && /\b(?:plot|distance|midpoint|area|perimeter|quadrant|reflect|reflection|rotate|rotation|translate|translation|dilate|dilation|transform)\b/.test(low)) ||
+        /^\s*table\b.*=/.test(low))
+      return go("graphing.html", qp(s), "graphing");
+    var eqCount = (s.match(/=/g) || []).length, ineqCount = (s.match(/[<>≤≥]/g) || []).length;
+    if ((/y/i.test(s) && /x/i.test(s) && ineqCount >= 1 && !/[;,]|\band\b/i.test(s)) ||                                  // y < 2x + 1: shade it
+        ineqCount >= 2 && !/y/i.test(s) ||                                                                               // −2 < x ≤ 3: a number line
+        (/^\s*y\s*=/.test(low) && eqCount === 1 && /x\s*(?:\^|\*\*|²|³)|\|[^|]*x[^|]*\||\bsqrt|√|\d\s*(?:\^|\*\*)\s*x|\/\s*\(?\s*x/.test(low)) ||   // curves
+        (/\bgraph\b/.test(low) && (eqCount >= 2 || /x\s*(?:\^|\*\*|²)/.test(low))))
+      return go("graphing.html", qp(s.replace(/^\s*graph\s*:?\s*/i, "")), "graphing");
     // probability: "P(rolling a 4)", "probability of red from 3 red 5 blue", "two coins both heads", "roll a die 60 times"
     if (!(/^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s)) &&     // "what is likely": the Word List
         /\bprobability\b|\bchances?\b|\bodds\b|\bp\s*\(|\b(?:un)?likely\b|without replacement|\bspinner\b|\b(?:roll|rolls|rolling|toss|tosses|flip|flips|flipping)\b[^.?]*\b(?:die|dice|coins?)\b|\b(?:two|2|three|3)\s+coins\b|\bdeck\b|\b(?:pick|picks|draw|draws|drawn)\b[^.?]*\bmarbles?\b/.test(low))

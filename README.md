@@ -1,6 +1,6 @@
 # Arithmetic Helpers
 
-Seventeen single-page tools that work through a math problem step by step, the way it's done on paper, plus tools for practice and for the classroom. It installs like an app and works offline.
+Eighteen single-page tools that work through a math problem step by step, the way it's done on paper, plus tools for practice and for the classroom. It installs like an app and works offline.
 
 | Page | What it does |
 | --- | --- |
@@ -17,6 +17,7 @@ Seventeen single-page tools that work through a math problem step by step, the w
 | [The Order Stack](pemdas.html) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
 | [The Balance Scale](algebra.html) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
 | [The Slope Grid](lines.html) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
+| [The Graph Paper](graphing.html) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, and scatter plots with a trend line |
 | [The Shape Shop](geometry.html) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
 | [The Dot Plot](stats.html) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
 | [The Chance Spinner](probability.html) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
@@ -65,6 +66,7 @@ Every helper reads its problem from the address, so a link opens with that probl
 - `percents.html?q=15% of 80`
 - `ratios.html?q=share 60 in 2:3`
 - `lines.html?q=(1,2) (5,4)`
+- `graphing.html?q=y = x^2 - 4x + 3; y = x - 1`
 - `stats.html?q=4, 8, 6, 5, 7`
 - `exponents.html?q=(2x^2)^3`
 - `probability.html?q=draw 2 without replacement from 4 red 6 blue, both red`
@@ -77,7 +79,7 @@ Each page lists the parameters it accepts in a `URL parameters` comment at the t
 
 ## Testing
 
-[`tests.html`](tests.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 8,800 checks). Run it from the live site or a local server (`python -m http.server`, then open `http://localhost:8000/tests.html`); opened as a plain file, the browser won't let it look inside the other pages. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=ratios,stats` tests just those. Your saved settings on each page are put back afterwards.
+[`tests.html`](tests.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 9,600 checks). Run it from the live site or a local server (`python -m http.server`, then open `http://localhost:8000/tests.html`); opened as a plain file, the browser won't let it look inside the other pages. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=ratios,stats` tests just those. Your saved settings on each page are put back afterwards.
 
 ## How it's built
 

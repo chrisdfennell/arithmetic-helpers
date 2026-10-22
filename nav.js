@@ -17,6 +17,7 @@
     { href:"pemdas.html",         sign:"( )", name:"Order",    title:"The Order Stack",    c:"ord" },
     { href:"algebra.html",        sign:"x",  name:"Algebra",   title:"The Balance Scale",  c:"alg", italic:true },
     { href:"lines.html",          sign:"↗",  name:"Lines",     title:"The Slope Grid",     c:"lin" },
+    { href:"graphing.html",        sign:"⌗",  name:"Graphing",   title:"The Graph Paper", c:"gra" },
     { href:"geometry.html",       sign:"△",  name:"Geometry",  title:"The Shape Shop",     c:"geo" },
     { href:"stats.html",          sign:"⁘",  name:"Statistics", title:"The Dot Plot",      c:"sta" },
     { href:"probability.html",     sign:"◔",  name:"Chance",     title:"The Chance Spinner", c:"pro" },
@@ -34,9 +35,9 @@
   ];
 
   var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;"
-            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-exp:#BE185D;--nv-pro:#A21CAF;";
+            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-gra:#0369A1;--nv-exp:#BE185D;--nv-pro:#A21CAF;";
   var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;"
-            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;";
+            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-gra:#7DD3FC;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;";
   var CSS =
     ":root{" + LIGHT + "}" +
     "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + DARK + "}}" +

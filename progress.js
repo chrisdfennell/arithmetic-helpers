@@ -32,6 +32,7 @@
     { page:"pemdas.html",         name:"Order of operations", title:"The Order Stack",    c:"ord" },
     { page:"algebra.html",        name:"Algebra",             title:"The Balance Scale",  c:"alg" },
     { page:"lines.html",          name:"Lines & slope",       title:"The Slope Grid",     c:"lin" },
+    { page:"graphing.html",      name:"Graphing",             title:"The Graph Paper",     c:"gra" },
     { page:"geometry.html",       name:"Geometry",            title:"The Shape Shop",     c:"geo" },
     { page:"stats.html",          name:"Statistics",          title:"The Dot Plot",       c:"sta" },
     { page:"probability.html",   name:"Probability",          title:"The Chance Spinner",  c:"pro" },

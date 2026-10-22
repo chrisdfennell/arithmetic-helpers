@@ -264,7 +264,7 @@
     { page:"factors.html", name:"The Factor Tree" }, { page:"integers.html", name:"The Number Line" },
     { page:"ratios.html", name:"The Ratio Table" }, { page:"exponents.html", name:"The Power Tower" },
     { page:"pemdas.html", name:"The Order Stack" }, { page:"algebra.html", name:"The Balance Scale" },
-    { page:"lines.html", name:"The Slope Grid" },
+    { page:"lines.html", name:"The Slope Grid" }, { page:"graphing.html", name:"The Graph Paper" },
     { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" },
     { page:"wordproblems.html", name:"The Story Problem" }, { page:"probability.html", name:"The Chance Spinner" },
     // not step-by-step helpers: each has its own checks (TOOLS below)
@@ -307,6 +307,11 @@
                       ["mode=vol&shape=box&l=8&w=3&h=5",["120","158"]], ["mode=right&shape=hyp&a=3&b=4",["5"]],
                       ["mode=right&shape=leg&a=5&c=13",["12"]], ["mode=angle&shape=tri&a=50&b=60",["70"]],
                       ["mode=angle&shape=poly&n=6",["720","120","60"]] ],
+    "graphing.html":[ ["mode=points&task=midpoint&pts=2%2C3%3B8%2C-1",["5","1"]], ["mode=points&task=distance&pts=-2%2C3%3B4%2C-1",[{ f:Math.sqrt(52), loose:0.002 }]],
+                      ["mode=points&task=polygon&pts=0%2C0%3B4%2C0%3B4%2C3&ask=area",["6"]], ["mode=systems&e1=x%2By%3D6&e2=x-y%3D2",["4","2"]],
+                      ["mode=transform&pts=1%2C2%3B4%2C2%3B4%2C5&t=reflect%3Ay-axis",["-1","-4"]], ["q=" + encodeURIComponent("y = x^2 - 4x + 3"),["2","1","3"]],
+                      ["mode=table&task=fill&rule=3x-1&xs=-2%2C-1%2C0%2C1%2C2",["-7","-4","-1","2","5"]],
+                      ["mode=systems&e1=20%2B5x&e2=8x&plan=1&unit=visits",["20/3"]] ],
     "exponents.html":[ ["mode=eval&b=2&e=5",["32"]], ["mode=eval&b=-3&e=2",["9"]], ["mode=eval&b=3&e=2&neg=1",["-9"]], ["mode=eval&b=5&e=-2",["1/25"]],
                        ["mode=eval&b=2%2F3&e=3",["8/27"]], ["q=2%5E60",["1152921504606846976"]],
                        ["mode=sci&n=45000000",["4.5","~10^7"]], ["mode=sci&n=3.2e-4",["0.00032"]],
@@ -360,6 +365,8 @@
                    ["mode=slope&q=(1,2) (5,4)",["2/4"],"simplify"], ["mode=slope&q=(1,2) (5,4)",["2"],"wrong"] ],
     "geometry.html":[ ["mode=area&shape=rect&l=8&w=5",["40","26"],"right"], ["mode=area&shape=rect&l=8&w=5",["26","40"],"wrong"],
                       ["mode=area&shape=circle&r=5&rd=r",["25π","10π"],"right"] ],
+    "graphing.html":[ ["mode=points&task=midpoint&pts=2%2C3%3B8%2C-1",["(5, 1)"],"right"], ["mode=points&task=midpoint&pts=2%2C3%3B8%2C-1",["(1, 5)"],"wrong"],
+                      ["mode=systems&e1=x%2By%3D6&e2=x-y%3D2",["(4, 2)"],"right"], ["mode=systems&e1=x%2By%3D6&e2=x-y%3D2",["(2, 4)"],"wrong"] ],
     "exponents.html":[ ["mode=eval&b=2&e=3",["8"],"right"], ["mode=eval&b=2&e=3",["6"],"wrong"], ["mode=eval&b=2&e=-3",["0.125"],"right"],
                        ["mode=sci&n=45000000",["4.5 x 10^7"],"right"], ["mode=sci&n=45000000",["4.5e7"],"right"],
                        ["mode=sci&n=45000000",["45 x 10^6"],"simplify"], ["mode=sci&n=45000000",["4.5 x 10^-7"],"wrong"],
@@ -489,7 +496,100 @@
   }
   function sciForm(t){ var m = /(-?[\d.]+)\s*×\s*10\^/.exec(String(t).replace(/[−–]/g, "-")); if (!m) return false; var c = Math.abs(Number(m[1])); return c >= 1 && c < 10; }
 
+  /* graphing: the coordinates worked out here, exactly */
+  function gPts(t){ return String(t || "").split(";").filter(Boolean).map(function(xy){ var q = xy.split(","); return [num(q[0]), num(q[1])]; }); }
+  function gPairs(t){                          // the (x, y) pairs in an answer, in order
+    var out = [], re = /\(\s*([−-]?[\d.\/]+)\s*,\s*([−-]?[\d.\/]+)\s*\)/g, m, x = String(t).replace(/[−–]/g, "-");
+    while ((m = re.exec(x))) out.push([num(m[1]), num(m[2])]);
+    return out;
+  }
+  function gLin(eq, plan){                     // "2x − y = 4" (or "20+5x" for a plan, meaning y = 20 + 5x) → [a, b, c] for ax + by = c
+    var e = String(eq).replace(/[−–]/g, "-"), sides = plan && !/=/.test(e) ? ["y", e] : e.split("=");
+    var f = function(x, y){ var env = { x:R(x), y:R(y) }; return sub(evaluate(sides[0], env), evaluate(sides[1], env)); };
+    var k = f(0, 0); return [sub(f(1, 0), k), sub(f(0, 1), k), sub(R(0), k)];
+  }
+  function gMove(P, t){
+    var q = t.split(":"), kind = q[0], arg = q[1] || "", c = q[2] ? q[2].split(",").map(num) : [R(0), R(0)], n2 = R(-1), two = R(2);
+    if (kind === "translate"){ var d = arg.split(",").map(num); return [add(P[0], d[0]), add(P[1], d[1])]; }
+    if (kind === "reflect"){
+      if (arg === "x-axis") return [P[0], mul(n2, P[1])]; if (arg === "y-axis") return [mul(n2, P[0]), P[1]];
+      if (arg === "y=x") return [P[1], P[0]]; if (arg === "y=-x") return [mul(n2, P[1]), mul(n2, P[0])];
+      var mm = /^([xy])=(.+)$/.exec(arg), k = num(mm[2]);
+      return mm[1] === "x" ? [sub(mul(two, k), P[0]), P[1]] : [P[0], sub(mul(two, k), P[1])];
+    }
+    var dx = sub(P[0], c[0]), dy = sub(P[1], c[1]), r;
+    if (kind === "rotate"){
+      r = arg === "90ccw" || arg === "270cw" ? [mul(n2, dy), dx] : arg === "90cw" || arg === "270ccw" ? [dy, mul(n2, dx)] : [mul(n2, dx), mul(n2, dy)];
+      return [add(r[0], c[0]), add(r[1], c[1])];
+    }
+    if (kind === "dilate"){ var kk = num(arg); return [add(mul(kk, dx), c[0]), add(mul(kk, dy), c[1])]; }
+    throw new Error("unknown move " + t);
+  }
+  function gQuad(P){ var x = cmp(P[0], R(0)), y = cmp(P[1], R(0)); return !x && !y ? "origin" : !y ? "x-axis" : !x ? "y-axis" : x > 0 ? (y > 0 ? "Quadrant I" : "Quadrant IV") : (y > 0 ? "Quadrant II" : "Quadrant III"); }
+
   var ORACLE = {
+    "graphing.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText), pts = gPts(o.pts), i;
+      switch (o.mode){
+        case "points":
+          if (o.task === "midpoint") return need(a, [X(div(add(pts[0][0], pts[1][0]), R(2))), X(div(add(pts[0][1], pts[1][1]), R(2)))]);
+          if (o.task === "distance"){ var dx = F(sub(pts[1][0], pts[0][0])), dy = F(sub(pts[1][1], pts[0][1])); return need(a, [Fl(Math.sqrt(dx * dx + dy * dy), 0.002)]); }
+          if (o.task === "polygon"){
+            var A2 = R(0), per = 0;
+            for (i = 0; i < pts.length; i++){ var u = pts[i], v = pts[(i + 1) % pts.length]; A2 = add(A2, sub(mul(u[0], v[1]), mul(v[0], u[1]))); per += Math.hypot(F(sub(v[0], u[0])), F(sub(v[1], u[1]))); }
+            if (cmp(A2, R(0)) < 0) A2 = sub(R(0), A2);
+            return o.ask === "perimeter" ? need(a, [Fl(per, 0.002)]) : need(a, [X(div(A2, R(2)))]);
+          }
+          if (o.task === "plot" || o.task === "read"){
+            var miss = o.task === "read" ? [] : pts.filter(function(P0){ return t.indexOf(gQuad(P0)) < 0; });     // plotting names the quadrant too
+            return miss.length ? { ok:false, msg:"expected " + gQuad(miss[0]) + " for (" + txt(miss[0][0]) + ", " + txt(miss[0][1]) + ")" } : need(a, pts.map(function(P0){ return X(P0[0]); }));
+          }
+          return { skip:true };
+        case "table":
+          if (o.task === "fill"){
+            var rule = decodeURIComponent(o.rule), ys = (o.xs || "").split(",").map(function(x){ return X(evaluate(rule, { x:num(x) })); });
+            return need(tokens(t.split("→").pop()), ys);
+          }
+          if (o.task === "classify"){
+            var rows = (o.tbl || "").split(",").map(function(xy){ var q = xy.split(":"); return [num(q[0]), num(q[1])]; }), m0 = div(sub(rows[1][1], rows[0][1]), sub(rows[1][0], rows[0][0]));
+            var lin = rows.every(function(r, j){ return !j || eq(div(sub(r[1], rows[j - 1][1]), sub(r[0], rows[j - 1][0])), m0); });
+            var b0 = sub(rows[0][1], mul(m0, rows[0][0])), word = !lin ? "neither" : eq(b0, R(0)) ? "proportional" : "linear";
+            return new RegExp("^\\s*" + word).test(t) ? { ok:true } : { ok:false, msg:"expected " + word };
+          }
+          return { skip:true };
+        case "functions":
+          var f0 = String(o.f || "").split(";")[0], yi = /y-intercept\s*\(\s*0\s*,\s*([^)]+)\)/.exec(t.replace(/[−–]/g, "-"));
+          if (!yi) return { skip:true };
+          if (/\||\^\s*\(?\s*x|\)\s*\^\s*x/.test(f0)) return { skip:true };      // |x| and 2^x: not worked out here
+          var y0; try { y0 = evaluate(f0, { x:R(0) }); } catch (e){ return { skip:true }; }
+          return eq(num(yi[1].trim().replace(/\s*≈.*$/, "")), y0) ? { ok:true } : { ok:false, msg:"y-intercept should be " + txt(y0) };
+        case "systems":
+          var L1 = gLin(o.e1, o.plan), L2 = gLin(o.e2, o.plan), det = sub(mul(L1[0], L2[1]), mul(L2[0], L1[1]));
+          if (!cmp(det, R(0))){
+            var same = !cmp(sub(mul(L1[0], L2[2]), mul(L2[0], L1[2])), R(0)) && !cmp(sub(mul(L1[1], L2[2]), mul(L2[1], L1[2])), R(0));
+            return (same ? /infinitely|same line/i : /no solution|parallel/i).test(t) ? { ok:true } : { ok:false, msg:same ? "the same line" : "parallel lines" };
+          }
+          var sx = div(sub(mul(L1[2], L2[1]), mul(L2[2], L1[1])), det), sy = div(sub(mul(L1[0], L2[2]), mul(L2[0], L1[2])), det);
+          return o.plan ? need(a, [X(sx)]) : need(a, [X(sx), X(sy)]);
+        case "transform":
+          var img = pts.map(function(P0){ var r1 = gMove(P0, o.t); return o.t2 ? gMove(r1, o.t2) : r1; }), got = gPairs(t);
+          var bad = img.some(function(P0, j){ return !got[j] || !eq(got[j][0], P0[0]) || !eq(got[j][1], P0[1]); });
+          return bad ? { ok:false, msg:"expected " + img.map(function(P0){ return "(" + txt(P0[0]) + ", " + txt(P0[1]) + ")"; }).join(" ") } : { ok:true };
+        case "scatter":
+          var d = String(o.data).split(";").map(function(xy){ return xy.split(",").map(Number); }), nn = d.length, mx = 0, my = 0, sxy = 0, sxx = 0;
+          d.forEach(function(q){ mx += q[0] / nn; my += q[1] / nn; });
+          d.forEach(function(q){ sxy += (q[0] - mx) * (q[1] - my); sxx += (q[0] - mx) * (q[0] - mx); });
+          var sl = sxy / sxx, ic = my - sl * mx, tl = /y\s*≈\s*([−-]?[\d.]+)x\s*([+−-])\s*([\d.]+)/.exec(t);
+          if (!tl) return { ok:false, msg:"no trend line in the answer" };
+          var gs = Number(tl[1].replace("−", "-")), gi = Number(tl[3]) * (tl[2] === "+" ? 1 : -1), pr = /predicted\s+y\s*≈\s*([−-]?[\d.]+)/.exec(t);
+          var okL = Math.abs(gs - sl) <= 0.006 + Math.abs(sl) * 0.002 && Math.abs(gi - ic) <= 0.06;
+          var pd = pr ? (pr[1].split(".")[1] || "").length : 0;                     // "≈ 115" is rounded to a whole number
+          var okP = !o.px || (pr && Math.abs(Number(pr[1].replace("−", "-")) - (sl * Number(o.px) + ic)) <= 0.5 * Math.pow(10, -pd) + 0.01);
+          return okL && okP ? { ok:true } : { ok:false, msg:"expected y ≈ " + sl.toFixed(3) + "x + " + ic.toFixed(2) + (o.px ? ", " + (sl * Number(o.px) + ic).toFixed(2) + " at x = " + o.px : "") };
+        case "inequalities": return { skip:true };
+      }
+      return { skip:true };
+    },
     "exponents.html":function(p, a, ansText){
       var o = P(p), t = String(ansText);
       switch (o.mode){
@@ -1200,10 +1300,10 @@
               score(T.page, "links", stats.lp, stats.lf);
               return;
             }
-            var text = answerText(docOf(fr)), want = tokens(it.pr.answer || ""), got = tokens(text);
+            var text = answerText(docOf(fr)).replace(/([−-])\s+(?=\d)/g, "$1"), want = tokens(it.pr.answer || ""), got = tokens(text);
             drop(fr);
             var miss = want.filter(function(w){ return !w.base && !has(got, w.exact && !w.approx ? { exact:w.exact } : { f:w.f, loose:0.002 }); });
-            var words = !want.length && it.pr.answer ? String(it.pr.answer).toLowerCase().split(/\W+/).filter(function(x){ return x.length > 3; }) : [];
+            var words = !want.length && it.pr.answer ? String(it.pr.answer).replace(/\([^)]*\)/g, "").toLowerCase().split(/\W+/).filter(function(x){ return x.length > 3; }) : [];
             var missWord = words.filter(function(w){ return text.toLowerCase().indexOf(w) < 0; });
             // an expression answer (14x − 17) is easier to compare as text with the spaces taken out
             var squash = function(x){ return String(x).replace(/[\s|:()]/g, "").replace(/[−–]/g, "-").toLowerCase(); };

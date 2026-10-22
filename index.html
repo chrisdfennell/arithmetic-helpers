@@ -34,7 +34,7 @@
   :root{
     --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
     --grid:rgba(25,33,29,.06);
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --exp:#BE185D; --pro:#A21CAF; --fla:#C2410C; --day:#4338CA;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --gra:#0369A1; --exp:#BE185D; --pro:#A21CAF; --fla:#C2410C; --day:#4338CA;
     --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
     --shadow-up:0 1px 0 rgba(25,33,29,.05), 0 24px 40px -22px rgba(25,33,29,.55);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -45,7 +45,7 @@
     :root:not([data-theme="light"]){
       --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
       --grid:rgba(231,235,228,.05);
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
       --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
     }
@@ -53,7 +53,7 @@
   :root[data-theme="dark"]{
     --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
     --grid:rgba(231,235,228,.05);
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
   }
@@ -73,7 +73,7 @@
   .c-add{--c:var(--add)} .c-sub{--c:var(--sub)} .c-mul{--c:var(--mul)} .c-div{--c:var(--div)}
   .c-ord{--c:var(--ord)} .c-alg{--c:var(--alg)} .c-geo{--c:var(--geo)}
   .c-fra{--c:var(--fra)} .c-pct{--c:var(--pct)} .c-fac{--c:var(--fac)} .c-int{--c:var(--int)} .c-ink{--c:var(--ink)}
-  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)}
+  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-gra{--c:var(--gra)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)}
   .stripe i{background:var(--c)}
 
   /* ---- top bar ---- */
@@ -619,6 +619,26 @@
         </div>
       </a>
     </div>
+    <a class="card wide c-gra" href="graphing.html">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 260 142">
+          <path d="M20 10 V134 M50 10 V134 M80 10 V134 M110 10 V134 M140 10 V134 M170 10 V134 M200 10 V134 M230 10 V134 M10 22 H250 M10 52 H250 M10 82 H250 M10 112 H250" stroke="var(--ink-3)" stroke-width=".6" opacity=".55"/>
+          <path class="ln" d="M110 10 V134 M10 82 H250" stroke-width="1.6"/>
+          <path d="M44 14 Q110 190 176 14" fill="none" stroke="var(--c)" stroke-width="3" stroke-linecap="round"/>
+          <line x1="20" y1="128" x2="240" y2="18" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 4" stroke-linecap="round"/>
+          <circle cx="62" cy="107" r="5" fill="var(--c)"/><circle cx="160" cy="58" r="5" fill="var(--c)"/>
+          <path d="M190 120 l14 -14 l14 14 z" fill="color-mix(in srgb, var(--c) 20%, transparent)" stroke="var(--c)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="kind"><b>⌗</b> Graphing</span>
+        <h3>The Graph Paper</h3>
+        <p>Plot points by tapping the grid, fill a table of values, graph several functions at once, find where two
+          lines cross, shade inequalities, move shapes around, and fit a trend line to a scatter plot.</p>
+        <ul class="ticks"><li>tap to plot</li><li>parabolas, |x|, 2ˣ</li><li>systems by graphing</li><li>transformations</li><li>scatter plots</li></ul>
+        <span class="go">Open <span aria-hidden="true">→</span></span>
+      </div>
+    </a>
   </section>
 
   <section class="group" aria-labelledby="g8">
