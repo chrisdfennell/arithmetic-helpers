@@ -64,7 +64,7 @@ Arithmetic Helpers is a free website for math from the early grades through firs
 There are no accounts and nothing to sign up for: it's plain web pages. It also installs like an app and works offline.
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="900" alt="The home page: the headline Every step, written out, a Type any problem box, example problems, an animated demo working 20 − 12 ÷ 4 × 2 + 1 down to 15, and cards for the four operations">
+  <img src="docs/screenshots/home.png" width="900" alt="The home page: Arithmetic Helpers in big letters over one search box; x^2 − 5x + 6 = 0 is typed in and the suggestion under it says Show the steps on the Area Box, a quadratic. Example problems and links to browse all topics, worksheets, practice sets and flash cards sit underneath">
 </p>
 
 ## The helpers
@@ -322,7 +322,7 @@ Every helper page has:
 And across the whole site:
 
 - light/dark and text size are remembered on every page, not one page at a time
-- a **Type any problem** search box in the bar at the top of every page; on the home page it works out which helper a problem belongs to and opens it there (and "what is a denominator" opens the Word List)
+- a **Type any problem** search box in the bar at the top of every page; on the home page it suggests as you type: which helper a problem belongs to, the topics that match a word ("frac", "slope", "time"), and the Word List for "what is a denominator"; arrow keys and Enter pick one
 - **Big screen** mode for a projector or smartboard, and **Read aloud** for the step-by-step explanation, in the most natural voice the device has (**Voice** picks another voice or speed)
 - **Recent** problems on each page, and keyboard shortcuts (press `?` to see them)
 - a **QR code** for the page on screen (the `QR` button or `Q`), big enough for a projector; practice sets and worksheets have one too

@@ -91,157 +91,110 @@
   .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
   :focus-visible{outline:2.5px solid var(--ord);outline-offset:3px}
 
-  /* ---- hero ---- */
-  .hero{position:relative;padding:40px 0 64px}
-  .hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  /* ---- the first screen: one big box ---- */
+  .stage{min-height:calc(100vh - 84px);min-height:calc(100svh - 84px);display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;padding:28px 0 64px;position:relative}
+  .stage::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
     background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);
     background-size:26px 26px;
-    -webkit-mask-image:radial-gradient(ellipse 75% 85% at 70% 40%, #000 30%, transparent 75%);
-            mask-image:radial-gradient(ellipse 75% 85% at 70% 40%, #000 30%, transparent 75%)}
-  .hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.02fr);gap:48px;align-items:center}
-  @media (max-width:900px){.hero-grid{grid-template-columns:minmax(0,1fr);gap:36px} h1{font-size:clamp(42px,10vw,72px)}}
-  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
-    text-transform:uppercase;color:var(--ink-3)}
-  h1{font-family:var(--f-display);font-stretch:120%;font-weight:800;
-    font-size:clamp(42px,5.7vw,78px);line-height:.94;letter-spacing:-.03em;margin:.22em 0 .32em;text-wrap:balance}
-  h1 .soft{color:var(--ink-3)}
-  h1 .u{background:linear-gradient(90deg,var(--add),var(--sub),var(--mul),var(--div),var(--fra),var(--pct),var(--fac),var(--int),var(--rat),var(--ord),var(--alg),var(--lin),var(--geo),var(--sta),var(--wrd));
-    background-size:100% .12em;background-repeat:no-repeat;background-position:0 92%;padding-bottom:.04em}
-  .lede{color:var(--ink-2);font-size:18px;max-width:46ch;margin:0 0 28px}
-  .cta{display:flex;gap:12px;flex-wrap:wrap}
-  .btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;text-decoration:none;
-    border-radius:10px;padding:11px 18px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
-  .btn:hover{border-color:var(--ink-3)}
-  .btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-  .btn.primary:hover{filter:brightness(1.15)}
+    -webkit-mask-image:radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 72%);
+            mask-image:radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 72%)}
+  .bigmark{display:grid;grid-template-columns:repeat(4,16px);grid-auto-rows:16px;gap:5px;margin:0 auto 18px}
+  .bigmark i{border-radius:4px;background:var(--c)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(38px,6.4vw,68px);line-height:1;
+    letter-spacing:-.03em;margin:0}
+  .tagline{color:var(--ink-2);font-size:clamp(16px,2.2vw,19px);margin:14px 0 30px;max-width:34em}
+  .tagline .u{background:linear-gradient(90deg,var(--add),var(--sub),var(--mul),var(--div),var(--fra),var(--pct),var(--fac),var(--int),var(--rat),var(--ord),var(--alg),var(--lin),var(--geo),var(--sta),var(--wrd));
+    background-size:100% .14em;background-repeat:no-repeat;background-position:0 96%;padding-bottom:.08em;color:var(--ink);font-weight:600}
 
-  /* "type any problem" */
-  .ask{margin:0 0 14px;max-width:560px}
-  .ask label{display:block;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--ink-3);margin-bottom:7px}
-  .ask-row{display:flex;gap:8px;background:var(--surface);border:1.5px solid var(--rule);border-radius:14px;padding:6px;
-    box-shadow:var(--shadow)}
+  .ask{position:relative;width:min(700px,100%);text-align:left}
+  .ask-row{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;
+    padding:7px 7px 7px 18px;box-shadow:var(--shadow-up)}
   .ask-row:focus-within{border-color:var(--ink-3)}
-  .ask-row input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-family:var(--f-mono);font-size:18px;
-    font-weight:600;padding:8px 10px;outline:none}
-  .ask-row input::placeholder{color:var(--ink-3);font-weight:400}
-  .ask-row .btn{border-radius:10px;white-space:nowrap}
-  .ask-to{min-height:1.6em;margin:8px 2px 0;font-size:14px;color:var(--ink-2)}
-  .ask-to b{color:var(--c,var(--ink));font-weight:600}
-  .ask-to a{color:var(--ink-2)}
-  .ask-try{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;font-size:13px;color:var(--ink-3)}
-  .ask-try button{font-family:var(--f-mono);font-size:12.5px;background:transparent;border:1px solid var(--rule);color:var(--ink-2);
-    border-radius:999px;padding:4px 10px;cursor:pointer}
-  .ask-try button:hover{color:var(--ink);border-color:var(--ink-3);background:var(--surface)}
-  @media (max-width:520px){.ask-row{flex-direction:column}.ask-row .btn{justify-content:center}}
-  .alt-links{font-size:14px;color:var(--ink-3);margin:0}
-  .alt-links a{color:var(--ink-2);font-weight:600}
+  .ask.open .ask-row{border-radius:18px 18px 0 0;border-bottom-color:transparent}
+  .ask-row svg{flex:none;width:20px;height:20px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round}
+  .ask-row input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-family:var(--f-mono);
+    font-size:clamp(17px,2.6vw,21px);font-weight:600;padding:12px 4px;outline:none}
+  .ask-row input::placeholder{color:var(--ink-3);font-weight:400;font-family:var(--f-body)}
+  .go-btn{font-family:var(--f-body);font-weight:600;font-size:15px;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;
+    background:var(--ink);color:var(--paper);white-space:nowrap}
+  .go-btn:hover{filter:brightness(1.15)}
+  .sugg{position:absolute;left:0;right:0;top:100%;z-index:20;background:var(--surface);border:1.5px solid var(--ink-3);
+    border-top:1px solid var(--rule);border-radius:0 0 18px 18px;box-shadow:var(--shadow-up);padding:6px;max-height:min(420px,60vh);
+    overflow-y:auto}
+  .ask-row:has(+ .sugg:not([hidden])){border-color:var(--ink-3)}
+  .sugg[hidden]{display:none}
+  .opt{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:0 12px;align-items:center;padding:9px 10px;border-radius:12px;
+    text-decoration:none;color:inherit;cursor:pointer}
+  .opt.on, .opt:hover{background:color-mix(in srgb, var(--c, var(--ink)) 10%, var(--surface))}
+  .opt .sg{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
+    font-weight:600;font-size:15px;line-height:1;color:var(--c, var(--ink));background:color-mix(in srgb, var(--c, var(--ink)) 14%, transparent)}
+  .opt b{display:block;font-weight:600;font-size:15.5px;line-height:1.3}
+  .opt b code{font-family:var(--f-mono);font-size:14.5px}
+  .opt small{display:block;font-size:13px;color:var(--ink-3);line-height:1.35;margin-top:1px}
+  .opt small em{font-style:normal;color:var(--c, var(--ink-2));font-weight:600}
+  .opt .kbd{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);border:1px solid var(--rule);border-radius:6px;padding:2px 6px;
+    visibility:hidden}
+  .opt.on .kbd{visibility:visible}
+  .sugg-head{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+    padding:8px 10px 4px}
 
-  /* the worked example that plays itself */
-  .demo{background:var(--surface);border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow-up);overflow:hidden}
-  .demo-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
-    padding:12px 14px 12px 16px;border-bottom:1px solid var(--rule)}
-  .tabs{display:flex;background:var(--surface-2);border-radius:9px;padding:3px;gap:3px}
-  .tabs button{font-family:var(--f-body);font-size:13px;font-weight:500;border:0;background:transparent;color:var(--ink-2);
-    padding:6px 12px;border-radius:6px;cursor:pointer}
-  .tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
-  .pause{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.06em;color:var(--ink-2);
-    background:transparent;border:1px solid var(--rule);border-radius:999px;padding:5px 11px;cursor:pointer}
-  .pause:hover{color:var(--ink);border-color:var(--ink-3)}
-  .demo-body{padding:20px 20px 6px;min-height:254px}
-  .dl{display:grid;grid-template-columns:1.6ch auto;gap:0 12px;align-items:center;padding:7px 0;
-    font-family:var(--f-mono);font-weight:600;font-size:clamp(18px,2.6vw,23px);font-variant-numeric:tabular-nums;
-    border-bottom:1px dashed var(--rule);white-space:nowrap}
-  .dl:last-child{border-bottom:0}
-  .dl .eq{color:var(--ink-3)}
-  .dl.past{color:var(--ink-3)}
-  .dl.past .hl{background:transparent;box-shadow:none;color:inherit}
-  .dl.done .expr{color:var(--c)}
-  .dl i{font-family:Georgia,"Times New Roman",serif;font-size:1.08em}
-  .hl{color:var(--hc);background:color-mix(in srgb, var(--hc) 14%, transparent);box-shadow:inset 0 0 0 2px var(--hc);
-    border-radius:7px;padding:.04em .32ch}
-  .hl-m{--hc:var(--mul)} .hl-a{--hc:var(--add)} .hl-alg{--hc:var(--alg)}
-  @media (prefers-reduced-motion:no-preference){
-    .dl.now{animation:rise .35s ease both}
-    @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  }
-  .say{margin:0 20px;padding:12px 14px;border-radius:10px;background:var(--surface-2);font-size:14.5px;color:var(--ink-2);min-height:4.4em}
-  .say b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
-  .demo-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 20px 16px}
-  .dots{display:flex;gap:5px}
-  .dots i{width:7px;height:7px;border-radius:50%;background:var(--rule)}
-  .dots i.on{background:var(--c)}
-  .demo-foot a{font-size:14px;font-weight:600;color:var(--c);text-decoration:none}
-  .demo-foot a:hover{text-decoration:underline}
-
-  /* ---- sections ---- */
-  section.group{padding:26px 0 30px}
-  .group-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:18px}
-  .group-head h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(24px,3.4vw,32px);
-    letter-spacing:-.015em;margin:0}
-  .group-head p{margin:0;color:var(--ink-3);font-size:15px}
-  .num{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:.1em}
-
-  .cards{display:grid;gap:18px;grid-template-columns:repeat(4,minmax(0,1fr))}
-  @media (max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:560px){
-    .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-    .cards .art{height:104px} .cards .art svg{width:min(170px,92%);height:auto}
-    .cards .body{padding:12px 13px 14px;gap:5px} .cards h3{font-size:16.5px} .cards p{font-size:13px}
-    .kind{font-size:10px;letter-spacing:.08em}
-  }
-  .cards.two{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-  @media (max-width:1000px){.cards.three{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:700px){.cards.three{grid-template-columns:minmax(0,1fr)}}
-  .cards + .cards, a.card.wide + .cards, .cards + a.card.wide, a.card.wide + a.card.wide{margin-top:18px}
-  .install{font-family:var(--f-body);font-size:14px;font-weight:600;background:transparent;color:var(--ink-2);
-    border:1px solid var(--rule);border-radius:999px;padding:4px 12px;cursor:pointer;margin-left:6px}
+  .try{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;align-items:center;margin:18px 0 0;font-size:13px;color:var(--ink-3)}
+  .try button{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);color:var(--ink-2);
+    border-radius:999px;padding:5px 11px;cursor:pointer}
+  .try button:hover{color:var(--ink);border-color:var(--ink-3);background:var(--surface)}
+  .quick{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin:26px 0 0;font-size:14.5px}
+  .quick a, .quick button{color:var(--ink-2);font-weight:600;text-decoration:none;background:none;border:0;padding:4px 0;font:inherit;
+    font-weight:600;cursor:pointer}
+  .quick a:hover, .quick button:hover{color:var(--ink);text-decoration:underline}
+  .quick .browse{color:var(--ink)}
+  .quick .browse span{display:inline-block;transition:transform .15s ease}
+  .quick .browse[aria-expanded="true"] span{transform:rotate(180deg)}
+  .install{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:transparent;color:var(--ink-2);
+    border:1px solid var(--rule);border-radius:999px;padding:4px 12px;cursor:pointer;margin-top:18px}
   .install:hover{color:var(--ink);border-color:var(--ink-3)}
-  .ios-tip{font-size:13px;color:var(--ink-3);margin:6px 0 0}
-  @media (max-width:700px){.cards.two{grid-template-columns:minmax(0,1fr)}}
-
-  a.card{display:flex;flex-direction:column;text-decoration:none;color:inherit;background:var(--surface);
-    border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow);overflow:hidden;
-    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease}
-  a.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-up);border-color:var(--c)}
-  @media (prefers-reduced-motion:reduce){a.card{transition:none} a.card:hover{transform:none}}
-  a.card:focus-visible{outline-color:var(--c)}
-  .art{display:flex;align-items:center;justify-content:center;height:132px;
-    background:color-mix(in srgb, var(--c) 9%, var(--surface));border-bottom:1px solid color-mix(in srgb, var(--c) 22%, var(--rule))}
-  .art svg{width:200px;height:110px;overflow:visible}
-  .art text{font-family:var(--f-mono);font-weight:600;font-size:17px;fill:var(--ink);font-variant-numeric:tabular-nums}
-  .art .k{fill:var(--c)}
-  .art .sm{font-size:11.5px}
-  .art .mu{fill:var(--ink-3)}
-  .art .ln{stroke:var(--ink);stroke-width:2;stroke-linecap:round;fill:none}
-  .art .lk{stroke:var(--c);stroke-width:2;stroke-linecap:round;fill:none}
-  .art .fk{fill:color-mix(in srgb, var(--c) 16%, transparent);stroke:var(--c);stroke-width:2}
-  .art .var{font-family:Georgia,"Times New Roman",serif;font-style:italic}
-  .body{display:flex;flex-direction:column;gap:7px;padding:16px 18px 18px;flex:1}
-  .kind{display:flex;align-items:center;gap:8px;font-family:var(--f-mono);font-size:11px;font-weight:600;
-    letter-spacing:.12em;text-transform:uppercase;color:var(--c)}
-  .kind b{font-size:16px;letter-spacing:0;line-height:1}
-  .card h3{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:20px;letter-spacing:-.005em;margin:0}
-  .card p{margin:0;font-size:14.5px;color:var(--ink-2)}
-  .go{margin-top:auto;padding-top:8px;font-size:13.5px;font-weight:600;color:var(--c)}
-  .go span{display:inline-block;transition:transform .18s ease}
-  a.card:hover .go span{transform:translateX(4px)}
-
-  /* the wide card for the order of operations */
-  a.card.wide{flex-direction:row}
-  a.card.wide .art{width:min(42%,380px);height:auto;min-height:190px;flex:none;
-    border-bottom:0;border-right:1px solid color-mix(in srgb, var(--c) 22%, var(--rule))}
-  a.card.wide .art svg{width:260px;height:142px}
-  a.card.wide .body{padding:22px 26px 24px;gap:9px}
-  a.card.wide h3{font-size:24px}
-  .ticks{display:flex;flex-wrap:wrap;gap:6px 8px;margin:4px 0 0;padding:0;list-style:none}
-  .ticks li{font-size:13px;color:var(--ink-2);background:var(--surface-2);border-radius:999px;padding:3px 10px}
-  @media (max-width:700px){
-    a.card.wide{flex-direction:column}
-    a.card.wide .art{width:auto;min-height:0;height:150px;border-right:0;border-bottom:1px solid color-mix(in srgb, var(--c) 22%, var(--rule))}
-    a.card.wide .art svg{width:220px;height:120px}
+  .ios-tip{font-size:13px;color:var(--ink-3);margin:14px 0 0}
+  @media (max-width:560px){
+    .stage{min-height:0;padding:34px 0 40px;justify-content:flex-start}
+    .bigmark{grid-template-columns:repeat(4,12px);grid-auto-rows:12px;gap:4px;margin-bottom:14px}
+    .ask-row{padding:5px 5px 5px 12px;border-radius:14px} .ask.open .ask-row{border-radius:14px 14px 0 0}
+    .sugg{border-radius:0 0 14px 14px}
+    .go-btn{padding:11px 13px} .go-btn .w{display:none}
+    .opt{grid-template-columns:32px minmax(0,1fr);padding:8px} .opt .sg{width:32px;height:32px;font-size:13.5px} .opt .kbd{display:none}
+    .try button:nth-of-type(n+5){display:none}
+    .quick{gap:2px 14px;font-size:14px}
   }
+
+  /* ---- browse topics: every helper, in a compact list ---- */
+  .browse-panel{padding:6px 0 26px;scroll-margin-top:16px}
+  .browse-panel[hidden]{display:none}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:6px}
+  .panel-head h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;margin:0}
+  .grades{display:flex;flex-wrap:wrap;gap:3px;background:var(--surface-2);border-radius:999px;padding:4px}
+  .grades button{font-family:var(--f-body);font-size:13.5px;font-weight:600;border:0;background:transparent;color:var(--ink-2);
+    padding:6px 13px;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .grades button:hover{color:var(--ink)}
+  .grades button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+  .cols{columns:4 230px;column-gap:28px;margin-top:16px}
+  .col{break-inside:avoid;margin:0 0 20px}
+  .col h3{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+    margin:0 0 6px}
+  .col[hidden], .col a[hidden]{display:none}
+  .col a{display:grid;grid-template-columns:30px minmax(0,1fr);gap:0 10px;align-items:center;padding:6px 6px;margin:0 -6px;border-radius:9px;
+    text-decoration:none;color:inherit}
+  .col a:hover{background:color-mix(in srgb, var(--c) 10%, transparent)}
+  .col a:focus-visible{outline-color:var(--c)}
+  .col .sg{grid-row:1 / span 2;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--f-mono);font-weight:600;font-size:13px;line-height:1;color:var(--c);background:color-mix(in srgb, var(--c) 14%, transparent)}
+  .col b{font-weight:600;font-size:15px;line-height:1.25}
+  .col small{font-size:12.5px;color:var(--c);font-weight:600;line-height:1.3}
+  .shown{font-size:13.5px;color:var(--ink-3);margin:2px 0 0;min-height:1.4em}
+  .shown button{font:inherit;font-weight:600;color:var(--ink-2);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+  section.group{padding:24px 0 6px}
+  .group-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+  .group-head h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;margin:0}
+  .group-head p{margin:0;color:var(--ink-3);font-size:15px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
   /* ---- what every page does ---- */
   .every{margin:34px 0 10px;background:var(--surface);border:1px solid var(--rule);border-radius:18px;box-shadow:var(--shadow);
@@ -274,42 +227,90 @@
     <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
   </header>
 
-  <section class="hero">
-    <div class="hero-grid">
-      <div>
-        <div class="eyebrow">Free &middot; no sign-up &middot; nothing to install</div>
-        <h1>Every step, <span class="u">written out.</span></h1>
-        <p class="lede">Type in a math problem and watch it get worked the way it’s done on paper, one move at a time,
-          with the reason for each move and a picture beside it. From carrying the one to finding a derivative:
-          the early grades through first-year college.</p>
-        <form class="ask" id="ask" role="search" autocomplete="off">
-          <label for="askIn">Type any problem</label>
-          <div class="ask-row">
-            <input id="askIn" type="text" spellcheck="false" placeholder="3x + 2 = 11" aria-describedby="askTo">
-            <button class="btn primary" type="submit">Show the steps <span aria-hidden="true">→</span></button>
-          </div>
-          <div class="ask-to" id="askTo" aria-live="polite"></div>
-          <div class="ask-try" id="askTry">Try:</div>
-        </form>
-        <p class="alt-links">Or try <a href="practice/problem-of-the-day.html">today’s problem</a>, <a href="helpers/scratch-paper.html">do one by hand</a>, <a href="#helpers">pick a helper</a>, <a href="practice/sets.html">make a practice set</a>,
-          <a href="practice/worksheets.html">make a worksheet</a>, or <a href="reference/definitions.html">look up a word</a>.<button type="button" class="install" id="installBtn" hidden>Install the app</button></p>
-        <p class="ios-tip" id="iosTip" hidden>To use it like an app on an iPhone or iPad, tap Share, then <b>Add to Home Screen</b>.</p>
+  <section class="stage" aria-labelledby="hTitle">
+    <span class="bigmark" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-alg"></i><i class="c-geo"></i></span>
+    <h1 id="hTitle">Arithmetic Helpers</h1>
+    <p class="tagline">Type any math problem and see <span class="u">every step, written out</span>, the way it’s done on paper.
+      Counting to calculus.</p>
+    <form class="ask" id="ask" role="search" autocomplete="off">
+      <div class="ask-row">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6"/><path d="M13 13l5 5"/></svg>
+        <label class="sr" for="askIn">Type any math problem, or a topic</label>
+        <input id="askIn" type="text" spellcheck="false" autocomplete="off" placeholder="Type a problem or a topic"
+          role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="sugg" aria-describedby="askHint">
+        <button class="go-btn" type="submit">Show <span class="w">the steps</span> <span aria-hidden="true">→</span></button>
       </div>
+      <div class="sugg" id="sugg" role="listbox" aria-label="Suggestions" hidden></div>
+      <p class="sr" id="askHint">Suggestions appear as you type. Use the up and down arrows to choose one, and Enter to open it.</p>
+    </form>
+    <div class="try" id="askTry">Try:</div>
+    <nav class="quick" aria-label="More">
+      <button type="button" class="browse" id="browseBtn" aria-expanded="false" aria-controls="topics">Browse all topics <span aria-hidden="true">▾</span></button>
+      <a href="practice/worksheets.html">Worksheets</a>
+      <a href="practice/sets.html">Practice sets</a>
+      <a href="practice/flash-cards.html">Flash cards</a>
+      <a href="practice/problem-of-the-day.html">Problem of the day</a>
+      <a href="reference/sheets.html">Reference sheets</a>
+    </nav>
+    <button type="button" class="install" id="installBtn" hidden>Install the app</button>
+    <p class="ios-tip" id="iosTip" hidden>To use it like an app on an iPhone or iPad, tap Share, then <b>Add to Home Screen</b>.</p>
+  </section>
 
-      <div class="demo c-ord" id="demo" aria-label="A worked example">
-        <div class="demo-head">
-          <div class="tabs" role="group" aria-label="Which example">
-            <button type="button" data-demo="ord" aria-pressed="true">Order of operations</button>
-            <button type="button" data-demo="alg" aria-pressed="false">Algebra</button>
-          </div>
-          <button type="button" class="pause" id="pauseBtn">Pause</button>
-        </div>
-        <div class="demo-body" id="demoBody"></div>
-        <p class="say" id="demoSay"></p>
-        <div class="demo-foot">
-          <span class="dots" id="demoDots" aria-hidden="true"></span>
-          <a id="demoLink" href="helpers/order-of-operations.html">Work your own <span aria-hidden="true">→</span></a>
-        </div>
+  <section class="browse-panel" id="topics" aria-labelledby="gTop" hidden>
+    <div class="panel-head"><h2 id="gTop">All 25 topics</h2>
+      <div class="grades" role="group" aria-label="Show topics for">
+        <button type="button" data-grade="all" aria-pressed="true">All</button>
+        <button type="button" data-grade="k5" aria-pressed="false">Grades K–5</button>
+        <button type="button" data-grade="m" aria-pressed="false">6–8</button>
+        <button type="button" data-grade="hs" aria-pressed="false">9–12</button>
+        <button type="button" data-grade="col" aria-pressed="false">College</button>
+      </div></div>
+    <p class="shown" id="shown" aria-live="polite"></p>
+    <div class="cols">
+      <div class="col"><h3>Counting and the four operations</h3>
+        <a class="c-num" href="helpers/number-sense.html" data-grades="k5"><span class="sg" aria-hidden="true">#</span><b>Place value</b><small>The Place Value Chart</small></a>
+        <a class="c-add" href="helpers/addition.html" data-grades="k5 m"><span class="sg" aria-hidden="true">+</span><b>Addition</b><small>The Carry Column</small></a>
+        <a class="c-sub" href="helpers/subtraction.html" data-grades="k5 m"><span class="sg" aria-hidden="true">−</span><b>Subtraction</b><small>The Borrow Bank</small></a>
+        <a class="c-mul" href="helpers/multiplication.html" data-grades="k5 m"><span class="sg" aria-hidden="true">×</span><b>Multiplication</b><small>The Product Ladder</small></a>
+        <a class="c-div" href="helpers/division.html" data-grades="k5 m"><span class="sg" aria-hidden="true">÷</span><b>Long division</b><small>The Division House</small></a>
+        <a class="c-scr" href="helpers/scratch-paper.html" data-grades="k5 m"><span class="sg" aria-hidden="true">✍</span><b>Do it by hand</b><small>The Scratch Paper</small></a>
+        <a class="c-ord" href="helpers/order-of-operations.html" data-grades="k5 m"><span class="sg" aria-hidden="true">( )</span><b>Order of operations</b><small>The Order Stack</small></a>
+      </div>
+      <div class="col"><h3>Fractions, ratios and number facts</h3>
+        <a class="c-fra" href="helpers/fractions.html" data-grades="k5 m"><span class="sg" aria-hidden="true">½</span><b>Fractions</b><small>The Fraction Bar</small></a>
+        <a class="c-pct" href="helpers/percents.html" data-grades="m"><span class="sg" aria-hidden="true">%</span><b>Percents</b><small>The Hundred Grid</small></a>
+        <a class="c-fac" href="helpers/factors-and-primes.html" data-grades="k5 m"><span class="sg" aria-hidden="true">⋔</span><b>Factors and primes</b><small>The Factor Tree</small></a>
+        <a class="c-int" href="helpers/negative-numbers.html" data-grades="m"><span class="sg" aria-hidden="true">±</span><b>Negative numbers</b><small>The Number Line</small></a>
+        <a class="c-rat" href="helpers/ratios.html" data-grades="m"><span class="sg" aria-hidden="true">∶</span><b>Ratios and rates</b><small>The Ratio Table</small></a>
+        <a class="c-exp" href="helpers/exponents.html" data-grades="m hs"><span class="sg" aria-hidden="true">xⁿ</span><b>Exponents and roots</b><small>The Power Tower</small></a>
+      </div>
+      <div class="col"><h3>Algebra and graphs</h3>
+        <a class="c-alg" href="helpers/algebra.html" data-grades="m hs"><span class="sg" aria-hidden="true">x</span><b>Equations</b><small>The Balance Scale</small></a>
+        <a class="c-lin" href="helpers/lines-and-slope.html" data-grades="m hs"><span class="sg" aria-hidden="true">↗</span><b>Lines and slope</b><small>The Slope Grid</small></a>
+        <a class="c-gra" href="helpers/graphing.html" data-grades="m hs"><span class="sg" aria-hidden="true">⌗</span><b>Graphing</b><small>The Graph Paper</small></a>
+        <a class="c-qua" href="helpers/quadratics.html" data-grades="hs"><span class="sg" aria-hidden="true">x²</span><b>Quadratics and polynomials</b><small>The Area Box</small></a>
+        <a class="c-log" href="helpers/logarithms.html" data-grades="hs col"><span class="sg" aria-hidden="true">log</span><b>Logarithms</b><small>The Log Ladder</small></a>
+        <a class="c-seq" href="helpers/sequences.html" data-grades="hs"><span class="sg" aria-hidden="true">aₙ</span><b>Sequences and series</b><small>The Number Staircase</small></a>
+      </div>
+      <div class="col"><h3>Shapes, data, chance and stories</h3>
+        <a class="c-geo" href="helpers/geometry.html" data-grades="k5 m hs"><span class="sg" aria-hidden="true">△</span><b>Geometry</b><small>The Shape Shop</small></a>
+        <a class="c-sta" href="helpers/statistics.html" data-grades="m hs"><span class="sg" aria-hidden="true">⁘</span><b>Statistics</b><small>The Dot Plot</small></a>
+        <a class="c-pro" href="helpers/probability.html" data-grades="m hs"><span class="sg" aria-hidden="true">◔</span><b>Probability</b><small>The Chance Spinner</small></a>
+        <a class="c-wrd" href="helpers/story-problems.html" data-grades="k5 m"><span class="sg" aria-hidden="true">✎</span><b>Story problems</b><small>The Story Problem</small></a>
+      </div>
+      <div class="col"><h3>Trigonometry and calculus</h3>
+        <a class="c-tri" href="helpers/trigonometry.html" data-grades="hs col"><span class="sg" aria-hidden="true">∠</span><b>Trigonometry</b><small>The Unit Circle</small></a>
+        <a class="c-cal" href="helpers/calculus.html" data-grades="col"><span class="sg" aria-hidden="true">∫</span><b>Calculus</b><small>The Rate Machine</small></a>
+      </div>
+      <div class="col"><h3>Practice, print and teach</h3>
+        <a class="c-ord" href="practice/worksheets.html" data-tool><span class="sg" aria-hidden="true">▤</span><b>Worksheets</b><small>The Worksheet Maker</small></a>
+        <a class="c-rat" href="practice/sets.html" data-tool><span class="sg" aria-hidden="true">▶</span><b>Practice sets</b><small>Share as a link or QR code</small></a>
+        <a class="c-fla" href="practice/flash-cards.html" data-tool><span class="sg" aria-hidden="true">7×8</span><b>Flash cards</b><small>The Flash Cards</small></a>
+        <a class="c-day" href="practice/problem-of-the-day.html" data-tool><span class="sg" aria-hidden="true">★</span><b>Problem of the day</b><small>A new one every day</small></a>
+        <a class="c-sta" href="practice/progress.html" data-tool><span class="sg" aria-hidden="true">✓</span><b>Your progress</b><small>Kept on this device</small></a>
+        <a class="c-geo" href="reference/sheets.html" data-tool><span class="sg" aria-hidden="true">▦</span><b>Reference sheets</b><small>Forty sheets to print</small></a>
+        <a class="c-alg" href="reference/definitions.html" data-tool><span class="sg" aria-hidden="true">Aa</span><b>Math words</b><small>The Word List</small></a>
+        <a class="c-ink" href="practice/class-results.html" data-tool><span class="sg" aria-hidden="true">▥</span><b>Class results</b><small>A teacher&#x27;s view</small></a>
       </div>
     </div>
   </section>
@@ -317,708 +318,6 @@
   <section class="group" id="practiceSec" aria-labelledby="g7" hidden>
     <div class="group-head"><h2 id="g7">Your practice</h2><p>Kept on this device only.</p></div>
     <div id="progressPanel"></div>
-  </section>
-
-  <div id="helpers"></div>
-
-  <section class="group" aria-labelledby="g1">
-    <div class="group-head"><span class="num">01</span><h2 id="g1">The four operations</h2>
-      <p>Whole numbers, decimals and fractions, on paper.</p></div>
-    <div class="cards">
-      <a class="card c-add" href="helpers/addition.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <text class="k sm" x="110" y="20" text-anchor="middle">1</text>
-            <text x="110" y="42" text-anchor="middle">4</text><text x="128" y="42" text-anchor="middle">7</text>
-            <text class="mu" x="86" y="64" text-anchor="middle">+</text>
-            <text x="110" y="64" text-anchor="middle">3</text><text x="128" y="64" text-anchor="middle">8</text>
-            <line class="ln" x1="78" y1="73" x2="140" y2="73"/>
-            <text class="k" x="110" y="96" text-anchor="middle">8</text><text class="k" x="128" y="96" text-anchor="middle">5</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>+</b> Addition</span>
-          <h3>The Carry Column</h3>
-          <p>Line up the decimal points or find a common denominator, and watch every carry.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-sub" href="helpers/subtraction.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <text class="k sm" x="110" y="20" text-anchor="middle">4</text><text class="k sm" x="130" y="20" text-anchor="middle">12</text>
-            <text x="110" y="42" text-anchor="middle">5</text><text x="128" y="42" text-anchor="middle">2</text>
-            <line class="lk" x1="102" y1="45" x2="118" y2="29"/><line class="lk" x1="120" y1="45" x2="136" y2="29"/>
-            <text class="mu" x="86" y="64" text-anchor="middle">−</text>
-            <text x="110" y="64" text-anchor="middle">1</text><text x="128" y="64" text-anchor="middle">7</text>
-            <line class="ln" x1="78" y1="73" x2="140" y2="73"/>
-            <text class="k" x="110" y="96" text-anchor="middle">3</text><text class="k" x="128" y="96" text-anchor="middle">5</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>−</b> Subtraction</span>
-          <h3>The Borrow Bank</h3>
-          <p>Every borrow crossed out and written above, so you can see where the ten came from.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-mul" href="helpers/multiplication.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <text x="118" y="16" text-anchor="middle">2</text><text x="134" y="16" text-anchor="middle">3</text>
-            <text class="mu" x="86" y="35" text-anchor="middle">×</text>
-            <text x="118" y="35" text-anchor="middle">1</text><text x="134" y="35" text-anchor="middle">4</text>
-            <line class="ln" x1="78" y1="43" x2="144" y2="43"/>
-            <text class="k" x="118" y="61" text-anchor="middle">9</text><text class="k" x="134" y="61" text-anchor="middle">2</text>
-            <text class="k" x="102" y="79" text-anchor="middle">2</text><text class="k" x="118" y="79" text-anchor="middle">3</text><text class="k" x="134" y="79" text-anchor="middle">0</text>
-            <line class="lk" x1="78" y1="87" x2="144" y2="87"/>
-            <text x="102" y="105" text-anchor="middle">3</text><text x="118" y="105" text-anchor="middle">2</text><text x="134" y="105" text-anchor="middle">2</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>×</b> Multiplication</span>
-          <h3>The Product Ladder</h3>
-          <p>One rung per digit, partial products stacked and added, then the decimal point.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-div" href="helpers/division.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <text class="k" x="118" y="24" text-anchor="middle">1</text><text class="k" x="134" y="24" text-anchor="middle">3</text>
-            <line class="ln" x1="96" y1="32" x2="148" y2="32"/>
-            <path class="ln" d="M96 32 Q105 47 96 62"/>
-            <text x="80" y="54" text-anchor="middle">4</text>
-            <text x="118" y="54" text-anchor="middle">5</text><text x="134" y="54" text-anchor="middle">2</text>
-            <text class="mu" x="104" y="76" text-anchor="middle">−</text><text class="mu" x="118" y="76" text-anchor="middle">4</text>
-            <line class="lk" x1="134" y1="60" x2="134" y2="84" stroke-dasharray="3 3"/>
-            <line class="ln" x1="108" y1="83" x2="128" y2="83"/>
-            <text x="118" y="102" text-anchor="middle">1</text><text x="134" y="102" text-anchor="middle">2</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>÷</b> Division</span>
-          <h3>The Division House</h3>
-          <p>Divide, multiply, subtract, bring down. Remainders, decimals or fractions.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-      <a class="card wide c-scr" href="helpers/scratch-paper.html">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 260 142">
-          <path d="M60 8 V134 M90 8 V134 M120 8 V134 M150 8 V134 M180 8 V134 M210 8 V134 M40 20 H230 M40 50 H230 M40 80 H230 M40 110 H230" stroke="var(--ink-3)" stroke-width=".6" opacity=".55"/>
-          <rect x="122" y="22" width="26" height="26" rx="4" fill="color-mix(in srgb, var(--c) 22%, transparent)" stroke="var(--c)" stroke-width="2"/>
-          <text class="k sm" x="135" y="41" text-anchor="middle" style="font-size:15px">2</text>
-          <text x="135" y="72" text-anchor="middle" style="font-size:22px">2</text><text x="165" y="72" text-anchor="middle" style="font-size:22px">5</text>
-          <text class="mu" x="105" y="102" text-anchor="middle" style="font-size:22px">×</text><text x="165" y="102" text-anchor="middle" style="font-size:22px">4</text>
-          <path class="ln" d="M90 112 H182" stroke-width="2.5"/>
-          <text class="k" x="105" y="132" text-anchor="middle" style="font-size:22px">1</text><text class="k" x="135" y="132" text-anchor="middle" style="font-size:22px">0</text><text class="k" x="165" y="132" text-anchor="middle" style="font-size:22px">0</text>
-        </svg>
-      </div>
-      <div class="body">
-        <span class="kind"><b>✍</b> Do it by hand</span>
-        <h3>The Scratch Paper</h3>
-        <p>Type a problem and work it out yourself on squared paper: tap above a digit to write the carry, tap a digit to
-          cross it out and borrow, write each row, bring down in long division. It checks each square as you go, with a
-          hint when something's off.</p>
-        <ul class="ticks"><li>+ − × ÷</li><li>carries and borrowing</li><li>long division</li><li>a hint for every square</li></ul>
-        <span class="go">Try it by hand <span aria-hidden="true">→</span></span>
-      </div>
-    </a>
-  </section>
-
-  <section class="group" aria-labelledby="g5">
-    <div class="group-head"><span class="num">02</span><h2 id="g5">Number sense</h2>
-      <p>Place value, rounding, time and money, then fractions, percents, factors and negative numbers.</p></div>
-      <a class="card wide c-num" href="helpers/number-sense.html">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 260 142">
-          <path class="ln" d="M30 34 H230 M30 34 V96 M80 34 V96 M130 34 V96 M180 34 V96 M230 34 V96 M30 96 H230" stroke-width="1.4"/>
-          <text class="sm mu" x="55" y="26" text-anchor="middle">1000s</text><text class="sm mu" x="105" y="26" text-anchor="middle">100s</text>
-          <text class="sm mu" x="155" y="26" text-anchor="middle">10s</text><text class="sm mu" x="205" y="26" text-anchor="middle">1s</text>
-          <text x="55" y="74" text-anchor="middle" style="font-size:26px">3</text><text class="k" x="105" y="74" text-anchor="middle" style="font-size:26px">4</text>
-          <text x="155" y="74" text-anchor="middle" style="font-size:26px">0</text><text x="205" y="74" text-anchor="middle" style="font-size:26px">7</text>
-          <rect x="84" y="44" width="42" height="44" rx="6" fill="none" stroke="var(--c)" stroke-width="2.5"/>
-          <text class="k" x="130" y="124" text-anchor="middle" style="font-size:15px">4 hundreds = 400</text>
-        </svg>
-      </div>
-      <div class="body">
-        <span class="kind"><b>#</b> Number sense</span>
-        <h3>The Place Value Chart</h3>
-        <p>Where the early grades start: what each digit is worth, with base-ten blocks, rounding on a number line,
-          estimating, comparing and ordering, skip counting, telling time and counting money.</p>
-        <ul class="ticks"><li>place value</li><li>rounding</li><li>time and money</li><li>skip counting</li></ul>
-        <span class="go">Open <span aria-hidden="true">→</span></span>
-      </div>
-    </a>
-    <div class="cards">
-      <a class="card c-fra" href="helpers/fractions.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <rect class="fk" x="18" y="16" width="105" height="26"/><rect x="123" y="16" width="35" height="26" fill="none" stroke="var(--c)" stroke-width="2"/>
-            <path class="lk" d="M53 16 V42 M88 16 V42" stroke-width="1.5"/>
-            <rect class="fk" x="18" y="66" width="105" height="26"/><rect x="123" y="66" width="35" height="26" fill="none" stroke="var(--c)" stroke-width="2"/>
-            <path class="lk" d="M35.5 66 V92 M53 66 V92 M70.5 66 V92 M88 66 V92 M105.5 66 V92 M140.5 66 V92" stroke-width="1.2"/>
-            <line x1="123" y1="8" x2="123" y2="100" stroke="var(--ink-3)" stroke-width="1.5" stroke-dasharray="3 3"/>
-            <text x="180" y="35" text-anchor="middle">3/4</text>
-            <text class="mu" x="180" y="58" text-anchor="middle">=</text>
-            <text x="180" y="85" text-anchor="middle">6/8</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>½</b> Fractions</span>
-          <h3>The Fraction Bar</h3>
-          <p>Simplify, convert to decimals and percents, compare and order, and find equivalent fractions.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-pct" href="helpers/percents.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <defs><pattern id="hgrid" width="8.8" height="8.8" patternUnits="userSpaceOnUse"><path d="M8.8 0H0V8.8" fill="none" stroke="var(--ink-3)" stroke-width=".7"/></pattern></defs>
-            <rect x="34" y="11" width="8.8" height="88" fill="var(--c)" opacity=".75"/>
-            <rect x="42.8" y="11" width="8.8" height="44" fill="var(--c)" opacity=".75"/>
-            <rect x="34" y="11" width="88" height="88" fill="url(#hgrid)" stroke="var(--ink)" stroke-width="1.6"/>
-            <text class="k" x="160" y="52" text-anchor="middle" style="font-size:24px">15%</text>
-            <text class="sm mu" x="160" y="72" text-anchor="middle">of 100</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>%</b> Percents</span>
-          <h3>The Hundred Grid</h3>
-          <p>Percent of a number, what percent, percent change, discounts, tax, tips and interest.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-fac" href="helpers/factors-and-primes.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <path class="ln" d="M92 24 L72 46 M108 24 L128 46 M64 66 L50 84 M76 66 L88 84 M124 66 L112 84 M136 66 L150 84" stroke-width="1.6"/>
-            <text x="100" y="20" text-anchor="middle">36</text>
-            <text x="68" y="62" text-anchor="middle">4</text><text x="132" y="62" text-anchor="middle">9</text>
-            <circle class="fk" cx="46" cy="94" r="10"/><circle class="fk" cx="90" cy="94" r="10"/>
-            <circle class="fk" cx="110" cy="94" r="10"/><circle class="fk" cx="154" cy="94" r="10"/>
-            <text class="k" x="46" y="100" text-anchor="middle">2</text><text class="k" x="90" y="100" text-anchor="middle">2</text>
-            <text class="k" x="110" y="100" text-anchor="middle">3</text><text class="k" x="154" y="100" text-anchor="middle">3</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>⋔</b> Factors &amp; primes</span>
-          <h3>The Factor Tree</h3>
-          <p>Factor pairs, prime factorization, prime or not, GCF and LCM, and divisibility rules.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-int" href="helpers/negative-numbers.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <line class="ln" x1="12" y1="76" x2="188" y2="76"/>
-            <path class="ln" d="M20 70 V82 M36 72 V80 M52 72 V80 M68 70 V82 M84 72 V80 M100 70 V82 M116 72 V80 M132 70 V82 M148 72 V80 M164 72 V80 M180 70 V82" stroke-width="1.5"/>
-            <text class="sm mu" x="20" y="98" text-anchor="middle">−5</text><text class="sm mu" x="100" y="98" text-anchor="middle">0</text><text class="sm mu" x="180" y="98" text-anchor="middle">5</text>
-            <path class="lk" d="M148 70 Q108 14 68 68" stroke-width="2.5"/>
-            <path d="M62 60 L68 70 L74 62" fill="none" stroke="var(--c)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="148" cy="76" r="5" fill="var(--ink)"/><circle cx="68" cy="76" r="5" fill="var(--c)"/>
-            <text class="k" x="108" y="32" text-anchor="middle">−5</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>±</b> Integers</span>
-          <h3>The Number Line</h3>
-          <p>Add, subtract, multiply and divide negative numbers, with number-line jumps and counters.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <section class="group" aria-labelledby="g2">
-    <div class="group-head"><span class="num">03</span><h2 id="g2">Put them together</h2>
-      <p>Long problems with every operation at once.</p></div>
-    <a class="card wide c-ord" href="helpers/order-of-operations.html">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 260 142">
-          <text x="30" y="34">3 + </text>
-          <rect class="fk" x="70" y="14" width="66" height="28" rx="7"/>
-          <text class="k" x="78" y="34">4 × 2</text>
-          <text class="mu" x="146" y="34">÷ 2</text>
-          <text class="mu" x="10" y="80">=</text>
-          <text x="30" y="80">3 + </text>
-          <rect class="fk" x="70" y="60" width="66" height="28" rx="7"/>
-          <text class="k" x="78" y="80">8 ÷ 2</text>
-          <text class="mu" x="10" y="126">=</text>
-          <text class="k" x="30" y="126">7</text>
-        </svg>
-      </div>
-      <div class="body">
-        <span class="kind"><b>( )</b> Order of operations</span>
-        <h3>The Order Stack</h3>
-        <p>PEMDAS, one operation at a time: parentheses, exponents, then × and ÷, then + and −, with the reason
-          each one goes next. An expression tree shows why, and a problem maker builds practice problems with
-          the operations you choose.</p>
-        <ul class="ticks"><li>+ − × ÷</li><li>parentheses</li><li>exponents</li><li>up to 24 operations</li><li>make me a problem</li></ul>
-        <span class="go">Open <span aria-hidden="true">→</span></span>
-      </div>
-    </a>
-    <a class="card wide c-wrd" href="helpers/story-problems.html">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 260 142">
-          <text class="sm" x="22" y="24">Ana has 12 shells. That is</text>
-          <text class="sm" x="22" y="42"><tspan class="k">5 more than</tspan> Ben has.</text>
-          <text class="sm k" x="22" y="60">How many does Ben have?</text>
-          <rect x="22" y="78" width="216" height="22" rx="4" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
-          <text class="sm" x="130" y="94" text-anchor="middle">Ana: 12</text>
-          <rect class="fk" x="22" y="106" width="126" height="22" rx="4"/>
-          <rect x="148" y="106" width="90" height="22" rx="4" fill="none" stroke="var(--ink-3)" stroke-width="1.4" stroke-dasharray="4 3"/>
-          <text class="sm k" x="85" y="122" text-anchor="middle">Ben: ?</text>
-          <text class="sm mu" x="193" y="122" text-anchor="middle">5 more</text>
-        </svg>
-      </div>
-      <div class="body">
-        <span class="kind"><b>✎</b> Story problems</span>
-        <h3>The Story Problem</h3>
-        <p>Paste or type a word problem and see it taken apart: what it tells you, what it asks, which operation
-          the words point to, a picture of the story, the working, and a check that the answer makes sense.</p>
-        <ul class="ticks"><li>key words, explained</li><li>tape diagrams</li><li>units in the answer</li><li>make me a story</li></ul>
-        <span class="go">Open <span aria-hidden="true">→</span></span>
-      </div>
-    </a>
-  </section>
-
-  <section class="group" aria-labelledby="g3">
-    <div class="group-head"><span class="num">04</span><h2 id="g3">Ratios, powers, algebra &amp; lines</h2>
-      <p>Comparing amounts, powers and scientific notation, solving for <i>x</i>, and graphing straight lines.</p></div>
-    <div class="cards">
-      <a class="card c-rat" href="helpers/ratios.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <rect x="34" y="34" width="132" height="58" rx="5" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/>
-            <path d="M78 34 V92 M122 34 V92 M34 63 H166" stroke="var(--ink-3)" stroke-width="1.2"/>
-            <text x="56" y="55" text-anchor="middle">3</text><text class="k" x="100" y="55" text-anchor="middle">6</text><text class="k" x="144" y="55" text-anchor="middle">9</text>
-            <text x="56" y="84" text-anchor="middle">4</text><text class="k" x="100" y="84" text-anchor="middle">8</text><text class="k" x="144" y="84" text-anchor="middle">12</text>
-            <path class="lk" d="M60 28 Q78 8 96 28 M104 28 Q122 8 140 28" stroke-width="1.8"/>
-            <text class="sm k" x="78" y="14" text-anchor="middle">×2</text><text class="sm k" x="122" y="14" text-anchor="middle">×3</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>∶</b> Ratios</span>
-          <h3>The Ratio Table</h3>
-          <p>Simplify ratios, unit rates and better buys, proportions, sharing in a ratio, and scale drawings.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-exp" href="helpers/exponents.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <text x="46" y="44" style="font-size:24px">2<tspan class="k" dy="-11" style="font-size:15px">5</tspan></text>
-            <text class="mu" x="80" y="40">=</text>
-            <text class="sm" x="98" y="40">2·2·2·2·2</text>
-            <text class="k" x="100" y="66" text-anchor="middle" style="font-size:15px">4.5 × 10<tspan dy="-7" style="font-size:11px">7</tspan></text>
-            <text class="sm mu" x="100" y="92" text-anchor="middle">45,000,000</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>xⁿ</b> Exponents</span>
-          <h3>The Power Tower</h3>
-          <p>Powers as repeated multiplication (and why a⁰ = 1), the exponent laws, scientific notation both ways,
-            calculating with it, and square and cube roots.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-alg" href="helpers/algebra.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <path class="ln" d="M100 24 V98 M80 100 H120"/>
-            <polygon points="94,24 106,24 100,14" fill="var(--ink)"/>
-            <line class="ln" x1="26" y1="24" x2="174" y2="24" stroke-width="2.5"/>
-            <path class="ln" d="M46 24 L16 60 M46 24 L76 60 M154 24 L124 60 M154 24 L184 60" stroke-width="1.4"/>
-            <path class="fk" d="M10 60 H82 Q76 86 46 86 Q16 86 10 60 Z"/>
-            <path class="fk" d="M118 60 H190 Q184 86 154 86 Q124 86 118 60 Z"/>
-            <text class="k" x="46" y="76" text-anchor="middle" style="font-size:14px"><tspan class="var">2x</tspan> + 3</text>
-            <text class="k" x="154" y="76" text-anchor="middle" style="font-size:14px">11</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b><i>x</i></b> Algebra</span>
-          <h3>The Balance Scale</h3>
-          <p>Simplify expressions, solve equations and inequalities, and solve systems of two equations,
-            doing the same thing to both sides every step.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-lin" href="helpers/lines-and-slope.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <path d="M30 10 V100 M50 10 V100 M70 10 V100 M90 10 V100 M110 10 V100 M130 10 V100 M150 10 V100 M170 10 V100 M20 20 H180 M20 40 H180 M20 60 H180 M20 80 H180" stroke="var(--ink-3)" stroke-width=".6" opacity=".6"/>
-            <path class="ln" d="M70 10 V100 M20 80 H180" stroke-width="1.6"/>
-            <line x1="30" y1="100" x2="180" y2="12" stroke="var(--c)" stroke-width="3" stroke-linecap="round"/>
-            <path d="M70 76.5 H130 V41.3" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 3"/>
-            <circle cx="70" cy="76.5" r="4.5" fill="var(--ink)"/><circle cx="130" cy="41.3" r="4.5" fill="var(--ink)"/>
-            <text class="sm" x="100" y="92" text-anchor="middle">run</text><text class="sm" x="152" y="63" text-anchor="middle">rise</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>↗</b> Lines &amp; slope</span>
-          <h3>The Slope Grid</h3>
-          <p>Slope from two points, the equation of a line, converting forms, graphing, and parallel or perpendicular lines.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-    <a class="card wide c-gra" href="helpers/graphing.html">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 260 142">
-          <path d="M20 10 V134 M50 10 V134 M80 10 V134 M110 10 V134 M140 10 V134 M170 10 V134 M200 10 V134 M230 10 V134 M10 22 H250 M10 52 H250 M10 82 H250 M10 112 H250" stroke="var(--ink-3)" stroke-width=".6" opacity=".55"/>
-          <path class="ln" d="M110 10 V134 M10 82 H250" stroke-width="1.6"/>
-          <path d="M44 14 Q110 190 176 14" fill="none" stroke="var(--c)" stroke-width="3" stroke-linecap="round"/>
-          <line x1="20" y1="128" x2="240" y2="18" stroke="var(--ink)" stroke-width="2.2" stroke-dasharray="7 4" stroke-linecap="round"/>
-          <circle cx="62" cy="107" r="5" fill="var(--c)"/><circle cx="160" cy="58" r="5" fill="var(--c)"/>
-          <path d="M190 120 l14 -14 l14 14 z" fill="color-mix(in srgb, var(--c) 20%, transparent)" stroke="var(--c)" stroke-width="2"/>
-        </svg>
-      </div>
-      <div class="body">
-        <span class="kind"><b>⌗</b> Graphing</span>
-        <h3>The Graph Paper</h3>
-        <p>Plot points by tapping the grid, fill a table of values, graph several functions at once, find where two
-          lines cross, shade inequalities, move shapes around, and fit a trend line to a scatter plot.</p>
-        <ul class="ticks"><li>tap to plot</li><li>parabolas, |x|, 2ˣ</li><li>systems by graphing</li><li>transformations</li><li>scatter plots</li></ul>
-        <span class="go">Open <span aria-hidden="true">→</span></span>
-      </div>
-    </a>
-  </section>
-
-  <section class="group" aria-labelledby="g8">
-    <div class="group-head"><span class="num">05</span><h2 id="g8">Shapes, data &amp; chance</h2>
-      <p>Measuring shapes, making sense of a list of numbers, and how likely something is.</p></div>
-    <div class="cards three">
-      <a class="card c-geo" href="helpers/geometry.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <g transform="translate(100 52) scale(1.12) translate(-96 -49)">
-            <rect x="46" y="34" width="30" height="30" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/>
-            <rect x="76" y="64" width="40" height="40" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/>
-            <polygon class="fk" points="76,34 116,64 146,24 106,-6"/>
-            <polygon points="76,34 116,64 76,64" fill="var(--surface)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
-            <path class="ln" d="M76 56 H84 V64" stroke-width="1.5"/>
-            <text class="sm mu" x="61" y="53" text-anchor="middle">9</text>
-            <text class="sm mu" x="96" y="88" text-anchor="middle">16</text>
-            <text class="sm k" x="111" y="33" text-anchor="middle">25</text>
-            </g>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>△</b> Geometry</span>
-          <h3>The Shape Shop</h3>
-          <p>Area and perimeter, volume and surface area, the Pythagorean theorem and missing angles,
-            each shape drawn to scale.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-sta" href="helpers/statistics.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <line class="ln" x1="16" y1="86" x2="184" y2="86"/>
-            <path class="ln" d="M40 82 V90 M64 82 V90 M88 82 V90 M112 82 V90 M136 82 V90 M160 82 V90" stroke-width="1.4"/>
-            <g fill="var(--c)">
-              <circle cx="40" cy="74" r="6.5"/>
-              <circle cx="64" cy="74" r="6.5"/><circle cx="64" cy="59" r="6.5"/>
-              <circle cx="88" cy="74" r="6.5"/><circle cx="88" cy="59" r="6.5"/><circle cx="88" cy="44" r="6.5"/>
-              <circle cx="112" cy="74" r="6.5"/><circle cx="112" cy="59" r="6.5"/><circle cx="112" cy="44" r="6.5"/><circle cx="112" cy="29" r="6.5"/>
-              <circle cx="136" cy="74" r="6.5"/><circle cx="136" cy="59" r="6.5"/>
-              <circle cx="160" cy="74" r="6.5"/>
-            </g>
-            <polygon points="104,104 110,94 116,104" fill="var(--ink)"/>
-            <text class="sm" x="136" y="104" text-anchor="middle">mean</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>⁘</b> Statistics</span>
-          <h3>The Dot Plot</h3>
-          <p>Mean, median, mode and range, box plots, frequency tables, spread, and finding a missing value.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-pro" href="helpers/probability.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <circle cx="62" cy="56" r="42" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"/>
-            <path d="M62 56 L62 14 A42 42 0 0 1 104 56 Z" class="fk"/>
-            <path d="M62 56 L62 14 M62 56 L104 56 M62 56 L62 98 M62 56 L20 56" stroke="var(--ink)" stroke-width="1.5"/>
-            <path d="M62 56 L88 30" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="62" cy="56" r="4" fill="var(--ink)"/>
-            <text class="k" x="150" y="50" text-anchor="middle" style="font-size:22px">1/4</text>
-            <text class="sm mu" x="150" y="72" text-anchor="middle">= 25%</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>◔</b> Probability</span>
-          <h3>The Chance Spinner</h3>
-          <p>How likely is it? One event or two (with and without putting it back), tree diagrams and dice tables,
-            and how many times to expect it in 60 rolls.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <section class="group" aria-labelledby="g6">
-    <div class="group-head"><span class="num">06</span><h2 id="g6">For the classroom</h2>
-      <p>A problem every day, practice sets to do on screen, worksheets to print, flash cards, reference sheets, and a record of how it’s going.</p></div>
-    <a class="card wide c-day" href="practice/problem-of-the-day.html">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 260 142">
-          <rect x="34" y="16" width="192" height="114" rx="10" fill="var(--surface)" stroke="var(--c)" stroke-width="2"/>
-          <path d="M34 44 H226" stroke="var(--c)" stroke-width="2"/>
-          <rect x="34" y="16" width="192" height="28" rx="10" fill="var(--c)" opacity=".18"/>
-          <path d="M84 8 V24 M176 8 V24" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
-          <text class="k" x="130" y="36" text-anchor="middle" style="font-size:12px;letter-spacing:.12em">TODAY</text>
-          <text x="130" y="84" text-anchor="middle" style="font-size:20px">3x + 2 = 11</text>
-          <text class="sm k" x="130" y="112" text-anchor="middle" style="font-size:11px">✓✓✓✓ 4-day streak</text>
-        </svg>
-      </div>
-      <div class="body">
-        <span class="kind"><b>☀</b> Every day</span>
-        <h3>Problem of the Day</h3>
-        <p>One new problem every day, the same for everyone, so a whole class can do it together with nothing to set up.
-          An easy start on Monday, a challenge on Friday, a puzzle at the weekend, and a streak to keep going.</p>
-        <ul class="ticks"><li>same for the whole class</li><li>streaks</li><li>the week ahead, to print</li><li>QR code for the projector</li></ul>
-        <span class="go">Today’s problem <span aria-hidden="true">→</span></span>
-      </div>
-    </a>
-    <a class="card wide c-ink" href="practice/worksheets.html">
-      <div class="art" aria-hidden="true">
-        <svg viewBox="0 0 260 142">
-          <rect x="34" y="6" width="192" height="132" rx="4" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="1.5"/>
-          <path d="M48 22 H116 M130 22 H212" stroke="var(--ink-3)" stroke-width="1.5"/>
-          <text class="sm" x="48" y="48">1.  47 + 38</text><text class="sm" x="48" y="72">2.  3x + 2 = 11</text>
-          <text class="sm" x="48" y="96">3.  15% of 80</text><text class="sm" x="48" y="120">4.  GCF of 12, 18</text>
-          <path d="M176 50 H212 M176 74 H212 M176 98 H212 M176 122 H212" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="2 3"/>
-        </svg>
-      </div>
-      <div class="body">
-        <span class="kind"><b>▤</b> Worksheets</span>
-        <h3>The Worksheet Maker</h3>
-        <p>Pick topics from any of the helpers and how hard they should be, and get a printable worksheet with
-          room to work, plus an answer key on a separate page. Every problem links to its worked steps.</p>
-        <ul class="ticks"><li>mix any topics</li><li>1–3 columns</li><li>answer key</li><li>new numbers in one click</li></ul>
-        <span class="go">Make a worksheet <span aria-hidden="true">→</span></span>
-      </div>
-    </a>
-    <div class="cards two">
-      <a class="card c-rat" href="practice/sets.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <rect x="30" y="14" width="140" height="10" rx="5" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="1.2"/>
-            <rect x="30" y="14" width="42" height="10" rx="5" fill="var(--c)"/>
-            <text class="sm mu" x="100" y="42" text-anchor="middle">Problem 3 of 10</text>
-            <rect x="46" y="52" width="108" height="46" rx="8" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="1.2"/>
-            <text x="100" y="72" text-anchor="middle">15% of 80</text>
-            <text class="sm k" x="100" y="90" text-anchor="middle">✓ Correct!</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>▶</b> Practice sets</span>
-          <h3>Practice on screen</h3>
-          <p>Build a set of problems from any helpers and share it as one link. Students work through it with
-            Check my answer and get a score to hand in.</p>
-          <span class="go">Make a practice set <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-sta" href="practice/progress.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <line class="ln" x1="30" y1="92" x2="170" y2="92" stroke-width="1.5"/>
-            <g fill="var(--c)">
-              <rect x="38" y="70" width="14" height="22" rx="3"/><rect x="58" y="56" width="14" height="36" rx="3"/>
-              <rect x="78" y="62" width="14" height="30" rx="3"/><rect x="98" y="40" width="14" height="52" rx="3"/>
-              <rect x="118" y="48" width="14" height="44" rx="3"/><rect x="138" y="26" width="14" height="66" rx="3"/>
-            </g>
-            <text class="sm mu" x="100" y="16" text-anchor="middle">this week</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>★</b> Progress</span>
-          <h3>Your progress</h3>
-          <p>What you’ve practiced, how often you got it right first time, and which problems to have another go at.
-            It stays private, on your device.</p>
-          <span class="go">See your progress <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-    <div class="cards three">
-      <a class="card c-fla" href="practice/flash-cards.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <rect x="58" y="16" width="104" height="70" rx="8" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="1.2" transform="rotate(-7 110 51)"/>
-            <rect x="48" y="22" width="104" height="70" rx="8" fill="var(--surface)" stroke="var(--c)" stroke-width="2"/>
-            <text x="100" y="63" text-anchor="middle" style="font-size:22px">7 × 8</text>
-            <text class="sm k" x="100" y="106" text-anchor="middle">tap to flip</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>▭</b> Flash cards</span>
-          <h3>The Flash Cards</h3>
-          <p>Times tables up to 20 × 20 (any of them, mixed together), division, adding and taking away, negatives,
-            ×10 and ×100, doubles, primes, powers, easy percents and fractions. Quiz yourself, race the clock, or let it learn which ones you know.</p>
-          <span class="go">Practice facts <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-ink" href="reference/sheets.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <rect x="52" y="8" width="96" height="96" rx="4" fill="var(--surface)" stroke="var(--ink-3)" stroke-width="1.5"/>
-            <path d="M62 22 H110" stroke="var(--ink)" stroke-width="2.5"/>
-            <text class="sm" x="62" y="44">A = ℓ × w</text>
-            <text class="sm" x="62" y="62">C = 2πr</text>
-            <text class="sm" x="62" y="80">a² + b² = c²</text>
-            <path d="M62 92 H138" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="2 3"/>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>▦</b> Reference</span>
-          <h3>Reference sheets</h3>
-          <p>Forty one-page sheets to print or keep open: times tables up to 20 × 20, hundred charts, primes to 200,
-            formulas, fractions, exponents, graphing, probability, money and time, and a graph paper maker.</p>
-          <span class="go">See the sheets <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-ink" href="practice/class-results.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <g fill="var(--add)">
-              <rect x="56" y="18" width="16" height="16" rx="3"/><rect x="76" y="18" width="16" height="16" rx="3"/><rect x="116" y="18" width="16" height="16" rx="3"/>
-              <rect x="56" y="38" width="16" height="16" rx="3"/><rect x="96" y="38" width="16" height="16" rx="3"/><rect x="116" y="38" width="16" height="16" rx="3"/><rect x="136" y="38" width="16" height="16" rx="3"/>
-              <rect x="56" y="58" width="16" height="16" rx="3"/><rect x="76" y="58" width="16" height="16" rx="3"/><rect x="96" y="58" width="16" height="16" rx="3"/>
-              <rect x="76" y="78" width="16" height="16" rx="3"/><rect x="136" y="78" width="16" height="16" rx="3"/>
-            </g>
-            <g fill="var(--div)" opacity=".8">
-              <rect x="96" y="18" width="16" height="16" rx="3"/><rect x="136" y="58" width="16" height="16" rx="3"/><rect x="116" y="78" width="16" height="16" rx="3"/>
-            </g>
-            <g fill="var(--sub)">
-              <rect x="136" y="18" width="16" height="16" rx="3"/><rect x="76" y="38" width="16" height="16" rx="3"/>
-              <rect x="116" y="58" width="16" height="16" rx="3"/><rect x="56" y="78" width="16" height="16" rx="3"/><rect x="96" y="78" width="16" height="16" rx="3"/>
-            </g>
-            <path d="M34 26 H48 M34 46 H48 M34 66 H48 M34 86 H48" stroke="var(--ink-3)" stroke-width="3" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>☷</b> For teachers</span>
-          <h3>Class results</h3>
-          <p>Paste the lines your students hand in after a practice set and see the whole class at once:
-            scores, the hardest problems, and who needs help. Nothing is uploaded.</p>
-          <span class="go">See the class <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <section class="group" aria-labelledby="g9">
-    <div class="group-head"><span class="num">07</span><h2 id="g9">Beyond middle school</h2>
-      <p>Quadratics, logarithms and sequences to round out high school algebra, trigonometry, and the first ideas
-        of calculus for a first-year college course.</p></div>
-    <div class="cards three">
-      <a class="card c-qua" href="helpers/quadratics.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <rect class="fk" x="40" y="22" width="60" height="44"/><rect x="100" y="22" width="34" height="44" fill="none" stroke="var(--c)" stroke-width="2"/>
-            <rect x="40" y="66" width="60" height="26" fill="none" stroke="var(--c)" stroke-width="2"/><rect class="fk" x="100" y="66" width="34" height="26" opacity=".55"/>
-            <text class="sm mu" x="70" y="15" text-anchor="middle">x</text><text class="sm mu" x="117" y="15" text-anchor="middle">+3</text>
-            <text class="sm mu" x="30" y="48" text-anchor="middle">x</text><text class="sm mu" x="28" y="83" text-anchor="middle">+2</text>
-            <text x="70" y="49" text-anchor="middle" style="font-size:14px">x²</text><text x="117" y="49" text-anchor="middle" style="font-size:14px">3x</text>
-            <text x="70" y="84" text-anchor="middle" style="font-size:14px">2x</text><text x="117" y="84" text-anchor="middle" style="font-size:14px">6</text>
-            <text class="k sm" x="170" y="52" text-anchor="middle">x²+5x</text><text class="k sm" x="170" y="68" text-anchor="middle">+6</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>x²</b> Quadratics</span>
-          <h3>The Area Box</h3>
-          <p>Multiply brackets with the box method, factor with factor pairs and grouping, solve quadratics four ways
-            (including the formula), find the vertex, and divide polynomials.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-log" href="helpers/logarithms.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <path class="ln" d="M28 100 V10 M60 100 V10" stroke-width="2"/>
-            <path class="lk" d="M28 84 H60 M28 64 H60 M28 44 H60 M28 24 H60" stroke-width="2"/>
-            <text class="sm mu" x="72" y="88">1</text><text class="sm mu" x="72" y="68">2</text><text class="sm mu" x="72" y="48">3</text><text class="k sm" x="72" y="28">4</text>
-            <text class="k" x="140" y="48" text-anchor="middle">log₂ 16</text>
-            <text class="mu sm" x="140" y="70" text-anchor="middle">= 4 because</text>
-            <text class="sm" x="140" y="88" text-anchor="middle">2⁴ = 16</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>log</b> Logarithms</span>
-          <h3>The Log Ladder</h3>
-          <p>What a log means (it’s the exponent), the log laws, change of base, solving exponential and log
-            equations, growth, decay and interest, and the graphs.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-seq" href="helpers/sequences.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <rect class="fk" x="22" y="78" width="30" height="18"/><rect class="fk" x="56" y="62" width="30" height="34"/>
-            <rect class="fk" x="90" y="46" width="30" height="50"/><rect x="124" y="30" width="30" height="66" fill="none" stroke="var(--c)" stroke-width="2" stroke-dasharray="4 3"/>
-            <text class="sm" x="37" y="72" text-anchor="middle">3</text><text class="sm" x="71" y="56" text-anchor="middle">7</text>
-            <text class="sm" x="105" y="40" text-anchor="middle">11</text><text class="k sm" x="139" y="24" text-anchor="middle">?</text>
-            <text class="k sm" x="178" y="58" text-anchor="middle">+4</text><text class="sm mu" x="178" y="76" text-anchor="middle">each</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>aₙ</b> Sequences</span>
-          <h3>The Number Staircase</h3>
-          <p>Spot the rule in a list of numbers, arithmetic and geometric sequences, the nth term, adding up a series,
-            sigma notation, and word problems.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-    <div class="cards two">
-      <a class="card c-tri" href="helpers/trigonometry.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <path d="M18 56 H122 M70 6 V106" stroke="var(--ink-3)" stroke-width="1.2" opacity=".7"/>
-            <circle cx="70" cy="56" r="42" fill="none" stroke="var(--ink)" stroke-width="2"/>
-            <path class="fk" d="M70 56 L86 56 A16 16 0 0 0 83.9 48 Z"/>
-            <path d="M106.4 35 V56" stroke="var(--c)" stroke-width="2" stroke-dasharray="4 3"/>
-            <path d="M70 56 L106.4 35" stroke="var(--c)" stroke-width="3" stroke-linecap="round"/>
-            <circle cx="106.4" cy="35" r="4.5" fill="var(--c)"/>
-            <text class="var sm" x="90" y="53">θ</text>
-            <text class="k" x="158" y="48" text-anchor="middle" style="font-size:16px">sin 30°</text>
-            <text class="sm mu" x="158" y="70" text-anchor="middle">= 1/2</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>∠</b> Trigonometry</span>
-          <h3>The Unit Circle</h3>
-          <p>Right triangles with SOH-CAH-TOA, exact values of the special angles, the unit circle and radians,
-            the laws of sines and cosines, sine and cosine graphs, and identities.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="card c-cal" href="helpers/calculus.html">
-        <div class="art" aria-hidden="true">
-          <svg viewBox="0 0 200 110">
-            <path class="ln" d="M16 98 H190 M24 106 V6" stroke-width="1.6"/>
-            <path class="fk" d="M47.9 98 L47.9 85.3 L55.8 84.2 L63.6 82.8 L71.5 80.8 L79.3 78.5 L87.0 75.8 L94.8 72.6 L102.5 69.0 L110.2 65.0 L110.2 98 Z"/>
-            <path d="M24 86 Q104 90 178 10" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round"/>
-            <line x1="92.1" y1="81.1" x2="166.1" y2="25.8" stroke="var(--c)" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="136.1" cy="48.2" r="4.5" fill="var(--c)"/>
-            <text class="k sm" x="79" y="94" text-anchor="middle">∫</text>
-            <text class="k sm" x="150" y="64">f′(x)</text>
-          </svg>
-        </div>
-        <div class="body">
-          <span class="kind"><b>∫</b> Calculus</span>
-          <h3>The Rate Machine</h3>
-          <p>Limits, derivatives with every rule named, tangent lines, maximum and minimum, integrals and the area
-            under a curve, and rates of change.</p>
-          <span class="go">Open <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
   </section>
 
   <section class="every" aria-labelledby="g4">
@@ -1074,101 +373,145 @@
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]; }); }
 
-  /* ---- the worked example ---- */
-  var DEMOS = {
-    ord:{ c:"c-ord", eq:true, link:"helpers/order-of-operations.html", lines:[
-      { h:'20 − <span class="hl hl-m">12 ÷ 4</span> × 2 + 1',
-        say:"× and ÷ come before + and −. Start with the first one from the left: <b>12 ÷ 4 = 3</b>." },
-      { h:'20 − <span class="hl hl-m">3 × 2</span> + 1', say:"Still × before −: <b>3 × 2 = 6</b>." },
-      { h:'<span class="hl hl-a">20 − 6</span> + 1', say:"Only + and − are left, so go left to right: <b>20 − 6 = 14</b>." },
-      { h:'<span class="hl hl-a">14 + 1</span>', say:"Last one: <b>14 + 1 = 15</b>." },
-      { h:'15', done:true, say:"The answer is <b>15</b>. Going straight left to right would give <b>5</b>, which is why the order matters." }
-    ]},
-    alg:{ c:"c-alg", eq:false, link:"helpers/algebra.html", lines:[
-      { h:'5<i>x</i> − 4 = <span class="hl hl-alg">2<i>x</i></span> + 8',
-        say:"Get the <i>x</i>’s on one side: subtract <b>2x</b> from both sides." },
-      { h:'3<i>x</i> <span class="hl hl-alg">− 4</span> = 8', say:"Undo the <b>− 4</b>: add <b>4</b> to both sides." },
-      { h:'<span class="hl hl-alg">3</span><i>x</i> = 12', say:"Undo the <b>× 3</b>: divide both sides by <b>3</b>." },
-      { h:'<i>x</i> = 4', done:true, say:"<b>x = 4</b>. Check it: 5(4) − 4 = <b>16</b> and 2(4) + 8 = <b>16</b> ✓" }
-    ]}
-  };
-  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var cur = "ord", step = still ? DEMOS.ord.lines.length - 1 : 0, paused = still, timer = null;
+  /* every helper and tool, for the suggestions (the same list as "Browse all topics") */
+  var TOPICS = [{"id":"number-sense.html","href":"helpers/number-sense.html","s":"#","n":"Place value","f":"The Place Value Chart","d":"Rounding, comparing, skip counting, time and money","c":"c-num","k":"digits number sense estimate clock coins"},{"id":"addition.html","href":"helpers/addition.html","s":"+","n":"Addition","f":"The Carry Column","d":"Carrying, decimals and fractions","c":"c-add","k":"add plus sum"},{"id":"subtraction.html","href":"helpers/subtraction.html","s":"−","n":"Subtraction","f":"The Borrow Bank","d":"Borrowing, decimals and fractions","c":"c-sub","k":"subtract minus take away difference regroup"},{"id":"multiplication.html","href":"helpers/multiplication.html","s":"×","n":"Multiplication","f":"The Product Ladder","d":"Partial products and decimals","c":"c-mul","k":"multiply times product"},{"id":"division.html","href":"helpers/division.html","s":"÷","n":"Long division","f":"The Division House","d":"Remainders, decimals and fractions","c":"c-div","k":"divide quotient"},{"id":"scratch.html","href":"helpers/scratch-paper.html","s":"✍","n":"Do it by hand","f":"The Scratch Paper","d":"Work + − × ÷ yourself, checked as you go","c":"c-scr","k":"scratch paper practice written method"},{"id":"pemdas.html","href":"helpers/order-of-operations.html","s":"( )","n":"Order of operations","f":"The Order Stack","d":"PEMDAS with brackets and powers","c":"c-ord","k":"pemdas bodmas bidmas parentheses"},{"id":"fractions.html","href":"helpers/fractions.html","s":"½","n":"Fractions","f":"The Fraction Bar","d":"Simplify, convert, compare and order","c":"c-fra","k":"fraction decimal equivalent mixed numbers"},{"id":"percents.html","href":"helpers/percents.html","s":"%","n":"Percents","f":"The Hundred Grid","d":"Percent of, discounts, tax, tips and interest","c":"c-pct","k":"percent percentage sale"},{"id":"factors.html","href":"helpers/factors-and-primes.html","s":"⋔","n":"Factors and primes","f":"The Factor Tree","d":"GCF, LCM and prime factorization","c":"c-fac","k":"factor prime gcd hcf lcm multiples divisibility"},{"id":"integers.html","href":"helpers/negative-numbers.html","s":"±","n":"Negative numbers","f":"The Number Line","d":"Integers, signs and absolute value","c":"c-int","k":"integers negative"},{"id":"ratios.html","href":"helpers/ratios.html","s":"∶","n":"Ratios and rates","f":"The Ratio Table","d":"Unit rates, proportions and scale","c":"c-rat","k":"ratio rate proportion unit price"},{"id":"exponents.html","href":"helpers/exponents.html","s":"xⁿ","n":"Exponents and roots","f":"The Power Tower","d":"Exponent laws, square roots, scientific notation","c":"c-exp","k":"powers exponent root sqrt scientific notation"},{"id":"algebra.html","href":"helpers/algebra.html","s":"x","n":"Equations","f":"The Balance Scale","d":"Solve, simplify, inequalities and systems","c":"c-alg","k":"algebra solve equation inequality system simplify expression"},{"id":"lines.html","href":"helpers/lines-and-slope.html","s":"↗","n":"Lines and slope","f":"The Slope Grid","d":"Slope, y = mx + b, parallel and perpendicular","c":"c-lin","k":"line slope intercept linear"},{"id":"graphing.html","href":"helpers/graphing.html","s":"⌗","n":"Graphing","f":"The Graph Paper","d":"Points, functions, transformations, scatter plots","c":"c-gra","k":"graph coordinate plane plot function"},{"id":"quadratics.html","href":"helpers/quadratics.html","s":"x²","n":"Quadratics and polynomials","f":"The Area Box","d":"Factor, the quadratic formula, the vertex","c":"c-qua","k":"quadratic polynomial factor foil parabola"},{"id":"logarithms.html","href":"helpers/logarithms.html","s":"log","n":"Logarithms","f":"The Log Ladder","d":"Log laws, exponential equations, interest","c":"c-log","k":"log logs logarithm exponential ln growth decay"},{"id":"sequences.html","href":"helpers/sequences.html","s":"aₙ","n":"Sequences and series","f":"The Number Staircase","d":"The nth term, sums and sigma notation","c":"c-seq","k":"sequence series arithmetic geometric pattern sigma"},{"id":"geometry.html","href":"helpers/geometry.html","s":"△","n":"Geometry","f":"The Shape Shop","d":"Area, volume, Pythagoras and angles","c":"c-geo","k":"shape area perimeter volume pythagorean triangle circle angle"},{"id":"stats.html","href":"helpers/statistics.html","s":"⁘","n":"Statistics","f":"The Dot Plot","d":"Mean, median, mode and box plots","c":"c-sta","k":"stats statistics mean median mode range average"},{"id":"probability.html","href":"helpers/probability.html","s":"◔","n":"Probability","f":"The Chance Spinner","d":"Dice, coins, marbles and tree diagrams","c":"c-pro","k":"probability chance odds"},{"id":"wordproblems.html","href":"helpers/story-problems.html","s":"✎","n":"Story problems","f":"The Story Problem","d":"Word problems with a bar model","c":"c-wrd","k":"word problem story"},{"id":"trigonometry.html","href":"helpers/trigonometry.html","s":"∠","n":"Trigonometry","f":"The Unit Circle","d":"SOH-CAH-TOA, the unit circle, laws of sines","c":"c-tri","k":"trig sin cos tan sine cosine unit circle radians"},{"id":"calculus.html","href":"helpers/calculus.html","s":"∫","n":"Calculus","f":"The Rate Machine","d":"Limits, derivatives and integrals","c":"c-cal","k":"calculus derivative integral limit"},{"id":"worksheet.html","href":"practice/worksheets.html","s":"▤","n":"Worksheets","f":"The Worksheet Maker","d":"Printable, with an answer key","c":"c-ord","k":"worksheet print","tool":1},{"id":"practice.html","href":"practice/sets.html","s":"▶","n":"Practice sets","f":"Share as a link or QR code","d":"Students work through it and get a score","c":"c-rat","k":"practice set quiz","tool":1},{"id":"flashcards.html","href":"practice/flash-cards.html","s":"7×8","n":"Flash cards","f":"The Flash Cards","d":"Times tables to 20 × 20, and more","c":"c-fla","k":"flash cards times tables facts","tool":1},{"id":"daily.html","href":"practice/problem-of-the-day.html","s":"★","n":"Problem of the day","f":"A new one every day","d":"And the week's problems with a key","c":"c-day","k":"daily","tool":1},{"id":"progress.html","href":"practice/progress.html","s":"✓","n":"Your progress","f":"Kept on this device","d":"What you've practiced and what's next","c":"c-sta","k":"progress","tool":1},{"id":"reference.html","href":"reference/sheets.html","s":"▦","n":"Reference sheets","f":"Forty sheets to print","d":"Times tables, formulas, graph paper","c":"c-geo","k":"reference chart formula graph paper","tool":1},{"id":"glossary.html","href":"reference/definitions.html","s":"Aa","n":"Math words","f":"The Word List","d":"What each math word means","c":"c-alg","k":"definitions glossary vocabulary","tool":1},{"id":"results.html","href":"practice/class-results.html","s":"▥","n":"Class results","f":"A teacher's view","d":"Scores and the hardest problems","c":"c-ink","k":"results teacher class","tool":1}];
+  var BYID = {};
+  TOPICS.forEach(function(t){ BYID[t.id] = t; });
+  var U = function(t){ return window.HelperSite ? window.HelperSite.url(t.id) : t.href; };
 
-  function draw(){
-    var d = DEMOS[cur], html = "";
-    for (var i = 0; i <= step; i++){
-      var L = d.lines[i];
-      html += '<div class="dl' + (i < step ? " past" : " now") + (L.done && i === step ? " done" : "") + '">'
-            + '<span class="eq">' + (d.eq && i ? "=" : "") + '</span><span class="expr">' + L.h + "</span></div>";
-    }
-    $("demoBody").innerHTML = html;
-    $("demoSay").innerHTML = d.lines[step].say;
-    $("demoDots").innerHTML = d.lines.map(function(_, i){ return "<i" + (i <= step ? ' class="on"' : "") + "></i>"; }).join("");
-    $("demo").className = "demo " + d.c;
-    $("demoLink").href = d.link;
-    Array.prototype.forEach.call(document.querySelectorAll("[data-demo]"), function(b){
-      b.setAttribute("aria-pressed", String(b.getAttribute("data-demo") === cur));
+  /* ---- "type any problem": search.js says which helper a problem belongs to; topic words match the list above ---- */
+  var route = window.HelperSearch.route, PAGE = window.HelperSearch.PAGE, href = window.HelperSearch.href;
+  var askIn = $("askIn"), sugg = $("sugg"), form = $("ask"), rows = [], on = -1;
+  function norm(s){ return String(s).toLowerCase().replace(/[−–]/g, "-").replace(/[^a-z0-9²ⁿ%+\-×÷½∠∫]+/g, " ").trim(); }
+  // topics for the words typed, best first: a match in the topic's name beats its fun name, its keywords, then its
+  // description; a whole word beats the start of a word, which beats a part of one ("frac" → Fractions first)
+  var FIELDS = [["n", 4], ["f", 3], ["k", 2], ["d", 1.5]];
+  function topicMatches(q){
+    var words = norm(q).split(" ").filter(Boolean);
+    if (!words.length) return [];
+    var scored = [];
+    TOPICS.forEach(function(t, i){
+      var total = 0, all = words.every(function(w){
+        var best = 0;
+        FIELDS.forEach(function(f){
+          var hay = " " + norm(t[f[0]]) + " ", how = hay.indexOf(" " + w + " ") >= 0 ? 1 : hay.indexOf(" " + w) >= 0 ? 0.6
+                    : w.length > 2 && hay.indexOf(w) >= 0 ? 0.3 : 0;
+          best = Math.max(best, how * f[1]);
+        });
+        total += best;
+        return best > 0;
+      });
+      if (all) scored.push({ t:t, s:total, i:i });
     });
-    $("pauseBtn").textContent = paused ? "Play" : "Pause";
+    scored.sort(function(a, b){ return b.s - a.s || a.i - b.i; });
+    return scored.map(function(x){ return x.t; });
   }
-  function tick(){
-    clearTimeout(timer);
-    if (paused) return;
-    var d = DEMOS[cur], last = step >= d.lines.length - 1;
-    timer = setTimeout(function(){
-      if (last){ cur = cur === "ord" ? "alg" : "ord"; step = 0; }
-      else step++;
-      draw(); tick();
-    }, last ? 4200 : 2300);
+  function optHtml(r, i){
+    var t = r.t;
+    return '<a class="opt ' + t.c + (i === on || (on < 0 && i === 0) ? " on" : "") + '" role="option" id="opt' + i + '" aria-selected="' + (i === on) + '" href="' + esc(r.url) + '">'
+      + '<span class="sg" aria-hidden="true">' + esc(t.s) + "</span><span>" + r.html + '</span><span class="kbd" aria-hidden="true">Enter ↵</span></a>';
   }
-  Array.prototype.forEach.call(document.querySelectorAll("[data-demo]"), function(b){
-    b.addEventListener("click", function(){
-      cur = b.getAttribute("data-demo");
-      step = paused ? DEMOS[cur].lines.length - 1 : 0;
-      draw(); tick();
-    });
-  });
-  $("pauseBtn").addEventListener("click", function(){
-    paused = !paused;
-    if (!paused && step >= DEMOS[cur].lines.length - 1) step = 0;
-    draw(); tick();
-  });
-  draw(); tick();
-
-  /* ---- "type any problem": the routing lives in search.js, shared with the bar on every page ---- */
-  var route = window.HelperSearch.route, PAGE = window.HelperSearch.PAGE;
-
-  var askIn = $("askIn"), askTo = $("askTo"), current = null;
-  function preview(){
-    current = route(askIn.value);
-    if (!current){ askTo.innerHTML = ""; return; }
-    if (current.none){
-      askTo.className = "ask-to";
-      askTo.innerHTML = "Type a problem with numbers in it, like <b>47 + 38</b> or <b>2x + 3 = 11</b>.";
-      return;
+  function build(){
+    var q = askIn.value.trim(), out = [];
+    rows = [];
+    if (q){
+      var r = route(q), hasNum = /\d/.test(q), topics = topicMatches(q);
+      var problem = r && !r.none && BYID[r.page] && r.page !== "glossary.html" ? r : null;
+      if (problem && (hasNum || !topics.length)){
+        var t = BYID[r.page];
+        rows.push({ t:t, url:href(r), html:"<b>Show the steps for <code>" + esc(q) + "</code></b><small>on <em>" + esc(t.f) + "</em>"
+          + (r.what ? " · " + esc(r.what) : "") + "</small>" });
+        if (r.alt && BYID[r.alt.page]){
+          var a = BYID[r.alt.page];
+          rows.push({ t:a, url:href(r.alt), html:"<b>Or open it on " + esc(a.f) + "</b><small>" + esc(a.n) + "</small>" });
+        }
+      }
+      topics.slice(0, hasNum ? 2 : 6).forEach(function(t){
+        if (rows.some(function(x){ return x.t === t; })) return;
+        rows.push({ t:t, url:U(t), html:"<b>" + esc(t.n) + "</b><small><em>" + esc(t.f) + "</em> · " + esc(t.d) + "</small>", topic:true });
+      });
+      // words with no numbers: what they mean, from the Word List (after the topics, or on its own)
+      if (r && !r.none && r.page === "glossary.html" && rows.length < 7){
+        var g = BYID["glossary.html"], term = (/“(.+)”/.exec(r.what || "") || [0, q])[1];
+        rows.push({ t:g, url:href(r), html:"<b>Look up “" + esc(term) + "”</b><small>in <em>the Word List</em>: what the math word means</small>", topic:rows.length > 0 });
+      }
     }
-    var p = PAGE[current.page];
-    askTo.className = "ask-to " + p[1];
-    askTo.innerHTML = "Opens <b>" + p[0] + "</b>" + (current.what ? " for " + current.what : "") + "."
-      // a lone fraction like 24/18 could be either a division or a fraction to simplify
-      + (current.alt ? ' Or <a href="' + window.HelperSearch.href(current.alt) + '">open it in '
-                       + PAGE[current.alt.page][0] + "</a>." : "");
+    if (on >= rows.length) on = rows.length - 1;
+    if (rows.length){
+      var firstTopic = -1;
+      rows.forEach(function(x, i){ if (x.topic && firstTopic < 0) firstTopic = i; });
+      out = rows.map(function(x, i){
+        return (i === firstTopic && i > 0 ? '<div class="sugg-head" role="presentation">Topics</div>' : "") + optHtml(x, i);
+      });
+      sugg.innerHTML = out.join("");
+    }
+    var open = rows.length > 0 && document.activeElement === askIn;
+    sugg.hidden = !open; form.classList.toggle("open", open);
+    askIn.setAttribute("aria-expanded", String(open));
+    if (on >= 0 && open) askIn.setAttribute("aria-activedescendant", "opt" + on); else askIn.removeAttribute("aria-activedescendant");
   }
-  askIn.addEventListener("input", preview);
-  $("ask").addEventListener("submit", function(e){
+  function move(d){
+    if (!rows.length) return;
+    on = on + d; if (on < -1) on = rows.length - 1; if (on >= rows.length) on = -1;
+    build();
+    var el = on >= 0 && $("opt" + on); if (el) el.scrollIntoView({ block:"nearest" });
+  }
+  askIn.addEventListener("input", function(){ on = -1; build(); });
+  askIn.addEventListener("focus", build);
+  askIn.addEventListener("blur", function(){ setTimeout(function(){ if (document.activeElement !== askIn){ sugg.hidden = true; form.classList.remove("open"); askIn.setAttribute("aria-expanded", "false"); } }, 150); });
+  askIn.addEventListener("keydown", function(e){
+    if (e.key === "ArrowDown"){ e.preventDefault(); move(1); }
+    else if (e.key === "ArrowUp"){ e.preventDefault(); move(-1); }
+    else if (e.key === "Escape"){ on = -1; sugg.hidden = true; form.classList.remove("open"); askIn.setAttribute("aria-expanded", "false"); }
+  });
+  sugg.addEventListener("mousedown", function(e){ if (e.target.closest(".opt")) e.preventDefault(); });   // keep the box focused until the click lands
+  form.addEventListener("submit", function(e){
     e.preventDefault();
-    preview();
-    if (current && !current.none) location.href = window.HelperSearch.href(current);
-    else askIn.focus();
+    build();
+    var pick = rows[on >= 0 ? on : 0];
+    if (pick) location.href = pick.url; else askIn.focus();
   });
-  ["47 + 38", "3/4 ÷ 1/2", "3x + 2 = 11", "15% of 80", "gcf 12 18", "−7 − (−2)", "share 60 in 2:3", "slope (1,2) (5,4)", "mean of 4, 8, 6, 5, 7", "circle radius 5", "cos 135°", "d/dx x^3 sin x"].forEach(function(ex){
+  ["47 + 38", "3/4 ÷ 1/2", "3x + 2 = 11", "x^2 - 5x + 6 = 0", "15% of 80", "round 3,456 to the nearest hundred", "log2 32", "d/dx x^3 sin x"].forEach(function(ex){
     var b = document.createElement("button");
     b.type = "button"; b.textContent = ex;
-    b.addEventListener("click", function(){ askIn.value = ex; preview(); askIn.focus(); });
+    b.addEventListener("click", function(){ askIn.value = ex; on = -1; askIn.focus(); build(); });
     $("askTry").appendChild(b);
   });
+
+  /* ---- browse all topics, with the grade buttons ---- */
+  var GRADES = { all:"", k5:"grades K–5", m:"grades 6–8", hs:"grades 9–12", col:"college" }, grade = "all";
+  var links = [].slice.call(document.querySelectorAll("#topics a[data-grades]"));
+  try { var g0 = localStorage.getItem("helpers-home-grade"); if (g0 && GRADES.hasOwnProperty(g0)) grade = g0; } catch (e){}
+  function filter(){
+    var n = 0;
+    links.forEach(function(a){
+      a.hidden = !(grade === "all" || (" " + a.getAttribute("data-grades") + " ").indexOf(" " + grade + " ") >= 0);
+      if (!a.hidden) n++;
+    });
+    [].forEach.call(document.querySelectorAll("#topics .col"), function(c){ c.hidden = !c.querySelector("a:not([hidden])"); });
+    [].forEach.call(document.querySelectorAll("[data-grade]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-grade") === grade)); });
+    $("shown").innerHTML = grade === "all" ? "" : n + " topics for " + GRADES[grade] + '. <button type="button" data-all>Show all ' + links.length + "</button>";
+  }
+  [].forEach.call(document.querySelectorAll("[data-grade]"), function(b){
+    b.addEventListener("click", function(){ grade = b.getAttribute("data-grade"); try { localStorage.setItem("helpers-home-grade", grade); } catch (e){} filter(); });
+  });
+  $("shown").addEventListener("click", function(e){
+    if (!e.target.closest("[data-all]")) return;
+    grade = "all"; try { localStorage.setItem("helpers-home-grade", grade); } catch (e2){} filter();
+  });
+  function showTopics(open, scroll){
+    $("topics").hidden = !open;
+    $("browseBtn").setAttribute("aria-expanded", String(open));
+    try { sessionStorage.setItem("helpers-home-browse", open ? "1" : ""); } catch (e){}
+    if (open && scroll) $("topics").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+  $("browseBtn").addEventListener("click", function(){ showTopics($("topics").hidden, true); });
+  var startOpen = /^#(topics|helpers)$/.test(location.hash);
+  try { startOpen = startOpen || sessionStorage.getItem("helpers-home-browse") === "1"; } catch (e){}
+  showTopics(startOpen, /^#(topics|helpers)$/.test(location.hash));
+  filter();
 
   /* ---- install as an app, and work offline ---- */
   if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
@@ -1213,3 +556,4 @@
 })();
 </script>
 </html>
+
