@@ -14,6 +14,7 @@
   if (window.HelperTools) return;
 
   var KEY = "helpers-settings", RECENT = "helpers-recent";
+  var SITE_VERSION = "dev";   // the release number is written in here when the site is published (.github/workflows/release.yml)
   var SCALES = [0.9, 1, 1.15, 1.3, 1.5];
   var root = document.documentElement;
   var SELF = (document.currentScript && document.currentScript.src) || "";
@@ -371,7 +372,8 @@
       "<tr><td><kbd>Q</kbd></td><td>A QR code for this page, to open it on a phone</td></tr>" +
       "<tr><td><kbd>K</kbd></td><td>Show or hide the math keys (they come up by themselves on phones)</td></tr>" +
       "<tr><td><kbd>Esc</kbd></td><td>Close this, or leave big screen</td></tr>" +
-      "<tr><td><kbd>?</kbd></td><td>Show this list</td></tr></table></div>");
+      "<tr><td><kbd>?</kbd></td><td>Show this list</td></tr></table>" +
+      '<p class="ht-sm" style="margin:10px 8px 2px">Arithmetic Helpers ' + (SITE_VERSION === "dev" ? "(a copy that isn’t published yet)" : "version " + esc(SITE_VERSION)) + ' · <a href="https://github.com/chrisdfennell/arithmetic-helpers/releases" target="_blank" rel="noopener" style="display:inline;padding:0">what’s new</a></p></div>');
     if (!anchor && openMenu){ openMenu.style.position = "fixed"; openMenu.style.top = "70px"; openMenu.style.left = "50%"; openMenu.style.transform = "translateX(-50%)"; }
   }
   function problemBox(){
@@ -677,7 +679,7 @@
     })();
   });
 
-  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, showQR:showQR, words:words, togglePad:togglePad, voiceScore:voiceScore, spoken:spoken };
+  window.HelperTools = { settings:function(){ return S; }, setBig:setBig, setScale:setScale, showQR:showQR, words:words, togglePad:togglePad, voiceScore:voiceScore, spoken:spoken, version:SITE_VERSION };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", main);
   else main();
 })();

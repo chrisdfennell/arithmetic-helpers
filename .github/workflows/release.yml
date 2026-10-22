@@ -1,0 +1,105 @@
+# Every push to main gets the next version number, a tag and a GitHub Release, and is published to GitHub Pages
+# with that version stamped into the site.
+#
+#   a commit subject starting with "Add"  -> the next minor version (1.4.2 -> 1.5.0)
+#   "[major]" anywhere in a commit        -> the next major version (1.4.2 -> 2.0.0)
+#   anything else                         -> the next patch version (1.4.2 -> 1.4.3)
+#
+# The version goes into tools.js (SITE_VERSION: shown in the home page footer and the ? menu), into sw.js (the
+# offline cache's name, so every release renews it) and into version.json. Running it by hand with nothing new
+# since the last tag re-publishes that same version.
+name: Release and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: release-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.next.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out the next version
+        id: next
+        run: |
+          last=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)
+          if [ -z "$last" ]; then
+            version="1.0.0"
+            { echo "The first versioned release of Arithmetic Helpers."; echo; echo "Recent changes:"; git log -30 --format='- %s'; } > notes.md
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          elif [ -z "$(git log --format=%H "$last..HEAD")" ]; then
+            version="${last#v}"
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            IFS=. read -r major minor patch <<< "${last#v}"
+            if git log --format=%B "$last..HEAD" | grep -q '\[major\]'; then
+              version="$((major + 1)).0.0"
+            elif git log --format=%s "$last..HEAD" | grep -qE '^Add\b'; then
+              version="$major.$((minor + 1)).0"
+            else
+              version="$major.$minor.$((patch + 1))"
+            fi
+            git log --format='- %s' "$last..HEAD" > notes.md
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Version: $version"
+
+      - name: Tag it and write the release
+        if: steps.next.outputs.new == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.next.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "v$VERSION" -m "v$VERSION"
+          git push origin "v$VERSION"
+          gh release create "v$VERSION" --title "v$VERSION" --notes-file notes.md
+
+  deploy:
+    needs: release
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the site with the version stamped in
+        env:
+          VERSION: ${{ needs.release.outputs.version }}
+        run: |
+          mkdir _site
+          rsync -a --exclude '.git' --exclude '.github' --exclude '_site' --exclude 'docs' --exclude 'README.md' ./ _site/
+          tools=$(find _site -name tools.js | head -1)
+          sed -i "s/var SITE_VERSION = \"dev\";/var SITE_VERSION = \"$VERSION\";/" "$tools"
+          grep -q "SITE_VERSION = \"$VERSION\"" "$tools"
+          sed -i "s/^var VERSION = \"[^\"]*\";/var VERSION = \"$VERSION\";/" _site/sw.js
+          grep -q "^var VERSION = \"$VERSION\";" _site/sw.js
+          printf '{ "version": "%s", "commit": "%s", "date": "%s" }\n' "$VERSION" "$GITHUB_SHA" "$(date -u +%Y-%m-%d)" > _site/version.json
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Publish to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
