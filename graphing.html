@@ -117,6 +117,10 @@
     border-radius:4px;padding:0 4px;white-space:nowrap}
   .ask{margin:-4px 0 0;font-size:14px;color:var(--ink-2);display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}
   .ask[hidden]{display:none}
+  .methodrow{display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap;margin-top:-4px}
+  .methodrow[hidden]{display:none}
+  .lbl2{font-size:12.5px;color:var(--ink-3)}
+  .fnm{font-family:var(--f-body);font-style:normal;font-weight:600;padding-right:.08em}
   .ask .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
   .ask .q{font-weight:500;color:var(--ink);display:inline-flex;flex-wrap:wrap;align-items:center;gap:0 .3ch;min-width:0}
   .ask .q b{font-family:var(--f-mono);font-weight:600}
@@ -648,6 +652,12 @@
       </div>
     </div>
     <p class="hint" id="hint"></p>
+    <div class="methodrow" id="angRow" hidden>
+      <span class="lbl2">Angles</span>
+      <div class="modes small" id="angBtns" role="group" aria-label="Angle units for sin, cos and tan"><button type="button" data-ang="rad" aria-pressed="true">Radians</button><button type="button" data-ang="deg" aria-pressed="false">Degrees</button></div>
+      <span class="lbl2">x-axis in π</span>
+      <div class="modes small" id="piBtns" role="group" aria-label="Label the x-axis in multiples of π"><button type="button" data-pi="auto" aria-pressed="true">Auto</button><button type="button" data-pi="off" aria-pressed="false">Off</button><button type="button" data-pi="2" aria-pressed="false">π/2</button><button type="button" data-pi="4" aria-pressed="false">π/4</button><button type="button" data-pi="6" aria-pressed="false">π/6</button></div>
+    </div>
     <p class="ask" id="ask" hidden></p>
 
     <details class="maker" id="maker">
@@ -706,6 +716,9 @@
         <span class="lbl">Grid</span>
         <div class="fr-custom"><label>Lines every <select id="frStep"><option>0.5</option><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
           <label>Numbers every <select id="frLbl"><option>0.5</option><option>1</option><option>2</option><option>5</option><option>10</option><option>20</option></select></label></div>
+        <span class="lbl">Angles</span>
+        <div><div class="modes small" id="frAng" role="group" aria-label="Angle units"><button type="button" data-ang="rad" aria-pressed="true">Radians</button><button type="button" data-ang="deg" aria-pressed="false">Degrees</button></div>
+          <div class="modes small" id="frPi" role="group" aria-label="Label the x-axis in multiples of π" style="margin-top:6px"><button type="button" data-pi="auto" aria-pressed="true">π axis: auto</button><button type="button" data-pi="off" aria-pressed="false">Off</button><button type="button" data-pi="2" aria-pressed="false">π/2</button><button type="button" data-pi="4" aria-pressed="false">π/4</button><button type="button" data-pi="6" aria-pressed="false">π/6</button></div></div>
         <span class="lbl">Show</span>
         <div class="toggles">
           <button type="button" class="tog" id="frFirst" aria-pressed="false"><b>I</b> First quadrant only</button>
@@ -865,7 +878,7 @@
   var $ = function(id){ return document.getElementById(id); };
   var MODES = ["points", "table", "functions", "systems", "inequalities", "transform", "scatter"];
   var PRACTICE = ["all", "step", "check"];
-  var S = { mode:"points", practice:"all", step:1,
+  var S = { mode:"points", practice:"all", step:1, angle:"rad", xpi:"auto",
             inputs:{ points:"distance (1, 2) (4, 6)", table:"table y = 3x − 1 for x = −2..2", functions:"y = x^2 − 4x + 3",
                      systems:"x + y = 6 and x − y = 2", inequalities:"y < 2x + 1",
                      transform:"reflect (1, 2) (4, 2) (4, 5) over the y-axis", scatter:"scatter (1, 2) (2, 4) (3, 5) (4, 4) (5, 6) predict x = 8" },
@@ -1150,7 +1163,7 @@
   var UNDEF = { undef:true };
   function lexE(src){
     var s = String(src).replace(/[−–—]/g, "-").replace(/\b[fgh]\s*\(\s*x\s*\)/gi, "y").replace(/\*\*/g, "^")
-      .replace(/\bsqrt\b/gi, "√").replace(/\babs\s*\(/gi, "\u0001").replace(/\bpi\b/gi, "π");
+      .replace(/\bsqrt\b/gi, "√").replace(/\babs\s*\(/gi, "\u0001");
     var out = [], i = 0, m;
     while (i < s.length){
       var c = s.charAt(i), rest = s.slice(i);
@@ -1163,12 +1176,26 @@
         out.push({ k:"num", v:v, int:m[0].indexOf(".") < 0, s:m[0] }); i += m[0].length; continue;
       }
       if (VULG[c]){ out.push({ k:"num", v:R(VULG[c][0], VULG[c][1]), int:false, frac:true, s:c }); i++; continue; }
-      if (/[xyXY]/.test(c)){ out.push({ k:"var", s:c.toLowerCase() }); i++; continue; }
       if (c === "\u0001"){ out.push({ k:"absf" }); i++; continue; }
-      if (c === "π" || c === "e" && !/^e[a-z]/i.test(rest)) throw new UserErr("This page works with whole numbers, fractions and decimals — not <b>" + esc(c) + "</b>. Use a number like 3.14 instead.");
-      if (/[A-Za-z]/.test(c)){
-        var w = /^[A-Za-z]+/.exec(rest)[0];
-        throw new UserErr("A function here uses just " + vH("x") + (w.length > 1 ? "" : " (and " + vH("y") + ")") + " — I don’t know what <b>" + esc(w) + "</b> is.");
+      // words: x, y, π / pi, e, and the functions sin cos tan sec csc cot ln log exp (sinx, 2xe^x … split up too)
+      if (/[A-Za-zπ]/.test(c)){
+        var w = /^[A-Za-zπ]+/.exec(rest)[0], j = 0;
+        while (j < w.length){
+          var rem = w.slice(j).toLowerCase(), hit = null;
+          for (var wi = 0; wi < WORDS.length && !hit; wi++) if (rem.indexOf(WORDS[wi]) === 0) hit = WORDS[wi];
+          if (!hit) throw new UserErr("I don’t know what <b>" + esc(w) + "</b> is. A function here can use " + vH("x") + ", numbers, π and " + vH("e") + ", and sin, cos, tan, ln, log, √ (sqrt) and |…| (abs).");
+          if (hit === "x" || hit === "y") out.push({ k:"var", s:hit });
+          else if (hit === "pi" || hit === "π") out.push({ k:"cst", s:"pi" });
+          else if (hit === "e") out.push({ k:"cst", s:"e" });
+          else if (hit === "sqrt") out.push({ k:"rt" });
+          else if (hit === "abs"){
+            if (j + 3 === w.length && /^\s*\(/.test(s.slice(i + w.length))){ out.push({ k:"absf" }); i = i + w.length + /^\s*\(/.exec(s.slice(i + w.length))[0].length; w = ""; break; }
+            throw new UserErr("Write <b>abs</b> with brackets, like <b>abs(x − 2)</b>, or use bars: <b>|x − 2|</b>.");
+          }
+          else out.push({ k:"fn", s:hit });
+          j += hit.length;
+        }
+        i += w.length; continue;
       }
       if (c === "²" || c === "³"){ out.push({ k:"op", s:"^" }); out.push({ k:"num", v:R(c === "²" ? 2 : 3), int:true, s:c === "²" ? "2" : "3" }); i++; continue; }
       if (c === "ˣ"){ out.push({ k:"op", s:"^" }); out.push({ k:"var", s:"x" }); i++; continue; }
@@ -1192,7 +1219,10 @@
     }
     return out;
   }
-  function tokTxt(t){ return !t ? "" : t.k === "num" ? t.s : t.k === "op" ? (t.s === "*" ? "×" : t.s === "-" ? "−" : t.s) : t.k === "var" ? t.s : t.k === "rt" ? "√" : t.k === "absf" ? "abs(" : t.k === "rel" ? t.s : t.k; }
+  var WORDS = ["sqrt", "abs", "sin", "cos", "tan", "sec", "csc", "cot", "exp", "log", "ln", "pi", "π", "x", "y", "e"];
+  var TRIG = { sin:1, cos:1, tan:1, sec:1, csc:1, cot:1 };
+  var DEGMODE = false;          // trig angles in degrees (the Angle units setting); radians otherwise
+  function tokTxt(t){ return !t ? "" : t.k === "fn" ? t.s : t.k === "cst" ? (t.s === "pi" ? "π" : "e") : t.k === "num" ? t.s : t.k === "op" ? (t.s === "*" ? "×" : t.s === "-" ? "−" : t.s) : t.k === "var" ? t.s : t.k === "rt" ? "√" : t.k === "absf" ? "abs(" : t.k === "rel" ? t.s : t.k; }
   function B(op, a, b, imp){ return { t:"bin", op:op, a:a, b:b, imp:!!imp }; }
   function Nn(v){ return { t:"num", v:v }; }
   var XN = { t:"var", n:"x" };
@@ -1204,7 +1234,7 @@
     function implicitNext(){
       var t = peek(), pr = tk[p - 1];
       if (!t) return false;
-      if (t.k === "var" || t.k === "(" || t.k === "rt" || t.k === "absf") return true;
+      if (t.k === "var" || t.k === "(" || t.k === "rt" || t.k === "absf" || t.k === "fn" || t.k === "cst") return true;
       if (t.k === "|") return absD === 0;
       if (t.k === "num" && pr && (pr.k === ")" || pr.k === "|")) return true;
       if (t.k === "num" && pr && pr.k === "var") throw new UserErr("Write the number in front of the letter — <b>" + esc(t.s + pr.s) + "</b>, not <b>" + esc(pr.s + t.s) + "</b>.");
@@ -1255,6 +1285,22 @@
       if (!t) throw new UserErr(pr ? "It ends with <b>" + esc(tokTxt(pr)) + "</b> — what comes after it?" : (emptyMsg || "There’s nothing there."));
       if (t.k === "num"){ p++; node = { t:"num", v:t.v, lit:true, int:t.int }; if (t.frac) node.fr = [t.v.n, t.v.d]; return node; }
       if (t.k === "var"){ p++; return { t:"var", n:t.s }; }
+      if (t.k === "cst"){ p++; return { t:"const", c:t.s }; }
+      if (t.k === "fn"){
+        p++;
+        var fname = t.s, fpow = null;
+        if (isOp(peek(), "^")){ p++; fpow = primary(); }                  // sin^2 x = (sin x)^2
+        if (!peek()) throw new UserErr("<b>" + esc(fname) + "</b> of what? Add it, like <b>" + esc(fname) + "(x)</b>.");
+        var arg;
+        if (peek().k === "(") arg = unpar(primary());
+        else {
+          // sin 2x, sin x: the argument is the product right after it (not past + or −, nor another function)
+          arg = power();
+          while (peek() && (peek().k === "var" || peek().k === "cst" || peek().k === "(" || peek().k === "rt")) arg = B("*", arg, power(), true);
+        }
+        var fnode = { t:"fn", f:fname, a:arg };
+        return fpow ? B("^", fnode, fpow) : fnode;
+      }
       if (t.k === "("){
         p++;
         if (peek() && peek().k === ")") throw new UserErr("There’s an empty pair of parentheses <b>( )</b> — put something inside.");
@@ -1315,8 +1361,25 @@
   function hasV(n, v){ if (!n) return false; if (n.t === "var") return n.n === v; if (n.t === "num") return false; return hasV(n.a, v) || (n.b ? hasV(n.b, v) : false); }
 
   /* ---- evaluating ---- */
+  function fnFloat(f, a){
+    var t = TRIG[f] ? (DEGMODE ? a * Math.PI / 180 : a) : a;
+    switch (f){
+      case "sin": return Math.sin(t);
+      case "cos": return Math.cos(t);
+      case "tan": return Math.abs(Math.cos(t)) < 1e-12 ? NaN : Math.tan(t);
+      case "sec": return Math.abs(Math.cos(t)) < 1e-12 ? NaN : 1 / Math.cos(t);
+      case "csc": return Math.abs(Math.sin(t)) < 1e-12 ? NaN : 1 / Math.sin(t);
+      case "cot": return Math.abs(Math.sin(t)) < 1e-12 ? NaN : Math.cos(t) / Math.sin(t);
+      case "ln": return a > 0 ? Math.log(a) : NaN;
+      case "log": return a > 0 ? Math.log(a) / Math.LN10 : NaN;
+      case "exp": return Math.exp(a);
+    }
+    return NaN;
+  }
   function fnum(n, x, y){
     switch (n.t){
+      case "const": return n.c === "pi" ? Math.PI : Math.E;
+      case "fn": return fnFloat(n.f, fnum(n.a, x, y));
       case "num": return toNum(n.v);
       case "var": return n.n === "x" ? x : y;
       case "par": return fnum(n.a, x, y);
@@ -1339,6 +1402,21 @@
   function fexact(n, x, y){
     switch (n.t){
       case "num": return n.v;
+      case "const": return null;
+      case "fn":
+        var fa = fexact(n.a, x, y);
+        if (fa === UNDEF) return UNDEF;
+        if (fa === null) return null;
+        if (n.f === "ln" || n.f === "log"){
+          if (sgn(fa) <= 0) return UNDEF;
+          if (isOne(fa)) return ZERO;
+          if (n.f === "log"){ for (var e10 = -12; e10 <= 12; e10++) if (eqR(powR(R(10), e10), fa)) return R(e10); }
+          return null;
+        }
+        if (n.f === "exp") return isZ(fa) ? ONE : null;
+        if (isZ(fa)){ if (n.f === "sin" || n.f === "tan") return ZERO; if (n.f === "cos" || n.f === "sec") return ONE; return UNDEF; }
+        if (DEGMODE && isInt(fa)){ var tv = trigExact(n.f, { r:ZERO, p:dvd(fa, R(180)) }); if (tv && tv.r === 1n) return tv.c; if (tv && tv.undef) return UNDEF; }
+        return null;
       case "var": return n.n === "x" ? x : y;
       case "par": return fexact(n.a, x, y);
       case "neg": var a0 = fexact(n.a, x, y); return a0 === null || a0 === UNDEF ? a0 : neg(a0);
@@ -1348,6 +1426,7 @@
     var a = fexact(n.a, x, y), b = fexact(n.b, x, y);
     if (a === UNDEF || b === UNDEF) return UNDEF;
     if (n.op === "^"){
+      if (b !== null && b !== UNDEF && isZ(b) && n.a.t === "const") return ONE;
       if (b === null || a === null) return null;
       if (isInt(b)){
         if (babs(b.n) > 64n) return null;
@@ -1381,7 +1460,7 @@
       case "var": return n.n === "x" ? [ZERO, ONE] : null;
       case "par": return polyOf(n.a);
       case "neg": var a0 = polyOf(n.a); return a0 ? pscale(a0, NEG1) : null;
-      case "abs": case "sqrt": var c = constOf(n); return c ? [c] : null;
+      case "abs": case "sqrt": case "fn": case "const": var c = constOf(n); return c ? [c] : null;
     }
     if (n.op === "^"){
       var e = constOf(n.b), base = polyOf(n.a);
@@ -1406,7 +1485,7 @@
       case "var": return n.n === "x" ? { x:ONE, y:ZERO, k:ZERO } : { x:ZERO, y:ONE, k:ZERO };
       case "par": return linOf(n.a);
       case "neg": var a0 = linOf(n.a); return a0 ? { x:neg(a0.x), y:neg(a0.y), k:neg(a0.k) } : null;
-      case "abs": case "sqrt": var c = constOf(n); return c ? { x:ZERO, y:ZERO, k:c } : null;
+      case "abs": case "sqrt": case "fn": case "const": var c = constOf(n); return c ? { x:ZERO, y:ZERO, k:c } : null;
     }
     var a = linOf(n.a), b = linOf(n.b);
     function cst(l){ return l && isZ(l.x) && isZ(l.y); }
@@ -1429,6 +1508,8 @@
   /* ---- showing an expression (html, plain text, and plain ASCII for links) ---- */
   function prec(n){
     switch (n.t){
+      case "const": return 9;
+      case "fn": return 8;
       case "num": return sgn(n.v) < 0 ? 4 : (n.fr ? 6 : 9);
       case "var": case "abs": case "par": return 9;
       case "sqrt": return 8;
@@ -1451,6 +1532,8 @@
           if (!H && !isInt(v) && !(v.dec && isTermD(v.d)) && !n.fr) m = (absR(v)).n + "/" + v.d;
           return ng ? (A ? "-" : H ? SG : "−") + m : m;
         case "var": return H ? vH(n.n) : n.n;
+        case "const": return n.c === "pi" ? (A ? "pi" : "π") : (H ? vH("e") : "e");
+        case "fn": return (H ? '<span class="fnm">' + n.f + "</span>" : n.f) + W(go(n.a, true));
         case "par": return W(go(n.a, true));
         case "abs": return "|" + go(n.a, true) + "|";
         case "sqrt":
@@ -1486,6 +1569,10 @@
         return sa + "/" + sb;
       }
       // a power
+      if (a.t === "fn" && b.t === "num" && isInt(b.v) && sgn(b.v) > 0 && !A){
+        var en = String(b.v.n);
+        return (H ? '<span class="fnm">' + a.f + "</span><sup>" + en + "</sup>" : a.f + (supT(en) || "^" + en)) + W(go(a.a, true));
+      }
       var base = pa < 9 && !(a.t === "num" && sgn(a.v) >= 0 && isInt(a.v)) ? W(go(a, true)) : go(a, false);
       if (a.t === "num" && a.fr) base = W(go(a, true));
       var et = go(b, true);
@@ -1587,6 +1674,12 @@
       return { x0:X[0], x1:X[1], y0:Y[0], y1:Y[1], sx:X[2], sy:Y[2] };
     }
     xs = xs.concat([0]); ys = ys.concat([0]);
+    if (spec.nonSquare){       // each axis its own scale (a trig graph in degrees: x runs to 360, y to ±1)
+      var nsA = function(a){ var lo = Math.min.apply(null, a), hi = Math.max.apply(null, a), sp = Math.max(hi - lo, 2), m2 = sp * 0.08, s2 = niceStep(sp + 2 * m2, 12);
+        return [Math.floor((lo - m2) / s2) * s2, Math.ceil((hi + m2) / s2) * s2]; };
+      var NX = nsA(xs), NY = nsA(ys);
+      return { x0:NX[0], x1:NX[1], y0:NY[0], y1:NY[1] };
+    }
     var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
     var span = Math.max(x1 - x0, y1 - y0);
     var m = Math.max(1.2, span * 0.12);
@@ -1602,8 +1695,9 @@
     while (b1 - b0 < w - 1e-9){ if (flip++ % 2) b0 -= step; else b1 += step; }
     return { x0:a0, x1:a1, y0:b0, y1:b1 };
   }
-  function stepsOf(view, kind){
+  function stepsOf(view, kind, ns){
     if (kind === "data" && view.sx) return { sx:view.sx, sy:view.sy };
+    if (ns) return { sx:niceStep(view.x1 - view.x0, 14), sy:niceStep(view.y1 - view.y0, 12) };
     var s = niceStep(view.x1 - view.x0, 16);
     if (kind === "data") return { sx:s, sy:niceStep(view.y1 - view.y0, 10) };
     return { sx:s, sy:s };
@@ -1648,6 +1742,14 @@
       for (var k = 0; k < d; k++){ var m = (xg + xb) / 2; if (isFinite(val(m))) xg = m; else xb = m; }
       return xg;
     }
+    // near an asymptote: the last x (going from xg toward xb) where the curve is still within the drawn range
+    function inside(xg, xb){
+      var yb = val(xb);
+      if (!isNaN(yb) && yb >= lo && yb <= hi) return [xb, yb];
+      for (var k = 0; k < 50; k++){ var m = (xg + xb) / 2, ym = val(m); if (isNaN(ym) || ym > hi || ym < lo) xb = m; else xg = m; }
+      var yv = val(xb);
+      return [xb, isNaN(yv) ? val(xg) : yv];
+    }
     function refine(x0, y0, x1, y1, depth){
       var p0 = toPy(y0), p1 = toPy(y1);
       if (Math.abs(p1 - p0) < 4 || depth > 14 || (y0 > hi && y1 > hi) || (y0 < lo && y1 < lo)){
@@ -1665,8 +1767,8 @@
       var x = xs[i], y = val(x);
       if (x - px < 1e-12){ continue; }
       if (isNaN(y) && isNaN(py)){ px = x; py = y; continue; }
-      if (isNaN(y)){ var xe = edge(px, x, 30), ye = val(xe); if (!isNaN(ye)) push(xe, ye); cut(); px = x; py = y; continue; }
-      if (isNaN(py)){ var xs2 = edge(x, px, 30), ys2 = val(xs2); cut(); if (!isNaN(ys2)) push(xs2, ys2); refine(xs2, ys2, x, y, 0); px = x; py = y; continue; }
+      if (isNaN(y)){ var xe = edge(px, x, 30), ye = val(xe); if (!isNaN(ye)){ var ce = inside(px, xe); refine(px, py, ce[0], ce[1], 0); } cut(); px = x; py = y; continue; }
+      if (isNaN(py)){ var xs2 = edge(x, px, 30), ys2 = val(xs2); cut(); if (!isNaN(ys2)){ var cs = inside(x, xs2); push(cs[0], cs[1]); refine(cs[0], cs[1], x, y, 0); } px = x; py = y; continue; }
       // both defined: a sign flip with a huge size on either side, with nothing defined in between, is an asymptote
       refine(px, py, x, y, 0);
       px = x; py = y;
@@ -1687,7 +1789,8 @@
     function C(cls){ return inline ? (INL[cls] || INL[cls.split(" ")[0]] || "") : 'class="' + cls + '"'; }
     function G(step){ return step >= 0 && !inline ? '<g class="gr-reveal" data-step="' + step + '">' : "<g>"; }
     var PP = spec.paper || null, SH = PP && PP.H ? PP.H : SZ;
-    var v = view, kind = spec.kind || "plane", st = PP ? paperSteps(PP, v) : stepsOf(v, kind);
+    var v = view, kind = spec.kind || "plane", st = PP ? paperSteps(PP, v) : stepsOf(v, kind, spec.nonSquare);
+    if (spec.piAxis && kind !== "data"){ var pu = Math.PI / spec.piAxis, pmu = 1; while ((v.x1 - v.x0) / (pu * pmu) > 15) pmu *= 2; st = { sx:pu * pmu, sy:st.sy, piK:spec.piAxis, piM:pmu }; }
     var L = PAD, Rr = SZ - PAD, T = PAD, Bt = SH - PAD;
     if (kind === "data"){ L = 52; Bt = SZ - 44; T = 16; Rr = SZ - 14; }
     function X(x){ return L + (x - v.x0) / (v.x1 - v.x0) * (Rr - L); }
@@ -1714,6 +1817,7 @@
     var ax = Math.min(Math.max(Y(0), T), Bt), ay = Math.min(Math.max(X(0), L), Rr);
     if (kind === "data"){ ax = Bt; ay = L; }
     var every = (gx1 - gx0) > 14 ? 2 : 1, everyY = (gy1 - gy0) > 14 ? 2 : 1;
+    if (st.piK) every = 1;
     if (PP){ every = everyY = Math.max(1, Math.round(PP.lbl / st.sx)); while ((gx1 - gx0) / every > 24) every *= 2; while ((gy1 - gy0) / everyY > 24) everyY *= 2; }
     var TICKS = [];
     if (kind === "data"){
@@ -1735,7 +1839,7 @@
       for (k = gx0; k <= gx1; k++){
         g = k * st.sx;
         if (k !== 0 && k % every === 0 && X(g) > L + 6 && X(g) < Rr - 6)
-          TICKS.push({ t:numLbl(g, st.sx), x:X(g), y:tyX, a:"middle", alt:ax - 7 > T + 12 ? { x:X(g), y:ax - 7, a:"middle" } : null });
+          TICKS.push({ t:st.piK ? piLbl(k * st.piM, st.piK) : numLbl(g, st.sx), x:X(g), y:tyX, a:"middle", alt:ax - 7 > T + 12 ? { x:X(g), y:ax - 7, a:"middle" } : null });
       }
       for (k = gy0; k <= gy1; k++){
         g = k * st.sy;
@@ -1745,7 +1849,7 @@
       if (TICKS.noNums) TICKS.length = 0;
       if (!TICKS.noNums && v.x0 < 0 && v.x1 > 0 && v.y0 < 0 && v.y1 > 0) TICKS.push({ t:"0", x:ay - 6, y:ax + 16, a:"end", alt:{ x:ay + 6, y:ax + 16, a:"start" } });
     }
-    var box = { x0:v.x0, x1:v.x1, y0:v.y0, y1:v.y1 }, placed = [], segsPx = [];
+    var box = { x0:v.x0, x1:v.x1, y0:v.y0, y1:v.y1 }, placed = [], segsPx = [], asymPx = [];
     var body = "";
     // shading first, under everything
     (spec.shades || []).forEach(function(sh){
@@ -1760,7 +1864,7 @@
       for (var i = 0; i < pg.pts.length - (pg.open ? 1 : 0); i++){ var a = pg.pts[i], b = pg.pts[(i + 1) % pg.pts.length]; segsPx.push([[X(a[0]), Y(a[1])], [X(b[0]), Y(b[1])]]); }
     });
     (spec.asym || []).forEach(function(as){
-      if (as.x !== undefined) segsPx.push([[X(as.x), T], [X(as.x), Bt]]); else segsPx.push([[L, Y(as.y)], [Rr, Y(as.y)]]);
+      if (as.x !== undefined) asymPx.push([[X(as.x), T], [X(as.x), Bt]]); else asymPx.push([[L, Y(as.y)], [Rr, Y(as.y)]]);
       if (as.x !== undefined) body += G(as.step) + '<line ' + C("gr-asym") + ' x1="' + f1(X(as.x)) + '" y1="' + T + '" x2="' + f1(X(as.x)) + '" y2="' + Bt + '"/></g>';
       else body += G(as.step) + '<line ' + C("gr-asym") + ' x1="' + L + '" y1="' + f1(Y(as.y)) + '" x2="' + Rr + '" y2="' + f1(Y(as.y)) + '"/></g>';
     });
@@ -1804,8 +1908,9 @@
       TAGS.push({ at:[x, y], t:tg.t, cls:tg.cls || "gr-t1", step:tg.step });
     });
     // what's drawn, as sample points every few pixels (lines, legs, curves, shape edges, asymptotes)
-    var samp = [];
-    segsPx.forEach(function(sg){
+    var samp = [], nSolid = 0;
+    segsPx.concat(asymPx).forEach(function(sg, si){
+      if (si === segsPx.length) nSolid = samp.length;
       var dx = sg[1][0] - sg[0][0], dy = sg[1][1] - sg[0][1], n = Math.max(1, Math.ceil(Math.sqrt(dx * dx + dy * dy) / 3));
       if (n > 400) n = 400;
       for (var i = 0; i <= n; i++){ var x = sg[0][0] + dx * i / n, y = sg[0][1] + dy * i / n; if (x > -10 && x < SZ + 10 && y > -10 && y < SZ + 10) samp.push([x, y]); }
@@ -1819,7 +1924,9 @@
     function tbox(tk, pos){ var w = tk.t.length * 7.2 + 2, x = pos.x, y = pos.y; return pos.a === "middle" ? [x - w / 2, y - 11, w, 14] : pos.a === "end" ? [x - w, y - 11, w, 14] : [x, y - 11, w, 14]; }
     function hit(a, b){ return a[0] < b[0] + b[2] && b[0] < a[0] + a[2] && a[1] < b[1] + b[3] && b[1] < a[1] + a[3]; }
     function dotIn(d, b, m){ var cx = Math.max(b[0], Math.min(d[0], b[0] + b[2])), cy = Math.max(b[1], Math.min(d[1], b[1] + b[3])); return (cx - d[0]) * (cx - d[0]) + (cy - d[1]) * (cy - d[1]) < (d[2] + m) * (d[2] + m); }
-    function sampIn(b, m){ var c = 0; for (var i = 0; i < samp.length; i++){ var q = samp[i]; if (q[0] > b[0] - m && q[0] < b[0] + b[2] + m && q[1] > b[1] - m && q[1] < b[1] + b[3] + m) c++; } return c; }
+    if (!asymPx.length) nSolid = samp.length;
+    // (dashed asymptotes count for placing labels, but an axis number may sit on one)
+    function sampIn(b, m, solidOnly){ var c = 0, n = solidOnly ? nSolid : samp.length; for (var i = 0; i < n; i++){ var q = samp[i]; if (q[0] > b[0] - m && q[0] < b[0] + b[2] + m && q[1] > b[1] - m && q[1] < b[1] + b[3] + m) c++; } return c; }
     var tickBoxes = kind === "data" ? [] : TICKS.map(function(tk){ return tbox(tk, tk); });
     function cost(b, own){
       var c = 0;
@@ -1890,7 +1997,7 @@
         var b = tbox(tk, opts[i]);
         if (placed.some(function(o2){ return hit(o2, b); })) continue;
         if (dots.some(function(d){ return dotIn(d, b, 1); })) continue;
-        if (sampIn(b, 0) > 0) continue;
+        if (sampIn(b, 0, true) > 0) continue;
         pick = opts[i];
       }
       if (pick) s += '<text ' + C(haloCls("gr-num")) + HALO + ' x="' + f1(pick.x) + '" y="' + f1(pick.y) + '" text-anchor="' + pick.a + '">' + tk.t + "</text>";
@@ -2040,7 +2147,12 @@
       function Yp(y){ return bx[3] - (y - v.y0) / (v.y1 - v.y0) * (bx[3] - bx[2]); }
       function Xp(x){ return bx[0] + (x - v.x0) / (v.x1 - v.x0) * (bx[1] - bx[0]); }
       if (u.px < bx[0] || u.px > bx[1] || u.py < bx[2] || u.py > bx[3]) return null;
-      var s = niceStep(v.x1 - v.x0, 40), xs = Math.round(u.x / s) * s, snap = Math.abs(u.x - xs) < s * 0.3, xu = snap ? xs : u.x;
+      var s = spec.nonSquare && v.x1 - v.x0 > 120 ? 15 : niceStep(v.x1 - v.x0, 40), xs = Math.round(u.x / s) * s, snap = Math.abs(u.x - xs) < s * 0.3, xu = snap ? xs : u.x, xPN = null;
+      if (spec.piAxis){
+        var dn = spec.piAxis === 2 ? 4 : spec.piAxis, sp2 = Math.PI / dn, np = Math.round(u.x / sp2);
+        snap = Math.abs(u.x - np * sp2) < sp2 * 0.3; xu = snap ? np * sp2 : u.x;
+        if (snap) xPN = PN(ZERO, R(np, dn));
+      }
       function consider(name, yf, exact, approx){
         if (!isFinite(yf)) return;
         var d = Math.abs(Yp(yf) - u.py);
@@ -2050,7 +2162,10 @@
         if (!cv.name) return;
         var yf; try { yf = cv.f(xu); } catch (e){ yf = NaN; }
         var ex2 = null;
-        if (snap && cv.ast){ var XR = fromNum(xu), yv = fexact(cv.ast, XR, ZERO); if (yv && yv !== UNDEF) ex2 = isTermD(yv.d) ? decOf(yv) : numT(yv); }
+        if (snap && xPN){ ex2 = cv.fam ? trigYAt(cv.fam, xPN) : null; if (ex2 === "undefined") return; }
+        else if (snap && cv.fam && cv.fam.deg && trigYAtDeg(cv.fam, fromNum(xu)) !== null){ ex2 = trigYAtDeg(cv.fam, fromNum(xu)); if (ex2 === "undefined") return; }
+        else if (snap && cv.ast){ var XR = fromNum(xu), od = DEGMODE; DEGMODE = !!cv.deg; var yv = fexact(cv.ast, XR, ZERO); DEGMODE = od; if (yv && yv !== UNDEF) ex2 = isTermD(yv.d) ? decOf(yv) : numT(yv); }
+        if (ex2 && /^−?\d+\/\d+$/.test(ex2)){ var rq = readNumber(ex2); if (rq && isTermD(rq.d)) ex2 = decOf(rq); }
         consider(cv.name, yf, ex2, false);
       });
       (spec.lines || []).forEach(function(l){
@@ -2060,7 +2175,7 @@
         consider(l.name, yf, ex2, !!l.approx);
       });
       if (!best) return null;
-      var xT = snap ? decOf(fromNum(xu)) : rd(u.x);
+      var xT = xPN ? pnT(xPN) : snap ? decOf(fromNum(xu)) : rd(u.x);
       var yT = best.exact !== null && !best.approx ? "= " + best.exact : "≈ " + (spec.kind === "data" ? sig(best.y) : rd(best.y));
       return { text:best.name + " at x = " + xT + ": y " + yT, vx:Xp(xu), vy:Yp(best.y), key:"t" + best.name };
     }
@@ -2128,7 +2243,7 @@
         if (e.pointerType === "touch") return;
         var n = nearest(u);
         if (n){ if (!shown || shown.key !== n.key) showPoint(n, false); return; }
-        var t = self.opt.plot ? null : trace(u);
+        var t = self.opt.plot && !self.opt.trace ? null : trace(u);
         if (t){ showTrace(t, false); return; }
         if (shown && !shown.pinned) hide();
         return;
@@ -2750,8 +2865,9 @@
     }
     return "standard";
   }
-  function analyze(ast){
-    var f = function(x){ return fnum(ast, x, 0); };
+  function analyze(ast, deg){
+    deg = !!deg;
+    var f = function(x){ var o = DEGMODE; DEGMODE = deg; var r = fnum(ast, x, 0); DEGMODE = o; return r; };
     var poly = polyOf(ast);
     if (poly){
       poly = ptrim(poly);
@@ -2775,6 +2891,13 @@
       if (!n || n.t === "num" || n.t === "var") return;
       if (n.t === "abs" && hasV(n.a, "x")){ cores.push({ k:"abs", node:n, lin:linCoef(n.a) }); return; }
       if (n.t === "sqrt" && hasV(n.a, "x")){ cores.push({ k:"sqrt", node:n, lin:linCoef(n.a) }); return; }
+      if (n.t === "fn" && hasV(n.a, "x")){
+        if (TRIG[n.f]) cores.push({ k:"trig", fname:n.f, node:n, lin:linPi(n.a) });
+        else if (n.f === "exp") cores.push({ k:"expe", node:n, lin:linCoef(n.a) });
+        else cores.push({ k:"log", fname:n.f, node:n, lin:linCoef(n.a) });
+        return;
+      }
+      if (n.t === "bin" && n.op === "^" && hasV(n.b, "x") && n.a.t === "const" && n.a.c === "e"){ cores.push({ k:"expe", node:n, lin:linCoef(n.b) }); return; }
       if (n.t === "bin" && n.op === "^" && hasV(n.b, "x")){ cores.push({ k:"exp", node:n, lin:hasV(n.a, "x") ? null : linCoef(n.b), base:constOf(n.a) }); return; }
       if (n.t === "bin" && n.op === "^" && hasV(n.a, "x")){
         var e = constOf(n.b);
@@ -2788,7 +2911,8 @@
     var other = { kind:"other", f:f, sp:[] };
     if (bad || !cores.length) return other;
     var c0 = cores[0];
-    if (!c0.lin || cores.some(function(c){ return c.k !== c0.k || !c.lin || !eqR(c.lin.m, c0.lin.m) || !eqR(c.lin.c, c0.lin.c) || (c.k === "exp" && (!c.base || !c0.base || !eqR(c.base, c0.base))); })) return other;
+    function linKey(c){ if (!c.lin) return null; var l = c.lin; return c.k + "|" + (c.fname || "") + "|" + (l.m.r ? numT(l.m.r) + "+" + numT(l.m.p) + "π|" + numT(l.c.r) + "+" + numT(l.c.p) + "π" : numT(l.m) + "|" + numT(l.c)); }
+    if (!c0.lin || cores.some(function(c){ return linKey(c) !== linKey(c0) || (c.k === "exp" && (!c.base || !c0.base || !eqR(c.base, c0.base))); })) return other;
     function isCore(n){ return cores.some(function(c){ return c.node === n; }); }
     function aff(n){
       if (isCore(n)){
@@ -2800,7 +2924,7 @@
         case "var": return null;
         case "par": return aff(n.a);
         case "neg": var z = aff(n.a); return z ? { a:neg(z.a), k:neg(z.k) } : null;
-        case "abs": case "sqrt": var cc = constOf(n); return cc ? { a:ZERO, k:cc } : null;
+        case "abs": case "sqrt": case "fn": case "const": var cc = constOf(n); return cc ? { a:ZERO, k:cc } : null;
       }
       var A = aff(n.a), Bb = aff(n.b);
       if (n.op === "^"){ var c2 = constOf(n); return c2 ? { a:ZERO, k:c2 } : null; }
@@ -2813,7 +2937,14 @@
     }
     var af = aff(ast);
     if (!af || isZ(af.a)) return other;
+    if (c0.k === "trig"){
+      var tk = c0.fname === "sin" || c0.fname === "cos" ? "trig" : c0.fname === "tan" || c0.fname === "cot" ? "tanf" : "trig2";
+      if (deg && (!pnIsRat(c0.lin.m) || !pnIsRat(c0.lin.c))) return other;
+      return { kind:tk, fname:c0.fname, A:af.a, k:af.k, m:c0.lin.m, c:c0.lin.c, deg:deg, f:f, sp:[] };
+    }
     var m = c0.lin.m, c = c0.lin.c, h = dvd(neg(c), m);
+    if (c0.k === "expe") return { kind:"expe", A:af.a, m:m, c:c, k:af.k, f:f, sp:[] };
+    if (c0.k === "log") return { kind:"log", fname:c0.fname, A:af.a, m:m, c:c, h:h, k:af.k, f:f, sp:[F(h)] };
     if (c0.k === "abs") return { kind:"abs", a:mul(af.a, absR(m)), h:h, k:af.k, f:f, sp:[F(h)] };
     if (c0.k === "sqrt") return { kind:"sqrt", A:af.a, m:m, c:c, h:h, k:af.k, f:f, sp:[F(h)] };
     if (c0.k === "recip") return { kind:"recip", a:dvd(af.a, m), h:h, k:af.k, f:f, sp:[F(h)] };
@@ -2944,14 +3075,17 @@
   function swatch(i, st){ return '<svg width="30" height="10" viewBox="0 0 30 10" aria-hidden="true"><line class="' + SER[i] + '"' + (st ? ' style="stroke-dasharray:' + (st === "dash" ? "6 4" : "none") + '"' : "") + ' x1="2" y1="5" x2="28" y2="5"/></svg>'; }
   function famName(fam){
     return { const:"a constant (a flat line)", linear:"linear (a straight line)", quad:"quadratic (a parabola)", cubic:"cubic", poly:"a polynomial", abs:"absolute value (a V)", sqrt:"square root (half a sideways parabola)",
-             exp:"exponential", recip:"reciprocal (a hyperbola)", other:"a combination" }[fam.kind];
+             exp:"exponential", recip:"reciprocal (a hyperbola)", other:"a combination",
+             trig:fam.fname === "sin" ? "a sine wave" : "a cosine wave", tanf:fam.fname === "tan" ? "tangent (with asymptotes)" : "cotangent (with asymptotes)",
+             trig2:fam.fname === "sec" ? "secant (with asymptotes)" : "cosecant (with asymptotes)", expe:"exponential (base e)", log:fam.fname === "ln" ? "natural logarithm" : "logarithm (base 10)" }[fam.kind];
   }
   // one function: its steps, its features, and what Check my answer asks about it
   function fnSteps(ctx, ast, fam, i, many, spec){
     var name = many ? "y" + "₁₂₃₄₅".charAt(i) : "y", nmH = many ? subH("y", i + 1) : vH("y"), eqH = nmH + opS("=") + exH(ast), eqT = name + " = " + exT(ast);
     var cls = SER[i % 5], pcl = SERP[i % 5], tcl = SERT[i % 5], badge = SERC[i % 5], pre = many ? "<b>" + eqH + "</b>: " : "";
     var feats = [], fields = [], facts = [], bandH = [], bandT = [], notes = "", sp = fam.sp.slice(), stepIds = [];
-    var yi = yIntOf(fam, ast), roots = rootsOf(fam.kind === "other" ? (function(){ fam.ast = ast; return fam; })() : fam);
+    var NEW = NEWK[fam.kind], info = null, piK = 0;
+    var yi = yIntOf(fam, ast), roots = NEW ? { vals:[], fl:[], pm:null } : rootsOf(fam.kind === "other" ? (function(){ fam.ast = ast; return fam; })() : fam);
     var sId = function(lines, aside, work){ var s = ctx.add(lines, aside, work); stepIds.push(s); return s; };
     var kName = famName(fam);
     var lab = many ? name + ": " : "";
@@ -2960,7 +3094,7 @@
       return sId([[badge, lab + "y-int", pre + "The <strong>" + vH("y") + "-intercept</strong> is where the graph crosses the " + vH("y") + "-axis, where " + vH("x") + " = 0. Put 0 in: <b>" + nmH + " = " + subShow(ast, ZERO, "h") + " = " + yiH(yi) + "</b>, the point " + yiPtH(yi) + "."]],
         null, [[lab + "x = 0", badge, ex(nmH + opS("=") + subShow(ast, ZERO, "h") + opS("=") + yiH(yi))]]);
     }
-    if (yi.r) spec.pts.push({ x:0, y:F(yi.r), lbl:yiPtT(yi), cls:pcl, step:-2, tip:lab + "y-intercept " + yiPtT(yi) });
+    if (yi.r && !NEW) spec.pts.push({ x:0, y:F(yi.r), lbl:yiPtT(yi), cls:pcl, step:-2, tip:lab + "y-intercept " + yiPtT(yi) });
     var yS, rS, xs = [];
     if (fam.kind === "linear" || fam.kind === "const"){
       var m = fam.kind === "linear" ? fam.m : ZERO, b = fam.kind === "linear" ? fam.b : fam.c, si = ruleLinH(m, b).replace(vH("y"), nmH);
@@ -3124,6 +3258,9 @@
       fields.push({ key:"va" + i, kind:"vline", label:lab + "Vertical asymptote", v:fam.h });
       fields.push({ key:"ha" + i, kind:"hline", label:lab + "Horizontal asymptote", v:fam.k });
       facts.push(lab + "domain " + vH("x") + " ≠ " + nH(fam.h) + "; range " + vH("y") + " ≠ " + nH(fam.k));
+    } else if (NEW){
+      var tr = trigSteps(ctx, ast, fam, { lab:lab, pre:pre, badge:badge, pcl:pcl, spec:spec, sId:sId, i:i });
+      feats = tr.feats; fields = tr.fields; facts = facts.concat(tr.facts); xs = xs.concat(tr.xs); sp = sp.concat(tr.sp); yS = tr.yS; info = tr.info; piK = tr.piK || 0;
     } else if (fam.kind === "cubic" && fam.pure){
       var Cc = P(fam.h, fam.k);
       var cS = sId([["p", lab + "Centre", pre + "It’s a <strong>cubic</strong> of the form <b>" + vH("y") + " = " + vH("a") + "(" + vH("x") + " − " + vH("h") + ")³ + " + vH("k") + "</b>, with " + vH("a") + " = " + nH(fam.a) + ", " + vH("h") + " = " + nH(fam.h) + ", " + vH("k") + " = " + nH(fam.k) + ". Its centre (where it flattens out and changes how it bends) is <b>" + ptH(Cc) + "</b>."]],
@@ -3172,7 +3309,7 @@
     spec.pts.forEach(function(p){ if (p.step === -2) p.step = yS; });
     var dS = ctx.add([[badge, lab + "Draw", pre + "Plot the key points, then sketch the " + (fam.kind === "linear" ? "line" : "curve") + " through them" + (many ? " — drawn " + DASHW[i % 5] + " in this colour" : "") + "."
       + (fam.kind === "recip" ? " Never join the two pieces across the asymptote." : "")]], null, [[lab + "draw", badge, ex(eqH, "res")]]);
-    spec.curves.push({ f:fam.f, cls:cls, step:dS, sp:sp.concat(xs), name:many ? name : "y", ast:ast });
+    spec.curves.push({ f:fam.f, cls:cls, step:dS, sp:sp.concat(xs), name:many ? name : "y", ast:ast, fam:fam, deg:!!fam.deg });
     var fx = spec.focus;
     xs.forEach(function(x){ if (Math.abs(x) < 40){ fx.xs.push(x); fx.ys.push(0); } });
     if (yi.r && Math.abs(F(yi.r)) < 40){ fx.xs.push(0); fx.ys.push(F(yi.r)); }
@@ -3183,7 +3320,7 @@
     if (fam.kind === "sqrt"){ var e1 = F(fam.h) + (sgn(fam.m) > 0 ? 4 : -4); fx.xs.push(e1); fx.ys.push(fam.f(e1)); }
     if (fam.kind === "other" || fam.kind === "poly"){ [-3, -2, -1, 1, 2, 3].forEach(function(x){ var y = fam.f(x); if (isFinite(y) && Math.abs(y) < 20){ fx.xs.push(x); fx.ys.push(y); } }); }
     feats.forEach(function(ft){ bandH.push('<span><span class="word">' + (many ? name + " " : "") + ft[0] + "&nbsp;</span>" + ft[1] + "</span>"); bandT.push((many ? name + " " : "") + ft[0].toLowerCase() + " " + ft[2]); });
-    return { eqH:eqH, eqT:eqT, feats:feats, fields:fields, facts:facts, bandH:bandH, bandT:bandT, kind:kName, fam:fam, roots:roots, yi:yi };
+    return { eqH:eqH, eqT:eqT, feats:feats, fields:fields, facts:facts, bandH:bandH, bandT:bandT, kind:kName, fam:fam, roots:roots, yi:yi, info:info, piK:piK };
   }
   function linNode(m, c){ return parseExpr(polyT([c, m]).replace(/−/g, "-")); }
   function polyT(p){
@@ -3212,7 +3349,7 @@
     if (many) ctx.add([["p", "Several", "There are " + pr.fns.length + " functions. Work out each one’s key features, then draw them all on one grid — each in its own colour <i>and</i> its own line style, so you can tell them apart."]], null,
       [["key", "p", ex(pr.fns.map(function(f, i){ return '<span class="nw">' + swatch(i) + "&nbsp;" + vH("y") + "<sub>" + (i + 1) + "</sub></span>"; }).join(opS(" ")))]]);
     pr.fns.forEach(function(fn, i){
-      var fam = analyze(fn.ast);
+      var fam = analyze(fn.ast, pr.deg);
       if (fam.kind === "other") fam.ast = fn.ast;
       outs.push(fnSteps(ctx, fn.ast, fam, i, many, spec));
     });
@@ -3226,16 +3363,25 @@
         var cps = xsC.map(function(v){ var x = v.r ? v.r : null, xf = v.r ? F(v.r) : v.f, y = x ? pevalR(outs[0].fam.poly, x) : null; return { x:x, y:y, xf:xf, yf:outs[0].fam.f(xf) }; });
         if (!cps.length) crossTxt = "Setting them equal has no solution, so the graphs <strong>never cross</strong>.";
         else {
-          var s = ctx.add([["a", "Crossing", "Where do they meet? Set the rules equal, <b>" + exH(pr.fns[0].ast) + " = " + exH(pr.fns[1].ast) + "</b>, and solve: they cross at " + cps.map(function(c){ return "<b>" + (c.x ? ptH(P(c.x, c.y)) : ptF({ x:c.xf, y:c.yf })) + "</b>"; }).join(" and ") + "."]], null,
+          var touch = dd === 2 && cps.length === 1;
+          var s = ctx.add([["a", touch ? "Touching" : "Crossing", "Where do they meet? Set the rules equal, <b>" + exH(pr.fns[0].ast) + " = " + exH(pr.fns[1].ast) + "</b>, and solve: they " + (touch ? "meet at just one point, " : "cross at ") + cps.map(function(c){ return "<b>" + (c.x ? ptH(P(c.x, c.y)) : ptF({ x:c.xf, y:c.yf })) + "</b>"; }).join(" and ") + "."
+            + (touch ? " The equation has a <i>double</i> root there, so the line doesn’t cross the curve — it just <strong>touches</strong> it: it’s a <strong>tangent line</strong> at that point." : "")]], null,
             [["meet", "a", ex(cps.map(function(c){ return c.x ? ptH(P(c.x, c.y)) : "≈" + ptF({ x:c.xf, y:c.yf }); }).join(opS("&nbsp;")), "res")]]);
-          cps.forEach(function(c){ spec.pts.push({ x:c.xf, y:c.yf, lbl:c.x ? ptT(P(c.x, c.y)) : "≈" + ptF({ x:c.xf, y:c.yf }), cls:"p4", step:s, tip:"y₁ and y₂ cross at " + (c.x ? ptT(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf })) }); spec.focus.xs.push(c.xf); spec.focus.ys.push(c.yf); });
+          cps.forEach(function(c){ spec.pts.push({ x:c.xf, y:c.yf, lbl:c.x ? ptT(P(c.x, c.y)) : "≈" + ptF({ x:c.xf, y:c.yf }), cls:"p4", step:s, tip:"y₁ and y₂ " + (touch ? "touch" : "cross") + " at " + (c.x ? ptT(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf })) }); spec.focus.xs.push(c.xf); spec.focus.ys.push(c.yf); });
           crossT = cps.map(function(c){ return c.x ? ptT(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf }); });
-          crossTxt = "They cross at " + cps.map(function(c){ return c.x ? ptH(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf }); }).join(" and ") + ".";
+          crossTxt = (touch ? "The line touches the curve (a tangent) at " : "They cross at ") + cps.map(function(c){ return c.x ? ptH(P(c.x, c.y)) : "≈ " + ptF({ x:c.xf, y:c.yf }); }).join(" and ") + ".";
         }
       }
     }
+    // a trig graph in radians: the x-axis in multiples of π (π/2, π/4 or π/6), unless switched off
+    var pk = 0; outs.forEach(function(o){ if (o.piK) pk = Math.max(pk, o.piK === 6 ? 6 : o.piK === 4 ? 4 : 2); });
+    if (pk === 4 && outs.some(function(o){ return o.piK === 6; })) pk = 6;
+    var want = pr.xpi && pr.xpi !== "auto" ? pr.xpi : null;
+    spec.piAxis = want === "off" ? 0 : want ? Number(want) : pk;
     // keep the window sensible
-    spec.focus.xs = spec.focus.xs.filter(function(x){ return Math.abs(x) <= 60; }); spec.focus.ys = spec.focus.ys.filter(function(y){ return Math.abs(y) <= 60; });
+    // trig in degrees: x runs to 360, so the axes get their own scales
+    if (pr.deg && outs.some(function(o){ return o.fam && (o.fam.kind === "trig" || o.fam.kind === "tanf" || o.fam.kind === "trig2"); })){ spec.nonSquare = true; spec.focus.ys = spec.focus.ys.filter(function(y){ return Math.abs(y) <= 60; }); }
+    else { spec.focus.xs = spec.focus.xs.filter(function(x){ return Math.abs(x) <= 60; }); spec.focus.ys = spec.focus.ys.filter(function(y){ return Math.abs(y) <= 60; }); }
     spec.aria = outs.map(function(o, i){ return "Graph of " + o.eqT + (many ? ", drawn " + DASHW[i % 5] : "") + ": " + o.kind + "; " + o.bandT.join("; "); }).join(". ") + (crossT.length ? ". They cross at " + crossT.join(" and ") : "");
     var key = many ? '<div class="gkey">' + outs.map(function(o, i){ return "<div>" + swatch(i) + "<span>" + o.eqH + " (" + DASHW[i % 5] + ")</span></div>"; }).join("") + "</div>" : "";
     ctx.fig(CAP + (many ? "All of them on one grid; the key says which is which." : "The key points, and the " + (outs[0].fam.kind === "linear" ? "line" : "curve") + " through them."), spec, key);
@@ -3251,14 +3397,325 @@
       if (v === UNDEF || v === null) { x = R(2); v = fexact(pr.fns[i].ast, x, ZERO); }
       return v && v !== UNDEF ? "at " + vH("x") + " = " + nH(x) + ", " + subShow(pr.fns[i].ast, x, "h") + " = " + nH(v) + ", so " + ptH(P(x, v)) + " is on the graph" : "";
     }).filter(Boolean).join("; ") + ".";
+    if (/a point: \.$/.test(closer)) closer = "<b>Check</b> it on the graph: " + outs.map(function(o){ return o.feats.slice(0, 3).map(function(ft){ return ft[0].toLowerCase() + " " + ft[1]; }).join(", "); }).join("; ") + " — each should match what you see.";
     var single = !many && outs[0].fam.kind === "linear" ? ' Straight lines in more depth: <a href="lines.html?mode=graph&amp;q=' + encodeURIComponent("y = " + exT(pr.fns[0].ast)) + '">graph it on the Slope Grid</a>.' : "";
     var bl = { kind:"plane", focus:spec.focus, aria:"A blank coordinate grid" };
     var bv = autoView(spec);
     var blank = { kind:"plane", focus:{ xs:[bv.x0 + 0.01, bv.x1 - 0.01], ys:[bv.y0 + 0.01, bv.y1 - 0.01] }, aria:"A blank coordinate grid" };
-    return { ctx:ctx, band:{ k:many ? "Key features" : (outs[0].kind.split(" (")[0].charAt(0).toUpperCase() + outs[0].kind.split(" (")[0].slice(1)), v:bandH.join('<span class="sep">·</span>'), facts:facts },
+    return { info:outs.map(function(o){ return o.info; }), piK:spec.piAxis, ctx:ctx, band:{ k:many ? "Key features" : (outs[0].kind.split(" (")[0].charAt(0).toUpperCase() + outs[0].kind.split(" (")[0].slice(1)), v:bandH.join('<span class="sep">·</span>'), facts:facts },
       closer:closer + single, fields:fields, ask:ask, askText:askT,
       api:{ text:askT, html:ask + "<br>" + gridSVG(blank, bv, { inline:true }), answer:bandT.join("; ") + (crossT.length ? "; cross at " + crossT.join(" and ") : ""),
             answerHtml:bandH.join("; ") + "<br>" + gridSVG(spec, bv, { inline:true }) } };
+  }
+
+  /* ===================== trigonometry, e and logs: numbers like 3π/4, exactly ===================== */
+  var NEWK = { trig:1, tanf:1, trig2:1, expe:1, log:1 };
+  // a number r + p·π (r and p fractions)
+  function PN(r, p){ return { r:r || ZERO, p:p || ZERO }; }
+  function pnAdd(a, b){ return PN(add(a.r, b.r), add(a.p, b.p)); }
+  function pnSub(a, b){ return PN(sub(a.r, b.r), sub(a.p, b.p)); }
+  function pnScale(a, k){ return PN(mul(a.r, k), mul(a.p, k)); }
+  function pnIsRat(a){ return isZ(a.p); }
+  function pnIsPi(a){ return isZ(a.r); }
+  function pnZero(a){ return isZ(a.r) && isZ(a.p); }
+  function pnEq(a, b){ return eqR(a.r, b.r) && eqR(a.p, b.p); }
+  function pnF(a){ return F(a.r) + F(a.p) * Math.PI; }
+  function pnDiv(a, b){            // a ÷ b, when that's still r + pπ
+    if (pnIsRat(b)){ if (isZ(b.r)) return null; return pnScale(a, recip(b.r)); }
+    if (pnIsPi(b) && pnIsPi(a)) return PN(dvd(a.p, b.p), ZERO);
+    return null;
+  }
+  function piPart(p){                // pπ as text: π/4, 3π/2, −π
+    if (isZ(p)) return "0";
+    var ng = sgn(p) < 0, a = absR(p), top = (a.n === 1n ? "" : String(a.n)) + "π";
+    return (ng ? "−" : "") + (a.d === 1n ? top : top + "/" + a.d);
+  }
+  function pnT(a){
+    if (pnIsPi(a)) return piPart(a.p);
+    if (pnIsRat(a)) return numT(a.r);
+    return numT(a.r) + (sgn(a.p) < 0 ? " − " : " + ") + piPart(absR(a.p));
+  }
+  function pnH(a){ return esc(pnT(a)); }
+  function piLbl(n, K){ return piPart(R(n, K)); }
+  // linear in x with coefficients r + pπ: {m, c} for m·x + c
+  function linPi(n){
+    function L(k, x){ return { k:k, x:x }; }
+    function go(n){
+      switch (n.t){
+        case "num": return L(PN(n.v), PN());
+        case "const": return n.c === "pi" ? L(PN(ZERO, ONE), PN()) : null;
+        case "var": return n.n === "x" ? L(PN(), PN(ONE)) : null;
+        case "par": return go(n.a);
+        case "neg": var a0 = go(n.a); return a0 ? L(pnScale(a0.k, NEG1), pnScale(a0.x, NEG1)) : null;
+        case "abs": case "sqrt": case "fn": var c = constOf(n); return c ? L(PN(c), PN()) : null;
+      }
+      var a = go(n.a), b = go(n.b);
+      if (!a || !b) return null;
+      if (n.op === "+") return L(pnAdd(a.k, b.k), pnAdd(a.x, b.x));
+      if (n.op === "-") return L(pnSub(a.k, b.k), pnSub(a.x, b.x));
+      function konst(l){ return pnZero(l.x); }
+      function mulPN(u, v){ if (pnIsRat(u)) return pnScale(v, u.r); if (pnIsRat(v)) return pnScale(u, v.r); return null; }
+      if (n.op === "*"){
+        var o = null;
+        if (konst(a)){ var k1 = mulPN(a.k, b.k), x1 = mulPN(a.k, b.x); if (k1 && x1) o = L(k1, x1); }
+        else if (konst(b)){ var k2 = mulPN(b.k, a.k), x2 = mulPN(b.k, a.x); if (k2 && x2) o = L(k2, x2); }
+        return o;
+      }
+      if (n.op === "/"){ if (!konst(b) || !pnIsRat(b.k) || isZ(b.k.r)) return null; return L(pnScale(a.k, recip(b.k.r)), pnScale(a.x, recip(b.k.r))); }
+      var c2 = constOf(n); return c2 ? L(PN(c2), PN()) : null;
+    }
+    var l = go(n);
+    if (!l || pnZero(l.x)) return null;
+    return { m:l.x, c:l.k };
+  }
+  // exact sin, cos, tan … at θ = qπ when q has a small bottom number: {c, r} (c·√r), {undef}, or null
+  var SIN12 = [[0, 1, 1], [1, 2, 1], [1, 2, 2], [1, 2, 3], [1, 1, 1]];   // sin of 0, π/6, π/4, π/3, π/2 as (top, bottom, √)
+  function sinQ(q){                 // q·π, q = t/12 for a whole t (otherwise null)
+    var t = mul(q, R(12));
+    if (!isInt(t)) return null;
+    var k = Number(((t.n % 24n) + 24n) % 24n), sg = 1;
+    if (k >= 12){ k -= 12; sg = -1; }
+    if (k > 6) k = 12 - k;
+    var idx = { 0:0, 2:1, 3:2, 4:3, 6:4 }[k];
+    if (idx === undefined) return null;
+    var e = SIN12[idx];
+    return { c:R(sg * e[0], e[1]), r:BigInt(e[2]) };
+  }
+  function surdDiv(a, b){          // (a.c√a.r) ÷ (b.c√b.r), both ≠ 0
+    var c = dvd(a.c, b.c), r = a.r * b.r, rb = b.r;
+    // √a.r / √b.r = √(a.r·b.r) / b.r
+    var s = surd(R(r)), out = { c:mul(dvd(c, R(rb)), s.c), r:s.r };
+    return out;
+  }
+  function trigExact(f, th){
+    if (!pnIsPi(th)) return null;
+    var q = th.p, s = sinQ(q), c = sinQ(add(q, HALF));
+    if (!s || !c) return null;
+    if (f === "sin") return s;
+    if (f === "cos") return c;
+    if (f === "tan"){ if (isZ(c.c)) return { undef:true }; if (isZ(s.c)) return { c:ZERO, r:1n }; return surdDiv(s, c); }
+    if (f === "cot"){ if (isZ(s.c)) return { undef:true }; if (isZ(c.c)) return { c:ZERO, r:1n }; return surdDiv(c, s); }
+    if (f === "sec"){ if (isZ(c.c)) return { undef:true }; return surdDiv({ c:ONE, r:1n }, c); }
+    if (f === "csc"){ if (isZ(s.c)) return { undef:true }; return surdDiv({ c:ONE, r:1n }, s); }
+    return null;
+  }
+  // a·v + k with v = c√r: text, html and float
+  function affSurdT(a, v, k){
+    if (v.r === 1n) return numT(add(mul(a, v.c), k));
+    var t = rootT({ c:mul(a, v.c), r:v.r });
+    if (isZ(k)) return t;
+    return numT(k) + (sgn(mul(a, v.c)) < 0 ? " − " + rootT({ c:absR(mul(a, v.c)), r:v.r }) : " + " + t);
+  }
+  function affSurdF(a, v, k){ return F(a) * F(v.c) * Math.sqrt(Number(v.r)) + F(k); }
+  // the first few x ≥ 0 where the angle is base + n·(period angle), exactly
+  function firstX(fam, bases, step, count){
+    var U = fam.deg ? PN(R(180)) : PN(ZERO, ONE), out = [];
+    bases.forEach(function(bq){
+      for (var n = -60; n <= 60; n++){
+        var th = pnAdd(pnScale(U, bq), pnScale(U, mul(step, R(n)))), x = pnDiv(pnSub(th, fam.c), fam.m);
+        if (!x) return;
+        var xf = pnF(x);
+        if (xf >= -1e-9) out.push({ x:x, f:xf });
+      }
+    });
+    out.sort(function(a, b){ return a.f - b.f; });
+    var ded = [];
+    out.forEach(function(o){ if (!ded.some(function(d){ return Math.abs(d.f - o.f) < 1e-9; })) ded.push(o); });
+    return ded.slice(0, count);
+  }
+  // numeric fallback for angles: the first x ≥ 0 where the angle is asin/acos … of w
+  function firstXf(fam, thetas, periodTh, count){
+    var m = pnF(fam.m), c = pnF(fam.c), U = fam.deg ? 180 : Math.PI, out = [];
+    thetas.forEach(function(t0){ for (var n = -60; n <= 60; n++){ var x = (t0 * U + n * periodTh * U - c) / m; if (x >= -1e-9) out.push({ x:null, f:x }); } });
+    out.sort(function(a, b){ return a.f - b.f; });
+    var ded = []; out.forEach(function(o){ if (!ded.some(function(d){ return Math.abs(d.f - o.f) < 1e-9; })) ded.push(o); });
+    return ded.slice(0, count);
+  }
+  var SPECIAL_SIN = { "0":[0, 1], "1/2":[R(1, 6), R(5, 6)], "-1/2":[R(7, 6), R(11, 6)], "1":[R(1, 2)], "-1":[R(3, 2)] };
+  var SPECIAL_COS = { "0":[R(1, 2), R(3, 2)], "1/2":[R(1, 3), R(5, 3)], "-1/2":[R(2, 3), R(4, 3)], "1":[ZERO], "-1":[ONE] };
+  function xT(o){ return o.x ? pnT(o.x) : "≈ " + rd(o.f); }
+  // "x = π/4, 3π/4" or "x ≈ 0.62, 2.53"
+  function xsH(list){ var apx = list.some(function(o){ return !o.x; }); return vH("x") + opS(apx ? "≈" : "=") + list.map(function(o){ return esc(o.x ? pnT(o.x) : rd(o.f)); }).join(opS(",")); }
+  function xsB(list){ var apx = list.some(function(o){ return !o.x; }); return vH("x") + " " + (apx ? "≈" : "=") + " <b>" + list.map(function(o){ return esc(o.x ? pnT(o.x) : rd(o.f)); }).join("</b> and <b>") + "</b>"; }
+  function ptPT(o, y){ return "(" + (o.x ? pnT(o.x) : rd(o.f)) + ", " + y + ")"; }
+  // the steps, features and check fields for the new families; c = what fnSteps hands over
+  function trigSteps(ctx, ast, fam, c){
+    var lab = c.lab, pre = c.pre, badge = c.badge, pcl = c.pcl, spec = c.spec, sId = c.sId, out = { feats:[], fields:[], facts:[], xs:[], sp:[], yS:-1, info:{} };
+    var fx = spec.focus, A = fam.A, k = fam.k, deg = fam.deg, uW = deg ? "degrees" : "radians";
+    function pushPt(o, y, tip, lbl, step){ var X = o.f; spec.pts.push({ x:X, y:typeof y === "number" ? y : F(y), lbl:lbl, cls:pcl, step:step, tip:lab + tip }); fx.xs.push(X); fx.ys.push(typeof y === "number" ? y : F(y)); }
+    if (fam.kind === "trig"){
+      var nm = fam.fname === "sin" ? "sine" : "cosine", amp = absR(A), U = deg ? PN(R(180)) : PN(ZERO, ONE);
+      var P = pnDiv(pnScale(U, TWO), PN(absR(fam.m.r), absR(fam.m.p))), h = pnDiv(pnScale(fam.c, NEG1), fam.m);
+      var bT = pnT(fam.m), hT = h ? pnT(h) : "≈ " + rd(-pnF(fam.c) / pnF(fam.m));
+      sId([["p", lab + "Read it", pre + "This is a <strong>" + nm + " wave</strong>. Written as <b>" + vH("y") + " = " + vH("a") + " " + fam.fname + "(" + vH("b") + "(" + vH("x") + " − " + vH("h") + ")) + " + vH("k") + "</b>, it’s "
+        + vH("a") + " = " + nH(A) + ", " + vH("b") + " = " + esc(bT) + ", " + vH("h") + " = " + esc(hT) + ", " + vH("k") + " = " + nH(k) + (deg ? " (angles in degrees)." : " (angles in radians).")]],
+        "<strong>What the numbers do:</strong> " + vH("a") + " sets the amplitude — how far the wave swings above and below its middle line (a negative " + vH("a") + " flips it); " + vH("b") + " squeezes it: the period is " + (deg ? "360°" : "2π") + " ÷ |" + vH("b") + "|; " + vH("h") + " slides it right; " + vH("k") + " lifts the middle line.",
+        [[lab + "a b h k", "p", ex(vH("a") + opS("=") + nH(A) + opS(",") + vH("b") + opS("=") + esc(bT) + opS(",") + vH("h") + opS("=") + esc(hT) + opS(",") + vH("k") + opS("=") + nH(k))]]);
+      sId([["m", lab + "Amplitude", pre + "The <strong>amplitude</strong> is |" + vH("a") + "| = <b>" + nH(amp) + "</b>: the wave goes " + nH(amp) + " above and " + nH(amp) + " below its middle line."]], null, [[lab + "|a|", "m", ex(wd("amplitude") + opS("=") + nH(amp), "res")]]);
+      sId([["e", lab + "Period", pre + "One full cycle is " + (deg ? "360°" : "2π") + " of angle. The angle here is " + esc(bT) + "·" + vH("x") + ", so one cycle takes <b>" + (deg ? "360" : "2π") + " ÷ " + esc(pnT(PN(absR(fam.m.r), absR(fam.m.p)))) + " = " + esc(P ? pnT(P) : "?") + "</b>: the <strong>period</strong>."]], null,
+        [[lab + "period", "e", ex(wd("period") + opS("=") + esc(P ? pnT(P) : "?"), "res")]]);
+      var mS = sId([["m", lab + "Shifts", pre + (h && !pnZero(h) ? "The <strong>phase shift</strong> is <b>" + esc(hT) + "</b>: the whole wave slides " + (pnF(h) > 0 ? "right" : "left") + " by " + esc(pnT(h && pnF(h) < 0 ? pnScale(h, NEG1) : h)) + ". " : "No phase shift: the wave starts where a plain " + fam.fname + " does. ")
+        + "The <strong>midline</strong> is <b>" + vH("y") + " = " + nH(k) + "</b>; the wave reaches a <strong>maximum</strong> of <b>" + nH(add(k, amp)) + "</b> and a <strong>minimum</strong> of <b>" + nH(sub(k, amp)) + "</b>. Range: " + nH(sub(k, amp)) + " ≤ " + vH("y") + " ≤ " + nH(add(k, amp)) + "."]], null,
+        [[lab + "midline", "m", ex(vH("y") + opS("=") + nH(k) + opS(",") + wd("max") + opS("=") + nH(add(k, amp)) + opS(",") + wd("min") + opS("=") + nH(sub(k, amp)))]]);
+      spec.asym.push({ y:F(k), step:mS });
+      // first max and min at x ≥ 0
+      var up = sgn(A) > 0, maxB = fam.fname === "sin" ? (up ? HALF : R(3, 2)) : (up ? ZERO : ONE), minB = fam.fname === "sin" ? (up ? R(3, 2) : HALF) : (up ? ONE : ZERO);
+      var mx = firstX(fam, [maxB], TWO, 1)[0], mn = firstX(fam, [minB], TWO, 1)[0];
+      var kS = sId([["a", lab + "Max, min", pre + "The first maximum to the right of the " + vH("y") + "-axis is at <b>" + esc(ptPT(mx, numT(add(k, amp)))) + "</b>, and the first minimum at <b>" + esc(ptPT(mn, numT(sub(k, amp)))) + "</b>."]], null,
+        [[lab + "max/min", "a", ex(wd("max") + "&nbsp;" + esc(ptPT(mx, numT(add(k, amp)))) + opS(",") + wd("min") + "&nbsp;" + esc(ptPT(mn, numT(sub(k, amp)))))]]);
+      pushPt(mx, add(k, amp), "Maximum at " + ptPT(mx, numT(add(k, amp))), "max " + ptPT(mx, numT(add(k, amp))), kS);
+      pushPt(mn, sub(k, amp), "Minimum at " + ptPT(mn, numT(sub(k, amp))), "min " + ptPT(mn, numT(sub(k, amp))), kS);
+      // zeros
+      var w = dvd(neg(k), A), zs = [], wk = numT(w).replace("−", "-"), tab = fam.fname === "sin" ? SPECIAL_SIN : SPECIAL_COS;
+      if (cmpR(absR(w), ONE) <= 0){
+        if (tab[wk]) zs = firstX(fam, tab[wk].map(function(q){ return typeof q === "number" ? R(q) : q; }), TWO, 2);
+        else { var t0 = fam.fname === "sin" ? Math.asin(F(w)) : Math.acos(F(w)), t1 = fam.fname === "sin" ? Math.PI - t0 : -t0; zs = firstXf(fam, [t0 / Math.PI, t1 / Math.PI], 2, 2); }
+      }
+      var zS = sId([[badge, lab + "Zeros", pre + (zs.length ? "It crosses the " + vH("x") + "-axis where " + fam.fname + "(the angle) = " + nH(w) + ": the first zeros to the right of the " + vH("y") + "-axis are " + xsB(zs)
+        + (zs.some(function(o){ return !o.x; }) ? " (not a nice angle, so rounded)" : "") + ", and then every half-period or so." : "The wave never reaches " + vH("y") + " = 0 (its minimum is above 0 or its maximum below), so there are <strong>no " + vH("x") + "-intercepts</strong>.")]], null,
+        [[lab + "y = 0", badge, ex(zs.length ? xsH(zs) : wd("none"), "res")]]);
+      zs.forEach(function(o){ pushPt(o, 0, "x-intercept " + ptPT(o, "0"), ptPT(o, "0"), zS); });
+      // y-intercept
+      var v0 = trigExact(fam.fname, deg ? PN(ZERO, dvd(fam.c.r, R(180))) : fam.c), yT0, yF0;
+      if (v0 && !v0.undef){ yT0 = affSurdT(A, v0, k); yF0 = affSurdF(A, v0, k); } else { yF0 = fam.f(0); yT0 = "≈ " + rd(yF0); }
+      out.yS = sId([[badge, lab + "y-int", pre + "At " + vH("x") + " = 0 the angle is " + esc(pnT(fam.c)) + ": <b>" + vH("y") + " = " + nH(A) + " " + fam.fname + "(" + esc(pnT(fam.c)) + ") + " + nH(k) + " = " + esc(yT0) + "</b>, the point (0, " + esc(yT0) + ")."]], null,
+        [[lab + "x = 0", badge, ex(vH("y") + opS("=") + esc(yT0))]]);
+      spec.pts.push({ x:0, y:yF0, cls:pcl, step:out.yS, lbl:"(0, " + yT0 + ")", tip:lab + "y-intercept (0, " + yT0 + ")" });
+      fx.xs.push(0, P ? pnF(P) : 6); fx.ys.push(F(add(k, amp)), F(sub(k, amp)), 0);
+      if (h) fx.xs.push(pnF(h));
+      out.feats = [["Amplitude", nH(amp), numT(amp)], ["Period", esc(P ? pnT(P) : "?"), P ? pnT(P) : "?"], ["Phase shift", esc(hT), hT], ["Midline", vH("y") + " = " + nH(k), "y = " + numT(k)],
+                   ["Max", esc(ptPT(mx, numT(add(k, amp)))), ptPT(mx, numT(add(k, amp)))], ["Min", esc(ptPT(mn, numT(sub(k, amp)))), ptPT(mn, numT(sub(k, amp)))],
+                   ["First zeros", zs.length ? esc(zs.map(xT).join(", ")) : "none", zs.length ? zs.map(xT).join(", ") : "none"]];
+      out.fields = [{ key:"amp" + c.i, kind:"num", label:lab + "Amplitude", v:{ r:amp }, ctx:{ what:"amplitude" } },
+                    { key:"per" + c.i, kind:"pnum", label:lab + "Period", v:P || PN(), ctx:{ deg:deg } },
+                    { key:"mid" + c.i, kind:"hline", label:lab + "Midline", v:k }];
+      out.facts.push(lab + "range " + nH(sub(k, amp)) + " ≤ " + vH("y") + " ≤ " + nH(add(k, amp)) + "; domain all real numbers (" + uW + ")");
+      out.info = { kind:"trig", amp:F(amp), period:P ? pnF(P) : null, h:h ? pnF(h) : null, k:F(k), max:[mx.f, F(add(k, amp))], min:[mn.f, F(sub(k, amp))], zeros:zs.map(function(o){ return o.f; }), yint:yF0,
+                   text:{ period:P ? pnT(P) : "", max:ptPT(mx, numT(add(k, amp))), zeros:zs.map(xT) } };
+      out.piK = pnIsRat(fam.m) && !deg ? piDen([P, h, mx && mx.x, mn && mn.x].concat(zs.map(function(o){ return o.x; }))) : 0;
+      return out;
+    }
+    if (fam.kind === "tanf" || fam.kind === "trig2"){
+      var U2 = deg ? PN(R(180)) : PN(ZERO, ONE), isTan = fam.fname === "tan" || fam.fname === "cot", mabs = PN(absR(fam.m.r), absR(fam.m.p));
+      var P2 = pnDiv(isTan ? U2 : pnScale(U2, TWO), mabs);
+      var asB = fam.fname === "tan" || fam.fname === "sec" ? [HALF] : [ZERO];
+      var asy = firstX(fam, asB, ONE, 3), asyNeg = [];
+      // one asymptote left of 0 too, so the window shows a full piece
+      for (var n2 = -1; n2 >= -60 && !asyNeg.length; n2--){ var th2 = pnAdd(pnScale(U2, asB[0]), pnScale(U2, R(n2))), x2 = pnDiv(pnSub(th2, fam.c), fam.m); if (x2 && pnF(x2) < -1e-9) asyNeg.push({ x:x2, f:pnF(x2) }); }
+      var aS = sId([["p", lab + "Asymptotes", pre + "<b>" + fam.fname + "</b> isn’t defined where " + (fam.fname === "tan" || fam.fname === "sec" ? "cos" : "sin") + "(the angle) = 0 — that would divide by zero — so the graph has <strong>vertical asymptotes</strong> (dashed) there: "
+        + vH("x") + " = <b>" + asy.slice(0, 2).map(function(o){ return esc(xT(o)); }).join("</b>, <b>") + "</b>, … every " + esc(isTan ? pnT(P2) : pnT(pnScale(P2, HALF))) + ". It never crosses them."]],
+        "<strong>What the numbers do:</strong> " + vH("a") + " stretches it (flips it when negative), " + vH("b") + " sets the period " + (isTan ? (deg ? "180°" : "π") : (deg ? "360°" : "2π")) + " ÷ |" + vH("b") + "|, " + vH("h") + " slides it right and " + vH("k") + " lifts it.",
+        [[lab + "asymptotes", "p", ex(vH("x") + opS("=") + asy.slice(0, 2).map(function(o){ return esc(xT(o)); }).join(opS(",")) + opS(",") + wd("…"), "res")]]);
+      var asyAll = firstX(fam, asB, ONE, 40), asyLeft = [];
+      for (var n3 = -1; n3 >= -40; n3--){ var th3 = pnAdd(pnScale(U2, asB[0]), pnScale(U2, R(n3))), x3 = pnDiv(pnSub(th3, fam.c), fam.m); if (x3 && pnF(x3) < -1e-9) asyLeft.push(pnF(x3)); }
+      asyLeft.concat(asyAll.map(function(o){ return o.f; })).forEach(function(x){ spec.asym.push({ x:x, step:aS }); out.sp.push(x); });
+      sId([["e", lab + "Period", pre + "It repeats every <b>" + esc(P2 ? pnT(P2) : "?") + "</b> — its <strong>period</strong> (" + (isTan ? (deg ? "180°" : "π") : (deg ? "360°" : "2π")) + " ÷ |" + vH("b") + "|)."]], null,
+        [[lab + "period", "e", ex(wd("period") + opS("=") + esc(P2 ? pnT(P2) : "?"), "res")]]);
+      var zs2 = [];
+      if (isTan){
+        var w2 = dvd(neg(fam.k), fam.A), wk2 = numT(w2).replace("−", "-"), tb = fam.fname === "tan" ? { "0":[ZERO], "1":[R(1, 4)], "-1":[R(3, 4)] } : { "0":[HALF], "1":[R(1, 4)], "-1":[R(3, 4)] };
+        zs2 = tb[wk2] ? firstX(fam, tb[wk2], ONE, 2) : firstXf(fam, [(fam.fname === "tan" ? Math.atan(F(w2)) : Math.atan2(1, F(w2))) / Math.PI], 1, 2);
+        var zS2 = sId([[badge, lab + "Zeros", pre + "It crosses the " + vH("x") + "-axis once in every piece; the first zeros to the right of the " + vH("y") + "-axis: " + xsB(zs2) + "."]], null,
+          [[lab + "y = 0", badge, ex(xsH(zs2), "res")]]);
+        zs2.forEach(function(o){ pushPt(o, 0, "x-intercept " + ptPT(o, "0"), ptPT(o, "0"), zS2); });
+        sId([["m", lab + "Shape", pre + "Each piece " + ((sgn(fam.A) > 0) === (pnF(fam.m) > 0) === (fam.fname === "tan") ? "rises" : "falls") + " from one asymptote to the next. Domain: all " + vH("x") + " except the asymptotes; range: all real numbers."]], null,
+          [[lab + "range", "m", ex(wd("range: all real numbers"))]]);
+      } else {
+        sId([["m", lab + "Range", pre + "It’s 1 over " + (fam.fname === "sec" ? "cos" : "sin") + ", so it never gets between the lines " + vH("y") + " = " + nH(sub(fam.k, absR(fam.A))) + " and " + vH("y") + " = " + nH(add(fam.k, absR(fam.A))) + ": range " + vH("y") + " ≤ " + nH(sub(fam.k, absR(fam.A))) + " or " + vH("y") + " ≥ " + nH(add(fam.k, absR(fam.A))) + "."]], null,
+          [[lab + "range", "m", ex(vH("y") + opS("≤") + nH(sub(fam.k, absR(fam.A))) + wd(" or ") + vH("y") + opS("≥") + nH(add(fam.k, absR(fam.A))))]]);
+      }
+      var v2 = trigExact(fam.fname, deg ? PN(ZERO, dvd(fam.c.r, R(180))) : fam.c), yT2, yF2;
+      if (v2 && !v2.undef){ yT2 = affSurdT(fam.A, v2, fam.k); yF2 = affSurdF(fam.A, v2, fam.k); } else if (v2 && v2.undef){ yT2 = null; } else { yF2 = fam.f(0); yT2 = isFinite(yF2) ? "≈ " + rd(yF2) : null; }
+      out.yS = sId([[badge, lab + "y-int", pre + (yT2 ? "At " + vH("x") + " = 0: <b>" + vH("y") + " = " + esc(yT2) + "</b>, the point (0, " + esc(yT2) + ")." : vH("x") + " = 0 is on an asymptote, so there’s <strong>no " + vH("y") + "-intercept</strong>.")]], null, [[lab + "x = 0", badge, ex(yT2 ? vH("y") + opS("=") + esc(yT2) : wd("none"))]]);
+      if (yT2) spec.pts.push({ x:0, y:yF2, cls:pcl, step:out.yS, lbl:"(0, " + yT2 + ")", tip:lab + "y-intercept (0, " + yT2 + ")" });
+      fx.xs.push(asyNeg.length ? asyNeg[0].f : 0, asy.length ? asy[Math.min(1, asy.length - 1)].f : 3); fx.ys.push(F(fam.k) - 3 * Math.max(1, Math.abs(F(fam.A))), F(fam.k) + 3 * Math.max(1, Math.abs(F(fam.A))));
+      out.feats = [["Period", esc(P2 ? pnT(P2) : "?"), P2 ? pnT(P2) : "?"], ["Asymptotes", vH("x") + " = " + esc(asy.slice(0, 2).map(xT).join(", ")) + ", …", "x = " + asy.slice(0, 2).map(xT).join(", ") + ", …"]];
+      if (isTan) out.feats.push(["First zeros", esc(zs2.map(xT).join(", ")), zs2.map(xT).join(", ")]);
+      out.feats.push(["y-intercept", yT2 ? "(0, " + esc(yT2) + ")" : "none", yT2 ? "(0, " + yT2 + ")" : "none"]);
+      out.fields = [{ key:"per" + c.i, kind:"pnum", label:lab + "Period", v:P2 || PN(), ctx:{ deg:deg } }, { key:"as" + c.i, kind:"pnum", label:lab + "The first vertical asymptote right of the y-axis (x = …)", v:asy[0].x || PN(fromNum(asy[0].f)), ctx:{ deg:deg, xeq:true } }];
+      out.info = { kind:fam.kind, period:P2 ? pnF(P2) : null, asym:asy.map(function(o){ return o.f; }), zeros:zs2.map(function(o){ return o.f; }), yint:yT2 ? yF2 : null };
+      out.piK = pnIsRat(fam.m) && !deg ? piDen([P2].concat(asy.map(function(o){ return o.x; }), zs2.map(function(o){ return o.x; }))) : 0;
+      return out;
+    }
+    if (fam.kind === "expe"){
+      var grow = sgn(fam.m) > 0, inc = grow === (sgn(fam.A) > 0);
+      sId([["p", lab + "Read it", pre + vH("x") + " is in the exponent of <b>" + vH("e") + " ≈ 2.718</b>, the natural base, so it’s <strong>exponential</strong> — " + (grow ? "<strong>growth</strong>" : "<strong>decay</strong>") + "."]],
+        "<strong>What the numbers do:</strong> " + vH("e") + "<sup>" + vH("x") + "</sup> grows by a factor of " + vH("e") + " for each step of 1; the number in front stretches it (and flips it when negative); the number added moves the asymptote up or down.",
+        [[lab + "base e", "p", ex(wd(grow ? "growth" : "decay") + opS("·") + vH("e") + " ≈ 2.718")]]);
+      var aS3 = sId([["m", lab + "Asymptote", pre + vH("e") + " to any power is positive and never 0, so the graph gets closer and closer to <b>" + vH("y") + " = " + nH(fam.k) + "</b> without touching it: the <strong>horizontal asymptote</strong>."]], null,
+        [[lab + "asymptote", "m", ex(vH("y") + opS("=") + nH(fam.k), "res")]]);
+      spec.asym.push({ y:F(fam.k), step:aS3 });
+      var y0 = isZ(fam.c) ? { r:add(fam.A, fam.k) } : { f:fam.f(0) };
+      out.yS = sId([[badge, lab + "y-int", pre + "At " + vH("x") + " = 0: <b>" + vH("y") + " = " + (isZ(fam.c) ? nH(fam.A) + " · " + vH("e") + "<sup>0</sup> + " + nH(fam.k) + " = " + nH(y0.r) : "≈ " + esc(rd(y0.f))) + "</b>" + (isZ(fam.c) ? " (anything to the power 0 is 1)" : "") + "."]], null,
+        [[lab + "x = 0", badge, ex(vH("y") + opS("=") + (y0.r ? nH(y0.r) : "≈" + esc(rd(y0.f))))]]);
+      spec.pts.push({ x:0, y:y0.r ? F(y0.r) : y0.f, cls:pcl, step:out.yS, lbl:"(0, " + (y0.r ? numT(y0.r) : "≈ " + rd(y0.f)) + ")", tip:lab + "y-intercept (0, " + (y0.r ? numT(y0.r) : "≈ " + rd(y0.f)) + ")" });
+      var t3 = dvd(neg(fam.k), fam.A), xi3 = null;
+      if (sgn(t3) > 0) xi3 = isOne(t3) ? { x:PN(dvd(neg(fam.c), fam.m)), f:F(dvd(neg(fam.c), fam.m)) } : { x:null, f:(Math.log(F(t3)) - F(fam.c)) / F(fam.m) };
+      var xS3 = sId([[badge, lab + "x-int", pre + (xi3 ? "Set " + vH("y") + " = 0: " + vH("e") + "<sup>…</sup> = " + nH(t3) + ", so the exponent is ln " + nH(t3) + (xi3.x ? " = 0" : "") + ": <b>" + vH("x") + " = " + esc(xT(xi3)) + "</b>." : "The graph stays on one side of its asymptote, so there’s <strong>no " + vH("x") + "-intercept</strong>.")]], null,
+        [[lab + "y = 0", badge, ex(xi3 ? vH("x") + opS("=") + esc(xT(xi3)) : wd("none"), "res")]]);
+      if (xi3) pushPt(xi3, 0, "x-intercept " + ptPT(xi3, "0"), ptPT(xi3, "0"), xS3);
+      sId([["m", lab + "Shape", pre + "It’s " + (inc ? "increasing" : "decreasing") + " everywhere. Domain: all real numbers. Range: <b>" + vH("y") + (sgn(fam.A) > 0 ? " > " : " < ") + nH(fam.k) + "</b>."]], null, [[lab + "range", "m", ex(vH("y") + opS(sgn(fam.A) > 0 ? ">" : "<") + nH(fam.k))]]);
+      fx.xs.push(-3, 3); fx.ys.push(F(fam.k)); [-2, -1, 0, 1, 2].forEach(function(x){ var y = fam.f(x); if (isFinite(y) && Math.abs(y) < 30){ fx.xs.push(x); fx.ys.push(y); } });
+      out.feats = [["y-intercept", "(0, " + esc(y0.r ? numT(y0.r) : "≈ " + rd(y0.f)) + ")", "(0, " + (y0.r ? numT(y0.r) : "≈ " + rd(y0.f)) + ")"], ["Asymptote", vH("y") + " = " + nH(fam.k), "y = " + numT(fam.k)], ["x-intercept", xi3 ? esc(xT(xi3)) : "none", xi3 ? xT(xi3) : "none"]];
+      out.fields = [{ key:"yi" + c.i, kind:"num", label:lab + "y-intercept", v:y0.r ? { r:y0.r } : { f:y0.f }, ctx:{ what:"y-intercept" } }, { key:"as" + c.i, kind:"hline", label:lab + "Horizontal asymptote", v:fam.k }];
+      out.facts.push(lab + "domain all real numbers; range " + vH("y") + (sgn(fam.A) > 0 ? " > " : " < ") + nH(fam.k));
+      out.info = { kind:"expe", asymH:F(fam.k), yint:y0.r ? F(y0.r) : y0.f, xint:xi3 ? xi3.f : null };
+      return out;
+    }
+    // logs: y = a·ln(m·x + c) + k
+    var L10 = fam.fname === "log", nmL = L10 ? "log" : "ln", right = sgn(fam.m) > 0, h4 = fam.h;
+    sId([["p", lab + "Read it", pre + "<b>" + nmL + "</b> is the " + (L10 ? "base-10 logarithm" : "natural logarithm (base " + vH("e") + ")") + ": " + nmL + "(" + vH("u") + ") is the power you raise " + (L10 ? "10" : vH("e")) + " to, to get " + vH("u") + ". You can only take the log of a <i>positive</i> number."]],
+      "<strong>What the numbers do:</strong> the number in front stretches it (and flips it when negative); the number added slides it up; what’s inside the log decides where the vertical asymptote is.",
+      [[lab + "log", "p", ex(wd(nmL + " of a positive number"))]]);
+    var aS4 = sId([["m", lab + "Asymptote", pre + "Inside, " + exH(linNode(fam.m, fam.c)) + " has to be more than 0, so " + vH("x") + (right ? " > " : " < ") + nH(h4) + ". The line <b>" + vH("x") + " = " + nH(h4) + "</b> is a <strong>vertical asymptote</strong>: the graph dives down (or up) alongside it but never touches it. Domain: <b>" + vH("x") + (right ? " > " : " < ") + nH(h4) + "</b>."]], null,
+      [[lab + "asymptote", "m", ex(vH("x") + opS("=") + nH(h4), "res")]]);
+    spec.asym.push({ x:F(h4), step:aS4 }); out.sp.push(F(h4));
+    var u4 = null, xi4 = null, wl = dvd(neg(fam.k), fam.A);
+    if (isZ(wl)) u4 = ONE; else if (L10 && isInt(wl) && babs(wl.n) <= 8n) u4 = powR(R(10), Number(wl.n));
+    xi4 = u4 ? { x:PN(dvd(sub(u4, fam.c), fam.m)), f:F(dvd(sub(u4, fam.c), fam.m)) } : { x:null, f:((L10 ? Math.pow(10, F(wl)) : Math.exp(F(wl))) - F(fam.c)) / F(fam.m) };
+    var xS4 = sId([[badge, lab + "x-int", pre + "Set " + vH("y") + " = 0: " + nmL + "(…) = " + nH(wl) + ", so the inside is " + (L10 ? "10" : vH("e")) + "<sup>" + nH(wl) + "</sup>" + (u4 ? " = " + nH(u4) : "") + ": <b>" + vH("x") + " = " + esc(xT(xi4)) + "</b>."]], null,
+      [[lab + "y = 0", badge, ex(vH("x") + opS("=") + esc(xT(xi4)), "res")]]);
+    pushPt(xi4, 0, "x-intercept " + ptPT(xi4, "0"), ptPT(xi4, "0"), xS4);
+    var inDom = right ? sgn(h4) < 0 : sgn(h4) > 0, y4 = null;
+    if (inDom){
+      var c4 = fam.c, lv = isOne(c4) ? ZERO : null;
+      if (L10 && !lv) for (var e4 = -8; e4 <= 8; e4++) if (eqR(powR(R(10), e4), c4)) lv = R(e4);
+      y4 = lv ? { r:add(mul(fam.A, lv), fam.k) } : { f:fam.f(0) };
+    }
+    out.yS = sId([[badge, lab + "y-int", pre + (y4 ? "At " + vH("x") + " = 0: <b>" + vH("y") + " = " + (y4.r ? nH(y4.r) : "≈ " + esc(rd(y4.f))) + "</b>." : vH("x") + " = 0 is outside the domain, so there’s <strong>no " + vH("y") + "-intercept</strong>.")]], null,
+      [[lab + "x = 0", badge, ex(y4 ? vH("y") + opS("=") + (y4.r ? nH(y4.r) : "≈" + esc(rd(y4.f))) : wd("none"))]]);
+    if (y4) spec.pts.push({ x:0, y:y4.r ? F(y4.r) : y4.f, cls:pcl, step:out.yS, lbl:"(0, " + (y4.r ? numT(y4.r) : "≈ " + rd(y4.f)) + ")", tip:lab + "y-intercept (0, " + (y4.r ? numT(y4.r) : "≈ " + rd(y4.f)) + ")" });
+    sId([["m", lab + "Shape", pre + "It’s " + ((sgn(fam.A) > 0) === right ? "increasing" : "decreasing") + " all the way along, slower and slower. Range: all real numbers."]], null, [[lab + "range", "m", ex(wd("range: all real numbers"))]]);
+    fx.xs.push(F(h4), F(h4) + (right ? 6 : -6), xi4.f); fx.ys.push(0, fam.f(F(h4) + (right ? 6 : -6)), fam.f(F(h4) + (right ? 0.2 : -0.2)));
+    out.feats = [["Vertical asymptote", vH("x") + " = " + nH(h4), "x = " + numT(h4)], ["Domain", vH("x") + (right ? " > " : " < ") + nH(h4), "x " + (right ? ">" : "<") + " " + numT(h4)], ["x-intercept", esc(ptPT(xi4, "0")), ptPT(xi4, "0")], ["y-intercept", y4 ? "(0, " + esc(y4.r ? numT(y4.r) : "≈ " + rd(y4.f)) + ")" : "none", y4 ? "(0, " + (y4.r ? numT(y4.r) : "≈ " + rd(y4.f)) + ")" : "none"]];
+    var rset = { vals:[xi4.x ? { r:xi4.x.r, f:xi4.f } : { f:xi4.f }], pm:null }; rset.fl = [xi4.f];
+    out.fields = [{ key:"va" + c.i, kind:"vline", label:lab + "Vertical asymptote", v:h4 }, { key:"xi" + c.i, kind:"xints", label:lab + "x-intercept", v:rset, ctx:{} }];
+    out.facts.push(lab + "domain " + vH("x") + (right ? " > " : " < ") + nH(h4) + "; range all real numbers");
+    out.info = { kind:"log", asymV:F(h4), xint:xi4.f, yint:y4 ? (y4.r ? F(y4.r) : y4.f) : null };
+    return out;
+  }
+  // the bottom numbers of the π-fractions shown: a π/6, π/4 or π/2 axis
+  function piDen(list){
+    var has = { 3:false, 4:false, 6:false };
+    list.forEach(function(v){ if (!v || !pnIsPi(v)) return; var d = Number(v.p.d); if (d % 3 === 0) has[6] = true; else if (d % 4 === 0) has[4] = true; });
+    return has[6] ? 6 : has[4] ? 4 : 2;
+  }
+  // the same in degrees, at a whole number of degrees
+  function trigYAtDeg(fam, xR){
+    if (!fam || !NEWK[fam.kind] || fam.kind === "expe" || fam.kind === "log" || !fam.deg) return null;
+    var th = add(mul(fam.m.r, xR), fam.c.r), v = trigExact(fam.fname, PN(ZERO, dvd(th, R(180))));
+    if (!v) return null;
+    if (v.undef) return "undefined";
+    return affSurdT(fam.A, v, fam.k);
+  }
+  // exact y on a trig curve at x = (a π-fraction): text, or null
+  function trigYAt(fam, xPN){
+    if (!fam || fam.kind !== "trig" && fam.kind !== "tanf" && fam.kind !== "trig2") return null;
+    if (fam.deg || !pnIsRat(fam.m)) return null;
+    var th = pnAdd(pnScale(xPN, fam.m.r), fam.c), v = trigExact(fam.fname, th);
+    if (!v) return null;
+    if (v.undef) return "undefined";
+    return affSurdT(fam.A, v, fam.k);
   }
 
   /* ===================== a straight line A·x + B·y = C, exactly ===================== */
@@ -3967,9 +4424,11 @@
       return { task:"fill", rule:ast, xs:xs };
     }
     if (mode === "functions"){
+      var degT = /\(\s*(?:in\s+)?degrees\s*\)|\bin degrees\b/i.test(src);
+      src = src.replace(/\s*\(\s*(?:in\s+)?(?:degrees|radians)\s*\)|\s*\bin (?:degrees|radians)\b/gi, "");
       var parts = src.replace(/^\s*(?:graph|plot|sketch|draw)\s*/i, "").split(/\s*;\s*|\s+and\s+(?=[yfgh]\s*(?:\(|=))/i).filter(function(t){ return t.trim(); });
       if (!parts.length) throw new UserErr(EMPTY.functions);
-      return { fns:parts.map(function(t, i){ return { ast:exprFrom(t.replace(/^\s*(?:graph|plot)\s*/i, ""), parts.length > 1 ? "function " + (i + 1) : null) }; }) };
+      return { fns:parts.map(function(t, i){ return { ast:exprFrom(t.replace(/^\s*(?:graph|plot)\s*/i, ""), parts.length > 1 ? "function " + (i + 1) : null) }; }), deg:degT };
     }
     if (mode === "systems"){
       var unit = null, um = UNITS.exec(src), plan = /\bplans?\b|\bcosts?\b|\bper\b|\bcharges?\b/i.test(src);
@@ -4117,7 +4576,7 @@
     p.set("mode", mode);
     if (mode === "points"){ p.set("task", pr.task); p.set("pts", ptsA(pr.pts)); if (pr.task === "polygon" && pr.ask !== "both") p.set("ask", pr.ask); }
     else if (mode === "table"){ p.set("task", pr.task); if (pr.task === "fill"){ p.set("rule", exA(pr.rule)); p.set("xs", pr.xs.map(numA).join(",")); } else p.set("tbl", pr.tbl.map(function(r){ return numA(r.x) + ":" + numA(r.y); }).join(",")); }
-    else if (mode === "functions") p.set("f", pr.fns.map(function(f){ return exA(f.ast); }).join(";"));
+    else if (mode === "functions"){ p.set("f", pr.fns.map(function(f){ return exA(f.ast); }).join(";")); if (pr.deg) p.set("angle", "deg"); if (pr.xpi && pr.xpi !== "auto") p.set("xpi", pr.xpi); }
     else if (mode === "systems"){
       if (pr.plan){ p.set("e1", exA(pr.e1.R)); p.set("e2", exA(pr.e2.R)); p.set("plan", "1"); if (pr.unit && pr.unit !== "visits") p.set("unit", pr.unit); }
       else { p.set("e1", exA(pr.e1.L) + "=" + exA(pr.e1.R)); p.set("e2", exA(pr.e2.L) + "=" + exA(pr.e2.R)); }
@@ -4152,7 +4611,7 @@
       if (g("tbl")) return { task:"classify", tbl:g("tbl").split(",").map(function(t){ var b = t.split(":"); var x = readNumber(b[0]), y = readNumber(b[1]); if (!x || !y) throw new UserErr("bad"); return P(x, y); }) };
       return null;
     }
-    if (mode === "functions"){ if (!g("f")) return null; return { fns:g("f").split(";").filter(function(t){ return t.trim(); }).map(function(t){ return { ast:exprFrom(t) }; }) }; }
+    if (mode === "functions"){ if (!g("f")) return null; var xp = g("xpi"); return { fns:g("f").split(";").filter(function(t){ return t.trim(); }).map(function(t){ return { ast:exprFrom(t) }; }), deg:/^deg/i.test(g("angle") || ""), xpi:/^(off|2|4|6)$/.test(xp || "") ? xp : undefined }; }
     if (mode === "systems"){
       if (!g("e1") || !g("e2")) return null;
       if (/^(1|true|yes)$/i.test(g("plan") || "")) return { e1:{ L:{ t:"var", n:"y" }, R:exprFrom(g("e1")) }, e2:{ L:{ t:"var", n:"y" }, R:exprFrom(g("e2")) }, plan:true, unit:g("unit") || "visits" };
@@ -4183,7 +4642,7 @@
       if (pr.task === "fill") return "table y = " + exT(pr.rule) + " for x = " + pr.xs.map(numT).join(", ");
       return "x: " + pr.tbl.map(function(r){ return numT(r.x); }).join(", ") + "; y: " + pr.tbl.map(function(r){ return numT(r.y); }).join(", ");
     }
-    if (mode === "functions") return pr.fns.map(function(f){ return "y = " + exT(f.ast); }).join("; ");
+    if (mode === "functions") return pr.fns.map(function(f){ return "y = " + exT(f.ast); }).join("; ") + (pr.deg ? " (degrees)" : "");
     if (mode === "systems"){
       if (pr.plan) return "plan A " + exT(pr.e1.R) + "; plan B " + exT(pr.e2.R) + (pr.unit && pr.unit !== "visits" ? " (x = " + pr.unit + ")" : "");
       return exT(pr.e1.L) + " = " + exT(pr.e1.R) + " and " + exT(pr.e2.L) + " = " + exT(pr.e2.R);
@@ -4204,7 +4663,7 @@
     var sol;
     if (mode === "points") sol = pr.task === "plot" ? solvePlot(pr) : pr.task === "read" ? solveRead(pr) : pr.task === "distance" ? solveDistance(pr) : pr.task === "midpoint" ? solveMidpoint(pr) : solvePolygon(pr);
     else if (mode === "table") sol = pr.task === "fill" ? solveFill(pr) : solveClassify(pr);
-    else if (mode === "functions") sol = solveFunctions(pr);
+    else if (mode === "functions"){ var od = DEGMODE; DEGMODE = !!pr.deg; try { sol = solveFunctions(pr); } finally { DEGMODE = od; } }
     else if (mode === "systems") sol = solveSystems(pr);
     else if (mode === "inequalities") sol = pr.kind === "one" ? solveIneq1(pr) : solveIneq2(pr);
     else if (mode === "transform") sol = solveTransform(pr);
@@ -4217,7 +4676,7 @@
   /* ===================== checking an answer ===================== */
   // a typed number that may have square roots in it: 2√13, √52, 1 + √3, 7.21, ≈ 7.2 → {f, dec, places, unsimp, rad}
   function evalAns(src){
-    var s = String(src).replace(/[−–—]/g, "-").replace(/\bsqrt\s*/gi, "√").replace(/≈|~|about|units?|square|sq\.?|squared/gi, " ").replace(/,(?=\d{3}\b)/g, "").trim();
+    var s = String(src).replace(/[−–—]/g, "-").replace(/\bpi\b/gi, "π").replace(/\bsqrt\s*/gi, "√").replace(/≈|~|about|units?|square|sq\.?|squared/gi, " ").replace(/,(?=\d{3}\b)/g, "").trim();
     if (!s) return null;
     var tk = [], i = 0, m, info = { dec:false, places:0, unsimp:false, rad:false };
     while (i < s.length){
@@ -4226,7 +4685,7 @@
       if ((m = /^(\d+(?:\.\d*)?|\.\d+)/.exec(rest))){ tk.push({ k:"n", v:Number(m[0]), s:m[0] }); if (m[0].indexOf(".") >= 0){ info.dec = true; info.places = Math.max(info.places, (m[0].split(".")[1] || "").length); } i += m[0].length; continue; }
       if (VULG[c]){ tk.push({ k:"n", v:VULG[c][0] / VULG[c][1], s:c }); i++; continue; }
       if ("+-*/×·÷()√^".indexOf(c) >= 0){ tk.push({ k:c === "×" || c === "·" ? "*" : c === "÷" ? "/" : c }); i++; continue; }
-      if (c === "π") return null;
+      if (c === "π"){ tk.push({ k:"n", v:Math.PI, s:"π" }); info.pi = true; i++; continue; }
       return null;
     }
     var p = 0;
@@ -4237,7 +4696,7 @@
       for (;;){
         var t = peek();
         if (t && (t.k === "*" || t.k === "/")){ p++; var b = unary(); a = t.k === "*" ? a * b : a / b; }
-        else if (t && (t.k === "√" || t.k === "(")) a = a * power();
+        else if (t && (t.k === "√" || t.k === "(" || (t.k === "n" && t.s === "π"))) a = a * power();
         else return a;
       }
     }
@@ -4634,8 +5093,21 @@
     if (f.ctx.slope) return { st:"bad", msg:"Find two points on your trend line far apart and work out rise ÷ run." + (Math.sign(z.f) !== Math.sign(f.v) ? " The sign’s off: the trend " + (f.v > 0 ? "goes up" : "goes down") + "." : "") };
     return { st:"bad", msg:"Put " + vH("x") + " = " + esc(rd(f.ctx.px)) + " into the trend line (or go up from " + esc(rd(f.ctx.px)) + " to the line and across) and read " + vH("y") + "." };
   }
+  // a number that may have π in it (a period, an asymptote): 3π/2, π, 1.57
+  function judgePnum(f, raw){
+    var s = String(raw).replace(/^\s*(x|period|p|t)\s*=\s*/i, "").replace(/°/g, "").trim(), T = pnF(f.v), c = f.ctx || {};
+    if (!s) return { st:"empty" };
+    var z = evalAns(s);
+    if (!z) return { st:"unread", msg:"Type it like <b>π</b>, <b>3π/2</b>, <b>2π/3</b> or a decimal like <b>1.57</b>" + (c.deg ? " (or degrees, like 180)" : "") + "." };
+    if (!z.dec && closeTo(z.f, T, 1e-9)) return { st:"ok" };
+    if (z.dec && closeTo(z.f, T, tolOf(z))) return { st:"ok", note:"Rounded is fine — exactly, it’s <b>" + esc(pnT(f.v)) + "</b>." };
+    if (!c.deg && closeTo(z.f, T * 180 / Math.PI, 0.01)) return { st:"bad", msg:"That’s in degrees, but this graph is in radians: " + esc(rd(z.f)) + "° is " + esc(pnT(f.v)) + "." };
+    if (closeTo(z.f, T * 2, 1e-6) || closeTo(z.f, T / 2, 1e-6)) return { st:"bad", msg:"Off by a factor of 2. A sine or cosine repeats every 2π of angle (360°); tangent every π (180°). Divide that by |" + vH("b") + "|." };
+    return { st:"bad" };
+  }
   function judge(f, raw){
     switch (f.kind){
+      case "pnum": return judgePnum(f, raw);
       case "pts": return judgePts(f, raw);
       case "quad": return judgeQuad(f, raw);
       case "len": return judgeLen(f, raw);
@@ -5060,11 +5532,11 @@
   var FR_TOOLS = [["point", "Point", "•"], ["segment", "Segment", "—"], ["polygon", "Polygon", "△"], ["line", "Line", "↔"], ["ray", "Ray", "→"], ["label", "Label", "T"], ["move", "Move", "✥"], ["erase", "Erase", "⌫"]];
   var FR_PRESETS = [["-5,5", "−5 to 5"], ["-10,10", "−10 to 10"], ["-20,20", "−20 to 20"], ["0,10", "0 to 10"], ["0,20", "0 to 20"], ["custom", "Custom"]];
   var FR_COLS = ["Blue", "Orange", "Purple", "Green", "Pink"], FR_DASH = ["Solid", "Dashed", "Dotted"];
-  function frDefaultPaper(){ return { x0:-10, x1:10, y0:-10, y1:10, step:1, lbl:2, axes:true, nums:true, style:"lines", fifth:true, square:true, snap:"grid" }; }
+  function frDefaultPaper(){ return { x0:-10, x1:10, y0:-10, y1:10, step:1, lbl:2, axes:true, nums:true, style:"lines", fifth:true, square:true, snap:"grid", deg:false, pi:"auto" }; }
   FREE.paper = frDefaultPaper();
   function frNum(s){ var v = readNumber(String(s)); return v; }
   function frPaperEnc(p){
-    return [p.x0, p.x1, p.y0, p.y1, p.step, p.lbl].map(function(n){ return String(n); }).join(",") + "," + (p.axes ? "a" : "") + (p.nums ? "n" : "") + (p.style === "dots" ? "d" : "") + (p.fifth ? "f" : "") + (p.square ? "s" : "") + (p.snap === "half" ? "h" : p.snap === "off" ? "o" : "");
+    return [p.x0, p.x1, p.y0, p.y1, p.step, p.lbl].map(function(n){ return String(n); }).join(",") + "," + (p.axes ? "a" : "") + (p.nums ? "n" : "") + (p.style === "dots" ? "d" : "") + (p.fifth ? "f" : "") + (p.square ? "s" : "") + (p.snap === "half" ? "h" : p.snap === "off" ? "o" : "") + (p.deg ? "D" : "") + (p.pi && p.pi !== "auto" ? "P" + (p.pi === "off" ? "0" : p.pi) : "");
   }
   function frPaperDec(s){
     var b = String(s || "").split(","), p = frDefaultPaper();
@@ -5074,7 +5546,8 @@
     if (n[1] - n[0] > 2000 || n[3] - n[2] > 2000) return p;
     var f = b[6] || "";
     return { x0:n[0], x1:n[1], y0:n[2], y1:n[3], step:n[4], lbl:n[5], axes:f.indexOf("a") >= 0, nums:f.indexOf("n") >= 0, style:f.indexOf("d") >= 0 ? "dots" : "lines",
-             fifth:f.indexOf("f") >= 0, square:f.indexOf("s") >= 0, snap:f.indexOf("h") >= 0 ? "half" : f.indexOf("o") >= 0 ? "off" : "grid" };
+             fifth:f.indexOf("f") >= 0, square:f.indexOf("s") >= 0, snap:f.indexOf("h") >= 0 ? "half" : f.indexOf("o") >= 0 ? "off" : "grid", deg:f.indexOf("D") >= 0,
+             pi:/P0/.test(f) ? "off" : (/P([246])/.exec(f) || [0, "auto"])[1] };
   }
   function frSty(o){ return (o.col ? ":c" + o.col : "") + (o.dash ? ":d" + o.dash : ""); }
   function frEnc(objs){
@@ -5121,7 +5594,7 @@
   function frColCls(o){ return "fr-k" + (o.col || 0) + " fr-d" + (o.dash || 0); }
   // the drawing as a grid spec
   function frSpec(){
-    var P = FREE.paper, spec = { kind:"plane", paper:{}, pts:[], segs:[], polys:[], lines:[], curves:[], texts:[], aria:"" }, ptIds = [];
+    var P = FREE.paper, spec = { kind:"plane", paper:{}, pts:[], segs:[], polys:[], lines:[], curves:[], texts:[], asym:[], aria:"" }, ptIds = [], trigHere = false;
     for (var k in P) spec.paper[k] = P[k];
     var xs = P.x1 - P.x0, ys = P.y1 - P.y0;
     spec.paper.H = P.square ? Math.max(180, Math.min(820, 2 * PAD + (SZ - 2 * PAD) * ys / xs)) : SZ;
@@ -5143,7 +5616,7 @@
         desc.push("ray " + A.name + Bq.name);
       }
       if (o.t === "f"){
-        try { var ast = exprFrom(o.src), fam = analyze(ast); spec.curves.push({ f:fam.f, sp:fam.sp, cls:cls, name:"y = " + exT(ast), ast:ast }); desc.push("y = " + exT(ast)); } catch (e){}
+        try { var ast = exprFrom(o.src), fam = analyze(ast, P.deg), axs = frAsymXs(fam, P); axs.forEach(function(x){ spec.asym.push({ x:x }); }); spec.curves.push({ f:fam.f, sp:fam.sp.concat(axs), cls:cls, name:"y = " + exT(ast), ast:ast, fam:fam, deg:P.deg }); desc.push("y = " + exT(ast)); if (NEWK[fam.kind] && fam.kind !== "expe" && fam.kind !== "log" && !P.deg) trigHere = true; } catch (e){}
       }
       if (o.t === "x"){ spec.texts.push({ x:F(o.x), y:F(o.y), t:o.s, cls:"fr-tk" + (o.col || 0), sel:FREE.sel === o.id }); desc.push("label “" + o.s + "”"); }
     });
@@ -5160,8 +5633,17 @@
       desc.push(o.name + " " + ptT(o));
     });
     spec.ptIds = ptIds;
+    spec.piAxis = P.pi === "off" ? 0 : P.pi && P.pi !== "auto" ? Number(P.pi) : trigHere ? 2 : 0;
     spec.aria = "Graph paper from x = " + P.x0 + " to " + P.x1 + " and y = " + P.y0 + " to " + P.y1 + (desc.length ? ", with " + desc.join(", ") : ", blank");
     return spec;
+  }
+  // where tan, sec … are undefined in the window, so the curve breaks there (and the asymptotes are drawn)
+  function frAsymXs(fam, P){
+    if (fam.kind !== "tanf" && fam.kind !== "trig2" && fam.kind !== "log") return [];
+    if (fam.kind === "log") return [F(fam.h)];
+    var U = fam.deg ? 180 : Math.PI, base = fam.fname === "tan" || fam.fname === "sec" ? 0.5 : 0, m = pnF(fam.m), c = pnF(fam.c), out = [], span = (P.x1 - P.x0) * 3;
+    for (var n = -400; n <= 400 && out.length < 300; n++){ var x = ((base + n) * U - c) / m; if (x > P.x0 - span && x < P.x1 + span) out.push(x); }
+    return out;
   }
   function frSnap(u){
     var P = FREE.paper, s = P.snap === "half" ? P.step / 2 : P.step;
@@ -5292,7 +5774,7 @@
     var host = $("frSheet");
     if (!FREE.fig || FREE.fig.host !== host || FREE.paperKey !== frPaperEnc(FREE.paper)){
       var keep = FREE.fig && FREE.paperKey === frPaperEnc(FREE.paper) ? FREE.fig.view : null;
-      FREE.fig = new Fig(frSpec(), { plot:true, onPlot:frTap, snap:frSnap, snapStep:function(){ var P = FREE.paper; return P.snap === "half" ? P.step / 2 : P.snap === "off" ? P.step / 10 : P.step; }, canMove:function(){ return FREE.tool === "move"; },
+      FREE.fig = new Fig(frSpec(), { plot:true, trace:true, onPlot:frTap, snap:frSnap, snapStep:function(){ var P = FREE.paper; return P.snap === "half" ? P.step / 2 : P.snap === "off" ? P.step / 10 : P.step; }, canMove:function(){ return FREE.tool === "move"; },
         onMove:function(key, q){ var id = FREE.fig.spec.ptIds[Number(key)], p = frPoint(id); if (!p) return; if (!FREE.moving){ frSnapshot(); FREE.moving = true; } p.x = frR(q.x); p.y = frR(q.y); FREE.sel = id; FREE.fig.spec = frSpec(); FREE.fig.draw(); },
         onMoveEnd:function(){ FREE.moving = false; frPaint(); },
         onDelete:function(){ if (FREE.sel !== null){ frSnapshot(); frRemove(FREE.objs.filter(function(o){ return o.id === FREE.sel; })[0]); frPaint(); frSay("Erased."); } else frSay("Select something first (Move tool), then Delete erases it."); } });
@@ -5319,6 +5801,8 @@
     $("frStep").value = String(P.step); $("frLbl").value = String(P.lbl);
     [["frAxes", P.axes], ["frNums", P.nums], ["frDots", P.style === "dots"], ["frFifth", P.fifth], ["frSquare", P.square], ["frFirst", P.x0 >= 0 && P.y0 >= 0]].forEach(function(t){ $(t[0]).setAttribute("aria-pressed", String(!!t[1])); });
     Array.prototype.forEach.call(document.querySelectorAll("#frSnap [data-snap]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-snap") === P.snap)); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frAng [data-ang]"), function(b){ b.setAttribute("aria-pressed", String((b.getAttribute("data-ang") === "deg") === !!P.deg)); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frPi [data-pi]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-pi") === (P.pi || "auto"))); });
   }
   function frSetPaper(ch){ for (var k in ch) FREE.paper[k] = ch[k]; frPaint(); }
   // copy what a worked problem drew onto a fresh sheet
@@ -5391,6 +5875,8 @@
       else frSetPaper({ x0:0, y0:0, x1:Math.max(P.x1, 1), y1:Math.max(P.y1, 1) });
     });
     Array.prototype.forEach.call(document.querySelectorAll("#frSnap [data-snap]"), function(b){ b.addEventListener("click", function(){ frSetPaper({ snap:b.getAttribute("data-snap") }); }); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frAng [data-ang]"), function(b){ b.addEventListener("click", function(){ frSetPaper({ deg:b.getAttribute("data-ang") === "deg" }); }); });
+    Array.prototype.forEach.call(document.querySelectorAll("#frPi [data-pi]"), function(b){ b.addEventListener("click", function(){ frSetPaper({ pi:b.getAttribute("data-pi") }); }); });
     $("frUndo").addEventListener("click", frUndo);
     $("frRedo").addEventListener("click", frRedo);
     $("frClear").addEventListener("click", function(){ if (!FREE.objs.length) return; frSnapshot(); FREE.objs = []; FREE.pending = []; FREE.sel = null; frPaint(); frSay("Cleared. Undo brings it back."); });
@@ -5477,7 +5963,9 @@
     if (S.struct[m] && S.structText[m] === S.inputs[m]){
       try { var pr = fromParams(m, new URLSearchParams(S.struct[m])); if (pr) return pr; } catch (e){}
     }
-    return parseQ(m, S.inputs[m]);
+    var pr0 = parseQ(m, S.inputs[m]);
+    if (m === "functions"){ pr0.deg = pr0.deg || S.angle === "deg"; if (S.xpi !== "auto") pr0.xpi = S.xpi; }
+    return pr0;
   }
   function ckKey(){ return S.mode + "|" + cleanQ(S.inputs[S.mode]) + "|" + (S.struct[S.mode] && S.structText[S.mode] === S.inputs[S.mode] ? S.struct[S.mode] : ""); }
   function render(){
@@ -5666,7 +6154,7 @@
       var base;
       if (S.mode === "free") base = frParams();
       else if (structOn()) base = S.struct[S.mode];
-      else { var p = new URLSearchParams(); p.set("mode", S.mode); p.set("q", S.inputs[S.mode]); base = p.toString(); }
+      else { var p = new URLSearchParams(); p.set("mode", S.mode); p.set("q", S.inputs[S.mode]); if (S.mode === "functions"){ if (S.angle === "deg") p.set("angle", "deg"); if (S.xpi !== "auto") p.set("xpi", S.xpi); } base = p.toString(); }
       var qs = "?" + base + (S.practice !== "all" ? "&practice=" + S.practice : "");
       if (location.search !== qs) history.replaceState(history.state, "", location.pathname + qs + location.hash);
     } catch (e){}
@@ -5728,6 +6216,9 @@
       S.inputs[m] = q.trim(); S.struct[m] = null;
     }
     if (m) S.mode = m;
+    var an = (P0.get("angle") || "").toLowerCase(), xp = (P0.get("xpi") || "").toLowerCase();
+    if (/^deg/.test(an)) S.angle = "deg"; else if (/^rad/.test(an)) S.angle = "rad";
+    if (/^(auto|off|2|4|6)$/.test(xp)) S.xpi = xp;
     var pr2 = (P0.get("practice") || "").toLowerCase();
     if (PRACTICE.indexOf(pr2) >= 0) S.practice = pr2;
   }
@@ -5785,11 +6276,24 @@
     Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === S.mode)); });
     Array.prototype.forEach.call(document.querySelectorAll("#keys button[data-only]"), function(b){ b.hidden = b.getAttribute("data-only").split(" ").indexOf(S.mode) < 0; });
     if (S.mode === "free"){ buildChips(); return; }
+    $("angRow").hidden = S.mode !== "functions";
+    paintAng();
     $("lab1").textContent = LABELS[S.mode];
     $("hint").innerHTML = HINTS[S.mode];
     in1.value = S.inputs[S.mode];
     buildChips(); buildMaker();
   }
+  function paintAng(){
+    Array.prototype.forEach.call(document.querySelectorAll("#angBtns [data-ang]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-ang") === S.angle)); });
+    Array.prototype.forEach.call(document.querySelectorAll("#piBtns [data-pi]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-pi") === S.xpi)); });
+  }
+  function angChanged(){
+    // a made problem keeps its structured link, with the new setting in it
+    if (structOn()){ try { var pr = fromParams(S.mode, new URLSearchParams(S.struct[S.mode])); pr.deg = S.angle === "deg"; pr.xpi = S.xpi; S.struct[S.mode] = paramsOf(S.mode, pr); } catch (e){} }
+    paintAng(); S.step = 1; render(); save();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("#angBtns [data-ang]"), function(b){ b.addEventListener("click", function(){ S.angle = b.getAttribute("data-ang"); angChanged(); }); });
+  Array.prototype.forEach.call(document.querySelectorAll("#piBtns [data-pi]"), function(b){ b.addEventListener("click", function(){ S.xpi = b.getAttribute("data-pi"); angChanged(); }); });
   function setMode(m){ S.mode = m; S.step = 1; paintMode(); render(); save(); }
   Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){ b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); }); });
   in1.addEventListener("input", function(){ S.inputs[S.mode] = in1.value; S.step = 1; render(); save(); });
@@ -5962,7 +6466,7 @@
   function save(){
     if (EMBED) return;
     try { localStorage.setItem("graph-paper", JSON.stringify({
-      mode:S.mode, inputs:S.inputs, struct:S.struct, structText:S.structText, practice:S.practice, gen:S.gen, maker:$("maker").open, free:frParams(),
+      mode:S.mode, inputs:S.inputs, struct:S.struct, structText:S.structText, practice:S.practice, gen:S.gen, maker:$("maker").open, free:frParams(), angle:S.angle, xpi:S.xpi,
       theme:document.documentElement.getAttribute("data-theme") || "" })); } catch (e){}
   }
   function load(){
@@ -5975,6 +6479,8 @@
       if (v.inputs) MODES.forEach(function(m){ if (typeof v.inputs[m] === "string") S.inputs[m] = v.inputs[m].slice(0, 400); });
       if (v.struct && v.structText) MODES.forEach(function(m){ if (typeof v.struct[m] === "string" && typeof v.structText[m] === "string"){ S.struct[m] = v.struct[m].slice(0, 2000); S.structText[m] = v.structText[m]; } });
       if (PRACTICE.indexOf(v.practice) >= 0) S.practice = v.practice;
+      if (v.angle === "deg" || v.angle === "rad") S.angle = v.angle;
+      if (/^(auto|off|2|4|6)$/.test(v.xpi || "")) S.xpi = v.xpi;
       if (v.gen) MODES.forEach(function(m){
         var s = v.gen[m], d = S.gen[m], K = GENKEYS[m];
         if (!s || typeof s !== "object") return;
