@@ -3,11 +3,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Scratch Paper</title>
-<meta name="description" content="Type a problem and do it by hand on squared paper: carry, borrow, multiply row by row and divide step by step, with every square checked as you go.">
+<meta name="description" content="Type a problem and do it by hand: + − × ÷ on squared paper, square by square; equations, expressions, fractions and stories line by line, with every line checked as you go.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Arithmetic Helpers">
 <meta property="og:title" content="The Scratch Paper · Arithmetic Helpers">
-<meta property="og:description" content="Type a problem and do it by hand on squared paper: carry, borrow, multiply row by row and divide step by step, with every square checked as you go.">
+<meta property="og:description" content="Type a problem and do it by hand: + − × ÷ on squared paper, square by square; equations, expressions, fractions and stories line by line, with every line checked as you go.">
 <meta property="og:url" content="https://chrisdfennell.github.io/arithmetic-helpers/scratch.html">
 <meta property="og:image" content="https://chrisdfennell.github.io/arithmetic-helpers/icons/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
@@ -27,6 +27,7 @@
     --bad:#C0362C;   --bad-bg:#FBE3DF;                        /* needs another look */
     --ok:#0F7A55;
     --sheet:#FCFBF6; --grid:#D5DDEA; --cell-bg:rgba(180,83,9,.045); --cell-line:#C7CFDD;
+    --lrule:#C6D3E8; --margin:#E39A9A;
     --focus:#B45309;
     --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -43,6 +44,7 @@
       --bad:#FF8B7B;  --bad-bg:#3D1D18;
       --ok:#57CBAB;
       --sheet:#171D1C; --grid:#2A3533; --cell-bg:rgba(252,211,77,.05); --cell-line:#3A4644;
+      --lrule:#2E3B39; --margin:#7A4040;
       --focus:#FCD34D;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     }
@@ -55,6 +57,7 @@
     --bad:#FF8B7B;  --bad-bg:#3D1D18;
     --ok:#57CBAB;
     --sheet:#171D1C; --grid:#2A3533; --cell-bg:rgba(252,211,77,.05); --cell-line:#3A4644;
+    --lrule:#2E3B39; --margin:#7A4040;
     --focus:#FCD34D;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
   }
@@ -86,7 +89,13 @@
   .qrow{display:flex;gap:10px 12px;align-items:center;flex-wrap:wrap}
   .q-in{font-family:var(--f-mono);font-size:clamp(22px,4.4vw,30px);font-weight:600;color:var(--ink);
     background:transparent;border:0;border-bottom:2.5px solid var(--rule);padding:1px 4px 4px;
-    width:13ch;max-width:100%;min-width:0;outline:none;font-variant-numeric:tabular-nums}
+    width:min(100%,24ch);max-width:100%;min-width:0;outline:none;font-variant-numeric:tabular-nums;
+    resize:none;overflow:hidden;line-height:1.3;display:block;flex:1 1 16ch}
+  .q-in.long{font-family:var(--f-body);font-size:17px;font-weight:500;width:min(100%,60ch);line-height:1.45}
+  .paper-modes button span{color:var(--ink-3);font-weight:400}
+  .paper-modes button[aria-pressed="true"] span{color:var(--ink-2)}
+  .tolines{font-family:var(--f-body);font-size:13px;background:none;border:0;color:var(--ink-2);text-decoration:underline;cursor:pointer;padding:4px 2px}
+  .tolines:hover{color:var(--ink)}
   .q-in:focus{border-bottom-color:var(--focus)}
   .qhelp{margin:0;font-size:13px;color:var(--ink-3)}
   .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
@@ -299,7 +308,58 @@
     border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
   .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
   .footnote a{color:var(--ink-2)}
-  .ht-next{display:none !important}          /* this page has its own "New problem" on the finished sheet */
+  .ht-next{display:none !important}
+  html:has(.lin:focus) .ht-pad{display:none !important}       /* the ruled paper has its own keys */
+
+  /* ---- line by line: ruled paper ---- */
+  .lines .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;
+    padding:12px 16px;border-bottom:1px solid var(--rule)}
+  .lines[hidden],.sheet[hidden]{display:none}
+  .kindbar{display:flex;gap:8px 12px;align-items:center;flex-wrap:wrap;padding:10px 16px;border-bottom:1px dashed var(--rule)}
+  .ruled{background-color:var(--sheet);padding:14px 16px 26px;position:relative}
+  .ruled::before{content:"";position:absolute;left:66px;top:0;bottom:0;width:2px;background:var(--margin);opacity:.6;pointer-events:none}
+  .story{margin:0 0 12px 64px;padding:10px 14px;background:var(--surface);border:1px solid var(--rule);border-radius:10px;font-size:15.5px;line-height:1.5}
+  .story[hidden]{display:none}
+  .story p{margin:4px 0 0}
+  .story .snote{font-size:13px;color:var(--ink-3)}
+  .given{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:24px;align-items:baseline;padding:6px 0 8px;border-bottom:2px solid var(--lrule)}
+  .given[hidden]{display:none}
+  .given .glbl{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);text-align:right}
+  .given .gtext{font-family:var(--f-mono);font-size:22px;font-weight:600;color:var(--ink);padding-left:8px;overflow-wrap:anywhere}
+  .llist{list-style:none;margin:0;padding:0}
+  .lrow{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:24px;border-bottom:1px solid var(--lrule);padding:3px 0}
+  .lrow .ln{align-self:center;text-align:right;font-family:var(--f-mono);font-size:12px;color:var(--ink-3)}
+  .lmain{display:flex;align-items:center;gap:6px;min-width:0}
+  .lin{flex:1;min-width:0;font-family:var(--f-mono);font-size:22px;font-weight:600;color:var(--ink);background:transparent;
+    border:0;border-radius:6px;padding:7px 8px;min-height:44px;outline:none;font-variant-numeric:tabular-nums}
+  .lin:focus{background:var(--key-bg)}
+  .lin:focus-visible{outline:2.5px solid var(--focus);outline-offset:0}
+  .lmark{width:1.4em;font-size:22px;font-weight:700;text-align:center;flex:none}
+  .lrow.ok .lmark{color:var(--ok)}
+  .lrow.bad .lmark,.lrow.err .lmark{color:var(--bad)}
+  .lrow.bad .lin,.lrow.err .lin{text-decoration:underline wavy var(--bad);text-underline-offset:7px;text-decoration-thickness:1.5px}
+  .lrow.shown .lin{color:var(--alt)}
+  .lhint{grid-column:2;font-size:13.5px;line-height:1.4;color:var(--ink-2);padding:0 8px 5px}
+  .lhint:empty{display:none}
+  .lrow.ok .lhint{color:var(--ok)}
+  .lrow.bad .lhint,.lrow.err .lhint{color:var(--bad)}
+  .lhint b{font-family:var(--f-mono);font-weight:600}
+  .spad{grid-template-columns:repeat(11,minmax(0,1fr))}
+  .spad button{font-size:18px}
+  .spad button.wide2{grid-column:span 2;font-family:var(--f-body);font-size:14px}
+  .spad[hidden]{display:none}
+  @media (max-width:560px){
+    .ruled{padding:10px 8px 22px}
+    .ruled::before{left:38px}
+    .story{margin-left:36px}
+    .lrow,.given{grid-template-columns:22px minmax(0,1fr);column-gap:18px}
+    .lin{font-size:19px;padding:7px 4px}
+    .given .gtext{font-size:19px}
+    .given .glbl{visibility:hidden}
+    .spad{grid-template-columns:repeat(11,minmax(0,1fr));gap:4px;padding:8px 6px 10px}
+    .spad button{font-size:15px;height:44px}
+    .spad button.wide2{font-size:12px}
+  }          /* this page has its own "New problem" on the finished sheet */
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
   @media print{
@@ -315,7 +375,9 @@
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     body{background:#fff;font-size:12px}
     .page{max-width:none;padding:0;gap:8px}
-    .theme-btn,.problem,.footnote,.tools,.pad,.bubble,.say,.linknote,.done .acts,.confetti,.nextline{display:none !important}
+    .theme-btn,.problem,.footnote,.tools,.pad,.bubble,.say,.linknote,.done .acts,.confetti,.nextline,.kindbar,.spad{display:none !important}
+    .ruled{background:#fff;padding:6px 0 10px} .lin{font-size:17px;min-height:0;padding:4px 6px} .lrow{padding:1px 0}
+    .lines .panel-head{padding:4px 0 8px;border-bottom:0}
     .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
     h1{font-size:21px} .eyebrow{font-size:9px} .tagline{display:none}
     .panel{box-shadow:none;border:0;overflow:visible}
@@ -335,21 +397,26 @@
     <div>
       <div class="eyebrow">Do it by hand</div>
       <h1>The Scratch <em>Paper</em></h1>
-      <p class="tagline">Type a problem, then work it out yourself on squared paper &mdash; carry, borrow,
-        multiply row by row and divide step by step. The page checks each square as you go.</p>
+      <p class="tagline">Type a problem, then work it out yourself: + &minus; &times; &divide; on squared paper, square by square,
+        and anything else &mdash; expressions, equations, fractions, stories &mdash; line by line. The page checks as you go.</p>
     </div>
     <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
   </header>
 
   <section class="problem" id="problemBox" aria-label="The problem">
+    <div class="modes paper-modes" role="group" aria-label="How to work it" id="paperModes">
+      <button type="button" data-paper="squares" aria-pressed="true">On squared paper <span>(+ &minus; &times; &divide;)</span></button>
+      <button type="button" data-paper="lines" aria-pressed="false">Line by line <span>(anything else)</span></button>
+    </div>
     <div>
       <label class="lbl" for="qIn">Your problem</label>
       <div class="qrow">
-        <input class="q-in" id="qIn" type="text" inputmode="text" autocomplete="off" spellcheck="false"
-               placeholder="47 × 23" aria-describedby="qHelp">
+        <textarea class="q-in" id="qIn" rows="1" inputmode="text" autocomplete="off" spellcheck="false"
+               placeholder="47 × 23" aria-describedby="qHelp"></textarea>
         <button type="button" class="go" id="startBtn">Start</button>
       </div>
-      <p class="qhelp" id="qHelp">Add (+), subtract (−), multiply (× or *) or divide (÷ or /): like 478 + 356, 5003 − 1278, 47 × 23, 847 ÷ 12.</p>
+      <p class="qhelp" id="qHelp">Squared paper: + − × ÷ of plain numbers, like 478 + 356, 47 × 23 or 847 ÷ 12. Line by line: anything else —
+        3(x − 2) + 4x, 2x + 5 = 17, 3/4 + 5/6, 20 − 12 ÷ 4 × 2, or a story problem.</p>
     </div>
     <div class="optrow">
       <div class="modes small" role="group" aria-label="When to check" id="checkModes">
@@ -390,6 +457,7 @@
   <section class="panel sheet" id="sheet" aria-label="Your sheet of squared paper">
     <div class="panel-head">
       <h2 id="sheetTitle">Your sheet</h2>
+      <button type="button" class="tolines" id="toLinesBtn">Do it line by line instead</button>
       <div class="tools">
         <button type="button" class="tool main" id="checkWorkBtn" hidden>Check my work</button>
         <button type="button" class="tool" id="stepBtn">Show me the next step</button>
@@ -418,6 +486,43 @@
     </div>
   </section>
 
+  <section class="panel lines" id="linesPanel" hidden aria-label="Your working, line by line">
+    <div class="panel-head">
+      <h2 id="linesTitle">Your working</h2>
+      <div class="tools">
+        <button type="button" class="tool main" id="lCheckBtn" hidden>Check my work</button>
+        <button type="button" class="tool" id="lStepBtn">Show me the next line</button>
+        <button type="button" class="tool" id="lShowBtn">Show the answer</button>
+        <button type="button" class="tool" id="lUndoBtn">Undo</button>
+        <button type="button" class="tool" id="lRedoBtn">Redo</button>
+        <button type="button" class="tool" id="lInsBtn">Insert line</button>
+        <button type="button" class="tool" id="lDelBtn">Delete line</button>
+        <button type="button" class="tool" id="lClearBtn">Clear</button>
+      </div>
+    </div>
+    <div class="kindbar">
+      <span class="lbl">This is</span>
+      <div class="modes small" role="group" aria-label="Kind of problem" id="kindModes">
+        <button type="button" data-kind="expression" aria-pressed="false">An expression</button>
+        <button type="button" data-kind="equation" aria-pressed="false">An equation</button>
+        <button type="button" data-kind="inequality" aria-pressed="false">An inequality</button>
+        <button type="button" data-kind="system" aria-pressed="false">A system</button>
+        <button type="button" data-kind="word" aria-pressed="false">A story</button>
+      </div>
+    </div>
+    <div class="ruled" id="ruled">
+      <div class="story" id="storyBox" hidden></div>
+      <div class="given" id="givenRow"><span class="glbl">Problem</span><span class="gtext" id="givenText"></span></div>
+      <ol class="llist" id="llist" aria-label="Your lines of working"></ol>
+    </div>
+    <p class="nextline"><span class="k">What to do next</span><span id="lNextTxt"></span></p>
+    <div class="pad spad idle" id="spad" role="toolbar" aria-label="Math keys">
+      <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button><button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button><button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button><button type="button" data-k="0">0</button><button type="button" data-k="." aria-label="point">.</button>
+      <button type="button" data-k="+" aria-label="plus">+</button><button type="button" data-k="−" aria-label="minus">−</button><button type="button" data-k="×" aria-label="times">×</button><button type="button" data-k="÷" aria-label="divided by">÷</button><button type="button" data-k="(" aria-label="open bracket">(</button><button type="button" data-k=")" aria-label="close bracket">)</button><button type="button" data-k="^" aria-label="to the power">^</button><button type="button" data-k="/" aria-label="fraction bar">/</button><button type="button" data-k="=" aria-label="equals">=</button><button type="button" data-k="?" aria-label="unknown">?</button><button type="button" data-k="back" aria-label="Rub out">&#9003;</button>
+      <button type="button" data-k="x">x</button><button type="button" data-k="y">y</button><button type="button" data-k="n">n</button><button type="button" data-k="<" aria-label="less than">&lt;</button><button type="button" data-k=">" aria-label="greater than">&gt;</button><button type="button" data-k="≤" aria-label="less than or equal to">≤</button><button type="button" data-k="≥" aria-label="greater than or equal to">≥</button><button type="button" data-k="left" aria-label="Move left">&larr;</button><button type="button" data-k="right" aria-label="Move right">&rarr;</button><button type="button" class="wide2 done" data-k="enter" aria-label="Next line">Next line</button>
+    </div>
+  </section>
+
   <section class="done" id="doneBox" hidden aria-label="Finished">
     <div class="confetti" aria-hidden="true"><i style="left:8%;animation-delay:.05s"></i><i style="left:17%;animation-delay:.25s"></i><i style="left:28%;animation-delay:.1s"></i><i style="left:39%;animation-delay:.35s"></i><i style="left:50%;animation-delay:0s"></i><i style="left:61%;animation-delay:.2s"></i><i style="left:72%;animation-delay:.4s"></i><i style="left:83%;animation-delay:.15s"></i><i style="left:92%;animation-delay:.3s"></i></div>
     <div class="head"><span class="stamp" id="stamp">Solved!</span><span class="score" id="score"></span></div>
@@ -431,7 +536,7 @@
   <div class="footnote">
     <button class="print" type="button" id="printBtn">Print this sheet</button>
     <button class="print" type="button" id="copyBtn">Copy link</button>
-    <span>Tap a square, then type a digit. To borrow, tap the digit you borrow from. Arrow keys move around; Tab goes to the next square.</span>
+    <span>Squared paper: tap a square, then type a digit; to borrow, tap the digit you borrow from. Line by line: write one step on each line and press Enter.</span>
   </div>
 </div>
 
@@ -447,6 +552,15 @@
    places     1–6: how far a decimal division goes (default 3)
    practice   all = open the sheet with the answer filled in (marked as shown); check | step = work it
               yourself (the default)
+   op=lines   line by line, for anything that isn't a column method. kind = expression | equation | inequality |
+              system | word (read off q when it's missing: words → word; ";" or two "=" with "and" → system;
+              < > ≤ ≥ → inequality; "=" → equation; anything else → expression). Examples:
+                op=lines&kind=expression&q=3(x%20%E2%88%92%202)%20%2B%204x       3(x − 2) + 4x
+                op=lines&kind=equation&q=2x%20%2B%205%20%3D%2017                 2x + 5 = 17
+                op=lines&kind=system&q=x%20%2B%20y%20%3D%2010%3B%20x%20%E2%88%92%20y%20%3D%204
+                op=lines&kind=word&q=<story>[&wp=<the Story Problem page's own params for it, URL-encoded>]
+              A q that isn't a column problem goes line by line on its own (q=3/4%2B5/6, q=20-12%C3%B74%C3%972).
+              A story is read by wordproblems.html in a hidden frame (its .answer .v is the answer).
    A link's params win over what the page remembered (localStorage "scratch-paper"). A link that can't be
    read shows a notice and the last problem instead. The page keeps op, q, check, ans and places in the
    address bar with history.replaceState; practice and the theme are never written there.
@@ -455,7 +569,10 @@
      {type:"helper:options", id}
         -> {type:"helper:optionsSchema", id, page:"scratch.html", title, options:[...]}   (options carry `modes`)
      {type:"helper:make", id, count, options:{mode, count, digits, top, by, dividend, divisor, decimals,
-                                               regroup, ans, zero, check}}
+                                               regroup, ans, zero, kind, topic, steps, negatives, story, check}}
+        mode=lines: kind (expression|equation|inequality|system|word), topic (expressions: simplify|order|
+        fractions|decimals|integers|exponents), steps (equations, inequalities: one|two|both|brackets), negatives,
+        story (word: the Story Problem page's kinds; those problems come from its own maker, so that reply is async)
         -> {type:"helper:made", id, page, problems:[{text, html, params, answer, answerHtml}]}
    Making problems never changes the page, its inputs or localStorage.
 
@@ -559,15 +676,18 @@
     return { p:{ op:"div", a:a.i, b:b.i, ans:"remainder", places:3 } };
   }
   function qParam(p){
+    if (p.op === "lines") return p.q;
     if (p.op === "add") return p.nums.join("+");
     return p.a + { sub:"-", mul:"*", div:"/" }[p.op] + p.b;
   }
   function qText(p){
+    if (p.op === "lines") return prettyQ(p.q, p.kind);
     if (p.op === "add") return p.nums.map(commasBig).join(" + ");
     return commasBig(p.a) + " " + { sub:"−", mul:"×", div:"÷" }[p.op] + " " + commasBig(p.b);
   }
   function commasBig(s){ var t = String(s).split("."); return (t[0].length >= 5 ? commas(t[0]) : t[0]) + (t.length > 1 ? "." + t[1] : ""); }
   function keyOf(p){                                 // the problem's own params (no check mode)
+    if (p.op === "lines") return "op=lines&kind=" + p.kind + "&q=" + encodeURIComponent(p.q).replace(/%2F/gi, "/") + (p.wp ? "&wp=" + encodeURIComponent(p.wp) : "");
     var s = "op=" + p.op + "&q=" + encodeURIComponent(qParam(p)).replace(/%2F/gi, "/");
     if (p.op === "div") s += "&ans=" + p.ans + (p.ans === "decimal" && p.places !== 3 ? "&places=" + p.places : "");
     return s;
@@ -577,6 +697,7 @@
   /* ===================== the answer (independent of the sheet) ===================== */
   function bigOf(n, f){ var s = n.i + n.f; while (s.length < n.i.length + f) s += "0"; return BigInt(s); }
   function answerOf(p){
+    if (p.op === "lines") return linesAnswer(p);
     var text;
     if (p.op === "add" || p.op === "sub"){
       var ns = p.op === "add" ? p.nums.map(parseNum) : [parseNum(p.a), parseNum(p.b)];
@@ -606,7 +727,7 @@
   /* ===================== the work, the state of the sheet ===================== */
   function newWork(){
     return { v:{}, x:{}, br:{}, shown:{}, mk:{}, first:{}, mistakes:0, hints:0, checks:0, done:false,
-             revealed:false, reported:false };
+             revealed:false, reported:false, lines:[], lc:{}, lshown:{}, lmk:{}, lfirst:{}, lseq:0 };
   }
   function val(id){ var v = W.v[id]; return (v === undefined || v === null || v === "") ? null : v; }
   function stat(c){
@@ -614,9 +735,10 @@
     if (v === null) return "empty";
     return (c.exp !== null && v === c.exp) ? "ok" : "bad";
   }
-  function snap(){ return JSON.stringify({ v:W.v, x:W.x, br:W.br, shown:W.shown, mk:W.mk }); }
+  function snap(){ return JSON.stringify({ v:W.v, x:W.x, br:W.br, shown:W.shown, mk:W.mk, lines:W.lines, lc:W.lc, lshown:W.lshown, lmk:W.lmk }); }
   function push(){ HIST.push(snap()); if (HIST.length > 300) HIST.shift(); FUT = []; }
-  function restore(s){ var o = JSON.parse(s); W.v = o.v; W.x = o.x; W.br = o.br; W.shown = o.shown; W.mk = o.mk; }
+  function restore(s){ var o = JSON.parse(s); W.v = o.v; W.x = o.x; W.br = o.br; W.shown = o.shown; W.mk = o.mk;
+    W.lines = o.lines || []; W.lc = o.lc || {}; W.lshown = o.lshown || {}; W.lmk = o.lmk || {}; LDIRTY = {}; }
 
   /* a model is what the sheet looks like right now: static marks (items), digits you can tap (taps),
      squares you fill in (cells), and what the written method does next */
@@ -1331,6 +1453,1841 @@
   }
   function lowerFirst(s){ return s ? s.charAt(0).toLowerCase() + s.slice(1) : ""; }
 
+  /* ======================================================================================
+     LINE BY LINE: expressions, equations, inequalities, systems and story problems.
+     Every line is read into a tree, worked with exact fractions (BigInt), and compared with the line
+     before it: the same value for every value of the letters (expressions), or the same solutions
+     (equations, inequalities, systems). Wrong lines are compared with the classic slips.
+     ====================================================================================== */
+  var B0 = BigInt(0), B1 = BigInt(1), B2 = BigInt(2), B5 = BigInt(5), B10 = BigInt(10);
+  var MN = "−";
+  function LineErr(msg, code){ this.msg = msg; this.code = code || ""; }
+  function babs(a){ return a < B0 ? -a : a; }
+  function bgcd(a, b){ a = babs(a); b = babs(b); while (b){ var t = a % b; a = b; b = t; } return a; }
+  function blcm(a, b){ return a / bgcd(a, b) * b; }
+  var ZERO_MSG = "Something here divides by 0, and that can’t be done.";
+  function rQ(n, d){
+    n = BigInt(n); d = d === undefined ? B1 : BigInt(d);
+    if (d === B0) throw new LineErr(ZERO_MSG, "zero");
+    if (d < B0){ n = -n; d = -d; }
+    var g = bgcd(n, d); if (g > B1){ n = n / g; d = d / g; }
+    return { n:n, d:d };
+  }
+  var RZERO = rQ(0), RONE = rQ(1), RMONE = rQ(-1);
+  function rAdd(a, b){ return rQ(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function rSub(a, b){ return rQ(a.n * b.d - b.n * a.d, a.d * b.d); }
+  function rMul(a, b){ return rQ(a.n * b.n, a.d * b.d); }
+  function rDiv(a, b){ if (b.n === B0) throw new LineErr(ZERO_MSG, "zero"); return rQ(a.n * b.d, a.d * b.n); }
+  function rNeg(a){ return { n:-a.n, d:a.d }; }
+  function rEq(a, b){ return !!a && !!b && a.n === b.n && a.d === b.d; }
+  function rZ(a){ return a.n === B0; }
+  function rSg(a){ return a.n < B0 ? -1 : a.n > B0 ? 1 : 0; }
+  function rCmp(a, b){ return rSg(rSub(a, b)); }
+  function rInt(a){ return a.d === B1; }
+  function rAbs(a){ return a.n < B0 ? rNeg(a) : a; }
+  function rPow(a, k){
+    if (Math.abs(k) > 40) throw new LineErr("That power is too big to work out here.", "big");
+    var r = RONE; for (var i = 0; i < Math.abs(k); i++) r = rMul(r, a);
+    return k < 0 ? rDiv(RONE, r) : r;
+  }
+  function rDecOf(s){ var p = s.split("."), f = p[1] || ""; return rQ(BigInt((p[0] || "0") + f), BigInt("1" + f.replace(/\d/g, "0"))); }
+  function isTerm(d){ while (d % B2 === B0) d /= B2; while (d % B5 === B0) d /= B5; return d === B1; }
+  function bsqrt(n){
+    if (n < B0) return null; if (n < B2) return n;
+    var x = BigInt(Math.floor(Math.sqrt(Number(n))));
+    while (x * x > n) x -= B1; while ((x + B1) * (x + B1) <= n) x += B1;
+    return x * x === n ? x : null;
+  }
+  function rSqrt(a){ var p = bsqrt(a.n), q = bsqrt(a.d); return p === null || q === null ? null : rQ(p, q); }
+  function rTxt(a, dec){
+    var neg = a.n < B0, n = babs(a.n), s;
+    if (a.d === B1) s = n.toString();
+    else if (dec && isTerm(a.d)){
+      var k = 0, p = B1; while (p % a.d !== B0){ p *= B10; k++; }
+      var digits = (n * (p / a.d)).toString(); while (digits.length <= k) digits = "0" + digits;
+      s = digits.slice(0, digits.length - k) + "." + digits.slice(digits.length - k);
+    } else s = n.toString() + "/" + a.d.toString();
+    return (neg ? MN : "") + s;
+  }
+  function rMixed(a){
+    if (a.d === B1 || babs(a.n) < a.d) return rTxt(a);
+    var neg = a.n < B0, n = babs(a.n);
+    return (neg ? MN : "") + (n / a.d) + " " + (n % a.d) + "/" + a.d;
+  }
+
+  /* ---------- reading a line ---------- */
+  var KEYW = /^(solve|simplify|evaluate|work out|find|calculate|expand)\s*:?\s*/i;
+  function lnorm(s){
+    return String(s == null ? "" : s).replace(/[−–—‒﹣－]/g, "-").replace(/[×✕✖·∙⋅]/g, "*")
+      .replace(/\*\*/g, "^").replace(/<=|=</g, "≤").replace(/>=|=>/g, "≥").replace(/²/g, "^2").replace(/³/g, "^3")
+      .replace(/[\[{]/g, "(").replace(/[\]}]/g, ")").replace(/[□_]/g, "?").replace(/＋/g, "+").replace(/\s+/g, " ").trim();
+  }
+  function lex(s0){
+    var s = lnorm(s0).replace(KEYW, "");
+    s = s.replace(/(\d)\s*[xX]\s*(?=\d)/g, "$1*").replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    var out = [], i = 0, m;
+    while (i < s.length){
+      var c = s.charAt(i), rest = s.slice(i), p = out[out.length - 1];
+      if (c === " "){ i++; continue; }
+      var canStart = !p || p.t === "op" || p.t === "(" || p.t === "rel" || p.t === "sep";
+      if (canStart && (m = /^(\d+) (\d+) ?\/ ?(\d+)(?![\d.])/.exec(rest))){
+        var w = BigInt(m[1]), nn = BigInt(m[2]), dd = BigInt(m[3]);
+        if (dd === B0) throw new LineErr("A fraction can’t have 0 on the bottom.");
+        out.push({ t:"num", q:rQ(w * dd + nn, dd), mixed:true, w:m[1], fn:m[2], fd:m[3], s:m[1] + " " + m[2] + "/" + m[3] });
+        i += m[0].length; continue;
+      }
+      if (!(p && p.t === "num") && (m = /^(\d+)\/(\d+)(?![\d.])/.exec(rest))){
+        if (BigInt(m[2]) === B0) throw new LineErr("A fraction can’t have 0 on the bottom.");
+        out.push({ t:"num", q:rQ(m[1], m[2]), frac:true, fn:m[1], fd:m[2], s:m[1] + "/" + m[2] });
+        i += m[0].length; continue;
+      }
+      if ((m = /^(\d+\.\d+|\d+\.(?!\d)|\.\d+|\d+)/.exec(rest))){
+        var dec = m[0].indexOf(".") >= 0, txt = m[0].replace(/\.$/, "");
+        out.push({ t:"num", q:dec ? rDecOf(txt) : rQ(txt), dec:dec && /\.\d/.test(m[0]), s:txt });
+        i += m[0].length; continue;
+      }
+      if ((m = /^[a-zA-Z]+/.exec(rest))){
+        var wd = m[0].toLowerCase();
+        if (wd === "or" || wd === "and"){ out.push({ t:"sep", v:wd }); i += wd.length; continue; }
+        if (wd.length > 2) throw new LineErr("words", "words");
+        for (var j = 0; j < wd.length; j++) out.push({ t:"var", v:wd.charAt(j) });
+        i += wd.length; continue;
+      }
+      if (c === "?"){ out.push({ t:"var", v:"?" }); i++; continue; }
+      if ("+-*/^".indexOf(c) >= 0 || c === "÷"){ out.push({ t:"op", v:c === "÷" ? "/" : c }); i++; continue; }
+      if (c === "(" || c === ")"){ out.push({ t:c }); i++; continue; }
+      if ("=<>≤≥".indexOf(c) >= 0){ out.push({ t:"rel", v:c }); i++; continue; }
+      if (c === ";" || c === ","){ out.push({ t:"sep", v:c }); i++; continue; }
+      if (c === "≠") throw new LineErr("Use =, <, >, ≤ or ≥ here.");
+      if (c === "$" || c === "%") throw new LineErr("words", "words");
+      throw new LineErr("I can’t read the “" + c + "” in this line.");
+    }
+    return out;
+  }
+  function parseExpr(toks, i0){
+    var i = i0;
+    function peek(){ return toks[i]; }
+    function expr(){
+      var a = term();
+      while (peek() && peek().t === "op" && (peek().v === "+" || peek().v === "-")){
+        var o = toks[i++].v, b = term(); a = { k:o === "+" ? "add" : "sub", a:a, b:b };
+      }
+      return a;
+    }
+    function term(){
+      var a = factor();
+      for (;;){
+        var t = peek();
+        if (!t) break;
+        if (t.t === "op" && (t.v === "*" || t.v === "/")){ i++; var b = factor(); a = { k:t.v === "*" ? "mul" : "div", a:a, b:b }; continue; }
+        if (t.t === "num" || t.t === "var" || t.t === "("){
+          var pv = toks[i - 1];
+          if (t.t === "num" && pv && pv.t === "num") throw new LineErr("There are two numbers side by side — is a sign missing between them?");
+          if (t.t === "num" && pv && pv.t === "var") throw new LineErr("Write the number in front of the letter: 2x, not x2.");
+          var b2 = power(); a = { k:"mul", a:a, b:b2, imp:true }; continue;
+        }
+        break;
+      }
+      return a;
+    }
+    function factor(){
+      var t = peek();
+      if (t && t.t === "op" && (t.v === "-" || t.v === "+")){ i++; var a = factor(); return t.v === "-" ? { k:"neg", a:a } : a; }
+      return power();
+    }
+    function power(){
+      var a = atom(), t = peek();
+      if (t && t.t === "op" && t.v === "^"){ i++; var b = factor(); return { k:"pow", a:a, b:b }; }
+      return a;
+    }
+    function atom(){
+      var t = toks[i++];
+      if (!t) throw new LineErr("Something’s missing at the end of this line.");
+      if (t.t === "num"){
+        var n = { k:"num", q:t.q, s:t.s };
+        if (t.dec) n.dec = true; if (t.frac){ n.frac = true; n.fn = t.fn; n.fd = t.fd; }
+        if (t.mixed){ n.mixed = true; n.w = t.w; n.fn = t.fn; n.fd = t.fd; }
+        return n;
+      }
+      if (t.t === "var") return { k:"var", v:t.v };
+      if (t.t === "("){
+        var e = expr(), c = toks[i++];
+        if (!c || c.t !== ")") throw new LineErr("A bracket is opened but never closed.");
+        return { k:"par", a:e };
+      }
+      if (t.t === ")") throw new LineErr("There’s a “)” without a “(” before it.");
+      if (t.t === "rel") throw new LineErr("Something’s missing before the “" + t.v + "”.");
+      throw new LineErr("Two signs are next to each other, or a sign has nothing after it.");
+    }
+    var ast = expr();
+    return { ast:ast, i:i };
+  }
+  function parseGroup(toks){
+    var i = 0, parts = [], rels = [], lead = null;
+    if (toks[0] && toks[0].t === "rel"){ lead = toks[0].v; i = 1; }
+    if (i >= toks.length) throw new LineErr("This line is empty.");
+    for (;;){
+      var r = parseExpr(toks, i); parts.push(r.ast); i = r.i;
+      if (i >= toks.length) break;
+      var t = toks[i];
+      if (t.t !== "rel") throw new LineErr(t.t === ")" ? "There’s a “)” without a “(” before it." : "I can’t read this line — check the signs and brackets.");
+      rels.push(t.v); i++;
+      if (i >= toks.length) throw new LineErr("Something’s missing after the “" + t.v + "”.");
+    }
+    return { parts:parts, rels:rels, lead:lead };
+  }
+  function parseLine(text){
+    var toks = lex(text), groups = [], cur = [];
+    each(toks, function(t){ if (t.t === "sep"){ groups.push(cur); cur = []; } else cur.push(t); });
+    groups.push(cur);
+    groups = groups.filter(function(g){ return g.length; });
+    if (!groups.length) throw new LineErr("This line is empty.");
+    return groups.map(parseGroup);
+  }
+  function parseOne(text){ var g = parseLine(text); return g[0].parts[0]; }
+
+  /* ---------- working a tree out ---------- */
+  function varsOf(a, out){
+    out = out || [];
+    (function walk(n){
+      if (!n || !n.k) return;
+      if (n.k === "var"){ if (out.indexOf(n.v) < 0) out.push(n.v); return; }
+      if (n.k === "raw"){ walk(n.ast); return; }
+      walk(n.a); walk(n.b);
+    })(a);
+    return out.sort();
+  }
+  function hasVar(a){ return varsOf(a).length > 0; }
+  function hasDec(a){ var f = false; (function w(n){ if (!n || !n.k) return; if (n.k === "num" && n.dec) f = true; if (n.k === "raw") w(n.ast); w(n.a); w(n.b); })(a); return f; }
+  function ev(a, env){
+    switch (a.k){
+      case "num": return a.q;
+      case "var": if (!env || !Object.prototype.hasOwnProperty.call(env, a.v)) throw new LineErr("var", "var"); return env[a.v];
+      case "par": return ev(a.a, env);
+      case "raw": return ev(a.ast, env);
+      case "neg": return rNeg(ev(a.a, env));
+      case "add": return rAdd(ev(a.a, env), ev(a.b, env));
+      case "sub": return rSub(ev(a.a, env), ev(a.b, env));
+      case "mul": return rMul(ev(a.a, env), ev(a.b, env));
+      case "div": return rDiv(ev(a.a, env), ev(a.b, env));
+      case "pow":
+        var e = ev(a.b, env);
+        if (!rInt(e)) throw new LineErr("This sheet works with whole-number powers only.", "pow");
+        return rPow(ev(a.a, env), Number(e.n));
+    }
+    throw new LineErr("I can’t work this line out.");
+  }
+  /* polynomials: { "": 3, "x": 2, "x^2": 1, "x*y": −1 } with exact fractions */
+  function monoKey(m){ return Object.keys(m).filter(function(v){ return m[v]; }).sort().map(function(v){ return m[v] === 1 ? v : v + "^" + m[v]; }).join("*"); }
+  function keyMono(k){ var m = {}; if (!k) return m; each(k.split("*"), function(p){ var s = p.split("^"); m[s[0]] = s[1] ? Number(s[1]) : 1; }); return m; }
+  function keyDeg(k){ var m = keyMono(k), s = 0; for (var v in m) s += m[v]; return s; }
+  function pConst(q){ var p = {}; if (!rZ(q)) p[""] = q; return p; }
+  function pVar(v){ var p = {}; p[v] = RONE; return p; }
+  function pAdd(a, b){ var r = {}, k; for (k in a) r[k] = a[k]; for (k in b){ r[k] = r[k] ? rAdd(r[k], b[k]) : b[k]; if (rZ(r[k])) delete r[k]; } return r; }
+  function pScale(a, q){ var r = {}; if (rZ(q)) return r; for (var k in a) r[k] = rMul(a[k], q); return r; }
+  function pSub(a, b){ return pAdd(a, pScale(b, RMONE)); }
+  function pMul(a, b){
+    var r = {};
+    for (var x in a) for (var y in b){
+      var mx = keyMono(x), my = keyMono(y), mm = {}, v;
+      for (v in mx) mm[v] = mx[v];
+      for (v in my) mm[v] = (mm[v] || 0) + my[v];
+      var k = monoKey(mm), c = rMul(a[x], b[y]);
+      r[k] = r[k] ? rAdd(r[k], c) : c;
+      if (rZ(r[k])) delete r[k];
+    }
+    return r;
+  }
+  function pIsConst(a){ for (var k in a) if (k !== "") return false; return true; }
+  function pIsZero(a){ for (var k in a) return false; return true; }
+  function pC(a){ return a[""] || RZERO; }
+  function pDeg(a){ var d = 0; for (var k in a) d = Math.max(d, keyDeg(k)); return d; }
+  function pEq(a, b){ var k; for (k in a) if (!b[k] || !rEq(a[k], b[k])) return false; for (k in b) if (!a[k]) return false; return true; }
+  function polyOf(a){
+    var x, y;
+    switch (a.k){
+      case "num": return pConst(a.q);
+      case "var": return pVar(a.v);
+      case "par": return polyOf(a.a);
+      case "raw": return polyOf(a.ast);
+      case "neg": x = polyOf(a.a); return x && pScale(x, RMONE);
+      case "add": case "sub":
+        x = polyOf(a.a); y = polyOf(a.b); if (!x || !y) return null;
+        return a.k === "add" ? pAdd(x, y) : pSub(x, y);
+      case "mul":
+        x = polyOf(a.a); y = polyOf(a.b); if (!x || !y) return null;
+        if (pDeg(x) + pDeg(y) > 12) return null;
+        return pMul(x, y);
+      case "div":
+        x = polyOf(a.a); y = polyOf(a.b); if (!x || !y || !pIsConst(y)) return null;
+        return pScale(x, rDiv(RONE, pC(y)));
+      case "pow":
+        x = polyOf(a.a); y = polyOf(a.b); if (!x || !y || !pIsConst(y)) return null;
+        var e = pC(y); if (!rInt(e)) return null;
+        var k = Number(e.n);
+        if (pIsConst(x)) return pConst(rPow(pC(x), k));
+        if (k < 0 || k * pDeg(x) > 12) return null;
+        var r = pConst(RONE); for (var i = 0; i < k; i++) r = pMul(r, x);
+        return r;
+    }
+    return null;
+  }
+  function safePoly(a){ try { return polyOf(a); } catch (e){ return null; } }
+  var PTS = [rQ(3, 7), rQ(-5, 3), rQ(11, 4), rQ(-2, 9), rQ(7, 5), rQ(13, 6), rQ(-17, 8), rQ(19, 10)];
+  function envAt(vars, k){ var e = {}; each(vars, function(v, j){ e[v] = PTS[(k + 3 * j) % PTS.length]; }); return e; }
+  function sameValue(a, b, vars){
+    var pa = safePoly(a), pb = safePoly(b);
+    if (pa && pb) return pEq(pa, pb);
+    vars = varsOf(b, varsOf(a, (vars || []).slice()));
+    var ok = 0;
+    for (var k = 0; k < PTS.length; k++){
+      var env = envAt(vars, k), x = null, y = null;
+      try { x = ev(a, env); } catch (e){ x = null; }
+      try { y = ev(b, env); } catch (e){ y = null; }
+      if (x === null && y === null) continue;
+      if (x === null || y === null || !rEq(x, y)) return false;
+      ok++;
+    }
+    return ok >= 3;
+  }
+  var ZNODE = { k:"num", q:RZERO, s:"0" };
+  function lit(q, dec){ return { k:"num", q:q, dec:!!dec, s:rTxt(rAbs(q), dec).replace(MN, "") }; }
+  function fracLit(n, d){ var q = rQ(n, d); var o = { k:"num", q:q, frac:true, fn:String(babs(BigInt(n))), fd:String(BigInt(d)) }; o.s = o.fn + "/" + o.fd; if (BigInt(n) < B0 && rSg(q) >= 0) o.q = q; return o; }
+  function diffAst(a, b){ return { k:"sub", a:a, b:{ k:"par", a:b } }; }
+  function negAst(a){ return { k:"neg", a:{ k:"par", a:a } }; }
+  function isZeroFn(a, vars){ return sameValue(a, ZNODE, vars); }
+  function ratioConst(a, b, vars){
+    var pa = safePoly(a), pb = safePoly(b);
+    if (pa && pb){
+      if (pIsZero(pb)) return null;
+      var key = Object.keys(pb)[0];
+      if (!pa[key]) return null;
+      var k = rDiv(pa[key], pb[key]);
+      return pEq(pa, pScale(pb, k)) ? k : null;
+    }
+    vars = varsOf(b, varsOf(a, (vars || []).slice()));
+    var kk = null, ok = 0;
+    for (var i = 0; i < PTS.length; i++){
+      try {
+        var env = envAt(vars, i), x = ev(a, env), y = ev(b, env);
+        if (rZ(y)){ if (!rZ(x)) return null; continue; }
+        var r = rDiv(x, y);
+        if (kk && !rEq(kk, r)) return null;
+        kk = r; ok++;
+      } catch (e){}
+    }
+    return ok >= 3 ? kk : null;
+  }
+
+  /* ---------- writing a tree back out ---------- */
+  function prec(a){
+    switch (a.k){
+      case "add": case "sub": return 1;
+      case "mul": case "div": return 2;
+      case "neg": return 3;
+      case "pow": return 4;
+      case "raw": return a.prec;
+      case "num": return rSg(a.q) < 0 ? 3 : (a.frac || a.mixed) ? 2.5 : 5;
+    }
+    return 5;
+  }
+  function negLead(a){ return a.k === "neg" || (a.k === "num" && rSg(a.q) < 0) || (a.k === "raw" && a.neg); }
+  function wrapP(s){ return "(" + s + ")"; }
+  function side(a, need){ return prec(a) < need ? wrapP(pr(a)) : pr(a); }
+  function rside(a, need){ return (prec(a) < need || negLead(a)) ? wrapP(pr(a)) : pr(a); }
+  function startsLetter(s){ return /^[a-z?(]/i.test(s); }
+  function pr(a){
+    switch (a.k){
+      case "num": return (rSg(a.q) < 0 ? MN : "") + (a.s !== undefined ? a.s : rTxt(rAbs(a.q), a.dec));
+      case "var": return a.v;
+      case "par": return wrapP(pr(a.a));
+      case "raw": return a.s;
+      case "neg": return MN + (prec(a.a) < 3 || negLead(a.a) ? wrapP(pr(a.a)) : pr(a.a));
+      case "pow":
+        var ex = a.b.k === "num" && rSg(a.b.q) >= 0 && rInt(a.b.q) ? pr(a.b) : wrapP(pr(a.b));
+        return side(a.a, 5) + "^" + ex;
+      case "add": return pr(a.a) + " + " + rside(a.b, 1);
+      case "sub": return pr(a.a) + " " + MN + " " + rside(a.b, 2);
+      case "mul":
+        var l = side(a.a, 2), r = rside(a.b, 2.5);
+        var imp = (a.imp || hasVar(a)) && !negLead(a.b) && startsLetter(r) && (a.a.k === "num" || a.a.k === "var" || a.a.k === "pow" || a.a.k === "mul" || a.a.k === "par" || a.a.k === "neg");
+        return imp ? l + r : l + " × " + r;
+      case "div": return side(a.a, 2) + (hasVar(a) ? "/" : " ÷ ") + rside(a.b, 3);
+    }
+    return "?";
+  }
+  function monoStr(key){ return key ? key.split("*").join("") : ""; }
+  function polyStr(p, dec, keys){
+    keys = keys || Object.keys(p).sort(function(a, b){ return keyDeg(b) - keyDeg(a) || (a < b ? -1 : a > b ? 1 : 0); });
+    if (!keys.length) return "0";
+    var s = "";
+    each(keys, function(k, i){
+      var c = p[k], neg = rSg(c) < 0, a = rAbs(c), m = monoStr(k), t;
+      if (!k) t = rTxt(a, dec);
+      else if (rEq(a, RONE)) t = m;
+      else if (a.d === B1 || (dec && isTerm(a.d))) t = rTxt(a, dec) + m;
+      else t = (a.n === B1 ? "" : a.n.toString()) + m + "/" + a.d.toString();
+      s += i === 0 ? (neg ? MN : "") + t : (neg ? " " + MN + " " : " + ") + t;
+    });
+    return s;
+  }
+  function polyAst(p, dec){ return parseOne(polyStr(p, dec)); }
+  function relTxt(r){ return r; }
+  function eqTxt(L, rel, R){ return L + " " + relTxt(rel) + " " + R; }
+
+  /* ---------- simplest form ---------- */
+  function termsOf(a, sign, out){
+    out = out || []; sign = sign || 1;
+    if (a.k === "add"){ termsOf(a.a, sign, out); termsOf(a.b, sign, out); }
+    else if (a.k === "sub"){ termsOf(a.a, sign, out); termsOf(a.b, -sign, out); }
+    else if (a.k === "neg" && (a.a.k !== "par" || !isSum(a.a.a))){ termsOf(a.a, -sign, out); }
+    else out.push({ s:sign, a:a });
+    return out;
+  }
+  function isSum(a){ return a.k === "add" || a.k === "sub"; }
+  function sumPar(a){ return a && a.k === "par" && isSum(a.a); }
+  function sumAst(list){
+    var r = null;
+    each(list, function(t){
+      if (!r) r = t.s < 0 ? { k:"neg", a:t.a } : t.a;
+      else r = { k:t.s < 0 ? "sub" : "add", a:r, b:t.a };
+    });
+    return r || ZNODE;
+  }
+  function simplestNumWhy(a){
+    if (a.k === "par") a = a.a;
+    if (a.k === "neg") a = a.a;
+    if (a.k !== "num") return "Finish the arithmetic: the answer is one number.";
+    if (a.mixed){
+      var fn = BigInt(a.fn), fd = BigInt(a.fd);
+      if (fn >= fd) return "The fraction part of a mixed number has to be less than 1.";
+      if (bgcd(fn, fd) > B1) return "Simplify the fraction part: " + a.fn + " and " + a.fd + " can both be divided by " + bgcd(fn, fd) + ".";
+    } else if (a.frac){
+      var n = BigInt(a.fn), d = BigInt(a.fd), g = bgcd(n, d);
+      if (n % d === B0) return "That fraction is a whole number: write it as one.";
+      if (g > B1) return "Simplify the fraction: " + a.fn + " and " + a.fd + " can both be divided by " + g + ".";
+    }
+    return null;
+  }
+  function monoInfo(a){
+    var num = [], den = [], vars = {}, ok = true, dup = null;
+    (function walk(n, inDen){
+      if (!ok) return;
+      if (n.k === "num"){ (inDen ? den : num).push(n); return; }
+      if (n.k === "var"){ if (inDen){ ok = false; return; } if (vars[n.v]) dup = n.v; vars[n.v] = (vars[n.v] || 0) + 1; return; }
+      if (n.k === "mul"){ walk(n.a, inDen); walk(n.b, inDen); return; }
+      if (n.k === "div"){ walk(n.a, inDen); if (n.b.k !== "num"){ ok = false; return; } walk(n.b, !inDen); return; }
+      if (n.k === "pow"){
+        if (n.a.k !== "var" || n.b.k !== "num" || !rInt(n.b.q) || rSg(n.b.q) <= 0 || inDen){ ok = false; return; }
+        if (vars[n.a.v]) dup = n.a.v; vars[n.a.v] = (vars[n.a.v] || 0) + Number(n.b.q.n); return;
+      }
+      if (n.k === "par" && n.a.k === "num"){ walk(n.a, inDen); return; }
+      if (n.k === "neg"){ walk(n.a, inDen); return; }
+      ok = false;
+    })(a, false);
+    if (!ok) return null;
+    var why = null, hasV = Object.keys(vars).length > 0;
+    if (dup) why = "Multiply the letters together: " + dup + " × " + dup + " is " + dup + "^2.";
+    else if (num.length > 1 || den.length > 1 || (num.length && den.length && (num[0].frac || num[0].mixed || num[0].dec || den[0].dec)))
+      why = hasV ? "Multiply the numbers in that term together." : "Finish the arithmetic.";
+    else {
+      var nn = num[0], dd = den[0];
+      if (nn && (nn.frac || nn.mixed)) why = simplestNumWhy(nn);
+      if (nn && dd && rInt(nn.q) && rInt(dd.q)){
+        if (rEq(dd.q, RONE)) why = "Dividing by 1 changes nothing — leave it out.";
+        else if (bgcd(nn.q.n, dd.q.n) > B1) why = "Simplify the fraction in that term.";
+      }
+      if (!nn && dd && !hasV) why = "Finish the arithmetic.";
+      if (nn && hasV && rEq(nn.q, RONE) && !dd && !nn.frac) why = "You don’t need the 1: 1" + monoStr(monoKey(vars)) + " is just " + monoStr(monoKey(vars)) + ".";
+      if (nn && rZ(nn.q)) why = "0 times anything is 0 — leave that term out.";
+    }
+    return { key:monoKey(vars), why:why };
+  }
+  function simplestWhy(a){
+    if (!hasVar(a)){
+      var t0 = termsOf(a, 1, []);
+      if (t0.length > 1) return "Finish the arithmetic: the answer is one number.";
+      return simplestNumWhy(a);
+    }
+    var terms = termsOf(a, 1, []), seen = {};
+    for (var i = 0; i < terms.length; i++){
+      var mi = monoInfo(terms[i].a);
+      if (!mi) return hasParSum(terms[i].a) ? "Multiply out the brackets." : "Simplify each term: multiply its numbers and letters together.";
+      if (mi.why) return mi.why;
+      if (seen[mi.key]) return mi.key ? "Combine the like terms: there’s more than one " + monoStr(mi.key) + " term." : "Add the plain numbers together.";
+      seen[mi.key] = 1;
+    }
+    return null;
+  }
+  function hasParSum(a){ var f = false; (function w(n){ if (!n || !n.k) return; if (sumPar(n)) f = true; w(n.a); w(n.b); })(a); return f; }
+
+  /* ---------- solutions ---------- */
+  var FLIP = { "<":">", ">":"<", "≤":"≥", "≥":"≤", "=":"=" };
+  function holds(c, rel){ var s = rSg(c); return rel === "<" ? s < 0 : rel === ">" ? s > 0 : rel === "≤" ? s <= 0 : rel === "≥" ? s >= 0 : s === 0; }
+  function oneVar(F, v){ for (var k in F) if (k && Object.keys(keyMono(k)).some(function(x){ return x !== v; })) return false; return true; }
+  function solveSet(L, R, v){
+    var pl, pq;
+    try { pl = polyOf(L); pq = polyOf(R); } catch (e){ return { bad:e.msg || ZERO_MSG }; }
+    if (!pl || !pq) return { unk:true };
+    var F = pSub(pl, pq);
+    if (!oneVar(F, v)) return { multi:true };
+    var deg = pDeg(F), c2 = F[v + "^2"] || RZERO, c1 = F[v] || RZERO, c0 = F[""] || RZERO;
+    if (deg === 0) return rZ(c0) ? { all:true } : { none:true };
+    if (deg === 1) return { roots:[rNeg(rDiv(c0, c1))] };
+    if (deg === 2){
+      var disc = rSub(rMul(c1, c1), rMul(rQ(4), rMul(c2, c0)));
+      if (rSg(disc) < 0) return { none:true };
+      var sq = rSqrt(disc), den = rMul(rQ(2), c2);
+      if (sq === null) return { irr:[rDiv(c1, c2), rDiv(c0, c2)] };
+      var r1 = rDiv(rAdd(rNeg(c1), sq), den), r2 = rDiv(rSub(rNeg(c1), sq), den);
+      return { roots:rEq(r1, r2) ? [r1] : (rCmp(r1, r2) < 0 ? [r1, r2] : [r2, r1]) };
+    }
+    return { high:true };
+  }
+  function ineqSet(L, rel, R, v){
+    var pl, pq;
+    try { pl = polyOf(L); pq = polyOf(R); } catch (e){ return { bad:e.msg || ZERO_MSG }; }
+    if (!pl || !pq) return { unk:true };
+    var F = pSub(pl, pq);
+    if (!oneVar(F, v)) return { multi:true };
+    if (pDeg(F) > 1) return { high:true };
+    var a = F[v] || RZERO, b = F[""] || RZERO;
+    if (rZ(a)) return holds(b, rel) ? { all:true } : { none:true };
+    return { ray:{ c:rNeg(rDiv(b, a)), r:rSg(a) > 0 ? rel : FLIP[rel] } };
+  }
+  function setSame(A, B){
+    if (!A || !B) return false;
+    if (A.all || B.all) return !!(A.all && B.all);
+    if (A.none || B.none) return !!(A.none && B.none);
+    if (A.roots && B.roots) return A.roots.length === B.roots.length && A.roots.every(function(r, i){ return rEq(r, B.roots[i]); });
+    if (A.irr && B.irr) return rEq(A.irr[0], B.irr[0]) && rEq(A.irr[1], B.irr[1]);
+    if (A.ray && B.ray) return rEq(A.ray.c, B.ray.c) && A.ray.r === B.ray.r;
+    return false;
+  }
+  function numVal(a){ try { return hasVar(a) ? null : ev(a, {}); } catch (e){ return null; } }
+  function assignOf(g){                       // "x = 5" or "5 = x", the number in simplest form
+    if (g.rels.length !== 1 || g.rels[0] !== "=") return null;
+    var a = g.parts[0], b = g.parts[1];
+    if (a.k === "var" && !hasVar(b) && simplestNumWhy(b) === null){ var q = numVal(b); return q ? { v:a.v, q:q } : null; }
+    if (b.k === "var" && !hasVar(a) && simplestNumWhy(a) === null){ var q2 = numVal(a); return q2 ? { v:b.v, q:q2 } : null; }
+    return null;
+  }
+  function ineqFinal(g){
+    if (g.rels.length !== 1 || g.rels[0] === "=") return null;
+    var a = g.parts[0], b = g.parts[1];
+    if (a.k === "var" && !hasVar(b) && simplestNumWhy(b) === null) return { v:a.v, r:g.rels[0] };
+    if (b.k === "var" && !hasVar(a) && simplestNumWhy(a) === null) return { v:b.v, r:FLIP[g.rels[0]] };
+    return null;
+  }
+
+  /* ---------- the classic slips ---------- */
+  function isLit(n){ return n.k === "num" || (n.k === "neg" && isLit(n.a)) || (n.k === "par" && isLit(n.a)); }
+  function litVal(n){ return n.k === "num" ? n.q : n.k === "neg" ? rNeg(litVal(n.a)) : litVal(n.a); }
+  function isFracLit(n){ if (n.k === "par") n = n.a; return n.k === "num" && n.frac && !n.mixed; }
+  function variants(a, fn){
+    var out = [];
+    each(fn(a), function(r){ out.push(r); });
+    each(["a", "b"], function(key){
+      var ch = a[key];
+      if (!ch || typeof ch !== "object" || !ch.k) return;
+      each(variants(ch, fn), function(v){ var c = {}; for (var x in a) c[x] = a[x]; c[key] = v.ast; out.push({ ast:c, msg:v.msg, tag:v.tag }); });
+    });
+    return out;
+  }
+  function mulAst(k, t){ return { k:"mul", a:k, b:{ k:"par", a:t } }; }
+  function slipsAt(n){
+    var out = [], A = n.a, Bn = n.b;
+    function add(ast, tag, msg){ out.push({ ast:ast, tag:tag, msg:msg }); }
+    if (!A || !A.k) return out;
+    if (n.k === "mul" && Bn && isLit(A) && isLit(Bn))
+      add({ k:"add", a:A, b:Bn }, "addmul", "You added instead of multiplying: <b>" + pr(n) + "</b> means " + pr(A) + " times " + pr(Bn) + ".");
+    if (n.k === "add" && isLit(A) && isLit(Bn) && !isFracLit(A) && !isFracLit(Bn))
+      add({ k:"mul", a:A, b:Bn }, "muladd", "You multiplied instead of adding: <b>" + pr(n) + "</b> is a plus.");
+    if ((n.k === "add" || n.k === "sub") && Bn && (Bn.k === "mul" || Bn.k === "div"))
+      add({ k:Bn.k, a:{ k:"par", a:{ k:n.k, a:A, b:Bn.a } }, b:Bn.b }, "order",
+        "Order of operations: × and ÷ come before + and −. Do <b>" + pr(Bn) + "</b> first.");
+    if ((n.k === "add" || n.k === "sub") && Bn && (Bn.k === "mul" || Bn.k === "div") && (Bn.a.k === "mul" || Bn.a.k === "div")){
+      var lead = Bn.a; while (lead.k === "mul" || lead.k === "div") lead = lead.a;
+      add(replaceNode(Bn, lead, { k:"par", a:{ k:n.k, a:A, b:lead } }), "order",
+        "Order of operations: × and ÷ come before + and −. Do the " + (Bn.k === "mul" ? "×" : "÷") + " part, <b>" + pr(Bn) + "</b>, first.");
+    }
+    if ((n.k === "mul" || n.k === "div") && Bn && Bn.k === "pow")
+      add({ k:"pow", a:{ k:"par", a:{ k:n.k, a:A, b:Bn.a } }, b:Bn.b }, "order", "Order of operations: work out the power first — <b>" + pr(Bn) + "</b>.");
+    if ((n.k === "add" || n.k === "sub") && Bn && Bn.k === "pow" && isLit(A))
+      add({ k:"pow", a:{ k:"par", a:{ k:n.k, a:A, b:Bn.a } }, b:Bn.b }, "order", "Order of operations: work out the power first — <b>" + pr(Bn) + "</b>.");
+    if (n.k === "mul" && A.k === "div")
+      add({ k:"div", a:A.a, b:{ k:"par", a:{ k:"mul", a:A.b, b:Bn } } }, "order", "× and ÷ go from left to right: do <b>" + pr(A) + "</b> first.");
+    if (n.k === "div" && A.k === "div")
+      add({ k:"div", a:A.a, b:{ k:"par", a:{ k:"div", a:A.b, b:Bn } } }, "order", "÷ goes from left to right: do <b>" + pr(A) + "</b> first.");
+    if ((n.k === "add" || n.k === "sub") && A.k === "sub")
+      add({ k:"sub", a:A.a, b:{ k:"par", a:{ k:n.k, a:A.b, b:Bn } } }, "order", "+ and − go from left to right: do <b>" + pr(A) + "</b> first.");
+    // brackets
+    var EVERY = "A minus in front of brackets changes the sign of <i>every</i> term inside, not just the first: ";
+    if (n.k === "neg" && sumPar(A)){
+      var T = termsOf(A.a, 1, []);
+      add(sumAst([{ s:-T[0].s, a:T[0].a }].concat(T.slice(1))), "negdist", EVERY + "<b>" + pr(n) + "</b>.");
+    }
+    if (n.k === "sub" && sumPar(Bn)){
+      var T2 = termsOf(Bn.a, 1, []);
+      add(sumAst([{ s:1, a:A }, { s:-T2[0].s, a:T2[0].a }].concat(T2.slice(1))), "negdist",
+        "Taking away brackets changes the sign of <i>every</i> term inside, not just the first: <b>" + pr(n) + "</b>.");
+    }
+    function distSlips(k, S){
+      var T3 = termsOf(S, 1, []);
+      if (T3.length < 2) return;
+      add(sumAst([{ s:T3[0].s, a:mulAst(k, T3[0].a) }].concat(T3.slice(1))), "first",
+        "Multiply <i>every</i> term in the brackets by <b>" + pr(k) + "</b>, not just the first one.");
+      var kv = isLit(k) ? litVal(k) : null;
+      if (kv && rSg(kv) < 0){
+        var ka = lit(rAbs(kv));
+        add(sumAst([{ s:T3[0].s, a:mulAst(k, T3[0].a) }].concat(T3.slice(1).map(function(t){ return { s:t.s, a:mulAst(ka, t.a) }; }))), "negdist",
+          "Multiplying by a negative number changes the sign of <i>every</i> term in the brackets.");
+      }
+    }
+    if (n.k === "mul" && sumPar(Bn) && !sumPar(A)) distSlips(A, Bn.a);
+    if (n.k === "mul" && sumPar(A) && !sumPar(Bn)) distSlips(Bn, A.a);
+    if (n.k === "neg" && A.k === "mul" && sumPar(A.b)) distSlips({ k:"neg", a:A.a }, A.b.a);
+    // fractions
+    if ((n.k === "add" || n.k === "sub") && isFracLit(A) && isFracLit(Bn)){
+      var a1 = A.k === "par" ? A.a : A, b1 = Bn.k === "par" ? Bn.a : Bn;
+      var top = n.k === "add" ? BigInt(a1.fn) + BigInt(b1.fn) : BigInt(a1.fn) - BigInt(b1.fn), bot = BigInt(a1.fd) + BigInt(b1.fd);
+      add({ k:"num", q:rQ(top, bot), frac:true, fn:String(babs(top)), fd:String(bot), s:String(babs(top)) + "/" + bot }, "fracacross",
+        "Don’t " + (n.k === "add" ? "add" : "subtract") + " the bottoms. Rename the fractions so they have the same denominator, then " + (n.k === "add" ? "add" : "subtract") + " the tops.");
+    }
+    // powers
+    if (n.k === "pow" && isLit(A) && Bn.k === "num" && rInt(Bn.q) && rSg(Bn.q) > 0){
+      var e = Number(Bn.q.n), rep = []; for (var i = 0; i < Math.min(e, 6); i++) rep.push(side(A, 5));
+      add({ k:"mul", a:A, b:Bn }, "exp", "<b>" + pr(n) + "</b> means " + rep.join(" × ") + (e > 6 ? " × …" : "") + ", not " + pr(A) + " × " + pr(Bn) + ".");
+    }
+    if (n.k === "neg" && A.k === "pow")
+      add({ k:"pow", a:{ k:"par", a:{ k:"neg", a:A.a } }, b:A.b }, "expneg", "<b>" + pr(n) + "</b> means −(" + pr(A) + "): the power is on the " + pr(A.a) + " only.");
+    // negative numbers
+    if (n.k === "sub" && isLit(Bn) && rSg(litVal(Bn)) < 0)
+      add({ k:"sub", a:A, b:lit(rAbs(litVal(Bn))) }, "subneg", "Subtracting a negative number is the same as adding: − (" + pr(lit(litVal(Bn))) + ") becomes + " + pr(lit(rAbs(litVal(Bn)))) + ".");
+    if ((n.k === "mul" || n.k === "div") && isLit(A) && isLit(Bn) && (rSg(litVal(A)) < 0 || rSg(litVal(Bn)) < 0))
+      add({ k:"neg", a:{ k:"par", a:n } }, "sign", "Check the sign: a negative " + (n.k === "mul" ? "times" : "divided by") + " a negative is positive, and a negative " + (n.k === "mul" ? "times" : "divided by") + " a positive is negative.");
+    if (n.k === "add" && isLit(A) && isLit(Bn) && (rSg(litVal(A)) < 0 || rSg(litVal(Bn)) < 0))
+      add({ k:"neg", a:{ k:"par", a:n } }, "sign", "Check the sign: when the numbers have different signs, take the smaller size from the bigger and keep the sign of the bigger.");
+    // like terms
+    if (isSum(n) && hasVar(n)){
+      var Ts = termsOf(n, 1, []), info = Ts.map(function(t){ var p = safePoly(t.a), mi = monoInfo(t.a); return mi && p && Object.keys(p).length <= 1 ? { key:mi.key, c:rMul(Object.keys(p).length ? p[Object.keys(p)[0]] : RZERO, rQ(t.s)) } : null; });
+      for (var x = 0; x < Ts.length; x++) for (var y = x + 1; y < Ts.length; y++){
+        if (!info[x] || !info[y] || info[x].key === info[y].key) continue;
+        each([info[x].key, info[y].key], function(key){
+          if (!key) return;
+          var c = rAdd(info[x].c, info[y].c), pp = {}; pp[key] = c;
+          var rest = Ts.filter(function(t, z){ return z !== x && z !== y; });
+          var list = [{ s:1, a:rZ(c) ? ZNODE : polyAst(pp) }].concat(rest);
+          add(sumAst(list), "unlike", "<b>" + pr(sumAst([Ts[x]]).k ? sumAst([{ s:Ts[x].s, a:Ts[x].a }]) : Ts[x].a) + "</b> and <b>" + pr(sumAst([{ s:Ts[y].s, a:Ts[y].a }]))
+            + "</b> aren’t like terms, so they can’t be combined.");
+        });
+      }
+    }
+    return out;
+  }
+  /* which slip turns one of the earlier lines into this one? */
+  function diagExpr(prevs, S, vars){
+    for (var i = prevs.length - 1; i >= 0 && i >= prevs.length - 3; i--){
+      var P0 = prevs[i], vs;
+      try { vs = variants(P0, slipsAt); } catch (e){ vs = []; }
+      for (var j = 0; j < vs.length; j++){
+        try { if (!sameValue(vs[j].ast, P0, vars) && sameValue(S, vs[j].ast, vars)) return vs[j]; } catch (e){}
+      }
+    }
+    return null;
+  }
+
+  /* ---------- moves on equations ---------- */
+  function amountOf(d){
+    var p = safePoly(d); if (!p) return null;
+    var ks = Object.keys(p); if (ks.length !== 1) return null;
+    var neg = rSg(p[ks[0]]) < 0, ab = {}; ab[ks[0]] = rAbs(p[ks[0]]);
+    return { neg:neg, txt:polyStr(ab) };
+  }
+  function didTxt(am){ return (am.neg ? "subtracted " : "added ") + "<b>" + am.txt + "</b>"; }
+  function scaleWords(k){
+    if (rEq(k, RMONE)) return { v:"multiplied", by:"−1" };
+    if (rInt(k)) return { v:"multiplied", by:rTxt(k) };
+    var inv = rDiv(RONE, k);
+    if (rInt(inv)) return { v:"divided", by:rTxt(inv) };
+    return { v:"multiplied", by:rTxt(k) };
+  }
+  function eqMove(pL, pR, L, R, vars){
+    var tries = [[L, R, false], [R, L, true]];
+    for (var t = 0; t < 2; t++){
+      var l = tries[t][0], r = tries[t][1], sw = tries[t][2] ? ", and swapped the sides" : "";
+      if (sameValue(l, pL, vars) && sameValue(r, pR, vars))
+        return tries[t][2] ? "swapped the sides" : (pr(l) === pr(pL) && pr(r) === pr(pR) ? "the same as before" : "tidied up");
+      var dL = diffAst(l, pL), dR = diffAst(r, pR);
+      if (sameValue(dL, dR, vars)){
+        var am = amountOf(dL);
+        return (am ? didTxt(am) + (am.neg ? " from" : " to") + " both sides" : "did the same to both sides") + sw;
+      }
+      var kL = ratioConst(l, pL, vars), kR = ratioConst(r, pR, vars);
+      if (kL && kR && rEq(kL, kR)){ var w = scaleWords(kL); return w.v + " both sides by <b>" + w.by + "</b>" + sw; }
+    }
+    return null;
+  }
+  function scaledTxt(k){ var w = scaleWords(k); return w.v + " by <b>" + w.by + "</b>"; }
+  function eqDiagnose(pL, pR, L, R, vars){
+    var tries = [[L, R], [R, L]];
+    for (var t = 0; t < 2; t++){
+      var l = tries[t][0], r = tries[t][1];
+      var kL = ratioConst(l, pL, vars), kR = ratioConst(r, pR, vars);
+      var nice = function(k){ return k && !rEq(k, RONE) && (rInt(k) || rInt(rDiv(RONE, k))); };
+      if (kL && kR && nice(kL) && rEq(rMul(kL, kR), RONE))
+        return "You " + scaledTxt(kL).replace("by", "the left side by") + " but " + scaledTxt(kR).replace("by", "the right side by") + ". Undo it the same way on <i>both</i> sides.";
+      var dL = diffAst(l, pL), dR = diffAst(r, pR), zL = isZeroFn(dL, vars), zR = isZeroFn(dR, vars);
+      if (zR && nice(kL) && !pIsConstSafe(pL)) return "You " + scaledTxt(kL).replace("by", "the left side by") + " only. Whatever you do to one side, do to the other side too.";
+      if (zL && nice(kR) && !pIsConstSafe(pR)) return "You " + scaledTxt(kR).replace("by", "the right side by") + " only. Whatever you do to one side, do to the other side too.";
+      var aL = amountOf(dL), aR = amountOf(dR);
+      if (zR){ var sv = diagExpr([pL], l, vars); if (sv) return sv.msg; }
+      if (zL){ var sv2 = diagExpr([pR], r, vars); if (sv2) return sv2.msg; }
+      if (!zL && zR && aL) return "You " + didTxt(aL) + " on the left side only. Whatever you do to one side, do to the other side too.";
+      if (zL && !zR && aR) return "You " + didTxt(aR) + " on the right side only. Whatever you do to one side, do to the other side too.";
+      if (!zL && !zR && aL && aR && sameValue(dL, negAst(dR), vars))
+        return "You " + didTxt(aL) + " on the left but " + didTxt(aR) + " on the right. To move a term across the =, do the <i>same</i> thing to both sides: " + (aL.neg ? "subtract" : "add") + " <b>" + aL.txt + "</b> on both sides.";
+      // divided (or multiplied) only one term
+      var oneTerm = function(k, prevSide, cur){
+        if (!nice(k)) return null;
+        var T = termsOf(prevSide, 1, []);
+        if (T.length < 2) return null;
+        for (var i = 0; i < T.length; i++){
+          var list = T.map(function(x, j){ return j === i ? { s:x.s, a:mulAst(lit(k), x.a) } : x; });
+          var list2 = T.map(function(x, j){ return j === i ? x : { s:x.s, a:mulAst(lit(k), x.a) }; });
+          var w = scaleWords(k);
+          if (sameValue(cur, sumAst(list), vars) || sameValue(cur, sumAst(list2), vars))
+            return "When you " + (w.v === "divided" ? "divide" : "multiply") + " a side by <b>" + w.by + "</b>, " + (w.v === "divided" ? "divide" : "multiply") + " <i>every</i> term on it, not just some of them.";
+        }
+        return null;
+      };
+      var m1 = kR ? oneTerm(kR, pL, l) : null; if (m1) return m1;
+      var m2 = kL ? oneTerm(kL, pR, r) : null; if (m2) return m2;
+    }
+    if (sameValue(R, pR, vars)){ var v1 = diagExpr([pL], L, vars); if (v1) return v1.msg; }
+    if (sameValue(L, pL, vars)){ var v2 = diagExpr([pR], R, vars); if (v2) return v2.msg; }
+    if (sameValue(L, pR, vars)){ var v3 = diagExpr([pL], R, vars); if (v3) return v3.msg; }
+    if (sameValue(R, pL, vars)){ var v4 = diagExpr([pR], L, vars); if (v4) return v4.msg; }
+    return null;
+  }
+  function pIsConstSafe(a){ var p = safePoly(a); return !!p && pIsConst(p); }
+
+  /* ---------- the next line, the way the helpers do it ---------- */
+  function innermostPar(root){
+    var found = null;
+    (function walk(n){
+      if (!n || !n.k || found) return;
+      if (n.k === "par" && !isLit(n.a)){
+        var inner = null;
+        (function w2(m){ if (!m || !m.k || inner) return; if (m !== n && m.k === "par" && !isLit(m.a)) inner = m; w2(m.a); w2(m.b); })(n.a);
+        if (!inner){ found = n; return; }
+      }
+      walk(n.a); walk(n.b);
+    })(root);
+    return found;
+  }
+  function inOrder(n, out){ if (!n || !n.k) return out; inOrder(n.a, out); out.push(n); if (n.b) inOrder(n.b, out); return out; }
+  function replaceNode(root, target, rep){
+    if (root === target) return rep;
+    if (!root || !root.k) return root;
+    var c = null;
+    each(["a", "b"], function(key){
+      if (root[key] && typeof root[key] === "object" && root[key].k){
+        var r = replaceNode(root[key], target, rep);
+        if (r !== root[key]){ if (!c){ c = {}; for (var x in root) c[x] = root[x]; } c[key] = r; }
+      }
+    });
+    return c || root;
+  }
+  function anyDec(n){ return hasDec(n); }
+  function dOf(n){ n = n.k === "par" ? n.a : n; if (n.k === "neg") return dOf(n.a); return n.k === "num" && (n.frac || n.mixed) ? BigInt(n.fd) : B1; }
+  function nOfFrac(n){ var neg = false; if (n.k === "par") n = n.a; if (n.k === "neg"){ neg = true; n = n.a; } var v = n.q, top = v.n * (BigInt(dOf(n)) / v.d); return neg ? -top : top; }
+  function opWord(k){ return { add:"add", sub:"subtract", mul:"multiply", div:"divide", pow:"work out the power" }[k]; }
+  function numStep(root){
+    var scope = innermostPar(root), sc = scope ? scope.a : root;
+    var nodes = inOrder(sc, []).filter(function(n){ return (n.k === "add" || n.k === "sub" || n.k === "mul" || n.k === "div" || n.k === "pow") && isLit(n.a) && isLit(n.b); });
+    var pick = null, why = "", todo = "";
+    each(["pow"], function(k){ if (!pick) nodes.forEach(function(n){ if (!pick && n.k === k) pick = n; }); });
+    if (!pick) nodes.forEach(function(n){ if (!pick && (n.k === "mul" || n.k === "div")) pick = n; });
+    if (!pick) nodes.forEach(function(n){ if (!pick && (n.k === "add" || n.k === "sub")) pick = n; });
+    var where = scope ? "Inside the brackets first: " : "";
+    if (!pick){
+      if (scope) return { ast:replaceNode(root, scope, scope.a), why:"Take away the brackets.", todo:"Take away the brackets." };
+      // one number left: tidy it
+      var only = root.k === "par" ? root.a : root, q = numVal(only);
+      if (q === null) return null;
+      var why0 = simplestNumWhy(only);
+      if (why0 === null) return null;
+      var dec = anyDec(only);
+      return { ast:dec || rInt(q) ? lit(q, dec) : fracLit(q.n, q.d), why:"Simplify: <b>" + pr(only) + " = " + rTxt(q, dec) + "</b>.", todo:"Simplify the answer." };
+    }
+    var a = pick.a, b = pick.b, x = litVal(a), y = litVal(b), dec2 = anyDec(a) || anyDec(b), rep;
+    var mixedOp = function(n){ var m = n.k === "par" ? n.a : n; m = m.k === "neg" ? m.a : m; return m.k === "num" && m.mixed; };
+    if (mixedOp(a) || mixedOp(b)){
+      var mx = mixedOp(a) ? a : b, mv = litVal(mx), imp = fracLit(mv.n, mv.d);
+      return { ast:replaceNode(root, mx, rSg(mv) < 0 ? { k:"neg", a:fracLit(-mv.n, mv.d) } : imp),
+        why:"Write the mixed number as an improper fraction: <b>" + pr(mx) + " = " + rTxt(mv) + "</b>.", todo:"Write the mixed number as an improper fraction." };
+    }
+    var fr = !dec2 && (isFracLit(a) || isFracLit(b) || (a.k === "neg" && isFracLit(a.a)) || (b.k === "neg" && isFracLit(b.a)));
+    if (fr && (pick.k === "add" || pick.k === "sub")){
+      var da = dOf(a), db = dOf(b);
+      if (da !== db){
+        var L = blcm(da, db), na = nOfFrac(a) * (L / da), nb = nOfFrac(b) * (L / db);
+        var fa = na < B0 ? { k:"neg", a:fracLit(-na, L) } : fracLit(na, L), fb = nb < B0 ? { k:"neg", a:fracLit(-nb, L) } : fracLit(nb, L);
+        rep = { k:pick.k, a:fa, b:fb };
+        return { ast:replaceNode(root, pick, rep), why:where + "Give the fractions the same denominator, <b>" + L + "</b>: " + pr(rep) + ".", todo:"Rename the fractions so they have the same denominator." };
+      }
+      var top = pick.k === "add" ? nOfFrac(a) + nOfFrac(b) : nOfFrac(a) - nOfFrac(b);
+      rep = top < B0 ? { k:"neg", a:fracLit(-top, da) } : fracLit(top, da);
+      return { ast:replaceNode(root, pick, rep), why:where + "The denominators match, so " + opWord(pick.k) + " the tops: <b>" + pr(pick) + " = " + pr(rep) + "</b>.", todo:"The denominators match: " + opWord(pick.k) + " the tops." };
+    }
+    if (fr && pick.k === "mul"){
+      var tn = nOfFrac(a) * nOfFrac(b), td = dOf(a) * dOf(b);
+      rep = tn < B0 ? { k:"neg", a:fracLit(-tn, td) } : fracLit(tn, td);
+      return { ast:replaceNode(root, pick, rep), why:where + "Multiply the tops and multiply the bottoms: <b>" + pr(pick) + " = " + pr(rep) + "</b>.", todo:"Multiply the tops, and multiply the bottoms." };
+    }
+    if (fr && pick.k === "div"){
+      var yv = litVal(b), recip = rDiv(RONE, yv), rb = rSg(recip) < 0 ? { k:"neg", a:fracLit(-recip.n, recip.d) } : fracLit(recip.n, recip.d);
+      rep = { k:"mul", a:a, b:rb };
+      return { ast:replaceNode(root, pick, rep), why:where + "Dividing by a fraction is the same as multiplying by its reciprocal (flip it over): <b>" + pr(rep) + "</b>.", todo:"Divide by a fraction by multiplying by its reciprocal." };
+    }
+    var res;
+    if (pick.k === "add") res = rAdd(x, y); else if (pick.k === "sub") res = rSub(x, y); else if (pick.k === "mul") res = rMul(x, y);
+    else if (pick.k === "div") res = rDiv(x, y);
+    else { if (!rInt(y)) return null; res = rPow(x, Number(y.n)); }
+    rep = (rInt(res) || (dec2 && isTerm(res.d))) ? lit(res, dec2) : (rSg(res) < 0 ? { k:"neg", a:fracLit(-res.n, res.d) } : fracLit(res.n, res.d));
+    if (rSg(res) < 0 && rep.k === "num") rep = { k:"num", q:res, dec:dec2, s:rTxt(rAbs(res), dec2).replace(MN, "") };
+    var order = pick.k === "pow" ? "Powers come first" : (pick.k === "mul" || pick.k === "div") ? (nodes.some(function(n){ return n.k === "add" || n.k === "sub"; }) ? "× and ÷ come before + and −" : "Left to right") : "Left to right";
+    return { ast:replaceNode(root, pick, rep), why:where + order + ": <b>" + pr(pick) + " = " + pr(rep) + "</b>.",
+      todo:where + (pick.k === "pow" ? "Work out the power first: " : order + " — " + opWord(pick.k) + " next: ") + pr(pick) + "." };
+  }
+  function findDist(root){
+    var found = null;
+    (function walk(n, parent){
+      if (!n || !n.k || found) return;
+      if (n.k === "mul" && sumPar(n.b) && !sumPar(n.a)){ found = { node:n, k:n.a, S:n.b.a }; return; }
+      if (n.k === "mul" && sumPar(n.a) && !sumPar(n.b)){ found = { node:n, k:n.b, S:n.a.a }; return; }
+      if (n.k === "mul" && sumPar(n.a) && sumPar(n.b)){ found = { node:n, k:n.a.a, S:n.b.a, both:true }; return; }
+      if (n.k === "neg" && sumPar(n.a)){ found = { node:n, k:{ k:"num", q:RMONE, s:"1" }, S:n.a.a, neg:true }; return; }
+      if (n.k === "sub" && sumPar(n.b)){ found = { node:n, A:n.a, S:n.b.a, sub:true }; return; }
+      if (n.k === "add" && sumPar(n.b)){ found = { node:n, A:n.a, S:n.b.a, plus:true }; return; }
+      if (n.k === "par" && isSum(n.a) && !parent){ found = { node:n, S:n.a, bare:true }; return; }
+      walk(n.a, n); walk(n.b, n);
+    })(root, null);
+    return found;
+  }
+  function signedTerms(list, first){
+    return list.map(function(t, i){
+      var s = polyStr(t), neg = s.charAt(0) === MN, body = neg ? s.slice(1) : s;
+      if (i === 0 && first) return (neg ? MN : "") + body;
+      if (/ [+−] /.test(body)) body = "(" + body + ")";
+      return (neg ? " " + MN + " " : " + ") + body;
+    }).join("");
+  }
+  function varStep(root, dec){
+    var f = findDist(root);
+    if (f){
+      var polys = [], T = termsOf(f.S, 1, []), txt, why;
+      if (f.sub || f.plus){
+        polys = T.map(function(t){ return pScale(safePoly(t.a) || {}, rQ(f.sub ? -t.s : t.s)); });
+        txt = side(f.A, 1) + signedTerms(polys, false);
+        why = f.sub ? "Take away the brackets: subtracting them changes the sign of every term inside." : "Take away the brackets: adding them changes nothing inside.";
+      } else if (f.bare){
+        return { ast:replaceNode(root, f.node, f.S), why:"Take away the brackets.", todo:"Take away the brackets." };
+      } else {
+        var kp = safePoly(f.k);
+        if (!kp) return null;
+        if (f.both){
+          var T1 = termsOf(f.k, 1, []);
+          T1.forEach(function(a1){ T.forEach(function(b1){ polys.push(pScale(pMul(safePoly(a1.a), safePoly(b1.a)), rQ(a1.s * b1.s))); }); });
+          why = "Multiply every term in the first brackets by every term in the second.";
+        } else {
+          polys = T.map(function(t){ return pScale(pMul(kp, safePoly(t.a) || {}), rQ(t.s)); });
+          why = f.neg ? "A minus in front of the brackets: change the sign of every term inside." : "Multiply every term inside the brackets by <b>" + pr(f.k) + "</b>.";
+        }
+        txt = signedTerms(polys, true);
+      }
+      var rep = { k:"raw", s:txt, prec:1, neg:txt.charAt(0) === MN, ast:parseOne(txt) };
+      var nr = replaceNode(root, f.node, rep), text = pr(nr);
+      return { ast:parseOne(text), why:why, todo:why.replace(/<[^>]+>/g, "") };
+    }
+    var w = simplestWhy(root);
+    if (w === null) return null;
+    var p = safePoly(root);
+    if (!p) return null;
+    var out = parseOne(polyStr(p, dec));
+    return { ast:out, why:"Combine the like terms: <b>" + polyStr(p, dec) + "</b>.", todo:"Combine the like terms." };
+  }
+  function exprStep(root, dec){ return hasVar(root) ? varStep(root, dec) : numStep(root); }
+  /* one move on an equation or inequality: tidy each side, clear fractions, letters to one side, numbers to the other, divide */
+  function eqStep(L, rel, R, v, dec){
+    var pl = safePoly(L), pq = safePoly(R);
+    if (!pl || !pq) return null;
+    var ineq = rel !== "=";
+    var deg = Math.max(pDeg(pl), pDeg(pq));
+    if (deg >= 2) return quadStep(L, R, v, pl, pq, dec);
+    var tidyL = simplestWhy(L) === null, tidyR = simplestWhy(R) === null;
+    function line(a, r, b, why, todo){ return { text:eqTxt(polyStr(a, dec), r, polyStr(b, dec)), why:why, todo:todo || why.replace(/<[^>]+>/g, "") }; }
+    if (!tidyL || !tidyR) return line(pl, rel, pq, "Tidy up each side first: multiply out any brackets and combine like terms.");
+    var D = B1;
+    each([pl, pq], function(p){ for (var k in p) D = blcm(D, p[k].d); });
+    if (D > B1){
+      if (dec && isTerm(D)){ var P10 = B10; while (P10 % D !== B0) P10 *= B10; D = P10; }
+      var Dq = rQ(D);
+      return line(pScale(pl, Dq), rel, pScale(pq, Dq), "Clear the " + (dec ? "decimals" : "fractions") + ": multiply <i>both</i> sides by <b>" + D + "</b>.");
+    }
+    var la = pl[v] || RZERO, ra = pq[v] || RZERO;
+    if (!rZ(la) && !rZ(ra)){
+      var keepL = rCmp(la, ra) >= 0, o = keepL ? ra : la, t = {}; t[v] = o;
+      var am = polyStr((function(){ var x = {}; x[v] = rAbs(o); return x; })());
+      return line(pSub(pl, t), rel, pSub(pq, t), (rSg(o) > 0 ? "Subtract <b>" + am + "</b> from" : "Add <b>" + am + "</b> to") + " both sides, so the " + v + "’s are on one side.");
+    }
+    var K = !rZ(la) ? "L" : !rZ(ra) ? "R" : null;
+    if (!K) return null;
+    var kp = K === "L" ? pl : pq, op = K === "L" ? pq : pl, kc = kp[""] || RZERO, coef = kp[v];
+    if (!rZ(kc)){
+      var c = pConst(kc), amt = rTxt(rAbs(kc), dec);
+      return line(pSub(pl, c), rel, pSub(pq, c), (rSg(kc) > 0 ? "Subtract <b>" + amt + "</b> from" : "Add <b>" + amt + "</b> to") + " both sides, to undo the " + (rSg(kc) > 0 ? "+ " : MN + " ") + amt + ".");
+    }
+    var val = pC(op);
+    if (!rEq(coef, RONE)){
+      var x = rDiv(val, coef), nrel = ineq && rSg(coef) < 0 ? FLIP[rel] : rel;
+      var r2 = K === "L" ? nrel : FLIP[nrel], xs = numText(x, dec);
+      var w = rEq(coef, RMONE) ? "Multiply both sides by <b>−1</b>" : "Divide both sides by <b>" + rTxt(coef, dec) + "</b>";
+      return { text:eqTxt(v, r2, xs), why:w + (ineq && rSg(coef) < 0 ? ". You multiplied or divided by a negative number, so the sign flips: <b>" + rel + "</b> becomes <b>" + nrel + "</b>." : " to get " + v + " by itself."),
+               todo:(rEq(coef, RMONE) ? "Multiply both sides by −1" : "Divide both sides by " + rTxt(coef, dec)) + (ineq && rSg(coef) < 0 ? ", and flip the sign." : ".") };
+    }
+    if (K === "R") return { text:eqTxt(v, FLIP[rel], numText(val, dec)), why:"Write it with " + v + " first" + (ineq ? " — turning it round turns the sign round too." : "."), todo:"Write it with " + v + " first." };
+    return null;
+  }
+  function numText(q, dec){ return rInt(q) || (dec && isTerm(q.d)) ? rTxt(q, dec) : rTxt(q); }
+  function quadStep(L, R, v, pl, pq, dec){
+    var F = pSub(pl, pq), c2 = F[v + "^2"] || RZERO, c1 = F[v] || RZERO, c0 = F[""] || RZERO;
+    if (rZ(c2)) return null;
+    var set = solveSet(L, R, v);
+    if (!set.roots) return null;
+    var fin = { text:set.roots.map(function(r){ return v + " = " + numText(r, dec); }).join(" or "),
+      why:(rZ(c1) ? "Take the square root of both sides — a positive and a negative number both work: " : "Factor it (or use the quadratic formula): ") + "<b>" + set.roots.map(function(r){ return v + " = " + numText(r, dec); }).join(" or ") + "</b>.",
+      todo:rZ(c1) ? "Take the square root of both sides (both signs)." : "Factor it, or use the quadratic formula." };
+    if (rZ(c1)){
+      var lone = (Object.keys(pl).length === 1 && pl[v + "^2"] && rEq(pl[v + "^2"], RONE) && pIsConst(pq));
+      if (lone) return fin;
+      var k = rDiv(rNeg(c0), c2);
+      return { text:v + "^2 = " + numText(k, dec), why:"Get <b>" + v + "^2</b> by itself on one side.", todo:"Get " + v + "^2 by itself." };
+    }
+    var std = pIsZero(pq) && simplestWhy(L) === null;
+    if (std) return fin;
+    return { text:polyStr(F, dec) + " = 0", why:"Move everything to one side, so the other side is 0.", todo:"Move everything to one side, so the other side is 0." };
+  }
+  /* ---------- the kinds of line-by-line problem ---------- */
+  var KINDS = ["expression", "equation", "inequality", "system", "word"];
+  var KLABEL = { expression:"Expression", equation:"Equation", inequality:"Inequality", system:"System", word:"Story" };
+  function detectKind(q){
+    var t = lnorm(q).replace(KEYW, "");
+    var words = (t.match(/[a-zA-Z]{3,}/g) || []).filter(function(w){ return !/^and$/i.test(w); });
+    if (words.length >= 2 || (words.length === 1 && words[0].length > 3)) return "word";
+    var eqs = (t.match(/=/g) || []).length;
+    if (/;/.test(t) || (eqs >= 2 && /,|\band\b/i.test(t))) return "system";
+    if (/[<>≤≥]/.test(t)) return "inequality";
+    if (eqs) return "equation";
+    return "expression";
+  }
+  function prettyQ(q, kind){
+    var s = String(q == null ? "" : q).replace(/\s+/g, " ").trim();
+    if (kind === "word") return s;
+    s = lnorm(s).replace(KEYW, "");
+    try {                                            // spaced the way the helpers write it: 3(x − 2) + 4x = 29
+      return parseLine(s).map(function(g){
+        var t = (g.lead ? g.lead + " " : "") + pr(g.parts[0]);
+        for (var i = 0; i < g.rels.length; i++) t += " " + g.rels[i] + " " + pr(g.parts[i + 1]);
+        return t;
+      }).join("; ");
+    } catch (e){}
+    return s.replace(/\*/g, "×").replace(/-/g, MN).replace(/\s*;\s*/g, "; ");
+  }
+  function wordsMsg(){ return LP && LP.kind === "word" ? "Save the words for your answer line, at the end." : "Write the maths on each line — numbers, letters and signs."; }
+  function setupLines(p){
+    var kind = p.kind, o = { kind:kind, q:p.q }, gs;
+    if (kind === "word"){ o.story = p.q; o.vars = []; return o; }
+    try { gs = parseLine(p.q); }
+    catch (e){ if (e.code === "words") throw new LineErr("That looks like a story problem — pick Story."); throw e; }
+    var vars = [];
+    each(gs, function(g){ each(g.parts, function(x){ varsOf(x, vars); }); });
+    o.vars = vars; o.dec = gs.some(function(g){ return g.parts.some(hasDec); });
+    if (vars.indexOf("?") >= 0) throw new LineErr("Use a letter like x (not ?) for the unknown.");
+    if (kind === "expression"){
+      if (gs.length !== 1 || gs[0].rels.length) throw new LineErr("An expression has no = or < > in it. Is it an equation?");
+      o.start = gs[0].parts[0];
+      if (vars.length > 3) throw new LineErr("Keep it to three letters or fewer.");
+      if (!hasVar(o.start)) ev(o.start, {});
+      else if (!safePoly(o.start)) throw new LineErr("This sheet simplifies expressions without letters in a denominator.");
+      if (simplestWhy(o.start) === null) throw new LineErr("That’s already in simplest form — there’s nothing to work out.");
+      return o;
+    }
+    if (kind === "equation" || kind === "inequality"){
+      if (gs.length !== 1 || gs[0].rels.length !== 1) throw new LineErr(kind === "equation" ? "An equation has one = sign." : "An inequality has one of < > ≤ ≥.");
+      var rel = gs[0].rels[0];
+      if (kind === "equation" && rel !== "=") throw new LineErr("That has < or > in it — it’s an inequality.");
+      if (kind === "inequality" && rel === "=") throw new LineErr("That has an = sign — it’s an equation.");
+      if (vars.length !== 1) throw new LineErr(vars.length ? "Solving here works with one letter at a time." : "There’s no letter to solve for.");
+      o.v = vars[0]; o.L = gs[0].parts[0]; o.R = gs[0].parts[1]; o.rel = rel;
+      o.set = kind === "equation" ? solveSet(o.L, o.R, o.v) : ineqSet(o.L, rel, o.R, o.v);
+      if (o.set.bad) throw new LineErr(o.set.bad);
+      if (o.set.unk) throw new LineErr("This sheet can’t solve equations with " + o.v + " in a denominator yet.");
+      if (o.set.high) throw new LineErr(kind === "equation" ? "This sheet solves equations up to " + o.v + "^2." : "This sheet solves inequalities without " + o.v + "^2.");
+      if (o.set.irr) throw new LineErr("The answers to that one are square roots that don’t come out exactly — this sheet needs answers it can write as fractions.");
+      if (o.set.none) throw new LineErr(kind === "equation" ? "That equation has no solution." : "No number makes that true.");
+      if (o.set.all) throw new LineErr("Every number makes that true, so there’s nothing to solve.");
+      return o;
+    }
+    if (kind === "system"){
+      if (gs.length !== 2 || gs.some(function(g){ return g.rels.length !== 1 || g.rels[0] !== "="; })) throw new LineErr("A system here is two equations, with a ; between them.");
+      if (vars.length !== 2) throw new LineErr("A system here has two letters, like x and y.");
+      o.vs = vars; o.E = gs.map(function(g){ return { L:g.parts[0], R:g.parts[1] }; });
+      var F = o.E.map(function(e){ var a = safePoly(e.L), b = safePoly(e.R); return a && b ? pSub(a, b) : null; });
+      if (!F[0] || !F[1] || pDeg(F[0]) > 1 || pDeg(F[1]) > 1) throw new LineErr("This sheet solves systems of straight-line (linear) equations.");
+      var x = vars[0], y = vars[1], a1 = F[0][x] || RZERO, b1 = F[0][y] || RZERO, c1 = rNeg(F[0][""] || RZERO), a2 = F[1][x] || RZERO, b2 = F[1][y] || RZERO, c2 = rNeg(F[1][""] || RZERO);
+      var det = rSub(rMul(a1, b2), rMul(a2, b1));
+      if (rZ(det)) throw new LineErr("Those two equations don’t cross at one point, so there isn’t one answer.");
+      o.F = F; o.sol = {};
+      o.sol[x] = rDiv(rSub(rMul(c1, b2), rMul(c2, b1)), det);
+      o.sol[y] = rDiv(rSub(rMul(a1, c2), rMul(a2, c1)), det);
+      return o;
+    }
+    throw new LineErr("I don’t know that kind of problem.");
+  }
+  function state0(){
+    if (LP.kind === "expression") return { all:[LP.start], last:LP.start };
+    if (LP.kind === "equation" || LP.kind === "inequality") return { L:LP.L, R:LP.R, rel:LP.rel };
+    if (LP.kind === "system") return { known:{}, last:null };
+    return { setup:null, value:null, last:null };
+  }
+  function cap1(s){ s = String(s || ""); return /^[a-z]{2}/.test(s) ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function numbersIn(text){
+    var s = lnorm(text).replace(/\$/g, "").replace(/(\d),(?=\d{3}(?!\d))/g, "$1"), out = [], m;
+    var re = /(\d+) (\d+)\/(\d+)|(\d+)\/(\d+)|(\d*\.\d+|\d+)/g;
+    while ((m = re.exec(s))){
+      if (m[1]) out.push(rQ(BigInt(m[1]) * BigInt(m[3]) + BigInt(m[2]), m[3]));
+      else if (m[4]) out.push(rQ(m[4], m[5]));
+      else out.push(m[6].indexOf(".") >= 0 ? rDecOf(m[6]) : rQ(m[6]));
+    }
+    var neg = /^\s*-/.test(s); if (neg && out.length === 1) out[0] = rNeg(out[0]);
+    return out;
+  }
+  function wordValue(g){
+    var vs = []; each(g.parts, function(p){ varsOf(p, vs); });
+    if (vs.length > 1) return { err:"Use one letter (or ?) for the number you don’t know." };
+    if (!g.rels.length){
+      if (vs.length) return { err:"Put an = in it, like n + 5 = 12." };
+      return { v:ev(g.parts[0], {}) };
+    }
+    if (g.rels.some(function(r){ return r !== "="; })) return { err:"Story problems here use = (not < or >)." };
+    if (g.parts.length > 2){
+      var vals = g.parts.filter(function(p){ return !hasVar(p); }).map(function(p){ return ev(p, {}); });
+      var lone = g.parts.filter(hasVar);
+      if (lone.some(function(p){ return p.k !== "var"; })) return { err:"Write one equation at a time." };
+      var same = vals.every(function(v){ return rEq(v, vals[0]); });
+      return { v:vals[0], trueSent:same, calc:!lone.length };
+    }
+    var L = g.parts[0], R = g.parts[1];
+    if (!vs.length){ var a = ev(L, {}), b = ev(R, {}); return { v:isLit(R) ? b : a, trueSent:rEq(a, b), calc:true }; }
+    var S = solveSet(L, R, vs[0]);
+    if (S.bad) return { err:S.bad };
+    if (!S.roots || S.roots.length !== 1) return { err:"I can’t solve that for one number." };
+    return { v:S.roots[0], unknown:vs[0], L:L, R:R };
+  }
+  /* one line, checked against everything accepted before it */
+  function gradeLine(text, st){
+    var gs, kind = LP.kind;
+    if (kind === "word") return gradeWord(text, st);
+    gs = parseLine(text);
+    if (kind === "expression"){
+      if (gs.length !== 1) throw new LineErr("One expression on each line, please.");
+      var g = gs[0];
+      if (g.rels.some(function(r){ return r !== "="; }) || (g.lead && g.lead !== "=")) throw new LineErr("This is an expression to work out: use only = between its forms, no < or >.");
+      var cur = st.last, prevs = st.all.slice();
+      for (var k = 0; k < g.parts.length; k++){
+        var part = g.parts[k];
+        if (!sameValue(part, cur, LP.vars)){
+          var d = diagExpr(prevs, part, LP.vars);
+          return { st:"bad", tag:d && d.tag, msg:d ? d.msg : (hasVar(cur) ? "This isn’t equal to the line before. Check each term, and its sign." : "This isn’t equal to the line before. Check which operation comes first, and work it out again.") };
+        }
+        cur = part; prevs.push(part);
+      }
+      var why = simplestWhy(cur);
+      return { st:"ok", final:why === null, notDone:why, msg:why === null ? "simplest form" : "equal", next:{ all:prevs, last:cur } };
+    }
+    if (kind === "equation" || kind === "inequality"){
+      if (kind === "equation" && gs.length > 1){
+        var asg = gs.map(assignOf);
+        if (asg.some(function(a){ return !a || a.v !== LP.v; })) throw new LineErr("Write each answer as " + LP.v + " = a number, joined by “or”.");
+        var roots = []; each(asg, function(a){ if (!roots.some(function(r){ return rEq(r, a.q); })) roots.push(a.q); });
+        roots.sort(rCmp);
+        if (setSame({ roots:roots }, LP.set)) return { st:"ok", final:true, msg:"every solution", next:{ L:st.L, R:st.R, rel:st.rel, done:true } };
+        return { st:"bad", msg:roots.length < (LP.set.roots || []).length ? "There’s another solution too: a square has a positive and a negative root." : "Put each one back into the equation: not all of them work." };
+      }
+      var g2 = gs[0];
+      if (gs.length > 1) throw new LineErr("One " + (kind === "equation" ? "equation" : "inequality") + " on each line, please.");
+      if (!g2.rels.length) throw new LineErr(kind === "equation" ? "Write an equation on each line: something = something." : "Write an inequality on each line, with < > ≤ or ≥.");
+      if (g2.rels.length > 1) throw new LineErr("One " + (kind === "equation" ? "equation" : "inequality") + " on each line, please.");
+      var rel = g2.rels[0], L = g2.parts[0], R = g2.parts[1], vs = varsOf(R, varsOf(L));
+      if (vs.some(function(v){ return v !== LP.v; })) throw new LineErr("Use only the letter " + LP.v + " here.");
+      var vv = [LP.v];
+      if (kind === "equation"){
+        if (rel !== "=") throw new LineErr("This is an equation: keep the = sign.");
+        var S = solveSet(L, R, LP.v);
+        if (S.bad) throw new LineErr(S.bad);
+        if (S.unk || S.high) throw new LineErr("This sheet can only check lines without " + LP.v + " in a denominator.");
+        if (setSame(S, LP.set)){
+          var mv = eqMove(st.L, st.R, L, R, vv), fin = !!assignOf(g2) && (LP.set.roots || []).length === 1;
+          return { st:"ok", final:fin, msg:mv ? mv : "same solution", next:{ L:L, R:R, rel:"=", done:fin } };
+        }
+        return { st:"bad", msg:eqDiagnose(st.L, st.R, L, R, vv) || "This line doesn’t have the same solution as the line before. Check your last move." };
+      }
+      if (rel === "=") throw new LineErr("Keep the inequality sign (< > ≤ or ≥), not =.");
+      var S2 = ineqSet(L, rel, R, LP.v);
+      if (S2.bad) throw new LineErr(S2.bad);
+      if (S2.unk || S2.high) throw new LineErr("This sheet checks inequalities without " + LP.v + "^2 or " + LP.v + " in a denominator.");
+      var kL = ratioConst(L, st.L, vv), kR = ratioConst(R, st.R, vv), kS = ratioConst(L, st.R, vv), kS2 = ratioConst(R, st.L, vv);
+      var kk = kL && kR && rEq(kL, kR) ? kL : kS && kS2 && rEq(kS, kS2) ? kS : null;
+      if (setSame(S2, LP.set)){
+        var mv2 = eqMove(st.L, st.R, L, R, vv), fin2 = !!ineqFinal(g2);
+        if (mv2 && kk && rSg(kk) < 0) mv2 += ", and flipped the sign";
+        return { st:"ok", final:fin2, msg:mv2 || "same solution", next:{ L:L, R:R, rel:rel, done:fin2 } };
+      }
+      var msg = null;
+      if (S2.ray && LP.set.ray && rEq(S2.ray.c, LP.set.ray.c)){
+        var mirrored = S2.ray.r === FLIP[LP.set.ray.r], w = kk ? scaleWords(kk) : null;
+        if (mirrored && kk && rSg(kk) < 0) msg = "You " + w.v + " both sides by <b>" + w.by + "</b>, a negative number, so the inequality sign has to flip: <b>" + st.rel + "</b> becomes <b>" + FLIP[st.rel] + "</b>.";
+        else if (mirrored && kk) msg = "You " + w.v + " by a positive number, so the sign stays the same — only flip it when you multiply or divide by a negative.";
+        else if (mirrored) msg = "Check which way the inequality sign points.";
+        else msg = "Keep the same kind of sign: an “or equal to” sign (≤ or ≥) stays “or equal to”.";
+      }
+      return { st:"bad", msg:msg || eqDiagnose(st.L, st.R, L, R, vv) || "This line doesn’t have the same solutions as the line before. Check your last move." };
+    }
+    if (kind === "system") return gradeSystem(text, gs, st);
+    throw new LineErr("I don’t know that kind of problem.");
+  }
+  function gradeSystem(text, gs, st){
+    var vs = LP.vs, env = LP.sol, assigns = {}, pm = /^\(\s*(-?[\d.\/ ]+)\s*,\s*(-?[\d.\/ ]+)\s*\)$/.exec(lnorm(text));
+    if (pm){
+      var a = numbersIn(pm[1]), b = numbersIn(pm[2]);
+      if (a.length === 1 && b.length === 1 && rEq(a[0], env[vs[0]]) && rEq(b[0], env[vs[1]])) return { st:"ok", final:true, msg:"the answer", next:{ known:env, last:null, done:true } };
+      return { st:"bad", msg:"That pair isn’t the solution: put the numbers into both equations to check." };
+    }
+    for (var i = 0; i < gs.length; i++){
+      var g = gs[i];
+      if (g.rels.length !== 1 || g.rels[0] !== "=") throw new LineErr("Each line of a system is an equation (or two, joined by “and” or a comma).");
+      var gv = varsOf(g.parts[1], varsOf(g.parts[0]));
+      if (gv.some(function(v){ return vs.indexOf(v) < 0; })) throw new LineErr("Use only the letters " + vs.join(" and ") + ".");
+      var l = ev(g.parts[0], env), r = ev(g.parts[1], env);
+      if (!rEq(l, r)){
+        var one = gv.length === 1 ? solveSet(g.parts[0], g.parts[1], gv[0]) : null;
+        return { st:"bad", msg:(one && one.roots && one.roots.length === 1 ? "That gives " + gv[0] + " = " + rTxt(one.roots[0]) + ", which doesn’t fit both equations. " : "That equation isn’t true for the answer to the system. ")
+          + "Check the last step: when you add or subtract equations, or put a value in, do it to every term on both sides." };
+      }
+      var as = assignOf(g); if (as) assigns[as.v] = as.q;
+    }
+    var known = {}, k; for (k in st.known) known[k] = st.known[k]; for (k in assigns) known[k] = assigns[k];
+    var both = Object.keys(assigns).length === 2 || (Object.keys(assigns).length === 1 && st.lastAssign && Object.keys(st.lastAssign).some(function(x){ return !assigns[x]; }));
+    var mvMsg = Object.keys(assigns).length ? Object.keys(assigns).map(function(x){ return x + " = " + rTxt(assigns[x]); }).join(", ") : "true for the solution";
+    return { st:"ok", final:both, msg:both ? "both answers" : mvMsg, next:{ known:known, last:gs, lastAssign:assigns, done:both } };
+  }
+  function gradeWord(text, st){
+    if (!WP.ans) return { st:"wait", msg:"Reading the story…" };
+    var A = WP.ans, gs = null, sentence = /^\$?\s*[\d.,]+( \d+\/\d+)?\s*[a-zA-Z]{1,3}\.?$/.test(lnorm(text)) && !/^[\d.,\s]*(x|y|n)$/.test(lnorm(text));
+    if (/[a-zA-Z]{2,}/.test(lnorm(text).replace(KEYW, ""))) sentence = true;     // "1/4 of 60 m is 15 m": words, not letters
+    if (!sentence) try { gs = parseLine(text); } catch (e){ if (e.code === "words") sentence = true; else throw e; }
+    if (sentence){
+      if (!st.setup) return { st:"bad", msg:"Start with your working: a number sentence or an equation for the story, like 12 − 5 = ? or n + 5 = 12." };
+      if (A.fail || !A.nums.length) return { st:"ok", final:true, unchecked:true, msg:"answer written (the story couldn’t be read, so it isn’t checked)", next:{ setup:st.setup, value:st.value, last:st.last, done:true } };
+      var ns = numbersIn(text);
+      var ok = A.nums.every(function(q){ return ns.some(function(m){ return rEq(m, q); }); });
+      if (ok) return { st:"ok", final:true, msg:"that answers the question", next:{ setup:st.setup, value:st.value, last:st.last, done:true } };
+      return { st:"bad", msg:"That isn’t the story’s answer. Look at what your working gave, and say it as the answer to the question" + (A.unit ? " (with the units: " + A.unit + ")" : "") + "." };
+    }
+    if (gs.length !== 1) throw new LineErr("One number sentence or equation on each line, please.");
+    var g = gs[0], val = wordValue(g);
+    if (val.err) throw new LineErr(val.err);
+    if (val.trueSent === false) return { st:"bad", msg:"That isn’t true: the two sides aren’t equal. Check the arithmetic." };
+    if (!st.setup){
+      if (A.main && !rEq(val.v, A.main) && !(A.eqVal && rEq(val.v, A.eqVal)))
+        return { st:"bad", tag:"setup", msg:"That works out to a different answer from the story. Read it again: what does the question ask for — and does the amount get bigger or smaller?" };
+      return { st:"ok", msg:"that fits the story", next:{ setup:g, value:val.v, last:g } };
+    }
+    if (rEq(val.v, st.value)){
+      // the answer on its own ("7") finishes it too
+      var bare = !g.rels.length && isLit(g.parts[0]) && (!A.main || rEq(val.v, A.main)) && !A.fail && A.nums.length === 1;
+      if (bare) return { st:"ok", final:true, msg:"that’s the answer", next:{ setup:st.setup, value:st.value, last:g, done:true } };
+      return { st:"ok", msg:"same answer", next:{ setup:st.setup, value:st.value, last:g } };
+    }
+    if (val.calc && val.trueSent) return { st:"ok", msg:"true", next:{ setup:st.setup, value:st.value, last:st.last } };
+    var prev = st.last, d = null;
+    if (val.unknown && prev && prev.rels.length === 1) d = eqDiagnose(prev.parts[0], prev.parts[1], val.L, val.R, [val.unknown]);
+    if (!d && prev && !g.rels.length){ var dv = diagExpr([prev.parts[0]], g.parts[0], []); d = dv && dv.msg; }
+    return { st:"bad", msg:d || "That doesn’t give the same answer as the line before. Check your last step." };
+  }
+  /* the next line, from the last line that was right */
+  function nextFrom(st){
+    if (!st || st.done) return null;
+    switch (LP.kind){
+      case "expression": var s = exprStep(st.last, LP.dec); return s ? { text:pr(s.ast), why:s.why, todo:s.todo } : null;
+      case "equation": case "inequality": return eqStep(st.L, st.rel, st.R, LP.v, LP.dec);
+      case "system": return sysStep(st);
+      case "word": return wordStep(st);
+    }
+    return null;
+  }
+  function substVar(a, v, q){
+    if (!a || !a.k) return a;
+    if (a.k === "var" && a.v === v) return rSg(q) < 0 || !rInt(q) ? { k:"par", a:lit(q) } : lit(q);
+    var c = {}; for (var x in a) c[x] = a[x];
+    if (a.a) c.a = substVar(a.a, v, q);
+    if (a.b) c.b = substVar(a.b, v, q);
+    return c;
+  }
+  function sysStep(st){
+    var vs = LP.vs, known = st.known || {};
+    if (known[vs[0]] && known[vs[1]])
+      return { text:vs[0] + " = " + numText(LP.sol[vs[0]], LP.dec) + ", " + vs[1] + " = " + numText(LP.sol[vs[1]], LP.dec), why:"Write both answers.", todo:"Write both answers." };
+    var last = st.last && st.last.length === 1 ? st.last[0] : null;
+    if (last){
+      var lv = varsOf(last.parts[1], varsOf(last.parts[0]));
+      var as = assignOf(last);
+      if (lv.length === 1 && !as){ var s = eqStep(last.parts[0], "=", last.parts[1], lv[0], LP.dec); if (s) return s; }
+      if (as){
+        var kv = as.v, other = kv === vs[0] ? vs[1] : vs[0];
+        if (!known[other]){
+          var E = LP.E.filter(function(e, i){ return LP.F[i][other] && !rZ(LP.F[i][other]); })[0] || LP.E[0];
+          var l = substVar(E.L, kv, as.q), r = substVar(E.R, kv, as.q);
+          return { text:pr(l) + " = " + pr(r), why:"Put <b>" + kv + " = " + rTxt(as.q) + "</b> into an equation to find " + other + ".", todo:"Put " + kv + " = " + rTxt(as.q) + " into one of the equations." };
+        }
+      }
+    }
+    // add or subtract the equations so one letter cancels
+    var F = LP.F, x = vs[0], y = vs[1];
+    function cf(p, v){ return p[v] || RZERO; }
+    var elim = y, m1 = RONE, m2 = RONE, how;
+    var b1 = cf(F[0], y), b2 = cf(F[1], y), a1 = cf(F[0], x), a2 = cf(F[1], x);
+    if (!rZ(b1) && rEq(b1, rNeg(b2))){ m2 = RMONE; how = "Add the two equations: the " + y + "’s cancel."; }
+    else if (!rZ(b1) && rEq(b1, b2)){ how = "Subtract the second equation from the first: the " + y + "’s cancel."; }
+    else if (!rZ(a1) && rEq(a1, rNeg(a2))){ elim = x; m2 = RMONE; how = "Add the two equations: the " + x + "’s cancel."; }
+    else if (!rZ(a1) && rEq(a1, a2)){ elim = x; how = "Subtract the second equation from the first: the " + x + "’s cancel."; }
+    else {
+      var e = rZ(b1) || rZ(b2) ? x : y, c1 = cf(F[0], e), c2 = cf(F[1], e);
+      if (rZ(c1) || rZ(c2)){ var only = rZ(c1) ? 0 : 1; return { text:pr(LP.E[only].L) + " = " + pr(LP.E[only].R), why:"This equation has only one letter: solve it first.", todo:"Start with the equation that has only one letter." }; }
+      elim = e; m1 = rAbs(c2); m2 = rSg(c1) === rSg(c2) ? rAbs(c1) : rNeg(rAbs(c1));
+      how = "Multiply the first equation by <b>" + rTxt(m1) + "</b> and the second by <b>" + rTxt(rAbs(m2)) + "</b>, then " + (rSg(m2) > 0 ? "subtract" : "add") + " them: the " + e + "’s cancel.";
+    }
+    var C = pSub(pScale(F[0], m1), pScale(F[1], m2)), keep = elim === x ? y : x, vt = {};
+    if (C[keep]) vt[keep] = C[keep];
+    if (!C[keep]) return null;
+    return { text:polyStr(vt, LP.dec) + " = " + numText(rNeg(C[""] || RZERO), LP.dec), why:how, todo:how.replace(/<[^>]+>/g, "") };
+  }
+  function wordStep(st){
+    var A = WP.ans;
+    if (!A || A.fail) return null;
+    if (!st.setup){ if (!A.setup) return null; return { text:A.setup, why:"Write the story as a number sentence (or an equation): <b>" + A.setup + "</b>.", todo:"Write the story as a number sentence, or an equation." }; }
+    var g = st.last, vs = [];
+    each(g.parts, function(p){ varsOf(p, vs); });
+    var solved = false;
+    if (!vs.length && !g.rels.length) solved = isLit(g.parts[0]);
+    else if (!vs.length) solved = g.parts.some(isLit);
+    else solved = !!assignOf(g);
+    if (solved) return { text:A.sentence, why:"Answer the question in a sentence, with the units: <b>" + A.sentence + "</b>", todo:"Answer the question in a sentence, with the units." };
+    if (vs.length === 1 && g.rels.length === 1){
+      var L = g.parts[0], R = g.parts[1], v = vs[0], E = R.k === "var" ? L : L.k === "var" ? R : null;
+      if (v === "?" && E){
+        var s = numStep(E);
+        if (!s) return null;
+        if (isLit(s.ast)) return { text:pr(E) + " = " + pr(s.ast), why:s.why, todo:s.todo };
+        return { text:pr(s.ast) + " = ?", why:s.why, todo:s.todo };
+      }
+      return eqStep(L, "=", R, v, false);
+    }
+    if (!g.rels.length){ var s2 = numStep(g.parts[0]); return s2 ? { text:pr(s2.ast), why:s2.why, todo:s2.todo } : null; }
+    return null;
+  }
+  /* the whole worked answer, line by line (also how the page knows the answer) */
+  function solveLines(max){
+    var st = state0(), lines = [];
+    for (var n = 0; n < (max || 60); n++){
+      var nx = null;
+      try { nx = nextFrom(st); } catch (e){ nx = null; }
+      if (!nx) break;
+      var r;
+      try { r = gradeLine(nx.text, st); } catch (e){ r = { st:"err", msg:e.msg }; }
+      lines.push({ text:nx.text, why:nx.why, ok:r.st === "ok" });
+      if (r.st !== "ok") break;
+      st = r.next; st.final = !!r.final;
+      if (r.final) break;
+    }
+    return { lines:lines, st:st, done:!!st.final };
+  }
+  function linesAnswer(p){
+    if (p.kind === "word"){
+      if (WP.ans && !WP.ans.fail && wpKey(p) === WP.key) return { text:WP.ans.text, html:esc(WP.ans.text) };
+      return { text:"…", html:"…" };
+    }
+    var keepLP = LP;
+    try {
+      LP = setupLines(p);
+      var s = solveLines(80), t = s.done && s.lines.length ? s.lines[s.lines.length - 1].text : "?";
+      if (LP.kind === "equation" || LP.kind === "inequality"){       // "−9 = x" is right, but the answer reads x = −9
+        var m = /^(.+?) (=|<|>|≤|≥) ([a-z])$/.exec(t);
+        if (m && !/[a-z]/.test(m[1])) t = m[3] + " " + FLIP[m[2]] + " " + m[1];
+      }
+      return { text:t, html:esc(t) };
+    } catch (e){ return { text:"?", html:"?" }; }
+    finally { LP = keepLP; }
+  }
+
+  /* ---------- stories: the Story Problem page reads them, in a hidden frame ---------- */
+  var WP = { key:null, state:"idle", ans:null, timer:null };
+  function wpKey(p){ return p.wp ? "wp:" + p.wp : "q:" + p.q; }
+  function composeCalcs(calcs){
+    var exprs = [], vals = [];
+    each(calcs, function(c){
+      var m = c.replace(/\$/g, "").split("=");
+      if (m.length !== 2) return;
+      var E = m[0].trim(), r = m[1].trim();
+      for (var j = exprs.length - 1; j >= 0; j--){
+        var re = new RegExp("(^|[^\\d.])" + vals[j].replace(/[.$]/g, "\\$&") + "(?![\\d.])");
+        if (re.test(E)) E = E.replace(re, "$1(" + exprs[j] + ")");
+      }
+      exprs.push(E); vals.push(r);
+    });
+    if (!exprs.length) return null;
+    try { return pr(unpar(parseOne(exprs[exprs.length - 1]))); } catch (e){ return null; }
+  }
+  function unpar(a){
+    if (!a || !a.k) return a;
+    if (a.k === "par") return unpar(a.a);
+    var c = {}; for (var x in a) c[x] = a[x];
+    if (a.a) c.a = unpar(a.a); if (a.b) c.b = unpar(a.b);
+    return c;
+  }
+  function wpRead(doc){
+    var v = doc.querySelector(".answer .v");
+    if (!v) return { fail:true };
+    var vt = v.innerHTML.replace(/<\/span>\s*<span/g, "</span> <span").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim(), unitEl = v.querySelector(".word"), fact = doc.querySelector(".answer .fact");
+    var rs = doc.getElementById("readSum"), km = rs && /What I read:\s*([^·]+)/.exec(rs.textContent);
+    var eq = null, calcs = [];
+    each(doc.querySelectorAll("#log .line"), function(l){
+      var tag = ((l.querySelector(".tag") || {}).textContent || "").trim(), b = l.querySelector(".txt b");
+      if (!b) return;
+      var t = b.textContent.replace(/\s+/g, " ").trim();
+      if (/^Equation$/i.test(tag) && !eq) eq = /<br/i.test(b.innerHTML) || /;/.test(t) ? "two" : t;
+      if (/^[+−×÷]$/.test(tag) && /=/.test(t) && !/[a-z]/i.test(t.replace(/R/g, ""))) calcs.push(t);
+    });
+    var nums = /\d:\d\d/.test(vt) || / R \d/.test(vt) ? [] : numbersIn(vt);
+    var setup = eq && eq !== "two" ? eq : composeCalcs(calcs);
+    if (setup && eq !== "two" && nums.length === 1 && !eq){
+      try { if (!rEq(ev(parseOne(setup), {}), nums[0])) setup = null; } catch (e){ setup = null; }
+    }
+    if (setup && !eq && setup.indexOf("=") < 0) setup += " = ?";
+    var eqVal = null;                       // the letter in the story's own equation (it isn't always what's asked: the width, then the length)
+    if (eq && eq !== "two"){ try { var g0 = parseLine(eq)[0], vs0 = varsOf(g0.parts[1], varsOf(g0.parts[0])); if (vs0.length === 1){ var S0 = solveSet(g0.parts[0], g0.parts[1], vs0[0]); if (S0.roots && S0.roots.length === 1) eqVal = S0.roots[0]; } } catch (e){} }
+    return { text:vt, nums:nums, main:nums.length === 1 && eq !== "two" ? nums[0] : null, unit:unitEl ? unitEl.textContent.trim() : "",
+             sentence:fact ? fact.textContent.replace(/\s+/g, " ").trim() : vt, setup:eq === "two" ? null : setup, kind:km ? km[1].trim() : "", eqVal:eqVal };
+  }
+  function wpStart(p){
+    var key = wpKey(p);
+    if (WP.key === key && (WP.state === "loading" || WP.state === "ok" || WP.state === "fail")) return;
+    WP.key = key; WP.state = "loading"; WP.ans = null;
+    var saved = null; try { saved = localStorage.getItem("story-problem"); } catch (e){}
+    var f = document.createElement("iframe"), fin = false;
+    f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.title = "story reader";
+    f.style.cssText = "position:absolute;left:-10000px;top:0;width:900px;height:700px;border:0;visibility:hidden";
+    function done(ans){
+      if (fin) return; fin = true;
+      clearTimeout(WP.timer);
+      try { if (saved === null) localStorage.removeItem("story-problem"); else localStorage.setItem("story-problem", saved); } catch (e){}
+      if (f.parentNode) f.parentNode.removeChild(f);
+      if (WP.key !== key) return;
+      WP.state = ans.fail ? "fail" : "ok"; WP.ans = ans;
+      if (P && P.op === "lines" && wpKey(P) === key) wordReady();
+    }
+    f.onload = function(){ setTimeout(function(){ var a; try { a = wpRead(f.contentDocument); } catch (e){ a = { fail:true }; } done(a); }, 80); };
+    WP.timer = setTimeout(function(){ done({ fail:true }); }, 12000);
+    f.src = "wordproblems.html?" + (p.wp ? p.wp : "q=" + encodeURIComponent(p.q)) + "&practice=all";
+    document.body.appendChild(f);
+  }
+  var WPAPI = { frame:null, ready:false, queue:[], seq:0, wait:{} };
+  function wpApi(msg, cb){
+    if (!WPAPI.frame){
+      var f = document.createElement("iframe");
+      f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.title = "story maker";
+      f.style.cssText = "position:absolute;left:-10000px;top:0;width:600px;height:400px;border:0;visibility:hidden";
+      f.onload = function(){ WPAPI.ready = true; var q = WPAPI.queue.splice(0); each(q, function(m){ f.contentWindow.postMessage(m, "*"); }); };
+      f.src = "wordproblems.html?embed=1";
+      document.body.appendChild(f); WPAPI.frame = f;
+    }
+    var id = "wp" + (++WPAPI.seq); msg.id = id;
+    WPAPI.wait[id] = cb;
+    setTimeout(function(){ if (WPAPI.wait[id]){ delete WPAPI.wait[id]; cb(null); } }, 12000);
+    if (WPAPI.ready) WPAPI.frame.contentWindow.postMessage(msg, "*"); else WPAPI.queue.push(msg);
+  }
+  var STORYOK = /^(\$\d[\d,]*(\.\d+)?|\d[\d,]*(\.\d+)?( [a-zA-Z][a-zA-Z’' -]*)?|\d+ \d+\/\d+( [a-zA-Z][a-zA-Z’' -]*)?|\d+\/\d+( [a-zA-Z][a-zA-Z’' -]*)?)$/;
+  function wpMakeSet(count, G, cb){
+    var mode = G.story || "any";
+    wpApi({ type:"helper:make", count:Math.min(100, count * 3 + 4), options:{ mode:mode, size:"medium" } }, function(d){
+      var out = [], seen = {};
+      each((d && d.problems) || [], function(pr0){
+        if (out.length >= count || !pr0 || !pr0.text || seen[pr0.text]) return;
+        if (!STORYOK.test(String(pr0.answer || "").trim())) return;
+        if (/(^|&)type=(time|remainder)(&|$)/.test(pr0.params || "") || /(^|&)kind=consecutive|form=(tickets|coins|numbers)/.test(pr0.params || "")) return;
+        var wp = String(pr0.params || "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+        var p = { op:"lines", kind:"word", q:pr0.text, wp:wp };
+        seen[pr0.text] = 1;
+        out.push({ text:pr0.text, html:esc(pr0.text), params:paramsOf(p, G.check), answer:pr0.answer, answerHtml:esc(pr0.answer), _p:p });
+      });
+      cb(out);
+    });
+  }
+
+  /* ---------- making line-by-line problems (pure) ---------- */
+  function sgnTxt(n){ return n < 0 ? MN + " " + Math.abs(n) : "+ " + n; }
+  function coefX(a, v){ v = v || "x"; return a === 1 ? v : a === -1 ? MN + v : (a < 0 ? MN + Math.abs(a) : a) + v; }
+  function termTxt(a, v, first){ var body = Math.abs(a) === 1 ? v : Math.abs(a) + v; return first ? (a < 0 ? MN : "") + body : (a < 0 ? " " + MN + " " : " + ") + body; }
+  function nz(a, b){ var x; do { x = ri(a, b); } while (x === 0); return x; }
+  function genExprP(G){
+    var t = G.topic || "order", neg = !!G.negatives, q;
+    if (t === "simplify"){
+      var a = ri(2, 6) * (neg && ri(0, 1) ? -1 : 1), b = ri(1, 9), c = ri(2, 8), d = ri(1, 9), s1 = ri(0, 1) ? "+" : MN, s2 = ri(0, 1) ? "+" : MN;
+      var form = ri(0, 3);
+      if (form === 0) q = (a < 0 ? MN + Math.abs(a) : a) + "(x " + s1 + " " + b + ") " + s2 + " " + c + "x";
+      else if (form === 1) q = a + "x " + s1 + " " + b + " " + s2 + " " + c + "x " + (ri(0, 1) ? "+ " : MN + " ") + d;
+      else if (form === 2) q = Math.abs(a) + "(x " + s1 + " " + b + ") " + MN + " " + ri(2, 5) + "(x " + s2 + " " + d + ")";
+      else q = MN + "(x " + s1 + " " + b + ") + " + c + "x";
+    } else if (t === "order"){
+      var f = ri(0, 4), A, B, C, D;
+      if (f === 0){ C = ri(2, 6); B = C * ri(2, 6); D = ri(2, 5); A = (B / C) * D + ri(1, 20); q = A + " " + MN + " " + B + " ÷ " + C + " × " + D; }
+      else if (f === 1){ A = ri(2, 20); B = ri(2, 9); C = ri(2, 9); D = ri(1, A + B * C - 1); q = A + " + " + B + " × " + C + " " + MN + " " + D; }
+      else if (f === 2){ A = ri(2, 12); B = ri(2, 12); C = ri(2, 6); D = ri(1, (A + B) * C - 1); q = "(" + A + " + " + B + ") × " + C + " " + MN + " " + D; }
+      else if (f === 3){ D = ri(2, 6); C = D * ri(2, 8); A = ri(2, 9); B = ri(2, 9); if (A * B <= C / D) A += C / D; q = A + " × " + B + " " + MN + " " + C + " ÷ " + D; }
+      else { A = ri(10, 40); B = ri(1, 9); C = ri(2, 6); D = ri(2, 6); q = A + " " + MN + " " + B + " + " + C + " × " + D; }
+    } else if (t === "fractions"){
+      var den = [2, 3, 4, 5, 6, 8, 10, 12], d1 = den[ri(0, 7)], d2 = den[ri(0, 7)];
+      while (d2 === d1) d2 = den[ri(0, 7)];
+      var n1 = ri(1, d1 - 1), n2 = ri(1, d2 - 1), op = ["+", MN, "×", "÷"][ri(0, 3)];
+      if (op === MN && n1 / d1 < n2 / d2){ var tn = n1, td = d1; n1 = n2; d1 = d2; n2 = tn; d2 = td; }
+      q = n1 + "/" + d1 + " " + op + " " + n2 + "/" + d2;
+      if (ri(0, 4) === 0 && op === "+") q = ri(1, 3) + " " + q;
+    } else if (t === "decimals"){
+      var x1 = ri(11, 99) / 10, x2 = ri(101, 999) / 100, k = ri(2, 6), g = ri(0, 2);
+      if (g === 0) q = x1 + " + " + x2 + " × " + k;
+      else if (g === 1) q = "(" + x1 + " + " + ri(11, 99) / 10 + ") × " + k;
+      else q = x1 + " × " + k + " " + MN + " " + (ri(1, Math.floor(x1 * k * 10) - 1) / 10);
+    } else if (t === "integers"){
+      var h = ri(0, 2), p1 = ri(2, 9), p2 = ri(2, 9), p3 = ri(2, 9), p4 = ri(2, 5);
+      if (h === 0) q = MN + p1 + " + " + p2 + " " + MN + " (" + MN + p3 + ")";
+      else if (h === 1) q = MN + p1 + " × (" + MN + p2 + ") + " + p4 * p3 + " ÷ (" + MN + p4 + ")";
+      else q = p1 + " " + MN + " " + p2 + " × (" + MN + p3 + ")";
+    } else {
+      var e = ri(0, 2), u = ri(2, 5), w = ri(2, 4), z = ri(2, 6);
+      if (e === 0) q = u + "^2 + " + w + "^3 " + MN + " " + z + " × " + ri(2, 5);
+      else if (e === 1) q = "(" + u + " + " + w + ")^2 " + MN + " " + z + "^2";
+      else q = z + " × " + w + "^2 " + MN + " " + u;
+    }
+    return { op:"lines", kind:"expression", q:q };
+  }
+  function genEqP(G, ineq){
+    var steps = G.steps || "two", neg = !!G.negatives, x = neg ? nz(-9, 9) : ri(1, 12), rel = ineq ? ["<", ">", "≤", "≥"][ri(0, 3)] : "=", q;
+    var a = ri(2, 9) * (neg && (ineq || ri(0, 1)) ? -1 : 1), b = nz(-15, 15), c, d;
+    if (!neg) b = ri(1, 15);
+    if (steps === "one"){
+      var f = ri(0, 3);
+      if (f === 0) q = "x + " + Math.abs(b) + " " + rel + " " + (x + Math.abs(b));
+      else if (f === 1) q = "x " + MN + " " + Math.abs(b) + " " + rel + " " + sg(x - Math.abs(b));
+      else if (f === 2) q = coefX(a) + " " + rel + " " + sg(a * x);
+      else { var dv = ri(2, 6); x = dv * (neg ? nz(-6, 6) : ri(1, 6)); q = "x/" + dv + " " + rel + " " + sg(x / dv); }
+    } else if (steps === "both"){
+      c = ri(1, 9) * (neg && ri(0, 1) ? -1 : 1); while (c === a) c = ri(1, 9);
+      d = a * x + b - c * x;
+      q = coefX(a) + " " + sgnTxt(b) + " " + rel + " " + coefX(c) + (d ? " " + sgnTxt(d) : "");
+    } else if (steps === "brackets"){
+      var k = Math.abs(a), m = ri(1, 9), s = ri(0, 1) ? 1 : -1, extra = ri(0, 1) ? ri(1, 12) : 0;
+      var val = k * (x + s * m) + extra;
+      q = (a < 0 ? MN : "") + k + "(x " + (s > 0 ? "+" : MN) + " " + m + ")" + (extra ? " + " + extra : "") + " " + rel + " " + sg(a < 0 ? -k * (x + s * m) + extra : val);
+    } else {
+      q = coefX(a) + " " + sgnTxt(b) + " " + rel + " " + sg(a * x + b);
+    }
+    return { op:"lines", kind:ineq ? "inequality" : "equation", q:q };
+  }
+  function sg(n){ return n < 0 ? MN + Math.abs(n) : String(n); }
+  function genSysP(G){
+    var x = G.negatives ? nz(-6, 9) : ri(1, 9), y = G.negatives ? nz(-6, 9) : ri(1, 9), q;
+    if ((G.steps || "two") === "one" || ri(0, 2) === 0){
+      if (x < y){ var t = x; x = y; y = t; }
+      q = "x + y = " + sg(x + y) + "; x " + MN + " y = " + sg(x - y);
+    } else {
+      var a1, b1, a2, b2;
+      do { a1 = ri(1, 5); b1 = nz(-4, 5); a2 = nz(-4, 5); b2 = ri(1, 5); } while (a1 * b2 - a2 * b1 === 0);
+      function side(a, b){ return coefX(a, "x") + " " + (b < 0 ? MN + " " : "+ ") + (Math.abs(b) === 1 ? "y" : Math.abs(b) + "y"); }
+      q = side(a1, b1) + " = " + sg(a1 * x + b1 * y) + "; " + side(a2, b2) + " = " + sg(a2 * x + b2 * y);
+    }
+    return { op:"lines", kind:"system", q:q };
+  }
+  function makeLinesOne(G){
+    var k = G.kind || "equation";
+    for (var t = 0; t < 60; t++){
+      var p = k === "expression" ? genExprP(G) : k === "equation" ? genEqP(G, false) : k === "inequality" ? genEqP(G, true) : k === "system" ? genSysP(G) : null;
+      if (!p) return null;
+      var keep = LP;
+      try { LP = setupLines(p); var s = solveLines(80); if (s.done) return { p:p, exact:true }; } catch (e){}
+      finally { LP = keep; }
+    }
+    return null;
+  }
+  /* ---------- the ruled paper ---------- */
+  var LP = null, LG = null, LFOCUS = null, LSNAP = null, LDIRTY = {}, LREVEAL = false;
+  function lid(){ W.lseq = (W.lseq || 0) + 1; return "l" + W.lseq; }
+  function linesFresh(){ W.lines = [{ id:lid(), t:"" }]; }
+  function lineIdx(id){ for (var i = 0; i < W.lines.length; i++) if (W.lines[i].id === id) return i; return -1; }
+  function gradeAll(){
+    var st = state0(), out = [];
+    each(W.lines, function(l){
+      var t = String(l.t || "").trim();
+      if (!t){ out.push({ st:"empty", stBefore:st }); return; }
+      var r;
+      try { r = gradeLine(t, st); }
+      catch (e){
+        r = { st:"err", msg:e instanceof LineErr ? (e.code === "words" ? wordsMsg() : esc(e.msg).replace(/&lt;b&gt;|&lt;\/b&gt;/g, "")) : "I can’t read this line." };
+        if (!(e instanceof LineErr) && window.console) console.error(e);
+      }
+      r.stBefore = st;
+      if (r.st === "ok"){ st = r.next; st.final = !!r.final; }
+      out.push(r);
+    });
+    out.state = st;
+    return out;
+  }
+  function lDone(g){
+    g = g || LG;
+    var last = -1, ok = true;
+    each(g, function(r, i){ if (r.st !== "empty"){ last = i; if (r.st !== "ok") ok = false; } });
+    return last >= 0 && ok && !!g[last].final;
+  }
+  function markVisible(l, r){
+    if (r.st === "empty") return false;
+    if (W.done) return true;
+    if (r.st === "wait") return true;
+    return S.check === "each" ? !!W.lc[l.id] : !!W.lmk[l.id];
+  }
+  function lineLabel(i, r, vis){
+    var s = "Line " + (i + 1);
+    if (!vis) return s;
+    if (r.st === "ok") return s + ", right" + (r.final ? ", finished" : "");
+    if (r.st === "bad") return s + ", needs another look";
+    if (r.st === "err") return s + ", can’t be read";
+    return s;
+  }
+  function buildLineList(force){
+    var host = $("llist"), ids = W.lines.map(function(l){ return l.id; }).join(",");
+    if (!force && host.getAttribute("data-ids") === ids) return false;
+    var focusId = LFOCUS && document.activeElement && document.activeElement.classList && document.activeElement.classList.contains("lin") ? LFOCUS : null;
+    host.innerHTML = W.lines.map(function(l, i){
+      return '<li class="lrow" data-lid="' + l.id + '"><span class="ln" aria-hidden="true">' + (i + 1) + '</span>'
+        + '<div class="lmain"><input class="lin" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-lid="' + l.id + '" aria-label="Line ' + (i + 1)
+        + '" aria-describedby="lh' + l.id + '" value="' + esc(l.t) + '"><span class="lmark" aria-hidden="true"></span></div>'
+        + '<div class="lhint" id="lh' + l.id + '"></div></li>';
+    }).join("");
+    host.setAttribute("data-ids", ids);
+    if (focusId) focusLine(focusId);
+    return true;
+  }
+  function focusLine(id, atEnd){
+    var el = document.querySelector('#llist .lin[data-lid="' + id + '"]');
+    if (!el) return;
+    try { el.focus({ preventScroll:false }); } catch (e){ el.focus(); }
+    if (atEnd !== false){ var n = el.value.length; try { el.setSelectionRange(n, n); } catch (e){} }
+    LFOCUS = id;
+  }
+  function paintLines(force){
+    if (!LP) return;
+    buildLineList(force);
+    LG = gradeAll();
+    each(W.lines, function(l, i){
+      var li = document.querySelector('#llist .lrow[data-lid="' + l.id + '"]');
+      if (!li) return;
+      var r = LG[i], vis = markVisible(l, r), inp = li.querySelector(".lin");
+      if (inp.value !== l.t && document.activeElement !== inp) inp.value = l.t;
+      inp.readOnly = W.done;
+      li.className = "lrow" + (vis ? " " + r.st : "") + (W.lshown[l.id] ? " shown" : "") + (vis && r.final ? " final" : "");
+      li.querySelector(".lmark").textContent = vis ? (r.st === "ok" ? "✓" : r.st === "bad" || r.st === "err" ? "✗" : r.st === "wait" ? "…" : "") : "";
+      var hint = "";
+      if (vis){
+        if (r.st === "ok") hint = (r.msg ? cap1(r.msg) : "") + (W.lshown[l.id] ? (r.msg ? " · " : "") + "filled in for you" : "");
+        else hint = r.msg || "";
+      }
+      li.querySelector(".lhint").innerHTML = hint;
+      inp.setAttribute("aria-invalid", String(vis && (r.st === "bad" || r.st === "err")));
+      inp.setAttribute("aria-label", lineLabel(i, r, vis));
+    });
+    $("lCheckBtn").hidden = S.check !== "end" || W.done;
+    $("lStepBtn").disabled = W.done; $("lShowBtn").disabled = W.done;
+    $("lUndoBtn").disabled = W.done || !HIST.length; $("lRedoBtn").disabled = W.done || !FUT.length;
+    $("lInsBtn").disabled = W.done; $("lDelBtn").disabled = W.done || W.lines.length < 2;
+    $("spad").hidden = W.done;
+    each(document.querySelectorAll("#kindModes [data-kind]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-kind") === LP.kind)); });
+    paintLinesNext();
+    if (!W.done && lDone() && (S.check === "each" || W.revealed)){
+      if (S.check === "each" && !W.revealed){
+        var allC = true; each(W.lines, function(l, i){ if (LG[i].st !== "empty" && !W.lc[l.id]) allC = false; });
+        if (allC) lFinish();
+      } else lFinish();
+    }
+    if (W.done) paintDone();
+  }
+  function baseState(){
+    var g = LG || gradeAll();
+    for (var i = 0; i < g.length; i++) if (g[i].st === "bad" || g[i].st === "err") return { st:g[i].stBefore, at:i };
+    return { st:g.state, at:-1 };
+  }
+  function paintLinesNext(){
+    var t = "";
+    if (W.done) t = W.revealed ? "That’s the whole answer, filled in. Try another one yourself!" : "Done — every line is right.";
+    else if (LP.kind === "word" && !WP.ans) t = "Reading the story…";
+    else if (LP.kind === "word" && WP.ans && WP.ans.fail) t = "Write a number sentence or an equation for the story, work it out, then answer in a sentence. (I couldn’t read this story, so only the arithmetic is checked.)";
+    else {
+      var b = baseState(), nx = null;
+      try { nx = nextFrom(b.st); } catch (e){ nx = null; }
+      if (b.at >= 0 && S.check === "each") t = "Fix line " + (b.at + 1) + " first. " + (nx ? nx.todo : "");
+      else if (nx) t = nx.todo;
+      else if (S.check === "end") t = "Everything is written: press <b>Check my work</b>.";
+      else t = "Check the lines marked in red.";
+    }
+    $("lNextTxt").innerHTML = t;
+  }
+  function commitLine(id, viaEnter){
+    var i = lineIdx(id);
+    if (i < 0 || W.done) return;
+    var l = W.lines[i];
+    LDIRTY[id] = false;
+    if (!String(l.t).trim()){
+      if (viaEnter && i < W.lines.length - 1) focusLine(W.lines[i + 1].id);
+      return;
+    }
+    W.lc[id] = true;
+    LG = gradeAll();
+    var r = LG[i];
+    if (S.check === "each" && W.lfirst[id] === undefined && r.st !== "wait" && !W.lshown[id]){
+      W.lfirst[id] = r.st === "ok";
+      if (r.st !== "ok") W.mistakes++;
+    }
+    if (S.check === "each"){
+      if (r.st === "bad" || r.st === "err") say('<span class="lead">' + (r.st === "err" ? "I can’t read line " + (i + 1) + "." : "Line " + (i + 1) + ": not quite.") + "</span> " + r.msg, "no");
+      else say("", "");
+    }
+    var stay = S.check === "each" && (r.st === "bad" || r.st === "err");
+    if (viaEnter && !stay){
+      if (i === W.lines.length - 1 && !(r.final && lDone(LG))){ HIST.push(snap()); FUT = []; W.lines.push({ id:lid(), t:"" }); }
+      paintLines();
+      if (!W.done && i + 1 < W.lines.length) focusLine(W.lines[i + 1].id);
+    } else paintLines();
+    LSNAP = snap();
+    save();
+  }
+  function lFinish(){
+    if (W.done) return;
+    W.done = true;
+    if (S.check === "end") each(W.lines, function(l, i){ if (LG[i] && LG[i].st !== "empty" && W.lfirst[l.id] === undefined && !W.lshown[l.id]) W.lfirst[l.id] = LG[i].st === "ok"; });
+    var unchecked = LG && LG.some(function(r){ return r.unchecked; });
+    if (!W.reported && !unchecked){ W.reported = true; report(W.revealed ? "shown" : "right"); }
+    if (W.revealed) say('<span class="lead">Here’s the whole answer.</span> The lines in blue were filled in for you.', "");
+    else if (unchecked) say('<span class="lead">Done.</span> I couldn’t read this story, so I checked the arithmetic but not the answer.', "");
+    else say('<span class="lead">✓ Correct!</span> You worked it out line by line: <b>' + esc(answerOf(P).text) + "</b>.", "ok");
+    paintLines();
+    var box = $("doneBox");
+    box.classList.remove("on"); void box.offsetWidth; if (!W.revealed) box.classList.add("on");
+  }
+  function lStep(silent){
+    if (W.done) return false;
+    if (LP.kind === "word" && !WP.ans){ if (!silent) say("Still reading the story…", ""); return false; }
+    LG = gradeAll();
+    var b = baseState(), nx = null;
+    try { nx = nextFrom(b.st); } catch (e){ nx = null; }
+    if (!nx){ if (!silent) say(lDone() ? "There’s nothing left to write." : "There’s nothing more I can suggest from here — check the lines marked in red.", ""); return false; }
+    HIST.push(snap()); FUT = [];
+    var id = lid(), entry = { id:id, t:nx.text };
+    if (b.at >= 0) W.lines.splice(b.at, 1, entry);
+    else {
+      var lastI = -1; each(W.lines, function(l, i){ if (String(l.t).trim()) lastI = i; });
+      if (lastI + 1 < W.lines.length) W.lines.splice(lastI + 1, 1, entry); else W.lines.push(entry);
+    }
+    W.lc[id] = true; W.lshown[id] = true; W.hints++; noteHint();
+    if (!silent) say('<span class="lead">Next line:</span> ' + nx.why, "");
+    LG = gradeAll();
+    if (!lDone(LG) && W.lines[W.lines.length - 1].id === id) W.lines.push({ id:lid(), t:"" });
+    paintLines();
+    if (!silent && !W.done){ var nxt = W.lines[lineIdx(id) + 1]; if (nxt) focusLine(nxt.id); }
+    save();
+    return true;
+  }
+  function lShowAll(silent){
+    if (W.done) return;
+    if (LP.kind === "word" && !WP.ans){ LREVEAL = true; return; }
+    if (!silent) HIST.push(snap());
+    var keepH = HIST.length;
+    for (var n = 0; n < 80; n++){
+      LG = gradeAll();
+      if (lDone(LG)) break;
+      if (!lStep(true)) break;
+    }
+    HIST.length = keepH;
+    W.lines = W.lines.filter(function(l, i){ return String(l.t).trim() || i === 0; });
+    W.revealed = true;
+    if (silent) W.reported = true;
+    LG = gradeAll();
+    if (lDone(LG)) lFinish(); else { say("I couldn’t finish this one from here.", ""); paintLines(true); }
+  }
+  function lCheck(){
+    if (W.done) return;
+    LG = gradeAll();
+    var bad = 0, filled = 0;
+    W.lmk = {};
+    each(W.lines, function(l, i){
+      var r = LG[i];
+      if (r.st === "empty") return;
+      filled++; W.lmk[l.id] = 1;
+      if (W.lfirst[l.id] === undefined && !W.lshown[l.id] && r.st !== "wait"){ W.lfirst[l.id] = r.st === "ok"; if (r.st !== "ok") W.mistakes++; }
+      if (r.st === "bad" || r.st === "err") bad++;
+    });
+    W.checks++;
+    if (bad){
+      report("wrong");
+      say('<span class="lead">' + (bad === 1 ? "One line needs" : bad + " lines need") + " another look.</span> " + "The hint is under each line marked ✗.", "no");
+      paintLines(); save(); return;
+    }
+    if (lDone(LG)){ lFinish(); save(); return; }
+    var lastR = null; each(LG, function(r){ if (r.st !== "empty") lastR = r; });
+    say('<span class="lead">Everything so far is right.</span> ' + (!filled ? "Start with the first line." : lastR && lastR.notDone ? "But it isn’t finished: " + lowerFirst(lastR.notDone) : "Keep going — you’re not at the answer yet."), "ok");
+    paintLines(); save();
+  }
+  function lineEdited(id, value){
+    var i = lineIdx(id);
+    if (i < 0) return;
+    if (!LDIRTY[id]){ if (LSNAP) HIST.push(LSNAP); if (HIST.length > 300) HIST.shift(); FUT = []; LDIRTY[id] = true; }
+    W.lines[i].t = value;
+    W.lc[id] = false; delete W.lmk[id]; delete W.lshown[id];
+    paintLines();
+    save();
+  }
+  function insertLine(){
+    if (W.done) return;
+    HIST.push(snap()); FUT = [];
+    var i = LFOCUS ? lineIdx(LFOCUS) : W.lines.length, id = lid();
+    if (i < 0) i = W.lines.length;
+    W.lines.splice(i, 0, { id:id, t:"" });
+    paintLines(); focusLine(id); save();
+  }
+  function deleteLine(id){
+    if (W.done || W.lines.length < 2) return;
+    var i = lineIdx(id || LFOCUS);
+    if (i < 0) i = W.lines.length - 1;
+    HIST.push(snap()); FUT = [];
+    W.lines.splice(i, 1);
+    paintLines();
+    var to = W.lines[Math.max(0, i - 1)]; if (to) focusLine(to.id);
+    save();
+  }
+  function lClear(){
+    HIST.push(snap()); FUT = [];
+    var was = W.done; W.done = false; W.revealed = false;
+    linesFresh(); W.lc = {}; W.lmk = {}; W.lshown = {};
+    $("doneBox").hidden = true; $("answerHost").innerHTML = "";
+    say(was ? "A fresh page for the same problem." : "", "");
+    paintLines(true); focusLine(W.lines[0].id); save();
+  }
+  function wordReady(){
+    renderLinesHead();
+    paintLines();
+    if (S.check === "each") each(W.lines, function(l, i){
+      var r = LG && LG[i];
+      if (r && W.lc[l.id] && r.st !== "empty" && r.st !== "wait" && W.lfirst[l.id] === undefined && !W.lshown[l.id]){ W.lfirst[l.id] = r.st === "ok"; if (r.st !== "ok") W.mistakes++; }
+    });
+    if (LREVEAL){ LREVEAL = false; lShowAll(true); }
+  }
+  function renderLinesHead(){
+    var isW = LP.kind === "word";
+    $("storyBox").hidden = !isW;
+    if (isW){
+      var A = WP.ans;
+      $("storyBox").innerHTML = '<span class="lbl">The story</span><p>' + esc(LP.story) + "</p>"
+        + (A ? (A.fail ? '<p class="snote">I couldn’t read this story well enough to know its answer, so I’ll check your arithmetic only.</p>'
+                       : (A.kind ? '<p class="snote">What I read: ' + esc(A.kind) + ".</p>" : "")) : '<p class="snote">Reading the story…</p>');
+    }
+    $("givenRow").hidden = isW;
+    $("givenText").textContent = isW ? "" : prettyQ(LP.q, LP.kind);
+    $("linesTitle").innerHTML = "Your working: <b>" + esc(isW ? (LP.story.length > 42 ? LP.story.slice(0, 40) + "…" : LP.story) : prettyQ(LP.q, LP.kind)) + "</b>";
+  }
+  /* ---------- events on the ruled paper ---------- */
+  $("llist").addEventListener("focusin", function(e){ var t = e.target; if (t.classList && t.classList.contains("lin")){ LFOCUS = t.getAttribute("data-lid"); LSNAP = snap(); $("spad").classList.remove("idle"); } });
+  $("llist").addEventListener("focusout", function(e){
+    var t = e.target; if (!t.classList || !t.classList.contains("lin")) return;
+    var id = t.getAttribute("data-lid");
+    setTimeout(function(){ if (document.activeElement !== t && LDIRTY[id] !== undefined && W.lc[id] === false) commitLine(id, false); }, 0);
+  });
+  $("llist").addEventListener("input", function(e){ var t = e.target; if (t.classList && t.classList.contains("lin")) lineEdited(t.getAttribute("data-lid"), t.value); });
+  $("llist").addEventListener("keydown", function(e){
+    var t = e.target; if (!t.classList || !t.classList.contains("lin")) return;
+    var id = t.getAttribute("data-lid"), i = lineIdx(id);
+    if (e.key === "Enter"){ e.preventDefault(); commitLine(id, true); return; }
+    if (e.key === "ArrowDown" && i < W.lines.length - 1){ e.preventDefault(); commitLine(id, false); focusLine(W.lines[i + 1].id); return; }
+    if (e.key === "ArrowUp" && i > 0){ e.preventDefault(); commitLine(id, false); focusLine(W.lines[i - 1].id); return; }
+    if (e.key === "Backspace" && !t.value && W.lines.length > 1){ e.preventDefault(); deleteLine(id); return; }
+    if (e.key === "Escape"){ t.blur(); }
+  });
+  /* the symbol pad: keep the line focused while it's used */
+  function padInsert(el, text){
+    var a = el.selectionStart, b = el.selectionEnd;
+    if (typeof a !== "number"){ a = b = el.value.length; }
+    el.value = el.value.slice(0, a) + text + el.value.slice(b);
+    var p = a + text.length; try { el.setSelectionRange(p, p); } catch (e){}
+    lineEdited(el.getAttribute("data-lid"), el.value);
+  }
+  $("spad").addEventListener("pointerdown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
+  $("spad").addEventListener("mousedown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
+  $("spad").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b || W.done) return;
+    var k = b.getAttribute("data-k"), el = LFOCUS && document.querySelector('#llist .lin[data-lid="' + LFOCUS + '"]');
+    if (!el){ var last = W.lines[W.lines.length - 1]; focusLine(last.id); el = document.querySelector('#llist .lin[data-lid="' + last.id + '"]'); }
+    if (!el) return;
+    if (document.activeElement !== el) focusLine(el.getAttribute("data-lid"));
+    if (k === "enter"){ commitLine(el.getAttribute("data-lid"), true); return; }
+    if (k === "back"){
+      var a = el.selectionStart, c = el.selectionEnd;
+      if (a === c && a > 0){ el.value = el.value.slice(0, a - 1) + el.value.slice(c); try { el.setSelectionRange(a - 1, a - 1); } catch (x){} }
+      else if (a !== c){ el.value = el.value.slice(0, a) + el.value.slice(c); try { el.setSelectionRange(a, a); } catch (x){} }
+      lineEdited(el.getAttribute("data-lid"), el.value); return;
+    }
+    if (k === "left" || k === "right"){
+      var p = Math.max(0, Math.min(el.value.length, (el.selectionStart || 0) + (k === "left" ? -1 : 1)));
+      try { el.setSelectionRange(p, p); } catch (x){} return;
+    }
+    if (k === "done"){ el.blur(); $("spad").classList.add("idle"); return; }
+    padInsert(el, b.getAttribute("data-ins") || k);
+  });
+  $("lStepBtn").addEventListener("click", function(){ lStep(false); });
+  $("lShowBtn").addEventListener("click", function(){ lShowAll(false); });
+  $("lCheckBtn").addEventListener("click", lCheck);
+  $("lClearBtn").addEventListener("click", lClear);
+  $("lInsBtn").addEventListener("click", insertLine);
+  $("lDelBtn").addEventListener("click", function(){ deleteLine(LFOCUS); });
+  $("lUndoBtn").addEventListener("click", function(){ if (!HIST.length || W.done) return; FUT.push(snap()); restore(HIST.pop()); say("", ""); paintLines(true); save(); });
+  $("lRedoBtn").addEventListener("click", function(){ if (!FUT.length || W.done) return; HIST.push(snap()); restore(FUT.pop()); say("", ""); paintLines(true); save(); });
+  each(document.querySelectorAll("#kindModes [data-kind]"), function(b){
+    b.addEventListener("click", function(){
+      var k = b.getAttribute("data-kind");
+      if (!P || P.op !== "lines" || P.kind === k) return;
+      var np = { op:"lines", kind:k, q:P.q };
+      try { setupLines(np); }
+      catch (e){ say('<span class="lead">That doesn’t fit.</span> ' + esc((e && e.msg) || "It can’t be read as that kind of problem."), "no"); return; }
+      setProblem(np);
+    });
+  });
+
   /* ===================== putting a model together ===================== */
   function build(){
     var M0 = P.op === "add" ? buildAdd(P) : P.op === "sub" ? buildSub(P) : P.op === "mul" ? buildMul(P) : buildDiv(P);
@@ -1507,6 +3464,7 @@
   /* ===================== render ===================== */
   function render(opts){
     opts = opts || {};
+    if (P && P.op === "lines"){ paintLines(); syncURL(); save(); return; }
     var hadFocus = $("sheet").contains(document.activeElement) && document.activeElement !== $("stepBtn")
       && !document.activeElement.closest(".tools, .pad, .bubble");
     var padFocus = document.activeElement && document.activeElement.closest && document.activeElement.closest(".pad");
@@ -1737,17 +3695,22 @@
     for (var s in W.shown) if (W.shown.hasOwnProperty(s) && M.byId[s]) shown++;
     return { right:right, tried:tried, shown:shown };
   }
+  function lscore(){
+    var right = 0, tried = 0, shown = 0;
+    each(W.lines, function(l){ if (W.lfirst[l.id] !== undefined){ tried++; if (W.lfirst[l.id]) right++; } if (W.lshown[l.id]) shown++; });
+    return { right:right, tried:tried, shown:shown };
+  }
   function paintDone(){
-    var box = $("doneBox"), sc = score(), A = answerOf(P);
+    var lines = P.op === "lines", box = $("doneBox"), sc = lines ? lscore() : score(), A = answerOf(P), unit = lines ? "line" : "square";
     box.hidden = false;
     box.classList.toggle("shownend", W.revealed);
     $("stamp").textContent = W.revealed ? "Shown" : (W.mistakes === 0 && !W.hints ? "Perfect!" : "Solved!");
     var t;
-    if (W.revealed && !sc.tried) t = "Every square was filled in for you. Try it yourself with <b>New problem</b>.";
+    if (W.revealed && !sc.tried) t = "Every " + unit + " was filled in for you. Try it yourself with <b>New problem</b>.";
     else {
-      t = "<b>" + sc.right + "</b> of <b>" + sc.tried + "</b> square" + (sc.tried === 1 ? "" : "s") + " right first time";
-      if (sc.shown) t += " · " + pl(sc.shown, "square") + " filled in for you";
-      if (W.mistakes > sc.tried - sc.right) t += " · " + pl(W.mistakes - (sc.tried - sc.right), "slip") + " with a cross-out or bring-down";
+      t = "<b>" + sc.right + "</b> of <b>" + sc.tried + "</b> " + unit + (sc.tried === 1 ? "" : "s") + " right first time";
+      if (sc.shown) t += " · " + pl(sc.shown, unit) + " filled in for you";
+      if (!lines && W.mistakes > sc.tried - sc.right) t += " · " + pl(W.mistakes - (sc.tried - sc.right), "slip") + " with a cross-out or bring-down";
       t += ".";
     }
     $("score").innerHTML = t;
@@ -1758,10 +3721,32 @@
     $("seeLink").hidden = EMBED;
   }
   function helperLink(p){
+    if (p.op === "lines") return linesHelperLink(p);
     if (p.op === "add") return "addition.html?q=" + encodeURIComponent(p.nums.join("+"));
     if (p.op === "sub") return "subtraction.html?q=" + encodeURIComponent(p.a + "-" + p.b);
     if (p.op === "mul") return "multiplication.html?q=" + encodeURIComponent(p.a + "*" + p.b);
     return "division.html?q=" + p.a + "/" + p.b + "&ans=" + (p.ans === "decimal" ? "decimal&places=" + (p.places <= 3 ? 3 : 6) : "remainder");
+  }
+
+  function linesHelperLink(p){
+    var q = prettyQ(p.q, p.kind), e = encodeURIComponent(q);
+    if (p.kind === "word") return "wordproblems.html?" + (p.wp ? p.wp : "q=" + encodeURIComponent(p.q));
+    if (p.kind === "equation") return "algebra.html?mode=solve&q=" + e;
+    if (p.kind === "inequality") return "algebra.html?mode=ineq&q=" + e;
+    if (p.kind === "system") return "algebra.html?mode=sys&q=" + e;
+    var lp; try { lp = setupLines(p); } catch (x){ return "pemdas.html?q=" + e; }
+    if (hasVar(lp.start)) return "algebra.html?mode=simplify&q=" + e;
+    var a = unpar(lp.start), ops = inOrder(a, []).filter(function(n){ return /^(add|sub|mul|div|pow)$/.test(n.k); });
+    var frac = false, neg = false;
+    inOrder(a, []).forEach(function(n){ if (n.k === "num" && (n.frac || n.mixed)) frac = true; if (n.k === "neg") neg = true; });
+    if (frac && ops.length === 1 && isLit(ops[0].a) && isLit(ops[0].b)){
+      var page = { add:"addition.html", sub:"subtraction.html", mul:"multiplication.html", div:"division.html" }[ops[0].k];
+      if (page) return page + "?q=" + encodeURIComponent(lnorm(q).replace(/\s+/g, "").replace(/\//g, "/").replace(/\*/g, "*")).replace(/%2F/gi, "/");
+    }
+    if (frac && !ops.length) return "fractions.html?q=" + encodeURIComponent(lnorm(q));
+    if (ops.length === 1 && ops[0].k === "pow") return "exponents.html?q=" + e;
+    if (neg && ops.every(function(n){ return n.k === "add" || n.k === "sub"; })) return "integers.html?q=" + e;
+    return "pemdas.html?q=" + e + (lp.dec ? "&as=dec" : "");
   }
 
   /* ===================== events ===================== */
@@ -1857,14 +3842,34 @@
   $("paper").addEventListener("scroll", function(){ if (BUB) placeBubble(); });
 
   /* ===================== setting up a problem ===================== */
+  function sizeQ(){
+    var el = $("qIn"), long = el.value.length > 26 || /[a-z]{3,}/i.test(el.value);
+    el.classList.toggle("long", long);
+    el.style.height = "auto"; el.style.height = Math.max(el.scrollHeight, 20) + "px";
+  }
   function setProblem(p, keepWork){
     P = p;
     if (!keepWork){ W = newWork(); HIST = []; FUT = []; }
     S.sel = null; BUB = null;
     $("doneBox").hidden = true; $("answerHost").innerHTML = "";
-    $("qIn").value = qText(p);
-    $("sheetTitle").innerHTML = "Your sheet: <b>" + esc(qText(p)) + "</b>";
+    $("qIn").value = qText(p); sizeQ();
+    var lines = p.op === "lines";
+    $("sheet").hidden = lines; $("linesPanel").hidden = !lines;
     paintOpts();
+    if (lines){
+      try { LP = setupLines(p); }
+      catch (e){ LP = null; say('<span class="lead">Hmm.</span> ' + esc((e && e.msg) || "That problem couldn’t be read."), "no"); return; }
+      if (!W.lines || !W.lines.length) linesFresh();
+      LG = null; LDIRTY = {}; LSNAP = snap(); LREVEAL = false;
+      if (p.kind === "word") wpStart(p);
+      renderLinesHead();
+      say("", "");
+      paintLines(true);
+      syncURL(); save();
+      return;
+    }
+    LP = null;
+    $("sheetTitle").innerHTML = "Your sheet: <b>" + esc(qText(p)) + "</b>";
     M = model();
     var note = "";
     if (p.op === "sub" && M.neg) note = "<b>" + esc(commasBig(p.b)) + "</b> is bigger, so work out <b>" + esc(commasBig(p.b)) + " − " + esc(commasBig(p.a)) + "</b> and the answer is negative.";
@@ -1872,27 +3877,69 @@
     say(note, "");
     render();
   }
-  function startFromBox(){
-    var r = parseProblem($("qIn").value);
-    if (r.err){ say('<span class="lead">Hmm.</span> That problem couldn’t be read: ' + r.err + ".", "no"); $("qIn").focus(); return; }
-    if (r.p.op === "div"){ r.p.ans = S.ans; r.p.places = S.places; }
-    setProblem(r.p);
-    if (r.note === "swap") say("The longer number goes on top, so the sheet works out <b>" + esc(qText(r.p)) + "</b>.", "");
+  /* squared paper when it's + − × ÷ of plain numbers, line by line for anything else */
+  function parseLinesProblem(raw, kind){
+    var q = String(raw == null ? "" : raw).replace(/\s+/g, " ").trim();
+    if (!q) return { err:"it was empty" };
+    var k = kind || detectKind(q), p = { op:"lines", kind:k, q:prettyQ(q, k) };
+    try { setupLines(p); } catch (e){ return { err:(e && e.msg) || "It couldn’t be read.", lines:true }; }
+    return { p:p };
+  }
+  function detectProblem(raw, hint){
+    if (hint === "lines") return parseLinesProblem(raw, null);
+    var r = parseProblem(raw, hint || null);
+    if (!r.err || hint) return r;
+    var r2 = parseLinesProblem(raw, null);
+    if (!r2.err) return r2;
+    var plain = /^[\d.,\s+\-−–×xX*·÷\/:=?]+$/.test(String(raw).trim()) && !/[()^<>]/.test(raw);
+    return plain ? r : r2;
+  }
+  function problemErr(r){
+    return r.lines ? '<span class="lead">Hmm.</span> ' + esc(r.err) : '<span class="lead">Hmm.</span> That problem couldn’t be read: ' + r.err + ".";
+  }
+  function openProblem(p, note){
+    if (p.op === "div"){ p.ans = S.ans; p.places = S.places; }
+    setProblem(p);
+    if (note === "swap") say("The longer number goes on top, so the sheet works out <b>" + esc(qText(p)) + "</b>.", "");
+    if (p.op === "lines"){ if (!W.done && W.lines.length) focusLine(W.lines[W.lines.length - 1].id); return; }
     var first = M.focusOrder.filter(function(c){ return c.main; })[0];
     if (first && !W.done){ S.sel = first.id; render({ focus:true }); }
   }
+  function startFromBox(){
+    var r = detectProblem($("qIn").value);
+    if (r.err){ say(problemErr(r), "no"); $("qIn").focus(); return; }
+    openProblem(r.p, r.note);
+  }
   $("startBtn").addEventListener("click", startFromBox);
   $("qIn").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); startFromBox(); } });
+  $("qIn").addEventListener("input", sizeQ);
+  function toLines(){
+    if (P.op === "lines") return;
+    var np = { op:"lines", kind:"expression", q:qText(P) };
+    try { setupLines(np); } catch (e){ say('<span class="lead">Hmm.</span> ' + esc((e && e.msg) || "That can’t be done line by line."), "no"); return; }
+    openProblem(np);
+  }
+  function toSquares(){
+    if (P.op !== "lines") return;
+    var r = parseProblem(P.q);
+    if (r.err){ say('<span class="lead">This one stays line by line.</span> Squared paper is for + − × ÷ of plain numbers, like 478 + 356, 47 × 23 or 847 ÷ 12.', ""); paintOpts(); return; }
+    openProblem(r.p, r.note);
+  }
+  each(document.querySelectorAll("[data-paper]"), function(b){
+    b.addEventListener("click", function(){ if (b.getAttribute("data-paper") === "lines") toLines(); else toSquares(); });
+  });
+  $("toLinesBtn").addEventListener("click", toLines);
 
   function paintOpts(){
     each(document.querySelectorAll("[data-check]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-check") === S.check)); });
+    each(document.querySelectorAll("[data-paper]"), function(b){ b.setAttribute("aria-pressed", String((b.getAttribute("data-paper") === "lines") === (!!P && P.op === "lines"))); });
     var isDiv = P && P.op === "div";
     $("ansModes").hidden = !isDiv; $("placeModes").hidden = !(isDiv && P.ans === "decimal");
     each(document.querySelectorAll("[data-ans]"), function(b){ b.setAttribute("aria-pressed", String(isDiv && b.getAttribute("data-ans") === P.ans)); });
     each(document.querySelectorAll("[data-places]"), function(b){ b.setAttribute("aria-pressed", String(isDiv && Number(b.getAttribute("data-places")) === P.places)); });
   }
   each(document.querySelectorAll("[data-check]"), function(b){
-    b.addEventListener("click", function(){ S.check = b.getAttribute("data-check"); W.mk = {}; BUB = null; paintOpts(); say("", ""); render(); });
+    b.addEventListener("click", function(){ S.check = b.getAttribute("data-check"); W.mk = {}; W.lmk = {}; BUB = null; paintOpts(); say("", ""); render(); });
   });
   each(document.querySelectorAll("[data-ans]"), function(b){
     b.addEventListener("click", function(){
@@ -1907,18 +3954,17 @@
     });
   });
 
-  var EX = ["478+356", "5003-1278", "25*4", "47*23", "847/12", "2.5+3.75+0.8", "6.4-2.75", "3.2*1.5"];
+  var EX = ["478+356", "5003-1278", "25*4", "47*23", "847/12", "2.5+3.75+0.8",
+            "3(x − 2) + 4x", "2x + 5 = 17", "−3x + 4 > 19", "x + y = 10; x − y = 4", "3/4 + 5/6", "20 − 12 ÷ 4 × 2",
+            "Ana has 12 shells. That is 5 more than Ben has. How many shells does Ben have?"];
   function buildChips(){
     var host = $("chips"); host.innerHTML = "";
     each(EX, function(q){
-      var r = parseProblem(q), b = document.createElement("button");
-      b.type = "button"; b.className = "chip"; b.textContent = qText(r.p);
-      b.addEventListener("click", function(){
-        if (r.p.op === "div"){ r.p.ans = S.ans; r.p.places = S.places; }
-        setProblem(JSON.parse(JSON.stringify(r.p)));
-        var first = M.focusOrder.filter(function(c){ return c.main; })[0];
-        if (first){ S.sel = first.id; render({ focus:true }); }
-      });
+      var r = detectProblem(q), b = document.createElement("button");
+      if (r.err) return;
+      b.type = "button"; b.className = "chip";
+      b.textContent = r.p.op === "lines" && r.p.kind === "word" ? "Ana has 12 shells… (a story)" : qText(r.p);
+      b.addEventListener("click", function(){ openProblem(JSON.parse(JSON.stringify(r.p))); });
       host.appendChild(b);
     });
   }
@@ -1927,7 +3973,24 @@
   var ALL = ["add", "sub", "mul", "div"];
   var OPTS = [
     { key:"mode", label:"Kind of problem", type:"choice", "default":"add",
-      values:[{ v:"add", label:"Adding" }, { v:"sub", label:"Subtracting" }, { v:"mul", label:"Multiplying" }, { v:"div", label:"Long division" }] },
+      values:[{ v:"add", label:"Adding" }, { v:"sub", label:"Subtracting" }, { v:"mul", label:"Multiplying" }, { v:"div", label:"Long division" },
+              { v:"lines", label:"Line by line (algebra, fractions, order, stories)" }] },
+    { key:"kind", label:"What to work out, line by line", type:"choice", "default":"equation", modes:["lines"],
+      values:[{ v:"expression", label:"An expression" }, { v:"equation", label:"An equation" }, { v:"inequality", label:"An inequality" },
+              { v:"system", label:"A system of two equations" }, { v:"word", label:"A story problem" }] },
+    { key:"topic", label:"What kind of expression", type:"choice", "default":"order", modes:["lines"], kinds:["expression"],
+      values:[{ v:"order", label:"Order of operations" }, { v:"fractions", label:"Fractions" }, { v:"decimals", label:"Decimals" },
+              { v:"integers", label:"Negative numbers" }, { v:"exponents", label:"Powers" }, { v:"simplify", label:"Simplify (with x)" }] },
+    { key:"steps", label:"How many steps (equations, inequalities)", type:"choice", "default":"two", modes:["lines"], kinds:["equation", "inequality"],
+      values:[{ v:"one", label:"One step (x + 5 = 12)" }, { v:"two", label:"Two steps (2x + 5 = 17)" }, { v:"both", label:"Letters on both sides" },
+              { v:"brackets", label:"With brackets" }] },
+    { key:"negatives", label:"Negative numbers (inequalities: dividing by a negative)", type:"toggle", "default":false, modes:["lines"],
+      kinds:["expression", "equation", "inequality", "system"], glyph:"−" },
+    { key:"story", label:"Kind of story", type:"choice", "default":"any", modes:["lines"], kinds:["word"],
+      values:[{ v:"any", label:"Any kind" }, { v:"addsub", label:"Adding and taking away" }, { v:"compare", label:"How many more" },
+              { v:"groups", label:"Equal groups" }, { v:"times", label:"Times as many" }, { v:"twostep", label:"Two steps" },
+              { v:"rate", label:"Rates" }, { v:"fraction", label:"Fractions of amounts" }, { v:"percent", label:"Percents" },
+              { v:"money", label:"Money and change" }, { v:"algebra", label:"Solved with an equation" }] },
     { key:"count", label:"How many numbers", type:"choice", "default":2, modes:["add"],
       values:[{ v:2, label:"2 numbers" }, { v:3, label:"3 numbers" }, { v:4, label:"4 numbers" }] },
     { key:"digits", label:"Digits in each number", type:"choice", "default":3, modes:["add", "sub"],
@@ -1946,7 +4009,7 @@
     { key:"ans", label:"Answer as", type:"choice", "default":"remainder", modes:["div"],
       values:[{ v:"remainder", label:"A remainder" }, { v:"decimal", label:"Decimals (zeros brought down)" }] },
     { key:"zero", label:"A 0 inside the answer", type:"toggle", "default":false, modes:["div"], glyph:"0" },
-    { key:"check", label:"Marking", type:"choice", "default":"each", modes:ALL,
+    { key:"check", label:"Marking", type:"choice", "default":"each", modes:ALL.concat(["lines"]),
       values:[{ v:"each", label:"Check as you go" }, { v:"end", label:"Check at the end" }] }
   ];
   function normOpts(o){
@@ -1959,7 +4022,8 @@
         return;
       }
       var s = String(v === undefined || v === null ? "" : v).trim().toLowerCase();
-      if (op.key === "mode") s = { addition:"add", subtraction:"sub", multiplication:"mul", division:"div", adding:"add", subtracting:"sub", multiplying:"mul", dividing:"div" }[s] || s;
+      if (op.key === "mode") s = { addition:"add", subtraction:"sub", multiplication:"mul", division:"div", adding:"add", subtracting:"sub", multiplying:"mul", dividing:"div", line:"lines" }[s] || s;
+      if (op.key === "kind") s = { story:"word", stories:"word", expressions:"expression", equations:"equation", inequalities:"inequality", systems:"system" }[s] || s;
       var hit = op.values.filter(function(x){ return String(x.v).toLowerCase() === s; });
       G[op.key] = hit.length ? hit[0].v : op["default"];
     });
@@ -2155,9 +4219,11 @@
   }
   function makeOne(G){
     var m = G.mode;
+    if (m === "lines") return G.kind === "word" ? null : makeLinesOne(G);
     return m === "sub" ? genSub(G) : m === "mul" ? genMul(G) : m === "div" ? genDiv(G) : genAdd(G);
   }
   function describe(p, check){
+    if (p.op === "lines") p.q = prettyQ(p.q, p.kind);
     var a = answerOf(p), text = qText(p);
     return { text:text, html:esc(text), params:paramsOf(p, check), answer:a.text, answerHtml:a.html };
   }
@@ -2166,6 +4232,7 @@
       var o = { key:op.key, label:op.label, type:op.type, "default":op["default"] };
       o.values = op.type === "toggle" ? [{ v:false, label:"Off" }, { v:true, label:"On" }] : op.values.map(function(v){ return { v:v.v, label:v.label }; });
       if (op.modes){ o.modes = op.modes.slice(); }
+      if (op.kinds){ o.kinds = op.kinds.slice(); }
       return o;
     });
   }
@@ -2184,9 +4251,24 @@
   window.addEventListener("message", function(ev){
     var d = ev.data, msg = null;
     if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    if (WPAPI.frame && ev.source === WPAPI.frame.contentWindow){         // the Story Problem page answering us
+      if (d.id && WPAPI.wait[d.id]){ var cb = WPAPI.wait[d.id]; delete WPAPI.wait[d.id]; cb(d); }
+      return;
+    }
     try {
       if (d.type === "helper:options") msg = { type:"helper:optionsSchema", id:d.id, page:PAGE, title:document.title, options:schema() };
-      else if (d.type === "helper:make") msg = { type:"helper:made", id:d.id, page:PAGE, problems:makeSet(d.count, d.options) };
+      else if (d.type === "helper:make"){
+        var G0 = normOpts(d.options);
+        if (G0.mode === "lines" && G0.kind === "word"){
+          var src = ev.source || window.parent, n0 = Math.max(1, Math.min(100, Math.floor(Number(d.count)) || 10));
+          wpMakeSet(n0, G0, function(list){
+            list.forEach(function(x){ delete x._p; });
+            try { src.postMessage({ type:"helper:made", id:d.id, page:PAGE, problems:list }, "*"); } catch (e2){}
+          });
+          return;
+        }
+        msg = { type:"helper:made", id:d.id, page:PAGE, problems:makeSet(d.count, d.options) };
+      }
     } catch (e){
       msg = { type:d.type === "helper:make" ? "helper:made" : "helper:optionsSchema", id:d.id, page:PAGE,
               error:String(e && e.message || e), problems:[], options:[] };
@@ -2201,10 +4283,12 @@
     each(OPTS, function(op){
       if (op.key === "check") return;
       var lbl = document.createElement("span"); lbl.className = "lbl"; lbl.setAttribute("data-for", op.key);
+      if (op.kinds) lbl.setAttribute("data-kinds", op.kinds.join(" "));
       lbl.textContent = op.key === "regroup" ? "Carrying" : op.label;
       host.appendChild(lbl);
       var g = document.createElement("div");
       g.className = "modes small"; g.setAttribute("role", "group"); g.setAttribute("aria-label", op.label); g.setAttribute("data-for", op.key);
+      if (op.kinds) g.setAttribute("data-kinds", op.kinds.join(" "));
       var vals = op.type === "toggle" ? [{ v:false, label:"No" }, { v:true, label:"Yes" }] : op.values;
       each(vals, function(v){
         var btn = document.createElement("button");
@@ -2221,7 +4305,7 @@
       b.setAttribute("aria-pressed", String(String(S.gen[b.getAttribute("data-key")]) === b.getAttribute("data-v")));
     });
     each(OPTS, function(op){
-      var show = !op.modes || op.modes.indexOf(S.gen.mode) >= 0;
+      var show = (!op.modes || op.modes.indexOf(S.gen.mode) >= 0) && (!op.kinds || op.kinds.indexOf(S.gen.kind) >= 0);
       each(document.querySelectorAll('#makerBody [data-for="' + op.key + '"]'), function(el){ el.hidden = !show; el.style.display = show ? "" : "none"; });
     });
     var rl = document.querySelector('#makerBody .lbl[data-for="regroup"]');
@@ -2230,21 +4314,31 @@
   }
   function paintSample(){
     var el = $("sample"), r = null;
+    if (S.gen.mode === "lines" && S.gen.kind === "word"){ el.innerHTML = "Makes problems like: <b>a story problem</b>, written by the Story Problem page — you write the number sentence, work it out, and answer in a sentence."; return; }
     try { r = makeOne(S.gen); } catch (e){ r = null; }
     el.innerHTML = r ? "Makes problems like: <b>" + esc(qText(r.p)) + "</b>" : "Those choices don’t make a problem — try different ones.";
   }
   function fromMaker(G){
+    if (G.mode === "lines" && G.kind === "word"){
+      $("genMsg").textContent = "Writing a story…";
+      wpMakeSet(1, G, function(list){
+        if (!list.length || !list[0]._p){ $("genMsg").textContent = "Couldn’t get a story just now — try again."; return; }
+        $("genMsg").textContent = "";
+        openProblem(list[0]._p);
+      });
+      return;
+    }
     var r = makeOne(G);
     if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
     $("genMsg").textContent = r.exact ? "" : "Couldn’t match every setting, so this one is a little different.";
     if (r.p.op === "div"){ S.ans = r.p.ans; r.p.places = S.places; }
-    setProblem(r.p);
-    var first = M.focusOrder.filter(function(c){ return c.main; })[0];
-    if (first){ S.sel = first.id; render({ focus:!EMBED }); }
+    if (r.p.op === "lines") r.p.q = prettyQ(r.p.q, r.p.kind);
+    openProblem(r.p);
   }
   $("genBtn").addEventListener("click", function(){ fromMaker(S.gen); });
   $("againBtn").addEventListener("click", function(){
     var G = JSON.parse(JSON.stringify(S.gen)); G.mode = P.op;
+    if (P.op === "lines"){ G.kind = P.kind; }
     fromMaker(G);
   });
   $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
@@ -2277,13 +4371,21 @@
     var op = sp.get("op"), hint = null;
     if (op !== null){
       op = op.trim().toLowerCase();
-      hint = { add:"add", sub:"sub", mul:"mul", div:"div", plus:"add", minus:"sub", times:"mul", divide:"div" }[op] || null;
-      if (!hint) notes.push("“op” can be add, sub, mul or div");
+      hint = { add:"add", sub:"sub", mul:"mul", div:"div", plus:"add", minus:"sub", times:"mul", divide:"div", lines:"lines", line:"lines" }[op] || null;
+      if (!hint) notes.push("“op” can be add, sub, mul, div or lines");
     }
     if (sp.has("q")){
-      var raw = rawParam("q") || "", r = parseProblem(raw, hint);
-      if (!r.err && hint && r.p.op !== hint) r = { err:"its op says " + hint + " but the problem uses another sign" };
-      if (r.err) notes.unshift("its problem, “" + esc(raw) + "”, couldn’t be read: " + r.err);
+      var raw = rawParam("q") || "", r, kd = sp.get("kind");
+      if (kd !== null){ kd = kd.trim().toLowerCase(); kd = { story:"word", stories:"word" }[kd] || kd; if (KINDS.indexOf(kd) < 0){ notes.push("“kind” can be expression, equation, inequality, system or word"); kd = null; } }
+      if (hint === "lines" || kd){
+        r = parseLinesProblem(raw, kd);
+        if (!r.err && r.p.kind === "word" && sp.get("wp")) r.p.wp = sp.get("wp");
+      } else {
+        r = parseProblem(raw, hint);
+        if (r.err && !hint){ var r2 = parseLinesProblem(raw, null); if (!r2.err) r = r2; }
+        if (!r.err && hint && r.p.op !== hint) r = { err:"its op says " + hint + " but the problem uses another sign" };
+      }
+      if (r.err) notes.unshift("its problem, “" + esc(raw) + "”, couldn’t be read: " + String(r.err).replace(/\.$/, ""));
       else {
         out = r.p;
         if (out.op === "div"){                          // a link's division is the same everywhere: remainder, 3 places unless it says
@@ -2300,10 +4402,11 @@
   function save(){
     if (EMBED || !P) return;
     try {
-      localStorage.setItem(KEY, JSON.stringify({ q:qParam(P), op:P.op, check:S.check, ans:S.ans, places:S.places, gen:S.gen,
+      localStorage.setItem(KEY, JSON.stringify({ q:qParam(P), op:P.op, kind:P.kind || "", wp:P.wp || "", check:S.check, ans:S.ans, places:S.places, gen:S.gen,
         maker:$("maker").open, theme:document.documentElement.getAttribute("data-theme") || "",
         work:{ key:keyOf(P), v:W.v, x:W.x, br:W.br, shown:W.shown, mk:W.mk, first:W.first, mistakes:W.mistakes,
-               hints:W.hints, checks:W.checks, done:W.done, revealed:W.revealed, reported:W.reported } }));
+               hints:W.hints, checks:W.checks, done:W.done, revealed:W.revealed, reported:W.reported,
+               lines:W.lines, lc:W.lc, lshown:W.lshown, lmk:W.lmk, lfirst:W.lfirst, lseq:W.lseq } }));
     } catch (e){}
   }
   var SAVED = null;
@@ -2318,7 +4421,8 @@
       if (v.gen && typeof v.gen === "object") S.gen = normOpts(v.gen);
       if (v.maker) $("maker").open = true;
       if (typeof v.q === "string"){
-        var r = parseProblem(v.q, v.op);
+        var r = v.op === "lines" ? parseLinesProblem(v.q, KINDS.indexOf(v.kind) >= 0 ? v.kind : null) : parseProblem(v.q, v.op);
+        if (!r.err && r.p.op === "lines" && v.wp) r.p.wp = v.wp;
         if (!r.err){ if (r.p.op === "div"){ r.p.ans = S.ans; r.p.places = S.places; } SAVED = { p:r.p, work:v.work }; }
       }
     } catch (e){}
@@ -2406,13 +4510,13 @@
   if (SAVED && SAVED.work && !REVEAL_ON_LOAD && SAVED.work.key === keyOf(start)){
     W = newWork();
     var sw = SAVED.work;
-    ["v", "x", "br", "shown", "mk", "first"].forEach(function(k){ if (sw[k] && typeof sw[k] === "object") W[k] = sw[k]; });
-    ["mistakes", "hints", "checks"].forEach(function(k){ if (typeof sw[k] === "number") W[k] = sw[k]; });
+    ["v", "x", "br", "shown", "mk", "first", "lines", "lc", "lshown", "lmk", "lfirst"].forEach(function(k){ if (sw[k] && typeof sw[k] === "object") W[k] = sw[k]; });
+    ["mistakes", "hints", "checks", "lseq"].forEach(function(k){ if (typeof sw[k] === "number") W[k] = sw[k]; });
     W.done = !!sw.done; W.revealed = !!sw.revealed; W.reported = !!sw.reported;
     keep = true;
   }
   setProblem(start, keep);
-  if (REVEAL_ON_LOAD) showAll(true);
+  if (REVEAL_ON_LOAD){ if (P.op === "lines"){ if (LP) lShowAll(true); } else showAll(true); }
   if (U && U.msg){ $("linkNote").innerHTML = U.msg; $("linkNote").hidden = false; }
 
 })();
