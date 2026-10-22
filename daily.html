@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Problem of the Day</title>
+<meta name="description" content="One math problem a day, the same for everyone on that date, so a whole class can do it together. Check your answer, see the steps, and keep your streak going.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arithmetic Helpers">
+<meta property="og:title" content="Problem of the Day · Arithmetic Helpers">
+<meta property="og:description" content="One math problem a day, the same for everyone on that date, so a whole class can do it together. Check your answer, see the steps, and keep your streak going.">
+<meta property="og:url" content="https://chrisdfennell.github.io/arithmetic-helpers/daily.html">
+<meta property="og:image" content="https://chrisdfennell.github.io/arithmetic-helpers/icons/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
+<meta name="twitter:card" content="summary_large_image">
+<script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
+<script src="qr.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFEC; --surface:#F8F9F7; --surface-2:#E2E6E2;
+    --ink:#18201C; --ink-2:#4A5550; --ink-3:#7B8681; --rule:#C8CFCA;
+    --key:#4338CA; --key-bg:#E2E3F6; --key-line:#9EA3E0;
+    --warm:#9A5410; --warm-bg:#F6E5D2;
+    --focus:#4338CA;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C; --pro:#A21CAF; --exp:#BE185D;
+    --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
+    --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
+      --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
+      --key:#A5B4FC; --key-bg:#23264A; --key-line:#4F55A0;
+      --warm:#E8A45C; --warm-bg:#37270F;
+      --focus:#A5B4FC;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF;
+      --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
+    --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
+    --key:#A5B4FC; --key-bg:#23264A; --key-line:#4F55A0;
+    --warm:#E8A45C; --warm-bg:#37270F;
+    --focus:#A5B4FC;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF;
+    --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  [hidden]{display:none !important}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:22px}
+  @media (max-width:520px){.page{padding:22px 16px 56px;gap:18px}}
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(32px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;
+    overflow-wrap:anywhere}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:60ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;background:var(--surface);color:var(--ink-2);
+    border:1px solid var(--rule);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+  button:focus-visible,a:focus-visible,iframe:focus-visible,summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);min-width:0}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;margin:0}
+  .panel-head span{font-size:13px;color:var(--ink-3)}
+  .blk{padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+  .blk p{margin:0;font-size:14px;color:var(--ink-2)}
+  .actions{display:flex;gap:8px 10px;flex-wrap:wrap;align-items:center}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);border:0;border-radius:9px;
+    padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .go:hover{filter:brightness(1.08)}
+  .ghost{font-family:var(--f-body);font-size:14px;font-weight:600;background:transparent;color:var(--ink);border:1px solid var(--rule);
+    border-radius:9px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+  .ghost:hover{border-color:var(--ink-3);background:var(--surface-2)}
+  .msg{font-size:13px;color:var(--ink-3)}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--c);display:inline-block;flex:none}
+
+  /* ---- today ---- */
+  .banner{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;font-size:14px;color:var(--ink-2);background:var(--key-bg);
+    border-left:4px solid var(--key);border-radius:6px 12px 12px 6px;padding:10px 14px}
+  .banner b{color:var(--ink)}
+  .banner a{font-weight:600;color:var(--ink)}
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);gap:22px;align-items:start}
+  @media (max-width:960px){.layout{grid-template-columns:minmax(0,1fr)}}
+  .side{display:flex;flex-direction:column;gap:22px;min-width:0}
+  .stage{overflow:hidden}
+  .stage-head{display:flex;flex-direction:column;gap:6px;padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .when{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+  .date-words{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:18px}
+  .badge{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--key);
+    background:var(--key-bg);border:1px solid var(--key-line);border-radius:999px;padding:3px 10px;white-space:nowrap}
+  .tp{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+  .tp .msg{font-weight:400}
+  .blurb{margin:0;font-size:14px;color:var(--ink-2)}
+  .frame{display:block;width:100%;border:0;height:420px;background:var(--paper)}
+  .frame-note{padding:16px 18px;color:var(--warm);font-size:14px}
+  .result{display:flex;flex-direction:column;gap:12px;padding:14px 18px;border-top:1px solid var(--rule);background:var(--surface)}
+  .verdict{font-size:15px;color:var(--ink-2);min-height:1.5em}
+  .verdict b{font-weight:600}
+  .verdict .ok{color:var(--ok)} .verdict .later{color:var(--later)} .verdict .warm{color:var(--warm)} .verdict .no{color:var(--no)}
+  .after{display:flex;flex-direction:column;gap:10px}
+  .tomorrow{font-size:14px;color:var(--ink-2)}
+  .tomorrow b{white-space:nowrap;font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+  .solved{border-radius:12px;padding:12px 14px;background:var(--ok-bg);border:1px solid var(--ok);display:flex;align-items:center;gap:12px}
+  .solved.warmish{background:var(--warm-bg);border-color:var(--warm)}
+  .solved .big-ic{font-family:var(--f-display);font-weight:800;font-size:30px;line-height:1;color:var(--ok);flex:none}
+  .solved.warmish .big-ic{color:var(--warm)}
+  .solved .txt{font-size:14.5px;color:var(--ink)}
+  .solved .txt span{display:block;color:var(--ink-2);font-size:13.5px}
+  .celebrate{animation:pop .9s cubic-bezier(.2,.9,.3,1.3) 1}
+  @keyframes pop{
+    0%{transform:scale(.94);box-shadow:0 0 0 0 color-mix(in srgb, var(--ok) 55%, transparent)}
+    45%{transform:scale(1.03);box-shadow:0 0 0 12px color-mix(in srgb, var(--ok) 0%, transparent)}
+    100%{transform:scale(1);box-shadow:0 0 0 0 transparent}
+  }
+  .bump{animation:bump .8s ease-out 1}
+  @keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.25)}100%{transform:scale(1)}}
+
+  /* ---- streak ---- */
+  .streak-top{display:flex;align-items:center;gap:14px;padding:16px 18px 6px}
+  .big{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:52px;line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--key);display:inline-block}
+  .streak-top .what{font-size:15px;font-weight:600}
+  .streak-top .what span{display:block;font-weight:400;color:var(--ink-2);font-size:13.5px;margin-top:2px}
+  .cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:10px 18px 4px}
+  .cal .c{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+  .cal .c small{font-family:var(--f-mono);font-size:10px;color:var(--ink-3);line-height:1.2}
+  .cal .m{width:100%;max-width:38px;aspect-ratio:1/1;border-radius:9px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;
+    font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--ink-3)}
+  .cal .m.y{background:var(--ok-bg);color:var(--ok)}
+  .cal .m.a{background:var(--later-bg);color:var(--later)}
+  .cal .m.x{background:var(--warm-bg);color:var(--warm)}
+  .cal .m.late{background:transparent;box-shadow:inset 0 0 0 1.5px currentColor}
+  .cal .m.today{box-shadow:inset 0 0 0 2px var(--key)}
+  .cal .m.today.y,.cal .m.today.a,.cal .m.today.x{box-shadow:inset 0 0 0 2px currentColor}
+  .cal a.m{text-decoration:none}
+  .cal a.m:hover{filter:brightness(.96);box-shadow:inset 0 0 0 1.5px var(--ink-3)}
+  .legend{display:flex;flex-wrap:wrap;gap:4px 12px;padding:6px 18px 0;font-size:12px;color:var(--ink-3)}
+  .legend b{font-family:var(--f-mono)}
+  .tallies{display:flex;gap:8px 22px;flex-wrap:wrap;padding:12px 18px 16px;font-size:13.5px;color:var(--ink-2)}
+  .tallies b{font-family:var(--f-display);font-stretch:112%;font-size:20px;color:var(--ink);margin-right:4px}
+
+  /* ---- week ---- */
+  .wlist{list-style:none;margin:0;padding:0}
+  .wlist li{display:grid;grid-template-columns:minmax(0,9.5em) minmax(0,1fr) auto;gap:4px 16px;align-items:start;padding:12px 18px;border-bottom:1px dashed var(--rule)}
+  .wlist li:last-child{border-bottom:0}
+  .wlist li.is-today{background:var(--key-bg)}
+  .wlist .d{display:flex;flex-direction:column;gap:2px}
+  .wlist .d b{font-family:var(--f-display);font-stretch:112%;font-size:15px}
+  .wlist .d small{font-size:12px;color:var(--ink-3)}
+  .wlist .q{font-size:15px;overflow-wrap:anywhere;min-width:0}
+  .wlist .q .tp{font-size:12.5px;color:var(--ink-3);font-weight:500;display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap}
+  .wlist .q .tp .badge{font-size:10px;padding:1px 8px}
+  .wlist .links{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+  .small-link{font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:8px;padding:5px 10px;white-space:nowrap}
+  .small-link:hover{border-color:var(--ink-3);background:var(--surface-2)}
+  @media (max-width:640px){
+    .wlist li{grid-template-columns:minmax(0,1fr);padding:12px 14px}
+    .wlist .links{justify-content:flex-start}
+  }
+  details.key > summary{cursor:pointer;padding:14px 18px;font-weight:600;font-size:14.5px}
+  .klist{margin:0;padding:0 18px 16px 2.6em;display:flex;flex-direction:column;gap:6px;font-size:14.5px}
+  .klist b{font-weight:600}
+  .print-only{display:none}
+  @media (max-width:520px){
+    .stage-head,.result,.blk{padding-left:14px;padding-right:14px}
+    .streak-top,.cal,.legend,.tallies{padding-left:14px;padding-right:14px}
+    .panel-head{padding-left:14px;padding-right:14px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .celebrate,.bump{animation:none}
+  }
+  @media print{
+    @page{margin:16mm 14mm}
+    body{background:#fff;color:#000}
+    .theme-btn,.sitenav,.actions,.side .teach,.frame-note,.no-print{display:none !important}
+    .panel{box-shadow:none;border-color:#bbb}
+    .print-only{display:block}
+    .page{padding:0;max-width:none}
+    body.week .masthead,body.week #weekScreen{display:none !important}
+    .print-sheet h2{font-family:var(--f-display);font-size:20px;margin:0 0 4px}
+    .print-sheet .sub{font-size:12.5px;color:#444;margin:0 0 14px}
+    .print-sheet ol{margin:0;padding-left:1.6em;display:flex;flex-direction:column;gap:10px}
+    .print-sheet li{break-inside:avoid;font-size:14px}
+    .print-sheet li .day{font-weight:700}
+    .print-sheet li .tpn{color:#444;font-size:12.5px}
+    .print-sheet li .work{height:42px;border-bottom:1px solid #ccc}
+    .print-key{break-before:page;page-break-before:always}
+    .print-key li{gap:4px}
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow" id="eyebrow">One a day · the same for everyone</div>
+      <h1 id="h1">Problem of the <em>day</em></h1>
+      <p class="tagline" id="tagline">Everyone who opens this page today gets the same problem, so a whole class can do it together.
+        Work it out on paper, check your answer, and come back tomorrow to keep your streak going.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <!-- ===================== today (or one day) ===================== -->
+  <div id="dayView" style="display:flex;flex-direction:column;gap:18px">
+    <div class="banner" id="banner" hidden></div>
+    <div class="layout">
+      <section class="panel stage" aria-labelledby="dateWords">
+        <div class="stage-head">
+          <div class="when"><span class="date-words" id="dateWords"></span><span class="badge" id="dayTheme"></span></div>
+          <span class="tp" id="stageTopic"></span>
+          <p class="blurb" id="blurb"></p>
+        </div>
+        <iframe class="frame" id="frame" title="The problem of the day"></iframe>
+        <div class="frame-note" id="frameNote" hidden></div>
+        <div class="result">
+          <div class="verdict" id="verdict" role="status" aria-live="polite"></div>
+          <div class="after" id="after" hidden>
+            <div class="actions">
+              <a class="go" id="stepsLink" href="#" target="_blank" rel="noopener">See the steps <span aria-hidden="true">↗</span></a>
+              <a class="ghost" id="weekLink2" href="#">This week’s problems</a>
+            </div>
+            <span class="tomorrow" id="tomorrow"></span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="panel" id="streakPanel" aria-labelledby="streakHead">
+          <div class="panel-head"><h2 id="streakHead">Your streak</h2><span>kept on this device</span></div>
+          <div class="streak-top"><span class="big" id="streakN">0</span>
+            <div class="what"><span style="display:inline;color:var(--ink);font-size:15px;font-weight:600;margin:0" id="streakUnit">days in a row</span><span id="streakNote"></span></div></div>
+          <div class="cal" id="cal" role="list" aria-label="The last 14 days"></div>
+          <div class="legend"><span><b>✓</b> first try</span><span><b>~</b> after more tries</span><span><b>✗</b> looked at the work</span><span>blank: missed</span></div>
+          <div class="tallies"><span><b id="bestN">0</b>best streak</span><span><b id="totalN">0</b>solved in all</span></div>
+        </section>
+
+        <section class="panel" id="bonus" hidden aria-labelledby="bonusHead">
+          <div class="panel-head"><h2 id="bonusHead">Weekend bonus</h2><span>just for fun</span></div>
+          <div class="blk">
+            <p id="bonusText"></p>
+            <div class="actions"><a class="ghost" id="bonusLink" href="#">Start the speed round <span aria-hidden="true">→</span></a></div>
+          </div>
+        </section>
+
+        <section class="panel teach" aria-labelledby="teachHead">
+          <div class="panel-head"><h2 id="teachHead">For teachers</h2></div>
+          <div class="blk">
+            <p>Every student gets this same problem on this date, with no accounts. Preview or print the whole week, with an answer key.</p>
+            <div class="actions">
+              <a class="ghost" id="weekLink" href="#">This week’s problems</a>
+              <button type="button" class="ghost" id="shareBtn">Share this problem</button>
+              <button type="button" class="ghost" id="qrBtn" hidden>QR code</button>
+            </div>
+            <span class="msg" id="shareMsg" role="status" aria-live="polite"></span>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ===================== the week (teachers) ===================== -->
+  <div id="weekView" hidden style="display:flex;flex-direction:column;gap:18px">
+    <div id="weekScreen" style="display:flex;flex-direction:column;gap:18px">
+      <section class="panel" aria-labelledby="weekHead">
+        <div class="panel-head"><h2 id="weekHead"></h2>
+          <div class="actions">
+            <a class="ghost" id="prevWeek" href="#" style="padding:6px 11px;font-size:13px">← Week before</a>
+            <a class="ghost" id="nextWeek" href="#" style="padding:6px 11px;font-size:13px">Week after →</a>
+            <button type="button" class="go" id="printBtn" style="padding:7px 13px;font-size:13.5px">Print the week</button>
+          </div>
+        </div>
+        <ol class="wlist" id="wlist"></ol>
+      </section>
+      <section class="panel">
+        <details class="key" id="keyDetails"><summary>Answer key</summary><ol class="klist" id="klist"></ol></details>
+      </section>
+      <div class="actions"><a class="ghost" id="backToday" href="daily.html">← Today’s problem</a>
+        <span class="msg">The print-out has the problems on the first page and the answer key on its own page.</span></div>
+    </div>
+    <div class="print-only print-sheet" id="printSheet"></div>
+  </div>
+</div>
+
+<script>
+/* daily.html: the Problem of the Day.
+   One problem a day, the same for everyone on that date, with no server: the problem is worked out from the
+   local date (YYYY-MM-DD) alone. The schedule picks the topic and how hard it is; a seeded generator (a hash of
+   the date and the topic) picks the numbers. The problem plays in a frame from its own helper page,
+     <page>?<params>&practice=check&embed=1&theme=<light|dark>
+   so the helper grades it and reports {type:"helper:checked", detail} and {type:"helper:height", h} to this page.
+   The helper in the frame writes the practice log itself (progress.js), so this page keeps only its streak record.
+
+   URL parameters
+     date=YYYY-MM-DD   that day's problem. Today (or no date): the normal page. A past day: "catching up" (it counts
+                       toward the total solved, not the streak). A future day: a teacher's preview (nothing recorded).
+     view=today|week   week = the Monday–Sunday list for teachers (of the week holding date, or this week),
+                       with links, an answer key and a print layout (problems first, the answer key on its own page).
+     theme=light|dark  the colours for this visit (not saved; the theme button saves its choice on this device).
+     The address bar is kept in step (history.replaceState): date (left out for today) and view=week; never the theme.
+     Testing only, and only on 127.0.0.1 / localhost: today=YYYY-MM-DD or now=YYYY-MM-DDTHH:MM moves this page's
+     clock (the clock keeps ticking from there). window.__daily has the same hooks for test pages.
+
+   THE SCHEDULE (all from the date; local time, day numbers counted in UTC so DST can't shift a day)
+     Mon Warm-up Monday (level 1, easier) · Tue–Thu (level 2) · Fri Challenge Friday (level 3: harder settings,
+     two-step stories) · Sat, Sun Weekend puzzle (level 4).
+     Weekdays walk through a "deck" of every topic with weekday:true, reshuffled each time round (seeded by the round
+     number), so a week mixes five different helpers and every helper comes up once per round. Weekends do the same
+     with the topics that have weekend:true. A round never starts with the topic the last round ended on.
+
+   ADDING A TOPIC: add an entry to TOPICS below (probability and exponents were added this way, from 2026-10-26):
+       { id:"probability", page:"probability.html", name:"Probability", title:"…", c:"pro",     // c: a colour token (--pro)
+         weekday:true, weekend:true, from:"2026-11-02",
+         make:function(r, L){ … return Q([["mode", "…"], ["q", "…"]], "the problem as text", "the answer"); } }
+     - make(r, L): r() is the seeded random number generator (0 ≤ r() < 1; use ri(r, lo, hi), pick(r, list),
+       chance(r, p)); L is the level 1–4 (see above); a third argument, the date key, lets an existing topic gain
+       a new kind of problem from a date on (test the date before calling r(), as the story topic does for its
+       algebra stories, so earlier dates keep their numbers). It returns Q(params, text, answer): params as [key, value]
+       pairs in the forms the helper's own "URL parameters" comment documents (Q encodes them), the problem as one
+       line of text (the week list and the print-out show it) and the answer (the answer key shows it).
+       Make the numbers "nice" (whole or clean answers) and use only r() for randomness, so a date always gives
+       the same problem.
+     - from: the first date the topic can be picked. Dates before it keep the rotation they had, so problems already
+       set (and printed) don't change. Always give a new topic a from date in the future. Changing an existing
+       make() changes that topic's problems on every date, past ones too.
+     - Add the colour token (--pro: light and dark) to the three CSS blocks at the top if it's new.
+     - Then run the verification page (it opens every generated link) before publishing.
+
+   Record: localStorage["daily-problem"] = { v:1, best:<best streak seen>, d:{ "YYYY-MM-DD":{ m, n, h, at, late } } }
+     m: "y" right first try · "a" right after more tries or a hint · "x" looked at the work · "t" tried, not right yet
+     n: wrong tries · h:1 a hint was used · at: when it was settled (ms) · late:1 done after its day (catching up).
+     The streak counts days in a row whose problem was right (y or a) on the day; today not done yet doesn't break
+     it; a missed day does. A problem opened as today's still counts as on the day if it's finished before 4 a.m.
+     the next morning. Every read and write is in try/catch: no localStorage just means nothing is kept.
+     The theme choice: localStorage["daily-page-theme"]. */
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  function esc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+  /* ===================== seeded randomness ===================== */
+  var imul = Math.imul || function(a, b){
+    var ah = (a >>> 16) & 0xffff, al = a & 0xffff, bh = (b >>> 16) & 0xffff, bl = b & 0xffff;
+    return ((al * bl) + (((ah * bl + al * bh) << 16) >>> 0) | 0);
+  };
+  function hash(str){                         // cyrb53, the low 32 bits are enough for a seed
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0, ch; i < str.length; i++){ ch = str.charCodeAt(i); h1 = imul(h1 ^ ch, 2654435761); h2 = imul(h2 ^ ch, 1597334677); }
+    h1 = imul(h1 ^ (h1 >>> 16), 2246822507) ^ imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = imul(h2 ^ (h2 >>> 16), 2246822507) ^ imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (h1 ^ h2) >>> 0;
+  }
+  function rng(seed){                         // mulberry32
+    var a = seed >>> 0;
+    return function(){
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = imul(t ^ (t >>> 15), t | 1);
+      t ^= t + imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function ri(r, lo, hi){ return lo + Math.floor(r() * (hi - lo + 1)); }
+  function pick(r, a){ return a[Math.floor(r() * a.length)]; }
+  function chance(r, p){ return r() < p; }
+  function shuffle(a, r){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function nz(r, lo, hi){ var v; do { v = ri(r, lo, hi); } while (v === 0); return v; }
+
+  /* ===================== numbers ===================== */
+  function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while (b){ var t = a % b; a = b; b = t; } return a; }
+  function lcm(a, b){ return a / gcd(a, b) * b; }
+  function F(n, d){ if (d < 0){ n = -n; d = -d; } var g = gcd(n, d) || 1; return { n:n / g, d:d / g }; }
+  function fadd(a, b){ return F(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function fsub(a, b){ return F(a.n * b.d - b.n * a.d, a.d * b.d); }
+  function fmul(a, b){ return F(a.n * b.n, a.d * b.d); }
+  function fdiv(a, b){ return F(a.n * b.d, a.d * b.n); }
+  function M(s){ return String(s).replace(/-/g, "−"); }                 // the real minus sign, for showing
+  function fS(f){ return M(f.d === 1 ? String(f.n) : f.n + "/" + f.d); }  // 7/4, −3
+  function mixS(f){                                                     // 1 3/4
+    if (f.d === 1) return M(String(f.n));
+    var s = f.n < 0 ? "−" : "", n = Math.abs(f.n), w = Math.floor(n / f.d), rm = n % f.d;
+    return s + (w ? w + " " : "") + rm + "/" + f.d;
+  }
+  function dec(v, places){                    // an integer count of 10^-places, as a decimal: dec(2915, 2) = "29.15"
+    var neg = v < 0, s = String(Math.abs(v));
+    while (s.length <= places) s = "0" + s;
+    var i = s.length - places, out = places ? s.slice(0, i) + "." + s.slice(i) : s;
+    if (places) out = out.replace(/0+$/, "").replace(/\.$/, "");
+    return (neg ? "-" : "") + out;
+  }
+  function cents(c){ return "$" + Math.floor(c / 100) + "." + ("0" + (c % 100)).slice(-2); }
+  function coprime(r, d){ var n; do { n = ri(r, 1, d - 1); } while (gcd(n, d) !== 1); return n; }
+  function neg(v){ return v < 0 ? "(" + M(v) + ")" : String(v); }        // −3 → (−3) inside a sum
+  function negA(v){ return v < 0 ? "(" + v + ")" : String(v); }
+  var SUP = { "0":"⁰", "1":"¹", "2":"²", "3":"³", "4":"⁴", "5":"⁵", "6":"⁶", "7":"⁷", "8":"⁸", "9":"⁹" };
+  function sup(n){ return String(n).replace(/\d/g, function(c){ return SUP[c]; }); }
+  function list(a){ return a.length < 2 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+  // a linear expression from [coefficient, letter] pairs ("" = the number on its own): [[2,"x"],[-1,"y"],[3,""]] → 2x − y + 3
+  function lin(terms, ascii){
+    var out = "";
+    terms.forEach(function(t){
+      var c = t[0], v = t[1];
+      if (!c) return;
+      var a = Math.abs(c), body = v ? (a === 1 ? v : a + v) : String(a);
+      if (!out) out = (c < 0 ? (ascii ? "-" : "−") : "") + body;
+      else out += ascii ? (c < 0 ? "-" : "+") + body : (c < 0 ? " − " : " + ") + body;
+    });
+    return out || "0";
+  }
+  // y = mx + b with fractions: "y = 1/2 x − 3", or ascii for a link: "y=1/2x-3"
+  function lineEq(m, b, ascii){
+    var s = "", mm = Math.abs(m.n);
+    if (m.n !== 0){
+      var c = m.d === 1 ? (mm === 1 ? "" : String(mm)) : mm + "/" + m.d + (ascii ? "" : " ");
+      s = (m.n < 0 ? (ascii ? "-" : "−") : "") + c + "x";
+    }
+    if (b.n !== 0 || !s){
+      var bs = b.d === 1 ? String(Math.abs(b.n)) : Math.abs(b.n) + "/" + b.d;
+      s += s ? (ascii ? (b.n < 0 ? "-" : "+") : (b.n < 0 ? " − " : " + ")) + bs : (b.n < 0 ? (ascii ? "-" : "−") : "") + bs;
+    }
+    return (ascii ? "y=" : "y = ") + s;
+  }
+  function pt(x, y, ascii){ return ascii ? "(" + x + "," + y + ")" : "(" + M(x) + ", " + M(y) + ")"; }
+  function plural(n, one, many){ return n + " " + (n === 1 ? one : many); }
+  function an(n){ return /^(8|11|18)(\d\d)?$|^8/.test(String(n)) ? "an" : "a"; }      // an 8, an 11, an 18; a 12
+
+  // a problem: its link parameters (as [key, value] pairs), its text and its answer
+  function Q(pairs, text, answer){
+    return { params:pairs.map(function(kv){ return kv[0] + "=" + encodeURIComponent(String(kv[1])); }).join("&"), text:text, answer:answer };
+  }
+
+  var FRPAIRS = [[2,3],[3,4],[4,6],[2,5],[3,8],[4,5],[6,8],[3,5],[2,9],[4,10],[6,9],[2,8],[4,12],[8,12],[3,6]];
+  function frPair(r){ var p = pick(r, FRPAIRS); return chance(r, .5) ? [p[0], p[1]] : [p[1], p[0]]; }
+  var NAMES = ["Maya", "Leo", "Aisha", "Kenji", "Sofia", "Omar", "Priya", "Mateo", "Zara", "Noah", "Lena", "Kofi", "Ines", "Ravi",
+               "Mei", "Sam", "Ana", "Jonah", "Yuki", "Elif", "Tariq", "Nia", "Diego", "Hana", "Ben", "Ada", "Luca", "Rosa"];
+  function names(r){ var a = pick(r, NAMES), b; do { b = pick(r, NAMES); } while (b === a); return [a, b]; }
+  var UNITS = ["cm", "m", "in", "ft"];
+  var NEW_FROM = "2026-10-26";     // probability, exponents and the algebra stories join the rotation on this Monday
+
+  /* ===================== the topics =====================
+     make(r, L) → Q(params, text, answer). See "ADDING A TOPIC" at the top. */
+  var TOPICS = [
+    { id:"addition", page:"addition.html", name:"Addition", title:"The Carry Column", c:"add", weekday:true, weekend:false,
+      make:function(r, L){
+        var a, b;
+        if (L <= 1){
+          do { a = ri(r, 146, 689); b = ri(r, 127, 389); } while (a % 10 + b % 10 < 10 || a % 10 === 0 || b % 10 === 0);
+          return Q([["q", a + "+" + b]], a + " + " + b, String(a + b));
+        }
+        if (L === 2){
+          do { a = ri(r, 105, 899); b = ri(r, 105, 999); } while (a % 10 === 0 || b % 10 === 0);
+          return Q([["q", dec(a, 1) + "+" + dec(b, 2)]], dec(a, 1) + " + " + dec(b, 2), dec(a * 10 + b, 2));
+        }
+        var p = frPair(r), n1 = coprime(r, p[0]), n2 = coprime(r, p[1]), w1 = ri(r, 1, 5), w2 = ri(r, 1, 4);
+        var x = w1 + " " + n1 + "/" + p[0], y = w2 + " " + n2 + "/" + p[1];
+        return Q([["q", x + "+" + y]], x + " + " + y, mixS(fadd(F(w1 * p[0] + n1, p[0]), F(w2 * p[1] + n2, p[1]))));
+      } },
+    { id:"subtraction", page:"subtraction.html", name:"Subtraction", title:"The Borrow Bank", c:"sub", weekday:true, weekend:false,
+      make:function(r, L){
+        var a, b;
+        if (L <= 1){
+          do { a = ri(r, 402, 950); b = ri(r, 126, a - 100); } while (a % 10 >= b % 10);
+          return Q([["q", a + "-" + b]], a + " − " + b, String(a - b));
+        }
+        if (L === 2){
+          if (chance(r, .5)){
+            a = ri(r, 3, 9) * 1000 + ri(r, 1, 7);
+            do { b = ri(r, 1234, a - 600); } while (b % 10 <= a % 10 || Math.floor(b / 10) % 10 === 0);
+            return Q([["q", a + "-" + b]], a + " − " + b, String(a - b));
+          }
+          do { a = ri(r, 105, 299); b = ri(r, 150, a * 10 - 150); } while (a % 10 === 0 || b % 10 === 0);
+          return Q([["q", dec(a, 1) + "-" + dec(b, 2)]], dec(a, 1) + " − " + dec(b, 2), dec(a * 10 - b, 2));
+        }
+        var p, n1, n2;
+        do { p = frPair(r); n1 = coprime(r, p[0]); n2 = coprime(r, p[1]); } while (n1 * p[1] >= n2 * p[0]);
+        var w1 = ri(r, 3, 7), w2 = ri(r, 1, w1 - 1), x = w1 + " " + n1 + "/" + p[0], y = w2 + " " + n2 + "/" + p[1];
+        return Q([["q", x + "-" + y]], x + " − " + y, mixS(fsub(F(w1 * p[0] + n1, p[0]), F(w2 * p[1] + n2, p[1]))));
+      } },
+    { id:"multiplication", page:"multiplication.html", name:"Multiplication", title:"The Product Ladder", c:"mul", weekday:true, weekend:false,
+      make:function(r, L){
+        var a, b;
+        if (L <= 1){
+          do { a = ri(r, 13, 49); b = ri(r, 12, 29); } while (a % 10 === 0 || b % 10 === 0 || a === b);
+          return Q([["q", a + "*" + b]], a + " × " + b, String(a * b));
+        }
+        if (L === 2){
+          if (chance(r, .5)){
+            do { a = ri(r, 104, 489); b = ri(r, 13, 38); } while (a % 10 === 0 || b % 10 === 0);
+            return Q([["q", a + "*" + b]], a + " × " + b, String(a * b));
+          }
+          do { a = ri(r, 12, 99); } while (a % 10 === 0);
+          b = ri(r, 3, 9);
+          return Q([["q", dec(a, 1) + "*" + b]], dec(a, 1) + " × " + b, dec(a * b, 1));
+        }
+        if (chance(r, .5)){
+          do { a = ri(r, 12, 89); b = ri(r, 12, 49); } while (a % 10 === 0 || b % 10 === 0);
+          return Q([["q", dec(a, 1) + "*" + dec(b, 1)]], dec(a, 1) + " × " + dec(b, 1), dec(a * b, 2));
+        }
+        var d1 = pick(r, [2, 3, 4, 5, 6, 8]), d2 = pick(r, [2, 3, 4, 5, 6, 8]), n1 = coprime(r, d1), n2 = coprime(r, d2), w = ri(r, 1, 4);
+        var x = w + " " + n1 + "/" + d1, y = n2 + "/" + d2;
+        return Q([["q", x + "*" + y]], x + " × " + y, mixS(fmul(F(w * d1 + n1, d1), F(n2, d2))));
+      } },
+    { id:"division", page:"division.html", name:"Division", title:"The Division House", c:"div", weekday:true, weekend:false,
+      make:function(r, L){
+        var d, q, n;
+        if (L <= 1){
+          d = ri(r, 3, 9); q = ri(r, Math.floor(100 / d) + 1, Math.floor(999 / d)); n = d * q;
+          return Q([["q", n + "÷" + d]], n + " ÷ " + d, String(q));
+        }
+        if (L === 2){
+          d = ri(r, 11, 24); q = ri(r, 12, 60); var rm = ri(r, 1, d - 1); n = d * q + rm;
+          return Q([["q", n + "÷" + d], ["ans", "remainder"]], n + " ÷ " + d + " (quotient and remainder)", q + " R " + rm);
+        }
+        if (chance(r, .5)){
+          var D = pick(r, [20, 25, 40, 50, 60, 80, 120, 150, 250]), Qh = ri(r, 5, 60) * 100 + (chance(r, .5) ? 50 : 0), th = D * Qh / 10;
+          return Q([["q", dec(th, 3) + "÷" + dec(D, 2)]], dec(th, 3) + " ÷ " + dec(D, 2), dec(Qh, 2));
+        }
+        var d1 = pick(r, [2, 3, 4, 5, 6, 8]), d2 = pick(r, [2, 3, 4, 5, 6, 8]), n1 = coprime(r, d1), n2 = coprime(r, d2), w = ri(r, 1, 3);
+        var x = w + " " + n1 + "/" + d1, y = n2 + "/" + d2;
+        return Q([["q", x + "÷" + y]], x + " ÷ " + y, mixS(fdiv(F(w * d1 + n1, d1), F(n2, d2))));
+      } },
+    { id:"fractions", page:"fractions.html", name:"Fractions", title:"The Fraction Bar", c:"fra", weekday:true, weekend:true,
+      make:function(r, L){
+        var d, n, k;
+        if (L <= 1){
+          d = ri(r, 3, 9); n = coprime(r, d);
+          do { k = ri(r, 2, 8); } while (d * k > 72);
+          return Q([["mode", "simplify"], ["q", n * k + "/" + d * k]], "Simplify " + n * k + "/" + d * k + ".", n + "/" + d);
+        }
+        if (L === 2){
+          if (chance(r, .5)){
+            d = ri(r, 3, 9); n = coprime(r, d); var w = ri(r, 1, 6), im = (w * d + n) + "/" + d;
+            return Q([["mode", "convert"], ["q", im], ["to", "mixed"]], "Write " + im + " as a mixed number.", w + " " + n + "/" + d);
+          }
+          d = ri(r, 3, 9); n = coprime(r, d); k = ri(r, 2, 8);
+          return Q([["mode", "equiv"], ["q", n + "/" + d + "=?/" + d * k]], "Find the missing number: " + n + "/" + d + " = ?/" + d * k + ".", String(n * k));
+        }
+        if (L === 3){
+          if (chance(r, .6)){
+            var fs, ds;
+            do {
+              ds = shuffle([3, 4, 5, 6, 8, 9, 10, 12], r).slice(0, 3);
+              fs = ds.map(function(dd){ return F(coprime(r, dd), dd); });
+            } while (fs[0].n * fs[1].d === fs[1].n * fs[0].d || fs[0].n * fs[2].d === fs[2].n * fs[0].d || fs[1].n * fs[2].d === fs[2].n * fs[1].d);
+            var sorted = fs.slice().sort(function(a, b){ return a.n * b.d - b.n * a.d; });
+            var qs = fs.map(fS).join(",");
+            return Q([["mode", "compare"], ["q", qs]], "Put these in order, least to greatest: " + fs.map(fS).join(", ") + ".", sorted.map(fS).join(" < "));
+          }
+          d = pick(r, [8, 16, 20, 25, 40]); n = coprime(r, d);
+          var pl = { 8:3, 16:4, 20:2, 25:2, 40:3 }[d], ds2 = dec(n * Math.pow(10, pl) / d, pl);
+          return Q([["mode", "convert"], ["q", ds2], ["to", "fraction"]], "Write " + ds2 + " as a fraction in simplest form.", n + "/" + d);
+        }
+        d = pick(r, [6, 9, 11, 12, 15, 18]); n = coprime(r, d);
+        var rep = repeating(n, d);
+        return Q([["mode", "convert"], ["q", rep], ["to", "fraction"]],
+          "Write " + rep + " as a fraction in simplest form. (The digits in brackets repeat forever.)", n + "/" + d);
+      } },
+    { id:"percents", page:"percents.html", name:"Percents", title:"The Hundred Grid", c:"pct", weekday:true, weekend:true,
+      make:function(r, L){
+        var p, n, w;
+        if (L <= 1){
+          p = pick(r, [5, 10, 15, 20, 25, 30, 40, 50, 60, 75]);
+          var base = 100 / gcd(p, 100);
+          do { n = base * ri(r, 1, Math.floor(400 / base)); } while (n < 20 || n === 100);
+          return Q([["mode", "of"], ["p", p], ["n", n]], "What is " + p + "% of " + n + "?", String(p * n / 100));
+        }
+        if (L === 2){
+          do { w = pick(r, [20, 25, 40, 50, 60, 80, 120, 150, 200, 250, 300, 400]); p = pick(r, [5, 10, 15, 20, 25, 30, 40, 45, 60, 75, 80]); } while (w * p % 100);
+          var part = w * p / 100;
+          if (chance(r, .5)) return Q([["mode", "what"], ["part", part], ["whole", w]], part + " is what percent of " + w + "?", p + "%");
+          return Q([["mode", "whole"], ["part", part], ["p", p]], part + " is " + p + "% of what number?", String(w));
+        }
+        if (L === 3){
+          if (chance(r, .5)){
+            var from, to;
+            do { from = pick(r, [40, 50, 60, 80, 120, 150, 200, 250, 400, 500]); p = pick(r, [10, 15, 20, 25, 30, 40, 50, 60, 75]); } while (from * p % 100);
+            var up = chance(r, .5) || p > 60;
+            to = up ? from + from * p / 100 : from - from * p / 100;
+            return Q([["mode", "change"], ["from", from], ["to", to]], "What is the percent change from " + from + " to " + to + "?", p + "% " + (up ? "increase" : "decrease"));
+          }
+          var price = pick(r, [20, 24, 30, 36, 40, 45, 48, 50, 60, 64, 75, 80, 90, 120]);
+          p = pick(r, [10, 15, 20, 25, 30, 40, 50]);
+          var off = price * p;                                    // in cents
+          return Q([["mode", "money"], ["kind", "discount"], ["p", p], ["price", price]],
+            "A $" + price + " jacket is " + p + "% off. How much is taken off, and what is the sale price?", cents(off) + " off; the sale price is " + cents(price * 100 - off));
+        }
+        var pr = ri(r, 2, 20) * 100, rate = ri(r, 2, 6), yrs = ri(r, 2, 5), intr = pr * rate * yrs / 100;
+        return Q([["mode", "money"], ["kind", "interest"], ["principal", pr], ["p", rate], ["years", yrs]],
+          "$" + pr + " is saved at " + rate + "% simple interest a year for " + yrs + " years. How much interest does it earn, and what is the total?",
+          "$" + intr + " interest; $" + (pr + intr) + " in all");
+      } },
+    { id:"factors", page:"factors.html", name:"Factors & primes", title:"The Factor Tree", c:"fac", weekday:true, weekend:true,
+      make:function(r, L){
+        if (L <= 1){
+          var n = pick(r, [24, 30, 36, 40, 42, 48, 54, 56, 60, 64, 72, 80, 84, 90, 96, 100]), fs = [];
+          for (var i = 1; i <= n; i++) if (n % i === 0) fs.push(i);
+          return Q([["mode", "factors"], ["q", n]], "List all the factors of " + n + ".", fs.join(", "));
+        }
+        if (L === 2){
+          if (chance(r, .35)){
+            if (chance(r, .5)){
+              var c = pick(r, [51, 57, 87, 91, 119, 133, 143, 161, 187, 209, 221, 247, 253, 299, 323, 341, 377, 391]), f = 2;
+              while (c % f) f++;
+              return Q([["mode", "test"], ["q", c]], "Is " + c + " prime or composite?", "Composite (" + c + " = " + f + " × " + c / f + ")");
+            }
+            var pr = pick(r, [53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241]);
+            return Q([["mode", "test"], ["q", pr]], "Is " + pr + " prime or composite?", "Prime");
+          }
+          var e, v;
+          do {
+            e = [ri(r, 1, 4), ri(r, 0, 3), ri(r, 0, 2), ri(r, 0, 1)];
+            v = Math.pow(2, e[0]) * Math.pow(3, e[1]) * Math.pow(5, e[2]) * Math.pow(7, e[3]);
+          } while (v < 72 || v > 1000 || e[0] + e[1] + e[2] + e[3] < 4 || e.filter(function(x){ return x; }).length < 2);
+          var parts = [];
+          [2, 3, 5, 7].forEach(function(p, k){ if (e[k]) parts.push(p + (e[k] > 1 ? sup(e[k]) : "")); });
+          return Q([["mode", "prime"], ["q", v]], "Write " + v + " as a product of primes.", parts.join(" × "));
+        }
+        var g, x, y, z;
+        if (L === 3){
+          do { g = ri(r, 2, 12); x = ri(r, 2, 9); y = ri(r, 2, 9); } while (x === y || gcd(x, y) !== 1 || g * x > 150 || g * y > 150);
+          return Q([["mode", "gcf"], ["q", g * x + "," + g * y]], "Find the GCF and the LCM of " + g * x + " and " + g * y + ".", "GCF " + g + ", LCM " + g * x * y);
+        }
+        do { g = ri(r, 2, 6); x = ri(r, 2, 9); y = ri(r, 2, 9); z = ri(r, 2, 9); }
+        while (x === y || y === z || x === z || gcd(gcd(x, y), z) !== 1 || g * Math.max(x, y, z) > 60 || g * lcm(lcm(x, y), z) > 1200);
+        var ns = shuffle([g * x, g * y, g * z], r);
+        return Q([["mode", "gcf"], ["q", ns.join(",")]], "Find the GCF and the LCM of " + list(ns.map(String)) + ".", "GCF " + g + ", LCM " + g * lcm(lcm(x, y), z));
+      } },
+    { id:"integers", page:"integers.html", name:"Integers", title:"The Number Line", c:"int", weekday:true, weekend:true,
+      make:function(r, L){
+        var a, b, k;
+        if (L <= 1){
+          k = ri(r, 0, 2);
+          if (k === 0){ a = ri(r, -20, -2); b = ri(r, 2, 20); if (a + b === 0) b++; return Q([["q", a + "+" + b]], M(a) + " + " + b, M(a + b)); }
+          if (k === 1){ a = ri(r, -15, -2); b = ri(r, -15, -2); return Q([["q", a + "+(" + b + ")"]], M(a) + " + " + neg(b), M(a + b)); }
+          a = ri(r, 2, 15); b = ri(r, -20, -2); if (a + b === 0) b--;
+          return Q([["q", a + "+(" + b + ")"]], a + " + " + neg(b), M(a + b));
+        }
+        if (L === 2){
+          if (chance(r, .5)){ a = nz(r, -15, 15); b = ri(r, -15, -2); return Q([["q", a + "-(" + b + ")"]], M(a) + " − " + neg(b), M(a - b)); }
+          a = ri(r, 2, 12) * (chance(r, .5) ? -1 : 1); b = ri(r, 2, 12) * (a > 0 || chance(r, .5) ? -1 : 1);
+          if (chance(r, .5)) return Q([["q", a + "*" + negA(b)]], M(a) + " × " + neg(b), M(a * b));
+          return Q([["q", a * b + "/" + negA(b)]], M(a * b) + " ÷ " + neg(b), M(a));
+        }
+        if (L === 3){
+          if (chance(r, .7)){
+            var v = nz(r, -12, 12), t = M(v), q = String(v), negs = v < 0 ? 1 : 0;
+            for (var i = 0; i < 3; i++){
+              var plus = chance(r, .5), x = nz(r, -12, 12);
+              if (i === 2 && !negs) x = -Math.abs(x);
+              if (x < 0) negs++;
+              t += (plus ? " + " : " − ") + neg(x); q += (plus ? "+" : "-") + negA(x); v += plus ? x : -x;
+            }
+            return Q([["q", q]], t, M(v));
+          }
+          var p1 = ri(r, 2, 6) * (chance(r, .5) ? -1 : 1), p2 = ri(r, 2, 5) * (chance(r, .5) ? -1 : 1), dv;
+          var prod = p1 * p2, divs = [];
+          for (var dd = 2; dd <= 12; dd++) if (prod % dd === 0) divs.push(dd);
+          dv = pick(r, divs) * (chance(r, .6) ? -1 : 1);
+          return Q([["q", p1 + "*" + negA(p2) + "/" + negA(dv)]], M(p1) + " × " + neg(p2) + " ÷ " + neg(dv), M(prod / dv));
+        }
+        a = ri(r, -15, -2); b = ri(r, 2, 15); var c = ri(r, -12, -2);
+        if (chance(r, .5)) return Q([["q", "|" + a + "|-" + b + "+(" + c + ")"]], "|" + M(a) + "| − " + b + " + " + neg(c), M(Math.abs(a) - b + c));
+        return Q([["q", b + "-|" + a + "|-(" + c + ")"]], b + " − |" + M(a) + "| − " + neg(c), M(b - Math.abs(a) - c));
+      } },
+    { id:"ratios", page:"ratios.html", name:"Ratios & rates", title:"The Ratio Table", c:"rat", weekday:true, weekend:true,
+      make:function(r, L){
+        var x, y, k;
+        function pair(){ do { x = ri(r, 1, 9); y = ri(r, 1, 9); } while (x === y || gcd(x, y) !== 1 || x + y < 4 || (L <= 1 && (x === 1 || y === 1))); }
+        if (L <= 1){
+          pair(); k = ri(r, 2, 9);
+          return Q([["mode", "simplify"], ["q", x * k + ":" + y * k]], "Simplify the ratio " + x * k + " : " + y * k + ".", x + " : " + y);
+        }
+        if (L === 2){
+          pair(); k = ri(r, 2, 8);
+          if (chance(r, .5)) return Q([["mode", "prop"], ["q", x + "/" + y + "=x/" + y * k]], "Solve the proportion " + x + "/" + y + " = x/" + y * k + ".", "x = " + x * k);
+          return Q([["mode", "prop"], ["q", "x/" + y + "=" + x * k + "/" + y * k]], "Solve the proportion x/" + y + " = " + x * k + "/" + y * k + ".", "x = " + x);
+        }
+        if (L === 3){
+          pair(); k = ri(r, 3, 15);
+          var tot = (x + y) * k;
+          return Q([["mode", "share"], ["q", "share " + tot + " in " + x + ":" + y]], "Share " + tot + " in the ratio " + x + " : " + y + ".", x * k + " and " + y * k);
+        }
+        if (chance(r, .5)){
+          do { x = ri(r, 1, 7); y = ri(r, 2, 9); } while (x >= y || gcd(x, y) !== 1);
+          k = ri(r, 2, 12);
+          return Q([["mode", "share"], ["q", x + ":" + y + ", the difference is " + (y - x) * k]],
+            "Two amounts are in the ratio " + x + " : " + y + ". Their difference is " + (y - x) * k + ". Find both amounts.", x * k + " and " + y * k);
+        }
+        var z;
+        do { x = ri(r, 1, 5); y = ri(r, 1, 6); z = ri(r, 2, 7); } while (x === y || y === z || x === z || gcd(gcd(x, y), z) !== 1);
+        k = ri(r, 2, 10);
+        var t3 = (x + y + z) * k;
+        return Q([["mode", "share"], ["q", "split " + t3 + " in the ratio " + x + ":" + y + ":" + z]],
+          "Split " + t3 + " in the ratio " + x + " : " + y + " : " + z + ".", x * k + ", " + y * k + " and " + z * k);
+      } },
+    { id:"pemdas", page:"pemdas.html", name:"Order of operations", title:"The Order Stack", c:"ord", weekday:true, weekend:true,
+      make:function(r, L){
+        var e = pemdas(r, L);
+        return Q([["q", e[1]]], e[0], M(e[2]));
+      } },
+    { id:"algebra", page:"algebra.html", name:"Algebra", title:"The Balance Scale", c:"alg", weekday:true, weekend:true,
+      make:function(r, L){
+        var x = nz(r, -6, 15), a, b, c, d, eq;
+        if (L <= 1){
+          var k = ri(r, 0, 3);
+          if (k === 0){ a = ri(r, 2, 15); eq = [lin([[1, "x"], [a, ""]]) + " = " + M(x + a), "x+" + a + "=" + (x + a)]; }
+          else if (k === 1){ a = ri(r, 2, 15); eq = [lin([[1, "x"], [-a, ""]]) + " = " + M(x - a), "x-" + a + "=" + (x - a)]; }
+          else if (k === 2){ a = ri(r, 2, 9); x = nz(r, -9, 12); eq = [a + "x = " + M(a * x), a + "x=" + a * x]; }
+          else { a = ri(r, 2, 6); b = nz(r, -6, 9); x = a * b; eq = ["x/" + a + " = " + M(b), "x/" + a + "=" + b]; }
+          return Q([["mode", "solve"], ["q", eq[1]]], "Solve " + eq[0] + ".", "x = " + M(x));
+        }
+        if (L === 2){
+          x = nz(r, -8, 12); a = ri(r, 2, 9); b = nz(r, -20, 20); c = a * x + b;
+          return Q([["mode", "solve"], ["q", lin([[a, "x"], [b, ""]], true) + "=" + c]], "Solve " + lin([[a, "x"], [b, ""]]) + " = " + M(c) + ".", "x = " + M(x));
+        }
+        if (L === 3){
+          x = nz(r, -6, 10);
+          if (chance(r, .5)){
+            do { a = ri(r, 2, 9); c = ri(r, 1, 8); } while (a === c);
+            b = nz(r, -15, 15); d = (a - c) * x + b;
+            return Q([["mode", "solve"], ["q", lin([[a, "x"], [b, ""]], true) + "=" + lin([[c, "x"], [d, ""]], true)]],
+              "Solve " + lin([[a, "x"], [b, ""]]) + " = " + lin([[c, "x"], [d, ""]]) + ".", "x = " + M(x));
+          }
+          a = ri(r, 2, 6); b = nz(r, -6, 8); if (x + b === 0) x++;
+          return Q([["mode", "solve"], ["q", a + "(" + lin([[1, "x"], [b, ""]], true) + ")=" + a * (x + b)]],
+            "Solve " + a + "(" + lin([[1, "x"], [b, ""]]) + ") = " + M(a * (x + b)) + ".", "x = " + M(x));
+        }
+        var y, a1, b1, a2, b2;
+        x = nz(r, -5, 8); y = nz(r, -5, 8);
+        do { a1 = nz(r, -3, 5); b1 = nz(r, -3, 5); a2 = nz(r, -3, 5); b2 = nz(r, -3, 5); } while (a1 * b2 - a2 * b1 === 0 || (Math.abs(a1) === 1 && Math.abs(b1) === 1 && Math.abs(a2) === 1 && Math.abs(b2) === 1));
+        var e1 = [[a1, "x"], [b1, "y"]], e2 = [[a2, "x"], [b2, "y"]], c1 = a1 * x + b1 * y, c2 = a2 * x + b2 * y;
+        return Q([["mode", "sys"], ["q", lin(e1, true) + "=" + c1 + ";" + lin(e2, true) + "=" + c2]],
+          "Solve the system: " + lin(e1) + " = " + M(c1) + " and " + lin(e2) + " = " + M(c2) + ".", "x = " + M(x) + ", y = " + M(y));
+      } },
+    { id:"lines", page:"lines.html", name:"Lines & slope", title:"The Slope Grid", c:"lin", weekday:true, weekend:true,
+      make:function(r, L){
+        var x1, y1, x2, y2, m, b;
+        if (L <= 1){
+          x1 = ri(r, -6, 5); x2 = x1 + ri(r, 1, 6); y1 = ri(r, -6, 6); y2 = y1 + nz(r, -7, 7);
+          if (chance(r, .5)){ var t = x1; x1 = x2; x2 = t; t = y1; y1 = y2; y2 = t; }
+          m = F(y2 - y1, x2 - x1);
+          return Q([["mode", "slope"], ["q", pt(x1, y1, true) + " " + pt(x2, y2, true)]],
+            "Find the slope of the line through " + pt(x1, y1) + " and " + pt(x2, y2) + ".", "m = " + fS(m));
+        }
+        if (L === 2){
+          m = F(nz(r, -4, 4), 1); x1 = ri(r, -4, 5); b = F(ri(r, -6, 6), 1); y1 = m.n * x1 + b.n;
+          return Q([["mode", "equation"], ["q", "slope " + m.n + " through " + pt(x1, y1, true)]],
+            "Write the equation of the line with slope " + M(m.n) + " through " + pt(x1, y1) + ".", lineEq(m, b));
+        }
+        if (L === 3){
+          m = pick(r, [F(1, 1), F(-1, 1), F(2, 1), F(-2, 1), F(3, 1), F(-3, 1), F(1, 2), F(-1, 2), F(3, 2), F(-2, 3)]);
+          b = F(ri(r, -5, 6), 1);
+          x1 = m.d * ri(r, -3, 1); x2 = x1 + m.d * ri(r, 1, 3);
+          y1 = m.n * x1 / m.d + b.n; y2 = m.n * x2 / m.d + b.n;
+          return Q([["mode", "equation"], ["q", "line through " + pt(x1, y1, true) + " and " + pt(x2, y2, true)]],
+            "Write the equation of the line through " + pt(x1, y1) + " and " + pt(x2, y2) + ".", lineEq(m, b));
+        }
+        m = pick(r, [F(2, 1), F(-2, 1), F(3, 1), F(-3, 1), F(1, 2), F(-1, 2), F(1, 3), F(-1, 3), F(1, 1), F(-1, 1), F(2, 3), F(-3, 2)]);
+        var c0 = F(nz(r, -5, 5), 1), perp = chance(r, .5), m2 = perp ? F(-m.d, m.n) : m;
+        x1 = m2.d * ri(r, -2, 3); y1 = ri(r, -6, 6);
+        b = F(y1 * m2.d - m2.n * x1, m2.d);
+        return Q([["mode", "parallel"], ["q", (perp ? "perpendicular" : "parallel") + " to " + lineEq(m, c0, true) + " through " + pt(x1, y1, true)]],
+          "Write the equation of the line " + (perp ? "perpendicular" : "parallel") + " to " + lineEq(m, c0) + " through " + pt(x1, y1) + ".", lineEq(m2, b));
+      } },
+    { id:"geometry", page:"geometry.html", name:"Geometry", title:"The Shape Shop", c:"geo", weekday:true, weekend:true,
+      make:function(r, L){
+        var u = pick(r, UNITS), l, w, h;
+        if (L <= 1){
+          l = ri(r, 5, 15); w = ri(r, 2, l - 1);
+          return Q([["mode", "area"], ["shape", "rect"], ["l", l], ["w", w], ["unit", u]],
+            "A rectangle is " + l + " " + u + " long and " + w + " " + u + " wide. Find its area and its perimeter.", "Area " + l * w + " " + u + "², perimeter " + 2 * (l + w) + " " + u);
+        }
+        if (L === 2){
+          if (chance(r, .6)){
+            var tr = pick(r, [[3, 4, 5], [4, 3, 5], [6, 8, 10], [8, 6, 10], [5, 12, 13], [12, 5, 13], [8, 15, 17], [9, 12, 15], [12, 9, 15]]);
+            var bb = 2 * tr[0];
+            return Q([["mode", "area"], ["shape", "tri"], ["b", bb], ["h", tr[1]], ["s1", tr[2]], ["s2", tr[2]], ["unit", u]],
+              "A triangle has a base of " + bb + " " + u + " and a height of " + tr[1] + " " + u + ". Its other two sides are " + tr[2] + " " + u + " each. Find its area and its perimeter.",
+              "Area " + tr[0] * tr[1] + " " + u + "², perimeter " + (bb + 2 * tr[2]) + " " + u);
+          }
+          var a1, a2;
+          do { a1 = ri(r, 25, 95); a2 = ri(r, 25, 95); } while (a1 + a2 > 155 || a1 === a2);
+          return Q([["mode", "angle"], ["shape", "tri"], ["a", a1], ["b", a2]],
+            "Two angles of a triangle are " + a1 + "° and " + a2 + "°. Find the third angle.", (180 - a1 - a2) + "°");
+        }
+        if (L === 3){
+          var k = ri(r, 0, 2);
+          if (k === 0){
+            var rad = ri(r, 2, 10);
+            return Q([["mode", "area"], ["shape", "circle"], ["r", rad], ["pi", "314"], ["unit", u]],
+              "A circle has a radius of " + rad + " " + u + ". Using π ≈ 3.14, find its area and its circumference.",
+              "Area ≈ " + dec(314 * rad * rad, 2) + " " + u + "², circumference ≈ " + dec(628 * rad, 2) + " " + u);
+          }
+          if (k === 1){
+            l = ri(r, 3, 12); w = ri(r, 2, 9); h = ri(r, 2, 10);
+            return Q([["mode", "vol"], ["shape", "box"], ["l", l], ["w", w], ["h", h], ["unit", u]],
+              "A box is " + l + " " + u + " long, " + w + " " + u + " wide and " + h + " " + u + " high. Find its volume and its surface area.",
+              "Volume " + l * w * h + " " + u + "³, surface area " + 2 * (l * w + l * h + w * h) + " " + u + "²");
+          }
+          var t = pick(r, [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [6, 8, 10], [9, 12, 15], [12, 16, 20], [20, 21, 29]]);
+          return Q([["mode", "right"], ["shape", "hyp"], ["a", t[0]], ["b", t[1]], ["unit", u]],
+            "A right triangle has legs of " + t[0] + " " + u + " and " + t[1] + " " + u + ". How long is the hypotenuse?", t[2] + " " + u);
+        }
+        var j = ri(r, 0, 2);
+        if (j === 0){
+          var W = ri(r, 8, 14), H = ri(r, 6, 12); w = ri(r, 2, W - 3); h = ri(r, 2, H - 3);
+          return Q([["mode", "area"], ["shape", "lshape"], ["W", W], ["H", H], ["w", w], ["h", h], ["unit", u]],
+            "An L-shape is " + an(W) + " " + W + " " + u + " by " + H + " " + u + " rectangle with " + an(w) + " " + w + " " + u + " by " + h + " " + u + " corner cut out. Find its area and its perimeter.",
+            "Area " + (W * H - w * h) + " " + u + "², perimeter " + 2 * (W + H) + " " + u);
+        }
+        if (j === 1){
+          var s = pick(r, [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25], [6, 8, 10], [9, 12, 15], [9, 40, 41], [12, 35, 37]]), sw = chance(r, .5);
+          return Q([["mode", "right"], ["shape", "leg"], ["a", sw ? s[1] : s[0]], ["c", s[2]], ["unit", u]],
+            "A right triangle has a hypotenuse of " + s[2] + " " + u + " and one leg of " + (sw ? s[1] : s[0]) + " " + u + ". How long is the other leg?", (sw ? s[0] : s[1]) + " " + u);
+        }
+        var ang, as;
+        do { as = [ri(r, 40, 140), ri(r, 40, 140), ri(r, 30, 120)]; ang = 360 - as[0] - as[1] - as[2]; } while (ang < 25 || ang > 160);
+        return Q([["mode", "angle"], ["shape", "point"], ["a", as.join(",")]],
+          "Four angles meet around a point. Three of them are " + list(as.map(function(x){ return x + "°"; })) + ". Find the fourth.", ang + "°");
+      } },
+    { id:"stats", page:"stats.html", name:"Statistics", title:"The Dot Plot", c:"sta", weekday:true, weekend:true,
+      make:function(r, L){
+        var vs, i, m, s;
+        if (L <= 1){
+          do {
+            m = ri(r, 5, 20); vs = []; s = 0;
+            for (i = 0; i < 4; i++){ vs.push(ri(r, Math.max(1, m - 7), m + 7)); s += vs[i]; }
+            vs.push(5 * m - s);
+          } while (vs[4] < 1 || vs[4] > 30 || vs.every(function(v){ return v === m; }));
+          return Q([["mode", "center"], ["q", vs.join(", ")], ["ask", "mean"]], "Find the mean of " + vs.join(", ") + ".", String(m));
+        }
+        if (L === 2){
+          var pool = [];
+          for (i = 1; i <= 40; i++) pool.push(i);
+          vs = shuffle(pool, r).slice(0, 6);
+          var so = vs.slice().sort(function(a, b){ return a - b; }), med = (so[2] + so[3]);
+          return Q([["mode", "center"], ["q", vs.join(", ")], ["ask", "median"]], "Find the median of " + vs.join(", ") + ".", dec(med * 5, 1));
+        }
+        if (L === 3){
+          var n = chance(r, .5) ? 9 : 11;
+          vs = []; for (i = 0; i < n; i++) vs.push(ri(r, 1, 40));
+          var st = vs.slice().sort(function(a, b){ return a - b; }), half = Math.floor(n / 2);
+          var md = function(a){ var k = a.length; return k % 2 ? a[(k - 1) / 2] * 2 : a[k / 2 - 1] + a[k / 2]; };   // doubled
+          var q1 = md(st.slice(0, half)), q3 = md(st.slice(half + 1)), q2 = md(st);
+          return Q([["mode", "box"], ["q", vs.join(",")]], "Find the five-number summary and the IQR of " + vs.join(", ") + ".",
+            "min " + st[0] + ", Q₁ " + dec(q1 * 5, 1) + ", median " + dec(q2 * 5, 1) + ", Q₃ " + dec(q3 * 5, 1) + ", max " + st[n - 1] + "; IQR " + dec((q3 - q1) * 5, 1));
+        }
+        var cnt, miss;
+        do {
+          cnt = ri(r, 4, 6); m = ri(r, 6, 20); vs = []; s = 0;
+          for (i = 0; i < cnt - 1; i++){ vs.push(ri(r, Math.max(1, m - 8), m + 8)); s += vs[i]; }
+          miss = cnt * m - s;
+        } while (miss < 2 || miss > 40);
+        var word = ["", "", "", "", "four", "five", "six"];
+        return Q([["mode", "missing"], ["q", "mean of " + cnt + " numbers is " + m + ": " + vs.join(", ")]],
+          "The mean of " + word[cnt] + " numbers is " + m + ". " + (cnt - 1 === 3 ? "Three" : cnt - 1 === 4 ? "Four" : "Five") + " of them are " + list(vs.map(String)) + ". What is the missing number?", String(miss));
+      } },
+    { id:"wordproblems", page:"wordproblems.html", name:"Story problems", title:"The Story Problem", c:"wrd", weekday:true, weekend:true,
+      make:function(r, L, key){ return story(r, L, key); } },
+    { id:"probability", page:"probability.html", name:"Probability", title:"The Chance Spinner", c:"pro", weekday:true, weekend:true, from:NEW_FROM,
+      make:function(r, L){ return probability(r, L); } },
+    { id:"exponents", page:"exponents.html", name:"Exponents", title:"The Power Tower", c:"exp", weekday:true, weekend:true, from:NEW_FROM,
+      make:function(r, L){ return exponents(r, L); } }
+  ];
+  var BY = {};
+  TOPICS.forEach(function(t){ BY[t.id] = t; BY[t.page] = t; });
+
+  /* ---- order of operations: [text, link form, value] ---- */
+  function pemdas(r, L){
+    var a, b, c, d, e, f, k, s;
+    var forms = {
+      1:[function(){ a = ri(r, 2, 20); b = ri(r, 2, 9); c = ri(r, 2, 9); return [a + " + " + b + " × " + c, a + "+" + b + "*" + c, a + b * c]; },
+         function(){ b = ri(r, 2, 6); c = ri(r, 2, 6); a = b * c + ri(r, 1, 20); return [a + " − " + b + " × " + c, a + "-" + b + "*" + c, a - b * c]; },
+         function(){ c = ri(r, 2, 9); k = ri(r, 2, 9); b = c * k; a = ri(r, 1, 20); return [a + " + " + b + " ÷ " + c, a + "+" + b + "/" + c, a + k]; },
+         function(){ a = ri(r, 2, 9); b = ri(r, 2, 9); c = ri(r, 1, a * b - 1); return [a + " × " + b + " − " + c, a + "*" + b + "-" + c, a * b - c]; }],
+      2:[function(){ a = ri(r, 2, 9); b = ri(r, 2, 9); c = ri(r, 2, 6); d = ri(r, 1, (a + b) * c - 1); return ["(" + a + " + " + b + ") × " + c + " − " + d, "(" + a + "+" + b + ")*" + c + "-" + d, (a + b) * c - d]; },
+         function(){ b = ri(r, 6, 15); c = ri(r, 1, b - 2); a = ri(r, 2, 7); d = ri(r, 1, 15); return [a + " × (" + b + " − " + c + ") + " + d, a + "*(" + b + "-" + c + ")+" + d, a * (b - c) + d]; },
+         function(){ c = ri(r, 2, 6); k = ri(r, 2, 6); b = c * k; d = ri(r, 2, 4); a = k * d + ri(r, 1, 20); e = ri(r, 1, 9);
+                     return [a + " − " + b + " ÷ " + c + " × " + d + " + " + e, a + "-" + b + "/" + c + "*" + d + "+" + e, a - k * d + e]; },
+         function(){ a = ri(r, 2, 20); b = ri(r, 2, 6); c = ri(r, 5, 12); d = ri(r, 1, c - 2); return [a + " + " + b + " × (" + c + " − " + d + ")", a + "+" + b + "*(" + c + "-" + d + ")", a + b * (c - d)]; }],
+      3:[function(){ a = ri(r, 2, 9); b = ri(r, 2, 6); c = ri(r, 5, 12); d = ri(r, 1, c - 1); return [a + "² + " + b + " × (" + c + " − " + d + ")", a + "^2+" + b + "*(" + c + "-" + d + ")", a * a + b * (c - d)]; },
+         function(){ s = ri(r, 4, 12); a = ri(r, 1, s - 1); b = s - a; var dv = [];
+                     for (k = 2; k <= 12; k++) if (s * s % k === 0) dv.push(k);
+                     c = pick(r, dv); return ["(" + a + " + " + b + ")² ÷ " + c, "(" + a + "+" + b + ")^2/" + c, s * s / c]; },
+         function(){ a = ri(r, 2, 4); s = ri(r, 3, 6); b = ri(r, 1, s - 1); c = s - b; d = ri(r, 1, 30); return [a + " × (" + b + " + " + c + ")² − " + d, a + "*(" + b + "+" + c + ")^2-" + d, a * s * s - d]; },
+         function(){ a = ri(r, 2, 4); do { b = ri(r, 2, 6); c = ri(r, 2, 6); } while (b * c >= a * a * a); return [a + "³ − " + b + " × " + c, a + "^3-" + b + "*" + c, a * a * a - b * c]; }],
+      4:[function(){ e = ri(r, 2, 6); var t = ri(r, 3, 12), tot = e * t; b = ri(r, 2, 5);
+                     k = ri(r, 1, Math.max(1, Math.floor((tot - 1) / b))); a = tot - b * k; d = ri(r, 1, 9); c = d + k;
+                     return ["[" + a + " + " + b + " × (" + c + " − " + d + ")] ÷ " + e, "[" + a + "+" + b + "*(" + c + "-" + d + ")]/" + e, t]; },
+         function(){ e = ri(r, 2, 5); var m = ri(r, 3, 10); c = ri(r, 2, 4); d = ri(r, 2, 4);
+                     while (e * m <= c * d) m++;
+                     b = e * m - c * d; do { a = ri(r, 4, 9); } while (a * a <= m); f = ri(r, 1, 12);
+                     return [a + "² − (" + b + " + " + c + " × " + d + ") ÷ " + e + " + " + f, a + "^2-(" + b + "+" + c + "*" + d + ")/" + e + "+" + f, a * a - m + f]; },
+         function(){ a = ri(r, 2, 5); b = ri(r, 2, 4); c = ri(r, 2, 9); d = ri(r, 1, c - 1); e = ri(r, 2, 3);
+                     return [a + " × " + b + "² − (" + c + " − " + d + ")" + sup(e), a + "*" + b + "^2-(" + c + "-" + d + ")^" + e, a * b * b - Math.pow(c - d, e)]; }]
+    };
+    var lv = Math.max(1, Math.min(4, L)), res;
+    do { res = pick(r, forms[lv])(); } while (res[2] < 0 && lv < 4);     // keep the early days' answers positive
+    return res;
+  }
+
+  /* ---- story problems: the fields the Story Problem page reads (type=…&a=…), and the story it writes from them ---- */
+  var ST = {
+    join:[["shells", "shells", "found", " at the beach"], ["stickers", "stickers", "got", " from a friend"], ["books", "books", "bought", " at the book fair"],
+          ["marbles", "marbles", "won", " in a game"], ["coins", "coins", "saved", " this week"], ["photos", "photos", "took", " at the park"], ["seeds", "seeds", "planted", " in the garden"]],
+    separate:[["stickers", "stickers", "used", " on a poster"], ["cupcakes", "cupcakes", "sold", " at the bake sale"], ["pencils", "pencils", "gave away", " to classmates"],
+              ["cards", "cards", "traded", " with friends"], ["tickets", "tickets", "spent", " on prizes"], ["balloons", "balloons", "gave away", " at the party"]],
+    groups:[["bags", "bags", "bag", "marbles", "in"], ["boxes", "boxes", "box", "crayons", "in"], ["packs", "packs", "pack", "pencils", "in"], ["plates", "plates", "plate", "cookies", "on"],
+            ["vases", "vases", "vase", "flowers", "in"], ["shelves", "shelves", "shelf", "books", "on"], ["cartons", "cartons", "carton", "eggs", "in"]],
+    compare:[["stickers", "stickers"], ["cards", "baseball cards"], ["shells", "shells"], ["marbles", "marbles"], ["stamps", "stamps"]],
+    twostep:[["shells", "shells", "found", "gave away", "buckets", "bucket"], ["stickers", "stickers", "got", "used", "sheets", "sheet"], ["cards", "cards", "won", "traded away", "packs", "pack"],
+             ["crayons", "crayons", "bought", "lost", "boxes", "box"], ["cookies", "cookies", "baked", "ate", "trays", "tray"], ["beads", "beads", "bought", "used", "bags", "bag"]]
+  };
+  function story(r, L, key){
+    var nm = names(r), N = nm[0], N2 = nm[1], a, b, c, d, x, k;
+    if (L <= 1){
+      if (chance(r, .5)){
+        x = pick(r, ST.join); a = ri(r, 12, 48); b = ri(r, 5, 29);
+        return Q([["type", "join"], ["a", a], ["b", b], ["ctx", x[0]], ["name", N]],
+          N + " had " + a + " " + x[1] + ". Then " + N + " " + x[2] + " " + b + " more" + x[3] + ". How many " + x[1] + " does " + N + " have now?", (a + b) + " " + x[1]);
+      }
+      x = pick(r, ST.separate); a = ri(r, 25, 60); b = ri(r, 8, a - 6);
+      return Q([["type", "separate"], ["a", a], ["b", b], ["ctx", x[0]], ["name", N]],
+        N + " had " + a + " " + x[1] + ". " + N + " " + x[2] + " " + b + " of them" + x[3] + ". How many " + x[1] + " does " + N + " have left?", (a - b) + " " + x[1]);
+    }
+    if (L === 2){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        x = pick(r, ST.groups); a = ri(r, 3, 9); b = ri(r, 4, 12);
+        return Q([["type", "groups"], ["a", a], ["b", b], ["ctx", x[0]], ["name", N]],
+          N + " has " + a + " " + x[1] + ". Each " + x[2] + " has " + b + " " + x[3] + " " + x[4] + " it. How many " + x[3] + " does " + N + " have in all?", a * b + " " + x[3]);
+      }
+      if (k === 1){
+        x = pick(r, ST.groups); a = ri(r, 3, 9); b = ri(r, 4, 12); c = a * b;
+        return Q([["type", "groups"], ["a", a], ["c", c], ["ctx", x[0]], ["name", N]],
+          N + " has " + c + " " + x[3] + ". " + N + " puts them into " + a + " " + x[1] + ", the same number " + x[4] + " each. How many " + x[3] + " go " + x[4] + " each " + x[2] + "?", b + " " + x[3]);
+      }
+      x = pick(r, ST.compare); a = ri(r, 12, 45); b = a + ri(r, 6, 30);
+      return Q([["type", "compare"], ["a", a], ["b", b], ["ctx", x[0]], ["name", N], ["name2", N2]],
+        N + " has " + a + " " + x[1] + ". " + N2 + " has " + b + " " + x[1] + ". How many more " + x[1] + " does " + N2 + " have than " + N + "?", (b - a) + " " + x[1]);
+    }
+    // from NEW_FROM on, Challenge Friday and the weekend can also be an algebra story. (The test comes before any
+    // r() call, so earlier dates draw exactly the numbers they always did.)
+    if (L >= 3 && key && key >= NEW_FROM && chance(r, .4)) return algebraStory(r, L, N, N2);
+    x = pick(r, ST.twostep);
+    var it = x[1], Vp = x[2], Vm = x[3], g = x[4], g1 = x[5];
+    if (L === 3){
+      k = ri(r, 0, 4);
+      if (k === 0){
+        a = ri(r, 3, 8); b = ri(r, 4, 12); c = ri(r, 2, 9);
+        return Q([["type", "twostep"], ["kind", "groupsplus"], ["a", a], ["b", b], ["c", c], ["ctx", x[0]], ["name", N]],
+          N + " has " + a + " " + g + " of " + it + ", with " + b + " in each " + g1 + ". " + N + " also has " + c + " loose " + it + ". How many " + it + " does " + N + " have in all?", (a * b + c) + " " + it);
+      }
+      if (k === 1){
+        a = ri(r, 3, 8); b = ri(r, 4, 12); c = ri(r, 2, a * b - 5);
+        return Q([["type", "twostep"], ["kind", "groupsless"], ["a", a], ["b", b], ["c", c], ["ctx", x[0]], ["name", N]],
+          N + " has " + a + " " + g + " of " + it + ", with " + b + " in each " + g1 + ". Then " + N + " " + Vm + " " + c + " " + it + ". How many " + it + " does " + N + " have now?", (a * b - c) + " " + it);
+      }
+      if (k === 2){
+        a = ri(r, 12, 40); b = ri(r, 4, 20);
+        return Q([["type", "twostep"], ["kind", "comparetotal"], ["a", a], ["b", b], ["ctx", x[0]], ["name", N], ["name2", N2]],
+          N + " has " + a + " " + it + ". " + N2 + " has " + b + " more " + it + " than " + N + ". How many " + it + " do they have altogether?", (2 * a + b) + " " + it);
+      }
+      if (k === 3){
+        c = ri(r, 2, 6); var each = ri(r, 3, 9); b = ri(r, 3, 15); a = c * each + b;
+        return Q([["type", "twostep"], ["kind", "shareleft"], ["a", a], ["b", b], ["c", c], ["ctx", x[0]], ["name", N]],
+          N + " had " + a + " " + it + ". " + N + " " + Vm + " " + b + " of them. Then " + N + " shared the rest equally among " + c + " friends. How many " + it + " did each friend get?", each + " " + it);
+      }
+      a = ri(r, 20, 60); b = ri(r, 5, 25); c = ri(r, 5, a + b - 5);
+      return Q([["type", "twostep"], ["kind", "addsub"], ["a", a], ["b", b], ["c", c], ["ops", "+-"], ["ctx", x[0]], ["name", N]],
+        N + " had " + a + " " + it + ". Then " + N + " " + Vp + " " + b + " more. After that, " + N + " " + Vm + " " + c + " of them. How many " + it + " does " + N + " have now?", (a + b - c) + " " + it);
+    }
+    if (chance(r, .45)){
+      a = ri(r, 3, 8); b = ri(r, 4, 12); c = ri(r, 2, 9); d = ri(r, 3, a * b + c - 4);
+      return Q([["type", "twostep"], ["kind", "multi"], ["a", a], ["b", b], ["c", c], ["d", d], ["ctx", x[0]], ["name", N]],
+        N + " has " + a + " " + g + " of " + it + ", with " + b + " in each " + g1 + ". " + N + " also has " + c + " loose " + it + ". Then " + N + " gives " + d + " " + it + " to a friend. How many " + it + " does " + N + " have now?",
+        (a * b + c - d) + " " + it);
+    }
+    var R = pick(r, [
+      ["vans", "up", function(A, B){ return A + " students are going on a field trip. Each van holds " + B + " students. How many vans are needed?"; }, "vans"],
+      ["tables", "up", function(A, B){ return A + " people are coming to a party. Each table seats " + B + " people. How many tables are needed so everyone has a seat?"; }, "tables"],
+      ["eggs", "down", function(A, B){ return "A farmer has " + A + " eggs. Each carton holds " + B + " eggs. How many cartons can the farmer fill?"; }, "cartons"],
+      ["teams", "down", function(A, B){ return A + " students want to play in teams of " + B + ". How many full teams can they make?"; }, "teams"],
+      ["cookies", "left", function(A, B){ return N + " puts " + A + " cookies into bags of " + B + ". How many cookies are left over?"; }, "cookies"],
+      ["marbles", "left", function(A, B){ return A + " marbles are put into groups of " + B + ". How many marbles are left over?"; }, "marbles"]
+    ]);
+    b = ri(r, 4, 12); var q = ri(r, 3, 12), rm = ri(r, 2, b - 1); a = b * q + rm;
+    var ans = R[1] === "up" ? q + 1 : R[1] === "down" ? q : rm;
+    return Q([["type", "remainder"], ["kind", R[1]], ["a", a], ["b", b], ["ctx", R[0]], ["name", N]], R[2](a, b), ans + " " + R[3]);
+  }
+  /* ---- algebra stories (wordproblems.html type=algebra), Challenge Friday and the weekend, from NEW_FROM ---- */
+  function algebraStory(r, L, N, N2){
+    var a, b, c, d, n, k;
+    function X(m){ return m === 2 ? "twice" : m + " times"; }
+    if (L === 3){
+      k = ri(r, 0, 4);
+      if (k === 0){
+        var form = pick(r, ["more", "less", "sum"]);
+        n = ri(r, 3, 20); a = ri(r, 2, 6); b = ri(r, 2, 15); c = form === "less" ? a * n - b : a * n + b;
+        if (c < 1){ b = 1; c = a * n - 1; }
+        var t = form === "sum" ? "The sum of " + X(a) + " a number and " + b + " is " + c + ". Find the number."
+          : b + (form === "more" ? " more than " : " less than ") + X(a) + " a number is " + c + ". What is the number?";
+        return Q([["type", "algebra"], ["kind", "number"], ["form", form], ["a", a], ["b", b], ["c", c]], t, String(n));
+      }
+      if (k === 1){
+        var cf = pick(r, ["all", "odd", "even"]), cnt = cf === "all" ? pick(r, [3, 4]) : 3, s = ri(r, 5, 40), step = cf === "all" ? 1 : 2, ns = [];
+        if (cf === "odd" && s % 2 === 0) s++;
+        if (cf === "even" && s % 2) s++;
+        for (var i = 0; i < cnt; i++) ns.push(s + i * step);
+        c = ns.reduce(function(x, y){ return x + y; }, 0);
+        return Q([["type", "algebra"], ["kind", "consecutive"], ["form", cf], ["a", cnt], ["c", c]],
+          (cnt === 3 ? "Three" : "Four") + " consecutive " + (cf === "all" ? "" : cf + " ") + "numbers add up to " + c + ". What are the numbers?", list(ns.map(String)));
+      }
+      if (k === 2){
+        var y = ri(r, 6, 15); a = ri(r, 2, 9); c = 2 * y + a;
+        return Q([["type", "algebra"], ["kind", "age"], ["form", "sum"], ["a", a], ["c", c], ["ask", "both"], ["name", N], ["name2", N2]],
+          N2 + " is " + a + " years older than " + N + ". Together their ages add up to " + c + ". How old is each of them?", N2 + " is " + (y + a) + " and " + N + " is " + y);
+      }
+      if (k === 3){
+        var ctx = pick(r, [["rect", "cm"], ["garden", "m"], ["yard", "ft"]]), w = ri(r, 3, 15), u = ctx[1];
+        a = ri(r, 2, 8); c = 2 * (2 * w + a);
+        return Q([["type", "algebra"], ["kind", "perimeter"], ["form", "more"], ["a", a], ["c", c], ["ask", "both"], ["ctx", ctx[0]]],
+          "The length of a rectangle is " + a + " " + u + " more than its width. The perimeter is " + c + " " + u + ". Find the length and the width.",
+          "length " + (w + a) + " " + u + ", width " + w + " " + u);
+      }
+      n = ri(r, 4, 12); b = ri(r, 2, 8); var gap = ri(r, 1, 5); d = b + gap; a = gap * n;
+      return Q([["type", "algebra"], ["kind", "plans"], ["a", a], ["b", b], ["c", 0], ["d", d], ["ctx", "gym"]],
+        "Gym A charges $" + a + " to join plus $" + b + " a visit. Gym B charges $" + d + " a visit and nothing to join. After how many visits do the two gyms cost the same?", n + " visits");
+    }
+    k = ri(r, 0, 3);
+    if (k === 0){
+      var x1, x2;
+      do { x1 = ri(r, 8, 60); x2 = ri(r, 3, 50); } while (x2 >= x1);
+      return Q([["type", "algebra"], ["kind", "twounknown"], ["form", "numbers"], ["c", x1 + x2], ["d", x1 - x2]],
+        "Two numbers add up to " + (x1 + x2) + ". Their difference is " + (x1 - x2) + ". What are the two numbers?", x1 + " and " + x2);
+    }
+    if (k === 1){
+      var tk = pick(r, [["tickets", "adult", "child", "tickets", "tickets were sold"], ["pizzas", "large", "small", "pizzas", "pizzas were bought"], ["seats", "front-row", "back-row", "seats", "seats were sold"]]);
+      var u1 = ri(r, 5, 20), u2 = ri(r, 5, 20);
+      do { a = ri(r, 5, 15); b = ri(r, 3, 12); } while (b >= a);
+      c = u1 + u2; d = a * u1 + b * u2;
+      return Q([["type", "algebra"], ["kind", "twounknown"], ["form", "tickets"], ["a", a], ["b", b], ["c", c], ["d", d], ["ctx", tk[0]]],
+        tk[1].charAt(0).toUpperCase() + tk[1].slice(1) + " " + tk[3] + " cost $" + a + " each and " + tk[2] + " " + tk[3] + " cost $" + b + " each. " + c + " " + tk[4] + " for $" + d
+          + " in all. How many of each kind were " + tk[4].split(" ").pop() + "?", u1 + " " + tk[1] + " and " + u2 + " " + tk[2] + " " + tk[3]);
+    }
+    if (k === 2){
+      var h = ri(r, 2, 6);
+      a = ri(r, 6, 14) * 5; do { b = ri(r, 6, 14) * 5; } while (b === a);
+      return Q([["type", "algebra"], ["kind", "motion"], ["form", "opposite"], ["a", a], ["b", b], ["c", (a + b) * h], ["ctx", "trains"]],
+        "Two trains leave the same station at the same time and travel in opposite directions. One goes " + a + " mph and the other goes " + b + " mph. After how many hours will they be "
+          + (a + b) * h + " miles apart?", h + " hours");
+    }
+    var p = pick(r, [10, 20, 25, 40, 50]), O, item = pick(r, [["jacket", "a jacket"], ["bike", "a bike"], ["game", "a video game"]]);
+    do { O = ri(r, 4, 60) * 5; } while (O * (100 - p) % 100);
+    return Q([["type", "algebra"], ["kind", "percentback"], ["form", "off"], ["p", p], ["c", O * (100 - p) / 100], ["ctx", item[0]]],
+      "After a " + p + "% discount, " + item[1] + " costs $" + O * (100 - p) / 100 + ". What was the original price?", "$" + O);
+  }
+
+  /* ---- probability (probability.html: x = what's used, ev / ev2 = the events) ---- */
+  function isPrime(n){ if (n < 2) return false; for (var d = 2; d * d <= n; d++) if (n % d === 0) return false; return true; }
+  function numEvents(r, N){                  // [ev, "an even number", how many of 1..N]
+    var out = [], k;
+    function cnt(f){ var c = 0; for (var i = 1; i <= N; i++) if (f(i)) c++; return c; }
+    k = ri(r, 1, N); out.push(["eq:" + k, an(k) + " " + k, 1]);
+    out.push(["even", "an even number", cnt(function(i){ return i % 2 === 0; })]);
+    out.push(["odd", "an odd number", cnt(function(i){ return i % 2 === 1; })]);
+    out.push(["prime", "a prime number", cnt(isPrime)]);
+    k = ri(r, 2, N - 2); out.push(["gt:" + k, "a number greater than " + k, N - k]);
+    k = ri(r, 3, N - 1); out.push(["lt:" + k, "a number less than " + k, k - 1]);
+    k = ri(r, 3, Math.min(5, N - 1)); out.push(["mult:" + k, "a multiple of " + k, Math.floor(N / k)]);
+    return out.filter(function(e){ return e[2] > 0 && e[2] < N; });
+  }
+  function bagOf(r, minEach, maxEach, colours){
+    var cs = shuffle(["red", "blue", "green", "yellow"], r).slice(0, colours), ns = cs.map(function(){ return ri(r, minEach, maxEach); });
+    return { cs:cs, ns:ns, total:ns.reduce(function(a, b){ return a + b; }, 0),
+             x:"bag(" + cs.map(function(c, i){ return c + ":" + ns[i]; }).join(",") + ")",
+             says:"A bag has " + list(cs.map(function(c, i){ return ns[i] + " " + c; })) + " marbles." };
+  }
+  function thing(r){                         // one fair thing to pick from, with its events
+    var k = ri(r, 0, 3), N;
+    if (k === 0){
+      N = pick(r, [6, 6, 8, 10, 12]);
+      return { x:"die" + N, total:N, verb:"rolling", evs:numEvents(r, N), says:"Roll a fair " + (N === 6 ? "die" : N + "-sided die") + " (numbered 1 to " + N + ")." };
+    }
+    if (k === 1){
+      N = pick(r, [10, 20, 25, 30, 50]);
+      return { x:"nums" + N, total:N, verb:"picking", evs:numEvents(r, N), says:"Pick a whole number from 1 to " + N + " at random." };
+    }
+    if (k === 2){
+      var B = bagOf(r, 1, 9, ri(r, 2, 3));
+      return { x:B.x, total:B.total, verb:"picking", evs:B.cs.map(function(c, i){ return ["is:" + c, an(c) + " " + c + " marble", B.ns[i]]; }), says:B.says + " Pick one without looking." };
+    }
+    return { x:"deck", total:52, verb:"picking", says:"Pick a card at random from a shuffled deck of 52.",
+             evs:[["suit:hearts", "a heart", 13], ["suit:spades", "a spade", 13], ["color:red", "a red card", 26], ["face", "a face card (J, Q or K)", 12],
+                  ["ace", "an ace", 4], ["rank:K", "a king", 4], ["numcard", "a number card (2 to 10)", 36]] };
+  }
+  function probability(r, L){
+    var T, e, k;
+    if (L <= 1){
+      T = thing(r); e = pick(r, T.evs);
+      return Q([["mode", "simple"], ["x", T.x], ["ev", e[0]]], T.says + " What is the probability of " + T.verb + " " + e[1] + "?", fS(F(e[2], T.total)));
+    }
+    if (L === 2){
+      k = ri(r, 0, 9);
+      if (k < 4){
+        T = thing(r); e = pick(r, T.evs);
+        return Q([["mode", "complement"], ["x", T.x], ["ev", e[0]]], T.says + " What is the probability of not " + T.verb + " " + e[1] + "?", fS(F(T.total - e[2], T.total)));
+      }
+      if (k < 6){
+        var ce = pick(r, [["is:H", "heads"], ["is:T", "tails"]]), de = pick(r, numEvents(r, 6));
+        return Q([["mode", "compound"], ["kind", "and"], ["x", "coin,die6"], ["ev", ce[0]], ["ev2", de[0]]],
+          "Flip a fair coin, then roll a fair die (numbered 1 to 6). What is the probability of getting " + ce[1] + " and rolling " + de[1] + "?", fS(F(de[2], 12)));
+      }
+      if (k < 8){
+        var B = bagOf(r, 2, 8, 2), i1 = ri(r, 0, 1), i2 = ri(r, 0, 1);
+        return Q([["mode", "compound"], ["kind", "with"], ["x", B.x], ["ev", "is:" + B.cs[i1]], ["ev2", "is:" + B.cs[i2]]],
+          B.says + " Pick one without looking, put it back, then pick again. What is the probability of picking " + (i1 === i2 ? B.cs[i1] + " both times" : B.cs[i1] + " first, then " + B.cs[i2]) + "?",
+          fS(F(B.ns[i1] * B.ns[i2], B.total * B.total)));
+      }
+      var N = pick(r, [6, 8, 10]), ev = pick(r, numEvents(r, N)), g = N / gcd(N, ev[2]), n;
+      do { n = g * ri(r, 1, 20); } while (n < 30 || n > 150);
+      return Q([["mode", "expected"], ["kind", "predict"], ["x", "die" + N], ["ev", ev[0]], ["n", n]],
+        "You roll a fair " + (N === 6 ? "die" : N + "-sided die") + " (numbered 1 to " + N + ") " + n + " times. About how many times would you expect to roll " + ev[1] + "?", (n * ev[2] / N) + " times");
+    }
+    if (L === 3){
+      var W = bagOf(r, 2, 8, ri(r, 2, 3)), j1 = ri(r, 0, W.cs.length - 1), j2 = ri(r, 0, W.cs.length - 1), same = j1 === j2 ? 1 : 0;
+      if (same && W.ns[j1] < 2) W.ns[j1] = 2;
+      return Q([["mode", "compound"], ["kind", "without"], ["x", W.x], ["ev", "is:" + W.cs[j1]], ["ev2", "is:" + W.cs[j2]]],
+        W.says + " Pick one without looking and keep it out, then pick another. What is the probability of picking " + (same ? W.cs[j1] + " both times" : W.cs[j1] + " first, then " + W.cs[j2]) + "?",
+        fS(F(W.ns[j1] * (W.ns[j2] - same), W.total * (W.total - 1))));
+    }
+    k = ri(r, 0, 3);
+    if (k === 0){
+      var h = ri(r, 1, 2);
+      return Q([["mode", "space"], ["x", "coin,coin,coin"], ["ev", "exactly:" + h + ":is:H"], ["view", "tree"]],
+        "Flip three fair coins. Draw a tree diagram of all the outcomes. What is the probability of getting exactly " + h + " head" + (h === 1 ? "" : "s") + "?", "3/8");
+    }
+    if (k === 1) return Q([["mode", "space"], ["x", "coin,coin,coin"], ["ev", "atleast:2:is:H"], ["view", "tree"]],
+      "Flip three fair coins. Draw a tree diagram of all the outcomes. What is the probability of getting at least 2 heads?", "1/2");
+    if (k === 2){
+      var s = ri(r, 3, 11);
+      return Q([["mode", "space"], ["x", "die6,die6"], ["ev", "sum:" + s], ["view", "grid"]],
+        "Roll two fair dice. Make a table of all 36 outcomes. What is the probability that the sum is " + s + "?", fS(F(6 - Math.abs(s - 7), 36)));
+    }
+    var sg = ri(r, 6, 10), more = 0;
+    for (var a1 = 1; a1 <= 6; a1++) for (var a2 = 1; a2 <= 6; a2++) if (a1 + a2 > sg) more++;
+    return Q([["mode", "space"], ["x", "die6,die6"], ["ev", "sumgt:" + sg], ["view", "grid"]],
+      "Roll two fair dice. Make a table of all 36 outcomes. What is the probability that the sum is greater than " + sg + "?", fS(F(more, 36)));
+  }
+
+  /* ---- exponents (exponents.html: eval b, e · laws ex · sci n · scicalc op, a, b) ---- */
+  function supS(n){ return String(n).replace(/-/g, "⁻").replace(/\d/g, function(c){ return SUP[c]; }); }
+  function commas(s){ var p = String(s).split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); return p.join("."); }
+  function zeros(n){ var s = ""; while (s.length < n) s += "0"; return s; }
+  function sigDigits(r){ var A; do { A = chance(r, .6) ? ri(r, 11, 99) : ri(r, 101, 999); } while (A % 10 === 0); return A; }
+  function sciS(mant, k){ return mant + " × 10" + supS(k); }
+  function term(c, ex, ey, ascii){            // 12x⁵y⁵ (or 12x^5y^5)
+    function pw(v, e){ return e === 1 ? v : v + (ascii ? "^" + e : supS(e)); }
+    return (c === 1 ? "" : String(c)) + (ex ? pw("x", ex) : "") + (ey ? pw("y", ey) : "");
+  }
+  function exponents(r, L){
+    var b, e, v, k, A, len, mant;
+    if (L <= 1){
+      do { b = ri(r, 2, 9); e = ri(r, 2, 6); v = Math.pow(b, e); } while (v > 5000 || v < 16);
+      if (chance(r, .2)){ b = 10; e = ri(r, 3, 6); v = Math.pow(10, e); }
+      return Q([["mode", "eval"], ["b", b], ["e", e]], "Evaluate " + b + supS(e) + ".", String(v));
+    }
+    if (L === 2){
+      A = sigDigits(r); len = String(A).length; mant = dec(A, len - 1);
+      var big = chance(r, .55), std;
+      if (big){ k = ri(r, 4, 9); std = String(A) + zeros(k - len + 1); }
+      else { k = -ri(r, 2, 6); std = "0." + zeros(-k - 1) + String(A); }
+      if (chance(r, .5)) return Q([["mode", "sci"], ["n", std]], "Write " + commas(std) + " in scientific notation.", sciS(mant, k));
+      return Q([["mode", "sci"], ["n", mant + "e" + k]], "Write " + sciS(mant, k) + " in standard form.", commas(std));
+    }
+    if (L === 3){
+      k = ri(r, 0, 4);
+      if (k === 0){
+        var c1 = ri(r, 2, 6), c2 = ri(r, 2, 6), p = ri(r, 1, 5), q = ri(r, 1, 5), p2 = ri(r, 1, 5), q2 = ri(r, 1, 5);
+        return Q([["mode", "laws"], ["ex", term(c1, p, q, true) + "*" + term(c2, p2, q2, true)]],
+          "Simplify " + term(c1, p, q) + " · " + term(c2, p2, q2) + ".", term(c1 * c2, p + p2, q + q2));
+      }
+      if (k === 1){
+        var pp = ri(r, 1, 4), qq = ri(r, 1, 4), kk = ri(r, 2, 3), m = ri(r, 1, pp * kk - 1), nn = ri(r, 1, qq * kk - 1);
+        return Q([["mode", "laws"], ["ex", "(" + term(1, pp, qq, true) + ")^" + kk + "/(" + term(1, m, nn, true) + ")"]],
+          "Simplify (" + term(1, pp, qq) + ")" + supS(kk) + " / " + term(1, m, nn) + ".", term(1, pp * kk - m, qq * kk - nn));
+      }
+      if (k === 2){
+        var cc = ri(r, 2, 3), ep = ri(r, 1, 4), eq = ri(r, 1, 4), kp = ri(r, 2, 3);
+        return Q([["mode", "laws"], ["ex", "(" + term(cc, ep, eq, true) + ")^" + kp]],
+          "Simplify (" + term(cc, ep, eq) + ")" + supS(kp) + ".", term(Math.pow(cc, kp), ep * kp, eq * kp));
+      }
+      var Am, Bm, k1 = ri(r, 2, 8), k2 = ri(r, 2, 8);
+      if (k === 3){
+        do { Am = ri(r, 11, 95); Bm = ri(r, 11, 95); } while (Am % 10 === 0 && Bm % 10 === 0);
+        var P = Am * Bm, pm = P >= 1000 ? dec(P, 3) : dec(P, 2), pk = k1 + k2 + (P >= 1000 ? 1 : 0);
+        return Q([["mode", "scicalc"], ["op", "mul"], ["a", dec(Am, 1) + "e" + k1], ["b", dec(Bm, 1) + "e" + k2]],
+          "Multiply: (" + sciS(dec(Am, 1), k1) + ") × (" + sciS(dec(Bm, 1), k2) + "). Give the answer in scientific notation.", sciS(pm, pk));
+      }
+      var Qm, At;
+      do { Bm = ri(r, 11, 49); Qm = ri(r, 11, 95); At = Bm * Qm; } while (At >= 1000 || Bm % 10 === 0 || Qm % 10 === 0);
+      return Q([["mode", "scicalc"], ["op", "div"], ["a", dec(At, 2) + "e" + (k1 + k2)], ["b", dec(Bm, 1) + "e" + k2]],
+        "Divide: (" + sciS(dec(At, 2), k1 + k2) + ") ÷ (" + sciS(dec(Bm, 1), k2) + "). Give the answer in scientific notation.", sciS(dec(Qm, 1), k1));
+    }
+    var m2, t, kb = ri(r, 2, 6), dd = ri(r, 2, 5);
+    do { m2 = pick(r, [10, 12, 15, 20, 25, 30, 40]); t = ri(r, 2, 6); } while (m2 * t >= 100 || m2 * t % 10 && m2 * t > 99);
+    var ma = dec(m2 * t, 1), mb = dec(m2, 1);
+    return Q([["mode", "scicalc"], ["op", "times"], ["a", ma + "e" + (kb + dd)], ["b", mb + "e" + kb]],
+      "How many times bigger is " + sciS(ma, kb + dd) + " than " + sciS(mb, kb) + "?", commas(String(t * Math.pow(10, dd))));
+  }
+
+  function repeating(n, d){                   // n/d (0 < n < d) as a decimal with the repeating digits in brackets: 5/12 → 0.41(6)
+    var seen = {}, digits = "", rem = n % d;
+    while (rem !== 0 && seen[rem] === undefined){ seen[rem] = digits.length; rem *= 10; digits += Math.floor(rem / d); rem %= d; }
+    if (rem === 0) return "0." + digits;
+    return "0." + digits.slice(0, seen[rem]) + "(" + digits.slice(seen[rem]) + ")";
+  }
+
+  /* ===================== dates (local) ===================== */
+  var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var DAYS = [   // Monday first
+    { name:"Monday", theme:"Warm-up Monday", level:1, blurb:"An easier one to start the week." },
+    { name:"Tuesday", theme:"Tuesday", level:2, blurb:"A middle-of-the-road one. Work it out on paper first." },
+    { name:"Wednesday", theme:"Midweek", level:2, blurb:"Halfway through the week. Work it out on paper first." },
+    { name:"Thursday", theme:"Thursday", level:2, blurb:"Work it out on paper first, then check it." },
+    { name:"Friday", theme:"Challenge Friday", level:3, blurb:"A harder one to end the week. Take your time; there’s a hint if you need it." },
+    { name:"Saturday", theme:"Weekend puzzle", level:4, blurb:"A puzzle for the weekend. It takes a few steps — read it twice." },
+    { name:"Sunday", theme:"Weekend puzzle", level:4, blurb:"A puzzle for the weekend. It takes a few steps — read it twice." }
+  ];
+  function p2(n){ return ("0" + n).slice(-2); }
+  function validKey(s){
+    var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(String(s || ""));
+    if (!m) return false;
+    var t = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+    return t.getUTCFullYear() === +m[1] && t.getUTCMonth() === +m[2] - 1 && t.getUTCDate() === +m[3] && +m[1] >= 2000 && +m[1] <= 2200;
+  }
+  function dayNum(key){ var m = key.split("-"); return Math.round(Date.UTC(+m[0], +m[1] - 1, +m[2]) / 86400000); }
+  function keyOfNum(n){ var t = new Date(n * 86400000); return t.getUTCFullYear() + "-" + p2(t.getUTCMonth() + 1) + "-" + p2(t.getUTCDate()); }
+  function addDays(key, k){ return keyOfNum(dayNum(key) + k); }
+  function keyOf(ms){ var t = new Date(ms); return t.getFullYear() + "-" + p2(t.getMonth() + 1) + "-" + p2(t.getDate()); }   // the local date
+  function startMs(key){ var m = key.split("-"); return new Date(+m[0], +m[1] - 1, +m[2]).getTime(); }                        // local midnight (DST-safe)
+  function wdIdx(key){ return ((dayNum(key) + 3) % 7 + 7) % 7; }      // 0 = Monday (1970-01-01, day 0, was a Thursday)
+  function words(key, short){
+    var m = key.split("-"), d = DAYS[wdIdx(key)];
+    return (short ? d.name.slice(0, 3) : d.name) + ", " + (short ? MONTHS[+m[1] - 1].slice(0, 3) : MONTHS[+m[1] - 1]) + " " + (+m[2]) + (short ? "" : ", " + m[0]);
+  }
+
+  /* ===================== the clock (and test overrides) ===================== */
+  var OFF = 0, LOCAL = /^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+  function now(){ return Date.now() + OFF; }
+  if (LOCAL){
+    var tn = /[?&]now=(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(location.search), td = /[?&]today=(\d{4}-\d\d-\d\d)(?:&|$)/.exec(location.search);
+    if (tn) OFF = new Date(+tn[1], +tn[2] - 1, +tn[3], +tn[4], +tn[5]).getTime() - Date.now();
+    else if (td && validKey(td[1])){ var tm = td[1].split("-"); OFF = new Date(+tm[0], +tm[1] - 1, +tm[2], 12, 0).getTime() - Date.now(); }
+  }
+  function today(){ return keyOf(now()); }
+
+  /* ===================== the schedule ===================== */
+  var EPOCH = dayNum("2024-01-01");           // a Monday
+  function pool(key, flag){ return TOPICS.filter(function(t){ return t[flag] && (!t.from || t.from <= key); }); }
+  function order(list, tag, cycle){
+    var a = shuffle(list.slice(), rng(hash(tag + "|" + list.length + "|" + cycle)));
+    var N = list.length, prev, t;
+    if (tag === "weekday" && N % 5 && N > 9){
+      // a round that doesn't fit whole weeks: keep the first 4 cards clear of the last 4 of the round before,
+      // so a week that straddles two rounds still has five different topics
+      prev = shuffle(list.slice(), rng(hash(tag + "|" + N + "|" + (cycle - 1)))).slice(N - 4);
+      for (var i = 0; i < 4; i++) if (prev.indexOf(a[i]) >= 0)
+        for (var j = 4; j < N - 4; j++) if (prev.indexOf(a[j]) < 0){ t = a[i]; a[i] = a[j]; a[j] = t; break; }   // swaps stay off the last 4, so the next round can trust them
+    } else if (N > 2){
+      prev = shuffle(list.slice(), rng(hash(tag + "|" + N + "|" + (cycle - 1))));
+      if (a[0] === prev[N - 1]){ t = a[0]; a[0] = a[1]; a[1] = t; }
+    }
+    return a;
+  }
+  function deckAt(key, flag, slot, poolKey){
+    var list = pool(poolKey || key, flag), N = list.length, cyc = Math.floor(slot / N);
+    return order(list, flag, cyc)[slot - cyc * N];
+  }
+  var tcache = {};
+  function topicFor(key){
+    if (tcache[key]) return tcache[key];
+    var n = dayNum(key), wi = wdIdx(key), week = Math.floor((n - EPOCH - wi) / 7), t;
+    if (wi < 5) t = deckAt(key, "weekday", week * 5 + wi);
+    else {
+      // Saturday and Sunday take the next two cards of the weekend deck, in whichever order keeps them
+      // from repeating Friday's topic or the next Monday's
+      var satK = addDays(key, 5 - wi), sat = deckAt(satK, "weekend", week * 2), sun = deckAt(satK, "weekend", week * 2 + 1);
+      var fri = deckAt(addDays(satK, -1), "weekday", week * 5 + 4), mon = deckAt(addDays(satK, 2), "weekday", (week + 1) * 5, satK);
+      if ((sat === fri || sun === mon) && sun !== fri && sat !== mon){ var x = sat; sat = sun; sun = x; }
+      t = wi === 5 ? sat : sun;
+    }
+    return (tcache[key] = t);
+  }
+  /* The numbers: the topic's make() with a seed from the date and the topic. So that a class doesn't meet the same
+     problem twice in a year, the days are settled in order from EPOCH: when a day's problem is one its topic already
+     had (at the same level) in the 400 days before, the next seed is tried (up to 8). That walk is a few
+     milliseconds even years ahead, and it gives every visitor the same answer. Days before EPOCH just use the first seed. */
+  var cache = {}, recent = {}, lastN = null;
+  function make(key, t, L, k){ return t.make(rng(hash("potd|" + key + "|" + t.id + (k ? "|" + k : ""))), L, key); }
+  function settle(key){
+    var t = topicFor(key), wi = wdIdx(key), L = DAYS[wi].level, made = make(key, t, L, 0), n = dayNum(key);
+    if (n >= EPOCH){
+      var id = t.id + "|" + L, prev = recent[id] || (recent[id] = []), used = function(p){ return prev.some(function(x){ return x.p === p; }); };
+      while (prev.length && prev[0].n < n - 400) prev.shift();
+      for (var k = 1; k <= 8 && used(made.params); k++) made = make(key, t, L, k);
+      prev.push({ n:n, p:made.params });
+    }
+    cache[key] = { key:key, topic:t, day:DAYS[wi], level:L, params:made.params, text:made.text, answer:made.answer };
+  }
+  function problemFor(key){
+    if (cache[key]) return cache[key];
+    var n = dayNum(key);
+    if (n < EPOCH){ settle(key); return cache[key]; }
+    for (var d = lastN === null ? EPOCH : lastN + 1; d <= n; d++){ settle(keyOfNum(d)); lastN = d; }
+    return cache[key];
+  }
+  function link(p, extra){ return p.topic.page + "?" + p.params + (extra ? "&" + extra : ""); }
+
+  /* ===================== the record ===================== */
+  var RKEY = "daily-problem", GRACE = 4 * 3600000;
+  function readRec(){
+    try {
+      var v = JSON.parse(localStorage.getItem(RKEY) || "null");
+      if (v && v.v === 1 && v.d && typeof v.d === "object") return v;
+    } catch (e){}
+    return { v:1, best:0, d:{} };
+  }
+  function writeRec(R){
+    try {
+      var keys = Object.keys(R.d).sort();
+      if (keys.length > 800) keys.slice(0, keys.length - 800).forEach(function(k){ delete R.d[k]; });
+      R.best = Math.max(R.best || 0, streaks(R).best);
+      localStorage.setItem(RKEY, JSON.stringify(R));
+    } catch (e){}
+  }
+  function solvedOnDay(e){ return !!e && (e.m === "y" || e.m === "a") && !e.late; }
+  function streaks(R, tk){
+    tk = tk || today();
+    var cur = 0, k = solvedOnDay(R.d[tk]) ? tk : addDays(tk, -1), te = R.d[tk];
+    while (solvedOnDay(R.d[k])){ cur++; k = addDays(k, -1); }
+    if (te && te.m === "x" && !te.late) cur = 0;             // looked at today's work: today can't be solved any more
+    var best = 0, run = 0, last = null;
+    Object.keys(R.d).sort().forEach(function(key){
+      if (!validKey(key) || !solvedOnDay(R.d[key])){ return; }
+      run = last && dayNum(key) - dayNum(last) === 1 ? run + 1 : 1;
+      last = key;
+      if (run > best) best = run;
+    });
+    var total = 0;
+    Object.keys(R.d).forEach(function(key){ var e = R.d[key]; if (e && (e.m === "y" || e.m === "a")) total++; });
+    return { cur:cur, best:Math.max(best, cur, R.best || 0), total:total, todayDone:solvedOnDay(R.d[tk]) };
+  }
+
+  /* ===================== theme ===================== */
+  var themeBtn = $("themeBtn"), root = document.documentElement;
+  function isDark(){ var t = root.getAttribute("data-theme"); return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches; }
+  function paintTheme(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  var urlTheme = /[?&]theme=(light|dark)(?:&|$)/.exec(location.search);
+  try { var th = localStorage.getItem("daily-page-theme"); if (th === "light" || th === "dark") root.setAttribute("data-theme", th); } catch (e){}
+  if (urlTheme) root.setAttribute("data-theme", urlTheme[1]);
+  themeBtn.addEventListener("click", function(){
+    var next = isDark() ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("daily-page-theme", next); } catch (e){}
+    paintTheme();
+    if (P && !$("dayView").hidden) frameEl.src = frameSrc();
+  });
+  paintTheme();
+
+  function copyText(text, msgEl, okText){
+    function fallback(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (e){ ok = false; }
+      document.body.removeChild(ta);
+      msgEl.textContent = ok ? okText : "Couldn’t copy — here it is: " + text;
+    }
+    var settled = false;
+    function once(fn){ return function(){ if (!settled){ settled = true; fn(); } }; }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(once(function(){ msgEl.textContent = okText; }), once(fallback));
+        setTimeout(once(fallback), 900);
+        return;
+      }
+    } catch (e){}
+    fallback();
+  }
+  function pageURL(key){ return new URL("daily.html" + (key ? "?date=" + key : ""), location.href).href; }
+
+  /* ===================== which view ===================== */
+  var qDate = /[?&]date=(\d{4}-\d\d-\d\d)(?:&|$)/.exec(location.search), qView = /[?&]view=(today|week)(?:&|$)/.exec(location.search);
+  var TODAY = today(), KEY = qDate && validKey(qDate[1]) ? qDate[1] : TODAY, VIEW = qView ? qView[1] : "today";
+  var MODE = KEY === TODAY ? "today" : KEY < TODAY ? "past" : "future";
+  var P = null, frameEl = $("frame");
+  function syncURL(){
+    var q = [];
+    if (KEY !== TODAY || (VIEW === "week" && qDate)) q.push("date=" + KEY);
+    if (VIEW === "week") q.push("view=week");
+    if (LOCAL){ var t = /[?&]((?:now|today)=[^&]*)/.exec(location.search); if (t) q.push(t[1]); }
+    var qs = q.length ? "?" + q.join("&") : "";
+    try { if (location.search !== qs) history.replaceState(history.state, "", location.pathname + qs + location.hash); } catch (e){}
+  }
+
+  /* ===================== the day view ===================== */
+  function frameSrc(){ return link(P, "practice=check&embed=1&theme=" + (isDark() ? "dark" : "light")); }
+  var gotHeight = false, loadTimer = 0, celebrateNext = false;
+  function showDay(){
+    P = problemFor(KEY);
+    $("dayView").hidden = false; $("weekView").hidden = true;
+    document.title = (MODE === "today" ? "Problem of the Day" : "Problem of the Day · " + words(KEY, true));
+    $("eyebrow").textContent = MODE === "today" ? "Today · the same problem for everyone" : MODE === "past" ? "Catching up" : "A teacher’s preview";
+    $("dateWords").textContent = words(KEY);
+    $("dayTheme").textContent = P.day.theme;
+    $("dayTheme").hidden = P.day.theme === P.day.name;
+    var t = P.topic;
+    $("stageTopic").innerHTML = '<i class="dot" style="--c:var(--' + t.c + ')"></i>' + esc(t.name) + ' <span class="msg">· ' + esc(t.title) + "</span>";
+    $("blurb").textContent = P.day.blurb;
+    $("stepsLink").href = link(P, "practice=all");
+    var wk = "daily.html?" + (MODE === "today" ? "" : "date=" + KEY + "&") + "view=week";
+    $("weekLink").href = wk; $("weekLink2").href = wk;
+    frameEl.title = "The problem of the day: " + P.text;
+    frameEl.style.height = "380px";
+    gotHeight = false;
+    clearTimeout(loadTimer);
+    loadTimer = setTimeout(function(){
+      if (!gotHeight){ $("frameNote").hidden = false;
+        $("frameNote").innerHTML = 'This problem is taking a while to load. If it doesn’t show up, <a href="' + esc(link(P, "practice=check")) + '">open it on its own page</a>.'; }
+    }, 9000);
+    frameEl.src = frameSrc();
+    // the banner
+    var b = $("banner"), R = readRec(), e = R.d[KEY];
+    if (MODE === "past"){
+      b.hidden = false;
+      b.innerHTML = solvedOnDay(e) ? "<span>You solved this one on the day ✓ — have another go if you like; it won’t change your record.</span> <a href=\"daily.html\">Today’s problem →</a>"
+        : "<span><b>Catching up on " + esc(words(KEY)) + ".</b> Solving it counts toward your total, but not your streak.</span> <a href=\"daily.html\">Today’s problem →</a>";
+    } else if (MODE === "future"){
+      b.hidden = false;
+      b.innerHTML = "<span><b>A preview of " + esc(words(KEY)) + ".</b> This is for teachers: answers here aren’t recorded.</span> <a href=\"daily.html\">Today’s problem →</a>";
+    } else b.hidden = true;
+    // the weekend bonus
+    var wi = wdIdx(KEY);
+    $("bonus").hidden = wi < 5;
+    if (wi >= 5){
+      var br = rng(hash("bonus|" + KEY)), deck = pick(br, [["times", "t=6,7,8", "the 6, 7 and 8 times tables"], ["times", "t=7,8,9", "the 7, 8 and 9 times tables"],
+        ["times", "t=11,12&max=12", "the 11 and 12 times tables"], ["div", "t=6,7,8,9", "division facts"], ["sq", "sq=15", "squares up to 15²"], ["fdp", "way=both", "fractions, decimals and percents"]]);
+      $("bonusText").textContent = "How many can you get in 60 seconds? Today’s speed round: " + deck[2] + ".";
+      $("bonusLink").href = "flashcards.html?deck=" + deck[0] + "&" + deck[1] + "&mode=speed&secs=60";
+    }
+    $("qrBtn").hidden = !(window.HelperQR && typeof window.HelperQR.show === "function");
+    $("shareBtn").textContent = MODE === "today" ? "Share today’s problem" : "Share this problem";
+    paintAll();
+  }
+  function paintAll(){ paintVerdict(); paintStreak(); }
+  function countdownText(){
+    var ms = startMs(addDays(today(), 1)) - now();
+    if (ms <= 60000) return "less than a minute";
+    var h = Math.floor(ms / 3600000), m = Math.floor(ms % 3600000 / 60000);
+    return (h ? h + " h " : "") + m + " min";
+  }
+  function paintVerdict(){
+    var R = readRec(), e = R.d[KEY] || { m:"", n:0 }, v = $("verdict"), after = $("after");
+    var done = e.m === "y" || e.m === "a" || e.m === "x", S = streaks(R);
+    if (MODE === "future"){
+      v.innerHTML = "Try it: the frame checks answers as usual, but nothing is recorded for a future day.";
+      after.hidden = false; $("tomorrow").textContent = "";
+      return;
+    }
+    if (!done){
+      after.hidden = true;
+      v.innerHTML = e.n ? '<b class="no">Not yet</b> — ' + plural(e.n, "try", "tries") + " so far. Have another go, or ask for a hint."
+        : "Work it out on paper, then type your answer and press <b>Check</b>.";
+      return;
+    }
+    var late = !!e.late, html;
+    if (e.m === "x") html = '<div class="solved warmish" id="solvedBox"><span class="big-ic" aria-hidden="true">✗</span><span class="txt"><b>You looked at the work.</b>'
+      + "<span>Read it through — then try the same kind on its helper page. " + (MODE === "today" ? "It doesn’t count toward the streak." : "") + "</span></span></div>";
+    else html = '<div class="solved" id="solvedBox"><span class="big-ic" aria-hidden="true">' + (e.m === "y" ? "✓" : "~") + '</span><span class="txt"><b>'
+      + (e.m === "y" ? "Solved — right first try!" : "Solved" + (e.n ? " after " + plural(e.n + 1, "try", "tries") : "") + (e.h ? ", with a hint" : "") + ".") + "</b><span>"
+      + (late ? "Caught up: it counts toward your total (" + S.total + " solved)." : S.cur > 1 ? "That’s " + S.cur + " days in a row." : S.cur === 1 ? "That’s day one of a new streak." : "") + "</span></span></div>";
+    v.innerHTML = html;
+    after.hidden = false;
+    paintTomorrow();
+    if (celebrateNext){
+      celebrateNext = false;
+      var box = $("solvedBox");
+      if (box && e.m !== "x"){ box.classList.add("celebrate"); var n = $("streakN"); n.classList.remove("bump"); void n.offsetWidth; n.classList.add("bump"); }
+    }
+  }
+  function paintTomorrow(){
+    var tk = today();
+    if (MODE !== "today"){ $("tomorrow").innerHTML = '<a href="daily.html">Go to today’s problem →</a>'; return; }
+    if (tk !== KEY) $("tomorrow").innerHTML = "It’s a new day — <a href=\"daily.html\">today’s problem is ready →</a>";
+    else $("tomorrow").innerHTML = "Come back tomorrow for a new one. It’s ready in <b id=\"countdown\">" + countdownText() + "</b>.";
+  }
+  function paintStreak(){
+    var R = readRec(), tk = today(), S = streaks(R, tk);
+    $("streakN").textContent = S.cur;
+    $("streakUnit").textContent = S.cur === 1 ? "day in a row" : "days in a row";
+    var te = R.d[tk];
+    $("streakNote").textContent = S.todayDone ? "Today’s is done ✓" : te && te.m === "x" ? "You looked at today’s work. Start a new streak tomorrow." : S.cur ? "Solve today’s to make it " + (S.cur + 1) + "." : "Solve today’s to start one.";
+    $("bestN").textContent = S.best;
+    $("totalN").textContent = S.total;
+    var html = "", first = addDays(tk, -13);
+    for (var i = 0; i < 14; i++){
+      var k = addDays(first, i), e = R.d[k], m = e && (e.m === "y" || e.m === "a" || e.m === "x") ? e.m : "";
+      var mk = { y:"✓", a:"~", x:"✗" }[m] || "", wd = DAYS[wdIdx(k)].name;
+      var label = words(k) + ": " + (m === "y" ? "right first try" : m === "a" ? "solved after more tries" : m === "x" ? "looked at the work" : e && e.m === "t" ? "tried, not solved" : k === tk ? "not done yet" : "missed")
+        + (e && e.late && m ? " (caught up later)" : "");
+      var cls = "m " + m + (e && e.late && m ? " late" : "") + (k === tk ? " today" : "");
+      var inner = k === tk || m ? '<span class="' + cls + '" aria-hidden="true">' + mk + "</span>"
+        : '<a class="' + cls + '" href="daily.html?date=' + k + '" title="' + esc(label) + ' — catch up" aria-hidden="true" tabindex="-1"></a>';
+      html += '<div class="c" role="listitem" aria-label="' + esc(label) + '" title="' + esc(label) + '"><small>' + wd.charAt(0) + "</small>" + inner + "<small>" + (+k.slice(8)) + "</small></div>";
+    }
+    $("cal").innerHTML = html;
+  }
+
+  // the helper in the frame reports each graded check (and "Show me the work")
+  window.addEventListener("message", function(ev){
+    var d = ev.data;
+    if (!P || !d || typeof d !== "object" || ev.source !== frameEl.contentWindow) return;
+    if (d.type === "helper:height" && typeof d.h === "number"){
+      gotHeight = true; $("frameNote").hidden = true;
+      frameEl.style.height = Math.max(160, Math.min(6000, Math.ceil(d.h))) + "px";
+      return;
+    }
+    if (d.type === "helper:checked" && d.detail && typeof d.detail === "object") checked(d.detail);
+  });
+  function checked(x){
+    if (MODE === "future") return;
+    var R = readRec(), e = R.d[KEY] || { m:"", n:0 };
+    if (e.m === "y" || e.m === "a" || e.m === "x"){ paintAll(); return; }      // settled: more tries don't change it
+    var late = !(MODE === "today" && now() < startMs(addDays(KEY, 1)) + GRACE);
+    if (x.hinted) e.h = 1;
+    if (x.verdict === "right"){
+      e.m = !e.n && x.firstTry !== false && !e.h ? "y" : "a"; e.at = now(); if (late) e.late = 1;
+      celebrateNext = true;
+    } else if (x.verdict === "shown"){
+      e.m = "x"; e.at = now(); if (late) e.late = 1;
+    } else if (x.verdict === "wrong" || x.verdict === "simplify"){
+      e.n = (e.n || 0) + 1; e.m = "t";
+    } else return;
+    R.d[KEY] = e;
+    writeRec(R);
+    paintAll();
+  }
+  setInterval(function(){
+    if ($("dayView").hidden) return;
+    if ($("countdown") || today() !== KEY) paintTomorrow();
+    paintStreak();
+  }, 20000);
+
+  $("shareBtn").addEventListener("click", function(){
+    copyText(pageURL(KEY), $("shareMsg"), "Link copied ✓ — everyone who opens it gets this same problem.");
+  });
+  $("qrBtn").addEventListener("click", function(){
+    try { window.HelperQR.show(pageURL(KEY), { title:"Problem of the Day · " + words(KEY) }); } catch (e){ $("shareMsg").textContent = "Couldn’t make the QR code."; }
+  });
+
+  /* ===================== the week view ===================== */
+  function showWeek(){
+    $("dayView").hidden = true; $("weekView").hidden = false;
+    document.body.classList.add("week");
+    var mon = addDays(KEY, -wdIdx(KEY)), sun = addDays(mon, 6), days = [];
+    for (var i = 0; i < 7; i++) days.push(problemFor(addDays(mon, i)));
+    var span = function(){
+      var a = mon.split("-"), b = sun.split("-");
+      return MONTHS[+a[1] - 1] + " " + (+a[2]) + " – " + (a[1] === b[1] ? "" : MONTHS[+b[1] - 1] + " ") + (+b[2]) + ", " + b[0];
+    }();
+    document.title = "Problem of the Day · the week of " + words(mon, true);
+    $("eyebrow").textContent = "For teachers · this week’s problems";
+    $("tagline").textContent = "The seven problems of the week, Monday to Sunday: the same ones every student gets on those days. "
+      + "Open any of them, or print the week with an answer key on its own page.";
+    $("weekHead").textContent = "The week of " + span;
+    $("prevWeek").href = "daily.html?date=" + addDays(mon, -7) + "&view=week";
+    $("nextWeek").href = "daily.html?date=" + addDays(mon, 7) + "&view=week";
+    var tk = today();
+    $("wlist").innerHTML = days.map(function(p){
+      var t = p.topic;
+      return '<li class="' + (p.key === tk ? "is-today" : "") + '"><span class="d"><b>' + esc(p.day.name) + "</b><small>" + esc(words(p.key).replace(/^\w+, /, "")) + (p.key === tk ? " · today" : "") + "</small></span>"
+        + '<span class="q"><span class="tp"><i class="dot" style="--c:var(--' + t.c + ')"></i>' + esc(t.name) + (p.day.theme !== p.day.name ? ' <span class="badge">' + esc(p.day.theme) + "</span>" : "") + "</span>" + esc(p.text) + "</span>"
+        + '<span class="links"><a class="small-link" href="daily.html?date=' + p.key + '">Open</a><a class="small-link" href="' + esc(link(p, "practice=check")) + '" target="_blank" rel="noopener">On its helper ↗</a></span></li>';
+    }).join("");
+    $("klist").innerHTML = days.map(function(p){ return "<li><b>" + esc(p.day.name) + ":</b> " + esc(p.answer) + "</li>"; }).join("");
+    $("printSheet").innerHTML = '<div><h2>Problem of the Day · ' + esc(span) + '</h2><p class="sub">Arithmetic Helpers · one problem a day. Each one opens at '
+      + esc(new URL("daily.html", location.href).href.replace(/^https?:\/\//, "")) + "?date=YYYY-MM-DD</p><ol>"
+      + days.map(function(p){ return '<li><span class="day">' + esc(words(p.key)) + "</span> <span class=\"tpn\">· " + esc(p.topic.name) + (p.day.theme !== p.day.name ? " · " + esc(p.day.theme) : "") + "</span><br>"
+          + esc(p.text) + '<div class="work"></div></li>'; }).join("")
+      + '</ol></div><div class="print-key"><h2>Answer key · ' + esc(span) + "</h2><ol>"
+      + days.map(function(p){ return "<li><span class=\"day\">" + esc(words(p.key, true)) + ":</span> " + esc(p.text) + "<br><b>" + esc(p.answer) + "</b></li>"; }).join("") + "</ol></div>";
+  }
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+
+  /* ===================== start ===================== */
+  syncURL();
+  if (VIEW === "week") showWeek(); else showDay();
+  // qr.js is deferred like nav.js; it may arrive after this script
+  window.addEventListener("load", function(){ $("qrBtn").hidden = !(window.HelperQR && typeof window.HelperQR.show === "function"); });
+
+  // for test pages (and the curious): the schedule and the record, without the page
+  window.__daily = {
+    problemFor:function(k){ var p = problemFor(k); return { key:p.key, topic:p.topic.id, page:p.topic.page, theme:p.day.theme, level:p.level, params:p.params, text:p.text, answer:p.answer, link:link(p, "") }; },
+    topics:function(){ return TOPICS.map(function(t){ return t.id; }); },
+    make:function(id, L, seed, key){ var t = BY[id], m = t.make(rng(hash(String(seed))), L, key || "2027-01-01"); return { topic:id, page:t.page, level:L, params:m.params, text:m.text, answer:m.answer, link:t.page + "?" + m.params }; },
+    today:today, keyOf:keyOf, addDays:addDays, startMs:startMs, wdIdx:wdIdx, words:words, mode:function(){ return MODE; }, key:function(){ return KEY; },
+    setNow:function(ms){ OFF = ms - Date.now(); }, now:now,
+    record:readRec, streaks:function(){ return streaks(readRec()); }, checked:checked, countdown:countdownText,
+    clear:function(){ try { localStorage.removeItem(RKEY); } catch (e){} paintAll(); }
+  };
+})();
+</script>
+</html>
