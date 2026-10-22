@@ -8,6 +8,7 @@ Eighteen single-page tools that work through a math problem step by step, the wa
 | [The Borrow Bank](subtraction.html) | Subtraction with every borrow crossed out and written above |
 | [The Product Ladder](multiplication.html) | Multiplication with partial products, then placing the decimal point |
 | [The Division House](division.html) | Long division with remainders, fractions or decimals (including repeating) |
+| [The Scratch Paper](scratch.html) | Do it by hand: work + − × ÷ yourself on squared paper (carries, borrowing with cross-outs, partial products, long division), checked square by square with a hint for each mistake |
 | [The Fraction Bar](fractions.html) | Fractions: simplifying, converting to decimals and percents, comparing and ordering, equivalent fractions |
 | [The Hundred Grid](percents.html) | Percents: percent of a number, what percent, finding the whole, percent change, discounts, tax, tips and interest |
 | [The Factor Tree](factors.html) | Factors and primes: factor pairs, prime factorization, prime or composite, GCF and LCM, divisibility rules |
@@ -17,7 +18,7 @@ Eighteen single-page tools that work through a math problem step by step, the wa
 | [The Order Stack](pemdas.html) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
 | [The Balance Scale](algebra.html) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
 | [The Slope Grid](lines.html) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
-| [The Graph Paper](graphing.html) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, and scatter plots with a trend line |
+| [The Graph Paper](graphing.html) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, scatter plots with a trend line, and a Free plot sheet of graph paper to draw on; tap or hover any point to see what it is |
 | [The Shape Shop](geometry.html) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
 | [The Dot Plot](stats.html) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
 | [The Chance Spinner](probability.html) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
@@ -26,12 +27,12 @@ Eighteen single-page tools that work through a math problem step by step, the wa
 | Tool | What it does |
 | --- | --- |
 | [Practice sets](practice.html) | Build a set of problems from any helpers and share it as one link; students work through it with Check my answer and get a score to hand in |
-| [The Flash Cards](flashcards.html) | Times tables (any of them, mixed together), division, addition and subtraction facts, squares, cubes, fraction–decimal–percent pairs and math words: study, quiz, a speed round, and a Learn mode that brings back the ones you miss |
+| [The Flash Cards](flashcards.html) | Times tables up to 20 × 20 (any of them, mixed together), division, addition and subtraction facts, negatives, ×10/×100/×1000, doubles and halves, primes, powers, easy percents, fractions, squares, cubes, fraction–decimal–percent pairs and math words: study, quiz, a speed round, and a Learn mode that brings back the ones you miss |
 | [Problem of the Day](daily.html) | One problem a day, the same for everyone on that date (no sign-up, nothing to set up): easier on Monday, a challenge on Friday, a puzzle at the weekend, with a streak kept on the device and a printable week ahead with answers for teachers |
 | [The Worksheet Maker](worksheet.html) | Printable worksheets mixing any of the topics, with an answer key on its own page (or turn the sheet into a practice link) |
 | [Your progress](progress.html) | A private record, kept on the device, of what's been practised, right first time per topic, and mistakes to revisit |
 | [Class results](results.html) | For teachers: paste the lines students hand in after a practice set and see scores, a heat map of who got which problem, the hardest problems and who needs help, with CSV export; nothing is uploaded |
-| [Reference sheets](reference.html) | Twelve one-page sheets to print: the times table (and a blank one), squares and roots, fractions–decimals–percents, place value, divisibility, order of operations, geometry, angles, units, algebra, integers and statistics |
+| [Reference sheets](reference.html) | Forty one-page sheets to print: times tables to 12, 15 and 20 (and blank ones), table strips, addition, hundred charts, primes to 200, prime factorizations, squares, cubes and powers, fractions–decimals–percents, ratios and percents, place value, divisibility, order of operations, exponents, geometry, angles, units, algebra, graphing, integers, statistics, probability, money and time, word problems, math words and Roman numerals, plus a graph paper maker (grids, coordinate planes, dot paper, number lines) |
 | [The Word List](glossary.html) | Definitions of the math words the site uses, with examples and pictures |
 
 Every helper page also has:
@@ -79,7 +80,7 @@ Each page lists the parameters it accepts in a `URL parameters` comment at the t
 
 ## Testing
 
-[`tests.html`](tests.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 9,600 checks). Run it from the live site or a local server (`python -m http.server`, then open `http://localhost:8000/tests.html`); opened as a plain file, the browser won't let it look inside the other pages. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=ratios,stats` tests just those. Your saved settings on each page are put back afterwards.
+[`tests.html`](tests.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 10,700 checks). Run it from the live site or a local server (`python -m http.server`, then open `http://localhost:8000/tests.html`); opened as a plain file, the browser won't let it look inside the other pages. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=ratios,stats` tests just those. Your saved settings on each page are put back afterwards.
 
 ## How it's built
 

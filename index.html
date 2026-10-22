@@ -34,7 +34,7 @@
   :root{
     --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
     --grid:rgba(25,33,29,.06);
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --gra:#0369A1; --exp:#BE185D; --pro:#A21CAF; --fla:#C2410C; --day:#4338CA;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --scr:#B45309; --gra:#0369A1; --exp:#BE185D; --pro:#A21CAF; --fla:#C2410C; --day:#4338CA;
     --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
     --shadow-up:0 1px 0 rgba(25,33,29,.05), 0 24px 40px -22px rgba(25,33,29,.55);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -45,7 +45,7 @@
     :root:not([data-theme="light"]){
       --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
       --grid:rgba(231,235,228,.05);
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
       --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
     }
@@ -53,7 +53,7 @@
   :root[data-theme="dark"]{
     --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
     --grid:rgba(231,235,228,.05);
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --fla:#FB923C; --day:#A5B4FC;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
   }
@@ -73,7 +73,7 @@
   .c-add{--c:var(--add)} .c-sub{--c:var(--sub)} .c-mul{--c:var(--mul)} .c-div{--c:var(--div)}
   .c-ord{--c:var(--ord)} .c-alg{--c:var(--alg)} .c-geo{--c:var(--geo)}
   .c-fra{--c:var(--fra)} .c-pct{--c:var(--pct)} .c-fac{--c:var(--fac)} .c-int{--c:var(--int)} .c-ink{--c:var(--ink)}
-  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-gra{--c:var(--gra)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)}
+  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-scr{--c:var(--scr)} .c-gra{--c:var(--gra)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)}
   .stripe i{background:var(--c)}
 
   /* ---- top bar ---- */
@@ -401,6 +401,28 @@
         </div>
       </a>
     </div>
+      <a class="card wide c-scr" href="scratch.html">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 260 142">
+          <path d="M60 8 V134 M90 8 V134 M120 8 V134 M150 8 V134 M180 8 V134 M210 8 V134 M40 20 H230 M40 50 H230 M40 80 H230 M40 110 H230" stroke="var(--ink-3)" stroke-width=".6" opacity=".55"/>
+          <rect x="122" y="22" width="26" height="26" rx="4" fill="color-mix(in srgb, var(--c) 22%, transparent)" stroke="var(--c)" stroke-width="2"/>
+          <text class="k sm" x="135" y="41" text-anchor="middle" style="font-size:15px">2</text>
+          <text x="135" y="72" text-anchor="middle" style="font-size:22px">2</text><text x="165" y="72" text-anchor="middle" style="font-size:22px">5</text>
+          <text class="mu" x="105" y="102" text-anchor="middle" style="font-size:22px">×</text><text x="165" y="102" text-anchor="middle" style="font-size:22px">4</text>
+          <path class="ln" d="M90 112 H182" stroke-width="2.5"/>
+          <text class="k" x="105" y="132" text-anchor="middle" style="font-size:22px">1</text><text class="k" x="135" y="132" text-anchor="middle" style="font-size:22px">0</text><text class="k" x="165" y="132" text-anchor="middle" style="font-size:22px">0</text>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="kind"><b>✍</b> Do it by hand</span>
+        <h3>The Scratch Paper</h3>
+        <p>Type a problem and work it out yourself on squared paper: tap above a digit to write the carry, tap a digit to
+          cross it out and borrow, write each row, bring down in long division. It checks each square as you go, with a
+          hint when something's off.</p>
+        <ul class="ticks"><li>+ − × ÷</li><li>carries and borrowing</li><li>long division</li><li>a hint for every square</li></ul>
+        <span class="go">Try it by hand <span aria-hidden="true">→</span></span>
+      </div>
+    </a>
   </section>
 
   <section class="group" aria-labelledby="g5">
@@ -812,8 +834,8 @@
         <div class="body">
           <span class="kind"><b>▭</b> Flash cards</span>
           <h3>The Flash Cards</h3>
-          <p>Times tables (pick any of them, mixed together), division facts, adding and taking away, squares,
-            and fraction–decimal–percent pairs. Quiz yourself, race the clock, or let it learn which ones you know.</p>
+          <p>Times tables up to 20 × 20 (any of them, mixed together), division, adding and taking away, negatives,
+            ×10 and ×100, doubles, primes, powers, easy percents and fractions. Quiz yourself, race the clock, or let it learn which ones you know.</p>
           <span class="go">Practise facts <span aria-hidden="true">→</span></span>
         </div>
       </a>
@@ -831,8 +853,8 @@
         <div class="body">
           <span class="kind"><b>▦</b> Reference</span>
           <h3>Reference sheets</h3>
-          <p>One-page sheets to print or keep open: multiplication charts, formulas, fraction–decimal–percent
-            tables, place value, divisibility rules, the order of operations and more.</p>
+          <p>Forty one-page sheets to print or keep open: times tables up to 20 × 20, hundred charts, primes to 200,
+            formulas, fractions, exponents, graphing, probability, money and time, and a graph paper maker.</p>
           <span class="go">See the sheets <span aria-hidden="true">→</span></span>
         </div>
       </a>

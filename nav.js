@@ -26,6 +26,7 @@
   var TOOLS = [
     { href:"worksheet.html", name:"Worksheets", title:"The Worksheet Maker" },
     { href:"practice.html",  name:"Practice",   title:"Practice sets" },
+    { href:"scratch.html",   name:"By hand",    title:"The Scratch Paper: do the written method yourself" },
     { href:"flashcards.html", name:"Flash cards", title:"The Flash Cards: times tables and other facts" },
     { href:"daily.html",     name:"Daily",      title:"Problem of the day" },
     { href:"progress.html",  name:"Progress",   title:"Your progress" },

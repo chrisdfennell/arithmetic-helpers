@@ -266,7 +266,7 @@
     { page:"pemdas.html", name:"The Order Stack" }, { page:"algebra.html", name:"The Balance Scale" },
     { page:"lines.html", name:"The Slope Grid" }, { page:"graphing.html", name:"The Graph Paper" },
     { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" },
-    { page:"wordproblems.html", name:"The Story Problem" }, { page:"probability.html", name:"The Chance Spinner" },
+    { page:"scratch.html", name:"The Scratch Paper", kind:"byhand" }, { page:"wordproblems.html", name:"The Story Problem" }, { page:"probability.html", name:"The Chance Spinner" },
     // not step-by-step helpers: each has its own checks (TOOLS below)
     { page:"flashcards.html", name:"The Flash Cards", kind:"cards" },
     { page:"reference.html", name:"Reference sheets", kind:"tool" }, { page:"results.html", name:"Class results", kind:"tool" },
@@ -307,6 +307,8 @@
                       ["mode=vol&shape=box&l=8&w=3&h=5",["120","158"]], ["mode=right&shape=hyp&a=3&b=4",["5"]],
                       ["mode=right&shape=leg&a=5&c=13",["12"]], ["mode=angle&shape=tri&a=50&b=60",["70"]],
                       ["mode=angle&shape=poly&n=6",["720","120","60"]] ],
+    "scratch.html":[ ["op=add&q=478%2B356",["834"]], ["op=sub&q=5003-1278",["3725"]], ["op=mul&q=25*4",["100"]], ["op=mul&q=47*23",["1081"]],
+                     ["op=div&q=847/12&ans=remainder",["70","7"]], ["op=add&q=2.5%2B13.75",["16.25"]] ],
     "graphing.html":[ ["mode=points&task=midpoint&pts=2%2C3%3B8%2C-1",["5","1"]], ["mode=points&task=distance&pts=-2%2C3%3B4%2C-1",[{ f:Math.sqrt(52), loose:0.002 }]],
                       ["mode=points&task=polygon&pts=0%2C0%3B4%2C0%3B4%2C3&ask=area",["6"]], ["mode=systems&e1=x%2By%3D6&e2=x-y%3D2",["4","2"]],
                       ["mode=transform&pts=1%2C2%3B4%2C2%3B4%2C5&t=reflect%3Ay-axis",["-1","-4"]], ["q=" + encodeURIComponent("y = x^2 - 4x + 3"),["2","1","3"]],
@@ -528,6 +530,20 @@
   function gQuad(P){ var x = cmp(P[0], R(0)), y = cmp(P[1], R(0)); return !x && !y ? "origin" : !y ? "x-axis" : !x ? "y-axis" : x > 0 ? (y > 0 ? "Quadrant I" : "Quadrant IV") : (y > 0 ? "Quadrant II" : "Quadrant III"); }
 
   var ORACLE = {
+    "scratch.html":function(p, a, ansText){
+      var o = P(p), q = String(o.q || "").replace(/−/g, "-"), t;
+      if (o.op === "add") return need(a, [X(q.split("+").map(num).reduce(add))]);
+      if (o.op === "sub"){ t = q.split("-"); return need(a, [X(sub(num(t[0]), num(t[1])))]); }
+      if (o.op === "mul"){ t = q.split(/[*×x]/); return need(a, [X(mul(num(t[0]), num(t[1])))]); }
+      if (o.op === "div"){
+        t = q.split(/[\/÷]/); var x = BigInt(t[0]), y = BigInt(t[1]);
+        if (o.ans !== "decimal") return need(a, x % y ? [X(String(x / y)), X(String(x % y))] : [X(String(x / y))]);     // 710 ÷ 5 = 142, no "R 0"
+        var places = Number(o.places || 3), sc = BigInt(Math.pow(10, places)), qd = x * sc / y;      // cut off, not rounded
+        var str = (qd / sc).toString() + (places ? "." + (qd % sc).toString().padStart(places, "0") : "");
+        return need(a, [X(str.replace(/\.?0+$/, "") || "0")]);
+      }
+      return { skip:true };
+    },
     "graphing.html":function(p, a, ansText){
       var o = P(p), t = String(ansText), pts = gPts(o.pts), i;
       switch (o.mode){
@@ -753,6 +769,20 @@
             return need(tokens(ansText.replace(/[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/g, function(ch){ return " " + VF[ch]; })), [Fl(F(fr) * 100, 0.001)]);
           }
           return need(a, [X(fr)]);                 // df, pf: back to the fraction
+        case "tn": return need(a, [X(c[2] === "x" ? mul(num(c[1]), num(c[3])) : div(num(c[1]), num(c[3])))]);   // × and ÷ by 10, 100, 1000
+        case "db": return need(a, [X(mul(num(c[1]), R(2)))]);
+        case "hf": return need(a, [X(div(num(c[1]), R(2)))]);
+        case "pr":
+          var pn = n(1), word = pn < 2 ? "neither" : isPrime(pn) ? "prime" : "not prime";
+          return new RegExp("^\\s*" + word + "\\b", "i").test(ansText) ? { ok:true } : { ok:false, msg:"expected " + word };
+        case "pw": return need(a, [X(String(Math.pow(n(1), n(2))))]);
+        case "pe": return need(a, [X(String(n(2)))]);
+        case "pc": return need(a, [X(div(mul(num(c[1]), num(c[2])), R(100)))]);
+        case "ng":
+          var na = num(c[1]), nb = num(c[3]);
+          return need(a, [X(c[2] === "p" ? add(na, nb) : c[2] === "m" ? sub(na, nb) : c[2] === "x" ? mul(na, nb) : div(na, nb))]);
+        case "fs": return need(a, [X(num(c[1]))]);
+        case "fo": return need(a, [X(mul(num(c[1]), num(c[2])))]);
         case "w":
           var sq2 = function(x){ return String(x).toLowerCase().replace(/[\s-]+/g, " ").trim(); };
           return sq2(ansText) === sq2(c.slice(1).join(":")) ? { ok:true } : { skip:true };
@@ -1320,6 +1350,23 @@
     }, function(e){ fail(T.page, "made problems", e.message); cell(T.page, "made", '<span class="bad">no reply</span>'); });
   }
 
+  /* ===================== the scratch paper: the student does the working, so there's no worked panel ===================== */
+  function smokeByHand(T){
+    return load(T.page + "?op=mul&q=25*4").then(function(fr){
+      var d = docOf(fr), probs = [];
+      if (!d.querySelector(".sitenav")) probs.push("no nav bar");
+      if (!d.querySelector("[aria-live]")) probs.push("no feedback line");
+      var btns = [].map.call(d.querySelectorAll("button"), function(b){ return b.textContent.trim(); });
+      ["Show me the next step", "Show the answer", "Copy link", "New problem"].forEach(function(t){
+        if (!btns.some(function(b){ return b.indexOf(t) === 0; })) probs.push("no “" + t + "” button");
+      });
+      if (fr.errs.length) probs.push("script error: " + fr.errs[0]);
+      drop(fr);
+      if (probs.length){ fail(T.page, "loads", probs.join("; "), T.page); score(T.page, "load", 0, 1); } else { pass(); score(T.page, "load", 1, 0); }
+      cell(T.page, "check", '<span class="na">by hand: its own test</span>');
+    });
+  }
+
   /* ===================== the flash cards: one card at a time, in Quiz ===================== */
   var CARD_CHECKS = [
     ["deck=times&t=7&card=m:7:8&mode=quiz", "7 × 8", "56", "right"], ["deck=times&t=7&card=m:7:8&mode=quiz", "7 × 8", "54", "wrong"],
@@ -1397,7 +1444,7 @@
         var d = docOf(fr), probs = [];
         if (!d.querySelector(".sitenav")) probs.push("no nav bar");
         var sheets = d.querySelectorAll("article.sheet").length;
-        if (sheets < 13) probs.push("only " + sheets + " sheets");
+        if (sheets < 40) probs.push("only " + sheets + " sheets");
         if (fr.errs.length) probs.push("script error: " + fr.errs[0]);
         if (probs.length){ fail(T.page, "loads", probs.join("; "), T.page); score(T.page, "load", 0, 1); } else { pass(); score(T.page, "load", 1, 0); }
         // the times table, every square of it
@@ -1410,6 +1457,12 @@
             cells.slice(1).forEach(function(v, j){ if (Number(v) !== a * (j + 1)) bad.push(a + "×" + (j + 1) + " shows " + v); });
           });
           if (rowsT.length !== 12) bad.push(rowsT.length + " rows");
+          var t20 = d.querySelector("#sheet-times20 table.tt");                       // and the 20 × 20 one
+          if (!t20) bad.push("no 20 × 20 table");
+          else [].slice.call(t20.querySelectorAll("tr")).filter(function(r){ return r.querySelector("td"); }).forEach(function(r){
+            var cells = [].map.call(r.querySelectorAll("th, td"), function(c){ return c.textContent.trim(); }), a20 = Number(cells[0]);
+            cells.slice(1).forEach(function(v, j){ if (Number(v) !== a20 * (j + 1)) bad.push("20×20: " + a20 + "×" + (j + 1) + " shows " + v); });
+          });
           if (bad.length){ kf++; fail(T.page, "known answer", "times table: " + bad.slice(0, 4).join(", "), T.page + "#times"); } else { kp++; pass(); }
         }
         // a few values from the other sheets
@@ -1603,6 +1656,8 @@
           ["check", "made"].forEach(function(c){ cell(T.page, c, '<span class="na">—</span>'); });
         }, function(e){ fail(T.page, "loads", e.message, T.page); cell(T.page, "load", '<span class="bad">failed</span>'); });
         if (T.kind === "cards") return smokeCards(T).then(function(){ return cardRun(T); }).then(function(){ return made(T); },
+          function(e){ fail(T.page, "loads", e.message, T.page); cell(T.page, "load", '<span class="bad">failed</span>'); });
+        if (T.kind === "byhand") return smokeByHand(T).then(function(){ return known(T); }).then(function(){ return made(T); },
           function(e){ fail(T.page, "loads", e.message, T.page); cell(T.page, "load", '<span class="bad">failed</span>'); });
         return smoke(T).then(function(state){
           if (state === "missing"){ ["load", "known", "check", "made", "links"].forEach(function(c){ cell(T.page, c, '<span class="na">page not found</span>'); }); return; }

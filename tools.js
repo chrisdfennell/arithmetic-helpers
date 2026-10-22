@@ -441,7 +441,7 @@
     "factors.html":", × ^ ²", "integers.html":"− + × ÷ ( ) | ,", "ratios.html":": / = ? x . $ ,",
     "pemdas.html":"+ − × ÷ ( ) ^ ² .", "algebra.html":"x y + − × ÷ ( ) = < > ^ / .",
     "lines.html":"x y ( ) , = + − / .", "geometry.html":". / π √ , °", "stats.html":", . − :",
-    "wordproblems.html":". $ / % ,", "flashcards.html":"/ . % − ,"
+    "wordproblems.html":". $ / % ,", "scratch.html":"+ − × ÷ . , space", "flashcards.html":"/ . % − ,"
   };
   var padEl = null, padFor = null, padHide = null;
   function padWanted(){

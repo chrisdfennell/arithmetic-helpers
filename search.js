@@ -13,7 +13,7 @@
     "geometry.html":["The Shape Shop","c-geo"], "glossary.html":["the Word List","c-ink"], "ratios.html":["The Ratio Table","c-rat"],
     "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"], "graphing.html":["The Graph Paper","c-gra"], "exponents.html":["The Power Tower","c-exp"], "probability.html":["The Chance Spinner","c-pro"],
     "wordproblems.html":["The Story Problem","c-wrd"], "flashcards.html":["The Flash Cards","c-fla"],
-    "reference.html":["the reference sheets","c-ink"], "daily.html":["the problem of the day","c-day"]
+    "reference.html":["the reference sheets","c-ink"], "daily.html":["the problem of the day","c-day"], "scratch.html":["The Scratch Paper","c-scr"]
   };
   function go(page, params, what, alt){ return { page:page, params:params, what:what || "", alt:alt || null }; }
   function qp(s){ return "q=" + encodeURIComponent(s); }
@@ -52,17 +52,32 @@
     if (/\b(flash ?cards?|times ?tables?|multiplication (?:tables?|facts)|(?:math|number|division|addition|subtraction) facts)\b/.test(low)){
       var deck = /division/.test(low) ? "div" : /addition/.test(low) ? "add" : /subtraction/.test(low) ? "sub" : "times";
       var span = /\b(\d+)\s*(?:-|–|to|through)\s*(\d+)\b/.exec(low);
-      var tables = span && +span[1] <= 12 && +span[2] <= 12 && +span[1] < +span[2] ? span[1] + "-" + span[2]
-                 : (low.match(/\d+/g) || []).filter(function(n){ return +n <= 12; }).map(Number).join(",");
-      return go("flashcards.html", "deck=" + deck + (tables && (deck === "times" || deck === "div") ? "&t=" + tables : ""), "flash cards");
+      var tables = span && +span[1] <= 20 && +span[2] <= 20 && +span[1] < +span[2] ? span[1] + "-" + span[2]
+                 : (low.match(/\d+/g) || []).filter(function(n){ return +n <= 20; }).map(Number).join(",");
+      var big = (tables.match(/\d+/g) || []).some(function(n){ return +n > 12; });       // the teens: facts up to × 20
+      return go("flashcards.html", "deck=" + deck + (tables && (deck === "times" || deck === "div") ? "&t=" + tables + (big ? "&max=20" : "") : ""), "flash cards");
+    }
+    // doing it by hand on the scratch paper: "by hand 478 + 356", "scratch paper", "let me do 47 × 23 myself"
+    if (/\b(?:by\s+hand|scratch\s+paper|on\s+paper|myself|let\s+me\s+(?:do|try|work))\b/.test(low)){
+      var sum = s.replace(/\b(?:by\s+hand|scratch\s+paper|on\s+paper|myself|let\s+me\s+(?:do|try|work)(?:\s+it)?|do|work\s+out|i\s+want\s+to|can\s+i|please)\b/gi, " ").replace(/[?.!:]/g, " ").trim();
+      var opm = /^[\d.,\s]+([+\-−×x*÷\/])[\d.,\s+\-−×x*÷\/]*$/.exec(sum), opk = opm && { "+":"add", "-":"sub", "−":"sub", "×":"mul", "x":"mul", "*":"mul", "÷":"div", "/":"div" }[opm[1]];
+      return go("scratch.html", opk ? "op=" + opk + "&" + qp(sum.replace(/\s+/g, "").replace(/[x×]/g, "*").replace(/÷/g, "/").replace(/−/g, "-")) : "", "doing it by hand");
     }
     // the problem of the day
     if (/^\s*(?:today'?s\s+problem|problem\s+of\s+the\s+day|daily(?:\s+problem|\s+challenge)?|daily\s+math)\s*$/.test(low))
       return go("daily.html", "", "the problem of the day");
     // reference sheets: "formula sheet", "cheat sheet", "multiplication chart"
-    if (/\b(reference|cheat ?sheets?|formula sheets?|formulas|(?:multiplication|times table) (?:chart|grid))\b/.test(low))
-      return go("reference.html", /multiplication|times/.test(low) ? "#times" : /\b(area|perimeter|volume|geometry|shapes?)\b/.test(low) ? "#geometry" : "",
-        "the reference sheets");
+    if (/\b(reference|cheat ?sheets?|formula sheets?|formulas|(?:multiplication|times table|addition|hundreds?|prime) (?:chart|grid|table|square)s?|hundreds? chart|roman numerals?|primes? (?:to|up to|under) \d+|list of primes|prime factori[sz]ations? (?:chart|list|to \d+))\b/.test(low)){
+      var big = Math.max.apply(null, (low.match(/\d+/g) || ["0"]).map(Number));
+      return go("reference.html",
+        /roman/.test(low) ? "#roman" : /prime factori/.test(low) ? "#factorizations" : /prime/.test(low) ? "#primes" : /hundred/.test(low) ? "#hundreds" :
+        /addition/.test(low) ? "#addition" : /multiplication|times/.test(low) ? (big > 15 ? "#times20" : big > 12 ? "#times15" : "#times") :
+        /\b(area|perimeter|volume|geometry|shapes?)\b/.test(low) ? "#geometry" : "", "the reference sheets");
+    }
+    // paper to print: graph paper, grid paper, dot paper, number lines (the maker), or a blank grid to draw on
+    if (/\b(?:graph|grid|dot|isometric|coordinate|squared?)\s+paper\b|\bnumber\s+lines?\s+(?:to\s+print|paper|sheet)|\bblank\s+(?:coordinate\s+(?:plane|grid)|graph|grid)\b/.test(low))
+      return /\b(?:draw|plot|online|virtual|on screen)\b/.test(low) ? go("graphing.html", "mode=free", "a blank sheet of graph paper")
+        : go("reference.html", "#paper", "graph paper to print", { page:"graphing.html", params:"mode=free" });
     // exponents: roots, scientific notation, one power on its own, and the exponent laws
     if (/\b(?:sqrt|square\s+root|cube\s+root)\b|[√∛]\s*\d/.test(low))
       return go("exponents.html", qp(s), "a root");

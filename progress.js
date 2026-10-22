@@ -23,6 +23,7 @@
     { page:"subtraction.html",    name:"Subtraction",         title:"The Borrow Bank",    c:"sub" },
     { page:"multiplication.html", name:"Multiplication",      title:"The Product Ladder", c:"mul" },
     { page:"division.html",       name:"Division",            title:"The Division House", c:"div" },
+    { page:"scratch.html",       name:"By hand",              title:"The Scratch Paper",   c:"scr" },
     { page:"fractions.html",      name:"Fractions",           title:"The Fraction Bar",   c:"fra" },
     { page:"percents.html",       name:"Percents",            title:"The Hundred Grid",   c:"pct" },
     { page:"factors.html",        name:"Factors & primes",    title:"The Factor Tree",    c:"fac" },
