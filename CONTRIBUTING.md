@@ -16,7 +16,7 @@ Then open <http://localhost:8000/>. (Opening the files straight from disk mostly
 
 ## The self-test
 
-Open <http://localhost:8000/tests/self-test.html> and press **Run**. It checks every helper: known answers, Check my answer, problems from each page's problem maker re-worked by separate code, and every made problem reopened from its link. **Thorough** tries every problem-maker option. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=fractions,stats` tests just those. It must end with **0 failed** before a change goes in.
+Open <http://localhost:8000/tests/self-test.html> and press **Run**. It checks every helper: known answers, Check my answer, problems from each page's problem maker re-worked by separate code, and every made problem reopened from its link. **Thorough** tries every problem-maker option. `?run=1` starts it straight away, `&depth=thorough` runs the long version and `&pages=fractions,stats` tests just those. It must end with **0 failed** before a change goes in. The same self-test also runs by itself on every pull request (the **Self-test** check, `.github/workflows/test.yml`), and can be started by hand, quick or thorough, from the repository's Actions tab.
 
 ## How the code is written
 

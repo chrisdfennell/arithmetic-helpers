@@ -16,6 +16,7 @@
   <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><img src="https://img.shields.io/badge/live%20site-chrisdfennell.github.io-2f6f5e" alt="Live site"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/releases"><img src="https://img.shields.io/github/v/release/chrisdfennell/arithmetic-helpers?label=version" alt="Latest version"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/release.yml"><img src="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/release.yml/badge.svg" alt="Release and deploy workflow status"></a>
+  <a href="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/test.yml"><img src="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/test.yml/badge.svg" alt="Self-test workflow status"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY--NC%204.0-lightgrey" alt="License: CC BY-NC 4.0"></a>
   <br>
   <a href="#how-its-built"><img src="https://img.shields.io/badge/build%20step-none-brightgreen" alt="No build step"></a>

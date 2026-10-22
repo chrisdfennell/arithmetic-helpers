@@ -1,0 +1,98 @@
+# Runs the site's own self-test (tests/self-test.html) in headless Chrome on every pull request, so a change that
+# breaks a helper is caught before it's merged. Start it by hand from the Actions tab to pick the thorough version.
+name: Self-test
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      depth:
+        description: "quick (a few minutes) or thorough (every problem-maker option, much longer)"
+        type: choice
+        options: [quick, thorough]
+        default: quick
+
+permissions:
+  contents: read
+
+concurrency:
+  group: self-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  self-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Serve the site
+        run: |
+          python3 -m http.server 8000 --bind 127.0.0.1 > server.log 2>&1 &
+          for i in $(seq 1 20); do curl -sf -o /dev/null http://127.0.0.1:8000/tests/self-test.html && break; sleep 1; done
+
+      - name: Run the self-test
+        env:
+          DEPTH: ${{ inputs.depth || 'quick' }}
+          PYTHONIOENCODING: utf-8
+        run: |
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium)
+          echo "Using $chrome ($($chrome --version))"
+          # A thorough run is split in two, because headless Chrome's time budget for one page runs out on the whole site.
+          if [ "$DEPTH" = "thorough" ]; then
+            runs="depth=thorough&pages=addition,subtraction,multiplication,division,scratch,fractions,percents,factors,integers,ratios,exponents,pemdas,algebra,lines
+          depth=thorough&pages=graphing,geometry,stats,wordproblems,probability,trigonometry,calculus,flashcards,reference,results,daily,qr,keypad"
+          else
+            runs="depth=quick"
+          fi
+          n=0
+          while IFS= read -r q; do
+            n=$((n + 1))
+            echo "::group::Part $n: $q"
+            "$chrome" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+              --host-resolver-rules="MAP gc.zgo.at 127.0.0.1" --user-data-dir="$RUNNER_TEMP/chrome-$n" \
+              --virtual-time-budget=6000000 --dump-dom "http://127.0.0.1:8000/tests/self-test.html?run=1&$q" > "report-$n.html" 2> "chrome-$n.log" || true
+            echo "::endgroup::"
+          done <<< "$runs"
+          python3 - <<'PY'
+          import glob, html, re, sys
+          total_pass = total_fail = 0
+          ok = True
+          for path in sorted(glob.glob("report-*.html")):
+              s = open(path, encoding="utf-8", errors="replace").read()
+              m = re.search(r'id="summary"[^>]*>(.*?)</div>', s, re.S)
+              text = html.unescape(re.sub(r"<[^>]+>", " ", m.group(1))) if m else ""
+              p = re.search(r"([\d,]+)\s+passed", text)
+              f = re.search(r"([\d,]+)\s+failed", text)
+              if not p or not f:
+                  print(f"::error::{path}: the self-test didn't finish (no summary found)")
+                  ok = False
+                  continue
+              passed, failed = int(p.group(1).replace(",", "")), int(f.group(1).replace(",", ""))
+              total_pass += passed; total_fail += failed
+              print(f"{path}: {passed} passed, {failed} failed")
+              if failed:
+                  ok = False
+                  box = re.search(r'id="fails"[^>]*>(.*?)</ul>', s, re.S)
+                  for li in re.findall(r"<li>(.*?)</li>", box.group(1) if box else "", re.S)[:40]:
+                      print("::error::" + re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", li))).strip()[:300])
+          print(f"Total: {total_pass} passed, {total_fail} failed")
+          with open("summary.md", "w") as out:
+              out.write(f"### Self-test\n\n**{total_pass} passed, {total_fail} failed**\n")
+          sys.exit(0 if ok and total_pass > 0 else 1)
+          PY
+
+      - name: Add the result to the run's summary
+        if: always()
+        run: cat summary.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+
+      - name: Keep the reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: self-test-reports
+          path: |
+            report-*.html
+            chrome-*.log
+            server.log
+          retention-days: 14
