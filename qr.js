@@ -7,12 +7,20 @@
 
    HelperQR.matrix(text, { ecc:"M" }) → { size, version, ecc, mask, get(x, y) → true for a dark module }
        (also { version:n } to ask for a version, at least that one, and { mask:0–7 } to force a mask)
-   HelperQR.svg(text, { ecc:"M", margin:4, dark:"#000", light:"#fff", label:"QR code", size:px })
-       → an SVG string: one path, shape-rendering="crispEdges", a <title> for screen readers; with size, a width and height
+   HelperQR.svg(text, { ecc:"M", margin:4, dark:"#000", light:"#fff", label:"QR code", size:px, logo:true, logoMono:false })
+       → an SVG string: the modules as one path, shape-rendering="crispEdges", a <title> for screen readers; with size, a
+       width and height. Unless logo:false, the site's tile sits in the middle: the code is then made at H (at Q with a
+       smaller logo when the text is too long for H; with no logo, at the ecc asked for, when it's too long for Q too).
+       logoMono draws the logo in black and white. logo:false gives exactly the plain code that matrix(text, opts) makes.
+       With an ecc but no logo option, the caller may have sized the code for that level (the printed worksheet does),
+       so the logo goes in only if the code stays within 10% of that many modules across; logo:true always prefers it.
+   HelperQR.logoInfo(text, opts) → { ecc, version, size, plate, cleared, damage } for the code svg() would draw (size
+       it from this to print a logo code: plate = logo modules across, damage = worst share of a block's correction)
    HelperQR.version(text, ecc) → the version it needs, 1–40, or 0 when it is too long for any QR code
    HelperQR.capacity(ecc[, version]) → how many bytes fit (version 40 unless given): 2953 at L, 2331 at M
-   HelperQR.show(text, { title, sub, linkText, ecc, filename, full, tooLongHint }) → opens the QR dialog: a big code,
+   HelperQR.show(text, { title, sub, linkText, ecc, filename, full, tooLongHint, logo, logoMono }) → opens the QR dialog: a big code,
        the title, a short form of the link, Show full screen (for the projector; Esc to leave), Print and Download SVG.
+       The logo is on unless logo:false (logoMono:true for a black-and-white one); the download has it too.
        If it doesn't fit at the asked level it drops to L; if it still doesn't fit, the dialog says so instead.
    HelperQR.close() closes it.
    Too long for any version: matrix() and svg() throw an Error with code "too-long", bytes and max, for callers to catch. */
@@ -287,14 +295,114 @@
   }
 
   function esc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
-  function svg(text, opts){
-    opts = opts || {};
-    var q = matrix(text, opts), mg = opts.margin === undefined ? 4 : Math.max(0, opts.margin | 0), n = q.size + mg * 2, d = [];
+  /* the logo in the middle: the site's tile (dark rounded square) with the four operations, on a white plate.
+     With a logo the code is made at H (30% recovery) and the plate clears about 15% of the symbol; if the text is too
+     long for H, at Q with a plate of about 9%; too long for Q, no logo (the level asked for, as without a logo).
+     The area isn't the whole story (in small versions the fixed patterns take much of the symbol), so the plate is
+     also made smaller until it spoils at most 60% of what any one Reed–Solomon block can correct; the rest is left
+     for smudges, glare and a shaky camera.
+     The plate is a whole number of modules, centred on the grid (the grid is odd, so is the plate), and stays clear
+     of the finders and separators, the timing patterns, the format and version information and the corner
+     alignment pattern. A centred plate that size can't miss the middle alignment pattern(s) from version 7 on;
+     decoders find the grid from the finders and the bottom-right alignment pattern, so those are the ones kept. */
+  // [level, the most of the symbol's area the plate may take, the most of any one block's correction it may use]
+  var LOGO_LEVELS = [["H", 0.15, 0.6], ["Q", 0.09, 0.6]], LOGO_MIN_VERSION = 3, layouts = {};
+  // which codeword (and so which Reed–Solomon block) each module belongs to, for one version and level
+  function layout(ver, e){
+    var key = ver + "/" + e;
+    if (layouts[key]) return layouts[key];
+    var g = new Grid(ver), size = g.size, i, j;
+    drawFunctions(g, ver);
+    var nb = BLOCKS[e][ver], el = ECC_PER_BLOCK[e][ver], raw = Math.floor(rawModules(ver) / 8);
+    var nShort = nb - raw % nb, shortLen = Math.floor(raw / nb), blockOf = [], cw = [];
+    for (i = 0; i <= shortLen; i++) for (j = 0; j < nb; j++) if (i !== shortLen - el || j >= nShort) blockOf.push(j);
+    for (i = 0; i < size * size; i++) cw.push(-1);
+    var bit = 0;
+    for (var right = size - 1; right >= 1; right -= 2){
+      if (right === 6) right = 5;
+      for (var v = 0; v < size; v++) for (j = 0; j < 2; j++){
+        var x = right - j, y = (right + 1 & 2) === 0 ? size - 1 - v : v, k = y * size + x;
+        if (!g.f[k]){ if (bit < raw * 8) cw[k] = bit >>> 3; bit++; }
+      }
+    }
+    return (layouts[key] = { size:size, cw:cw, blockOf:blockOf, nb:nb, fix:Math.floor(el / 2) });
+  }
+  // the worst share of one block's correction (it fixes up to half its error correction codewords) a centred plate uses
+  function damage(L, p){
+    var p0 = (L.size - p) / 2, seen = {}, per = [], worst = 0;
+    for (var b = 0; b < L.nb; b++) per.push(0);
+    for (var y = p0; y < p0 + p; y++) for (var x = p0; x < p0 + p; x++){
+      var c = L.cw[y * L.size + x];
+      if (c >= 0 && !seen[c]){ seen[c] = 1; per[L.blockOf[c]]++; }
+    }
+    for (b = 0; b < L.nb; b++) worst = Math.max(worst, per[b] / L.fix);
+    return worst;
+  }
+  function plateFor(ver, e, frac, most){
+    var size = ver * 4 + 17, p = Math.floor(Math.sqrt(frac * size * size)), L = layout(ver, e);
+    if (p % 2 === 0) p--;
+    p = Math.min(p, size - 18);        // starts at module 9 or later: past the finder, its separator and the format bits
+    while (p >= 5 && damage(L, p) > most) p -= 2;
+    return p >= 5 ? p : 0;
+  }
+  function build(text, opts){
+    if (opts.logo !== false){
+      var n = utf8(text).length, most = Infinity;
+      // a caller that names the level but doesn't ask for the logo may have sized the code for that level (the printed
+      // worksheet does: a 2 cm code); the logo then only goes in if the modules stay within 10% of that size
+      if (opts.logo === undefined && opts.ecc){
+        var own = pickVersion(n, LEVELS[level(opts.ecc)], opts.version);
+        if (own) most = (own * 4 + 17 + 8) * 1.1;
+      }
+      for (var i = 0; i < LOGO_LEVELS.length; i++){
+        var lv = LOGO_LEVELS[i][0], v = pickVersion(n, LEVELS[lv], Math.max(LOGO_MIN_VERSION, opts.version | 0));
+        if (!v || v * 4 + 17 + 8 > most) continue;
+        var plate = plateFor(v, LEVELS[lv], LOGO_LEVELS[i][1], LOGO_LEVELS[i][2]);
+        // in a few versions the blocks line up badly under the middle and the plate comes out small; one version up
+        // is barely denser, so take it when its logo is half as big again
+        if (v < 40 && v * 4 + 29 <= most){
+          var up = plateFor(v + 1, LEVELS[lv], LOGO_LEVELS[i][1], LOGO_LEVELS[i][2]), s0 = v * 4 + 17, s1 = s0 + 4;
+          if (plate * plate / (s0 * s0) < 0.08 && up * up / (s1 * s1) >= 1.5 * plate * plate / (s0 * s0)){ v++; plate = up; }
+        }
+        if (plate) return { q:matrix(text, { ecc:lv, version:v, mask:opts.mask }), plate:plate };
+      }
+    }
+    return { q:matrix(text, opts), plate:0 };
+  }
+  function num(x){ return String(Math.round(x * 1000) / 1000); }
+  function logoSVG(x0, p, mono, light){
+    // the tile's dark rim and the gap between the squares are kept thin: a dark rim, a light square and a dark
+    // symbol in its middle at the icon's proportions look enough like a finder pattern to send a scanner the wrong way
+    var ink = "#19211D", inset = p >= 9 ? 1 : 0.6, t = p - 2 * inset, tx = x0 + inset;
+    var c = t * 0.45, gap = t * 0.03, m0 = (t - 2 * c - gap) / 2, sw = c * 0.15, a = c * 0.25, b = a * 0.86;
+    var cols = mono ? ["#fff", "#fff", "#fff", "#fff"] : ["#4FCCB0", "#F08A6E", "#A99CF0", "#F2A85C"];
+    var tile = mono ? "#000" : ink, sym = mono ? "#000" : ink;
+    var out = '<g shape-rendering="geometricPrecision">'
+      + '<rect x="' + num(x0) + '" y="' + num(x0) + '" width="' + p + '" height="' + p + '" rx="' + num(Math.min(1.2, p * 0.12)) + '" fill="' + esc(light) + '"/>'
+      + '<rect x="' + num(tx) + '" y="' + num(tx) + '" width="' + num(t) + '" height="' + num(t) + '" rx="' + num(t * 112 / 512) + '" fill="' + tile + '"/>';
+    var lines = "", dots = "";
+    for (var k = 0; k < 4; k++){
+      var sx = tx + m0 + (k % 2) * (c + gap), sy = tx + m0 + Math.floor(k / 2) * (c + gap), cx = sx + c / 2, cy = sy + c / 2;
+      out += '<rect x="' + num(sx) + '" y="' + num(sy) + '" width="' + num(c) + '" height="' + num(c) + '" rx="' + num(c * 20 / 88) + '" fill="' + cols[k] + '"/>';
+      if (k === 0) lines += "M" + num(cx - a) + " " + num(cy) + "H" + num(cx + a) + "M" + num(cx) + " " + num(cy - a) + "V" + num(cy + a);      // +
+      if (k === 1 || k === 3) lines += "M" + num(cx - a) + " " + num(cy) + "H" + num(cx + a);                                           // − and the bar of ÷
+      if (k === 2) lines += "M" + num(cx - b) + " " + num(cy - b) + "L" + num(cx + b) + " " + num(cy + b)
+                          + "M" + num(cx + b) + " " + num(cy - b) + "L" + num(cx - b) + " " + num(cy + b);                               // ×
+      if (k === 3) dots += '<circle cx="' + num(cx) + '" cy="' + num(cy - c * 0.22) + '" r="' + num(c * 0.08) + '"/>'
+                         + '<circle cx="' + num(cx) + '" cy="' + num(cy + c * 0.22) + '" r="' + num(c * 0.08) + '"/>';
+    }
+    return out + '<path d="' + lines + '" fill="none" stroke="' + sym + '" stroke-width="' + num(sw) + '" stroke-linecap="round"/>'
+      + '<g fill="' + sym + '">' + dots + "</g></g>";
+  }
+  function draw(b, opts){
+    var q = b.q, mg = opts.margin === undefined ? 4 : Math.max(0, opts.margin | 0), n = q.size + mg * 2, d = [];
+    var p0 = (q.size - b.plate) / 2, p1 = p0 + b.plate;            // the modules under the plate are left out
+    function on(x, y){ return q.get(x, y) && !(b.plate && x >= p0 && x < p1 && y >= p0 && y < p1); }
     for (var y = 0; y < q.size; y++){
       for (var x = 0; x < q.size; x++){
-        if (!q.get(x, y)) continue;
+        if (!on(x, y)) continue;
         var run = 1;
-        while (q.get(x + run, y)) run++;
+        while (on(x + run, y)) run++;
         d.push("M" + (x + mg) + " " + (y + mg) + "h" + run + "v1h-" + run + "z");
         x += run - 1;
       }
@@ -304,7 +412,18 @@
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + n + " " + n + '"' + wh
       + ' shape-rendering="crispEdges" role="img" aria-label="' + esc(label) + '"><title>' + esc(label) + "</title>"
       + '<rect width="' + n + '" height="' + n + '" fill="' + esc(opts.light || "#fff") + '"/>'
-      + '<path fill="' + esc(opts.dark || "#000") + '" d="' + d.join("") + '"/></svg>';
+      + '<path fill="' + esc(opts.dark || "#000") + '" d="' + d.join("") + '"/>'
+      + (b.plate ? logoSVG(p0 + mg, b.plate, !!opts.logoMono, opts.light || "#fff") : "") + "</svg>";
+  }
+  function svg(text, opts){
+    opts = opts || {};
+    return draw(build(text, opts), opts);
+  }
+  // the code svg() would draw: { ecc, version, size, plate (modules across, 0 for none), cleared (share of the symbol) }
+  function logoInfo(text, opts){
+    var b = build(text, opts || {});
+    return { ecc:b.q.ecc, version:b.q.version, size:b.q.size, plate:b.plate, cleared:b.plate * b.plate / (b.q.size * b.q.size),
+             damage:b.plate ? damage(layout(b.q.version, LEVELS[b.q.ecc]), b.plate) : 0 };
   }
   function version(text, ecc){ return pickVersion(utf8(text).length, LEVELS[level(ecc)]); }
 
@@ -412,9 +531,9 @@
     }
     e.stopPropagation();    // the page's own shortcuts wait until the dialog is closed
   }
-  function download(text, ecc, label, filename){
-    var q = matrix(text, { ecc:ecc });
-    var src = '<?xml version="1.0" encoding="UTF-8"?>\n' + svg(text, { ecc:ecc, label:label, size:(q.size + 8) * 8 }) + "\n";
+  function download(text, o, filename){
+    var b = build(text, o);
+    var src = '<?xml version="1.0" encoding="UTF-8"?>\n' + draw(b, { label:o.label, logoMono:o.logoMono, size:(b.q.size + 8) * 8 }) + "\n";
     var a = document.createElement("a"), url = null;
     try { url = URL.createObjectURL(new Blob([src], { type:"image/svg+xml" })); } catch (e){}
     a.href = url || "data:image/svg+xml;charset=utf-8," + encodeURIComponent(src);
@@ -444,6 +563,8 @@
     var title = opts.title || "QR code", label = "QR code for " + title, ecc = level(opts.ecc), n = utf8(text).length;
     if (!version(text, ecc) && version(text, "L")) ecc = "L";
     var ok = version(text, ecc) > 0;
+    var so = { ecc:ecc, label:label, logo:opts.logo !== false, logoMono:!!opts.logoMono }, used = ecc;
+    if (ok) try { used = build(text, so).q.ecc; } catch (e){}
     var link = /^https?:\/\//i.test(text)
       ? '<a href="' + esc(text) + '">' + esc(opts.linkText || shortLink(text)) + "</a>" : esc(opts.linkText || shortLink(text));
     var ov = document.createElement("div");
@@ -453,7 +574,7 @@
       + '<div class="hq-top"><div><h2 class="hq-title" id="hqTitle">' + esc(title) + "</h2>"
       + (opts.sub ? '<div class="hq-sub">' + esc(opts.sub) + "</div>" : "") + "</div>"
       + '<button type="button" class="hq-x" aria-label="Close">✕</button></div>'
-      + (ok ? '<div class="hq-code">' + svg(text, { ecc:ecc, label:label }) + "</div>"
+      + (ok ? '<div class="hq-code">' + svg(text, so) + "</div>"
             : '<p class="hq-note"><b>This link is too long for a QR code.</b> It has ' + n.toLocaleString() + " characters, and a QR code holds at most "
               + capacity("L").toLocaleString() + ". " + esc(opts.tooLongHint || "Copy the link and send it instead.") + "</p>")
       + '<div class="hq-link">' + link + (n > 64 ? " · " + n.toLocaleString() + " characters" : "") + "</div>"
@@ -474,15 +595,15 @@
       else if (b.classList.contains("hq-exit")) setFull(false);
       else if (a === "full") setFull(true);
       else if (a === "print") window.print();
-      else if (a === "dl") download(text, ecc, label, opts.filename);
+      else if (a === "dl") download(text, so, opts.filename);
     });
     window.addEventListener("keydown", onKey, true);
     document.addEventListener("fullscreenchange", onFsChange);
     document.addEventListener("webkitfullscreenchange", onFsChange);
     if (ok && opts.full) setFull(true);
     else ov.querySelector(ok ? '[data-a="full"]' : ".hq-x").focus();
-    return { close:close, ecc:ecc, fits:ok };
+    return { close:close, ecc:used, fits:ok };
   }
 
-  window.HelperQR = { matrix:matrix, svg:svg, version:version, capacity:capacity, show:show, close:close, utf8:utf8 };
+  window.HelperQR = { matrix:matrix, svg:svg, logoInfo:logoInfo, version:version, capacity:capacity, show:show, close:close, utf8:utf8 };
 })();
