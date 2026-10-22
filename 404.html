@@ -5,18 +5,40 @@
 <title>Page not found · Arithmetic Helpers</title>
 <meta name="robots" content="noindex">
 <script>
-  /* GitHub Pages shows this page for any missing address, at any depth, so point every link at the site's folder */
+  /* GitHub Pages shows this page for any missing address, at any depth, so every link here is written from the site's
+     folder, and a <base> points there: the first folder of the address on github.io (a project site) or on a copy
+     served under /arithmetic-helpers/, and the top of the site anywhere else */
   (function(){
     var m = /^\/[^\/]+\//.exec(location.pathname);
-    var base = /\.github\.io$/.test(location.hostname) && m ? m[0] : "./";
+    var base = m && (/\.github\.io$/.test(location.hostname) || /^\/arithmetic-helpers\/$/i.test(m[0])) ? m[0] : "/";
     document.write('<base href="' + base + '">');
   })();
 </script>
-<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+<script src="assets/site.js"></script>
+<script>
+  /* An address from before the pages were put in folders and renamed (a shared problem, a practice set, a bookmark,
+     a QR code on a printed worksheet: pemdas.html?q=…, practice.html?set=…, helpers/pemdas, icons/og.png): go straight
+     to where that page or file lives now, with its problem (?q=…) and #part kept. HelperSite.moved knows them all.
+     Anything else stays here and shows the page below. */
+  (function(){
+    var S = window.HelperSite;
+    if (!S) return;
+    var base = document.querySelector("base").href, here = location.href.split(/[?#]/)[0];
+    if (here.indexOf(base) !== 0) return;
+    var rel; try { rel = decodeURIComponent(here.slice(base.length)); } catch (e){ rel = here.slice(base.length); }
+    var to = S.moved(rel);
+    if (!to) return;
+    var next = to.page ? S.url(to.page) : S.root + to.file;
+    if (next === here) return;
+    document.documentElement.style.visibility = "hidden";
+    location.replace(next + location.search + location.hash);
+  })();
+</script>
+<link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<script src="search.js"></script>
+<script src="assets/search.js"></script>
 <style>
   :root{
     --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
@@ -59,13 +81,13 @@
     <button type="submit">Show the steps →</button>
   </form>
   <div class="links">
-    <a href="addition.html">+ Add</a><a href="subtraction.html">− Subtract</a><a href="multiplication.html">× Multiply</a>
-    <a href="division.html">÷ Divide</a><a href="fractions.html">½ Fractions</a><a href="percents.html">% Percents</a>
-    <a href="factors.html">Factors</a><a href="integers.html">± Integers</a><a href="ratios.html">Ratios</a>
-    <a href="pemdas.html">( ) Order of operations</a><a href="algebra.html">x Algebra</a><a href="lines.html">↗ Lines</a>
-    <a href="geometry.html">△ Geometry</a><a href="stats.html">Statistics</a><a href="graphing.html">⌗ Graphing</a><a href="exponents.html">xⁿ Exponents</a><a href="probability.html">◔ Probability</a><a href="wordproblems.html">✎ Story problems</a>
-    <a href="practice.html">Practice sets</a><a href="worksheet.html">Worksheets</a><a href="scratch.html">By hand</a><a href="flashcards.html">Flash cards</a><a href="daily.html">Problem of the day</a>
-    <a href="reference.html">Reference sheets</a><a href="results.html">Class results</a><a href="glossary.html">Definitions</a>
+    <a href="helpers/addition.html">+ Add</a><a href="helpers/subtraction.html">− Subtract</a><a href="helpers/multiplication.html">× Multiply</a>
+    <a href="helpers/division.html">÷ Divide</a><a href="helpers/fractions.html">½ Fractions</a><a href="helpers/percents.html">% Percents</a>
+    <a href="helpers/factors-and-primes.html">Factors</a><a href="helpers/negative-numbers.html">± Integers</a><a href="helpers/ratios.html">Ratios</a>
+    <a href="helpers/order-of-operations.html">( ) Order of operations</a><a href="helpers/algebra.html">x Algebra</a><a href="helpers/lines-and-slope.html">↗ Lines</a>
+    <a href="helpers/geometry.html">△ Geometry</a><a href="helpers/statistics.html">Statistics</a><a href="helpers/graphing.html">⌗ Graphing</a><a href="helpers/exponents.html">xⁿ Exponents</a><a href="helpers/probability.html">◔ Probability</a><a href="helpers/trigonometry.html">∠ Trigonometry</a><a href="helpers/calculus.html">∫ Calculus</a><a href="helpers/story-problems.html">✎ Story problems</a>
+    <a href="practice/sets.html">Practice sets</a><a href="practice/worksheets.html">Worksheets</a><a href="helpers/scratch-paper.html">By hand</a><a href="practice/flash-cards.html">Flash cards</a><a href="practice/problem-of-the-day.html">Problem of the day</a>
+    <a href="reference/sheets.html">Reference sheets</a><a href="practice/class-results.html">Class results</a><a href="reference/definitions.html">Definitions</a>
   </div>
   <a class="home" href="index.html">← Back to the home page</a>
 </div>
@@ -77,7 +99,7 @@
       var v = document.getElementById("askIn").value.trim();
       if (!v) return;
       var r = window.HelperSearch && window.HelperSearch.route(v);
-      location.href = r && !r.none ? r.page + "?" + r.params : "glossary.html?q=" + encodeURIComponent(v);
+      location.href = (r && !r.none && window.HelperSearch.href(r)) || window.HelperSite.url("definitions.html", "q=" + encodeURIComponent(v));
     });
   })();
 </script>

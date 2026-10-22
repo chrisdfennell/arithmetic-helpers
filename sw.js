@@ -1,20 +1,30 @@
 /* Keeps a copy of the site so it works offline once it has been opened.
    Pages are fetched fresh whenever there's a connection (so updates show straight away),
    and the saved copy is used when there isn't. Fonts are saved the first time they load.
-   Adding a page: put it in PAGES. Change VERSION to throw away everything saved before. */
-var VERSION = "v6";
+   Adding a page: put it in PAGES (its real file, with its folder). Change VERSION to throw away everything saved before.
+   Pages are opened by readable addresses (helpers/order-of-operations, no .html): offline, such an address is found
+   under its file's name.
+   This file stays at the top of the site: a service worker only looks after the pages in its own folder and below. */
+var VERSION = "v7";
 var CACHE = "helpers-" + VERSION;
 var FONTS = "helpers-fonts";
 var PAGES = [
-  "./", "index.html",
-  "addition.html", "subtraction.html", "multiplication.html", "division.html",
-  "fractions.html", "percents.html", "factors.html", "integers.html", "ratios.html",
-  "pemdas.html", "algebra.html", "lines.html", "geometry.html", "stats.html", "graphing.html", "exponents.html", "probability.html",
-  "wordproblems.html", "flashcards.html", "reference.html", "results.html", "daily.html", "scratch.html",
-  "worksheet.html", "practice.html", "progress.html", "glossary.html", "tests.html",
-  "nav.js", "progress.js", "glossary.js", "search.js", "tools.js", "qr.js", "404.html", "manifest.webmanifest",
-  "icons/icon.svg", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/apple-touch-icon.png", "icons/favicon.svg", "icons/og.png"
+  "./", "index.html", "404.html",
+  "helpers/addition.html", "helpers/subtraction.html", "helpers/multiplication.html", "helpers/division.html",
+  "helpers/fractions.html", "helpers/percents.html", "helpers/factors-and-primes.html", "helpers/negative-numbers.html",
+  "helpers/ratios.html", "helpers/exponents.html", "helpers/order-of-operations.html", "helpers/algebra.html",
+  "helpers/lines-and-slope.html", "helpers/graphing.html", "helpers/geometry.html", "helpers/statistics.html",
+  "helpers/probability.html", "helpers/trigonometry.html", "helpers/calculus.html", "helpers/story-problems.html",
+  "helpers/scratch-paper.html",
+  "practice/sets.html", "practice/worksheets.html", "practice/flash-cards.html", "practice/problem-of-the-day.html", "practice/progress.html", "practice/class-results.html",
+  "reference/sheets.html", "reference/definitions.html", "tests/self-test.html",
+  "assets/site.js", "assets/nav.js", "assets/progress.js", "assets/glossary.js", "assets/search.js", "assets/tools.js", "assets/qr.js",
+  "assets/manifest.webmanifest", "assets/icons/icon.svg", "assets/icons/icon-192.png", "assets/icons/icon-512.png",
+  "assets/icons/icon-maskable-512.png", "assets/icons/apple-touch-icon.png", "assets/icons/favicon.svg", "assets/icons/og.png"
 ];
+
+// where each page lives (assets/site.js), so an old address opened offline still finds its page
+try { importScripts("assets/site.js"); } catch (e){}
 
 self.addEventListener("install", function(e){
   // save each file on its own, so one missing page doesn't stop the rest being saved
@@ -59,8 +69,24 @@ self.addEventListener("fetch", function(e){
   }).catch(function(){
     return caches.match(req, { ignoreSearch:true }).then(function(hit){
       if (hit) return hit;
-      if (req.mode === "navigate") return caches.match("index.html");
-      return new Response("", { status:504, statusText:"Offline" });
+      // a readable address (…/helpers/order-of-operations) is saved under its file's name (….html)
+      var last = url.pathname.split("/").pop();
+      if (last && last.indexOf(".") < 0){
+        return caches.match(url.origin + url.pathname + ".html", { ignoreSearch:true }).then(function(h2){ return h2 || missing(); });
+      }
+      return missing();
     });
+    function missing(){
+      if (req.mode === "navigate"){
+        // an address from before the pages were put in folders and renamed (pemdas.html?q=…): send it on
+        var scope = self.registration.scope, to = null;
+        if (self.HelperSite && url.href.indexOf(scope) === 0){
+          try { to = self.HelperSite.moved(decodeURIComponent(url.pathname.slice(new URL(scope).pathname.length))); } catch (x){}
+        }
+        if (to) return Response.redirect((to.page ? self.HelperSite.url(to.page) : scope + to.file) + url.search, 302);
+        return caches.match("index.html");
+      }
+      return new Response("", { status:504, statusText:"Offline" });
+    }
   }));
 });

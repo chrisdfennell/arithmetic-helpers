@@ -1,0 +1,2649 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Dot Plot</title>
+<meta name="description" content="What’s typical, and how spread out? Find the mean, median, mode and range, draw a dot plot, a box plot or a histogram to scale, read a frequency table, measure the spread, and work back to a…">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arithmetic Helpers">
+<meta property="og:title" content="The Dot Plot · Arithmetic Helpers">
+<meta property="og:description" content="What’s typical, and how spread out? Find the mean, median, mode and range, draw a dot plot, a box plot or a histogram to scale, read a frequency table, measure the spread, and work back to a…">
+<meta property="og:url" content="https://chrisdfennell.github.io/arithmetic-helpers/helpers/statistics">
+<meta property="og:image" content="https://chrisdfennell.github.io/arithmetic-helpers/assets/icons/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
+<meta name="twitter:card" content="summary_large_image">
+<script src="../assets/site.js"></script>
+<script src="../assets/nav.js" defer></script>
+<script src="../assets/progress.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#ECEEF3; --surface:#F8F9FB; --surface-2:#E0E4EC;
+    --ink:#1A1F2E; --ink-2:#4C5468; --ink-3:#7D8597; --rule:#C8CDD9;
+    --key:#3346A8;   --key-bg:#E0E4F6;  --key-line:#95A0DA;   /* the mean, and the page itself */
+    --m:#0D7361;     --m-bg:#D4EAE7;                          /* the median and the quartiles' middle */
+    --e:#9A5410;     --e-bg:#F6E5D2;                          /* the mode, counts */
+    --r:#A8412A;     --r-bg:#F6DFD8;                          /* range, spread, outliers */
+    --a:#3D7A1C;     --a-bg:#E2EED8;                          /* answers and checks */
+    --warm:#9A5410;  --warm-bg:#F6E5D2;                       /* notes */
+    --focus:#3346A8;
+    --shadow:0 1px 0 rgba(26,31,46,.05), 0 14px 30px -20px rgba(26,31,46,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#12141B; --surface:#1A1D27; --surface-2:#272B38;
+      --ink:#E6E8F0; --ink-2:#A6ABBD; --ink-3:#7A8093; --rule:#373C4C;
+      --key:#93A2F2;  --key-bg:#1F2547;  --key-line:#4D5AA0;
+      --m:#4FCCB0;    --m-bg:#0F2F2C;
+      --e:#E8A45C;    --e-bg:#37270F;
+      --r:#F08A6E;    --r-bg:#3A1D14;
+      --a:#9AD46A;    --a-bg:#1E2D12;
+      --warm:#E8A45C; --warm-bg:#37270F;
+      --focus:#93A2F2;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#12141B; --surface:#1A1D27; --surface-2:#272B38;
+    --ink:#E6E8F0; --ink-2:#A6ABBD; --ink-3:#7A8093; --rule:#373C4C;
+    --key:#93A2F2;  --key-bg:#1F2547;  --key-line:#4D5AA0;
+    --m:#4FCCB0;    --m-bg:#0F2F2C;
+    --e:#E8A45C;    --e-bg:#37270F;
+    --r:#F08A6E;    --r-bg:#3A1D14;
+    --a:#9AD46A;    --a-bg:#1E2D12;
+    --warm:#E8A45C; --warm-bg:#37270F;
+    --focus:#93A2F2;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;margin:0}
+  sup{font-size:.62em;line-height:0}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
+  @media (max-width:520px){.page{padding:22px 16px 60px}}
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:56ch;margin:.5em 0 0;font-size:15.5px}
+  .tagline a{color:var(--ink-2)}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:20px 22px 18px;display:flex;flex-direction:column;gap:16px;min-width:0}
+  @media (max-width:520px){.problem{padding:16px 14px 14px}}
+  .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
+    color:var(--ink-2);padding:8px 16px;border-radius:7px;cursor:pointer}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  .modes.small button{font-size:13px;padding:6px 12px}
+  @media (max-width:520px){.modes button{padding:7px 11px;font-size:13.5px}}
+
+  .entry{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap}
+  .numfield{display:flex;flex-direction:column;gap:4px;flex:1 1 420px;min-width:0}
+  .numfield > label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .expr-in{font-family:var(--f-mono);font-size:clamp(18px,3.2vw,25px);font-weight:600;
+    color:var(--ink);background:transparent;border:0;width:100%;min-width:0;
+    border-bottom:2.5px solid var(--rule);padding:1px 4px 5px;outline:none;border-radius:0}
+  .expr-in:focus{border-bottom-color:var(--focus)}
+  .hint{margin:-6px 0 0;font-size:13px;color:var(--ink-3)}
+  .hint code{font-family:var(--f-mono);font-size:12.5px;color:var(--ink-2);background:var(--surface-2);
+    border-radius:4px;padding:0 4px}
+  .methodrow{display:flex;gap:8px 10px;align-items:center;flex-wrap:wrap;margin-top:-4px}
+  .lbl2{font-size:12.5px;color:var(--ink-3)}
+  .optrow{display:flex;flex-direction:column;gap:10px}
+
+  /* ---- the problem maker ---- */
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;flex-wrap:wrap}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--key);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 16px;align-items:center;
+    padding:4px 15px 15px}
+  @media (max-width:620px){.maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px}}
+  .maker-body .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .toggles{display:flex;gap:6px;flex-wrap:wrap}
+  .tog{font-family:var(--f-body);font-size:13.5px;font-weight:500;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:6px 13px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px}
+  .tog b{font-family:var(--f-mono);font-weight:600;font-size:15px;line-height:1}
+  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
+  .tog[aria-pressed="true"] b{color:var(--key)}
+  .tog:hover{border-color:var(--key-line)}
+  .maker-go{grid-column:1 / -1;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer}
+  .go:hover{filter:brightness(1.08)}
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{grid-column:1 / -1;margin:0;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    border-top:1px dashed var(--rule);padding-top:14px}
+  .examples .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+  #chips{display:contents}
+  .chip{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer;max-width:100%;text-align:left}
+  .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
+  .practice{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-left:auto}
+  button:focus-visible,input:focus-visible,summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  /* ---- check my answer ---- */
+  .ckbox{background:var(--surface);border:1px solid var(--key-line);border-radius:14px;box-shadow:var(--shadow);
+    padding:16px 20px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .ckbox h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;letter-spacing:.02em;margin:0}
+  .ckq{font-size:15.5px;color:var(--ink)}
+  .ckq b{font-family:var(--f-mono);font-weight:600}
+  .ckrow{display:flex;gap:12px 16px;align-items:flex-end;flex-wrap:wrap}
+  .ckfields{display:flex;gap:12px 18px;flex-wrap:wrap;flex:1 1 320px;min-width:0}
+  .ckf{display:flex;flex-direction:column;gap:4px;flex:1 1 130px;min-width:0;max-width:300px}
+  .ckf label{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .ckf .ckin{display:flex;align-items:center;gap:6px;min-width:0}
+  .ckf input{font-family:var(--f-mono);font-size:clamp(17px,3vw,20px);font-weight:600;color:var(--ink);
+    background:transparent;border:0;border-bottom:2.5px solid var(--rule);padding:1px 4px 5px;outline:none;
+    width:100%;min-width:0;border-radius:0}
+  .ckf input:focus{border-bottom-color:var(--focus)}
+  .ckmark{font-family:var(--f-mono);font-weight:600;font-size:16px;width:1.2em;flex:none;text-align:center}
+  .ckmark.ok{color:var(--a)} .ckmark.part{color:var(--e)} .ckmark.bad{color:var(--r)}
+  .ckfb{font-size:14.5px;color:var(--ink-2)}
+  .ckfb:empty{display:none}
+  .ckfb .lead{font-weight:600;color:var(--r)}
+  .ckfb.ok .lead{color:var(--a)}
+  .ckfb.part .lead{color:var(--e)}
+  .ckfb .why{display:block;margin-top:4px;color:var(--ink-2)}
+  .ckfb b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .ckhint{font-size:14px;color:var(--ink);background:var(--warm-bg);border-left:3px solid var(--warm);
+    border-radius:4px 8px 8px 4px;padding:8px 12px}
+  .ckhint b{font-family:var(--f-mono);font-weight:600}
+  .ckmore{display:flex;gap:8px;flex-wrap:wrap}
+  .cknote{font-size:13px;color:var(--ink-3)}
+  .cknote:empty{display:none}
+
+  .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
+    padding:16px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 26px}
+  .answer .cells{display:flex;flex-wrap:wrap;gap:10px 30px;align-items:flex-end;min-width:0}
+  .answer .cell{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .answer .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .answer .v{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(22px,4.2vw,31px);color:var(--ink);line-height:1.15;display:flex;align-items:center;
+    flex-wrap:wrap;gap:0 .45ch;min-width:0}
+  .answer .v.long{font-size:clamp(16px,2.6vw,21px);line-height:1.4}
+  .answer .v .fr{font-size:.6em}
+  .answer .v .ap{color:var(--ink-2);font-size:.62em}
+  .answer .v .word{font-family:var(--f-display);font-stretch:110%;font-weight:700;font-size:.8em}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto;min-width:0}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .answer.masked .v{color:var(--ink-3);filter:blur(8px);user-select:none}
+  .answer.masked .facts{filter:blur(5px);user-select:none}
+  .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .notice b{font-family:var(--f-mono)}
+
+  .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
+  @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden;min-width:0}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 18px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0}
+  .stepper{display:flex;align-items:center;gap:6px}
+  .stepper button{font-family:var(--f-mono);font-size:13px;font-weight:600;background:var(--surface-2);
+    border:0;color:var(--ink);border-radius:7px;width:30px;height:28px;cursor:pointer}
+  .stepper button:disabled{color:var(--ink-3);cursor:not-allowed}
+  .stepper button:hover:not(:disabled){background:var(--key-bg);color:var(--key)}
+  .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
+    text-align:center;font-variant-numeric:tabular-nums}
+
+  /* colour by kind of step */
+  .c-p{--c:var(--key);--cb:var(--key-bg)}
+  .c-m{--c:var(--m);--cb:var(--m-bg)}
+  .c-e{--c:var(--e);--cb:var(--e-bg)}
+  .c-r{--c:var(--r);--cb:var(--r-bg)}
+  .c-a{--c:var(--a);--cb:var(--a-bg)}
+  .c-n{--c:var(--ink-2);--cb:var(--surface-2)}
+  .badge{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;
+    padding:2px 7px;border-radius:999px;background:var(--cb);color:var(--c);white-space:nowrap}
+
+  /* ---- the work: sections ---- */
+  .sect{padding:14px 18px 16px;border-top:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px;min-width:0}
+  .sect:first-child{border-top:0}
+  .tapecap{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+  .tapecap b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .tapecap .lead{font-family:var(--f-body);color:var(--ink)}
+  .xscroll{overflow-x:auto;max-width:100%;padding-bottom:2px}
+  .veil{opacity:.16}
+  svg [data-step].veil{opacity:0}
+  @media (prefers-reduced-motion:no-preference){[data-step]{transition:opacity .2s ease}}
+  svg{display:block}
+  svg text{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums}
+
+  .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;
+    margin:0 .1ch;font-size:.8em}
+  .fr > span{display:block;padding:0 .2ch;text-align:center;white-space:nowrap}
+  .fr .de{border-top:2px solid currentColor;margin-top:1px}
+
+  .bigline{font-family:var(--f-mono);font-weight:600;font-size:clamp(16px,2.8vw,20px);color:var(--ink);
+    font-variant-numeric:tabular-nums;line-height:1.6;overflow-wrap:anywhere}
+  .bigline .eqk{color:var(--key)}
+  .bigline .eqm{color:var(--m)}
+  .bigline .eqe{color:var(--e)}
+  .bigline .eqr{color:var(--r)}
+  .bigline .ap{color:var(--ink-2)}
+  .bigline .nm{font-family:var(--f-body);font-weight:500;font-size:13.5px;color:var(--ink-3)}
+  .bigline + .bigline{margin-top:-6px}
+
+  .lists{display:flex;flex-direction:column;gap:8px}
+  .lrow{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 12px;align-items:baseline}
+  .lrow .ln{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);white-space:nowrap}
+  @media (max-width:420px){.lrow{grid-template-columns:minmax(0,1fr)}}
+  .toks{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+  .tk{font-family:var(--f-mono);font-size:14.5px;font-weight:600;padding:1px 8px;border-radius:7px;color:var(--ink);
+    background:var(--surface-2);font-variant-numeric:tabular-nums;line-height:1.55;white-space:nowrap}
+  .tk .fr{font-size:.72em}
+  .tk.x{color:var(--ink-3);background:transparent;box-shadow:inset 0 0 0 1px var(--rule)}
+  .tk.x .vx{text-decoration:line-through;text-decoration-thickness:2px}
+  .tk .pn{font-size:9.5px;color:var(--ink-3);margin-left:3px;vertical-align:super;line-height:0}
+  .tk.mid{background:var(--m-bg);color:var(--m);box-shadow:inset 0 0 0 2px var(--m)}
+  .tk.q{background:var(--key-bg);color:var(--key);box-shadow:inset 0 0 0 2px var(--key)}
+  .tk.out{background:var(--r-bg);color:var(--r);box-shadow:inset 0 0 0 2px var(--r)}
+  .tk.md{background:var(--e-bg);color:var(--e);box-shadow:inset 0 0 0 2px var(--e)}
+  .tk.new{background:var(--r-bg);color:var(--r)}
+  .tk .ct{font-size:11px;color:var(--ink-3);margin-left:4px}
+  .tk.md .ct{color:var(--e)}
+  .tk.gap{background:transparent;color:var(--ink-3);padding:1px 2px}
+  .halves{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-start}
+  .half{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .half .hl{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+
+  .tbl{border-collapse:collapse;font-family:var(--f-mono);font-size:14.5px;font-variant-numeric:tabular-nums;min-width:max-content}
+  .tbl th{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);font-weight:600;
+    padding:4px 14px 6px 0;text-align:right;border-bottom:1.5px solid var(--rule);white-space:nowrap;vertical-align:bottom}
+  .tbl td{padding:4px 14px 4px 0;text-align:right;border-bottom:1px dashed var(--rule);font-weight:600;white-space:nowrap;
+    color:var(--ink);vertical-align:middle}
+  .tbl .l{text-align:left}
+  .tbl td.dim{color:var(--ink-3);font-weight:400}
+  .tbl td.k{color:var(--key)}
+  .tbl td.mm{color:var(--m)}
+  .tbl td.ee{color:var(--e)}
+  .tbl tfoot td{border-bottom:0;border-top:1.5px solid var(--ink-3);color:var(--key)}
+  .tbl tr.hit td{background:var(--m-bg)}
+  .tbl tr.top td.cnt{color:var(--e);box-shadow:inset 0 0 0 2px var(--e);border-radius:6px}
+  .tbl td .fr{font-size:.75em}
+  .tbl td.tl2{text-align:left;padding-right:18px}
+
+  /* pictures */
+  .ax{stroke:var(--ink-2);stroke-width:2;stroke-linecap:round}
+  .tkl{stroke:var(--ink-2);stroke-width:1.5}
+  .tkm{stroke:var(--ink-3);stroke-width:1}
+  .tl{fill:var(--ink-2);font-size:13px}
+  .dt{fill:var(--ink-2)}
+  .dt.new{fill:var(--r)}
+  .dt.out{fill:var(--r)}
+  .bar{fill:var(--surface-2);stroke:var(--ink-2);stroke-width:1.4}
+  .barl{fill:var(--ink-2);font-size:11.5px}
+  .mean-m{fill:var(--key)}
+  .mean-l{fill:var(--key);font-size:13px}
+  .med-m{stroke:var(--m);stroke-width:2.2;stroke-dasharray:5 4}
+  .med-l{fill:var(--m);font-size:13px}
+  .mode-m{fill:none;stroke:var(--e);stroke-width:2}
+  .rng-m{fill:none;stroke:var(--r);stroke-width:2}
+  .rng-l{fill:var(--r);font-size:13px}
+  .ghost{fill:none;stroke:var(--ink-3);stroke-width:1.5;stroke-dasharray:3 3}
+  .sq{fill:var(--key-bg);stroke:var(--key);stroke-width:1}
+  .sq.hi{fill:var(--key);stroke:var(--key)}
+  .sq.hole{fill:none;stroke:var(--key-line);stroke-dasharray:2 2}
+  .sq.even{fill:var(--key-bg);stroke:var(--key)}
+  .mline{stroke:var(--key);stroke-width:2;stroke-dasharray:6 4}
+  .ptitle{fill:var(--ink-3);font-size:10.5px;letter-spacing:.08em}
+  .vl{fill:var(--ink-2);font-size:12px}
+  .mll{fill:var(--key);font-size:12px}
+  .bx{fill:var(--key-bg);stroke:var(--key);stroke-width:2}
+  .bxm{stroke:var(--m);stroke-width:3.2}
+  .wh{stroke:var(--ink);stroke-width:2}
+  .fence{stroke:var(--r);stroke-width:1.4;stroke-dasharray:4 4}
+  .fl2{fill:var(--r);font-size:11px}
+  .bl{fill:var(--ink);font-size:12.5px}
+  .bl.q{fill:var(--key)} .bl.m{fill:var(--m)}
+  .ldr{stroke:var(--ink-3);stroke-width:1;stroke-dasharray:2 3}
+  .hb{fill:var(--key-bg);stroke:var(--key);stroke-width:1.6}
+  .grid{stroke:var(--rule);stroke-width:1}
+  .hc{fill:var(--key);font-size:12.5px}
+  .dl{stroke:var(--r);stroke-width:2.4;stroke-linecap:round}
+  .dlab{fill:var(--r);font-size:12px}
+  .tape{fill:var(--surface-2);stroke:var(--ink-2);stroke-width:1.5}
+  .tape.ev{fill:var(--key-bg);stroke:var(--key)}
+  .tape.kp{fill:var(--m-bg);stroke:var(--m)}
+  .tape.mp{fill:var(--a-bg);stroke:var(--a);stroke-width:2.2}
+  .tapel{fill:var(--ink);font-size:13px}
+  .tapel.mp{fill:var(--a)}
+  .tally line{stroke:var(--ink);stroke-width:1.6;stroke-linecap:round}
+  .tally{display:inline-block;vertical-align:middle}
+
+  .legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:12px 18px;border-top:1px dashed var(--rule)}
+  .legend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+  .legend .badge{min-width:3.4ch;text-align:center}
+
+  .log{padding:6px 0 10px;margin:0;list-style:none}
+  .log > li{padding:13px 18px 14px;border-bottom:1px dashed var(--rule);
+    display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 12px;align-items:start}
+  .log .line + .line{margin-top:3px}
+  .log > li:last-child{border-bottom:0}
+  .log .n{grid-column:1;grid-row:1 / span 99;font-family:var(--f-mono);font-size:11px;font-weight:600;
+    color:var(--ink-3);background:var(--surface-2);border-radius:7px;padding:3px 7px;
+    letter-spacing:.04em;white-space:nowrap}
+  .log .line{grid-column:2;display:flex;gap:9px;align-items:baseline;font-size:14.5px;min-width:0}
+  .log .tag{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;padding:2px 6px;border-radius:5px;flex:none;min-width:8.2ch;text-align:center;
+    background:var(--cb);color:var(--c)}
+  .log .txt{color:var(--ink-2);min-width:0;overflow-wrap:anywhere}
+  .log .txt b{font-family:var(--f-mono);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;
+    overflow-wrap:normal}
+  .log .aside{grid-column:2;margin-top:6px;font-size:13.5px;color:var(--ink);background:var(--warm-bg);
+    border-left:3px solid var(--warm);border-radius:4px 8px 8px 4px;padding:8px 12px}
+  .log .aside b{font-family:var(--f-mono);font-weight:600}
+  .log strong,.closer strong,.answer .fact strong{font-weight:600;color:var(--ink)}
+  .closer{padding:14px 18px;font-size:14px;color:var(--ink-2);background:var(--surface-2)}
+  .closer b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .closer .ok{color:var(--a);font-weight:600}
+  .closer .ck + .ck{margin-top:6px}
+
+  .footnote{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote a{color:var(--ink-2)}
+  .print{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .print:hover{color:var(--ink);border-color:var(--ink-3)}
+  .footnote .btns{display:flex;gap:8px;flex-wrap:wrap}
+
+  /* embedded in a practice set (embed=1) */
+  html.embed body{margin:0}
+  html.embed .page{padding:12px 12px 16px;gap:14px}
+  html.embed .sitenav,html.embed .masthead,html.embed .footnote,html.embed .theme-btn,html.embed #modeTabs,
+  html.embed .maker,html.embed .examples,html.embed .hint,html.embed #optRow{display:none !important}
+  html.embed .problem{padding:12px 14px;gap:8px}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#EEF0F5;
+      --ink:#111; --ink-2:#3B4254; --ink-3:#6A7184; --rule:#AEB4C2;
+      --key:#3346A8;  --key-bg:#E0E4F6;  --key-line:#95A0DA;
+      --m:#0D7361;    --m-bg:#D4EAE7;
+      --e:#9A5410;    --e-bg:#F6E5D2;
+      --r:#A8412A;    --r-bg:#F6DFD8;
+      --a:#3D7A1C;    --a-bg:#E2EED8;
+      --warm:#9A5410; --warm-bg:#F6E5D2;
+      --shadow:none;
+    }
+    @page{margin:13mm 11mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.examples,.maker,.hint,.footnote,.stepper,.methodrow,#optRow,#modeTabs,#statusLine,.ckmore,.cknote,.ckhint,#ckGo{display:none !important}
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px}
+    .eyebrow{font-size:9px}
+    .tagline{display:none}
+    .problem{border:0;box-shadow:none;padding:0;gap:4px;break-after:avoid}
+    .expr-in{font-size:16px;border-bottom-color:var(--ink)}
+    .numfield > label{font-size:8.5px}
+    .ckbox{box-shadow:none;padding:8px 12px;gap:6px}
+    .answer{padding:8px 12px;gap:5px 16px;break-after:avoid;break-inside:avoid}
+    .answer .cells{gap:4px 18px}
+    .answer .v{font-size:19px}
+    .answer .v.long{font-size:13px}
+    .answer .facts{margin-left:0;flex-basis:100%}
+    .answer .fact{font-size:11px}
+    .answer.masked .v,.answer.masked .facts{filter:none;color:var(--ink)}
+    .board{display:flex;gap:12px;align-items:flex-start}
+    .board > .panel:first-of-type{flex:0 1 57%;min-width:0}
+    .board > .panel:last-of-type{flex:1 1 40%;min-width:0}
+    .panel{box-shadow:none;border:1px solid var(--rule);break-inside:auto}
+    .panel-head{padding:6px 10px}
+    .panel-head h2{font-size:12.5px}
+    .veil,svg [data-step].veil{opacity:1}
+    #closer{opacity:1 !important}
+    .xscroll{overflow:visible}
+    .xscroll:has(> svg){break-inside:avoid}
+    .sect{padding:8px 10px 10px;gap:6px;break-inside:avoid}
+    .sect svg{max-width:100%;height:auto}
+    .tapecap{font-size:10.5px}
+    .bigline{font-size:13px}
+    .tk{font-size:10.5px;padding:0 5px}
+    .tbl{font-size:10.5px;min-width:0}
+    .tbl th{font-size:8px;padding:2px 8px 3px 0}
+    .tbl td{padding:2px 8px 2px 0}
+    .lrow .ln{font-size:8.5px}
+    .legend{padding:7px 10px;gap:4px 13px}
+    .legend div{font-size:10px}
+    .log{padding:2px 0 4px}
+    .log > li{padding:7px 10px;break-inside:avoid}
+    .log .n{font-size:9.5px;padding:2px 5px}
+    .log .line{font-size:11px;gap:7px}
+    .log .tag{font-size:8.5px;min-width:7.2ch;padding:1px 4px}
+    .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
+    .closer{font-size:11px;padding:8px 10px}
+  }
+</style>
+
+<div class="page" id="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Statistics, worked out</div>
+      <h1>The Dot <em>Plot</em></h1>
+      <p class="tagline">What&rsquo;s typical, and how spread out? Find the mean, median, mode and range, draw a dot plot,
+        a box plot or a histogram to scale, read a frequency table, measure the spread, and work back to a missing
+        number &mdash; with the reason for every step.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem">
+    <div class="modes" id="modeTabs" role="group" aria-label="What kind of problem">
+      <button type="button" data-mode="center" aria-pressed="true">Mean, median, mode</button>
+      <button type="button" data-mode="box" aria-pressed="false">Box plot</button>
+      <button type="button" data-mode="freq" aria-pressed="false">Frequency</button>
+      <button type="button" data-mode="spread" aria-pressed="false">Spread</button>
+      <button type="button" data-mode="missing" aria-pressed="false">Missing value</button>
+    </div>
+    <div class="entry">
+      <div class="numfield">
+        <label for="numIn" id="numLab">Your numbers</label>
+        <input class="expr-in" id="numIn" type="text" inputmode="text" autocomplete="off" spellcheck="false" value="">
+      </div>
+    </div>
+    <p class="hint" id="hint"></p>
+    <div class="optrow" id="optRow"></div>
+
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body" id="makerBody"></div>
+    </details>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips"></span>
+      <span class="practice">
+        <div class="modes" role="group" aria-label="Practice mode">
+          <button type="button" id="allBtn" aria-pressed="true">Show all work</button>
+          <button type="button" id="stepBtn" aria-pressed="false">One step at a time</button>
+          <button type="button" id="checkBtn" aria-pressed="false">Check my answer</button>
+        </div>
+      </span>
+    </div>
+  </section>
+
+  <div id="statusLine" role="status" aria-live="polite"></div>
+
+  <section class="ckbox" id="ckBox" hidden aria-labelledby="ckH">
+    <h2 id="ckH">Your answer</h2>
+    <div class="ckq" id="ckQ"></div>
+    <div class="ckrow">
+      <div class="ckfields" id="ckFields"></div>
+      <button type="button" class="go" id="ckGo">Check</button>
+    </div>
+    <div class="ckfb" id="ckFb" aria-live="polite"></div>
+    <div class="ckhint" id="ckHint" hidden></div>
+    <div class="ckmore" id="ckMore" hidden>
+      <button type="button" class="print" id="hintBtn">Show a hint</button>
+      <button type="button" class="print" id="showBtn">Show me the work</button>
+    </div>
+    <div class="cknote" id="ckNote"></div>
+  </section>
+
+  <div class="board" id="board">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The work</h2>
+        <div class="stepper" id="stepper" hidden>
+          <button type="button" id="prevBtn" aria-label="Previous step">&larr;</button>
+          <span class="count" id="stepCount"></span>
+          <button type="button" id="nextBtn" aria-label="Next step">&rarr;</button>
+        </div>
+      </div>
+      <div id="workHost"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h2>Say it out loud</h2></div>
+      <ol class="log" id="log"></ol>
+      <div class="closer" id="closer"></div>
+    </section>
+  </div>
+
+  <div class="footnote">
+    <span class="btns">
+      <button class="print" type="button" id="printBtn">Print this work</button>
+      <button class="print" type="button" id="copyBtn">Copy link</button>
+    </span>
+    <span>Up to 60 numbers, worked out exactly &mdash; a mean that doesn&rsquo;t come out even is shown as a fraction and
+      a decimal. Need a long division done out? Work it on <a href="division.html">&divide;</a>, or turn a fraction into
+      a decimal on <a href="fractions.html">&frac12;</a>.</span>
+  </div>
+</div>
+
+<script>
+/* =============================================================================
+   URL parameters
+   ---------------
+   mode      center | box | freq | spread | missing  — which tab opens.
+             (Also understood: mean, median, average, mmmr, boxplot, quartiles, iqr, frequency, table, tally,
+             histogram, mad, deviation, sd, missing, need.)  Missing? It is worked out from q (below).
+   q         The problem. Numbers may be split by commas or spaces; decimals and negatives are fine, and words
+             are read too (case doesn't matter). When mode is missing, the words choose the tab:
+               4, 8, 6, 5, 7 · mean of 4 8 6 5 7 · median 3 9 4 7 · mode 2 5 5 8 · range 3 9 4 7   -> center
+               box plot 3,7,8,5,12,14,21,13,18 · quartiles … · five number summary … · iqr …     -> box
+               frequency 1:3, 2:5, 3:2 · tally 5: ||||, 6: ||| · 10-19: 4, 20-29: 7             -> freq
+               mad 2 4 6 8 · mean absolute deviation … · standard deviation …                    -> spread
+               mean of 5 numbers is 8: 6, 9, 7, 10 · mean 7: 4, 9, ?, 6
+               need average 85 scores 78 92 81 · need average 90 scores 88, 85 over 4 tests      -> missing
+             In center, the words mean / median / mode / range pick what Check my answer asks for (ask, below).
+             A frequency table is value: count pairs (a tally of | marks works as the count); classes like
+             10-19 make it grouped data. A plain list on the Frequency tab is counted up into a table.
+             "standard deviation" (or "sd") also turns on sd=pop; "sample standard deviation" sd=sample.
+             With no words: a list with value: count pairs -> freq, anything else -> center.
+   practice  all | step | check  =  Show all work | One step at a time | Check my answer
+   ask       center only: all | mean | median | mode | range — what Check my answer asks for (default all).
+   outlier   center only: 1 shows "what if I add an outlier?" — how the mean and the median move.
+   method    box only: exclusive | inclusive — leave the median out of both halves when finding Q1 and Q3
+             (default), or include it in both. (Other books and calculators differ; the page says so.)
+   bin       freq only (a plain value: count table): a bin width, e.g. bin=5, to group the values into a
+             histogram and estimate the mean from the midpoints. Off by default.
+   sd        spread only: pop | sample — also work out the standard deviation (÷ n or ÷ n − 1). Off by default.
+   embed     1 = shown inside a practice set: Check my answer only, the problem read-only, no masthead, tabs,
+             maker, examples, practice toggle or footnote, nothing saved; the page posts its height to the
+             parent as {type:"helper:height", h}.
+   theme     light | dark — followed when embed=1.
+   A link's params win over what the page remembered (localStorage). One that can't be read shows the usual
+   friendly notice instead. As the problem changes, the page keeps mode, q and the options above in the
+   address bar with history.replaceState (practice too, unless it's "all"; never the theme).
+
+   Worksheet API (window "message" events, for a page that loads this one in an iframe):
+     {type:"helper:options", id}
+        -> {type:"helper:optionsSchema", id, page:"stats.html", title, options:[{key, label, type, values, default, modes}]}
+     {type:"helper:make", id, count, options:{mode, ask, size, max, decimals, nice, outliers, method, grouped, sd, kind}}
+        -> {type:"helper:made", id, page:"stats.html", problems:[{text, html, params, answer, answerHtml}]}
+   Making problems never changes the page, its inputs or localStorage.
+
+   Practice hooks: every graded Check, and "Show me the work", is reported as helper:checked — a CustomEvent
+   on document and, in a frame, a postMessage to the parent:
+     { page:"stats.html", params (this problem's link without practice/embed/theme),
+       verdict:"right"|"wrong"|"simplify"|"shown", firstTry, hinted, text }
+   ============================================================================= */
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var PAGE = "stats.html", STORE = "dot-plot", TITLE = "The Dot Plot";
+  var MODES = ["center", "box", "freq", "spread", "missing"];
+  var ASKS = ["all", "mean", "median", "mode", "range"];
+  var MAXN = 60;
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var S = { mode:"center", practice:"all", step:1,
+            ask:"all", outlier:false, method:"exclusive", bin:0, sd:"off",
+            inputs:{ center:"4, 8, 6, 5, 7", box:"3, 7, 8, 5, 12, 14, 21, 13, 18", freq:"1: 3, 2: 5, 3: 2, 4: 4, 5: 1",
+                     spread:"2, 4, 6, 8, 10", missing:"mean of 5 numbers is 8: 6, 9, 7, 10" },
+            gen:{ center:{ size:"small", max:20, dec:false, nice:true },
+                  box:{ size:"medium", max:50, out:true },
+                  freq:{ max:10, grouped:false },
+                  spread:{ size:"small", max:20, dec:false, nice:true },
+                  missing:{ kind:"either", max:20 } } };
+  var CK = freshCK(null);
+  var CUR = null;                 // the problem on screen, once it reads
+
+  /* ===================== helpers ===================== */
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function B(x){ return "<b>" + x + "</b>"; }
+  function UserErr(msg){ this.user = msg; }
+  function cap(s){ s = String(s); return s.charAt(0).toUpperCase() + s.slice(1); }
+  var WORDS = ["zero","one","two","three","four","five","six","seven","eight","nine","ten","eleven","twelve"];
+  function word(k){ return k < WORDS.length ? WORDS[k] : String(k); }
+  var ORDS = ["zeroth","first","second","third","fourth","fifth","sixth","seventh","eighth","ninth","tenth","eleventh","twelfth"];
+  function ordW(k){ return k < ORDS.length ? ORDS[k] : k + (k % 10 === 1 && k % 100 !== 11 ? "st" : k % 10 === 2 && k % 100 !== 12 ? "nd" : k % 10 === 3 && k % 100 !== 13 ? "rd" : "th"); }
+  function ordN(k){ return k + (k % 100 >= 11 && k % 100 <= 13 ? "th" : k % 10 === 1 ? "st" : k % 10 === 2 ? "nd" : k % 10 === 3 ? "rd" : "th"); }
+  function times(c){ return c === 1 ? "once" : c === 2 ? "twice" : c + " times"; }
+  function listAnd(a){ return a.length < 2 ? a.join("") : a.length === 2 ? a[0] + " and " + a[1] : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+  function ds(step){ return (step === undefined || step === null || step < 0) ? "" : ' data-step="' + step + '"'; }
+  function f1(x){ return (Math.round(x * 10) / 10).toString(); }
+  function lead(t){ return '<b class="lead">' + t + "</b>"; }
+
+  /* ===================== exact numbers (BigInt fractions) ===================== */
+  function babs(x){ return x < 0n ? -x : x; }
+  function bgcd(a, b){ a = babs(a); b = babs(b); while (b){ var t = a % b; a = b; b = t; } return a || 1n; }
+  function R(n, d){
+    n = BigInt(n); d = d === undefined ? 1n : BigInt(d);
+    if (d < 0n){ n = -n; d = -d; }
+    var g = bgcd(n, d);
+    if (g > 1n){ n /= g; d /= g; }
+    return { n:n, d:d };
+  }
+  var ZERO = R(0), ONE = R(1), TWO = R(2), HALF3 = R(3, 2);
+  function add(a, b){ return R(a.n * b.d + b.n * a.d, a.d * b.d); }
+  function sub(a, b){ return R(a.n * b.d - b.n * a.d, a.d * b.d); }
+  function mul(a, b){ return R(a.n * b.n, a.d * b.d); }
+  function dvd(a, b){ return R(a.n * b.d, a.d * b.n); }
+  function cmpR(a, b){ var x = a.n * b.d - b.n * a.d; return x < 0n ? -1 : x > 0n ? 1 : 0; }
+  function eqR(a, b){ return a.n === b.n && a.d === b.d; }
+  function absR(a){ return R(babs(a.n), a.d); }
+  function negR(a){ return R(-a.n, a.d); }
+  function isInt(a){ return a.d === 1n; }
+  function toF(r){ return Number(r.n) / Number(r.d); }
+  function P10(k){ return 10n ** BigInt(k); }
+  function sumR(arr){ return arr.reduce(function(a, b){ return add(a, b); }, ZERO); }
+  function sortR(arr){ return arr.slice().sort(cmpR); }
+  function keyR(r){ return r.n + "/" + r.d; }
+  function avg2(a, b){ return dvd(add(a, b), TWO); }
+  function parseDecStr(str){                       // "-3.25" -> exact
+    var m = /^(-?)(\d*)(?:\.(\d+))?$/.exec(String(str).trim());
+    if (!m || (m[2] === "" && !m[3])) return null;
+    var fp = m[3] || "", n = BigInt((m[2] || "0") + fp);
+    return R(m[1] ? -n : n, P10(fp.length));
+  }
+  function decDigits(r){ for (var k = 0; k <= 12; k++) if (P10(k) % r.d === 0n) return k; return -1; }
+  function isRep(r){ var k = decDigits(r); return k < 0 || k > 6; }   // shown as a fraction and ≈ decimal
+  function grpInt(s){ return s.length > 4 ? s.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : s; }
+  function decExact(r, plain){
+    var k = Math.max(0, decDigits(r)), a = babs(r.n) * (P10(k) / r.d), s = a.toString(), ip, fp;
+    if (k === 0){ ip = s; fp = ""; } else { while (s.length <= k) s = "0" + s; ip = s.slice(0, -k); fp = s.slice(-k); }
+    return (r.n < 0n ? (plain ? "-" : "−") : "") + (plain ? ip : grpInt(ip)) + (fp ? "." + fp : "");
+  }
+  function roundDec(r, dp){
+    var m = babs(r.n) * P10(dp), q = m / r.d, rem = m % r.d, s, ip, fp;
+    if (rem * 2n >= r.d) q += 1n;
+    s = q.toString();
+    if (dp === 0){ ip = s; fp = ""; } else { while (s.length <= dp) s = "0" + s; ip = s.slice(0, -dp); fp = s.slice(-dp).replace(/0+$/, ""); }
+    return (r.n < 0n && q !== 0n ? "−" : "") + grpInt(ip) + (fp ? "." + fp : "");
+  }
+  function plainT(r){ return isRep(r) ? String(toF(r)) : decExact(r, true); }      // for links
+  function mixParts(r){ var a = babs(r.n); return { neg:r.n < 0n, w:a / r.d, n:a % r.d, d:r.d }; }
+  function fH(n, d){ return '<span class="fr"><span class="nu">' + n + '</span><span class="de">' + d + "</span></span>"; }
+  function mixH(r){
+    var m = mixParts(r), sg = m.neg ? "−" : "";
+    if (m.n === 0n) return sg + grpInt(m.w.toString());
+    if (m.w === 0n) return fH(sg + m.n, m.d);
+    return sg + grpInt(m.w.toString()) + fH(m.n, m.d);
+  }
+  function mixT(r){
+    var m = mixParts(r), sg = m.neg ? "−" : "";
+    if (m.n === 0n) return sg + grpInt(m.w.toString());
+    return sg + (m.w === 0n ? "" : grpInt(m.w.toString()) + " ") + m.n + "/" + m.d;
+  }
+  function fracT(r){ return (r.n < 0n ? "−" : "") + babs(r.n) + (r.d === 1n ? "" : "/" + r.d); }
+  function vT(r){ return isRep(r) ? mixT(r) : decExact(r); }                       // short, exact
+  function vH(r){ return isRep(r) ? mixH(r) : decExact(r); }
+  function fullT(r){ return isRep(r) ? mixT(r) + " ≈ " + roundDec(r, 2) : decExact(r); }
+  function fullH(r){ return isRep(r) ? mixH(r) + ' <span class="ap">≈ ' + roundDec(r, 2) + "</span>" : decExact(r); }
+  function eqT(r){ return isRep(r) ? "≈ " + roundDec(r, 2) : "= " + decExact(r); }   // "= 6" or "≈ 4.33"
+  function pT(r, i){ return i && r.n < 0n ? "(" + vT(r) + ")" : vT(r); }             // a negative after an operator gets brackets
+  function pH(r, i){ return i && r.n < 0n ? "(" + vH(r) + ")" : vH(r); }
+  function listT(arr){ return arr.map(vT).join(", "); }
+  function sumParts(arr, f){
+    if (arr.length <= 14) return arr.map(function(r, i){ return f(r, i); }).join(" + ");
+    return arr.slice(0, 5).map(function(r, i){ return f(r, i); }).join(" + ") + " + … + " + arr.slice(-2).map(function(r){ return f(r, 1); }).join(" + ");
+  }
+  function sumT(arr){ return sumParts(arr, pT); }
+  function sumH(arr){ return sumParts(arr, pH); }
+  function minusT(a, b){ return vT(a) + " − " + pT(b, 1); }
+  function minusH(a, b){ return vH(a) + " − " + pH(b, 1); }
+  function isqrtB(n){ if (n < 2n) return n; var x = BigInt(Math.floor(Math.sqrt(Number(n)))); while (x * x > n) x -= 1n; while ((x + 1n) * (x + 1n) <= n) x += 1n; return x; }
+  function sqrtExact(r){ if (r.n < 0n) return null; var a = isqrtB(r.n), b = isqrtB(r.d); return a * a === r.n && b * b === r.d ? R(a, b) : null; }
+
+  /* ===================== statistics ===================== */
+  function medianOf(s){ var n = s.length; return n % 2 ? s[(n - 1) / 2] : avg2(s[n / 2 - 1], s[n / 2]); }
+  function countsOf(s){
+    var out = [];
+    s.forEach(function(v){ var l = out[out.length - 1]; if (l && eqR(l.v, v)) l.c++; else out.push({ v:v, c:1 }); });
+    return out;
+  }
+  function modesOf(cs){
+    var max = 0;
+    cs.forEach(function(c){ max = Math.max(max, c.c); });
+    if (cs.length === 1) return { modes:[cs[0].v], max:max, kind:"same" };
+    var top = cs.filter(function(c){ return c.c === max; });
+    if (top.length === cs.length) return { modes:[], max:max, kind: max === 1 ? "once" : "tie" };
+    return { modes:top.map(function(c){ return c.v; }), max:max, kind: top.length === 1 ? "one" : "several" };
+  }
+  function solveCenter(vals){
+    var s = sortR(vals), n = s.length, sum = sumR(s), cs = countsOf(s);
+    return { s:s, n:n, sum:sum, mean:dvd(sum, R(n)), med:medianOf(s), cs:cs, mo:modesOf(cs), min:s[0], max:s[n - 1], range:sub(s[n - 1], s[0]) };
+  }
+  function halvesOf(s, method){
+    var n = s.length, h = Math.floor(n / 2);
+    if (n % 2 && method === "inclusive") return { lower:s.slice(0, h + 1), upper:s.slice(h) };
+    return { lower:s.slice(0, h), upper:s.slice(n - h) };
+  }
+  function solveBox(vals, method){
+    var s = sortR(vals), n = s.length, hv = halvesOf(s, method), other = halvesOf(s, method === "inclusive" ? "exclusive" : "inclusive");
+    var q1 = medianOf(hv.lower), q3 = medianOf(hv.upper), iqr = sub(q3, q1), k = mul(HALF3, iqr);
+    var lf = sub(q1, k), uf = add(q3, k);
+    var outs = s.filter(function(v){ return cmpR(v, lf) < 0 || cmpR(v, uf) > 0; });
+    var ins = s.filter(function(v){ return cmpR(v, lf) >= 0 && cmpR(v, uf) <= 0; });
+    return { s:s, n:n, min:s[0], max:s[n - 1], med:medianOf(s), lower:hv.lower, upper:hv.upper, q1:q1, q3:q3, iqr:iqr, k:k, lf:lf, uf:uf,
+             outs:outs, wl:ins[0], wh:ins[ins.length - 1], alt:{ q1:medianOf(other.lower), q3:medianOf(other.upper) } };
+  }
+  function solveSpread(vals, sd){
+    var s = sortR(vals), n = s.length, sum = sumR(vals), mean = dvd(sum, R(n));
+    var devs = vals.map(function(v){ return sub(v, mean); }), dists = devs.map(absR), sumD = sumR(dists), mad = dvd(sumD, R(n));
+    var sq = devs.map(function(d){ return mul(d, d); }), sumSq = sumR(sq);
+    var vp = dvd(sumSq, R(n)), vs = n > 1 ? dvd(sumSq, R(n - 1)) : null;
+    var v = sd === "sample" ? vs : vp;
+    var med = medianOf(s), madMed = dvd(sumR(vals.map(function(x){ return absR(sub(x, med)); })), R(n));
+    return { s:s, n:n, sum:sum, mean:mean, devs:devs, dists:dists, sumD:sumD, mad:mad, sq:sq, sumSq:sumSq, vp:vp, vs:vs, v:v,
+             sdF:v ? Math.sqrt(toF(v)) : 0, sdExact:v ? sqrtExact(v) : null, other:sd === "sample" ? vp : vs, med:med, madMed:madMed, range:sub(s[n - 1], s[0]) };
+  }
+
+  /* ===================== reading what was typed ===================== */
+  var EMPTY = { center:"Type 2 or more numbers, like <b>4, 8, 6, 5, 7</b>.", box:"Type at least 4 numbers, like <b>3, 7, 8, 5, 12, 14, 21, 13, 18</b>.",
+                freq:"Type each value with its count, like <b>1: 3, 2: 5, 3: 2</b>.", spread:"Type 2 or more numbers, like <b>2, 4, 6, 8</b>.",
+                missing:"Type a problem like <b>mean of 5 numbers is 8: 6, 9, 7, 10</b> or <b>need average 85 scores 78, 92, 81</b>." };
+  function numTokens(s){
+    var t = String(s == null ? "" : s).replace(/[−–—]/g, "-");
+    if (/\d\s*\/\s*\d/.test(t)) throw new UserErr("Type fractions as decimals here — <b>1/2</b> is <b>0.5</b> and <b>3/4</b> is <b>0.75</b>.");
+    if (/,\s|;|\d\s+-?\d/.test(t)) t = t.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");     // 12,500 is one number when the list is split some other way
+    var re = /(^|[^\d.])(-?)(\d+(?:\.\d+)?|\.\d+)/g, m, out = [];
+    while ((m = re.exec(t))){
+      var str = m[2] + (m[3].charAt(0) === "." ? "0" + m[3] : m[3]);
+      out.push({ s:str, r:parseDecStr(str), dp:(m[3].split(".")[1] || "").length });
+    }
+    return out;
+  }
+  function checkSizes(toks){
+    toks.forEach(function(t){
+      if (t.dp > 4) throw new UserErr("Up to 4 decimal places, please — <b>" + esc(t.s) + "</b> has " + t.dp + ".");
+      if (Math.abs(toF(t.r)) > 1e7) throw new UserErr("<b>" + esc(t.s) + "</b> is past this page’s limit of 10,000,000. Try smaller numbers (or change the units).");
+    });
+  }
+  function readList(text, mode, min){
+    var s = String(text == null ? "" : text).trim();
+    if (!s) throw new UserErr(EMPTY[mode]);
+    var toks = numTokens(s);
+    if (!toks.length) throw new UserErr("I can’t find any numbers in <b>" + esc(s) + "</b>. " + EMPTY[mode]);
+    checkSizes(toks);
+    if (toks.length < min) throw new UserErr(min === 2 ? "One number on its own is already its own mean, median and mode — type at least <b>two</b>, like <b>" + esc(toks[0].s) + ", " + esc(String(Number(toks[0].s) + 4)) + "</b>."
+      : "A box plot splits the numbers into four quarters, so it needs at least <b>4</b> numbers. You typed " + toks.length + ".");
+    if (toks.length > MAXN) throw new UserErr("Up to <b>60</b> numbers at a time — you typed " + toks.length + ". For a long list, a frequency table (value: count) on the <b>Frequency</b> tab is quicker.");
+    return toks.map(function(t){ return t.r; });
+  }
+  function listQ(vals){ return vals.map(plainT).join(","); }
+  function readCenter(text, o){
+    var vals = readList(text, "center", 2);
+    return { mode:"center", vals:vals, ask:ASKS.indexOf(o.ask) >= 0 ? o.ask : "all", outlier:!!o.outlier, q:listQ(vals) };
+  }
+  function readBox(text, o){
+    var vals = readList(text, "box", 4);
+    return { mode:"box", vals:vals, method:o.method === "inclusive" ? "inclusive" : "exclusive", q:listQ(vals) };
+  }
+  function readSpread(text, o){
+    var vals = readList(text, "spread", 2);
+    var sd = o.sd === "pop" || o.sd === "sample" ? o.sd : "off";
+    return { mode:"spread", vals:vals, sd:sd, q:listQ(vals) };
+  }
+
+  /* frequency tables */
+  function tallyCount(t){
+    var bars = (t.match(/[|Il¦]/g) || []).length, slash = (t.match(/[\/\\]/g) || []).length, five = (t.match(/卌/g) || []).length;
+    return bars + slash + 5 * five;
+  }
+  function readFreq(text, o){
+    var s = String(text == null ? "" : text).replace(/[−–—]/g, "-").trim();
+    s = s.replace(/^[a-z\s]+(?=[\d.\-])/i, "").trim();
+    if (!s) throw new UserErr(EMPTY.freq);
+    var rows = [], grouped = null, fromList = false;
+    if (!/[:=→]/.test(s)){
+      var vals = readList(s, "freq", 1);
+      countsOf(sortR(vals)).forEach(function(c){ rows.push({ v:c.v, c:c.c }); });
+      grouped = false; fromList = true;
+    } else {
+      var parts = s.split(/\s*[,;\n]+\s*/).filter(function(x){ return x.trim() !== ""; });
+      parts.forEach(function(p){
+        var m = /^(.*?)\s*[:=→]\s*(.*)$/.exec(p);
+        if (!m) throw new UserErr("I can’t read <b>" + esc(p) + "</b> — write each value with its count, like <b>3: 5</b>.");
+        var lhs = m[1].trim(), rhs = m[2].trim(), c, rg, vv;
+        if (/^\d+$/.test(rhs)) c = Number(rhs);
+        else if (/^[\s|Il¦\/\\卌]+$/.test(rhs) && tallyCount(rhs) > 0) c = tallyCount(rhs);
+        else throw new UserErr("The count for <b>" + esc(lhs) + "</b> should be a whole number or tally marks (like <b>||||</b>), not <b>" + esc(rhs) + "</b>.");
+        if (c > 100000) throw new UserErr("Counts up to 100,000, please.");
+        rg = /^(-?\d*\.?\d+)\s*(?:-|to)\s*(-?\d*\.?\d+)$/.exec(lhs);
+        if (rg){
+          if (grouped === false) throw new UserErr("Mix of single values and classes — use one or the other: <b>1: 3, 2: 5</b> or <b>10-19: 4, 20-29: 7</b>.");
+          grouped = true;
+          var a = parseDecStr(rg[1].replace(/^(-?)\./, "$10.")), b = parseDecStr(rg[2].replace(/^(-?)\./, "$10."));
+          if (cmpR(a, b) >= 0) throw new UserErr("A class goes from the smaller number to the bigger one — <b>" + esc(lhs) + "</b> is backwards.");
+          rows.push({ a:a, b:b, c:c });
+        } else if (/^-?\d*\.?\d+$/.test(lhs)){
+          if (grouped === true) throw new UserErr("Mix of single values and classes — use one or the other: <b>1: 3, 2: 5</b> or <b>10-19: 4, 20-29: 7</b>.");
+          grouped = false;
+          checkSizes(numTokens(lhs));
+          vv = parseDecStr(lhs.replace(/^(-?)\./, "$10."));
+          var same = rows.filter(function(r){ return eqR(r.v, vv); })[0];
+          if (same) same.c += c; else rows.push({ v:vv, c:c });
+        } else throw new UserErr("I can’t read the value <b>" + esc(lhs || p) + "</b> — use a number like <b>3</b>, or a class like <b>10-19</b>.");
+      });
+    }
+    if (!rows.length) throw new UserErr(EMPTY.freq);
+    if (rows.length > 30) throw new UserErr("Up to 30 rows, please — you have " + rows.length + ". Group the values into classes, like <b>10-19: 4</b>.");
+    if (grouped){
+      rows.sort(function(x, y){ return cmpR(x.a, y.a); });
+      for (var i = 1; i < rows.length; i++) if (cmpR(rows[i].a, rows[i - 1].b) < 0)
+        throw new UserErr("The classes <b>" + clsT(rows[i - 1]) + "</b> and <b>" + clsT(rows[i]) + "</b> overlap — each value should fit in just one class.");
+      rows.forEach(function(r){ r.mid = avg2(r.a, r.b); });
+    } else rows.sort(function(x, y){ return cmpR(x.v, y.v); });
+    var n = rows.reduce(function(t, r){ return t + r.c; }, 0);
+    if (!n) throw new UserErr("Every count is 0 — there’s no data to work with.");
+    var q = rows.map(function(r){ return grouped ? (r.a.n < 0n || r.b.n < 0n ? plainT(r.a) + " to " + plainT(r.b) : plainT(r.a) + "-" + plainT(r.b)) + ":" + r.c : plainT(r.v) + ":" + r.c; }).join(",");
+    var P = { mode:"freq", rows:rows, grouped:!!grouped, fromList:fromList, n:n, q:q, bin:0 };
+    if (!grouped && o.bin){ var bw = Number(o.bin); if (binsFor(P, bw)) P.bin = bw; }
+    return P;
+  }
+  function clsT(r){ return vT(r.a) + "–" + vT(r.b); }
+  function clsWords(r){ return vT(r.a) + " to " + vT(r.b); }
+  function freqIntData(P){ return P.rows.every(function(r){ return isInt(r.v); }); }
+  function binsFor(P, w){
+    if (!w || !(w > 0)) return null;
+    var live = P.rows.filter(function(r){ return r.c > 0; }), intD = freqIntData(P);
+    if (intD && w < 2) return null;
+    var W = parseDecStr(String(w)); if (!W) return null;
+    var lo = live[0].v, hi = live[live.length - 1].v;
+    var start = R(BigInt(Math.floor(toF(dvd(lo, W)) + 1e-9)) * W.n, W.d);
+    var bins = [];
+    for (var a = start; cmpR(a, hi) <= 0 && bins.length < 40; a = add(a, W)){
+      var b = intD ? sub(add(a, W), ONE) : add(a, W);
+      bins.push({ a:a, b:b, top:add(a, W), c:0, mid:intD ? avg2(a, b) : avg2(a, add(a, W)) });
+    }
+    if (bins.length < 2 || bins.length > 30) return null;
+    P.rows.forEach(function(r){ bins.forEach(function(bn){ if (cmpR(r.v, bn.a) >= 0 && cmpR(r.v, bn.top) < 0) bn.c += r.c; }); });
+    return { bins:bins, w:W, intD:intD };
+  }
+  function binChoices(P){
+    if (P.grouped) return [];
+    var c = [0.5, 1, 2, 5, 10, 20, 25, 50, 100, 200, 500, 1000, 5000, 10000], out = [];
+    c.forEach(function(w){ var b = binsFor(P, w); if (b && b.bins.length >= 3 && b.bins.length <= 12 && out.length < 4) out.push(w); });
+    return out;
+  }
+
+  /* missing value */
+  var NW = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12, thirteen:13, fourteen:14,
+             fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20 };
+  var NOUNS = "numbers?|values?|scores?|tests?|quizz?(?:es)?|exams?|grades?|games?|marks?|items?|days?|weeks?|months?|students?|people|players?|kids?|rounds?|assignments?|data|times?|nights?|amounts?|ages?|heights?|weights?|bags?|boxes?|readings?|results?|tries|trials?|events?|races?|matches|hours?|years?";
+  var COUNT_RE = new RegExp("^\\s+(?:(more|other|last|remaining|missing|unknown)\\s+)?(?:" + NOUNS + ")\\b(?!\\s*\\d)");
+  function readMissing(text){
+    var s = String(text == null ? "" : text).toLowerCase().replace(/[−–—]/g, "-").replace(/[’']/g, "").replace(/\s+/g, " ").trim();
+    if (!s) throw new UserErr(EMPTY.missing);
+    s = s.replace(/\b\d+(?:st|nd|rd|th)\b/g, " ");
+    s = s.replace(new RegExp("\\b(" + Object.keys(NW).join("|") + ")\\b(?=\\s+(?:more\\s+|other\\s+|last\\s+|remaining\\s+|missing\\s+)?(?:" + NOUNS + ")\\b)", "g"), function(m){ return String(NW[m]); });
+    if (/\d\s*\/\s*\d/.test(s)) throw new UserErr("Type fractions as decimals here — <b>1/2</b> is <b>0.5</b>.");
+    var toks = [], re = /\d*\.\d+|\d+/g, m;
+    while ((m = re.exec(s))){
+      var i0 = m.index, neg = i0 > 0 && s.charAt(i0 - 1) === "-" && (i0 < 2 || /[\s,;:(=]/.test(s.charAt(i0 - 2)));
+      var rest = s.slice(re.lastIndex), cm = COUNT_RE.exec(rest);
+      toks.push({ i:i0, end:re.lastIndex, s:(neg ? "-" : "") + (m[0].charAt(0) === "." ? "0" + m[0] : m[0]), count:!!cm && !neg && !/\./.test(m[0]), more:cm ? cm[1] : null, used:false });
+    }
+    toks.forEach(function(t){ t.r = parseDecStr(t.s); });
+    checkSizes(toks.map(function(t){ return { s:t.s, r:t.r, dp:(t.s.split(".")[1] || "").length }; }));
+    var qm = (s.match(/(?:^|[\s,;:(])(?:\?|x|_+|□)(?=$|[\s,;.)])/g) || []).length;
+    var kwRe = /\b(?:average|mean|avg)\b/g, kw = [], k;
+    while ((k = kwRe.exec(s))) kw.push(k.index);
+    if (!kw.length) throw new UserErr("Say what the mean is — like <b>mean of 5 numbers is 8: 6, 9, 7, 10</b>, or <b>need average 85 scores 78, 92, 81</b>.");
+    var need = /\b(need|needs|needed|what (?:score|grade|mark|do|does|must|should|would|will|is needed)|to (?:get|reach|have|keep|raise|bring|end up with)|goal|target|wants?|hopes?|aims?)\b/.test(s);
+    function tokAfter(pos){ return toks.filter(function(t){ return t.i > pos && !t.used && !t.count; })[0]; }
+    function tokBefore(pos){ var b = toks.filter(function(t){ return t.end <= pos && pos - t.end <= 4 && !t.used && !t.count; }); return b[b.length - 1]; }
+    var T = null;
+    kw.forEach(function(p){ if (!T){ var t = tokAfter(p); if (t && t.i - p < 40) T = t; } });
+    if (!T) kw.forEach(function(p){ if (!T) T = tokBefore(p); });
+    if (!T) throw new UserErr("I can’t find the mean in that. Put the number right after the word <b>mean</b> or <b>average</b>, like <b>mean of 5 numbers is 8</b>.");
+    T.used = true;
+    var cnt = toks.filter(function(t){ return t.count && !t.used; }), N = null, more = null;
+    cnt.forEach(function(t){ if (t.more){ if (more === null){ more = Number(t.s); t.used = true; } } else if (N === null){ N = Number(t.s); t.used = true; } });
+    var known = toks.filter(function(t){ return !t.used; }).map(function(t){ return t.r; });
+    var kk = known.length;
+    if (!kk) throw new UserErr("Which numbers do you know? List them after a colon, like <b>mean of 5 numbers is 8: 6, 9, 7, 10</b>.");
+    if (kk > MAXN) throw new UserErr("Up to 60 numbers at a time — you listed " + kk + ".");
+    var r;
+    if (more !== null) r = more;
+    else if (N !== null){
+      if (need && N <= kk) r = 1;
+      else if (N <= kk) throw new UserErr("You said there are <b>" + N + "</b> numbers, but listed <b>" + kk + "</b> of them — so none are missing. Check the count.");
+      else r = N - kk;
+    }
+    else if (qm) r = qm;
+    else if (need) r = 1;
+    else throw new UserErr("How many numbers are there in all? Say it like <b>mean of " + (kk + 1) + " numbers is " + esc(T.s) + ": …</b>, or put a <b>?</b> for the missing one.");
+    if (r < 1 || r > 20) throw new UserErr("Up to 20 missing numbers, please.");
+    N = kk + r;
+    var P = { mode:"missing", kind:need ? "need" : "meanof", M:T.r, known:known, k:kk, r:r, N:N };
+    P.q = need ? "need average " + plainT(T.r) + " scores " + known.map(plainT).join(", ") + (r > 1 ? " over " + N + " tests" : "")
+               : "mean of " + N + " numbers is " + plainT(T.r) + ": " + known.map(plainT).join(", ");
+    return P;
+  }
+  function solveMissing(P){
+    var total = mul(P.M, R(P.N)), have = sumR(P.known), miss = sub(total, have), each = dvd(miss, R(P.r));
+    return { total:total, have:have, miss:miss, each:each };
+  }
+  function readProblem(mode, text, o){
+    o = o || {};
+    if (mode === "box") return readBox(text, o);
+    if (mode === "freq") return readFreq(text, o);
+    if (mode === "spread") return readSpread(text, o);
+    if (mode === "missing") return readMissing(text);
+    return readCenter(text, o);
+  }
+  function curOpts(){ return { ask:S.ask, outlier:S.outlier, method:S.method, bin:S.bin, sd:S.sd }; }
+
+  /* ===================== drawing: number lines ===================== */
+  function niceStep(raw){
+    if (!(raw > 0)) return 1;
+    var p = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10)), m = raw / p;
+    return (m <= 1.0001 ? 1 : m <= 2.0001 ? 2 : m <= 5.0001 ? 5 : 10) * p;
+  }
+  function stepDec(st){ var d = 0; while (d < 6 && Math.abs(Math.round(st * Math.pow(10, d)) - st * Math.pow(10, d)) > 1e-6) d++; return d; }
+  function fmtTick(v, dec){
+    var s = Math.abs(v) < 1e-9 ? (0).toFixed(dec) : Math.abs(v).toFixed(dec), ip = s.split(".")[0], fp = s.split(".")[1];
+    return (v < 0 && Math.abs(v) >= 1e-9 ? "−" : "") + grpInt(ip) + (fp ? "." + fp : "");
+  }
+  function tw(str, fs){ return String(str).length * fs * 0.61; }
+  function axisFor(lo, hi, W, pL, pR, integer){
+    if (hi - lo < 1e-9){ var d0 = integer ? 2 : Math.max(1, Math.abs(lo) * 0.2); lo -= d0; hi += d0; }
+    var inner = W - pL - pR, maxT = Math.max(2, Math.floor(inner / 34)), step, a, b, dec, guard = 0;
+    for (;;){
+      step = niceStep((hi - lo) / maxT);
+      if (integer && step < 1) step = 1;
+      a = Math.floor(lo / step + 1e-9) * step; b = Math.ceil(hi / step - 1e-9) * step;
+      if (b - a < step) b = a + step;
+      dec = stepDec(step);
+      var lab = Math.max(tw(fmtTick(a, dec), 13), tw(fmtTick(b, dec), 13)) + 10, per = inner / ((b - a) / step);
+      if (per >= lab || ++guard > 6 || maxT <= 2) break;
+      maxT = Math.max(2, maxT - 1);
+    }
+    var ticks = [], kk;
+    for (kk = 0; a + kk * step <= b + step * 1e-6; kk++) ticks.push(+(a + kk * step).toFixed(dec));
+    var ppx = inner / ((b - a) / step), minor = 0;
+    [5, 2].forEach(function(dv){ var ms = step / dv; if (!minor && ppx / dv >= 8 && (!integer || Math.abs(ms - Math.round(ms)) < 1e-9)) minor = ms; });
+    return { a:a, b:b, step:step, dec:dec, ticks:ticks, minor:minor, pL:pL, pR:pR, W:W,
+             sx:function(v){ return pL + (v - a) / (b - a) * inner; } };
+  }
+  function axisSVG(ax, y0, yT){
+    var g = "", x;
+    if (ax.minor){
+      for (var v = ax.a; v <= ax.b + 1e-9; v += ax.minor){ x = ax.sx(v); g += '<line class="tkm" x1="' + f1(x) + '" y1="' + (y0 - 3) + '" x2="' + f1(x) + '" y2="' + (y0 + 3) + '"/>'; }
+    }
+    g += '<line class="ax" x1="' + f1(ax.sx(ax.a) - 6) + '" y1="' + y0 + '" x2="' + f1(ax.sx(ax.b) + 6) + '" y2="' + y0 + '"/>';
+    ax.ticks.forEach(function(t){
+      x = ax.sx(t);
+      g += '<line class="tkl" x1="' + f1(x) + '" y1="' + (y0 - 6) + '" x2="' + f1(x) + '" y2="' + (y0 + 6) + '"/>'
+         + '<text class="tl" x="' + f1(x) + '" y="' + yT + '" text-anchor="middle">' + fmtTick(t, ax.dec) + "</text>";
+    });
+    return g;
+  }
+  function clampX(x, w, W){ return Math.max(w / 2 + 2, Math.min(W - w / 2 - 2, x)); }
+  function svgWrap(W, H, label, body){
+    return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(label) + '">' + body + "</svg>";
+  }
+
+  /* a dot plot (or, when the counts are big, a bar for each value) on a number line drawn to scale */
+  function dotPlot(o){
+    var W = o.W, pL = 18, pR = 18;
+    var xs = o.pts.map(function(p){ return p.x; });
+    if (o.mean) xs.push(o.mean.x);
+    if (o.median) xs.push(o.median.x);
+    if (o.ghost){ xs.push(o.ghost.mean); xs.push(o.ghost.median); }
+    var lo = Math.min.apply(null, xs), hi = Math.max.apply(null, xs);
+    var ax = axisFor(lo, hi, W, pL, pR, o.integer), sx = ax.sx, maxC = 1;
+    var pxs = o.pts.map(function(p){ maxC = Math.max(maxC, p.c); return sx(p.x); }).sort(function(a, b){ return a - b; });
+    var gap = 40, i;
+    for (i = 1; i < pxs.length; i++) if (pxs[i] - pxs[i - 1] > 0.5) gap = Math.min(gap, pxs[i] - pxs[i - 1]);
+    var bars = maxC > 30, r = Math.max(2.6, Math.min(7.5, gap / 2 - 1)), dy = 2 * r + 2.4, room = o.room || 210;
+    if (!bars && maxC * dy > room){ dy = room / maxC; r = Math.max(1.8, Math.min(r, dy / 2 - 0.4)); }
+    var colH = bars ? 160 : maxC * dy;
+    var top = (o.median ? 28 : 10) + (bars ? 16 : 0), y0 = Math.round(top + colH + 8);
+    var yT = y0 + (o.mean ? 33 : 21), yML = y0 + 52, yR = y0 + (o.mean ? 66 : 36);
+    var H = o.range ? yR + 26 : o.mean ? yML + 10 : yT + 8;
+    var g = axisSVG(ax, y0, yT), lw;
+    if (o.median){
+      var mx = sx(o.median.x);
+      lw = tw(o.median.label, 13);
+      g += "<g" + ds(o.median.step) + '><line class="med-m" x1="' + f1(mx) + '" y1="22" x2="' + f1(mx) + '" y2="' + y0 + '"/>'
+         + '<text class="med-l" x="' + f1(clampX(mx, lw, W)) + '" y="15" text-anchor="middle">' + esc(o.median.label) + "</text></g>";
+    }
+    if (o.ghost){
+      g += "<g" + ds(o.ghost.step) + '><line class="ghost" x1="' + f1(sx(o.ghost.median)) + '" y1="22" x2="' + f1(sx(o.ghost.median)) + '" y2="' + y0 + '"/>'
+         + '<path class="ghost" d="M' + f1(sx(o.ghost.mean)) + " " + (y0 + 2) + " l-8 14 h16 z\"/></g>";
+    }
+    var bw = Math.max(4, Math.min(24, gap * 0.6));
+    o.pts.forEach(function(p){
+      var x = sx(p.x), j, cls = "dt" + (p.cls ? " " + p.cls : "");
+      if (bars){
+        var h = p.c / maxC * colH;
+        g += "<g" + ds(p.step) + '><rect class="bar" x="' + f1(x - bw / 2) + '" y="' + f1(y0 - h) + '" width="' + f1(bw) + '" height="' + f1(h) + '"/>'
+           + '<text class="barl" x="' + f1(x) + '" y="' + f1(y0 - h - 4) + '" text-anchor="middle">' + p.c + "</text></g>";
+        return;
+      }
+      var dd = "";
+      for (j = 0; j < p.c; j++) dd += '<circle class="' + cls + '" cx="' + f1(x) + '" cy="' + f1(y0 - 4 - r - j * dy) + '" r="' + f1(r) + '"/>';
+      g += p.step !== undefined ? "<g" + ds(p.step) + ">" + dd + "</g>" : dd;
+    });
+    if (o.modes && o.modes.length){
+      var mg = "";
+      o.modes.forEach(function(v){
+        var p = o.pts.filter(function(q){ return Math.abs(q.x - v) < 1e-9; })[0]; if (!p) return;
+        var x = sx(v), h = bars ? p.c / maxC * colH + 4 : p.c * dy + 2, hw = bars ? bw / 2 + 4 : r + 4;
+        mg += '<rect class="mode-m" x="' + f1(x - hw) + '" y="' + f1(y0 - 3 - h) + '" width="' + f1(2 * hw) + '" height="' + f1(h + 1) + '" rx="' + f1(Math.min(hw, 9)) + '"/>';
+      });
+      g += "<g" + ds(o.modeStep) + ">" + mg + "</g>";
+    }
+    if (o.mean){
+      var xm = sx(o.mean.x);
+      lw = tw(o.mean.label, 13);
+      g += "<g" + ds(o.mean.step) + '><path class="mean-m" d="M' + f1(xm) + " " + (y0 + 2) + ' l-8 14 h16 z"/>'
+         + '<text class="mean-l" x="' + f1(clampX(xm, lw, W)) + '" y="' + yML + '" text-anchor="middle">' + esc(o.mean.label) + "</text></g>";
+    }
+    if (o.range){
+      var x1 = sx(o.range.lo), x2 = sx(o.range.hi);
+      lw = tw(o.range.label, 13);
+      g += "<g" + ds(o.range.step) + '><path class="rng-m" d="M' + f1(x1) + " " + (yR - 7) + " V" + yR + " H" + f1(x2) + " V" + (yR - 7) + '"/>'
+         + '<text class="rng-l" x="' + f1(clampX((x1 + x2) / 2, lw, W)) + '" y="' + (yR + 18) + '" text-anchor="middle">' + esc(o.range.label) + "</text></g>";
+    }
+    return svgWrap(W, H, o.aria || "Dot plot", g);
+  }
+
+  /* blocks: the numbers as towers, then the same blocks shared out evenly */
+  function towersSVG(vals, mean, W){
+    var n = vals.length, mx = Math.max.apply(null, vals.concat([1])), mf = toF(mean);
+    var u = Math.max(7, Math.min(16, Math.floor(170 / mx))), cw = u + 4, pw = n * cw;
+    while (2 * pw + 80 > W && u > 7){ u--; cw = u + 4; pw = n * cw; }
+    var side = 2 * pw + 80 <= W, ph = mx * u + 40, H = side ? ph : 2 * ph + 8, g = "";
+    function panel(x0, y0, after){
+      var base = y0 + 22 + mx * u, out = '<text class="ptitle" x="' + x0 + '" y="' + (y0 + 11) + '">' + (after ? "SHARED OUT EVENLY" : "AS THEY ARE") + "</text>";
+      vals.forEach(function(v, i){
+        var x = x0 + i * cw, k;
+        if (!after){
+          for (k = 0; k < v; k++) out += '<rect class="sq' + (k + 1 > mf + 1e-9 ? " hi" : "") + '" x="' + x + '" y="' + (base - (k + 1) * u) + '" width="' + (u - 1) + '" height="' + (u - 1) + '"/>';
+          for (k = v; k + 1 <= Math.ceil(mf - 1e-9); k++) out += '<rect class="sq hole" x="' + (x + .5) + '" y="' + (base - (k + 1) * u + .5) + '" width="' + (u - 2) + '" height="' + (u - 2) + '"/>';
+          out += '<text class="vl" x="' + f1(x + (u - 1) / 2) + '" y="' + (base + 14) + '" text-anchor="middle">' + v + "</text>";
+        } else {
+          var whole = Math.floor(mf + 1e-9), part = mf - whole;
+          for (k = 0; k < whole; k++) out += '<rect class="sq even" x="' + x + '" y="' + (base - (k + 1) * u) + '" width="' + (u - 1) + '" height="' + (u - 1) + '"/>';
+          if (part > 1e-9) out += '<rect class="sq even" x="' + x + '" y="' + f1(base - whole * u - part * u) + '" width="' + (u - 1) + '" height="' + f1(Math.max(1, part * u - 1)) + '"/>';
+        }
+      });
+      var ly = base - mf * u;
+      out += '<line class="mline" x1="' + (x0 - 4) + '" y1="' + f1(ly) + '" x2="' + (x0 + pw) + '" y2="' + f1(ly) + '"/>';
+      if (after) out += '<text class="mll" x="' + (x0 + pw + 4) + '" y="' + f1(ly + 4) + '">' + esc(isRep(mean) ? "≈" + roundDec(mean, 1) : vT(mean)) + "</text>";
+      return out;
+    }
+    g += panel(4, 0, false);
+    g += side ? panel(pw + 40, 0, true) : panel(4, ph + 8, true);
+    return svgWrap(side ? 2 * pw + 80 : pw + 60, H, "Blocks: each number as a tower, then the same blocks shared out evenly", g);
+  }
+
+  /* a box-and-whisker plot under a strip of the data, on a number line to scale */
+  function boxSVG(o){
+    var W = o.W, pL = 18, pR = 18, st = o.st, F = function(r){ return toF(r); };
+    var ax = axisFor(F(st.min), F(st.max), W, pL, pR, o.integer), sx = ax.sx;
+    var cnt = {}, maxC = 1;
+    st.s.forEach(function(v){ var k = keyR(v); cnt[k] = (cnt[k] || 0) + 1; maxC = Math.max(maxC, cnt[k]); });
+    var r = 3.6, dy = 8.4;
+    if (maxC * dy > 60){ dy = 60 / maxC; r = Math.max(1.6, dy / 2 - 0.3); }
+    var yS = 8 + maxC * dy, g = "";
+    var seen = {};
+    st.s.forEach(function(v){
+      var k = keyR(v), j = seen[k] || 0; seen[k] = j + 1;
+      var out = st.outs.some(function(u){ return eqR(u, v); });
+      g += '<circle class="dt' + (out ? " out" : "") + '"' + ds(o.steps.dots) + ' cx="' + f1(sx(F(v))) + '" cy="' + f1(yS - r - j * dy) + '" r="' + f1(r) + '"/>';
+    });
+    var labs = [{ v:st.min, t:"min " + vT(st.min), c:"" }, { v:st.q1, t:"Q₁ " + vT(st.q1), c:"q" }, { v:st.med, t:"med " + vT(st.med), c:"m" },
+                { v:st.q3, t:"Q₃ " + vT(st.q3), c:"q" }, { v:st.max, t:"max " + vT(st.max), c:"" }], ends = [];
+    labs.forEach(function(L){
+      var px = sx(F(L.v)), w = tw(L.t, 12.5) + 6, left = Math.max(2, Math.min(W - 2 - w, px - w / 2)), row = 0;
+      while (row < ends.length && left < ends[row] + 6) row++;
+      ends[row] = left + w; L.px = px; L.x = left + w / 2; L.row = row;
+    });
+    var nR = ends.length, yL0 = yS + 18, yB = yL0 + (nR - 1) * 16 + 12, bh = 36, ym = yB + bh / 2, y0 = yB + bh + 18, yT = y0 + 20, H = yT + 8;
+    labs.forEach(function(L){
+      var yl = yL0 + (nR - 1 - L.row) * 16;
+      g += '<line class="ldr"' + ds(o.steps.five) + ' x1="' + f1(L.px) + '" y1="' + (yl + 4) + '" x2="' + f1(L.px) + '" y2="' + (yB - 2) + '"/>'
+         + '<text class="bl' + (L.c ? " " + L.c : "") + '"' + ds(o.steps.five) + ' x="' + f1(L.x) + '" y="' + yl + '" text-anchor="middle">' + esc(L.t) + "</text>";
+    });
+    if (st.outs.length){
+      [st.lf, st.uf].forEach(function(fv, i){
+        var v = F(fv); if (v < ax.a || v > ax.b) return;
+        g += '<line class="fence"' + ds(o.steps.out) + ' x1="' + f1(sx(v)) + '" y1="' + (yB - 6) + '" x2="' + f1(sx(v)) + '" y2="' + (y0 - 2) + '"/>';
+      });
+    }
+    var bx = '<line class="wh" x1="' + f1(sx(F(st.wl))) + '" y1="' + ym + '" x2="' + f1(sx(F(st.q1))) + '" y2="' + ym + '"/>'
+      + '<line class="wh" x1="' + f1(sx(F(st.q3))) + '" y1="' + ym + '" x2="' + f1(sx(F(st.wh))) + '" y2="' + ym + '"/>'
+      + '<line class="wh" x1="' + f1(sx(F(st.wl))) + '" y1="' + (ym - 10) + '" x2="' + f1(sx(F(st.wl))) + '" y2="' + (ym + 10) + '"/>'
+      + '<line class="wh" x1="' + f1(sx(F(st.wh))) + '" y1="' + (ym - 10) + '" x2="' + f1(sx(F(st.wh))) + '" y2="' + (ym + 10) + '"/>'
+      + '<rect class="bx" x="' + f1(sx(F(st.q1))) + '" y="' + yB + '" width="' + f1(Math.max(1, sx(F(st.q3)) - sx(F(st.q1)))) + '" height="' + bh + '"/>'
+      + '<line class="bxm" x1="' + f1(sx(F(st.med))) + '" y1="' + yB + '" x2="' + f1(sx(F(st.med))) + '" y2="' + (yB + bh) + '"/>';
+    st.outs.forEach(function(v){ bx += '<circle class="dt out" cx="' + f1(sx(F(v))) + '" cy="' + ym + '" r="5"/>'; });
+    g += "<g" + ds(o.steps.box) + ">" + bx + "</g>";
+    g += axisSVG(ax, y0, yT);
+    return svgWrap(W, H, "Box plot: min " + vT(st.min) + ", Q1 " + vT(st.q1) + ", median " + vT(st.med) + ", Q3 " + vT(st.q3) + ", max " + vT(st.max), g);
+  }
+
+  /* a histogram: bars that touch, one for each class */
+  function histSVG(o){
+    var W = o.W, pL = 34, pR = 8, top = 20, ph = 160, k = o.bins.length, bw = (W - pL - pR) / k, g = "";
+    var ymax = Math.max.apply(null, o.bins.map(function(b){ return b.c; }).concat([1])), ys = Math.max(1, niceStep(ymax / 5)), ytop = Math.ceil(ymax / ys) * ys;
+    for (var v = 0; v <= ytop + 1e-9; v += ys){
+      var y = top + ph - v / ytop * ph;
+      g += '<line class="grid" x1="' + pL + '" y1="' + f1(y) + '" x2="' + (W - pR) + '" y2="' + f1(y) + '"/><text class="tl" x="' + (pL - 6) + '" y="' + f1(y + 4) + '" text-anchor="end">' + fmtTick(v, 0) + "</text>";
+    }
+    var two = o.bins.some(function(b){ return tw(b.label, 11.5) > bw - 4; }), bars = "";
+    o.bins.forEach(function(b, i){
+      var h = b.c / ytop * ph, x = pL + i * bw;
+      bars += '<rect class="hb" x="' + f1(x) + '" y="' + f1(top + ph - h) + '" width="' + f1(bw) + '" height="' + f1(h) + '"/>';
+      if (b.c) bars += '<text class="hc" x="' + f1(x + bw / 2) + '" y="' + f1(top + ph - h - 5) + '" text-anchor="middle">' + b.c + "</text>";
+      bars += '<text class="vl" x="' + f1(x + bw / 2) + '" y="' + (top + ph + 16 + (two && i % 2 ? 14 : 0)) + '" text-anchor="middle">' + esc(b.label) + "</text>";
+    });
+    g += "<g" + ds(o.step) + ">" + bars + "</g>";
+    g += '<line class="ax" x1="' + pL + '" y1="' + (top + ph) + '" x2="' + (W - pR) + '" y2="' + (top + ph) + '"/>';
+    g += '<text class="ptitle" x="' + pL + '" y="11">COUNT</text>';
+    return svgWrap(W, top + ph + (two ? 38 : 24), "Histogram: " + o.bins.map(function(b){ return b.label + " has " + b.c; }).join(", "), g);
+  }
+
+  /* how far each number is from the mean, to scale */
+  function distSVG(vals, mean, W, step){
+    var pL = 18, pR = 18, F = toF, xs = vals.map(F).concat([F(mean)]);
+    var ax = axisFor(Math.min.apply(null, xs), Math.max.apply(null, xs), W, pL, pR, vals.every(isInt) && isInt(mean)), sx = ax.sx;
+    var rowH = 22, top = 26, n = vals.length, xm = sx(F(mean)), g = "", y0 = top + n * rowH + 8, lab = "mean " + eqT(mean);
+    g += '<line class="mline" x1="' + f1(xm) + '" y1="20" x2="' + f1(xm) + '" y2="' + y0 + '"/><text class="mean-l" x="' + f1(clampX(xm, tw(lab, 13), W)) + '" y="14" text-anchor="middle">' + esc(lab) + "</text>";
+    var rows = "";
+    vals.forEach(function(v, i){
+      var y = top + i * rowH + rowH / 2, x = sx(F(v)), d = absR(sub(v, mean)), t = vT(d), w = tw(t, 12);
+      if (Math.abs(x - xm) > 0.5) rows += '<line class="dl" x1="' + f1(xm) + '" y1="' + f1(y) + '" x2="' + f1(x) + '" y2="' + f1(y) + '"/>';
+      rows += '<circle class="dt" cx="' + f1(x) + '" cy="' + f1(y) + '" r="4.5"/>';
+      var tx = Math.abs(x - xm) > w + 14 ? (x + xm) / 2 : (x >= xm ? x + 8 + w / 2 : x - 8 - w / 2);
+      rows += '<text class="dlab" x="' + f1(clampX(tx, w, W)) + '" y="' + f1(y - 5) + '" text-anchor="middle">' + esc(t) + "</text>";
+    });
+    g += "<g" + ds(step) + ">" + rows + "</g>" + axisSVG(ax, y0, y0 + 20);
+    return svgWrap(W, y0 + 28, "Each number's distance from the mean", g);
+  }
+
+  /* the total as a bar: mean × count on top, the known numbers and the missing one underneath */
+  function tapeSVG(P, sol, W, steps){
+    var all = P.known.concat([sol.miss]);
+    if (P.known.some(function(v){ return v.n < 0n; }) || sol.miss.n < 0n || sol.total.n <= 0n) return "";
+    var pL = 4, inner = W - 8, T = toF(sol.total), sc = inner / T, g = "", x, i, h = 32;
+    function piece(x0, w, y, cls, label, st){
+      var s = '<rect class="tape ' + cls + '" x="' + f1(x0) + '" y="' + y + '" width="' + f1(Math.max(0.5, w)) + '" height="' + h + '"/>';
+      if (label && tw(label, 13) + 6 < w) s += '<text class="tapel' + (cls === "mp" ? " mp" : "") + '" x="' + f1(x0 + w / 2) + '" y="' + (y + 21) + '" text-anchor="middle">' + esc(label) + "</text>";
+      return s;
+    }
+    var top = "", each = toF(P.M) * sc;
+    g += '<text class="ptitle" x="' + pL + '" y="11">' + esc(P.N + " × " + vT(P.M) + " = " + vT(sol.total)).toUpperCase() + " IN ALL</text>";
+    for (i = 0, x = pL; i < P.N; i++, x += each) top += piece(x, each, 18, "ev", P.N <= 24 ? vT(P.M) : "", null);
+    g += "<g" + ds(steps.total) + ">" + top + "</g>";
+    var bot = "", y2 = 18 + h + 30;
+    g += '<text class="ptitle"' + ds(steps.known) + ' x="' + pL + '" y="' + (y2 - 7) + '">' + (P.kind === "need" ? "SCORES SO FAR, THEN WHAT’S NEEDED" : "THE NUMBERS WE KNOW, THEN THE MISSING ONE" + (P.r > 1 ? "S" : "")) + "</text>";
+    for (i = 0, x = pL; i < P.known.length; i++){ var w = toF(P.known[i]) * sc; bot += piece(x, w, y2, "kp", vT(P.known[i])); x += w; }
+    g += "<g" + ds(steps.known) + ">" + bot + "</g>";
+    var mw = toF(sol.miss) * sc, ms = "";
+    if (P.r === 1) ms = piece(x, mw, y2, "mp", "? = " + vT(sol.miss));
+    else for (i = 0; i < P.r; i++) ms += piece(x + i * mw / P.r, mw / P.r, y2, "mp", "?");
+    g += "<g" + ds(steps.miss) + ">" + ms + "</g>";
+    return svgWrap(W, y2 + h + 6, "Bar model: the total split into the known numbers and the missing one", g);
+  }
+  function tallySVG(c){
+    if (c > 40 || c < 1) return "";
+    var gN = Math.floor(c / 5), rem = c % 5, x = 3, out = "", i, j;
+    for (i = 0; i < gN; i++){
+      for (j = 0; j < 4; j++) out += '<line x1="' + (x + j * 5) + '" y1="3" x2="' + (x + j * 5) + '" y2="17"/>';
+      out += '<line x1="' + (x - 2) + '" y1="14" x2="' + (x + 17) + '" y2="5"/>';
+      x += 26;
+    }
+    for (j = 0; j < rem; j++){ out += '<line x1="' + x + '" y1="3" x2="' + x + '" y2="17"/>'; x += 5; }
+    return '<svg class="tally" width="' + (x + 2) + '" height="20" viewBox="0 0 ' + (x + 2) + ' 20" role="img" aria-label="tally ' + c + '">' + out + "</svg>";
+  }
+
+  /* ===================== shared bits of the work ===================== */
+  function sect(capt, inner, step, cls){
+    return '<div class="sect' + (cls ? " " + cls : "") + '"' + ds(step) + ">" + (capt ? '<div class="tapecap">' + capt + "</div>" : "") + inner + "</div>";
+  }
+  function strip(arr, clsOf){
+    return '<div class="toks">' + arr.map(function(r, i){
+      var c = clsOf ? clsOf(r, i) : "";
+      return '<span class="tk' + (c ? " " + c : "") + '">' + vH(r) + "</span>";
+    }).join("") + "</div>";
+  }
+  function lrow(lab, inner){ return '<div class="lrow"><span class="ln">' + lab + "</span>" + inner + "</div>"; }
+  function crossStrip(s){
+    var n = s.length;
+    return '<div class="toks">' + s.map(function(r, i){
+      var mid = n % 2 ? i === (n - 1) / 2 : (i === n / 2 - 1 || i === n / 2), p = Math.min(i, n - 1 - i) + 1;
+      return mid ? '<span class="tk mid">' + vH(r) + "</span>" : '<span class="tk x"><span class="vx">' + vH(r) + '</span><span class="pn">' + p + "</span></span>";
+    }).join("") + "</div>";
+  }
+  function plotW(){
+    var host = $("workHost"), w = host ? host.clientWidth : 0;
+    if (!w){
+      var vw = window.innerWidth || 1000;
+      w = Math.min(vw, 1120) - (vw <= 520 ? 32 : 40);
+      if (vw > 880) w = (w - 22) * 1.12 / 2;
+      w -= 2;
+    }
+    return Math.max(260, Math.min(640, Math.floor(w - 36)));
+  }
+  function medianText(s, med){       // the median found, in words
+    var n = s.length, k;
+    if (n === 2) return ["m","Middle","With only two numbers, both are in the middle: " + B(vT(s[0])) + " and " + B(vT(s[1])) + "."];
+    if (n % 2){ k = (n - 1) / 2;
+      return ["m","Cross off","Cross off the smallest and the largest, then the next pair in — " + word(k) + " pair" + (k === 1 ? "" : "s") + " in all. One number is left in the middle: " + B(vT(med)) + "."];
+    }
+    k = n / 2 - 1;
+    return ["m","Cross off","Cross off the smallest and the largest, then the next pair in — " + word(k) + " pair" + (k === 1 ? "" : "s") + " in all. Two numbers are left in the middle: " + B(vT(s[n / 2 - 1])) + " and " + B(vT(s[n / 2])) + "."];
+  }
+  function medianHalf(s, med){
+    var n = s.length, a = s[n / 2 - 1], b = s[n / 2];
+    if (eqR(a, b)) return ["m","Median","They’re both " + vT(a) + ", so the median is " + B(vT(med)) + "."];
+    return ["m","Halfway","The median is halfway between them: " + B("(" + vT(a) + " + " + pT(b, 1) + ") ÷ 2 = " + vT(add(a, b)) + " ÷ 2 = " + fullT(med)) + "."];
+  }
+  function medLineH(s, med){
+    var n = s.length;
+    if (n % 2) return 'median = <span class="eqm">' + vH(med) + "</span>";
+    var a = s[n / 2 - 1], b = s[n / 2];
+    return "median = (" + vH(a) + " + " + pH(b, 1) + ") ÷ 2 = " + vH(add(a, b)) + ' ÷ 2 = <span class="eqm">' + fullH(med) + "</span>";
+  }
+  function divH(sum, n){                 // "30 ÷ 4 = 7 2/4 = 7 1/2 = 7.5"
+    var q = dvd(sum, R(n)), t = vH(sum) + " ÷ " + n + " = ";
+    if (isInt(q)) return t + '<span class="eqk">' + vH(q) + "</span>";
+    if (isInt(sum)){
+      var a = babs(sum.n), N = BigInt(n), w = a / N, rem = a % N, sg = sum.n < 0n ? "−" : "";
+      t += sg + (w ? grpInt(w.toString()) : "") + fH(rem, N);
+      if (bgcd(rem, N) > 1n) t += " = " + mixH(q);
+      return t + (isRep(q) ? ' <span class="eqk">≈ ' + roundDec(q, 2) + "</span>" : ' = <span class="eqk">' + decExact(q) + "</span>");
+    }
+    return t + (isRep(q) ? mixH(q) + ' <span class="eqk">≈ ' + roundDec(q, 2) + "</span>" : '<span class="eqk">' + decExact(q) + "</span>");
+  }
+  function divT(sum, n){
+    var q = dvd(sum, R(n)), t = vT(sum) + " ÷ " + n + " = ";
+    if (isInt(q) || !isRep(q)) return t + vT(q);
+    return t + fullT(q);
+  }
+  function modeH(mo){ return mo.modes.length ? mo.modes.map(vH).join(", ") : '<span class="word">none</span>'; }
+  function modeT(mo){ return mo.modes.length ? listAnd(mo.modes.map(vT)) : "none"; }
+  function modeSay(st){
+    var mo = st.mo, cs = st.cs, reps = cs.filter(function(c){ return c.c > 1; }), lines = [];
+    var cntT = reps.length && reps.length <= 6 ? listAnd(reps.map(function(c){ return vT(c.v) + " shows up " + times(c.c); })) + (reps.length < cs.length ? "; every other number just once" : "") + "." : "";
+    if (mo.kind === "same") lines.push(["e","Mode","Every number is " + vT(mo.modes[0]) + ", so the mode is " + B(vT(mo.modes[0])) + "."]);
+    else if (mo.kind === "once") lines.push(["e","Mode","Every number shows up just once, so none is more common than the others: there is " + B("no mode") + "."]);
+    else if (mo.kind === "tie") lines.push(["e","Count", "Every number shows up " + times(mo.max) + " — a tie between all of them, so none stands out: there is " + B("no mode") + "."]);
+    else {
+      if (cntT) lines.push(["e","Count", cap(cntT)]);
+      if (mo.kind === "one") lines.push(["e","Mode", vT(mo.modes[0]) + " shows up " + times(mo.max) + ", more than any other number, so the mode is " + B(vT(mo.modes[0])) + "."]);
+      else lines.push(["e","Modes", listAnd(mo.modes.map(vT)) + " all show up " + times(mo.max) + ". When there’s a tie for most often, each of them is a mode: " + B(listAnd(mo.modes.map(vT))) + "."]);
+    }
+    return lines;
+  }
+  function modeStrip(st){
+    return '<div class="toks">' + st.cs.map(function(c){
+      var on = st.mo.modes.some(function(m){ return eqR(m, c.v); });
+      return '<span class="tk' + (on ? " md" : "") + '">' + vH(c.v) + '<span class="ct">×' + c.c + "</span></span>";
+    }).join("") + "</div>";
+  }
+  function modeLineH(mo){
+    if (!mo.modes.length) return 'mode: <span class="eqe">none</span>';
+    return (mo.modes.length > 1 ? "modes = " : "mode = ") + '<span class="eqe">' + mo.modes.map(vH).join(", ") + "</span>";
+  }
+  function outlierFor(st){
+    var span = toF(st.range) || Math.max(1, Math.abs(toF(st.max))), raw = toF(st.max) + 3 * span, u = niceStep(span / 2);
+    if (st.s.every(isInt)) u = Math.max(1, Math.round(u));
+    var X = Math.ceil(raw / u - 1e-9) * u;
+    return parseDecStr(X.toFixed(stepDec(u)));
+  }
+  function balanceAside(st){
+    var below = st.s.filter(function(v){ return cmpR(v, st.mean) < 0; }), above = st.s.filter(function(v){ return cmpR(v, st.mean) > 0; });
+    if (!below.length) return "Every number equals the mean — the dots all sit right on the balance point.";
+    var dB = below.map(function(v){ return sub(st.mean, v); }), dA = above.map(function(v){ return sub(v, st.mean); }), m = vT(st.mean);
+    if (st.n <= 10 && !isRep(st.mean)) return "The mean is the <strong>balance point</strong>. Below " + m + ": " + listAnd(below.map(vT)) + ", which " + (below.length === 1 ? "is " : "are ") + listAnd(dB.map(vT)) + " under — "
+      + B(vT(sumR(dB))) + " in all. Above: " + listAnd(above.map(vT)) + ", " + listAnd(dA.map(vT)) + " over — " + B(vT(sumR(dA))) + " in all. The two totals match, so the number line would balance on the triangle.";
+    return "The mean is the <strong>balance point</strong>: the distances of the numbers below " + m + " add up to " + B(vT(sumR(dB))) + ", exactly the same as the distances above it. That’s why a number line with these dots would balance on the triangle.";
+  }
+
+  /* ===================== tab 1: mean, median, mode & range ===================== */
+  function drawCenter(P){
+    var st = solveCenter(P.vals), n = st.n, s = st.s, W = plotW(), html = "", items = [];
+    var allInt = s.every(isInt), mean = st.mean, med = st.med, mo = st.mo;
+    html += sect(lead("Put them in order.") + " " + cap(word(n)) + " numbers, from least to greatest. Count them again afterwards, so none went missing.",
+      '<div class="lists">' + lrow("As given", strip(P.vals)) + lrow("In order", strip(s)) + "</div>", 0);
+    var pts = st.cs.map(function(c){ return { x:toF(c.v), c:c.c }; });
+    html += sect(lead("The dot plot.") + " A number line drawn to scale, with a dot above each number for every time it shows up. The mean (▲), median (dashed), mode and range appear as you find them.",
+      '<div class="xscroll">' + dotPlot({ W:W, pts:pts, integer:allInt, mean:{ x:toF(mean), label:"mean " + eqT(mean), step:2 }, median:{ x:toF(med), label:"median " + eqT(med), step:3 },
+        modes:mo.modes.map(toF), modeStep:4, range:{ lo:toF(st.min), hi:toF(st.max), label:"range = " + vT(st.range), step:5 }, aria:"Dot plot of " + listT(s) }) + "</div>", 1);
+    var mInner = '<div class="bigline">' + sumH(s) + " = " + vH(st.sum) + '</div><div class="bigline">' + divH(st.sum, n) + "</div>";
+    if (allInt && toF(st.min) >= 0 && toF(st.max) <= 20 && toF(st.max) >= 1 && n <= 16) mInner += '<div class="xscroll">' + towersSVG(s.map(toF), mean, W) + "</div>";
+    html += sect(lead("Mean: share it out evenly.") + " Add them all up, then split the total equally among the " + n + " numbers" + (allInt && toF(st.max) <= 20 && toF(st.min) >= 0 && n <= 16
+      ? " — like moving blocks from the tall towers to the short ones until every tower is the same height." : "."), mInner, 2);
+    html += sect(lead("Median: the middle one.") + " In order, cross off one from each end, again and again, until you reach the middle.",
+      crossStrip(s) + '<div class="bigline">' + medLineH(s, med) + "</div>", 3);
+    html += sect(lead("Mode: the most common.") + " How many times each number shows up.", modeStrip(st) + '<div class="bigline">' + modeLineH(mo) + "</div>", 4);
+    html += sect(lead("Range: how far it stretches.") + " Biggest minus smallest.", '<div class="bigline">range = ' + minusH(st.max, st.min) + ' = <span class="eqr">' + vH(st.range) + "</span></div>", 5);
+    var st2 = null, X = null;
+    if (P.outlier){
+      X = outlierFor(st); st2 = solveCenter(P.vals.concat([X]));
+      var pts2 = st2.cs.map(function(c){ return { x:toF(c.v), c:c.c, cls:eqR(c.v, X) ? "new" : "" }; });
+      var cmp = '<table class="tbl"><thead><tr><th class="l"></th><th>Before</th><th>With ' + vH(X) + '</th><th>Moved</th></tr></thead><tbody>'
+        + '<tr><td class="l k">Mean</td><td>' + fullH(mean) + "</td><td>" + fullH(st2.mean) + '</td><td class="k">' + fullH(absR(sub(st2.mean, mean))) + "</td></tr>"
+        + '<tr><td class="l mm">Median</td><td>' + vH(med) + "</td><td>" + vH(st2.med) + '</td><td class="mm">' + vH(absR(sub(st2.med, med))) + "</td></tr></tbody></table>";
+      html += sect(lead("What if I add an outlier?") + " Put in one number far from the rest, " + B(vT(X)) + ", and see how far each center moves. The dotted marks show where the mean and median were.",
+        '<div class="xscroll">' + dotPlot({ W:W, pts:pts2, integer:allInt && isInt(X), mean:{ x:toF(st2.mean), label:"mean " + eqT(st2.mean) }, median:{ x:toF(st2.med), label:"median " + eqT(st2.med) },
+          ghost:{ mean:toF(mean), median:toF(med) }, aria:"Dot plot with the outlier " + vT(X) }) + '</div><div class="xscroll">' + cmp + "</div>", 6);
+    }
+    $("workHost").innerHTML = html;
+
+    var lo = s[0], hi = s[n - 1];
+    items.push({ step:0, lines:[["n","Order","Put the " + n + " numbers in order: " + B(listT(s)) + "."]],
+      aside: n >= 8 ? "Tip: tick each number off the original list as you copy it, so none gets missed or written twice." : null });
+    items.push({ step:1, lines:[["n","Plot","Draw a number line from " + B(vT(lo)) + " to " + B(vT(hi)) + " with even spacing, and put a dot above each number — a second dot on top when a number repeats."]] });
+    items.push({ step:2, lines:[["p","Add","Add them all up: " + B(sumT(s) + " = " + vT(st.sum)) + "."],
+      ["p","Share","Share " + vT(st.sum) + " out evenly among the " + n + " numbers: " + B(divT(st.sum, n)) + ". The mean is " + B(fullT(mean)) + "."]], aside:balanceAside(st) });
+    var mlines = [medianText(s, med)];
+    if (n % 2 === 0) mlines.push(medianHalf(s, med));
+    else mlines.push(["m","Median","The median is " + B(vT(med)) + "."]);
+    items.push({ step:3, lines:mlines, aside:"Half the numbers are at or below the median and half are at or above it. With " + n + " numbers, the middle is number (" + n + " + 1) ÷ 2 = "
+      + (n % 2 ? ordN((n + 1) / 2) : (n + 1) / 2 + " — halfway between the " + ordN(n / 2) + " and the " + ordN(n / 2 + 1)) + " in order." });
+    items.push({ step:4, lines:modeSay(st), aside: mo.kind === "tie" ? "Some books say every number is a mode when they all tie. Either way, the mode tells you nothing here — no number is more typical than another."
+      : mo.modes.length ? "The mode is always one of the numbers in the list — the mean and the median don’t have to be." : null });
+    items.push({ step:5, lines:[["r","Range","Biggest take away smallest: " + B(minusT(st.max, st.min) + " = " + vT(st.range)) + ". The numbers stretch across " + vT(st.range) + "."]],
+      aside:"The range measures spread, not the middle: it says how far apart the two extremes are. One unusual number can make it much bigger." });
+    if (st2){
+      var dM = sub(st2.mean, mean), dMd = sub(st2.med, med);
+      items.push({ step:6, lines:[["r","Outlier","Now add one number far away from the rest: " + B(vT(X)) + ". There are " + (n + 1) + " numbers, adding up to " + vT(st2.sum) + "."],
+        ["p","Mean", B(divT(st2.sum, n + 1)) + " — the mean jumped " + (dM.n >= 0n ? "up" : "down") + " by " + B(fullT(absR(dM))) + "."],
+        ["m","Median","The middle is now " + B(vT(st2.med)) + (dMd.n === 0n ? " — it didn’t move at all." : " — it moved just " + B(vT(absR(dMd))) + ".")]],
+        aside:"One extreme number pulls the mean toward it, because the mean uses the size of every number. The median only cares which number is in the middle, so it barely moves. "
+          + "That’s why the median is often the better “typical” value when there’s an outlier — like one very expensive house on a street." });
+    }
+    writeLog(items);
+
+    var facts = [B(n) + " numbers, adding up to " + B(vT(st.sum)), "From " + B(vT(st.min)) + " to " + B(vT(st.max))];
+    var c = cmpR(mean, med);
+    facts.push(c === 0 ? "Mean and median are equal — the numbers balance evenly around the middle" : c > 0 ? "The mean is above the median: the bigger numbers pull it up" : "The mean is below the median: the smaller numbers pull it down");
+    if (st2) facts.push("With the outlier " + B(vT(X)) + ": mean " + B(fullT(st2.mean)) + ", median " + B(vT(st2.med)));
+    var cells = [{ k:"Mean", v:fullH(mean) }, { k:"Median", v:fullH(med) }, { k:"Mode", v:modeH(mo), long:mo.modes.length > 3 }, { k:"Range", v:vH(st.range) }];
+    bandCells(cells, facts);
+    $("closer").innerHTML = '<div class="ck"><b>Check:</b> mean × count gives the total back — ' + (isRep(mean) ? fracT(mean) : vT(mean)) + " × " + n + " = " + vT(st.sum) + ' <span class="ok">✓</span></div>'
+      + '<div class="ck"><b>Check:</b> smallest + range = largest — ' + vT(st.min) + " + " + pT(st.range, 1) + " = " + vT(st.max) + ' <span class="ok">✓</span></div>';
+    return items.length;
+  }
+
+  /* ===================== tab 2: box plot ===================== */
+  function halfStrip(h){
+    var n = h.length;
+    return '<div class="toks">' + h.map(function(r, i){
+      var mid = n % 2 ? i === (n - 1) / 2 : (i === n / 2 - 1 || i === n / 2);
+      return '<span class="tk' + (mid ? " q" : "") + '">' + vH(r) + "</span>";
+    }).join("") + "</div>";
+  }
+  function qLine(h, q, name){
+    var n = h.length;
+    if (n % 2) return name + ' = <span class="eqk">' + vH(q) + "</span>";
+    var a = h[n / 2 - 1], b = h[n / 2];
+    return name + " = (" + vH(a) + " + " + pH(b, 1) + ") ÷ 2 = " + '<span class="eqk">' + fullH(q) + "</span>";
+  }
+  function qSay(h, q, name, which){
+    var n = h.length;
+    if (n % 2) return "The " + which + " half is " + B(listT(h)) + " (" + n + " numbers); its middle is " + B(vT(q)) + ". That’s " + B(name) + ".";
+    var a = h[n / 2 - 1], b = h[n / 2];
+    return "The " + which + " half is " + B(listT(h)) + " (" + n + " numbers); its middle is halfway between " + vT(a) + " and " + vT(b) + ": "
+      + B(eqR(a, b) ? vT(q) : "(" + vT(a) + " + " + pT(b, 1) + ") ÷ 2 = " + fullT(q)) + ". That’s " + B(name) + ".";
+  }
+  function drawBox(P){
+    var st = solveBox(P.vals, P.method), n = st.n, s = st.s, W = plotW(), html = "", items = [], incl = P.method === "inclusive", odd = n % 2 === 1;
+    var allInt = s.every(isInt);
+    html += sect(lead("Put them in order.") + " " + cap(word(n)) + " numbers, least to greatest.", '<div class="lists">' + lrow("As given", strip(P.vals)) + lrow("In order", strip(s)) + "</div>", 0);
+    html += sect(lead("The median splits the data in half.") + " Cross off pairs from both ends until you reach the middle.", crossStrip(s) + '<div class="bigline">' + medLineH(s, st.med) + "</div>", 1);
+    var halves = '<div class="halves"><div class="half"><span class="hl">Lower half</span>' + halfStrip(st.lower) + "</div>";
+    if (odd && !incl) halves += '<div class="half"><span class="hl">Median</span><div class="toks"><span class="tk mid">' + vH(st.med) + "</span></div></div>";
+    halves += '<div class="half"><span class="hl">Upper half</span>' + halfStrip(st.upper) + "</div></div>";
+    html += sect(lead("The quartiles: the middle of each half.") + (odd ? (incl ? " With an odd count, this time the median goes into both halves." : " With an odd count, the median itself is left out of both halves.") : " With an even count the halves split cleanly."),
+      halves + '<div class="bigline">' + qLine(st.lower, st.q1, "Q₁") + '</div><div class="bigline">' + qLine(st.upper, st.q3, "Q₃") + "</div>", 2);
+    var five = '<table class="tbl"><thead><tr><th>Min</th><th>Q₁</th><th>Median</th><th>Q₃</th><th>Max</th></tr></thead><tbody><tr><td>' + vH(st.min) + '</td><td class="k">' + vH(st.q1)
+      + '</td><td class="mm">' + vH(st.med) + '</td><td class="k">' + vH(st.q3) + "</td><td>" + vH(st.max) + "</td></tr></tbody></table>";
+    html += sect(lead("The five-number summary, and the IQR.") + " The interquartile range is the width of the middle half: Q₃ − Q₁.",
+      '<div class="xscroll">' + five + '</div><div class="bigline">IQR = ' + minusH(st.q3, st.q1) + ' = <span class="eqk">' + vH(st.iqr) + "</span></div>", 3);
+    var outStrip = strip(s, function(v){ return st.outs.some(function(u){ return eqR(u, v); }) ? "out" : ""; });
+    html += sect(lead("Any outliers?") + " The 1.5 × IQR rule: anything more than 1.5 × IQR below Q₁ or above Q₃ counts as an outlier.",
+      '<div class="bigline">1.5 × ' + pH(st.iqr, 1) + " = " + vH(st.k) + '</div><div class="bigline">low fence: ' + minusH(st.q1, st.k) + ' = <span class="eqr">' + vH(st.lf)
+      + '</span></div><div class="bigline">high fence: ' + vH(st.q3) + " + " + pH(st.k, 1) + ' = <span class="eqr">' + vH(st.uf) + "</span></div>" + outStrip, 4);
+    html += sect(lead("The box plot.") + " A box from Q₁ to Q₃ with a line at the median, and whiskers out to the smallest and largest numbers"
+      + (st.outs.length ? " that aren’t outliers. The outliers get dots of their own, and the dashed red lines are the fences." : ". Each of the four parts holds about a quarter of the numbers."),
+      '<div class="xscroll">' + boxSVG({ W:W, st:st, integer:allInt, steps:{ dots:5, five:5, box:5, out:5 } }) + "</div>", 5);
+    $("workHost").innerHTML = html;
+
+    items.push({ step:0, lines:[["n","Order","Put the " + n + " numbers in order: " + B(listT(s)) + "."]] });
+    var ml = [medianText(s, st.med)];
+    if (!odd) ml.push(medianHalf(s, st.med)); else ml.push(["m","Median","The median is " + B(vT(st.med)) + " — it splits the numbers into a lower half and an upper half."]);
+    items.push({ step:1, lines:ml });
+    var methodAside = odd ? (incl ? "This page is including the median in both halves. Many US middle-school books leave it out instead (the switch above) — that way gives Q₁ = " + vT(st.alt.q1) + " and Q₃ = " + vT(st.alt.q3) + "."
+        : "How to split is a choice: this page leaves the median out of both halves (the usual way in US middle school). Some books include it in both, which here gives Q₁ = " + vT(st.alt.q1) + " and Q₃ = " + vT(st.alt.q3)
+          + ", and calculators and spreadsheets use yet other rules — so quartiles can differ a little from book to book. Use your class’s way.")
+      : "With an even count, every method that takes the median of each half agrees here. (Calculators and spreadsheets sometimes use a formula instead, so their quartiles can differ a little.)";
+    items.push({ step:2, lines:[["p","Q₁", qSay(st.lower, st.q1, "Q₁, the lower quartile", "lower")], ["p","Q₃", qSay(st.upper, st.q3, "Q₃, the upper quartile", "upper")]], aside:methodAside });
+    items.push({ step:3, lines:[["a","Summary","The five-number summary: min " + B(vT(st.min)) + ", Q₁ " + B(vT(st.q1)) + ", median " + B(vT(st.med)) + ", Q₃ " + B(vT(st.q3)) + ", max " + B(vT(st.max)) + "."],
+      ["e","IQR","IQR = Q₃ − Q₁ = " + B(minusT(st.q3, st.q1) + " = " + vT(st.iqr)) + ". The middle half of the numbers spans " + vT(st.iqr) + "."]],
+      aside:"The IQR is like the range, but only of the middle half — so one extreme number can’t stretch it the way it stretches the range (" + vT(sub(st.max, st.min)) + " here)." });
+    var ol = [["r","1.5 × IQR","1.5 × " + pT(st.iqr, 1) + " = " + B(vT(st.k)) + "."],
+      ["r","Fences","Low fence: " + B(minusT(st.q1, st.k) + " = " + vT(st.lf)) + ". High fence: " + B(vT(st.q3) + " + " + pT(st.k, 1) + " = " + vT(st.uf)) + "."]];
+    ol.push(["r","Outliers", st.outs.length ? listAnd(st.outs.map(function(v){ return B(vT(v)); })) + (st.outs.length === 1 ? " is" : " are") + " outside the fences, so "
+      + (st.outs.length === 1 ? "it’s an outlier." : "they’re outliers.") : "Nothing is below " + vT(st.lf) + " or above " + vT(st.uf) + ", so there are " + B("no outliers") + "."]);
+    items.push({ step:4, lines:ol });
+    items.push({ step:5, lines:[["p","Draw","Under a number line, draw a box from " + vT(st.q1) + " to " + vT(st.q3) + " with a line at the median, " + vT(st.med) + ". Whiskers go out to "
+      + vT(st.wl) + " and " + vT(st.wh) + (st.outs.length ? " — the farthest numbers that aren’t outliers — and each outlier gets its own dot." : ", the smallest and largest numbers.")]],
+      aside:"About a quarter of the numbers fall in each part: left whisker, left part of the box, right part of the box, right whisker. A long part means those numbers are spread out, not that there are more of them." });
+    writeLog(items);
+
+    var facts = [st.outs.length ? "Outlier" + (st.outs.length > 1 ? "s" : "") + ": " + B(listT(st.outs)) + " (outside " + vT(st.lf) + " to " + vT(st.uf) + ")" : "No outliers (nothing outside " + vT(st.lf) + " to " + vT(st.uf) + ")",
+      "Quartiles found with the median " + (odd ? (incl ? "included in" : "left out of") : "split between") + " the halves", B(n) + " numbers"];
+    bandCells([{ k:"Min", v:vH(st.min) }, { k:"Q₁", v:fullH(st.q1) }, { k:"Median", v:fullH(st.med) }, { k:"Q₃", v:fullH(st.q3) }, { k:"Max", v:vH(st.max) }, { k:"IQR", v:fullH(st.iqr) }], facts);
+    $("closer").innerHTML = '<div class="ck"><b>Check:</b> min ≤ Q₁ ≤ median ≤ Q₃ ≤ max — ' + [st.min, st.q1, st.med, st.q3, st.max].map(vT).join(" ≤ ") + ' <span class="ok">✓</span></div>'
+      + '<div class="ck"><b>Check:</b> Q₁ + IQR = Q₃ — ' + vT(st.q1) + " + " + pT(st.iqr, 1) + " = " + vT(st.q3) + ' <span class="ok">✓</span></div>';
+    return items.length;
+  }
+
+  /* ===================== tab 3: frequency ===================== */
+  function solveFreq(P){
+    var rows = P.rows, n = P.n, live = rows.filter(function(r){ return r.c > 0; }), run = 0;
+    rows.forEach(function(r){ r.lo = run + 1; run += r.c; r.hi = run; });
+    function at(pos){ for (var i = 0; i < rows.length; i++) if (rows[i].c && pos >= rows[i].lo && pos <= rows[i].hi) return i; return -1; }
+    var p1 = Math.floor((n + 1) / 2), p2 = Math.ceil((n + 1) / 2), i1 = at(p1), i2 = at(p2);
+    var maxC = Math.max.apply(null, rows.map(function(r){ return r.c; }));
+    var top = rows.filter(function(r){ return r.c === maxC; });
+    if (P.grouped){
+      var prods = rows.map(function(r){ return mul(r.mid, R(r.c)); }), sumP = sumR(prods);
+      return { n:n, prods:prods, sum:sumP, mean:dvd(sumP, R(n)), p1:p1, p2:p2, i1:i1, i2:i2, maxC:maxC, top:top, rows:rows, live:live };
+    }
+    var pr = rows.map(function(r){ return mul(r.v, R(r.c)); }), sum = sumR(pr);
+    var med = avg2(rows[i1].v, rows[i2].v);
+    var cs = live.map(function(r){ return { v:r.v, c:r.c }; }), mo = modesOf(cs);
+    return { n:n, prods:pr, sum:sum, mean:dvd(sum, R(n)), p1:p1, p2:p2, i1:i1, i2:i2, med:med, mo:mo, cs:cs, maxC:maxC, rows:rows, live:live,
+             min:live[0].v, max:live[live.length - 1].v, range:sub(live[live.length - 1].v, live[0].v) };
+  }
+  function posT(n){ return n % 2 ? "number (" + n + " + 1) ÷ 2 = " + ordN((n + 1) / 2) : "halfway between the " + ordN(n / 2) + " and the " + ordN(n / 2 + 1); }
+  function drawFreq(P){ return P.grouped ? drawGrouped(P) : drawUngrouped(P); }
+  function drawUngrouped(P){
+    var st = solveFreq(P), rows = st.rows, n = st.n, W = plotW(), html = "", items = [], step = 0;
+    var head = '<thead><tr><th class="l">Value</th><th class="l">Tally</th><th>Count</th><th' + ds(1) + '>Value × count</th><th' + ds(2) + ">Running total</th></tr></thead>";
+    var body = rows.map(function(r, i){
+      var hit = i >= st.i1 && i <= st.i2, isTop = r.c === st.maxC && st.mo.modes.length;
+      return "<tr" + (isTop ? ' class="top"' : "") + '><td class="l">' + vH(r.v) + '</td><td class="tl2">' + tallySVG(r.c) + '</td><td class="cnt">' + r.c + "</td>"
+        + "<td" + ds(1) + ">" + vH(r.v) + " × " + r.c + " = " + vH(st.prods[i]) + '</td><td class="' + (hit ? "mm" : "dim") + '"' + ds(2) + ">" + (r.c ? (r.lo === r.hi ? ordN(r.lo) : ordN(r.lo) + "–" + ordN(r.hi)) : "—") + "</td></tr>";
+    }).join("");
+    var foot = '<tfoot><tr><td class="l">Total</td><td></td><td>' + n + "</td><td" + ds(1) + ">" + vH(st.sum) + "</td><td" + ds(2) + "></td></tr></tfoot>";
+    html += sect(lead(P.fromList ? "Count them up into a table." : "The frequency table.") + " Each row is a value and how many times it shows up (its count, or frequency).",
+      '<div class="xscroll"><table class="tbl">' + head + "<tbody>" + body + "</tbody>" + foot + "</table></div>", 0);
+    html += sect(lead("Mean.") + " Each value counts as many times as it shows up, so multiply by the counts before you add.",
+      '<div class="bigline">total = ' + sumParts(st.prods, pH) + " = " + vH(st.sum) + '</div><div class="bigline">how many = ' + rows.map(function(r){ return r.c; }).join(" + ") + " = " + n + '</div><div class="bigline">mean = ' + divH(st.sum, n) + "</div>", 1);
+    var mid = rows[st.i1], mid2 = rows[st.i2];
+    html += sect(lead("Median.") + " The middle is " + posT(n) + " number. The running totals show which value is there.",
+      '<div class="bigline">median = ' + (st.i1 === st.i2 ? '<span class="eqm">' + vH(st.med) + "</span>" : "(" + vH(mid.v) + " + " + pH(mid2.v, 1) + ') ÷ 2 = <span class="eqm">' + fullH(st.med) + "</span>") + "</div>", 2);
+    html += sect(lead("Mode.") + " The value with the biggest count.", '<div class="bigline">' + modeLineH(st.mo) + (st.mo.modes.length ? ' <span class="nm">(count ' + st.maxC + ")</span>" : "") + "</div>", 3);
+    html += sect(lead("Range.") + " Biggest value minus smallest (only values that show up count).", '<div class="bigline">range = ' + minusH(st.max, st.min) + ' = <span class="eqr">' + vH(st.range) + "</span></div>", 4);
+    var allInt = freqIntData(P);
+    html += sect(lead(st.maxC > 30 ? "The picture." : "As a dot plot.") + (st.maxC > 30 ? " Counts this big make dots too small, so each value gets a bar as tall as its count." : " One dot for every number in the data, stacked above its value."),
+      '<div class="xscroll">' + dotPlot({ W:W, pts:st.live.map(function(r){ return { x:toF(r.v), c:r.c }; }), integer:allInt, mean:{ x:toF(st.mean), label:"mean " + eqT(st.mean) },
+        median:{ x:toF(st.med), label:"median " + eqT(st.med) }, modes:st.mo.modes.map(toF), aria:"Dot plot of the frequency table" }) + "</div>", 5);
+    var bn = P.bin ? binsFor(P, P.bin) : null, est = null;
+    if (bn){
+      bn.bins.forEach(function(b){ b.label = bn.intD ? (eqR(b.a, b.b) ? vT(b.a) : vT(b.a) + "–" + vT(b.b)) : vT(b.a) + "–" + vT(b.top); });
+      var bsum = sumR(bn.bins.map(function(b){ return mul(b.mid, R(b.c)); }));
+      est = dvd(bsum, R(n));
+      html += sect(lead("Grouped into a histogram.") + " Bins " + vT(bn.w) + " wide" + (bn.intD ? "" : " (each bin includes its left end, not its right end)") + ". Bars touch, because the bins cover the number line with no gaps.",
+        '<div class="xscroll">' + histSVG({ W:W, bins:bn.bins }) + '</div><div class="bigline">estimated mean = (' + sumParts(bn.bins.map(function(b){ return { m:b.mid, c:b.c }; }), function(o, i){ return vH(o.m) + " × " + o.c; })
+          + ") ÷ " + n + " = " + vH(bsum) + " ÷ " + n + ' <span class="eqk">' + eqT(est) + '</span> <span class="nm">(the real mean is ' + fullH(st.mean) + ")</span></div>", 6);
+    }
+    $("workHost").innerHTML = html;
+
+    var nrows = rows.length;
+    items.push({ step:0, lines:[["e","Table", P.fromList ? "Count how many times each number shows up and write it next to the number: " + B(rows.map(function(r){ return vT(r.v) + ": " + r.c; }).join(", ")) + "."
+      : "Read each row as a number and how many times it shows up. " + vT(rows[0].v) + " with a count of " + rows[0].c + " means " + (rows[0].c && rows[0].c <= 6 ? B(new Array(rows[0].c + 1).join(vT(rows[0].v) + ", ").replace(/, $/, "")) : rows[0].c + " of them") + "."]] });
+    items.push({ step:1, lines:[["e","How many","Add the counts to see how many numbers there are: " + B(rows.map(function(r){ return r.c; }).join(" + ") + " = " + n) + "."],
+      ["p","Total","Multiply each value by its count — " + (rows[0].c ? word(rows[0].c) + " " + vT(rows[0].v) + (rows[0].c === 1 ? " is " : "s add up to ") + vT(rows[0].v) + " × " + rows[0].c + " = " + vT(st.prods[0]) : "a count of 0 adds nothing")
+        + " — and add those up: " + B(vT(st.sum)) + "."],
+      ["p","Mean", B(divT(st.sum, n)) + ". The mean is " + B(fullT(st.mean)) + "."]],
+      aside:"Divide by the number of numbers (" + n + "), not the number of rows (" + nrows + ") — the table is just a short way to write " + n + " numbers." });
+    var ml = [["m","Position","There are " + n + " numbers, so the middle is " + posT(n) + " one."]];
+    if (st.i1 === st.i2) ml.push(["m","Median","The running totals show the " + vT(rows[st.i1].v) + "s fill places " + ordN(rows[st.i1].lo) + " to " + ordN(rows[st.i1].hi) + ", so " + (n % 2 ? "the middle one is" : "both middle ones are") + " " + vT(rows[st.i1].v) + ". The median is " + B(vT(st.med)) + "."]);
+    else ml.push(["m","Median","The " + ordN(st.p1) + " number is " + vT(mid.v) + " and the " + ordN(st.p2) + " is " + vT(mid2.v) + ", so the median is halfway between: " + B("(" + vT(mid.v) + " + " + pT(mid2.v, 1) + ") ÷ 2 = " + fullT(st.med)) + "."]);
+    items.push({ step:2, lines:ml });
+    var mol;
+    if (st.mo.modes.length === 1) mol = [["e","Mode","The biggest count is " + st.maxC + ", for " + vT(st.mo.modes[0]) + ". The mode is " + B(vT(st.mo.modes[0])) + "."]];
+    else if (st.mo.modes.length) mol = [["e","Modes", listAnd(st.mo.modes.map(vT)) + " share the biggest count, " + st.maxC + ", so they’re all modes: " + B(listAnd(st.mo.modes.map(vT))) + "."]];
+    else mol = [["e","Mode","Every value has the same count, " + st.maxC + " — no value is more common than another, so there’s " + B("no mode") + "."]];
+    items.push({ step:3, lines:mol, aside: st.mo.modes.length ? "The mode is the <strong>value</strong> (" + vT(st.mo.modes[0]) + "), not its count (" + st.maxC + ")." : null });
+    items.push({ step:4, lines:[["r","Range","Biggest minus smallest: " + B(minusT(st.max, st.min) + " = " + vT(st.range)) + "."]] });
+    items.push({ step:5, lines:[["n","Picture", st.maxC > 30 ? "A bar above each value, as tall as its count — the same shape a dot plot would make." : "Put " + n + " dots on a number line: a column of " + rows[0].c + " above " + vT(rows[0].v) + ", and so on. The tallest column is the mode."]] });
+    if (bn) items.push({ step:6, lines:[["n","Bins","Group the values into bins " + vT(bn.w) + " wide and count each bin: " + B(bn.bins.map(function(b){ return b.label + ": " + b.c; }).join(", ")) + "."],
+      ["p","Estimate","Pretend every number sits at the middle of its bin: " + B(vT(sumR(bn.bins.map(function(b){ return mul(b.mid, R(b.c)); }))) + " ÷ " + n + " " + eqT(est)) + " — close to the real mean, " + fullT(st.mean) + "."]],
+      aside:"Grouping hides the exact values, so a mean worked out from the bins is only an <strong>estimate</strong>. Wider bins make a simpler picture but a rougher estimate." });
+    writeLog(items);
+
+    bandCells([{ k:"Mean", v:fullH(st.mean) }, { k:"Median", v:fullH(st.med) }, { k:"Mode", v:modeH(st.mo), long:st.mo.modes.length > 3 }],
+      [B(n) + " numbers in all", "Total of all of them: " + B(vT(st.sum)), "Range: " + B(vT(st.range))].concat(est ? ["Estimate from the bins: " + B(roundDec(est, 2))] : []));
+    $("closer").innerHTML = '<div class="ck"><b>Check:</b> the counts add up to ' + n + ", and " + (isRep(st.mean) ? fracT(st.mean) : vT(st.mean)) + " × " + n + " = " + vT(st.sum) + ', the total <span class="ok">✓</span></div>';
+    return items.length;
+  }
+  function drawGrouped(P){
+    var st = solveFreq(P), rows = st.rows, n = st.n, W = plotW(), html = "", items = [];
+    var head = '<thead><tr><th class="l">Class</th><th>Count</th><th>Midpoint</th><th' + ds(1) + ">Midpoint × count</th><th" + ds(2) + ">Running total</th></tr></thead>";
+    var body = rows.map(function(r, i){
+      var hit = i >= st.i1 && i <= st.i2;
+      return "<tr" + (r.c === st.maxC ? ' class="top"' : "") + '><td class="l">' + clsT(r) + '</td><td class="cnt">' + r.c + "</td><td>" + vH(r.mid) + "</td><td" + ds(1) + ">" + vH(r.mid) + " × " + r.c + " = " + vH(st.prods[i])
+        + '</td><td class="' + (hit ? "mm" : "dim") + '"' + ds(2) + ">" + (r.c ? (r.lo === r.hi ? ordN(r.lo) : ordN(r.lo) + "–" + ordN(r.hi)) : "—") + "</td></tr>";
+    }).join("");
+    var foot = '<tfoot><tr><td class="l">Total</td><td>' + n + "</td><td></td><td" + ds(1) + ">" + vH(st.sum) + "</td><td" + ds(2) + "></td></tr></tfoot>";
+    html += sect(lead("The grouped frequency table.") + " We only know how many numbers fall in each class, not what they are — so each class’s midpoint stands in for its numbers.",
+      '<div class="xscroll"><table class="tbl">' + head + "<tbody>" + body + "</tbody>" + foot + "</table></div>"
+      + '<div class="bigline">midpoint of ' + clsT(rows[0]) + " = (" + vH(rows[0].a) + " + " + pH(rows[0].b, 1) + ") ÷ 2 = " + vH(rows[0].mid) + "</div>", 0);
+    html += sect(lead("Estimated mean.") + " Multiply each midpoint by its count, add, and divide by how many numbers there are.",
+      '<div class="bigline">' + vH(st.sum) + " ÷ " + n + ' <span class="eqk">' + eqT(st.mean) + "</span></div>", 1);
+    var mc = st.i1 === st.i2 ? rows[st.i1] : null;
+    html += sect(lead("Median class.") + " The middle is " + posT(n) + " number; the running totals show which class holds it.",
+      '<div class="bigline">median class: <span class="eqm">' + (mc ? clsT(mc) : clsT(rows[st.i1]) + " / " + clsT(rows[st.i2])) + "</span></div>", 2);
+    var tops = rows.filter(function(r){ return r.c === st.maxC; });
+    html += sect(lead("Modal class.") + " The class with the biggest count.", '<div class="bigline">modal class: <span class="eqe">' + tops.map(clsT).join(", ") + '</span> <span class="nm">(count ' + st.maxC + ")</span></div>", 3);
+    html += sect(lead("The histogram.") + " One bar per class, as tall as its count. The bars touch because the classes follow on from each other.",
+      '<div class="xscroll">' + histSVG({ W:W, bins:rows.map(function(r){ return { label:clsT(r), c:r.c }; }) }) + "</div>", 4);
+    $("workHost").innerHTML = html;
+
+    items.push({ step:0, lines:[["e","Midpoints","Inside a class we don’t know the exact numbers, so use the middle of each class: the midpoint of " + clsT(rows[0]) + " is " + B("(" + vT(rows[0].a) + " + " + pT(rows[0].b, 1) + ") ÷ 2 = " + vT(rows[0].mid)) + "."]] });
+    items.push({ step:1, lines:[["e","How many","Add the counts: " + B(rows.map(function(r){ return r.c; }).join(" + ") + " = " + n) + "."],
+      ["p","Total","Multiply each midpoint by its count and add: " + B(vT(st.sum)) + "."], ["p","Mean", B(vT(st.sum) + " ÷ " + n + " " + eqT(st.mean)) + "."]],
+      aside:"It’s an <strong>estimate</strong>: pretending every number sits at the middle of its class is close, but not exact. The real mean could be a little higher or lower." });
+    items.push({ step:2, lines:[["m","Median", "There are " + n + " numbers, so the middle is " + posT(n) + " one. " + (mc ? "The running totals put it in " + B(clsT(mc)) + " — that’s the median class."
+      : "The " + ordN(st.p1) + " is in " + clsT(rows[st.i1]) + " and the " + ordN(st.p2) + " in " + clsT(rows[st.i2]) + ", so the median is right where they meet.")]] });
+    items.push({ step:3, lines:[["e","Mode", (tops.length === 1 ? B(clsT(tops[0])) + " has the biggest count, " + st.maxC + ", so it’s the modal class." : listAnd(tops.map(function(r){ return B(clsT(r)); })) + " tie for the biggest count, " + st.maxC + ".")]] });
+    items.push({ step:4, lines:[["n","Draw","Draw a bar for each class, as tall as its count, with no gaps between them."]] });
+    writeLog(items);
+    bandCells([{ k:"Estimated mean", v:fullH(st.mean) }, { k:"Median class", v:mc ? clsWords(mc) : clsWords(rows[st.i1]) + " / " + clsWords(rows[st.i2]), long:true },
+      { k:"Modal class", v:tops.map(clsWords).join(", "), long:true }], [B(n) + " numbers in " + rows.length + " classes", "The mean is an estimate, from the midpoints"]);
+    $("closer").innerHTML = '<div class="ck"><b>Check:</b> the estimated mean, ' + roundDec(st.mean, 2) + ", is inside the data: from " + vT(rows[0].a) + " to " + vT(rows[rows.length - 1].b) + ' <span class="ok">✓</span></div>';
+    return items.length;
+  }
+
+  /* ===================== tab 4: spread ===================== */
+  function drawSpread(P){
+    var st = solveSpread(P.vals, P.sd), n = st.n, vals = P.vals, W = plotW(), html = "", items = [], step = 0, sdOn = P.sd !== "off" && !(P.sd === "sample" && n < 2);
+    html += sect(lead("First, the mean.") + " Add them up and divide by how many.", '<div class="bigline">' + sumH(vals) + " = " + vH(st.sum) + '</div><div class="bigline">' + divH(st.sum, n) + "</div>", step++);
+    var stD = step++;
+    var rowsH = vals.map(function(v, i){
+      return "<tr><td>" + vH(v) + "</td><td>" + minusH(v, st.mean) + " = " + vH(st.devs[i]) + '</td><td class="k">' + vH(st.dists[i]) + "</td>" + (sdOn ? "<td" + ds(4) + ">" + vH(st.sq[i]) + "</td>" : "") + "</tr>";
+    }).join("");
+    var tbl = '<table class="tbl"><thead><tr><th>Number</th><th>Minus the mean</th><th>Distance</th>' + (sdOn ? "<th" + ds(4) + ">Squared</th>" : "") + "</tr></thead><tbody>" + rowsH
+      + '</tbody><tfoot><tr><td>' + vH(st.sum) + "</td><td>" + vH(sumR(st.devs)) + "</td><td>" + vH(st.sumD) + "</td>" + (sdOn ? "<td" + ds(4) + ">" + vH(st.sumSq) + "</td>" : "") + "</tr></tfoot></table>";
+    html += sect(lead("How far is each number from the mean?") + " Take the mean away, then drop the sign: a distance is never negative.", '<div class="xscroll">' + tbl + "</div>", stD);
+    var stP = -1;
+    if (n <= 20){ stP = step++; html += sect(lead("The distances, to scale.") + " Each red line runs from a number to the mean.", '<div class="xscroll">' + distSVG(vals, st.mean, W) + "</div>", stP); }
+    var stM = step++;
+    html += sect(lead("The mean absolute deviation.") + " The mean of the distances.", '<div class="bigline">MAD = (' + sumH(st.dists) + ") ÷ " + n + " = " + vH(st.sumD) + " ÷ " + n + ' <span class="eqk">' + eqT(st.mad) + "</span></div>", stM);
+    var stS = -1, sdT = "", den = P.sd === "sample" ? n - 1 : n;
+    if (sdOn){
+      stS = step++;
+      sdT = st.sdExact ? vT(st.sdExact) : "√" + (isInt(st.v) ? vT(st.v) : fracT(st.v)) + " ≈ " + st.sdF.toFixed(2);
+      html = html.replace(/ data-step="4"/g, ds(stS));
+      html += sect(lead("Standard deviation" + (P.sd === "sample" ? " (sample)." : " (population).")) + " Square each difference instead (the Squared column), average them, then take the square root to get back to the original units.",
+        '<div class="bigline">variance = ' + vH(st.sumSq) + " ÷ " + den + ' = ' + fullH(st.v) + '</div><div class="bigline">standard deviation = √(' + (isInt(st.v) || !isRep(st.v) ? vH(st.v) : fracT(st.v)) + ') <span class="eqk">' + (st.sdExact ? "= " + vH(st.sdExact) : "≈ " + st.sdF.toFixed(2)) + "</span></div>", stS);
+    }
+    $("workHost").innerHTML = html;
+
+    items.push({ step:0, lines:[["p","Mean","Add the " + n + " numbers: " + B(sumT(vals) + " = " + vT(st.sum)) + ", and share it out: " + B(divT(st.sum, n)) + ". The mean is " + B(fullT(st.mean)) + "."]] });
+    var ex = vals.slice(0, 3).map(function(v, i){ return vT(v) + " is " + vT(st.dists[i]) + (st.devs[i].n < 0n ? " below" : st.devs[i].n > 0n ? " above" : " away — it’s right on the mean"); });
+    items.push({ step:stD, lines:[["m","Distance","Find how far each number is from " + vT(st.mean) + ": " + ex.join(", ") + (n > 3 ? ", and so on." : ".") + " Write each as a positive distance."]],
+      aside:"Why not just add the differences? The ones below the mean and the ones above cancel out exactly — they always add up to " + B("0") + " (see the total of the middle column). That’s what makes the mean the balance point, but it says nothing about spread. Distances can’t cancel." });
+    if (stP >= 0) items.push({ step:stP, lines:[["m","Picture","The longer the red lines, the more spread out the numbers. Short lines mean the numbers huddle close to the mean."]] });
+    items.push({ step:stM, lines:[["p","Add","Add the distances: " + B(sumT(st.dists) + " = " + vT(st.sumD)) + "."], ["a","MAD","Divide by how many numbers there are: " + B(vT(st.sumD) + " ÷ " + n + " " + eqT(st.mad)) + ". The MAD is " + B(fullT(st.mad)) + "."]],
+      aside:"So on average, a number is about " + roundDec(st.mad, 2) + " away from the mean. A bigger MAD means the numbers are more spread out; a MAD of 0 means they’re all the same." });
+    if (sdOn) items.push({ step:stS, lines:[["r","Square","Square each difference (a negative times itself is positive) and add: " + B(vT(st.sumSq)) + "."],
+      ["r","Variance","Divide by " + (P.sd === "sample" ? B("n − 1 = " + den) + ", because this is a sample from a bigger group" : B("n = " + n) + ", because this is the whole group (population)") + ": " + B(vT(st.sumSq) + " ÷ " + den + " " + eqT(st.v)) + "."],
+      ["a","Root","Take the square root to undo the squaring: the standard deviation is " + B(sdT) + "."]],
+      aside:"The standard deviation is the high-school cousin of the MAD: squaring instead of dropping the sign. It is usually a little bigger than the MAD (" + roundDec(st.mad, 2) + " here). "
+        + (P.sd === "sample" ? "Dividing by n − 1 instead of n corrects for a small sample; the population version (÷ " + n + ") would be " + (st.other ? "≈ " + Math.sqrt(toF(st.other)).toFixed(2) : "—") + "."
+          : "The sample version divides by n − 1 instead" + (st.other ? " and would give ≈ " + Math.sqrt(toF(st.other)).toFixed(2) : "") + ".") });
+    writeLog(items);
+    var cells = [{ k:"Mean", v:fullH(st.mean) }, { k:"MAD", v:fullH(st.mad) }];
+    if (sdOn) cells.push({ k:"Std. deviation", v:st.sdExact ? vH(st.sdExact) : '<span class="ap">≈</span> ' + st.sdF.toFixed(2) });
+    bandCells(cells, [B(n) + " numbers", "Distances add up to " + B(vT(st.sumD)), "Range: " + B(vT(st.range))].concat(sdOn ? [(P.sd === "sample" ? "Sample" : "Population") + " standard deviation (÷ " + den + ")"] : []));
+    $("closer").innerHTML = '<div class="ck"><b>Check:</b> the differences from the mean add up to ' + vH(sumR(st.devs)) + ' — they always cancel <span class="ok">✓</span></div>'
+      + '<div class="ck"><b>Check:</b> the MAD, ' + roundDec(st.mad, 2) + ", is between 0 and half the range (" + vT(dvd(st.range, TWO)) + ') <span class="ok">✓</span></div>';
+    return items.length;
+  }
+
+  /* ===================== tab 5: missing value ===================== */
+  function drawMissing(P){
+    var sol = solveMissing(P), W = plotW(), html = "", items = [], need = P.kind === "need", k = P.k, N = P.N;
+    var tape = tapeSVG(P, sol, W, { total:0, known:1, miss:2 });
+    html += sect(lead(need ? "The total you need." : "The total.") + " A mean of " + vT(P.M) + " for " + N + " " + (need ? "tests" : "numbers") + " means they add up to the same as " + N + " × " + vT(P.M) + ".",
+      '<div class="bigline">total = ' + vH(P.M) + " × " + N + ' = <span class="eqk">' + vH(sol.total) + "</span></div>", 0);
+    html += sect(lead(need ? "What you have so far." : "The numbers we know.") + " Add them up.", '<div class="bigline">' + sumH(P.known) + " = " + vH(sol.have) + "</div>", 1);
+    html += sect(lead(need ? "What’s left to score." : "The missing " + (P.r > 1 ? "ones." : "one.")) + " Whatever the known numbers don’t cover, the missing " + (P.r > 1 ? "ones have" : "one has") + " to make up.",
+      '<div class="bigline">' + minusH(sol.total, sol.have) + ' = <span class="eqk">' + vH(sol.miss) + "</span></div>"
+      + (P.r > 1 && need ? '<div class="bigline">each of the ' + P.r + " = " + vH(sol.miss) + " ÷ " + P.r + ' <span class="eqk">' + eqT(sol.each) + "</span></div>" : "")
+      + (tape ? '<div class="xscroll">' + tape + "</div>" : ""), 2);
+    $("workHost").innerHTML = html;
+
+    items.push({ step:0, lines:[["p","Total", need ? "To average " + vT(P.M) + " over " + N + " tests, the scores must add up to " + B(vT(P.M) + " × " + N + " = " + vT(sol.total)) + "."
+      : "A mean of " + vT(P.M) + " means the " + N + " numbers add up to the same as " + N + " numbers that are all " + vT(P.M) + ": " + B(vT(P.M) + " × " + N + " = " + vT(sol.total)) + "."]],
+      aside:"This is the mean worked backwards: mean = total ÷ count, so total = mean × count." });
+    items.push({ step:1, lines:[["m","Known", (need ? "The " + k + " score" + (k === 1 ? "" : "s") + " so far add" + (k === 1 ? "s" : "") + " up to " : "The " + k + " we know add up to ") + B(sumT(P.known) + " = " + vT(sol.have)) + "."]] });
+    var ml = [["a", P.r > 1 ? "Missing" : "Answer", (need ? "That leaves " : "The missing " + (P.r > 1 ? word(P.r) + " make" : "one makes") + " up the rest: ") + B(minusT(sol.total, sol.have) + " = " + vT(sol.miss)) + (need ? (P.r > 1 ? " points for the last " + P.r + " tests." : " — that’s the score you need.") : ".")]];
+    if (P.r > 1 && need) ml.push(["a","Each","Shared equally over " + P.r + " tests: " + B(vT(sol.miss) + " ÷ " + P.r + " " + eqT(sol.each)) + " on each."]);
+    var aside = null;
+    if (need && toF(sol.each) > 100) aside = "That’s more than 100 — if the tests are out of 100, an average of " + vT(P.M) + " can’t be reached any more.";
+    else if (sol.miss.n < 0n) aside = "A negative answer means the known numbers already add up to more than the total — check the problem.";
+    else if (P.r > 1 && !need) aside = "With " + P.r + " numbers missing, we can only find what they add up to — not each one, unless we know more.";
+    items.push({ step:2, lines:ml, aside:aside });
+    writeLog(items);
+    var ansV = P.r > 1 && need ? fullH(sol.each) + ' <span class="word">each</span>' : fullH(sol.miss);
+    bandCells([{ k:need ? (P.r > 1 ? "Score needed on each" : "Score needed") : (P.r > 1 ? "The missing ones add up to" : "The missing number"), v:ansV }],
+      ["Total: " + B(vT(P.M) + " × " + N + " = " + vT(sol.total)), "Known so far: " + B(vT(sol.have))]);
+    var all = P.known.concat(P.r > 1 ? [] : [sol.miss]);
+    $("closer").innerHTML = P.r === 1 ? '<div class="ck"><b>Check:</b> (' + sumT(all) + ") ÷ " + N + " = " + vT(sol.total) + " ÷ " + N + " = " + vT(P.M) + ' <span class="ok">✓</span></div>'
+      : '<div class="ck"><b>Check:</b> ' + vT(sol.have) + " + " + pT(sol.miss, 1) + " = " + vT(sol.total) + ", and " + vT(sol.total) + " ÷ " + N + " = " + vT(P.M) + ' <span class="ok">✓</span></div>';
+    return items.length;
+  }
+
+  var DRAW = { center:drawCenter, box:drawBox, freq:drawFreq, spread:drawSpread, missing:drawMissing };
+  var LEGEND = {
+    center:'<div><span class="badge c-p">▲ Mean</span> share evenly</div><div><span class="badge c-m">Median</span> the middle</div><div><span class="badge c-e">Mode</span> most common</div><div><span class="badge c-r">Range</span> spread</div>',
+    box:'<div><span class="badge c-m">Median</span> splits in half</div><div><span class="badge c-p">Q₁ Q₃</span> quartiles</div><div><span class="badge c-e">IQR</span> middle half</div><div><span class="badge c-r">Outlier</span> past a fence</div>',
+    freq:'<div><span class="badge c-e">Count</span> how often</div><div><span class="badge c-p">Mean</span> value × count</div><div><span class="badge c-m">Median</span> running totals</div>',
+    spread:'<div><span class="badge c-p">Mean</span> the balance point</div><div><span class="badge c-m">Distance</span> from the mean</div><div><span class="badge c-a">MAD</span> mean distance</div>',
+    missing:'<div><span class="badge c-p">Total</span> mean × count</div><div><span class="badge c-m">Known</span> what we have</div><div><span class="badge c-a">Missing</span> what’s left</div>'
+  };
+
+  /* ===================== problems as words: check box, worksheets ===================== */
+  function shortList(vals){ return vals.length > 14 ? vals.slice(0, 12).map(vT).join(", ") + ", …" : listT(vals); }
+  var ASKW = { all:"the mean, median, mode and range", mean:"the mean", median:"the median", mode:"the mode", range:"the range" };
+  var IS = 'style="border-collapse:collapse;margin:4px 0;font-variant-numeric:tabular-nums"', TH = 'style="border:1px solid #999;padding:2px 9px;font-weight:600"', TD = 'style="border:1px solid #999;padding:2px 9px;text-align:center"';
+  function freqTableHtml(P){
+    var lab = P.grouped ? "Class" : "Value";
+    return "<table " + IS + "><tr><th " + TH + ">" + lab + "</th>" + P.rows.map(function(r){ return "<td " + TD + ">" + (P.grouped ? clsT(r) : vT(r.v)) + "</td>"; }).join("")
+      + "</tr><tr><th " + TH + ">Count</th>" + P.rows.map(function(r){ return "<td " + TD + ">" + r.c + "</td>"; }).join("") + "</tr></table>";
+  }
+  function record(P){
+    var o = { params:paramsOf(P) }, st, a;
+    if (P.mode === "center"){
+      st = solveCenter(P.vals); a = P.ask;
+      o.text = "Find " + ASKW[a] + " of " + listT(P.vals) + ".";
+      o.html = "Find " + ASKW[a] + " of <b>" + listT(P.vals) + "</b>.";
+      o.short = cap(a === "all" ? "Mean, median, mode and range" : a) + " of " + shortList(P.vals);
+      var parts = { mean:fullT(st.mean), median:fullT(st.med), mode:modeT(st.mo), range:vT(st.range) };
+      o.answer = a === "all" ? "Mean " + parts.mean + ", median " + parts.median + ", mode " + parts.mode + ", range " + parts.range : parts[a];
+      o.answerHtml = a === "all" ? "Mean <b>" + parts.mean + "</b>, median <b>" + parts.median + "</b>, mode <b>" + parts.mode + "</b>, range <b>" + parts.range + "</b>" : "<b>" + parts[a] + "</b>";
+    } else if (P.mode === "box"){
+      st = solveBox(P.vals, P.method);
+      var how = P.method === "inclusive" ? " (Put the median in both halves.)" : "";
+      o.text = "Find the five-number summary (smallest, lower quartile, median, upper quartile, largest) and the interquartile range (IQR) of " + listT(P.vals) + "." + how;
+      o.html = "Find the five-number summary (smallest, lower quartile, median, upper quartile, largest) and the interquartile range (IQR) of <b>" + listT(P.vals) + "</b>." + how;
+      o.short = "Box plot of " + shortList(P.vals);
+      var five = "Min " + vT(st.min) + ", Q₁ " + fullT(st.q1) + ", median " + fullT(st.med) + ", Q₃ " + fullT(st.q3) + ", max " + vT(st.max) + ", IQR " + fullT(st.iqr);
+      var outs = st.outs.length ? "; outlier" + (st.outs.length > 1 ? "s " : " ") + listT(st.outs) : "; no outliers";
+      o.answer = five + outs; o.answerHtml = five.replace(/(Min|Q₁|median|Q₃|max|IQR) ([^,]+)/g, "$1 <b>$2</b>") + outs;
+    } else if (P.mode === "freq"){
+      st = solveFreq(P);
+      var tbl = P.rows.map(function(r){ return (P.grouped ? clsT(r) : vT(r.v)) + ": " + r.c; }).join(", ");
+      if (P.grouped){
+        var mc = st.i1 === st.i2 ? clsWords(P.rows[st.i1]) : clsWords(P.rows[st.i1]) + " / " + clsWords(P.rows[st.i2]), tops = P.rows.filter(function(r){ return r.c === st.maxC; }).map(clsWords).join(", ");
+        o.text = "Estimate the mean, and find the median class and the modal class. (Class: count) " + tbl + ".";
+        o.html = "Estimate the mean, and find the median class and the modal class." + freqTableHtml(P);
+        o.short = "Grouped table " + tbl.slice(0, 80);
+        o.answer = "Estimated mean " + fullT(st.mean) + ", median class " + mc + ", modal class " + tops;
+        o.answerHtml = "Estimated mean <b>" + fullT(st.mean) + "</b>, median class <b>" + mc + "</b>, modal class <b>" + tops + "</b>";
+      } else {
+        o.text = "Find the mean, median and mode. (Value: count) " + tbl + ".";
+        o.html = "Find the mean, median and mode." + freqTableHtml(P);
+        o.short = "Mean, median and mode of " + tbl.slice(0, 80);
+        o.answer = "Mean " + fullT(st.mean) + ", median " + fullT(st.med) + ", mode " + modeT(st.mo);
+        o.answerHtml = "Mean <b>" + fullT(st.mean) + "</b>, median <b>" + fullT(st.med) + "</b>, mode <b>" + modeT(st.mo) + "</b>";
+      }
+    } else if (P.mode === "spread"){
+      st = solveSpread(P.vals, P.sd);
+      var sdW = P.sd === "pop" ? " Then find the standard deviation for the whole group (population: divide by n)." : P.sd === "sample" ? " Then find the standard deviation for a sample (divide by n − 1)." : "";
+      o.text = "Find the mean and the mean absolute deviation (MAD) of " + listT(P.vals) + "." + sdW;
+      o.html = "Find the mean and the mean absolute deviation (MAD) of <b>" + listT(P.vals) + "</b>." + sdW;
+      o.short = "MAD of " + shortList(P.vals);
+      var sdA = P.sd !== "off" ? ", standard deviation " + (st.sdExact ? vT(st.sdExact) : "≈ " + st.sdF.toFixed(2)) : "";
+      o.answer = "Mean " + fullT(st.mean) + ", MAD " + fullT(st.mad) + sdA;
+      o.answerHtml = "Mean <b>" + fullT(st.mean) + "</b>, MAD <b>" + fullT(st.mad) + "</b>" + (sdA ? ", standard deviation <b>" + sdA.replace(", standard deviation ", "") + "</b>" : "");
+    } else {
+      var sol = solveMissing(P), kn = listAnd(P.known.map(vT));
+      if (P.kind === "need"){
+        o.text = "Your " + (P.k === 1 ? "score so far is " : "scores so far are ") + kn + ". " + (P.r > 1 ? "What do you need on each of the last " + P.r + " tests for an average of " + vT(P.M) + " over all " + P.N + "?"
+          : "What do you need on the next test for an average of " + vT(P.M) + "?");
+        o.short = "Score needed for an average of " + vT(P.M) + " after " + shortList(P.known);
+        o.answer = P.r > 1 ? fullT(sol.each) + " on each" : fullT(sol.miss);
+      } else {
+        o.text = "The mean of " + P.N + " numbers is " + vT(P.M) + ". " + cap(word(P.k)) + " of them " + (P.k === 1 ? "is " : "are ") + kn + ". " + (P.r > 1 ? "What do the other " + word(P.r) + " add up to?" : "What is the " + ordW(P.N) + " number?");
+        o.short = "Mean of " + P.N + " numbers is " + vT(P.M) + ": " + shortList(P.known) + ", find the missing " + (P.r > 1 ? "ones" : "one");
+        o.answer = fullT(sol.miss);
+      }
+      o.html = esc(o.text).replace(/(\d+(?:\.\d+)?)/g, "<b>$1</b>");
+      o.answerHtml = "<b>" + o.answer + "</b>";
+    }
+    return o;
+  }
+  function paramsOf(P){
+    var q = encodeURIComponent(P.q).replace(/%2C/gi, ",").replace(/%3A/gi, ":").replace(/%20/g, "+");
+    var s = "mode=" + P.mode + "&q=" + q;
+    if (P.mode === "center"){ if (P.ask !== "all") s += "&ask=" + P.ask; if (P.outlier) s += "&outlier=1"; }
+    if (P.mode === "box" && P.method === "inclusive") s += "&method=inclusive";
+    if (P.mode === "freq" && P.bin) s += "&bin=" + P.bin;
+    if (P.mode === "spread" && P.sd !== "off") s += "&sd=" + P.sd;
+    return s;
+  }
+
+  /* ===================== check my answer ===================== */
+  function freshCK(sig){ return { sig:sig, vals:{}, marks:{}, revealed:false, tried:false, fb:"", fbCls:"", ok:false, graded:0, hinted:false, hint:"" }; }
+  function readUser(s){
+    s = String(s || "").replace(/[−–—]/g, "-").replace(/÷/g, "/").replace(/^\s*(?:(?:the|mean|median|mode|range|mad|iqr|q1|q3|min|max|it|is|about|approx(?:imately)?|x)\b\s*|(?:q₁|q₃|[=≈~:])\s*)+/i, "").replace(/\s*(?:points?|pts|each|on each)\.?\s*$/i, "").trim();
+    s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    var m, approx = false;
+    if (/(\.\.\.|…)$/.test(s)){ approx = true; s = s.replace(/(\.\.\.|…)$/, ""); }
+    if ((m = /^(-?)\s*(\d+)\s+(\d+)\s*\/\s*(\d+)$/.exec(s))){
+      if (m[4] === "0") return null;
+      var w = BigInt(m[2]), nn = BigInt(m[3]), dd = BigInt(m[4]), v = R((w * dd + nn) * (m[1] ? -1n : 1n), dd);
+      return { v:v, form:"mixed", lowest:bgcd(nn, dd) === 1n && nn < dd, dp:0 };
+    }
+    if ((m = /^(-?)\s*(\d+)\s*\/\s*(\d+)$/.exec(s))){
+      if (m[3] === "0") return null;
+      var n2 = BigInt(m[2]), d2 = BigInt(m[3]);
+      return { v:R(m[1] ? -n2 : n2, d2), form:"frac", lowest:bgcd(n2, d2) === 1n, dp:0 };
+    }
+    if ((m = /^(-?)\s*(\d*)(?:\.(\d*))?$/.exec(s)) && (m[2] !== "" || (m[3] || "") !== "")){
+      var r0 = parseDecStr(m[1] + (m[2] || "0") + (m[3] ? "." + m[3] : ""));
+      return { v:r0, form:m[3] ? "dec" : "int", dp:(m[3] || "").length, approx:approx, lowest:true };
+    }
+    return null;
+  }
+  function nearRounded(U, want){                     // a decimal correctly rounded at its own number of places?
+    if (U.form !== "dec" || U.dp < 1) return false;
+    return Math.abs(toF(sub(U.v, want))) <= 0.5 * Math.pow(10, -U.dp) + 1e-12;
+  }
+  function chopped(U, want){
+    if (U.form !== "dec" || U.dp < 1) return false;
+    var t = Math.trunc(toF(want) * Math.pow(10, U.dp)) / Math.pow(10, U.dp);
+    return Math.abs(toF(U.v) - t) < 1e-9;
+  }
+  function gradeNum(f, raw){
+    var U = readUser(raw), want = f.want;
+    if (!U) return { st:"bad", msg:"Type a number, like <b>6</b>, <b>7.5</b> or <b>4 1/3</b>." };
+    if (eqR(U.v, want)){
+      if ((U.form === "frac" || U.form === "mixed") && !U.lowest) return { st:"part", msg:"Right value — now simplify it: " + B(isInt(want) ? vT(want) : mixT(want)) + "." };
+      return { st:"ok" };
+    }
+    var rep = isRep(want);
+    if (rep && nearRounded(U, want)) return { st:"ok", note:"(Exactly, it’s " + mixT(want) + ".)" };
+    for (var i = 0; i < f.mist.length; i++){
+      var mm = f.mist[i];
+      if (eqR(U.v, mm.v) || (isRep(mm.v) && nearRounded(U, mm.v))) return { st:"bad", msg:mm.msg };
+    }
+    if (rep && chopped(U, want)) return { st:"bad", msg:"Close — but round, don’t chop: the next digit is 5 or more, so round up." };
+    if (rep && U.form === "int" && Math.abs(toF(U.v) - toF(want)) < 0.5 + 1e-9) return { st:"bad", msg:"Close — but it isn’t a whole number. Give it as a fraction or a decimal (rounded to tenths or hundredths)." };
+    if (!rep && U.form === "dec" && Math.abs(toF(U.v) - toF(want)) <= Math.max(0.05, Math.abs(toF(want)) * 0.01)) return { st:"bad", msg:"Close — but this one comes out exactly, with no rounding. Check the last digit." };
+    if (U.v.n < 0n && want.n >= 0n && f.pos) return { st:"bad", msg:"It can’t be negative." };
+    return { st:"bad", msg:f.generic || "" };
+  }
+  function gradeApprox(f, raw){                      // a standard deviation: any decimal rounded correctly
+    var U = readUser(raw);
+    if (!U) return { st:"bad", msg:"Type a number, like <b>2.45</b>." };
+    if (f.exact && eqR(U.v, f.exact)) return { st:"ok" };
+    if (U.form === "dec" && U.dp >= 1 && Math.abs(toF(U.v) - f.wantF) <= 0.5 * Math.pow(10, -U.dp) + 1e-9) return { st:"ok" };
+    for (var i = 0; i < f.mist.length; i++){
+      if (Math.abs(toF(U.v) - f.mist[i].f) <= (U.dp ? 0.5 * Math.pow(10, -U.dp) : 1e-9) + 1e-9) return { st:"bad", msg:f.mist[i].msg };
+    }
+    if (U.form === "int" && Math.abs(toF(U.v) - f.wantF) < 0.5) return { st:"bad", msg:"Close — give it to at least one decimal place." };
+    return { st:"bad", msg:"" };
+  }
+  function readModes(raw){
+    var s = String(raw || "").trim().toLowerCase();
+    if (/^(none|no mode|no|n\/?a|nothing|-|—|there is no mode|no modes?)\.?$/.test(s)) return [];
+    var toks;
+    try { toks = numTokens(s.replace(/\band\b|\bor\b|&/g, ",")); } catch (e){ return null; }
+    return toks.length ? toks.map(function(t){ return t.r; }) : null;
+  }
+  function gradeModes(f, raw){
+    var got = readModes(raw), want = f.want;
+    if (got === null) return { st:"bad", msg:"Type the mode as a number — or several, like <b>4, 7</b> — or type <b>none</b>." };
+    var uniq = []; got.forEach(function(v){ if (!uniq.some(function(u){ return eqR(u, v); })) uniq.push(v); });
+    var same = uniq.length === want.length && uniq.every(function(v){ return want.some(function(w){ return eqR(w, v); }); });
+    if (same) return { st:"ok" };
+    if (!want.length && f.allVals && uniq.length === f.allVals.length && uniq.every(function(v){ return f.allVals.some(function(w){ return eqR(w, v); }); }))
+      return { st:"ok", note:"(Some books call every value a mode when they all tie; this page says there’s no mode.)" };
+    if (uniq.length === 1 && eqR(uniq[0], R(f.maxC)) && !want.some(function(w){ return eqR(w, uniq[0]); }) && want.length)
+      return { st:"bad", msg:"That’s how many times it shows up. The mode is the <i>number</i> that shows up most." };
+    if (!uniq.length) return { st:"bad", msg:"One " + (f.freq ? "value has a bigger count than the rest" : "number shows up more often than the others") + " — look for repeats." };
+    if (!want.length) return { st:"bad", msg: f.maxC === 1 ? "Every number shows up just once, so none is more common. Type <b>none</b>." : "Every value shows up the same number of times — a tie between all of them. Type <b>none</b>." };
+    var some = uniq.filter(function(v){ return want.some(function(w){ return eqR(w, v); }); });
+    if (some.length === uniq.length && uniq.length < want.length) return { st:"bad", msg:"There’s a tie — give every value that shows up " + times(f.maxC) + "." };
+    if (f.mist) for (var i = 0; i < f.mist.length; i++) if (uniq.length === 1 && eqR(uniq[0], f.mist[i].v)) return { st:"bad", msg:f.mist[i].msg };
+    return { st:"bad", msg:"Count how many times each " + (f.freq ? "value" : "number") + " shows up — the mode is the one with the most." };
+  }
+  function readClass(raw){
+    var s = String(raw || "").replace(/[−–—]/g, "-").replace(/\bto\b/gi, " to ").trim(), m;
+    m = /^(-?\d*\.?\d+)\s*(?:-|to)\s*(-?\d*\.?\d+)$/.exec(s);
+    if (!m) return null;
+    return { a:parseDecStr(m[1].replace(/^(-?)\./, "$10.")), b:parseDecStr(m[2].replace(/^(-?)\./, "$10.")) };
+  }
+  function gradeClass(f, raw){
+    var c = readClass(raw);
+    if (!c) return { st:"bad", msg:"Type the class the way the table writes it, like <b>" + clsT(f.rows[0]).replace("–", "-") + "</b>." };
+    var hit = f.rows.filter(function(r){ return eqR(r.a, c.a) && eqR(r.b, c.b); })[0];
+    if (!hit) return { st:"bad", msg:"That isn’t one of the classes in the table." };
+    if (f.want.indexOf(hit) >= 0) return { st:"ok" };
+    if (f.other && f.other.indexOf(hit) >= 0) return { st:"bad", msg:f.otherMsg };
+    return { st:"bad", msg:f.generic };
+  }
+  function gradeField(f, raw){
+    if (!String(raw || "").trim()) return { st:"empty" };
+    if (f.type === "modes") return gradeModes(f, raw);
+    if (f.type === "class") return gradeClass(f, raw);
+    if (f.type === "approx") return gradeApprox(f, raw);
+    return gradeNum(f, raw);
+  }
+  function mists(want, list){                       // keep only the mistakes that differ from the answer and each other
+    var out = [];
+    list.forEach(function(m){ if (m && m.v && !eqR(m.v, want) && !out.some(function(o){ return eqR(o.v, m.v); })) out.push(m); });
+    return out;
+  }
+  function fieldsFor(P){
+    var F = [], st, n;
+    if (P.mode === "center"){
+      st = solveCenter(P.vals); n = st.n;
+      var raw = P.vals, um = n % 2 ? raw[(n - 1) / 2] : avg2(raw[n / 2 - 1], raw[n / 2]);
+      var fm = { k:"mean", label:"Mean", type:"num", want:st.mean, mist:mists(st.mean, [
+        { v:st.sum, msg:"That’s the total. Now share it out — divide by " + n + "." },
+        n > 2 ? { v:dvd(st.sum, R(n - 1)), msg:"Check how many numbers there are — divide the total by " + n + "." } : null,
+        { v:dvd(st.sum, R(n + 1)), msg:"Check how many numbers there are — divide the total by " + n + "." },
+        { v:st.med, msg:"That’s the median (the middle). The mean adds them all up and divides." }]) };
+      var fmd = { k:"median", label:"Median", type:"num", want:st.med, mist:mists(st.med, [
+        { v:um, msg:"Put the numbers in order first — the middle of the list as it was typed isn’t the median." },
+        n % 2 === 0 ? { v:st.s[n / 2 - 1], msg:"There are two middle numbers, " + vT(st.s[n / 2 - 1]) + " and " + vT(st.s[n / 2]) + " — the median is halfway between them." } : null,
+        n % 2 === 0 ? { v:st.s[n / 2], msg:"There are two middle numbers, " + vT(st.s[n / 2 - 1]) + " and " + vT(st.s[n / 2]) + " — the median is halfway between them." } : null,
+        n % 2 === 0 ? { v:add(st.s[n / 2 - 1], st.s[n / 2]), msg:"You added the two middle numbers — now divide by 2 to get halfway between them." } : null,
+        { v:R(n + 1, 2), msg:"That’s <i>where</i> the median is (its place in the list). What number is in that place?" },
+        { v:st.mean, msg:"That’s the mean. The median is the middle number once they’re in order." }]) };
+      var fmo = { k:"mode", label:"Mode", type:"modes", want:st.mo.modes, maxC:st.mo.max, allVals:st.mo.kind === "tie" ? st.cs.map(function(c){ return c.v; }) : null,
+        mist:mists(R(-999999999), [{ v:st.mean, msg:"That’s the mean. The mode is the number that shows up most often." }, { v:st.med, msg:"That’s the median. The mode is the number that shows up most often." }]) };
+      var fr = { k:"range", label:"Range", type:"num", want:st.range, pos:true, mist:mists(st.range, [
+        { v:st.max, msg:"That’s the biggest number — now take away the smallest." },
+        { v:sub(st.min, st.max), msg:"Biggest minus smallest, so the range comes out positive." },
+        { v:add(st.max, st.min), msg:"Subtract, don’t add: biggest <i>minus</i> smallest." },
+        { v:absR(sub(raw[n - 1], raw[0])), msg:"Use the biggest and smallest numbers, not the first and last in the list." }]) };
+      var all = { mean:fm, median:fmd, mode:fmo, range:fr };
+      if (P.ask === "all") F = [fm, fmd, fmo, fr]; else F = [all[P.ask]];
+    } else if (P.mode === "box"){
+      st = solveBox(P.vals, P.method);
+      var altW = P.method === "inclusive" ? "with the median left out of the halves" : "with the median included in both halves";
+      var rawL = P.vals.slice(0, Math.floor(P.vals.length / 2)), rawU = P.vals.slice(Math.ceil(P.vals.length / 2));
+      var uq1 = medianOf(rawL), uq3 = medianOf(rawU);
+      var swap = "Q₁ is the middle of the <i>lower</i> half and Q₃ the middle of the <i>upper</i> half.";
+      F = [{ k:"min", label:"Min", type:"num", want:st.min, mist:[] },
+        { k:"q1", label:"Q₁", type:"num", want:st.q1, mist:mists(st.q1, [{ v:st.alt.q1, msg:"That’s Q₁ " + altW + ". This problem " + (P.method === "inclusive" ? "includes the median in both halves" : "leaves the median out of the halves") + "." },
+          { v:uq1, msg:"Put the numbers in order first, then split them." }, { v:st.q3, msg:swap }, { v:st.med, msg:"That’s the median of all the numbers. Q₁ is the middle of the lower half." }]) },
+        { k:"med", label:"Median", type:"num", want:st.med, mist:mists(st.med, [{ v:medianOf(P.vals), msg:"Put the numbers in order first." }]) },
+        { k:"q3", label:"Q₃", type:"num", want:st.q3, mist:mists(st.q3, [{ v:st.alt.q3, msg:"That’s Q₃ " + altW + ". This problem " + (P.method === "inclusive" ? "includes the median in both halves" : "leaves the median out of the halves") + "." },
+          { v:uq3, msg:"Put the numbers in order first, then split them." }, { v:st.q1, msg:swap }]) },
+        { k:"max", label:"Max", type:"num", want:st.max, mist:[] },
+        { k:"iqr", label:"IQR", type:"num", want:st.iqr, pos:true, mist:mists(st.iqr, [{ v:sub(st.max, st.min), msg:"That’s the range (max − min). The IQR is Q₃ − Q₁." },
+          { v:sub(st.alt.q3, st.alt.q1), msg:"That IQR comes from quartiles found " + altW + "." }, { v:sub(st.q1, st.q3), msg:"Q₃ minus Q₁, so the IQR comes out positive." }]) }];
+    } else if (P.mode === "freq"){
+      st = solveFreq(P); n = st.n;
+      var nr = P.rows.length;
+      if (P.grouped){
+        var lows = sumR(P.rows.map(function(r){ return mul(r.a, R(r.c)); }));
+        F = [{ k:"mean", label:"Estimated mean", type:"num", want:st.mean, mist:mists(st.mean, [
+          { v:dvd(st.sum, R(nr)), msg:"Divide by how many numbers there are (" + n + "), not the number of classes (" + nr + ")." },
+          { v:st.sum, msg:"That’s the total — now divide by " + n + "." },
+          { v:dvd(lows, R(n)), msg:"Use the <i>midpoint</i> of each class, not its lowest value." },
+          { v:dvd(sumR(P.rows.map(function(r){ return r.mid; })), R(nr)), msg:"Each midpoint counts as many times as its class’s count — multiply by the counts first." }]) },
+          { k:"medc", label:"Median class", type:"class", rows:P.rows, want:[P.rows[st.i1], P.rows[st.i2]], other:P.rows.filter(function(r){ return r.c === st.maxC; }),
+            otherMsg:"That’s the modal class (the biggest count). The median class holds the middle number — use the running totals.", generic:"Find the " + ordN(st.p1) + " number with running totals of the counts." },
+          { k:"modec", label:"Modal class", type:"class", rows:P.rows, want:P.rows.filter(function(r){ return r.c === st.maxC; }), other:[P.rows[st.i1], P.rows[st.i2]],
+            otherMsg:"That’s the median class. The modal class is the one with the biggest count.", generic:"Look for the biggest count." }];
+      } else {
+        var sv = sumR(P.rows.map(function(r){ return r.v; }));
+        F = [{ k:"mean", label:"Mean", type:"num", want:st.mean, mist:mists(st.mean, [
+          { v:dvd(st.sum, R(nr)), msg:"Divide by how many numbers there are (" + n + "), not the number of rows (" + nr + ")." },
+          { v:st.sum, msg:"That’s the total — now divide by " + n + "." },
+          { v:dvd(sv, R(nr)), msg:"Each value counts as many times as it shows up — multiply each value by its count first." },
+          { v:R(n, nr), msg:"That’s the average of the counts. The question is about the values." }]) },
+          { k:"median", label:"Median", type:"num", want:st.med, mist:mists(st.med, [
+            { v:medianOf(P.rows.map(function(r){ return r.v; })), msg:"That’s the middle row of the table. Use the counts: the middle is the " + (n % 2 ? ordN((n + 1) / 2) : ordN(n / 2) + " and " + ordN(n / 2 + 1)) + " number." },
+            { v:medianOf(sortR(P.rows.map(function(r){ return R(r.c); }))), msg:"That’s the middle count. The median is a value — find the " + ordN(st.p1) + " number with running totals." },
+            { v:R(n + 1, 2), msg:"That’s <i>where</i> the median is. Which value is in that place?" }]) },
+          { k:"mode", label:"Mode", type:"modes", want:st.mo.modes, maxC:st.maxC, freq:true, allVals:null, mist:[] }];
+      }
+    } else if (P.mode === "spread"){
+      st = solveSpread(P.vals, P.sd); n = st.n;
+      F = [{ k:"mean", label:"Mean", type:"num", want:st.mean, mist:mists(st.mean, [{ v:st.sum, msg:"That’s the total — now divide by " + n + "." }, { v:st.med, msg:"That’s the median. The mean adds them up and divides." }]) },
+        { k:"mad", label:"MAD", type:"num", want:st.mad, pos:true, mist:mists(st.mad, [
+          { v:ZERO, msg:"The differences cancel to 0 — use distances, which are never negative (drop the minus signs)." },
+          { v:st.sumD, msg:"That’s the total distance — now divide by " + n + "." },
+          n > 1 ? { v:dvd(st.sumD, R(n - 1)), msg:"Divide the total distance by how many numbers there are, " + n + "." } : null,
+          { v:st.madMed, msg:"Measure the distances from the mean (" + vT(st.mean) + "), not the median." },
+          { v:st.range, msg:"That’s the range. The MAD is the mean of the distances from the mean." }]) }];
+      if (P.sd !== "off" && st.v){
+        var om = [];
+        if (st.other) om.push({ f:Math.sqrt(toF(st.other)), msg:P.sd === "sample" ? "That’s the population standard deviation (÷ " + n + "). This one is a sample: divide by n − 1 = " + (n - 1) + "." : "That’s the sample standard deviation (÷ n − 1). This one divides by n = " + n + "." });
+        om.push({ f:toF(st.v), msg:"That’s the variance — take its square root." });
+        om.push({ f:toF(st.mad), msg:"That’s the MAD. The standard deviation squares the differences first." });
+        F.push({ k:"sd", label:"Std. deviation", type:"approx", wantF:st.sdF, exact:st.sdExact, mist:om });
+      }
+    } else {
+      var sol = solveMissing(P), need = P.kind === "need";
+      var avgK = dvd(sol.have, R(P.k));
+      var w = P.r > 1 && need ? sol.each : sol.miss;
+      F = [{ k:"x", label:need ? (P.r > 1 ? "Score on each" : "Score needed") : (P.r > 1 ? "They add up to" : "Missing number"), type:"num", want:w, mist:mists(w, [
+        { v:sol.total, msg:"That’s what all " + P.N + " have to add up to — now take away the ones you know." },
+        { v:sol.have, msg:"That’s the total of the ones you know. The missing " + (P.r > 1 ? "ones make" : "one makes") + " up the rest of " + vT(sol.total) + "." },
+        { v:P.M, msg:"If it were " + vT(P.M) + ", the others would have to average " + vT(P.M) + " too — but they average " + fullT(avgK) + ". Use the total." },
+        { v:sub(mul(P.M, R(P.k)), sol.have), msg:"Count the missing one" + (P.r > 1 ? "s" : "") + " too: there are " + P.N + " in all, so the total is " + vT(P.M) + " × " + P.N + "." },
+        { v:avgK, msg:"That’s the mean of the ones you know. Work out the total first: mean × count." },
+        P.r > 1 && need ? { v:sol.miss, msg:"That’s the total for " + (P.r === 2 ? "both" : "all " + P.r) + " tests — share it out: ÷ " + P.r + "." } : null]) }];
+    }
+    return F;
+  }
+  function hintFor(P){
+    if (P.mode === "center"){
+      var H = { mean:"<b>Mean:</b> add up all " + P.vals.length + " numbers, then divide by " + P.vals.length + ".", median:"<b>Median:</b> put the numbers in order, then cross off one from each end until you reach the middle.",
+                mode:"<b>Mode:</b> the number that shows up most often — there can be none, or more than one.", range:"<b>Range:</b> the biggest number minus the smallest." };
+      return P.ask === "all" ? [H.mean, H.median, H.mode, H.range].join(" ") : H[P.ask];
+    }
+    if (P.mode === "box") return "Put the numbers in order and find the median first. Q₁ is the middle of the lower half and Q₃ the middle of the upper half"
+      + (P.vals.length % 2 ? (P.method === "inclusive" ? " (include the median in both halves)" : " (leave the median itself out of both halves)") : "") + ". IQR = Q₃ − Q₁.";
+    if (P.mode === "freq") return P.grouped ? "Use each class’s midpoint: (low + high) ÷ 2. Multiply each midpoint by its count, add, and divide by the total count, " + P.n + ". Running totals of the counts show where the middle number is."
+      : "There are " + P.n + " numbers, not " + P.rows.length + ". For the mean, multiply each value by its count, add those, and divide by " + P.n + ". For the median, keep a running total of the counts to find the middle place.";
+    if (P.mode === "spread") return "Find the mean first. Then find how far each number is from it (always positive), add up those distances and divide by " + P.vals.length + "."
+      + (P.sd !== "off" ? " For the standard deviation, square the differences instead, average them (÷ " + (P.sd === "sample" ? "n − 1" : "n") + ") and take the square root." : "");
+    return "Mean × how many numbers = the total they must add up to. Take away the ones you know" + (P.r > 1 && P.kind === "need" ? ", then share what’s left over the " + P.r + " tests." : ".");
+  }
+  function buildCheck(P){
+    var f = P._fields || (P._fields = fieldsFor(P));
+    $("ckQ").innerHTML = record(P).html;
+    $("ckFields").innerHTML = f.map(function(x){
+      var mk = CK.marks[x.k] || "";
+      return '<div class="ckf"><label for="ck_' + x.k + '">' + x.label + '</label><div class="ckin"><input id="ck_' + x.k + '" data-k="' + x.k
+        + '" type="text" autocomplete="off" spellcheck="false" inputmode="text" value="' + esc(CK.vals[x.k] || "") + '"><span class="ckmark ' + mk + '" aria-hidden="true">'
+        + (mk === "ok" ? "✓" : mk === "part" ? "~" : mk === "bad" ? "✗" : "") + "</span></div></div>";
+    }).join("");
+    Array.prototype.forEach.call(document.querySelectorAll("#ckFields input"), function(inp){
+      inp.addEventListener("input", function(){ CK.vals[inp.getAttribute("data-k")] = inp.value; });
+      inp.addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); doCheck(); } });
+    });
+    $("ckFb").className = "ckfb" + (CK.fbCls ? " " + CK.fbCls : ""); $("ckFb").innerHTML = CK.fb;
+    $("ckHint").hidden = !CK.hint; $("ckHint").innerHTML = CK.hint;
+    $("ckMore").hidden = CK.ok || CK.revealed;
+    $("hintBtn").hidden = !!CK.hint;
+    $("ckNote").textContent = CK.revealed ? "" : "The work and the answer stay hidden until you check.";
+  }
+  function report(verdict){
+    if (!CUR) return;
+    var d = { page:PAGE, params:paramsOf(CUR), verdict:verdict, firstTry:verdict !== "shown" && CK.graded === 0, hinted:!!CK.hinted, text:record(CUR).short };
+    if (verdict !== "shown") CK.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  function doCheck(){
+    if (!CUR) return;
+    Array.prototype.forEach.call(document.querySelectorAll("#ckFields input"), function(inp){ CK.vals[inp.getAttribute("data-k")] = inp.value; });
+    var fields = CUR._fields || (CUR._fields = fieldsFor(CUR)), res = fields.map(function(f){ return gradeField(f, CK.vals[f.k] || ""); });
+    CK.marks = {};
+    res.forEach(function(r, i){ CK.marks[fields[i].k] = r.st === "empty" ? "" : r.st; });
+    var lab = function(i){ return fields.length > 1 ? B(fields[i].label + ":") + " " : ""; };
+    var bad = [], part = [], empty = 0, notes = [];
+    res.forEach(function(r, i){ if (r.st === "bad") bad.push(i); else if (r.st === "part") part.push(i); else if (r.st === "empty") empty++; if (r.note) notes.push(r.note); });
+    var verdict = null;
+    if (empty === res.length){ CK.fb = '<span class="lead">Type your answer first' + (fields.length > 1 ? " — fill in the boxes." : ".") + "</span>"; CK.fbCls = ""; }
+    else if (bad.length){
+      verdict = "wrong"; CK.ok = false; CK.tried = true; CK.fbCls = "";
+      var why = bad.slice(0, 2).map(function(i){ return res[i].msg ? lab(i) + res[i].msg : ""; }).filter(Boolean);
+      CK.fb = '<span class="lead">Not quite — try again.</span>' + (fields.length > 1 ? '<span class="why">' + (fields.length - bad.length - empty) + " of " + fields.length + " right so far" + (empty ? ", " + empty + " still empty" : "") + ".</span>" : "")
+        + why.map(function(w){ return '<span class="why">' + w + "</span>"; }).join("");
+    }
+    else if (empty){ CK.fb = '<span class="lead">So far so good — fill in the rest.</span><span class="why">' + empty + " box" + (empty === 1 ? " is" : "es are") + " still empty.</span>"; CK.fbCls = "part"; }
+    else if (part.length){
+      verdict = "simplify"; CK.fbCls = "part";
+      CK.fb = '<span class="lead">Almost!</span><span class="why">' + lab(part[0]) + res[part[0]].msg + "</span>";
+    } else {
+      verdict = "right"; CK.ok = true; CK.revealed = true; CK.fbCls = "ok";
+      CK.fb = '<span class="lead">✓ Correct!</span>' + (notes.length ? '<span class="why">' + notes.join(" ") + "</span>" : "") + '<span class="why">Here’s the full work.</span>';
+    }
+    if (verdict) report(verdict);
+    var had = document.activeElement && document.activeElement.id;
+    render();
+    if (!CK.ok && had && /^ck_/.test(had) && $(had)) $(had).focus();
+  }
+
+  /* ===================== render ===================== */
+  var lastTotal = 0, LASTW = 0;
+  function render(){
+    var total = 0, P = null, err = null;
+    try { P = readProblem(S.mode, S.inputs[S.mode], curOpts()); }
+    catch (e){ if (e && e.user) err = e.user; else throw e; }
+    var sig = P ? paramsOf(P) : null;
+    if (sig !== CK.sig) CK = freshCK(sig);
+    CUR = P;
+    var check = S.practice === "check" && !!P;
+    $("board").hidden = check && !CK.revealed;          // before drawing, so the pictures can measure their room
+    if (P){
+      try { total = DRAW[S.mode](P); }
+      catch (e2){ if (e2 && e2.user){ CUR = null; total = fail(e2.user); } else throw e2; }
+    } else total = fail(err);
+    LASTW = plotW();
+    $("legend").innerHTML = LEGEND[S.mode];
+    lastTotal = total;
+    if (total){
+      if (S.step > total) S.step = total;
+      if (S.step < 1) S.step = 1;
+    }
+    paintPractice(total);
+    paintOpts();
+    syncURL();
+    postHeight();
+  }
+  function paintPractice(total){
+    var stepMode = S.practice === "step" && total > 0, check = S.practice === "check" && total > 0 && !!CUR, hide = check && !CK.revealed;
+    $("stepper").hidden = !stepMode;
+    if (stepMode){
+      $("stepCount").textContent = S.step + " of " + total;
+      $("prevBtn").disabled = S.step <= 1;
+      $("nextBtn").disabled = S.step >= total;
+    }
+    $("ckBox").hidden = !check;
+    if (check) buildCheck(CUR);
+    $("board").hidden = hide;
+    var bnd = document.querySelector(".answer");
+    if (bnd) bnd.hidden = hide;
+    Array.prototype.forEach.call(document.querySelectorAll("#workHost [data-step], #log [data-step]"), function(el){
+      el.classList.toggle("veil", stepMode && Number(el.getAttribute("data-step")) >= S.step);
+    });
+    if (bnd) bnd.classList.toggle("masked", stepMode && S.step < total);
+    $("closer").style.opacity = (stepMode && S.step < total) ? ".2" : "1";
+    if (total) $("statusLine").textContent = "";
+  }
+
+  /* ===================== shared shell ===================== */
+  function band(inner, facts, cls){
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = cls;
+    el.innerHTML = inner + '<div class="facts">' + facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
+    $("board").parentNode.insertBefore(el, $("board"));
+  }
+  function bandCells(cells, facts){
+    band('<div class="cells">' + cells.map(function(c){
+      return '<div class="cell"><span class="k">' + c.k + '</span><span class="v' + (c.long ? " long" : "") + '">' + c.v + "</span></div>";
+    }).join("") + "</div>", facts, "answer");
+  }
+  function writeLog(items){
+    var html = "";
+    items.forEach(function(it, i){
+      html += "<li" + ds(it.step) + '><span class="n">Step&nbsp;' + (i + 1) + "</span>";
+      it.lines.forEach(function(l){
+        html += '<div class="line"><span class="tag c-' + l[0] + '">' + l[1] + '</span><span class="txt">' + l[2] + "</span></div>";
+      });
+      if (it.aside) html += '<div class="aside">' + it.aside + "</div>";
+      html += "</li>";
+    });
+    $("log").innerHTML = html;
+  }
+  function fail(msg){
+    $("workHost").innerHTML = ""; $("log").innerHTML = "";
+    $("closer").textContent = ""; $("stepper").hidden = true;
+    var old = document.querySelector(".answer, .notice");
+    if (old) old.parentNode.removeChild(old);
+    var el = document.createElement("div");
+    el.className = "notice"; el.innerHTML = msg;
+    $("board").parentNode.insertBefore(el, $("board"));
+    $("statusLine").textContent = el.textContent;
+    return 0;
+  }
+
+  /* ===================== links ===================== */
+  var MODE_ALIAS = { center:"center", centre:"center", mean:"center", median:"center", mode:"center", average:"center", mmmr:"center", range:"center", "mean-median-mode":"center",
+    box:"box", boxplot:"box", "box-plot":"box", quartiles:"box", quartile:"box", iqr:"box", "five-number":"box", whisker:"box",
+    freq:"freq", frequency:"freq", table:"freq", tally:"freq", histogram:"freq", grouped:"freq",
+    spread:"spread", mad:"spread", deviation:"spread", sd:"spread", std:"spread", variance:"spread",
+    missing:"missing", need:"missing", unknown:"missing", "missing-value":"missing" };
+  function kindOf(low){
+    if (/\b(need|needs|needed|what score|what grade|missing|unknown)\b/.test(low) || /(?:^|[\s,;:(])\?(?=$|[\s,;.)])/.test(low)) return "missing";
+    var cm = new RegExp("\\b(?:mean|average|avg)\\s+(?:of\\s+)?(?:the\\s+)?(\\d+|" + Object.keys(NW).join("|") + ")\\s+(?:" + NOUNS + ")\\b").exec(low);
+    if (cm && !countIsList(low, cm[1])) return "missing";
+    if (new RegExp("\\b(?:\\d+|" + Object.keys(NW).join("|") + ")\\s+(?:" + NOUNS + ")\\s+(?:have|has|with)\\s+(?:an?\\s+)?(?:mean|average)").test(low)) return "missing";
+    if (/\b(?:mean|average)\s+(?:is|=|was)\s*-?\d/.test(low)) return "missing";
+    if (/\bbox|whisker|quartile|five[- ]?number|5[- ]number|\biqr\b|interquartile|outliers?\b/.test(low)) return "box";
+    if (/\bmad\b|absolute deviation|standard deviation|std\.?\s*dev|\bs\.?d\.?\b|variance|deviation|\bspread\b/.test(low)) return "spread";
+    if (/freq|tally|table|histogram|grouped/.test(low) || /\d\s*[:=→]\s*[\d|]/.test(low)) return "freq";
+    return null;
+  }
+  function countIsList(low, nTok){   // "mean of 3 tests: 80, 90, 70" lists all 3, so nothing is missing
+    var N = NW[nTok] || Number(nTok), all = (low.match(/\d*\.\d+|\d+/g) || []).length - (NW[nTok] ? 0 : 1);
+    return all === N && !/\b(?:is|was|equals)\s*-?\d|=\s*-?\d/.test(low);
+  }
+  function dropWords(s){
+    s = s.replace(/\b(?:5|five)[- ]?number(?:\s+summary)?/gi, " ").replace(/\b(?:q1|q3)\b/gi, " ");
+    var m = new RegExp("\\b(?:the\\s+)?(\\d+|" + Object.keys(NW).join("|") + ")\\s+(?:" + NOUNS + ")\\b\\s*(?:are|were)?\\s*:?", "i").exec(s);
+    if (m && countIsList(s.toLowerCase(), m[1].toLowerCase())) s = s.replace(m[0], " ");
+    return s;
+  }
+  function parseQ(q, modeParam){
+    var s = String(q).trim(), low = s.toLowerCase().replace(/[−–—]/g, "-"), kw = kindOf(low), mode = modeParam || kw || "center", out = { mode:mode, text:s };
+    if (mode === "center"){
+      var w = ["mean", "median", "mode", "range"].filter(function(x){ return new RegExp("\\b" + x + "s?\\b").test(low) || (x === "mean" && /\baverage\b/.test(low)); });
+      if (w.length === 1) out.ask = w[0]; else if (w.length > 1) out.ask = "all";
+    }
+    if (mode === "spread"){
+      if (/sample/.test(low) && /standard|\bsd\b|deviation|std/.test(low) && !/absolute/.test(low)) out.sd = "sample";
+      else if (/standard deviation|std\.?\s*dev|\bs\.?d\.?\b/.test(low)) out.sd = "pop";
+    }
+    if (mode === "center" || mode === "box" || mode === "spread"){
+      try {
+        var toks = numTokens(dropWords(s));
+        if (toks.length && toks.length <= MAXN) out.text = toks.map(function(t){ return t.s.replace(/^-/, "−"); }).join(", ");
+      } catch (e){}
+    }
+    if (mode === "freq") out.text = s.replace(/^\s*(?:frequency|freq|tally|table|histogram|grouped|data|of|from|the|a|chart)(?:\s+(?:frequency|freq|tally|table|histogram|grouped|data|of|from|the|a|chart))*\s*:?\s*/i, "");
+    return out;
+  }
+  function qString(){ return CUR ? paramsOf(CUR) : "mode=" + S.mode + "&q=" + encodeURIComponent(String(S.inputs[S.mode] || "").trim()); }
+  function syncURL(){
+    if (EMBED || !window.history || !history.replaceState) return;
+    var qs = "?" + qString() + (S.practice !== "all" ? "&practice=" + S.practice : "");
+    if (location.search === qs) return;
+    try{ history.replaceState(history.state, "", location.pathname + qs + location.hash); }catch(e){}
+  }
+  function readParams(){
+    var sp;
+    try{ sp = new URLSearchParams(location.search); }catch(e){ return; }
+    var mode = MODE_ALIAS[String(sp.get("mode") || "").toLowerCase().trim()] || null, q = sp.get("q"), pr = String(sp.get("practice") || "").toLowerCase();
+    var given = q !== null;
+    if (given){
+      var r = parseQ(q, mode);
+      S.mode = r.mode; S.inputs[r.mode] = r.text; S.step = 1;
+      if (r.mode === "center"){ S.ask = r.ask || "all"; S.outlier = false; }
+      if (r.mode === "box") S.method = "exclusive";
+      if (r.mode === "freq") S.bin = 0;
+      if (r.mode === "spread") S.sd = r.sd || "off";
+    } else if (mode) S.mode = mode;
+    var ask = String(sp.get("ask") || "").toLowerCase(); if (ask === "average") ask = "mean";
+    if (ASKS.indexOf(ask) >= 0) S.ask = ask;
+    var ol = String(sp.get("outlier") || "").toLowerCase(); if (ol) S.outlier = ol === "1" || ol === "true" || ol === "yes" || ol === "on";
+    var me = String(sp.get("method") || "").toLowerCase();
+    if (me === "inclusive" || me === "include" || me === "in") S.method = "inclusive"; else if (me === "exclusive" || me === "exclude" || me === "ex") S.method = "exclusive";
+    var bn = Number(sp.get("bin")); if (sp.get("bin") !== null) S.bin = bn > 0 ? bn : 0;
+    var sd = String(sp.get("sd") || "").toLowerCase();
+    if (sd === "pop" || sd === "population" || sd === "1" || sd === "on") S.sd = "pop"; else if (sd === "sample" || sd === "s") S.sd = "sample"; else if (sd === "off" || sd === "0") S.sd = "off";
+    if (pr === "all" || pr === "step" || pr === "check") S.practice = pr;
+    if (EMBED){
+      var th = String(sp.get("theme") || "").toLowerCase();
+      if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th);
+    }
+  }
+
+  /* ===================== making problems (pure: nothing on the page changes) ===================== */
+  function rint(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pickOf(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+  function shuffle(a){ for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function sizeN(size){ return size === "large" ? rint(13, 20) : size === "medium" ? rint(9, 12) : rint(6, 8); }   // = W.sizeV
+  function tenths(x, dec){ return dec ? (x % 10 === 0 ? String(x / 10) : (x / 10).toFixed(1)) : String(x); }
+  function genList(G, kind){
+    var max = [10, 20, 50, 100].indexOf(Number(G.max)) >= 0 ? Number(G.max) : 20, dec = !!G.dec, sc = dec ? 10 : 1;
+    var lo = max <= 20 ? 1 : Math.round(max / 10), a = lo * sc, b = max * sc;
+    for (var t = 0; t < 200; t++){
+      var n = sizeN(G.size, kind), out = [], i;
+      var c = rint(a, b), spr = Math.max(2 * sc, Math.round((b - a) * (0.25 + Math.random() * 0.35)));
+      for (i = 0; i < n; i++) out.push(Math.max(a, Math.min(b, c + rint(-spr, spr))));
+      if (Math.random() < .6 && n > 3) out[rint(1, n - 1)] = out[0];
+      if (G.nice){
+        var s = out.reduce(function(x, y){ return x + y; }, 0), m = s % n, done = m === 0;
+        for (i = 0; i < n && !done; i++){
+          var j = (i + rint(0, n - 1)) % n;
+          if (out[j] - m >= a){ out[j] -= m; done = true; } else if (out[j] + (n - m) <= b){ out[j] += n - m; done = true; }
+        }
+        if (!done) continue;
+      }
+      if (Math.max.apply(null, out) === Math.min.apply(null, out)) continue;
+      return shuffle(out).map(function(x){ return tenths(x, dec); }).join(", ");
+    }
+    return "4, 8, 6, 5, 7";
+  }
+  function genBox(G){
+    var max = [10, 20, 50, 100].indexOf(Number(G.max)) >= 0 ? Number(G.max) : 50;
+    for (var t = 0; t < 200; t++){
+      var n = sizeN(G.size, "box"), out = [], i, lo = Math.max(1, Math.round(max / 10)), hiV = max;
+      if (G.out) hiV = Math.round(max * 0.75);
+      for (i = 0; i < n; i++) out.push(rint(lo, hiV));
+      var st = solveBox(out.map(function(x){ return R(x); }), G.method === "inclusive" ? "inclusive" : "exclusive");
+      if (st.iqr.n === 0n || st.outs.length) continue;
+      if (G.out && Math.random() < .55){
+        var uf = Math.ceil(toF(st.uf)), x = uf + rint(1, Math.max(2, Math.round(toF(st.iqr) / 2)));
+        if (x > max * 1.6) continue;
+        out.push(x);
+      }
+      return shuffle(out).join(", ");
+    }
+    return "3, 7, 8, 5, 12, 14, 21, 13, 18";
+  }
+  function genFreq(G){
+    var max = [10, 20, 50, 100].indexOf(Number(G.max)) >= 0 ? Number(G.max) : 10, i;
+    for (var t = 0; t < 200; t++){
+      var rows = [], k = rint(4, 6);
+      if (G.grouped){
+        var w = max <= 10 ? 2 : max <= 20 ? 5 : 10, start = max <= 20 ? 0 : w * rint(0, 2);
+        k = Math.min(k, Math.max(3, Math.floor((max * (max <= 20 ? 2 : 1)) / w)));
+        for (i = 0; i < k; i++) rows.push((start + i * w) + "-" + (start + (i + 1) * w - 1) + ": " + rint(1, 12));
+      } else {
+        var step = max <= 20 ? 1 : max <= 50 ? 5 : 10, v0 = max <= 10 ? rint(0, 1) : max <= 20 ? rint(5, 12) : step * rint(1, 3), cs = [];
+        for (i = 0; i < k; i++) cs.push(rint(0, 8));
+        var tot = cs.reduce(function(x, y){ return x + y; }, 0), nz = cs.filter(function(c){ return c > 0; }).length;
+        if (tot < 6 || nz < 3) continue;
+        for (i = 0; i < k; i++) rows.push((v0 + i * step) + ": " + cs[i]);
+      }
+      return rows.join(", ");
+    }
+    return "1: 3, 2: 5, 3: 2";
+  }
+  function genMissing(G){
+    var max = [10, 20, 50, 100].indexOf(Number(G.max)) >= 0 ? Number(G.max) : 20, kind = G.kind === "meanof" || G.kind === "need" ? G.kind : (Math.random() < .5 ? "meanof" : "need"), i;
+    for (var t = 0; t < 300; t++){
+      if (kind === "meanof"){
+        var N = rint(4, 7), M = rint(Math.max(3, Math.round(max / 4)), max), kn = [];
+        for (i = 0; i < N - 1; i++) kn.push(Math.max(0, M + rint(-Math.ceil(M / 2), Math.ceil(M / 2))));
+        var x = N * M - kn.reduce(function(a, b){ return a + b; }, 0);
+        if (x < 0 || x > Math.round(max * 1.5)) continue;
+        return "mean of " + N + " numbers is " + M + ": " + kn.join(", ");
+      }
+      var k = rint(2, 5), T = rint(70, 95), sc = [];
+      for (i = 0; i < k; i++) sc.push(rint(60, 100));
+      var r = Math.random() < .25 ? 2 : 1, need = T * (k + r) - sc.reduce(function(a, b){ return a + b; }, 0);
+      if (need < 50 || need > 100 * r || need % r) continue;
+      return "need average " + T + " scores " + sc.join(", ") + (r > 1 ? " over " + (k + r) + " tests" : "");
+    }
+    return "mean of 5 numbers is 8: 6, 9, 7, 10";
+  }
+  function genText(mode, G){
+    if (mode === "box") return genBox(G);
+    if (mode === "freq") return genFreq(G);
+    if (mode === "missing") return genMissing(G);
+    return genList(G, mode);
+  }
+  function makeOne(mode, G, o, avoid){
+    for (var t = 0; t < 60; t++){
+      var text = genText(mode, G), P;
+      try { P = readProblem(mode, text, o); } catch (e){ continue; }
+      if (avoid && avoid[paramsOf(P)] && t < 50) continue;
+      return { P:P, text:text };
+    }
+    return null;
+  }
+
+  /* ===================== the maker's controls ===================== */
+  /* plain words for the maker (and the same words in the worksheet API's labels) */
+  var W = {
+    size:"How many numbers", max:"Biggest number", also:"Also include", kind:"Kind of problem",
+    sizeV:{ small:"6 to 8 numbers", medium:"9 to 12 numbers", large:"13 to 20 numbers" },
+    maxV:function(v){ return "up to " + v; },
+    nice:"The average (mean) comes out exact — no rounding", dec:"Decimals (like 2.5)",
+    out:"Sometimes one number far from the rest (an outlier)", grouped:"Numbers in groups (like 10–19)",
+    kindV:{ either:"Either one", meanof:"Find the missing number (like: 5 numbers average 8)", need:"What score do I need? (like: for an average of 85)" }
+  };
+  var SIZES = ["small", "medium", "large"], MAXES = [10, 20, 50, 100];
+  function sizeSec(){ return { lbl:W.size, seg:"size", vals:SIZES, fmt:function(v){ return W.sizeV[v]; } }; }
+  function maxSec(){ return { lbl:W.max, seg:"max", vals:MAXES, fmt:W.maxV }; }
+  var MAKER = {
+    center:[sizeSec(), maxSec(), { lbl:W.also, togs:[["nice", "=", W.nice], ["dec", ".5", W.dec]] }],
+    box:[sizeSec(), maxSec(), { lbl:W.also, togs:[["out", "•", W.out]] }],
+    freq:[maxSec(), { lbl:W.also, togs:[["grouped", "▥", W.grouped]] }],
+    spread:[sizeSec(), maxSec(), { lbl:W.also, togs:[["nice", "=", W.nice], ["dec", ".5", W.dec]] }],
+    missing:[{ lbl:W.kind, seg:"kind", vals:["either", "meanof", "need"], fmt:function(v){ return W.kindV[v]; } }, maxSec()]
+  };
+  function makerG(){
+    var G2 = {}; Object.keys(S.gen[S.mode]).forEach(function(k){ G2[k] = S.gen[S.mode][k]; });
+    if (S.mode === "box") G2.method = S.method;
+    return G2;
+  }
+  // "Makes problems like: …" — a sample from the same pure generator, so the choices are easy to picture
+  function paintSample(){
+    var el = $("makerSample"), m = null;
+    if (!el) return;
+    try { m = makeOne(S.mode, makerG(), curOpts(), null); } catch (e){ m = null; }
+    el.innerHTML = m ? "Makes problems like: <b>" + esc(record(m.P).text) + "</b>" : "Those choices don’t make a problem — try different ones.";
+  }
+  function buildMaker(){
+    var host = $("makerBody"), G = S.gen[S.mode];
+    host.innerHTML = "";
+    MAKER[S.mode].forEach(function(sec){
+      var lbl = document.createElement("span");
+      lbl.className = "lbl"; lbl.textContent = sec.lbl; host.appendChild(lbl);
+      var box = document.createElement("div");
+      if (sec.seg){
+        box.className = "modes small"; box.setAttribute("role", "group"); box.setAttribute("aria-label", sec.lbl);
+        sec.vals.forEach(function(v){
+          var b = document.createElement("button");
+          b.type = "button"; b.textContent = sec.fmt(v);
+          b.setAttribute("aria-pressed", String(G[sec.seg] === v));
+          b.addEventListener("click", function(){ G[sec.seg] = v; buildMaker(); save(); });
+          box.appendChild(b);
+        });
+      } else {
+        box.className = "toggles";
+        sec.togs.forEach(function(t){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "tog"; b.innerHTML = "<b>" + esc(t[1]) + "</b> " + esc(t[2]);
+          b.setAttribute("aria-pressed", String(!!G[t[0]]));
+          b.addEventListener("click", function(){ G[t[0]] = !G[t[0]]; buildMaker(); save(); });
+          box.appendChild(b);
+        });
+      }
+      host.appendChild(box);
+    });
+    var smp = document.createElement("p");
+    smp.className = "sample"; smp.id = "makerSample";
+    host.appendChild(smp);
+    var go = document.createElement("div");
+    go.className = "maker-go";
+    go.innerHTML = '<button type="button" class="go" id="genBtn">New problem</button><span class="msg" id="genMsg"></span>';
+    host.appendChild(go);
+    paintSample();
+    $("genBtn").addEventListener("click", function(){
+      var avoid = {}; if (CUR) avoid[paramsOf(CUR)] = true;
+      var m = makeOne(S.mode, makerG(), curOpts(), avoid);
+      if (!m){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+      $("genMsg").textContent = "";
+      setProblem(m.text);
+    });
+  }
+
+  /* ===================== the options row (per tab) ===================== */
+  function seg(label, aria, vals, cur, fmt, on){
+    var h = '<div class="methodrow"><span class="lbl2">' + label + '</span><div class="modes small" role="group" aria-label="' + esc(aria) + '">';
+    vals.forEach(function(v){ h += '<button type="button" data-v="' + esc(String(v)) + '" aria-pressed="' + String(String(v) === String(cur)) + '">' + fmt(v) + "</button>"; });
+    return h + "</div>" + (on || "") + "</div>";
+  }
+  var ASKL = { mean:"The average (mean)", median:"The middle (median)", mode:"The most common (mode)", range:"How spread out (range)" };
+  var QL = { label:"How to find the quartiles", exclusive:"Leave the middle number out of each half", inclusive:"Put the middle number in both halves" };
+  var SDL = { label:"Also the standard deviation (for older students)", off:"No", pop:"Whole group (population: divide by n)", sample:"A sample (divide by n − 1)" };
+  var OPTKEY = "";
+  function paintOpts(){
+    var host = $("optRow"), m = S.mode, h = "", key;
+    var choices = m === "freq" && CUR && !CUR.grouped ? binChoices(CUR) : [];
+    key = m + "|" + S.ask + "|" + S.outlier + "|" + S.method + "|" + S.bin + "|" + S.sd + "|" + choices.join(",") + "|" + (CUR && CUR.mode === "freq" ? CUR.grouped : "");
+    if (key === OPTKEY) return;
+    OPTKEY = key;
+    if (m === "center"){
+      h += seg("Check my answer asks for", "What to find", ASKS, S.ask, function(v){ return v === "all" ? "All four" : ASKL[v]; },
+        ' <button type="button" class="tog" id="outTog" aria-pressed="' + S.outlier + '"><b>⇢</b> What if I add a number far from the rest (an outlier)?</button>');
+    } else if (m === "box"){
+      h += seg(QL.label, QL.label, ["exclusive", "inclusive"], S.method, function(v){ return QL[v]; });
+    } else if (m === "freq"){
+      if (choices.length) h += seg("Group into a bar chart (histogram)", "Group into a histogram", [0].concat(choices), choices.indexOf(S.bin) >= 0 ? S.bin : 0, function(v){ return v ? "groups " + v + " wide" : "Off"; });
+    } else if (m === "spread"){
+      h += seg(SDL.label, SDL.label, ["off", "pop", "sample"], S.sd, function(v){ return SDL[v]; });
+    }
+    host.innerHTML = h;
+    host.hidden = !h;
+    Array.prototype.forEach.call(host.querySelectorAll(".methodrow button[data-v]"), function(b){
+      b.addEventListener("click", function(){
+        var v = b.getAttribute("data-v");
+        if (m === "center") S.ask = v;
+        else if (m === "box") S.method = v;
+        else if (m === "freq") S.bin = Number(v) || 0;
+        else if (m === "spread") S.sd = v;
+        S.step = 1; render(); save(); paintSample();
+      });
+    });
+    if ($("outTog")) $("outTog").addEventListener("click", function(){ S.outlier = !S.outlier; S.step = 1; render(); save(); });
+  }
+
+  /* ===================== worksheet API ===================== */
+  function tog(v, d){
+    if (v === undefined || v === null || v === "") return d;
+    if (typeof v === "boolean") return v;
+    v = String(v).toLowerCase();
+    return v === "true" || v === "1" || v === "yes" || v === "on";
+  }
+  function schema(){
+    var onOff = [{ v:false, label:"Off" }, { v:true, label:"On" }];
+    return [
+      { key:"mode", label:W.kind, type:"choice", default:"center", values:[
+        { v:"center", label:"Average, middle, most common and how spread out (mean, median, mode, range)" }, { v:"box", label:"Box plot (split into quarters)" },
+        { v:"freq", label:"Frequency tables (how many of each)" }, { v:"spread", label:"How spread out (mean absolute deviation)" },
+        { v:"missing", label:"Missing number (work back from the average)" }] },
+      { key:"ask", label:"What to find", type:"choice", default:"all", modes:["center"], values:[{ v:"all", label:"All four" }, { v:"mean", label:ASKL.mean },
+        { v:"median", label:ASKL.median }, { v:"mode", label:ASKL.mode }, { v:"range", label:ASKL.range }] },
+      { key:"size", label:W.size, type:"choice", default:"small", modes:["center", "box", "spread"], values:SIZES.map(function(v){ return { v:v, label:W.sizeV[v] }; }) },
+      { key:"max", label:W.max, type:"choice", default:"20", modes:["center", "box", "freq", "spread", "missing"], values:MAXES.map(function(v){ return { v:String(v), label:W.maxV(v) }; }) },
+      { key:"decimals", label:W.dec, type:"toggle", default:false, values:onOff, modes:["center", "spread"] },
+      { key:"nice", label:W.nice, type:"toggle", default:true, values:onOff, modes:["center", "spread"] },
+      { key:"outliers", label:W.out, type:"toggle", default:true, values:onOff, modes:["box"] },
+      { key:"method", label:QL.label, type:"choice", default:"exclusive", modes:["box"], values:[{ v:"exclusive", label:QL.exclusive }, { v:"inclusive", label:QL.inclusive }] },
+      { key:"grouped", label:W.grouped, type:"toggle", default:false, values:onOff, modes:["freq"] },
+      { key:"sd", label:SDL.label, type:"choice", default:"off", modes:["spread"], values:[{ v:"off", label:SDL.off }, { v:"pop", label:SDL.pop }, { v:"sample", label:SDL.sample }] },
+      { key:"kind", label:"Kind of missing-number problem", type:"choice", default:"either", modes:["missing"], values:[{ v:"either", label:W.kindV.either }, { v:"meanof", label:W.kindV.meanof }, { v:"need", label:W.kindV.need }] }
+    ];
+  }
+  function optsToGen(o){
+    o = o && typeof o === "object" ? o : {};
+    var mode = MODE_ALIAS[String(o.mode || "").toLowerCase()] || "center";
+    var max = parseInt(o.max, 10); if ([10, 20, 50, 100].indexOf(max) < 0) max = mode === "box" ? 50 : mode === "freq" ? 10 : 20;
+    var size = ["small", "medium", "large"].indexOf(o.size) >= 0 ? o.size : (mode === "box" ? "medium" : "small");
+    var ask = ASKS.indexOf(o.ask) >= 0 ? o.ask : "all", method = o.method === "inclusive" ? "inclusive" : "exclusive";
+    var sd = o.sd === "pop" || o.sd === "sample" ? o.sd : "off", kind = ["either", "meanof", "need"].indexOf(o.kind) >= 0 ? o.kind : "either";
+    return { mode:mode, G:{ size:size, max:max, dec:tog(o.decimals, false), nice:tog(o.nice, true), out:tog(o.outliers, true), grouped:tog(o.grouped, false), kind:kind, method:method },
+             o:{ ask:ask, method:method, sd:sd, bin:0, outlier:false } };
+  }
+  function makeSet(count, opts){
+    var M = optsToGen(opts), seen = {}, out = [];
+    count = Math.max(1, Math.min(100, Math.floor(Number(count)) || 10));
+    for (var guard = 0; out.length < count && guard < count * 40; guard++){
+      var m = makeOne(M.mode, M.G, M.o, guard < count * 30 ? seen : null);
+      if (!m) break;
+      var key = paramsOf(m.P);
+      if (seen[key] && guard < count * 30) continue;
+      seen[key] = true;
+      var r = record(m.P);
+      out.push({ text:r.text, html:r.html, params:r.params, answer:r.answer, answerHtml:r.answerHtml });
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data, msg = null;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    try{
+      if (d.type === "helper:options")
+        msg = { type:"helper:optionsSchema", id:d.id, page:PAGE, title:TITLE, options:schema() };
+      else if (d.type === "helper:make")
+        msg = { type:"helper:made", id:d.id, page:PAGE, problems:makeSet(d.count, d.options) };
+    }catch(e){
+      msg = { type: d.type === "helper:make" ? "helper:made" : "helper:optionsSchema", id:d.id, page:PAGE,
+              error:String(e && e.message || e), problems:[], options:[] };
+    }
+    if (!msg) return;
+    try{ (ev.source || window.parent).postMessage(msg, "*"); }catch(e){}
+  });
+
+  /* ===================== wiring ===================== */
+  var inp = $("numIn");
+  var HINTS = {
+    center:"2 to 60 numbers, split by commas or spaces: <code>4, 8, 6, 5, 7</code>. Decimals and negatives are fine: <code>2.5, −1, 4</code>.",
+    box:"At least 4 numbers, in any order: <code>3, 7, 8, 5, 12, 14, 21, 13, 18</code>.",
+    freq:"Each value with its count: <code>1: 3, 2: 5, 3: 2</code> — tally marks work too: <code>5: ||||</code>. Classes make it grouped: <code>10-19: 4, 20-29: 7</code>. A plain list gets counted up for you.",
+    spread:"2 to 60 numbers: <code>2, 4, 6, 8, 10</code>.",
+    missing:"<code>mean of 5 numbers is 8: 6, 9, 7, 10</code>, or <code>need average 85 scores 78, 92, 81</code> (add <code>over 5 tests</code> when more than one is left). A <code>?</code> marks the missing one: <code>mean 7: 4, 9, ?, 6</code>."
+  };
+  var LABELS = { center:"Your numbers", box:"Your numbers", freq:"Your table", spread:"Your numbers", missing:"Your problem" };
+  var EX = {
+    center:["4, 8, 6, 5, 7", "3, 9, 4, 7", "2, 5, 5, 8, 10, 5, 3", "12, 15, 11, 15, 19, 11", "7, 3, 9, 1", "1.5, 2.25, 3, 2.25", "−3, 4, −1, 0, 5", "88, 92, 75, 92, 100, 81"],
+    box:["3, 7, 8, 5, 12, 14, 21, 13, 18", "2, 4, 4, 5, 6, 7, 8, 9", "10, 12, 13, 15, 15, 16, 18, 40", "45, 52, 38, 61, 49, 55, 47, 50, 58, 44"],
+    freq:["1: 3, 2: 5, 3: 2", "0: 4, 1: 7, 2: 5, 3: 3, 4: 1", "5: ||||, 6: |||| ||, 7: |||", "10-19: 4, 20-29: 7, 30-39: 5, 40-49: 2", "3, 4, 4, 5, 5, 5, 6"],
+    spread:["2, 4, 6, 8", "2, 4, 6, 8, 10", "3, 5, 6, 9, 12", "10, 10, 10, 10", "1, 3, 7, 9, 15", "68, 75, 80, 82, 95"],
+    missing:["mean of 5 numbers is 8: 6, 9, 7, 10", "mean of 4 numbers is 15: 12, 20, 9", "need average 85 scores 78, 92, 81", "need average 90 scores 88, 85 over 4 tests", "mean 7: 4, 9, ?, 6"]
+  };
+  function buildChips(){
+    var host = $("chips");
+    host.innerHTML = "";
+    EX[S.mode].forEach(function(ex){
+      var btn = document.createElement("button");
+      btn.className = "chip"; btn.type = "button"; btn.textContent = ex;
+      btn.addEventListener("click", function(){ setProblem(ex); });
+      host.appendChild(btn);
+    });
+  }
+  function setProblem(text){ S.inputs[S.mode] = text; inp.value = text; S.step = 1; render(); save(); }
+  function paintMode(){
+    Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-mode") === S.mode));
+    });
+    $("numLab").textContent = LABELS[S.mode];
+    $("hint").innerHTML = HINTS[S.mode];
+    buildChips(); buildMaker();
+    inp.value = S.inputs[S.mode];
+  }
+  function setMode(m){ S.mode = m; S.step = 1; paintMode(); render(); save(); }
+  Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){
+    b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); });
+  });
+  inp.addEventListener("input", function(){ S.inputs[S.mode] = inp.value; S.step = 1; render(); save(); });
+
+  function setPractice(p){
+    S.practice = p; S.step = 1;
+    $("allBtn").setAttribute("aria-pressed", String(p === "all"));
+    $("stepBtn").setAttribute("aria-pressed", String(p === "step"));
+    $("checkBtn").setAttribute("aria-pressed", String(p === "check"));
+    render(); save();
+  }
+  $("allBtn").addEventListener("click", function(){ setPractice("all"); });
+  $("stepBtn").addEventListener("click", function(){ setPractice("step"); });
+  $("checkBtn").addEventListener("click", function(){ setPractice("check"); });
+  $("ckGo").addEventListener("click", doCheck);
+  $("hintBtn").addEventListener("click", function(){ if (!CUR) return; CK.hinted = true; CK.hint = hintFor(CUR); render(); });
+  $("showBtn").addEventListener("click", function(){ if (!CUR) return; report("shown"); CK.revealed = true; render(); });
+  $("prevBtn").addEventListener("click", function(){ S.step--; render(); });
+  $("nextBtn").addEventListener("click", function(){ S.step++; render(); });
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+  $("copyBtn").addEventListener("click", function(){
+    var btn = $("copyBtn"), url, settled = false;
+    syncURL(); url = location.href;
+    function done(){ if (settled) return; settled = true; btn.textContent = "Link copied ✓"; clearTimeout(btn._t); btn._t = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000); }
+    function fallback(){
+      if (settled) return;
+      var ta = document.createElement("textarea");
+      ta.value = url; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.left = "-9999px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); }catch(e){}
+      document.body.removeChild(ta); done();
+    }
+    try{
+      if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(done, fallback); setTimeout(fallback, 900); }
+      else fallback();
+    }catch(e){ fallback(); }
+  });
+  document.addEventListener("keydown", function(e){
+    if (S.practice !== "step" || (document.activeElement && document.activeElement.tagName === "INPUT")) return;
+    if (e.key === "ArrowRight" && !$("nextBtn").disabled){ S.step++; render(); }
+    if (e.key === "ArrowLeft" && !$("prevBtn").disabled){ S.step--; render(); }
+  });
+  var rzT = null;
+  window.addEventListener("resize", function(){
+    clearTimeout(rzT);
+    rzT = setTimeout(function(){ if (Math.abs(plotW() - LASTW) > 16) render(); else postHeight(); }, 150);
+  });
+
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    paint(); save();
+  });
+  $("maker").addEventListener("toggle", save);
+
+  function save(){
+    if (EMBED) return;
+    try{ localStorage.setItem(STORE, JSON.stringify({
+      mode:S.mode, inputs:S.inputs, practice:S.practice, ask:S.ask, outlier:S.outlier, method:S.method, bin:S.bin, sd:S.sd, gen:S.gen, maker:$("maker").open,
+      theme:document.documentElement.getAttribute("data-theme") || "" })); }catch(e){}
+  }
+  function load(){
+    try{
+      var v = JSON.parse(localStorage.getItem(STORE) || "null");
+      if (!v) return;
+      if (v.theme === "light" || v.theme === "dark") document.documentElement.setAttribute("data-theme", v.theme);
+      if (MODES.indexOf(v.mode) >= 0) S.mode = v.mode;
+      if (v.inputs) MODES.forEach(function(m){ if (typeof v.inputs[m] === "string") S.inputs[m] = v.inputs[m]; });
+      if (v.practice === "all" || v.practice === "step" || v.practice === "check") S.practice = v.practice;
+      if (ASKS.indexOf(v.ask) >= 0) S.ask = v.ask;
+      if (typeof v.outlier === "boolean") S.outlier = v.outlier;
+      if (v.method === "inclusive" || v.method === "exclusive") S.method = v.method;
+      if (typeof v.bin === "number" && v.bin >= 0) S.bin = v.bin;
+      if (v.sd === "off" || v.sd === "pop" || v.sd === "sample") S.sd = v.sd;
+      if (v.gen) MODES.forEach(function(m){
+        var g = v.gen[m], G = S.gen[m]; if (!g) return;
+        Object.keys(G).forEach(function(k){
+          if (typeof G[k] === "boolean" && typeof g[k] === "boolean") G[k] = g[k];
+          else {
+            var sec = MAKER[m].filter(function(s){ return s.seg === k; })[0];
+            if (sec && sec.vals.indexOf(g[k]) >= 0) G[k] = g[k];
+          }
+        });
+      });
+      if (v.maker) $("maker").open = true;
+    }catch(e){}
+  }
+
+  /* embedded in a practice set: the height goes to the parent */
+  var lastH = 0;
+  function postHeight(){
+    if (!EMBED || window.parent === window) return;
+    var h = document.documentElement.scrollHeight;
+    if (h === lastH) return;
+    lastH = h;
+    try{ window.parent.postMessage({ type:"helper:height", h:h }, "*"); }catch(e){}
+  }
+
+  if (!EMBED) load();
+  readParams();
+  if (EMBED){
+    document.documentElement.classList.add("embed");
+    S.practice = "check";
+    inp.readOnly = true;
+    if (window.ResizeObserver) try{ new ResizeObserver(function(){ lastH = 0; postHeight(); }).observe(document.body); }catch(e){}
+    window.addEventListener("load", function(){ lastH = 0; postHeight(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ lastH = 0; postHeight(); });
+  }
+  $("allBtn").setAttribute("aria-pressed", String(S.practice === "all"));
+  $("stepBtn").setAttribute("aria-pressed", String(S.practice === "step"));
+  $("checkBtn").setAttribute("aria-pressed", String(S.practice === "check"));
+  paint(); paintMode(); render();
+})();
+</script>

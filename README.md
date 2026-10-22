@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><img src="icons/icon-192.png" width="96" height="96" alt="Arithmetic Helpers icon: the four operation signs on coloured tiles"></a>
+  <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><img src="assets/icons/icon-192.png" width="96" height="96" alt="Arithmetic Helpers icon: the four operation signs on coloured tiles"></a>
 </p>
 
 <h1 align="center">Arithmetic Helpers</h1>
@@ -21,7 +21,7 @@
   <a href="#how-its-built"><img src="https://img.shields.io/badge/build%20step-none-brightgreen" alt="No build step"></a>
   <a href="#install-it-as-an-app"><img src="https://img.shields.io/badge/works%20offline-installable-5a4fcf" alt="Works offline and installs as an app"></a>
   <a href="#how-its-built"><img src="https://img.shields.io/badge/vanilla%20JS-ES5-f0db4f" alt="Vanilla JavaScript (ES5)"></a>
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/tests.html"><img src="https://img.shields.io/badge/self--test-10%2C700%2B%20checks-success" alt="Self-test: more than 10,700 checks"></a>
+  <a href="https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test"><img src="https://img.shields.io/badge/self--test-12%2C200%2B%20checks-success" alt="Self-test: more than 12,200 checks"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/commits/main"><img src="https://img.shields.io/github/last-commit/chrisdfennell/arithmetic-helpers" alt="Last commit"></a>
 </p>
 
@@ -48,7 +48,14 @@
 
 ## What it is and who it's for
 
-Arithmetic Helpers is a free website for middle-school math. **Eighteen helper pages**, from carrying in addition to graphing functions, work through a problem step by step the way it's done on paper; **the Scratch Paper** lets students do the written methods by hand; and there are tools for practice and for the classroom. Each step comes with a plain-English reason, including why it comes next, and a picture of the problem.
+Arithmetic Helpers is a free website for math from the early grades through first-year college. **Twenty helper pages**, from carrying in addition to derivatives, work through a problem step by step the way it's done on paper; **the Scratch Paper** lets students do the working by hand, line by line or on squared paper; and there are tools for practice and for the classroom. Each step comes with a plain-English reason, including why it comes next, and a picture of the problem.
+
+| Level | What's here |
+| --- | --- |
+| **Early grades (K–5)** | Addition and subtraction facts, carrying and borrowing, times tables to 20 × 20, long division, place value, hundred charts, flash cards |
+| **Middle school (6–8)** | Fractions, decimals and percents, ratios and rates, negative numbers, order of operations, exponents, equations, geometry, statistics, probability, story problems |
+| **High school (9–12)** | Algebra and systems, lines, graphing functions, transformations, inequalities, trigonometry (the unit circle, the laws of sines and cosines, sine and cosine graphs) |
+| **First-year college** | Calculus basics: limits, derivatives with every rule named, tangent lines, maximum and minimum, integrals and the area under a curve |
 
 - **Students** type in a problem and see how it's done, step through it one move at a time, or check their own answer and get told what probably went wrong.
 - **Teachers** make worksheets with answer keys, share practice sets as one link or QR code, read the class's results, print reference sheets and graph paper, and put any problem on the projector.
@@ -65,25 +72,27 @@ Each helper is one page. Type a problem (or pick one, or have the page make one)
 
 | Page | What it does |
 | --- | --- |
-| [The Carry Column](https://chrisdfennell.github.io/arithmetic-helpers/addition.html) | Addition of whole numbers, decimals (2–4 numbers) and fractions, with every carry shown |
-| [The Borrow Bank](https://chrisdfennell.github.io/arithmetic-helpers/subtraction.html) | Subtraction with every borrow crossed out and written above |
-| [The Product Ladder](https://chrisdfennell.github.io/arithmetic-helpers/multiplication.html) | Multiplication with partial products, then placing the decimal point |
-| [The Division House](https://chrisdfennell.github.io/arithmetic-helpers/division.html) | Long division with remainders, fractions or decimals (including repeating) |
-| [The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/scratch.html) | Do it by hand: work + − × ÷ yourself on squared paper (carries, borrowing with cross-outs, partial products, long division), checked square by square with a hint for each mistake |
-| [The Fraction Bar](https://chrisdfennell.github.io/arithmetic-helpers/fractions.html) | Fractions: simplifying, converting to decimals and percents, comparing and ordering, equivalent fractions |
-| [The Hundred Grid](https://chrisdfennell.github.io/arithmetic-helpers/percents.html) | Percents: percent of a number, what percent, finding the whole, percent change, discounts, tax, tips and interest |
-| [The Factor Tree](https://chrisdfennell.github.io/arithmetic-helpers/factors.html) | Factors and primes: factor pairs, prime factorization, prime or composite, GCF and LCM, divisibility rules |
-| [The Number Line](https://chrisdfennell.github.io/arithmetic-helpers/integers.html) | Integers: adding, subtracting, multiplying and dividing negative numbers, absolute value and ordering |
-| [The Ratio Table](https://chrisdfennell.github.io/arithmetic-helpers/ratios.html) | Ratios: simplifying, unit rates and better buys, proportions, sharing in a ratio, and scale |
-| [The Power Tower](https://chrisdfennell.github.io/arithmetic-helpers/exponents.html) | Exponents: powers (zero, negative, negative bases), the exponent laws with the reason for each, scientific notation both ways, calculating and comparing with it, and square and cube roots |
-| [The Order Stack](https://chrisdfennell.github.io/arithmetic-helpers/pemdas.html) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
-| [The Balance Scale](https://chrisdfennell.github.io/arithmetic-helpers/algebra.html) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
-| [The Slope Grid](https://chrisdfennell.github.io/arithmetic-helpers/lines.html) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
-| [The Graph Paper](https://chrisdfennell.github.io/arithmetic-helpers/graphing.html) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, scatter plots with a trend line, and a Free plot sheet of graph paper to draw on; tap or hover any point to see what it is |
-| [The Shape Shop](https://chrisdfennell.github.io/arithmetic-helpers/geometry.html) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
-| [The Dot Plot](https://chrisdfennell.github.io/arithmetic-helpers/stats.html) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
-| [The Chance Spinner](https://chrisdfennell.github.io/arithmetic-helpers/probability.html) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
-| [The Story Problem](https://chrisdfennell.github.io/arithmetic-helpers/wordproblems.html) | Word problems: paste or type one and see what it tells you, what it asks, which operation the words point to, a picture of the story, the working and a check |
+| [The Carry Column](https://chrisdfennell.github.io/arithmetic-helpers/helpers/addition) | Addition of whole numbers, decimals (2–4 numbers) and fractions, with every carry shown |
+| [The Borrow Bank](https://chrisdfennell.github.io/arithmetic-helpers/helpers/subtraction) | Subtraction with every borrow crossed out and written above |
+| [The Product Ladder](https://chrisdfennell.github.io/arithmetic-helpers/helpers/multiplication) | Multiplication with partial products, then placing the decimal point |
+| [The Division House](https://chrisdfennell.github.io/arithmetic-helpers/helpers/division) | Long division with remainders, fractions or decimals (including repeating) |
+| [The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper) | Do it by hand: work + − × ÷ yourself on squared paper (carries, borrowing with cross-outs, partial products, long division), checked square by square with a hint for each mistake |
+| [The Fraction Bar](https://chrisdfennell.github.io/arithmetic-helpers/helpers/fractions) | Fractions: simplifying, converting to decimals and percents, comparing and ordering, equivalent fractions |
+| [The Hundred Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/percents) | Percents: percent of a number, what percent, finding the whole, percent change, discounts, tax, tips and interest |
+| [The Factor Tree](https://chrisdfennell.github.io/arithmetic-helpers/helpers/factors-and-primes) | Factors and primes: factor pairs, prime factorization, prime or composite, GCF and LCM, divisibility rules |
+| [The Number Line](https://chrisdfennell.github.io/arithmetic-helpers/helpers/negative-numbers) | Integers: adding, subtracting, multiplying and dividing negative numbers, absolute value and ordering |
+| [The Ratio Table](https://chrisdfennell.github.io/arithmetic-helpers/helpers/ratios) | Ratios: simplifying, unit rates and better buys, proportions, sharing in a ratio, and scale |
+| [The Power Tower](https://chrisdfennell.github.io/arithmetic-helpers/helpers/exponents) | Exponents: powers (zero, negative, negative bases), the exponent laws with the reason for each, scientific notation both ways, calculating and comparing with it, and square and cube roots |
+| [The Order Stack](https://chrisdfennell.github.io/arithmetic-helpers/helpers/order-of-operations) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
+| [The Balance Scale](https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
+| [The Slope Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/lines-and-slope) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
+| [The Graph Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, scatter plots with a trend line, and a Free plot sheet of graph paper to draw on; tap or hover any point to see what it is |
+| [The Shape Shop](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
+| [The Dot Plot](https://chrisdfennell.github.io/arithmetic-helpers/helpers/statistics) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
+| [The Chance Spinner](https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
+| [The Unit Circle](https://chrisdfennell.github.io/arithmetic-helpers/helpers/trigonometry) | Trigonometry: right triangles with SOH-CAH-TOA (and angle-of-elevation stories), exact values of the special angles, the unit circle with reference angles, quadrants and radians, the laws of sines and cosines (the ambiguous case too), reading and writing sine and cosine graphs, and the Pythagorean and sum identities |
+| [The Rate Machine](https://chrisdfennell.github.io/arithmetic-helpers/helpers/calculus) | Calculus: limits (0/0, one-sided, at infinity), derivatives with each rule named (power, product, quotient, chain, trig, eˣ and ln), tangent lines, local and absolute maximum and minimum, antiderivatives and definite integrals (u-substitution too), and average and instantaneous rates of change |
+| [The Story Problem](https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems) | Word problems: paste or type one and see what it tells you, what it asks, which operation the words point to, a picture of the story, the working and a check |
 
 The Story Problem reads a story as it's typed: it finds the numbers and the question, says what kind of story it looks like, and works it out.
 
@@ -96,52 +105,62 @@ The Story Problem reads a story as it's typed: it finds the numbers and the ques
 <table>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/pemdas.html?q=20%20%E2%88%92%2012%20%C3%B7%204%20%C3%97%202%20%2B%201"><img src="docs/screenshots/order-of-operations.png" width="100%" alt="The Order Stack: 20 − 12 ÷ 4 × 2 + 1 worked line by line to 15, each operation boxed and tagged with its PEMDAS letter, an expression tree, and the reasons in plain English"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/order-of-operations?q=20%20%E2%88%92%2012%20%C3%B7%204%20%C3%97%202%20%2B%201"><img src="docs/screenshots/order-of-operations.png" width="100%" alt="The Order Stack: 20 − 12 ÷ 4 × 2 + 1 worked line by line to 15, each operation boxed and tagged with its PEMDAS letter, an expression tree, and the reasons in plain English"></a>
       <br><b>The Order Stack</b>: one operation per line, with an expression tree
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/multiplication.html?q=47*23"><img src="docs/screenshots/multiplication.png" width="100%" alt="The Product Ladder: 47 × 23 with partial products 141 and 940 adding to 1081, a tape diagram and an area model"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/multiplication?q=47*23"><img src="docs/screenshots/multiplication.png" width="100%" alt="The Product Ladder: 47 × 23 with partial products 141 and 940 adding to 1081, a tape diagram and an area model"></a>
       <br><b>The Product Ladder</b>: partial products, a tape diagram and an area model
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/division.html?q=847%C3%B712&ans=remainder"><img src="docs/screenshots/division.png" width="100%" alt="The Division House: 847 ÷ 12 by long division, answer 70 R 7, with a tape diagram and an area model"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/division?q=847%C3%B712&ans=remainder"><img src="docs/screenshots/division.png" width="100%" alt="The Division House: 847 ÷ 12 by long division, answer 70 R 7, with a tape diagram and an area model"></a>
       <br><b>The Division House</b>: divide, multiply, subtract, bring down
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/fractions.html?q=3%2F4%2C5%2F8%2C2%2F3"><img src="docs/screenshots/fractions.png" width="100%" alt="The Fraction Bar: putting 3/4, 5/8 and 2/3 in order using a common denominator of 24, with fraction bars and a number line"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/fractions?q=3%2F4%2C5%2F8%2C2%2F3"><img src="docs/screenshots/fractions.png" width="100%" alt="The Fraction Bar: putting 3/4, 5/8 and 2/3 in order using a common denominator of 24, with fraction bars and a number line"></a>
       <br><b>The Fraction Bar</b>: comparing with a common denominator
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/percents.html?q=20%25%20off%2045"><img src="docs/screenshots/percents.png" width="100%" alt="The Hundred Grid: 20% off $45, worked two ways to $36.00, with a bar and a hundred grid"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/percents?q=20%25%20off%2045"><img src="docs/screenshots/percents.png" width="100%" alt="The Hundred Grid: 20% off $45, worked two ways to $36.00, with a bar and a hundred grid"></a>
       <br><b>The Hundred Grid</b>: a discount worked two ways
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/algebra.html?mode=solve&q=5x%20-%204%20%3D%202x%20%2B%208"><img src="docs/screenshots/algebra-solve.png" width="100%" alt="The Balance Scale: solving 5x − 4 = 2x + 8 to x = 4, doing the same thing to both sides, with balance-scale pictures and a check"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra?mode=solve&q=5x%20-%204%20%3D%202x%20%2B%208"><img src="docs/screenshots/algebra-solve.png" width="100%" alt="The Balance Scale: solving 5x − 4 = 2x + 8 to x = 4, doing the same thing to both sides, with balance-scale pictures and a check"></a>
       <br><b>The Balance Scale</b>: solving an equation, both sides at once
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/wordproblems.html?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F"><img src="docs/screenshots/story-problem.png" width="100%" alt="The Story Problem: Ana has 12 shells, that is 5 more than Ben has; the page finds what is asked, picks subtract, draws a bar model and answers Ben has 7 shells"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F"><img src="docs/screenshots/story-problem.png" width="100%" alt="The Story Problem: Ana has 12 shells, that is 5 more than Ben has; the page finds what is asked, picks subtract, draws a bar model and answers Ben has 7 shells"></a>
       <br><b>The Story Problem</b>: “more” that means subtract, with a bar model
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/probability.html?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red"><img src="docs/screenshots/probability.png" width="100%" alt="The Chance Spinner: drawing 2 marbles without replacement from 4 red and 6 blue, both red, 2/15, with marble pictures and a tree diagram"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red"><img src="docs/screenshots/probability.png" width="100%" alt="The Chance Spinner: drawing 2 marbles without replacement from 4 red and 6 blue, both red, 2/15, with marble pictures and a tree diagram"></a>
       <br><b>The Chance Spinner</b>: two picks without putting it back
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/graphing.html?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201"><img src="docs/screenshots/graphing-functions.png" width="100%" alt="The Graph Paper: y = x² − 4x + 3 and y = x − 1 on one grid, with the vertex, intercepts and crossing points labelled"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201"><img src="docs/screenshots/graphing-functions.png" width="100%" alt="The Graph Paper: y = x² − 4x + 3 and y = x − 1 on one grid, with the vertex, intercepts and crossing points labelled"></a>
       <br><b>The Graph Paper</b>: two functions with their key features
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/graphing.html?q=rotate%20triangle%20(1%2C1)%20(3%2C1)%20(1%2C4)%2090%20clockwise"><img src="docs/screenshots/graphing-transform.png" width="100%" alt="The Graph Paper: rotating triangle (1,1) (3,1) (1,4) 90° clockwise with the rule (x, y) → (y, −x), the image drawn dashed on the grid"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=rotate%20triangle%20(1%2C1)%20(3%2C1)%20(1%2C4)%2090%20clockwise"><img src="docs/screenshots/graphing-transform.png" width="100%" alt="The Graph Paper: rotating triangle (1,1) (3,1) (1,4) 90° clockwise with the rule (x, y) → (y, −x), the image drawn dashed on the grid"></a>
       <br><b>The Graph Paper</b>: a rotation and its rule
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/trigonometry?q=a%20%3D%207%2C%20b%20%3D%2010%2C%20C%20%3D%2040%C2%B0"><img src="docs/screenshots/trigonometry.png" width="100%" alt="The Unit Circle: solving a triangle with a = 7, b = 10 and C = 40° by the law of cosines, c ≈ 6.46, then the other angles, with the triangle drawn to scale"></a>
+      <br><b>The Unit Circle</b>: two sides and the angle between them, by the law of cosines
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/calculus?q=tangent%20line%20to%20x%5E3%20-%203x%20at%20x%20%3D%202"><img src="docs/screenshots/calculus.png" width="100%" alt="The Rate Machine: the tangent line to x³ − 3x at x = 2 is y = 9x − 16, found from the point (2, 2) and the slope f′(2) = 9, each derivative rule named"></a>
+      <br><b>The Rate Machine</b>: a tangent line, each rule of the derivative named
     </td>
   </tr>
 </table>
@@ -158,9 +177,9 @@ Every helper has three ways to work: **Show all work**, **One step at a time** a
 
 ### Practice sets, flash cards and the problem of the day
 
-- **[Practice sets](https://chrisdfennell.github.io/arithmetic-helpers/practice.html):** open the link (or scan the QR code) your teacher shares and work through the problems one at a time with Check my answer. At the end you get a score and a line to send back.
-- **[The Flash Cards](https://chrisdfennell.github.io/arithmetic-helpers/flashcards.html):** times tables up to 20 × 20 (any of them, mixed together), division, addition and subtraction facts, negatives, ×10/×100/×1000, doubles and halves, primes, powers, easy percents, fractions, squares, cubes, fraction–decimal–percent pairs and math words. Study, Quiz, a Speed round, and a **Learn** mode that brings back the ones you miss. A mastery chart colours each fact by how well you know it, and the cards print as cut-outs.
-- **[Problem of the Day](https://chrisdfennell.github.io/arithmetic-helpers/daily.html):** one problem a day, the same for everyone on that date (no sign-up, nothing to set up): easier on Monday, a challenge on Friday, a puzzle at the weekend, with a streak kept on the device.
+- **[Practice sets](https://chrisdfennell.github.io/arithmetic-helpers/practice/sets):** open the link (or scan the QR code) your teacher shares and work through the problems one at a time with Check my answer. At the end you get a score and a line to send back.
+- **[The Flash Cards](https://chrisdfennell.github.io/arithmetic-helpers/practice/flash-cards):** times tables up to 20 × 20 (any of them, mixed together), division, addition and subtraction facts, negatives, ×10/×100/×1000, doubles and halves, primes, powers, easy percents, fractions, squares, cubes, fraction–decimal–percent pairs and math words. Study, Quiz, a Speed round, and a **Learn** mode that brings back the ones you miss. A mastery chart colours each fact by how well you know it, and the cards print as cut-outs.
+- **[Problem of the Day](https://chrisdfennell.github.io/arithmetic-helpers/practice/problem-of-the-day):** one problem a day, the same for everyone on that date (no sign-up, nothing to set up): easier on Monday, a challenge on Friday, a puzzle at the weekend, with a streak kept on the device.
 
 <table>
   <tr>
@@ -177,7 +196,7 @@ Every helper has three ways to work: **Show all work**, **One step at a time** a
 
 ### The Scratch Paper: do it by hand
 
-On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/scratch.html)** you do the written method yourself on squared paper: tap above a digit to write the carry, tap a digit to cross it out and borrow, write each row, bring down in long division. It checks each square as you go (or at the end) with a hint when something's off, and **Show me the next step** fills in one square at a time when you're stuck. The four written-method helpers (+ − × ÷) have a **Now try it by hand** button that opens the same problem here.
+On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper)** you do the written method yourself on squared paper: tap above a digit to write the carry, tap a digit to cross it out and borrow, write each row, bring down in long division. It checks each square as you go (or at the end) with a hint when something's off, and **Show me the next step** fills in one square at a time when you're stuck. The four written-method helpers (+ − × ÷) have a **Now try it by hand** button that opens the same problem here.
 
 <p align="center">
   <img src="docs/scratch-paper-steps.gif" width="784" alt="The Scratch Paper filling in 5003 − 1278 one square at a time with Show me the next step: borrowing across the zeros (5 becomes 4, each 0 becomes 10 then 9, the 3 becomes 13), then writing 5, 2, 7 and 3 under the line, ending Solved with the answer 3,725">
@@ -191,7 +210,7 @@ On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/scra
 
 ### Your progress
 
-**[Your progress](https://chrisdfennell.github.io/arithmetic-helpers/progress.html)** is a private record, kept on the device, of what's been practised, right first time per topic, and mistakes to revisit, each with a **Try again** link. The home page shows a short "Your practice" summary too.
+**[Your progress](https://chrisdfennell.github.io/arithmetic-helpers/practice/progress)** is a private record, kept on the device, of what's been practised, right first time per topic, and mistakes to revisit, each with a **Try again** link. The home page shows a short "Your practice" summary too.
 
 <details>
 <summary>Screenshot: Your progress</summary>
@@ -201,17 +220,17 @@ On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/scra
 
 ### The Word List
 
-**[The Word List](https://chrisdfennell.github.io/arithmetic-helpers/glossary.html)** has definitions of the math words the site uses, with examples and pictures. On every page those words link to their definition, with a popup on hover, focus or tap.
+**[The Word List](https://chrisdfennell.github.io/arithmetic-helpers/reference/definitions)** has definitions of the math words the site uses, with examples and pictures. On every page those words link to their definition, with a popup on hover, focus or tap.
 
 ## For teachers
 
 | Tool | What it does |
 | --- | --- |
-| [The Worksheet Maker](https://chrisdfennell.github.io/arithmetic-helpers/worksheet.html) | Printable worksheets mixing any of the topics, with an answer key on its own page where every answer links to its worked steps (or turn the sheet into a practice link) |
-| [Practice sets](https://chrisdfennell.github.io/arithmetic-helpers/practice.html) | Build a set of problems from any helpers and share it as one link or QR code; students work through it with Check my answer and get a score to hand in |
-| [Class results](https://chrisdfennell.github.io/arithmetic-helpers/results.html) | Paste the lines students hand in after a practice set and see scores, a heat map of who got which problem, the hardest problems and who needs help, with CSV export; nothing is uploaded |
-| [Reference sheets](https://chrisdfennell.github.io/arithmetic-helpers/reference.html) | Forty one-page sheets to print, plus a graph paper maker |
-| [Problem of the Day](https://chrisdfennell.github.io/arithmetic-helpers/daily.html?view=week) | The week's problems in one list, with links and a printable answer key, so a whole class can do the same problem each day |
+| [The Worksheet Maker](https://chrisdfennell.github.io/arithmetic-helpers/practice/worksheets) | Printable worksheets mixing any of the topics, with an answer key on its own page where every answer links to its worked steps (or turn the sheet into a practice link) |
+| [Practice sets](https://chrisdfennell.github.io/arithmetic-helpers/practice/sets) | Build a set of problems from any helpers and share it as one link or QR code; students work through it with Check my answer and get a score to hand in |
+| [Class results](https://chrisdfennell.github.io/arithmetic-helpers/practice/class-results) | Paste the lines students hand in after a practice set and see scores, a heat map of who got which problem, the hardest problems and who needs help, with CSV export; nothing is uploaded |
+| [Reference sheets](https://chrisdfennell.github.io/arithmetic-helpers/reference/sheets) | Forty one-page sheets to print, plus a graph paper maker |
+| [Problem of the Day](https://chrisdfennell.github.io/arithmetic-helpers/practice/problem-of-the-day?view=week) | The week's problems in one list, with links and a printable answer key, so a whole class can do the same problem each day |
 
 ### Worksheets and practice sets
 
@@ -248,7 +267,7 @@ At the end of a practice set each student copies a short result line and sends i
 
 Forty one-page sheets to print: times tables to 12, 15 and 20 (and blank ones), table strips, addition, hundred charts, primes to 200, prime factorizations, squares, cubes and powers, fractions–decimals–percents, ratios and percents, place value, divisibility, order of operations, exponents, geometry, angles, units, algebra, graphing, integers, statistics, probability, money and time, word problems, math words and Roman numerals. Tick the ones you want and print them together, open any sheet full size, or follow its **Practise this** link to the helper.
 
-The **graph paper maker** (`reference.html#paper`) prints square grids, coordinate planes, dot paper, isometric dots and number lines, on Letter or A4, with your spacing, margins and title, as a page or a downloadable SVG.
+The **graph paper maker** (`reference/sheets#paper`) prints square grids, coordinate planes, dot paper, isometric dots and number lines, on Letter or A4, with your spacing, margins and title, as a page or a downloadable SVG.
 
 <table>
   <tr>
@@ -308,22 +327,22 @@ Every helper reads its problem from the address, so a link opens with that probl
 
 | Link | Opens |
 | --- | --- |
-| [`addition.html?q=2 3/4+1 5/6`](https://chrisdfennell.github.io/arithmetic-helpers/addition.html?q=2%203%2F4%2B1%205%2F6) | adding mixed numbers |
-| [`division.html?q=847÷12&ans=fraction`](https://chrisdfennell.github.io/arithmetic-helpers/division.html?q=847%C3%B712&ans=fraction) | long division, answer as a fraction |
-| [`algebra.html?mode=sys&q=2x+y=7;x-y=2`](https://chrisdfennell.github.io/arithmetic-helpers/algebra.html?mode=sys&q=2x%2By%3D7%3Bx-y%3D2) | a system of two equations |
-| [`percents.html?q=15% of 80`](https://chrisdfennell.github.io/arithmetic-helpers/percents.html?q=15%25%20of%2080) | percent of a number |
-| [`ratios.html?q=share 60 in 2:3`](https://chrisdfennell.github.io/arithmetic-helpers/ratios.html?q=share%2060%20in%202%3A3) | sharing in a ratio |
-| [`lines.html?q=(1,2) (5,4)`](https://chrisdfennell.github.io/arithmetic-helpers/lines.html?q=(1%2C2)%20(5%2C4)) | the slope between two points |
-| [`graphing.html?q=y = x^2 - 4x + 3; y = x - 1`](https://chrisdfennell.github.io/arithmetic-helpers/graphing.html?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201) | two functions on one grid |
-| [`stats.html?q=4, 8, 6, 5, 7`](https://chrisdfennell.github.io/arithmetic-helpers/stats.html?q=4%2C%208%2C%206%2C%205%2C%207) | mean, median, mode and range |
-| [`exponents.html?q=(2x^2)^3`](https://chrisdfennell.github.io/arithmetic-helpers/exponents.html?q=(2x%5E2)%5E3) | an exponent law |
-| [`probability.html?q=draw 2 without replacement from 4 red 6 blue, both red`](https://chrisdfennell.github.io/arithmetic-helpers/probability.html?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red) | two events without putting it back |
-| [`geometry.html?q=circle radius 5`](https://chrisdfennell.github.io/arithmetic-helpers/geometry.html?q=circle%20radius%205) | a circle with radius 5 |
-| [`wordproblems.html?q=Ana has 12 shells. …`](https://chrisdfennell.github.io/arithmetic-helpers/wordproblems.html?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F) | a story problem |
-| [`scratch.html?op=sub&q=5003-1278`](https://chrisdfennell.github.io/arithmetic-helpers/scratch.html?op=sub&q=5003-1278) | a subtraction to do by hand |
-| [`flashcards.html?deck=times&t=6,7,8&mode=quiz`](https://chrisdfennell.github.io/arithmetic-helpers/flashcards.html?deck=times&t=6,7,8&mode=quiz) | a times-table quiz |
-| [`daily.html?view=week`](https://chrisdfennell.github.io/arithmetic-helpers/daily.html?view=week) | this week's problems with an answer key |
-| [`reference.html#geometry`](https://chrisdfennell.github.io/arithmetic-helpers/reference.html#geometry) | one reference sheet (or `reference.html?print=times,geometry` to pick sheets to print) |
+| [`helpers/addition?q=2 3/4+1 5/6`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/addition?q=2%203%2F4%2B1%205%2F6) | adding mixed numbers |
+| [`helpers/division?q=847÷12&ans=fraction`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/division?q=847%C3%B712&ans=fraction) | long division, answer as a fraction |
+| [`helpers/algebra?mode=sys&q=2x+y=7;x-y=2`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra?mode=sys&q=2x%2By%3D7%3Bx-y%3D2) | a system of two equations |
+| [`helpers/percents?q=15% of 80`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/percents?q=15%25%20of%2080) | percent of a number |
+| [`helpers/ratios?q=share 60 in 2:3`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/ratios?q=share%2060%20in%202%3A3) | sharing in a ratio |
+| [`helpers/lines-and-slope?q=(1,2) (5,4)`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/lines-and-slope?q=(1%2C2)%20(5%2C4)) | the slope between two points |
+| [`helpers/graphing?q=y = x^2 - 4x + 3; y = x - 1`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201) | two functions on one grid |
+| [`helpers/statistics?q=4, 8, 6, 5, 7`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/statistics?q=4%2C%208%2C%206%2C%205%2C%207) | mean, median, mode and range |
+| [`helpers/exponents?q=(2x^2)^3`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/exponents?q=(2x%5E2)%5E3) | an exponent law |
+| [`helpers/probability?q=draw 2 without replacement from 4 red 6 blue, both red`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red) | two events without putting it back |
+| [`helpers/geometry?q=circle radius 5`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry?q=circle%20radius%205) | a circle with radius 5 |
+| [`helpers/story-problems?q=Ana has 12 shells. …`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F) | a story problem |
+| [`helpers/scratch-paper?op=sub&q=5003-1278`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper?op=sub&q=5003-1278) | a subtraction to do by hand |
+| [`practice/flash-cards?deck=times&t=6,7,8&mode=quiz`](https://chrisdfennell.github.io/arithmetic-helpers/practice/flash-cards?deck=times&t=6,7,8&mode=quiz) | a times-table quiz |
+| [`practice/problem-of-the-day?view=week`](https://chrisdfennell.github.io/arithmetic-helpers/practice/problem-of-the-day?view=week) | this week's problems with an answer key |
+| [`reference/sheets#geometry`](https://chrisdfennell.github.io/arithmetic-helpers/reference/sheets#geometry) | one reference sheet (or `reference/sheets?print=times,geometry` to pick sheets to print) |
 
 Each page lists the parameters it accepts in a `URL parameters` comment at the top of its script. `embed=1` shows just the problem and the answer box (practice sets use this).
 
@@ -331,7 +350,7 @@ Each page lists the parameters it accepts in a `URL parameters` comment at the t
 <summary>A note on <code>+</code> in links</summary>
 <br>
 
-In a web address a raw `+` can mean a space. The helpers read it as a plus sign when that's the only sensible reading, but the safe way is to send it as `%2B` (for example `addition.html?q=25.4%2B3.75`).
+In a web address a raw `+` can mean a space. The helpers read it as a plus sign when that's the only sensible reading, but the safe way is to send it as `%2B` (for example `helpers/addition?q=25.4%2B3.75`).
 </details>
 
 ## Install it as an app
@@ -345,13 +364,13 @@ It opens in its own window, works without a connection, and updates itself when 
 
 ## Testing
 
-[`tests.html`](tests.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 10,700 checks).
+[`tests/self-test.html`](tests/self-test.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 12,200 checks).
 
-Run it from the [live site](https://chrisdfennell.github.io/arithmetic-helpers/tests.html) or a local server:
+Run it from the [live site](https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test) or a local server:
 
 ```sh
 python -m http.server
-# then open http://localhost:8000/tests.html
+# then open http://localhost:8000/tests/self-test.html
 ```
 
 Opened as a plain file, the browser won't let it look inside the other pages.
@@ -366,18 +385,20 @@ Your saved settings on each page are put back afterwards.
 
 ## How it's built
 
-Each page is one self-contained HTML file in plain HTML, CSS and ES5 JavaScript, with no framework, no dependencies and no build step: open a page in a browser, or serve the folder as it is. A few shared files sit beside the pages:
+Each page is one self-contained HTML file in plain HTML, CSS and ES5 JavaScript, with no framework, no dependencies and no build step: open a page in a browser, or serve the folder as it is. Only the home page, `404.html` and the service worker sit at the top; the pages are in folders (`helpers/`, `practice/`, `reference/`, `tests/`) and the shared files in `assets/`:
 
 | File | What it does |
 | --- | --- |
-| `nav.js` | adds the bar across the top of every page, makes the site installable (`manifest.webmanifest`, `icons/`) and offline (`sw.js`), and loads the definitions popups. To add a page, add it to the list in `nav.js` and to `PAGES` in `sw.js`. |
-| `glossary.js` | holds every definition, and finds and links the math words on each page |
-| `progress.js` | records each Check my answer result in the browser and draws the "Your practice" panel |
-| `tools.js` | adds the site-wide settings, big screen, read aloud, recent problems, keyboard shortcuts, the math keys and Next problem |
-| `qr.js` | makes QR codes in the browser (no library, works offline), loaded only when one is asked for |
-| `search.js` | works out which helper a typed problem belongs to (used by the home page, the bar and `404.html`) |
-| `sw.js` | the service worker: keeps the pages for offline use |
-| `tests.html` | the self-test (see [Testing](#testing)) |
+| `assets/site.js` | where every page and file lives: the one list of pages (`PAGES`), from the short name a page is known by inside the site (`pemdas`, which practice sets, progress and saved worksheets store) to its file (`helpers/order-of-operations.html`). Each page loads it first, and every link from one page to another is made through it (`HelperSite.url("fractions", "mode=simplify&q=18%2F24")`). On the live site the links are readable, without `.html` (`helpers/order-of-operations?q=…`); opened as a file or from a local `python -m http.server`, they keep `.html`. |
+| `assets/nav.js` | adds the bar across the top of every page, makes the site installable (`assets/manifest.webmanifest`, `assets/icons/`) and offline (`sw.js`), and loads the definitions popups. To add a page, put it in its folder, add it to `PAGES` in `site.js`, to the list in `nav.js` and to `PAGES` in `sw.js`. |
+| `assets/glossary.js` | holds every definition, and finds and links the math words on each page |
+| `assets/progress.js` | records each Check my answer result in the browser and draws the "Your practice" panel |
+| `assets/tools.js` | adds the site-wide settings, big screen, read aloud, recent problems, keyboard shortcuts, the math keys and Next problem |
+| `assets/qr.js` | makes QR codes in the browser (no library, works offline), loaded only when one is asked for |
+| `assets/search.js` | works out which helper a typed problem belongs to (used by the home page, the bar and `404.html`) |
+| `sw.js` | the service worker: keeps the pages for offline use. It stays at the top, because a service worker only looks after the pages in its own folder and below. |
+| `404.html` | the page GitHub Pages shows for a missing address. It also sends every older address (`pemdas.html?q=…`, `practice.html?set=…`, `helpers/pemdas`, `icons/og.png`) on to the page's address now, with the problem kept, so old links, bookmarks and QR codes still work. |
+| `tests/self-test.html` | the self-test (see [Testing](#testing)) |
 
 Each helper reports each check with a `helper:checked` event, and answers worksheet and practice-set requests through `postMessage` (`helper:options` and `helper:make`), so every worksheet and practice answer is worked out by the same code as the helper page.
 
@@ -385,11 +406,14 @@ Each helper reports each check with a `helper:checked` event, and answers worksh
 <summary>All the files</summary>
 <br>
 
-| Kind | Files |
+| Folder | Files |
 | --- | --- |
-| Helpers | `addition.html` `subtraction.html` `multiplication.html` `division.html` `scratch.html` `fractions.html` `percents.html` `factors.html` `integers.html` `ratios.html` `exponents.html` `pemdas.html` `algebra.html` `lines.html` `graphing.html` `geometry.html` `stats.html` `probability.html` `wordproblems.html` |
-| Tools | `index.html` `practice.html` `flashcards.html` `daily.html` `worksheet.html` `progress.html` `results.html` `reference.html` `glossary.html` `404.html` `tests.html` |
-| Shared | `nav.js` `tools.js` `glossary.js` `progress.js` `qr.js` `search.js` `sw.js` `manifest.webmanifest` `icons/` |
+| (top) | `index.html` (the home page) `404.html` `sw.js` |
+| `helpers/` | `addition.html` `subtraction.html` `multiplication.html` `division.html` `scratch-paper.html` `fractions.html` `percents.html` `factors-and-primes.html` `negative-numbers.html` `ratios.html` `exponents.html` `order-of-operations.html` `algebra.html` `lines-and-slope.html` `graphing.html` `geometry.html` `statistics.html` `probability.html` `trigonometry.html` `calculus.html` `story-problems.html` |
+| `practice/` | `sets.html` `worksheets.html` `flash-cards.html` `problem-of-the-day.html` `progress.html` `class-results.html` |
+| `reference/` | `sheets.html` `definitions.html` |
+| `assets/` | `site.js` `nav.js` `tools.js` `glossary.js` `progress.js` `qr.js` `search.js` `manifest.webmanifest` `icons/` |
+| `tests/` | `self-test.html` |
 | Repository | `README.md` and `docs/` (its screenshots and demos), `LICENSE`, `.github/workflows/release.yml` |
 </details>
 

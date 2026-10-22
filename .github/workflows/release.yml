@@ -86,7 +86,7 @@ jobs:
           VERSION: ${{ needs.release.outputs.version }}
         run: |
           mkdir _site
-          rsync -a --exclude '.git' --exclude '.github' --exclude '_site' --exclude 'docs' --exclude 'README.md' ./ _site/
+          rsync -a --exclude '.git' --exclude '.git*' --exclude '.github' --exclude '.editorconfig' --exclude '_site' --exclude 'docs' --exclude '*.md' ./ _site/
           tools=$(find _site -name tools.js | head -1)
           sed -i "s/var SITE_VERSION = \"dev\";/var SITE_VERSION = \"$VERSION\";/" "$tools"
           grep -q "SITE_VERSION = \"$VERSION\"" "$tools"
