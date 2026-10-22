@@ -216,6 +216,8 @@
   .expr .op-s{padding:0 .38ch;color:var(--ink-2)}
   .expr .sg0{padding:0 .06ch 0 0}
   .expr .pg{color:var(--key);font-weight:500}
+  .expr .sx{align-self:flex-start;font-size:.62em;margin-top:-.15em;margin-left:.05ch}
+  .log .txt .sx,.log .aside .sx,.closer .sx,.ck-msg .sx,.notice .sx{display:inline;vertical-align:super;font-size:.7em}
   .vr{font-family:var(--f-var);font-style:italic;font-weight:600;font-size:1.1em;padding:0 .05em;line-height:1}
   .expr .vr{color:inherit}
   .expr .hl{background:var(--cb);color:var(--c);border-radius:7px;padding:.08em .3ch;
@@ -662,6 +664,15 @@
   function toNum(a){ return Number(a.n) / Number(a.d); }
   function tooBig(r){ return (r.n < 0n ? -r.n : r.n).toString().length > 15 || r.d.toString().length > 12; }
   function isTermD(d){ while (d % 2n === 0n) d /= 2n; while (d % 5n === 0n) d /= 5n; return d === 1n; }
+  function powR(a, b){                         // a to a whole-number power b
+    if (b.d !== 1n) throw new UserErr("Powers have to be whole numbers here — <b>" + numText(b) + "</b> isn’t one I can work by hand.");
+    var k = b.n < 0n ? -b.n : b.n;
+    if (k > 20n) throw new UserErr("A power of <b>" + numText(b) + "</b> is too big to write out. Keep powers to 20 or less.");
+    if (a.n === 0n && b.n <= 0n) throw new UserErr("<b>0</b> to the power <b>" + numText(b) + "</b> isn’t defined — try a different power.");
+    var r = b.n < 0n ? R(a.d ** k, a.n ** k) : R(a.n ** k, a.d ** k);
+    if (tooBig(r)) throw new UserErr("That power makes a number too big to work by hand. Try a smaller one.");
+    return r;
+  }
 
   /* ===================== showing numbers ===================== */
   function decStr(a, d){                       // a ≥ 0; exact if it ends, else 4 places and "…"
@@ -824,12 +835,17 @@
           : "It starts with <b>" + esc(tokText(t)) + "</b> — what comes before it?");
       }
       if (peek() && peek().k === "pow"){
-        var withVar = hasVar(node);
-        throw new UserErr(withVar
-          ? "<b>" + astH(node) + "</b> with a power isn’t linear — this page works with plain <i>x</i>, not <i>x</i>², <i>x</i>³… "
-            + "(Those make curves, not straight lines.)"
-          : "Powers aren’t part of this page — work out <b>" + astH(node) + "</b> to a power first, or try the "
-            + '<a href="pemdas.html">Order Stack</a>.');
+        if (hasVar(node)) throw new UserErr("<b>" + astH(node) + "</b> with a power isn’t linear — this page works with plain <i>x</i>, not <i>x</i>², <i>x</i>³… "
+            + "(Those make curves, not straight lines.)");
+        // a power of a plain number is fine: it gets worked out like on the Order Stack
+        var pt = tk[p++], ex;
+        if (pt.s === "²" || pt.s === "³") ex = { t:"num", v:R(pt.s === "²" ? 2 : 3), lit:true };
+        else {
+          if (!peek()) throw new UserErr("It ends with a power sign — what’s the power?");
+          ex = unary();
+        }
+        if (hasVar(ex)) throw new UserErr("A power with a letter in it isn’t linear — this page only works with letters to the first power.");
+        node = { t:"bin", op:"^", a:node, b:ex };
       }
       return node;
     }
@@ -840,8 +856,10 @@
       throw new UserErr("Two things in a row — <b>" + esc(tokText(tk[p-1])) + " " + esc(tokText(t2))
         + "</b> — with nothing between them. Is there an operation missing?");
     }
-    return root;
+    return tagIds(root);
   }
+  var NID = 0;                                 // every node of what was typed gets an id, so a step can point at it
+  function tagIds(n){ n.id = ++NID; if (n.a) tagIds(n.a); if (n.b) tagIds(n.b); return n; }
   function hasVar(n){
     if (n.t === "var") return true;
     if (n.t === "num") return false;
@@ -915,6 +933,7 @@
       case "neg": return lScale(evalLin(n.a), NEG1);
     }
     var a = evalLin(n.a), b = evalLin(n.b);
+    if (n.op === "^") return L0(powR(a.k, b.k));          // only ever plain numbers (the parser checks)
     if (n.op === "+") return lComb(a, b, 1);
     if (n.op === "−") return lComb(a, b, -1);
     if (n.op === "×"){
@@ -944,8 +963,45 @@
 
   /* ===================== drawing what was typed ===================== */
   // sub = {x:value} plugs numbers in (for the checks); tight = right next to something (3x, −x)
+  // AM = {hl:{id:true}, hlCls, fresh:{id:true}, freshCls} boxes or underlines nodes, for the rows of the work
+  var AM = null;
+  function astHM(n, am){ var keep = AM; AM = am || null; try { return astH(n); } finally { AM = keep; } }
   function astH(n, sub, first, tight){
     if (first === undefined) first = true;
+    var s = astH0(n, sub, first, tight);
+    if (AM && n.id){
+      if (AM.hl && AM.hl[n.id]) s = '<span class="hl c-' + AM.hlCls + '">' + s + "</span>";
+      if (AM.fresh && AM.fresh[n.id]) s = '<span class="fresh c-' + AM.freshCls + '">' + s + "</span>";
+    }
+    return s;
+  }
+  function baseWrap(n){                        // a power's base that needs brackets: (−3)², (1/2)²
+    return (n.t === "num" && (sgn(n.v) < 0 || n.fr || numParts(n.v).frac)) || n.t === "neg" || n.t === "bin";
+  }
+  // how the written form of n starts ("L") or ends ("R"): a digit "num", a letter "var", a bracket "par", or a "sign"
+  function edgeK(n, side, sub, first, tight){
+    switch (n.t){
+      case "num": return sgn(n.v) < 0 && !first ? "par" : side === "L" && sgn(n.v) < 0 ? "sign" : "num";
+      case "var":
+        if (!sub || sub[n.name] === undefined) return "var";
+        var p = numParts(sub[n.name]);
+        return (tight || p.neg || p.frac) ? "par" : "num";
+      case "par": return "par";
+      case "neg": return !first ? "par" : side === "L" ? "sign" : edgeK(n.a, "R", sub, false, true);
+    }
+    if (n.op === "÷" && n.slash) return "num";
+    if (n.op === "^") return side === "R" ? "num" : baseWrap(n.a) ? "par" : edgeK(n.a, "L", sub, true);
+    if (n.op === "×" && n.imp){
+      var t = !useDot(n, sub, first);
+      return side === "L" ? edgeK(n.a, "L", sub, first, t) : edgeK(n.b, "R", sub, false, t);
+    }
+    return side === "L" ? edgeK(n.a, "L", sub, first) : edgeK(n.b, "R", sub, false);
+  }
+  // two numbers side by side need a dot between them: 5(19 · 3)2 becomes 5 · 57 · 2, never 5572
+  function useDot(n, sub, first){
+    return edgeK(n.b, "L", sub, false, true) === "num" && edgeK(n.a, "R", sub, first, true) !== "par";
+  }
+  function astH0(n, sub, first, tight){
     var s;
     switch (n.t){
       case "num":
@@ -969,7 +1025,11 @@
       var a = n.a.t === "par" ? n.a.a : n.a, b = n.b.t === "par" ? n.b.a : n.b;
       return frHTML(astH(a, sub, true), astH(b, sub, true));
     }
-    if (n.op === "×" && n.imp) return astH(n.a, sub, first, true) + astH(n.b, sub, false, true);
+    if (n.op === "^"){
+      var bs = astH(n.a, sub, true);
+      return (baseWrap(n.a) ? wrapP(bs) : bs) + '<span class="sx">' + astH(n.b, sub, true) + "</span>";
+    }
+    if (n.op === "×" && n.imp && !useDot(n, sub, first)) return astH(n.a, sub, first, true) + astH(n.b, sub, false, true);
     return astH(n.a, sub, first) + opS(n.op === "×" ? "·" : n.op) + astH(n.b, sub, false);
   }
 
@@ -990,7 +1050,15 @@
   }
   function listLin(list){ return list.reduce(function(acc, p){ return lComb(acc, pieceLin(p), 1); }, L0()); }
 
+  // SRC[piece id] = the id of the typed node it came from, so a row drawn from what was typed can box a piece
+  var SRC = {};
   function toPieces(n){
+    var out = toPieces0(n);
+    out.forEach(function(p){ if (!(p.id in SRC)) SRC[p.id] = n.id; });
+    return out;
+  }
+  function toPieces0(n){
+    if (n.t === "bin" && n.op === "^") return [mkP(evalLin(n).k, null, astH(n), "×")];
     switch (n.t){
       case "num": return [mkT(n.v, null)];
       case "var": return [mkT(ONE, n.name)];
@@ -1013,6 +1081,7 @@
     if (o.length === 1 && o[0].k === "t") return [mkP(mul(K, o[0].c), o[0].v, astH(n), "×")];
     if (o.length !== 1){ FOLD = true; return o.map(function(p){ var q = cp(p); return q; }); }
     var g = cp(o[0]);
+    SRC[g.id] = n.id;                          // the group is the whole product, 4(2x + 3), not just its brackets
     if (kn.t !== "num" || !kFirst || g.mul || g.div) FOLD = true;
     if (sgn(K) < 0) g.sg = -g.sg;
     g.mul = mul(g.mul || ONE, absR(K));
@@ -1032,6 +1101,7 @@
       return [mkP(dvd(t.c, K), t.v, astH(n), "÷")];
     }
     var g = cp(o[0]);
+    SRC[g.id] = n.id;
     if (n.b.t !== "num" || g.div || n.b.fr) FOLD = true;
     if (sgn(K) < 0) g.sg = -g.sg;
     g.div = mul(g.div || ONE, absR(K)); g.sl = !!n.slash;
@@ -1089,6 +1159,7 @@
     var d = document.createElement("div");
     d.innerHTML = h;
     Array.prototype.forEach.call(d.querySelectorAll(".op-s"), function(o){ if (!o.classList.contains("sg0")) o.textContent = " " + o.textContent.trim() + " "; });
+    Array.prototype.forEach.call(d.querySelectorAll(".sx"), function(o){ o.textContent = "^" + o.textContent.trim(); });
     Array.prototype.slice.call(d.querySelectorAll(".fr")).reverse().forEach(function(f){
       var nu = f.querySelector(".nu"), de = f.querySelector(".de");
       var a = nu ? nu.textContent.trim() : "", b = de ? de.textContent.trim() : "";
@@ -1114,6 +1185,12 @@
     }
     for (i = 0; i < list.length; i++) if (list[i].k === "g") return distribute(list, i);
     for (i = 0; i < list.length; i++) if (list[i].show) return collapse(list, i);
+    if (top && list.length > 1)
+      for (i = 0; i < list.length; i++) if (plainT(list[i]) && !list[i].v && isZ(list[i].c)){
+        var z = list[i];
+        return { list:list.slice(0, i).concat(list.slice(i + 1)), hl:[z.id], fresh:[], cls:"a", tag:"Drop 0", badge:"+ −",
+                 text:"Adding or taking away <b>0</b> changes nothing, so the 0 can go.", what:"zero" };
+      }
     if (top && (a = gather(list, ordered))) return a;
     return combine(list);
   }
@@ -1155,7 +1232,8 @@
     var t = list[i], nt = mkT(t.c, t.v), nl = list.slice();
     nl[i] = nt;
     var val = t.sg < 0 ? neg(t.c) : t.c, res = mkT(val, t.v);
-    var text = (t.op === "÷" ? (t.v ? "Dividing by a number is the same as multiplying by its reciprocal, so " : "Divide: ")
+    var text = (!t.v && list.length > 1 ? "× and ÷ come before + and −, so do this first. " : "")
+      + (t.op === "÷" ? (t.v ? "Dividing by a number is the same as multiplying by its reciprocal, so " : "Divide: ")
                : t.v ? "Multiply the numbers in this term: " : "Multiply: ")
       + "<b>" + t.show + " = " + T1(res) + "</b>.";
     return { list:nl, hl:[t.id], fresh:[nt.id], cls:"m", tag:t.op === "÷" ? "Divide" : "Multiply", badge:"× ÷",
@@ -1229,8 +1307,13 @@
   function markLast(ctx, ids, cls, badge){
     var r = lastRow(ctx);
     if (!r) return;
-    if (ids && ids.length){ r.o.hl = setOf(ids); r.o.hlCls = cls; }
-    if (badge) r.badge = { cls:cls, text:badge };
+    if (ids && ids.length){
+      if (r.ast || r.astL || r.astR){             // a row drawn from what was typed: box the nodes the pieces came from
+        r.am = r.am || {};
+        r.am.hl = setOf(ids.map(function(id){ return SRC[id] || id; })); r.am.hlCls = cls;
+      } else { r.o.hl = setOf(ids); r.o.hlCls = cls; }
+    }
+    if (badge) r.badge = typeof badge === "object" ? badge : { cls:cls, text:badge };
   }
   function pushStep(ctx, lines, aside, state, loud){
     ctx.steps.push({ lines:lines, aside:aside || null, loud:!!loud });
@@ -1431,13 +1514,205 @@
     return { kind:ok ? "all" : "none", cur:cur };
   }
 
+  /* ===================== plain-number arithmetic, one operation at a time =====================
+     Any part made only of numbers — 5(19 · 3)2, 2³ · 3, 3 · 4/6, (2 + 3) in (2 + 3)(x + 1) — is worked the way the
+     Order Stack works it: inside the parentheses first, then powers, then × ÷ left to right, then + − left to right,
+     one operation per line. Plain numbers that are separate terms (the 20 and the 2 in 3x + 20 − 2) are left for
+     "combine like terms", like every other kind of term. */
+  function leafy(n){ return n.t === "num" || n.t === "var"; }
+  function numLeaf(n){ return n.t === "num" ? n : n.t === "par" && n.a.t === "num" ? n.a : null; }
+  function canDo(n){ return n.t === "neg" ? !!numLeaf(n.a) : n.t === "bin" && !!numLeaf(n.a) && !!numLeaf(n.b); }
+  function opKind(n){ return n.t === "neg" ? "m" : n.op === "^" ? "e" : (n.op === "+" || n.op === "−") ? "a" : "m"; }
+  function doOp(n){
+    if (n.t === "neg") return neg(numLeaf(n.a).v);
+    var a = numLeaf(n.a).v, b = numLeaf(n.b).v;
+    return n.op === "+" ? add(a, b) : n.op === "−" ? sub(a, b) : n.op === "×" ? mul(a, b) : n.op === "÷" ? dvd(a, b) : powR(a, b);
+  }
+  function swapNode(n, id, nn){
+    if (n.id === id) return nn;
+    if (leafy(n)) return n;
+    var c = cp(n); c.a = swapNode(n.a, id, nn); if (n.b) c.b = swapNode(n.b, id, nn);
+    return c;
+  }
+  function findId(n, id){ return n.id === id ? n : leafy(n) ? null : findId(n.a, id) || (n.b ? findId(n.b, id) : null); }
+  function parentIn(n, id){
+    if (leafy(n)) return null;
+    if (n.a.id === id || (n.b && n.b.id === id)) return n;
+    return parentIn(n.a, id) || (n.b ? parentIn(n.b, id) : null);
+  }
+  // −(a positive plain number) is just a negative number, and 3 over 4 with a fraction bar is just the fraction 3/4
+  function tidyNeg(n){
+    if (leafy(n)) return n;
+    if (n.t === "neg" && n.a.t === "num" && sgn(n.a.v) > 0){ var q = cp(n.a); q.id = n.id; q.v = neg(n.a.v); q.neg = true; return q; }
+    var c = cp(n); c.a = tidyNeg(n.a); if (n.b) c.b = tidyNeg(n.b);
+    if (c.t === "bin" && c.op === "÷" && c.slash && c.a.t === "num" && c.b.t === "num" && isInt(c.a.v) && isInt(c.b.v)
+        && c.b.v.n > 1n && !c.a.fr && !c.b.fr && !c.a.dec && !c.b.dec && bgcd(c.a.v.n, c.b.v.n) === 1n){
+      var top = c.a.v.n < 0n ? -c.a.v.n : c.a.v.n;
+      return { t:"num", id:c.id, v:R(c.a.v.n, c.b.v.n), fr:[top, c.b.v.n], neg:c.a.v.n < 0n, lit:true };
+    }
+    return c;
+  }
+  function termIds(n, out){                    // the + and − that join separate terms
+    out = out || {};
+    if (n.t === "bin" && (n.op === "+" || n.op === "−")){ out[n.id] = true; termIds(n.a, out); termIds(n.b, out); }
+    else if (n.t === "neg") termIds(n.a, out);
+    return out;
+  }
+  function arithNext(root){
+    var tl = termIds(root), list = [];
+    (function walk(n, g){                      // every operation on two plain numbers, left to right, with its brackets
+      if (leafy(n)) return;
+      var inner = n.t === "par" ? n : g;
+      walk(n.a, inner);
+      if (canDo(n) && !tl[n.id]) list.push({ n:n, g:g });
+      if (n.b) walk(n.b, inner);
+    })(root, null);
+    if (!list.length) return chainNext(root);
+    function find(n){                          // the leftmost innermost parentheses with work in them
+      if (leafy(n)) return null;
+      var f = find(n.a) || (n.b ? find(n.b) : null);
+      if (f) return f;
+      return n.t === "par" && list.some(function(c){ return c.g === n; }) ? n : null;
+    }
+    var G = find(root), here = list.filter(function(c){ return c.g === G; });
+    var cls = here.some(function(c){ return opKind(c.n) === "e"; }) ? "e" : here.some(function(c){ return opKind(c.n) === "m"; }) ? "m" : "a";
+    var pick = here.filter(function(c){ return opKind(c.n) === cls; })[0].n;
+    var counts = { e:0, m:0, a:0 };            // what else is waiting in here, for the reason
+    (function cnt(n){
+      if (leafy(n)) return;
+      if ((n.t === "bin" || n.t === "neg") && !hasVar(n) && !tl[n.id]) counts[opKind(n)]++;
+      cnt(n.a); if (n.b) cnt(n.b);
+    })(G ? G.a : root);
+    if (!G) counts.a += sumTerms(root, 1, []).length - 1;     // the + and − between the terms all wait for this
+    var v = doOp(pick), nn = { t:"num", id:++NID, v:v, lit:false, neg:sgn(v) < 0 };
+    var outer = G && G.a === pick ? parentIn(root, G.id) : null;
+    // the brackets go once they hold one number — but −(−2) keeps them, that minus is a step of its own
+    var dropped = !!G && G.a === pick && !(sgn(v) < 0 && outer && outer.t === "neg");
+    var mid = swapNode(root, dropped ? G.id : pick.id, nn), after = tidyNeg(mid);
+    var bare = outer && outer.t === "bin" && outer.op === "÷" && outer.slash;      // a fraction bar draws them without brackets
+    return { pick:pick, group:G, dropped:dropped, cls:cls, counts:counts, value:v, after:after,
+             hl:[dropped && !bare ? G.id : pick.id], fresh:[findId(after, nn.id) ? nn.id : (parentIn(mid, nn.id) || nn).id],
+             parent:parentIn(root, pick.id) };
+  }
+  // the numbers of one term, when a letter sits between them: 2x · 3 → 6x, x · 2 · 3 → x · 6
+  function chainNext(root){
+    var hit = null;
+    (function walk(n){
+      if (hit || leafy(n)) return;
+      walk(n.a); if (n.b) walk(n.b);
+      if (hit || n.t !== "bin" || (n.op !== "×" && n.op !== "÷") || n.slash || !numLeaf(n.b)) return;
+      var q = n.a, b = numLeaf(n.b).v, a, c, nn, num, how;
+      if (q.t !== "bin" || q.slash || (q.op !== "×" && q.op !== "÷")) return;
+      if (q.op === "×" && numLeaf(q.a) && hasVar(q.b)){
+        a = numLeaf(q.a).v; how = n.op; c = how === "×" ? mul(a, b) : dvd(a, b);
+        num = { t:"num", id:++NID, v:c, lit:false, neg:sgn(c) < 0 };
+        nn = { t:"bin", id:++NID, op:"×", a:num, b:q.b, imp:q.b.t === "var" || q.b.t === "par" };
+      } else if (!q.imp && numLeaf(q.b) && hasVar(q.a) && !(q.op === "÷" && n.op === "×")){
+        a = numLeaf(q.b).v; how = q.op === "÷" ? "×" : n.op;          // (x ÷ 2) ÷ 3 = x ÷ (2 · 3); (x · 2) ÷ 3 = x · (2 ÷ 3)
+        c = how === "×" ? mul(a, b) : dvd(a, b);
+        num = { t:"num", id:++NID, v:c, lit:false, neg:sgn(c) < 0 };
+        nn = { t:"bin", id:++NID, op:q.op, a:q.a, b:num };
+      } else return;
+      hit = { n:n, q:q, nn:nn, num:num, calc:[a, how, b] };
+    })(root);
+    if (!hit) return null;
+    return { pick:hit.n, chain:hit, group:null, cls:"m", value:hit.num.v, after:tidyNeg(swapNode(root, hit.n.id, hit.nn)),
+             hl:[hit.n.id], fresh:[hit.num.id] };
+  }
+  var VERBS = { "+":"Add", "−":"Subtract", "×":"Multiply", "÷":"Divide", "^":"Power" };
+  function powWords(p, v){
+    var b = numLeaf(p.a).v, k = Number(numLeaf(p.b).v.n), pk = Math.abs(k), head = "<b>" + astH(p) + "</b>";
+    var base = (sgn(b) < 0 || !isInt(b)) ? wrapP(nH(b)) : nH(b);
+    if (k === 0) return head + ": anything (except 0) to the power 0 is <b>1</b>.";
+    if (k === 1) return head + ": a power of 1 leaves the number alone, <b>" + nH(v) + "</b>.";
+    var rep = pk <= 6 ? new Array(pk).fill(base).join(" · ") : pk + " " + base + "’s multiplied together";
+    if (k < 0) return head + ": a negative power means one over, <b>1 ÷ (" + rep + ") = " + nH(v) + "</b>.";
+    return head + " means <b>" + rep + " = " + nH(v) + "</b>.";
+  }
+  function arithWords(st){
+    var p = st.pick, v = st.value, c = st.counts, why = [], did;
+    st.aside = null;
+    if (st.chain){
+      var k = st.chain.calc;
+      why.push(st.chain.q.op === "÷" && p.op === "÷" ? "Dividing by one number and then another is the same as dividing by the two multiplied together."
+        : p.op === "÷" ? "Dividing the term divides the number in it." : "You can multiply in any order, so put the numbers in this term together.");
+      did = "<b>" + nH(k[0]) + " " + (k[1] === "×" ? "·" : "÷") + " " + nP(k[2]) + " = " + nH(v) + "</b>.";
+      st.tag = k[1] === "×" ? "Multiply" : "Divide";
+    } else {
+      if (st.group) why.push(st.first ? "Parentheses first: start inside them." : "Still inside the parentheses.");
+      if (st.cls === "e"){ if (c.m || c.a) why.push("Powers come before × ÷ + −."); else if (c.e > 1) why.push("Powers first, left to right."); }
+      else if (p.t === "neg"){ if (c.a) why.push("Taking the opposite is multiplying by −1, so it goes before + and −."); }
+      else if (st.cls === "m"){
+        if (c.a) why.push("× and ÷ come before + and −.");
+        if (c.m > 1) why.push("× and ÷ go from left to right" + (st.group ? " in here" : "") + ", and this one comes first.");
+      } else if (c.a > 1) why.push("Only + and − are left" + (st.group ? " in here" : "") + ", so go from left to right.");
+      if (!why.length) why.push(st.prev && c.e + c.m + c.a === 1 ? "That leaves one operation." : "Work out the plain numbers first.");
+      if (p.t === "neg") did = "The minus in front means “the opposite of”: <b>" + astH(p) + " = " + nH(v) + "</b>.";
+      else if (p.op === "^") did = powWords(p, v);
+      else did = (p.slash ? "The fraction bar means divide: " : "") + "<b>" + astH(p.a) + " " + (p.op === "×" ? "·" : p.op) + " "
+        + astH(p.b, null, false) + " = " + nH(v) + "</b>.";
+      if (st.dropped) did += " The parentheses are done, so they drop away.";
+      if (p.op === "^" && st.parent && st.parent.t === "neg")
+        st.aside = "The minus sign waits its turn: <b>−3²</b> means “the opposite of 3²”, which is <b>−9</b>. "
+          + "To square −3 you’d write <b>(−3)²</b> = 9.";
+      st.tag = p.t === "neg" ? "Opposite" : VERBS[p.op];
+    }
+    st.col = st.cls === "a" ? "a" : "m";                 // powers are repeated multiplying, so they share its colour
+    st.badge = { cls:st.col, text:st.cls === "e" ? "xⁿ" : st.cls === "a" ? "+ −" : "× ÷", pre:st.group ? { cls:"p", text:"( )" } : null };
+    st.text = why.join(" ") + " " + did + " Now it reads <b>" + astH(st.after) + "</b>.";
+  }
+  function arithSteps(root){
+    var steps = [], cur = tidyNeg(root), prevG = null, guard = 0, st;
+    while (guard++ < 300 && (st = arithNext(cur))){
+      st.first = !!st.group && st.group.id !== prevG;
+      prevG = st.group ? st.group.id : null;
+      st.prev = steps.length > 0;
+      arithWords(st);
+      steps.push(st);
+      cur = st.after;
+    }
+    return { steps:steps, final:cur };
+  }
+  function markAst(ctx, st){                   // box the operation on the row before, the way every move is boxed
+    var r = lastRow(ctx);
+    r.am = r.am || {}; r.am.hl = setOf(st.hl); r.am.hlCls = st.col;
+    r.badge = st.badge;
+  }
+  // 5(19 · 3)2: a number right next to brackets, with no sign, means multiply — say so once
+  function edgeNode(n, side){
+    return n.t === "bin" && !n.slash && n.op !== "^" ? edgeNode(side === "L" ? n.a : n.b, side) : n;
+  }
+  function juxtNote(asts){
+    var seen = {}, out = [];
+    asts.forEach(function(root){
+      (function walk(n){
+        if (leafy(n)) return;
+        walk(n.a); if (n.b) walk(n.b);
+        if (n.t !== "bin" || n.op !== "×" || !n.imp) return;
+        var ra = edgeNode(n.a, "R"), lb = edgeNode(n.b, "L"), s = "";
+        if (ra.t === "par" && lb.t === "num")
+          s = "<b>" + astH(ra) + astH(lb, null, false, true) + "</b> means <b>" + astH(ra) + " × " + astH(lb, null, false) + "</b>; writing <b>× "
+            + astH(lb, null, false) + "</b> is clearer.";
+        else if (ra.t === "num" && lb.t === "par" && !hasVar(lb))
+          s = "<b>" + astH(ra) + astH(lb) + "</b> means <b>" + astH(ra) + " × " + astH(lb) + "</b>.";
+        if (s && !seen[s]){ seen[s] = true; out.push(s); }
+      })(root);
+    });
+    return out.length ? "No sign between a number and parentheses means multiply. " + out.join(" ") : null;
+  }
+  function addNote(ctx, note){
+    if (!note || !ctx.steps.length) return;
+    var s0 = ctx.steps[0];
+    s0.aside = s0.aside ? s0.aside + "<br>" + note : note;
+  }
+
   /* ===================== reading a side: pieces, or what was typed if it had to be tidied ===================== */
   function piecesOf(ast){ FOLD = false; var p = toPieces(ast); return { list:p, fold:FOLD }; }
 
   /* ===================== substituting ===================== */
   function subShow(c, val){                   // c·(val), shown the way it's written by hand
     var a = absR(c), pv = numParts(val);
-    if (isOne(a) && !pv.neg && !pv.frac) return mkT(mul(c, val), null);
+    if (isOne(c) || (isOne(a) && !pv.neg && !pv.frac)){ var t = mkT(mul(c, val), null); t.plug = true; return t; }   // nothing to multiply
     var show = isOne(a) ? ((pv.neg || pv.frac) ? wrapP(pv.html) : pv.html) : magH(a) + wrapP(pv.html);
     return mkP(mul(c, val), null, show, "×", sgn(c) < 0 ? -1 : 1);
   }
@@ -1476,41 +1751,79 @@
     });
   }
   function makeQ(P, k){
-    var lp = piecesOf(P.L), rp = piecesOf(P.R);
+    // the plain-number arithmetic is worked first (see arithQ); the rest of the work starts from the result
+    var arL = arithSteps(P.L), arR = arithSteps(P.R), F = { L:arL.final, R:arR.final, rel:P.rel };
+    var lp = piecesOf(F.L), rp = piecesOf(F.R);
     var d = lComb(evalLin(P.L), evalLin(P.R), -1);
     var E = { a:lCo(d, "x"), b:lCo(d, "y"), c:neg(d.k) };
     if (isZ(E.a) && isZ(E.b))
       throw new UserErr("Equation " + k + " has no <i>x</i> or <i>y</i> left once it’s tidied up (it comes to <b>0 = " + nH(E.c)
         + "</b>). Each equation needs at least one letter.");
-    return { P:P, lab:"(" + k + ")", k:k, Lp:lp.list, Rp:rp.list, fold:lp.fold || rp.fold, E:E };
+    return { P:F, P0:P, ar:{ L:arL.steps, R:arR.steps }, lab:"(" + k + ")", k:k, Lp:lp.list, Rp:rp.list, fold:lp.fold || rp.fold, E:E };
   }
   function showRow(ctx, Q, extra){
-    var r = { L:Q.Lp, R:Q.Rp, rel:"=", lab:Q.lab };
-    if (Q.fold && !Q.lined){ r.htmlL = astH(Q.P.L); r.htmlR = astH(Q.P.R); }
+    var r = { L:Q.Lp, R:Q.Rp, rel:"=", lab:Q.lab, qk:Q.k };
+    if ((Q.fold || Q.ar.L.length || Q.ar.R.length) && !Q.lined){ r.astL = Q.P0.L; r.astR = Q.P0.R; }
     for (var k in extra) r[k] = extra[k];
     return addRow(ctx, r);
   }
+  function qSide(Q, side){ return '<span class="sidew">Equation ' + Q.lab + ", " + (side === "L" ? "left" : "right") + " side:</span> "; }
+  // the plain-number arithmetic in one equation, one operation per row
+  function arithQ(ctx, Q){
+    var cur = { L:Q.P0.L, R:Q.P0.R };
+    ["L","R"].forEach(function(side){
+      Q.ar[side].forEach(function(s){
+        if (lastRow(ctx).qk !== Q.k) addRow(ctx, { L:Q.Lp, R:Q.Rp, rel:"=", lab:Q.lab, qk:Q.k, cls:"gap", astL:cur.L, astR:cur.R });
+        markAst(ctx, s);
+        cur[side] = s.after;
+        addRow(ctx, { L:Q.Lp, R:Q.Rp, rel:"=", lab:Q.lab, qk:Q.k, astL:cur.L, astR:cur.R, am:{ fresh:setOf(s.fresh), freshCls:s.col } });
+        pushStep(ctx, [[s.col, s.tag, qSide(Q, side) + s.text]], s.aside);
+      });
+    });
+  }
+  // distribute, multiply and combine on each side of one equation, one move per row
+  function tidyQ(ctx, Q){
+    ["L","R"].forEach(function(side){
+      var key = side + "p", guard = 0, a;
+      while (guard++ < 150 && (a = nextAction(Q[key], true, false))){
+        if (lastRow(ctx).qk !== Q.k){
+          var g = { L:Q.Lp, R:Q.Rp, rel:"=", lab:Q.lab, qk:Q.k, cls:"gap" };
+          if (Q.fold && !Q.lined){ g.astL = Q.P.L; g.astR = Q.P.R; }
+          addRow(ctx, g);
+        }
+        markLast(ctx, a.hl, a.cls, a.badge);
+        Q[key] = a.list; Q.lined = true;
+        addRow(ctx, { L:Q.Lp, R:Q.Rp, rel:"=", lab:Q.lab, qk:Q.k, o:{ fresh:setOf(a.fresh), freshCls:a.cls } });
+        pushStep(ctx, [[a.cls, a.tag, qSide(Q, side) + (a.inside ? "Inside the parentheses first. " : "") + a.text]], a.aside);
+      }
+    });
+  }
   function lineUp(ctx, Q, why){
+    tidyQ(ctx, Q);
     var E = Q.E;
     if (!isStdPieces(Q.Lp, Q.Rp)){
-      var ll = evalLin(Q.P.L), rl = evalLin(Q.P.R), parts = [];
-      if (hasWork(Q.Lp) || hasWork(Q.Rp)) parts.push("multiply out the parentheses");
+      var ll = listLin(Q.Lp), rl = listLin(Q.Rp), parts = [], calc = [];
       ["x","y"].forEach(function(v){
-        var rc = lCo(rl, v);
-        if (!isZ(rc)) parts.push((sgn(rc) > 0 ? "subtract <b>" : "add <b>") + T1(mkT(absR(rc), v)) + "</b> " + (sgn(rc) > 0 ? "from" : "to") + " both sides");
+        var rc = lCo(rl, v), lc = lCo(ll, v);
+        if (isZ(rc)) return;
+        parts.push((sgn(rc) > 0 ? "subtract <b>" : "add <b>") + T1(mkT(absR(rc), v)) + "</b> " + (sgn(rc) > 0 ? "from" : "to") + " both sides");
+        if (!isZ(lc)) calc.push("<b>" + T1(mkT(lc, v)) + (sgn(rc) > 0 ? " − " : " + ") + T1(mkT(absR(rc), v)) + " = "
+          + (eqR(lc, rc) ? "0" : T1(mkT(sub(lc, rc), v))) + "</b> on the left");
       });
-      if (!isZ(ll.k)) parts.push((sgn(ll.k) > 0 ? "subtract <b>" : "add <b>") + magH(ll.k) + "</b> " + (sgn(ll.k) > 0 ? "from" : "to") + " both sides");
-      var cnt = {};
-      Q.Lp.concat(Q.Rp).forEach(function(p){ if (p.k === "t" && !p.show){ var kk = keyOf(p); cnt[kk] = (cnt[kk] || 0) + 1; } });
-      if (Object.keys(cnt).some(function(kk){ return cnt[kk] > 1; })) parts.push("combine like terms");
+      if (!isZ(ll.k)){
+        parts.push((sgn(ll.k) > 0 ? "subtract <b>" : "add <b>") + magH(ll.k) + "</b> " + (sgn(ll.k) > 0 ? "from" : "to") + " both sides");
+        if (!isZ(rl.k)) calc.push("<b>" + nH(rl.k) + (sgn(ll.k) > 0 ? " − " : " + ") + magH(ll.k) + " = " + nH(sub(rl.k, ll.k)) + "</b> on the right");
+      }
       if (!parts.length) parts.push("put the " + vH("x") + " term first");
       var nL = [], nR = [mkT(E.c, null)];
       if (!isZ(E.a)) nL.push(mkT(E.a, "x"));
       if (!isZ(E.b)) nL.push(mkT(E.b, "y"));
-      addRow(ctx, { L:nL, R:nR, rel:"=", lab:Q.lab, o:{ fresh:setOf(allIds(nL.concat(nR))), freshCls:"a" } });
-      pushStep(ctx, [["a", "Line up", (why || "Elimination works best with both equations lined up the same way") + " — letters on the left ("
+      addRow(ctx, { L:nL, R:nR, rel:"=", lab:Q.lab, qk:Q.k, o:{ fresh:setOf(allIds(nL.concat(nR))), freshCls:"a" } });
+      var lines = [["a", "Line up", (why || "Elimination works best with both equations lined up the same way") + " — letters on the left ("
         + vH("x") + " then " + vH("y") + "), the number on the right. For equation " + Q.lab + ": "
-        + parts.join(", ").replace(/, ([^,]*)$/, " and $1") + "."]]);
+        + parts.join(", ").replace(/, ([^,]*)$/, " and $1") + "."]];
+      if (calc.length) lines.push(["a", "Result", calc.join(", and ") + "."]);
+      pushStep(ctx, lines);
       Q.Lp = nL; Q.Rp = nR; Q.lined = true;
     }
     var D = blcm(blcm(E.a.d, E.b.d), E.c.d);
@@ -1534,7 +1847,7 @@
     var Lp = subVal(typed.list, w, wv), Rp = subVal(typedR.list, w, wv);
     addRow(ctx, { L:Lp, R:Rp, rel:"=", lab:"", cls:"gap", o:{} });
     var pl = [];
-    Lp.concat(Rp).forEach(function(p){ if (p.show && p.op === "×" && !p.v) pl.push(p.id); });
+    Lp.concat(Rp).forEach(function(p){ if ((p.show && p.op === "×" && !p.v) || p.plug) pl.push(p.id); });
     lastRow(ctx).o.fresh = setOf(pl); lastRow(ctx).o.freshCls = "e";
     pushStep(ctx, [["e", "Plug in", "Now you know <b>" + vH(w) + " = " + nH(wv) + "</b>. Put it back into equation " + Q.lab
       + " (any equation works — pick a friendly one) wherever " + vH(w) + " is, to find " + vH(v) + "."]], null, { L:Lp, R:Rp, rel:"=" });
@@ -1596,7 +1909,7 @@
     if (c.m2 > 1n) B = scale(B, c.m2);
     var addIt = sgn(coOf(A.E, v)) !== sgn(coOf(B.E, v)), f = addIt ? add : sub;
     var nr = ctx.rows.length, r1 = ctx.rows[nr - 2], r2 = ctx.rows[nr - 1];
-    if (r1 && r1.L === A.L && r2.L === B.L && !r1.htmlL && !r2.htmlL){ r2.lab = (addIt ? "+ " : "− ") + B.lab; r2.opLab = true; }
+    if (r1 && r1.L === A.L && r2.L === B.L && !r1.htmlL && !r2.htmlL && !r1.astL && !r2.astL){ r2.lab = (addIt ? "+ " : "− ") + B.lab; r2.opLab = true; }
     else {
       if (lastRow(ctx).L !== A.L) addRow(ctx, { L:copyList(A.L), R:copyList(A.R), rel:"=", lab:A.lab, cls:"gap" });
       addRow(ctx, { L:copyList(B.L), R:copyList(B.R), rel:"=", lab:(addIt ? "+ " : "− ") + B.lab, opLab:true });
@@ -1681,7 +1994,7 @@
     if (res.kind !== "one") return { kind:res.kind };
     var bL = [mkT(ONE, v)], bR = subVal(copyList(expr), w, res.val);
     var pl = [];
-    bR.forEach(function(p){ if (p.show) pl.push(p.id); });
+    bR.forEach(function(p){ if (p.show || p.plug) pl.push(p.id); });
     addRow(ctx, { L:bL, R:bR, rel:"=", lab:"", cls:"gap", o:{ fresh:setOf(pl), freshCls:"e" } });
     pushStep(ctx, [["e", "Plug in", "Now put <b>" + vH(w) + " = " + nH(res.val) + "</b> into <b>" + vH(v) + " = " + L(expr) + "</b> to find " + vH(v) + "."]]);
     var r2 = solveEq(ctx, { L:bL, R:bR, rel:"=" }, v, { sys:true });
@@ -1849,20 +2162,26 @@
   }
 
   /* ===================== running each kind of problem (no drawing) ===================== */
+  var TIDY = "Write each term the usual way, with its number in front of the letter or the parentheses it multiplies";
   function runSimplify(src){
-    HASDEC = false; SEEN = {};
+    HASDEC = false; SEEN = {}; SRC = {};
     var P = parseInput(src, "simplify"), vs = Object.keys(varsOf(P.E)).sort();
     if (vs.length > 2) throw new UserErr("I see " + vs.length + " different letters (" + vs.map(vH).join(", ")
       + "). Keep it to one or two letters so the work fits.");
     evalLin(P.E);
-    var ctx = new Ctx(), pc = piecesOf(P.E), list = pc.list;
-    addRow(ctx, { L:list, html:pc.fold ? astH(P.E) : null });
+    var ctx = new Ctx(), ar = arithSteps(P.E), pc = piecesOf(ar.final), list = pc.list;
+    addRow(ctx, { L:list, ast:ar.steps.length || pc.fold ? P.E : null });
     begin(ctx);
+    ar.steps.forEach(function(st){
+      markAst(ctx, st);
+      addRow(ctx, { L:list, ast:st.after, am:{ fresh:setOf(st.fresh), freshCls:st.col } });
+      pushStep(ctx, [[st.col, st.tag, st.text]], st.aside);
+    });
     if (pc.fold){
       markLast(ctx, [], "m", "× ÷");
       list = copyList(list);
       addRow(ctx, { L:list });
-      pushStep(ctx, [["m", "Tidy", "First work out the plain-number parts, so every term is a number times a letter: <b>" + L(list) + "</b>."]]);
+      pushStep(ctx, [["m", "Tidy", TIDY + ": <b>" + L(list) + "</b>."]]);
     }
     var guard = 0, a;
     while (guard++ < 200 && (a = nextAction(list, true, true))){
@@ -1871,10 +2190,11 @@
       addRow(ctx, { L:list, o:{ fresh:setOf(a.fresh), freshCls:a.cls } });
       pushStep(ctx, [[a.cls, a.tag, (a.inside ? "Inside the parentheses first. " : "") + a.text]], a.aside);
     }
+    addNote(ctx, juxtNote([P.E]));
     return { P:P, vs:vs, ctx:ctx, list:list };
   }
   function runEq(src, ineq){
-    HASDEC = false; SEEN = {};
+    HASDEC = false; SEEN = {}; SRC = {};
     var P = parseInput(src, ineq ? "ineq" : "eq");
     var vs = Object.keys(varsOf(P.R, varsOf(P.L))).sort();
     if (!vs.length) throw new UserErr("There’s no letter to solve for. Put one in, like <b>2x + 3 " + (ineq ? "&gt;" : "=") + " 11</b>.");
@@ -1882,22 +2202,33 @@
       + "For two letters and two equations, use the <b>System</b> tab.");
     var v = vs[0];
     evalLin(P.L); evalLin(P.R);
-    var ctx = new Ctx(), lp = piecesOf(P.L), rp = piecesOf(P.R), fold = lp.fold || rp.fold;
+    var ctx = new Ctx(), arL = arithSteps(P.L), arR = arithSteps(P.R), pre = arL.steps.length + arR.steps.length > 0;
+    var lp = piecesOf(arL.final), rp = piecesOf(arR.final), fold = lp.fold || rp.fold;
     var st = { L:lp.list, R:rp.list, rel:P.rel };
-    addRow(ctx, { L:st.L, R:st.R, rel:P.rel, lab:"", htmlL:fold ? astH(P.L) : null, htmlR:fold ? astH(P.R) : null });
-    begin(ctx, st);
+    var st0 = pre ? { L:piecesOf(P.L).list, R:piecesOf(P.R).list, rel:P.rel } : st;
+    addRow(ctx, { L:st.L, R:st.R, rel:P.rel, lab:"", astL:pre || fold ? P.L : null, astR:pre || fold ? P.R : null });
+    begin(ctx, st0);
+    var cur = { L:P.L, R:P.R };
+    [["L", arL], ["R", arR]].forEach(function(q){
+      q[1].steps.forEach(function(s){
+        markAst(ctx, s);
+        cur[q[0]] = s.after;
+        addRow(ctx, { L:st.L, R:st.R, rel:P.rel, lab:"", astL:cur.L, astR:cur.R, am:{ fresh:setOf(s.fresh), freshCls:s.col } });
+        pushStep(ctx, [[s.col, s.tag, sideTag(q[0]) + s.text]], s.aside, { L:piecesOf(cur.L).list, R:piecesOf(cur.R).list, rel:P.rel });
+      });
+    });
     if (fold){
       markLast(ctx, [], "m", "× ÷");
       st = { L:copyList(st.L), R:copyList(st.R), rel:P.rel };
       addRow(ctx, { L:st.L, R:st.R, rel:st.rel, lab:"" });
-      pushStep(ctx, [["m", "Tidy", "First work out the plain-number parts, so every term is a number times " + vH(v)
-        + " or a plain number: <b>" + eqText(st.L, st.rel, st.R) + "</b>."]], null, st);
+      pushStep(ctx, [["m", "Tidy", TIDY + ": <b>" + eqText(st.L, st.rel, st.R) + "</b>."]], null, st);
     }
     var res = solveEq(ctx, st, v, {});
+    addNote(ctx, juxtNote([P.L, P.R]));
     return { P:P, v:v, ctx:ctx, res:res };
   }
   function runSys(s1, s2, method){
-    HASDEC = false; SEEN = {};
+    HASDEC = false; SEEN = {}; SRC = {};
     var P1 = parseInput(s1, "eq", "Equation 1"), P2 = parseInput(s2, "eq", "Equation 2");
     [P1, P2].forEach(function(P, i){
       var bad = Object.keys(varsOf(P.R, varsOf(P.L))).filter(function(v){ return v !== "x" && v !== "y"; });
@@ -1908,12 +2239,17 @@
     var E1 = { a:Q1.E.a, b:Q1.E.b, c:Q1.E.c }, E2 = { a:Q2.E.a, b:Q2.E.b, c:Q2.E.c };
     showRow(ctx, Q1); showRow(ctx, Q2);
     begin(ctx);
+    arithQ(ctx, Q1); arithQ(ctx, Q2);
     var res = method === "sub" ? runSubst(ctx, Q1, Q2) : runElim(ctx, Q1, Q2);
+    addNote(ctx, juxtNote([P1.L, P1.R, P2.L, P2.R]));
     return { P1:P1, P2:P2, E1:E1, E2:E2, ctx:ctx, res:res };
   }
 
   /* ===================== drawing the work ===================== */
-  function badgeH(b){ return b ? '<span class="next"><span class="badge c-' + b.cls + '">' + b.text + "</span></span>" : "<span></span>"; }
+  function badgeH(b){
+    return b ? '<span class="next">' + (b.pre ? '<span class="badge c-' + b.pre.cls + '">' + b.pre.text + "</span>" : "")
+      + '<span class="badge c-' + b.cls + '">' + b.text + "</span></span>" : "<span></span>";
+  }
   function dataStep(r){ return r.step >= 0 ? ' data-step="' + r.step + '"' : ""; }
   function chainHTML(ctx, simp){
     var html = '<div class="chain-scroll">', n = ctx.rows.length;
@@ -1921,7 +2257,7 @@
       html += '<div class="chain">';
       ctx.rows.forEach(function(r, i){
         html += '<div class="crow' + (i === n - 1 && n > 1 ? " result" : "") + '"' + dataStep(r) + '><span class="eq">' + (i ? "=" : "")
-              + '</span><span class="expr">' + (r.html || listHTML(r.L, r.o)) + "</span>" + badgeH(r.badge) + "</div>";
+              + '</span><span class="expr">' + (r.ast ? astHM(r.ast, r.am) : r.html || listHTML(r.L, r.o)) + "</span>" + badgeH(r.badge) + "</div>";
       });
       return html + "</div></div>";
     }
@@ -1933,8 +2269,8 @@
         ? '<span class="verdict ' + (r.verdict ? "yes" : "no") + '">' + (r.verdict ? "always true" : "never true") + "</span>"
         : badgeH(r.badge);
       html += '<tr class="' + (r.cls || "") + '"' + dataStep(r) + '><td class="lab">' + lab + '</td><td class="lhs"><span class="expr">'
-            + (r.htmlL || sideHTML(r.L, r.o, r.mvL)) + '</span></td><td class="rel">' + rel + '</td><td class="rhs"><span class="expr">'
-            + (r.htmlR || sideHTML(r.R, r.o, r.mvR)) + '</span></td><td class="nb">' + nb + "</td></tr>";
+            + (r.astL ? astHM(r.astL, r.am) : r.htmlL || sideHTML(r.L, r.o, r.mvL)) + '</span></td><td class="rel">' + rel + '</td><td class="rhs"><span class="expr">'
+            + (r.astR ? astHM(r.astR, r.am) : r.htmlR || sideHTML(r.R, r.o, r.mvR)) + '</span></td><td class="nb">' + nb + "</td></tr>";
     });
     return html + "</tbody></table></div>";
   }
@@ -2419,7 +2755,7 @@
       case "neg": return neg(evalAt(n.a, vals));
     }
     var a = evalAt(n.a, vals), b = evalAt(n.b, vals);
-    return n.op === "+" ? add(a, b) : n.op === "−" ? sub(a, b) : n.op === "×" ? mul(a, b) : dvd(a, b);
+    return n.op === "+" ? add(a, b) : n.op === "−" ? sub(a, b) : n.op === "×" ? mul(a, b) : n.op === "^" ? powR(a, b) : dvd(a, b);
   }
   function randPoints(vs, k){
     var pts = [];
@@ -2768,7 +3104,7 @@
   var in1 = $("in1"), in2 = $("in2"), lastInp = in1;
   var HINTS = {
     simplify:"Type <code>*</code> or <code>·</code> for &times;, and <code>/</code> for &divide; or a fraction bar (<code>x/4</code>, <code>2/3x</code>). "
-      + "<code>3x</code> and <code>2(x + 1)</code> mean multiply. Up to two letters.",
+      + "<code>3x</code> and <code>2(x + 1)</code> mean multiply, <code>2^3</code> is a power of a number. Up to two letters.",
     solve:"One letter and one <code>=</code>. <code>*</code> or <code>·</code> for &times;, <code>/</code> for &divide; or fractions like <code>2/3x</code>. <code>[ ]</code> work as parentheses.",
     ineq:"Use <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code> or <code>&gt;=</code> (or ≤ ≥). One letter, one inequality sign.",
     sys:"Two equations in <i>x</i> and <i>y</i>, any form: <code>2x + y = 7</code>, <code>y = 2x + 1</code>, <code>3x = 2y − 4</code>."
@@ -3153,7 +3489,7 @@
     fr:"display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;font-size:.85em;margin:0 .1em",
     nu:"display:block;padding:0 .2em;text-align:center",
     de:"display:block;padding:0 .2em;text-align:center;border-top:1.5px solid currentColor",
-    "op-s":"padding:0 .3em", sg0:"padding:0",
+    "op-s":"padding:0 .3em", sg0:"padding:0", sx:"vertical-align:super;font-size:.7em",
     vr:"font-family:Georgia,'Times New Roman',serif;font-style:italic;padding:0 .05em",
     word:"font-weight:600"
   };
