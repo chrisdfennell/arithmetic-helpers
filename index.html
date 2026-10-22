@@ -36,7 +36,7 @@
   :root{
     --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
     --grid:rgba(25,33,29,.06);
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --scr:#B45309; --gra:#0369A1; --exp:#BE185D; --pro:#A21CAF; --tri:#4D7C0F; --cal:#7C3AED; --fla:#C2410C; --day:#4338CA;
+    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --scr:#B45309; --gra:#0369A1; --exp:#BE185D; --pro:#A21CAF; --tri:#4D7C0F; --cal:#7C3AED; --num:#EA580C; --qua:#B91C1C; --log:#1D4ED8; --seq:#15803D; --fla:#C2410C; --day:#4338CA;
     --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
     --shadow-up:0 1px 0 rgba(25,33,29,.05), 0 24px 40px -22px rgba(25,33,29,.55);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -47,7 +47,7 @@
     :root:not([data-theme="light"]){
       --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
       --grid:rgba(231,235,228,.05);
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --fla:#FB923C; --day:#A5B4FC;
+      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --fla:#FB923C; --day:#A5B4FC;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
       --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
     }
@@ -55,7 +55,7 @@
   :root[data-theme="dark"]{
     --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
     --grid:rgba(231,235,228,.05);
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --fla:#FB923C; --day:#A5B4FC;
+    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --fla:#FB923C; --day:#A5B4FC;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
   }
@@ -69,13 +69,13 @@
   .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
   @media (max-width:520px){.wrap{padding:0 16px}}
 
-  /* the seven page colours, the site's signature */
+  /* the seven page colors, the site's signature */
   .stripe{display:flex;height:6px}
   .stripe i{flex:1}
   .c-add{--c:var(--add)} .c-sub{--c:var(--sub)} .c-mul{--c:var(--mul)} .c-div{--c:var(--div)}
   .c-ord{--c:var(--ord)} .c-alg{--c:var(--alg)} .c-geo{--c:var(--geo)}
   .c-fra{--c:var(--fra)} .c-pct{--c:var(--pct)} .c-fac{--c:var(--fac)} .c-int{--c:var(--int)} .c-ink{--c:var(--ink)}
-  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-scr{--c:var(--scr)} .c-gra{--c:var(--gra)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)} .c-tri{--c:var(--tri)} .c-cal{--c:var(--cal)}
+  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-scr{--c:var(--scr)} .c-gra{--c:var(--gra)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)} .c-tri{--c:var(--tri)} .c-cal{--c:var(--cal)} .c-num{--c:var(--num)} .c-qua{--c:var(--qua)} .c-log{--c:var(--log)} .c-seq{--c:var(--seq)}
   .stripe i{background:var(--c)}
 
   /* ---- top bar ---- */
@@ -263,7 +263,7 @@
   footer .stripe{height:4px;border-radius:2px;overflow:hidden;margin-bottom:22px}
 </style>
 
-<div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-pro"></i><i class="c-tri"></i><i class="c-cal"></i><i class="c-wrd"></i></div>
+<div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-pro"></i><i class="c-tri"></i><i class="c-cal"></i><i class="c-num"></i><i class="c-qua"></i><i class="c-log"></i><i class="c-seq"></i><i class="c-wrd"></i></div>
 
 <div class="wrap">
   <header class="top">
@@ -430,7 +430,28 @@
 
   <section class="group" aria-labelledby="g5">
     <div class="group-head"><span class="num">02</span><h2 id="g5">Number sense</h2>
-      <p>Fractions, percents, factors and negative numbers.</p></div>
+      <p>Place value, rounding, time and money, then fractions, percents, factors and negative numbers.</p></div>
+      <a class="card wide c-num" href="helpers/number-sense.html">
+      <div class="art" aria-hidden="true">
+        <svg viewBox="0 0 260 142">
+          <path class="ln" d="M30 34 H230 M30 34 V96 M80 34 V96 M130 34 V96 M180 34 V96 M230 34 V96 M30 96 H230" stroke-width="1.4"/>
+          <text class="sm mu" x="55" y="26" text-anchor="middle">1000s</text><text class="sm mu" x="105" y="26" text-anchor="middle">100s</text>
+          <text class="sm mu" x="155" y="26" text-anchor="middle">10s</text><text class="sm mu" x="205" y="26" text-anchor="middle">1s</text>
+          <text x="55" y="74" text-anchor="middle" style="font-size:26px">3</text><text class="k" x="105" y="74" text-anchor="middle" style="font-size:26px">4</text>
+          <text x="155" y="74" text-anchor="middle" style="font-size:26px">0</text><text x="205" y="74" text-anchor="middle" style="font-size:26px">7</text>
+          <rect x="84" y="44" width="42" height="44" rx="6" fill="none" stroke="var(--c)" stroke-width="2.5"/>
+          <text class="k" x="130" y="124" text-anchor="middle" style="font-size:15px">4 hundreds = 400</text>
+        </svg>
+      </div>
+      <div class="body">
+        <span class="kind"><b>#</b> Number sense</span>
+        <h3>The Place Value Chart</h3>
+        <p>Where the early grades start: what each digit is worth, with base-ten blocks, rounding on a number line,
+          estimating, comparing and ordering, skip counting, telling time and counting money.</p>
+        <ul class="ticks"><li>place value</li><li>rounding</li><li>time and money</li><li>skip counting</li></ul>
+        <span class="go">Open <span aria-hidden="true">→</span></span>
+      </div>
+    </a>
     <div class="cards">
       <a class="card c-fra" href="helpers/fractions.html">
         <div class="art" aria-hidden="true">
@@ -893,7 +914,67 @@
 
   <section class="group" aria-labelledby="g9">
     <div class="group-head"><span class="num">07</span><h2 id="g9">Beyond middle school</h2>
-      <p>Trigonometry for high school, and the first ideas of calculus for a first-year college course.</p></div>
+      <p>Quadratics, logarithms and sequences to round out high school algebra, trigonometry, and the first ideas
+        of calculus for a first-year college course.</p></div>
+    <div class="cards three">
+      <a class="card c-qua" href="helpers/quadratics.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <rect class="fk" x="40" y="22" width="60" height="44"/><rect x="100" y="22" width="34" height="44" fill="none" stroke="var(--c)" stroke-width="2"/>
+            <rect x="40" y="66" width="60" height="26" fill="none" stroke="var(--c)" stroke-width="2"/><rect class="fk" x="100" y="66" width="34" height="26" opacity=".55"/>
+            <text class="sm mu" x="70" y="15" text-anchor="middle">x</text><text class="sm mu" x="117" y="15" text-anchor="middle">+3</text>
+            <text class="sm mu" x="30" y="48" text-anchor="middle">x</text><text class="sm mu" x="28" y="83" text-anchor="middle">+2</text>
+            <text x="70" y="49" text-anchor="middle" style="font-size:14px">x²</text><text x="117" y="49" text-anchor="middle" style="font-size:14px">3x</text>
+            <text x="70" y="84" text-anchor="middle" style="font-size:14px">2x</text><text x="117" y="84" text-anchor="middle" style="font-size:14px">6</text>
+            <text class="k sm" x="170" y="52" text-anchor="middle">x²+5x</text><text class="k sm" x="170" y="68" text-anchor="middle">+6</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>x²</b> Quadratics</span>
+          <h3>The Area Box</h3>
+          <p>Multiply brackets with the box method, factor with factor pairs and grouping, solve quadratics four ways
+            (including the formula), find the vertex, and divide polynomials.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="card c-log" href="helpers/logarithms.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <path class="ln" d="M28 100 V10 M60 100 V10" stroke-width="2"/>
+            <path class="lk" d="M28 84 H60 M28 64 H60 M28 44 H60 M28 24 H60" stroke-width="2"/>
+            <text class="sm mu" x="72" y="88">1</text><text class="sm mu" x="72" y="68">2</text><text class="sm mu" x="72" y="48">3</text><text class="k sm" x="72" y="28">4</text>
+            <text class="k" x="140" y="48" text-anchor="middle">log₂ 16</text>
+            <text class="mu sm" x="140" y="70" text-anchor="middle">= 4 because</text>
+            <text class="sm" x="140" y="88" text-anchor="middle">2⁴ = 16</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>log</b> Logarithms</span>
+          <h3>The Log Ladder</h3>
+          <p>What a log means (it’s the exponent), the log laws, change of base, solving exponential and log
+            equations, growth, decay and interest, and the graphs.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="card c-seq" href="helpers/sequences.html">
+        <div class="art" aria-hidden="true">
+          <svg viewBox="0 0 200 110">
+            <rect class="fk" x="22" y="78" width="30" height="18"/><rect class="fk" x="56" y="62" width="30" height="34"/>
+            <rect class="fk" x="90" y="46" width="30" height="50"/><rect x="124" y="30" width="30" height="66" fill="none" stroke="var(--c)" stroke-width="2" stroke-dasharray="4 3"/>
+            <text class="sm" x="37" y="72" text-anchor="middle">3</text><text class="sm" x="71" y="56" text-anchor="middle">7</text>
+            <text class="sm" x="105" y="40" text-anchor="middle">11</text><text class="k sm" x="139" y="24" text-anchor="middle">?</text>
+            <text class="k sm" x="178" y="58" text-anchor="middle">+4</text><text class="sm mu" x="178" y="76" text-anchor="middle">each</text>
+          </svg>
+        </div>
+        <div class="body">
+          <span class="kind"><b>aₙ</b> Sequences</span>
+          <h3>The Number Staircase</h3>
+          <p>Spot the rule in a list of numbers, arithmetic and geometric sequences, the nth term, adding up a series,
+            sigma notation, and word problems.</p>
+          <span class="go">Open <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+    </div>
     <div class="cards two">
       <a class="card c-tri" href="helpers/trigonometry.html">
         <div class="art" aria-hidden="true">
@@ -972,7 +1053,7 @@
   </section>
 
   <footer>
-    <div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-pro"></i><i class="c-tri"></i><i class="c-cal"></i><i class="c-wrd"></i></div>
+    <div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-pro"></i><i class="c-tri"></i><i class="c-cal"></i><i class="c-num"></i><i class="c-qua"></i><i class="c-log"></i><i class="c-seq"></i><i class="c-wrd"></i></div>
     <div class="row">
       <span>Arithmetic Helpers &middot; light and dark themes, and a print layout on every page.
         Visits are counted with <a href="https://www.goatcounter.com">GoatCounter</a>: no cookies, nothing personal.</span>

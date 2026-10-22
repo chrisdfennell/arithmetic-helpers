@@ -243,7 +243,7 @@
     text-align:center;font-variant-numeric:tabular-nums}
   .stepper[hidden]{display:none}
 
-  /* colour by kind of move */
+  /* color by kind of move */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
@@ -627,7 +627,7 @@
                                  problem shown read-only, no masthead, tabs, maker, examples, footnote or theme
                                  button; nothing is saved in this browser; the page posts its height to the
                                  parent after every change: { type:"helper:height", h }
-       theme=light|dark          with embed=1: the colours to use
+       theme=light|dark          with embed=1: the colors to use
      The page keeps the address bar in step with the problem on screen (history.replaceState: mode and q;
      practice only when it isn't "all"; never the theme). Each graded "Check" and each "Show me the work"
      fires a "helper:checked" CustomEvent on document, and posts the same detail to the parent page if there is one.
@@ -2416,7 +2416,7 @@
 
   /* ===================== the worksheet API ===================== */
   var TOG = [{ v:true, label:"On" }, { v:false, label:"Off" }];
-  // plain words first; a maths term in brackets only where it's the thing being learned (the worksheet API uses the same words)
+  // plain words first; a math term in brackets only where it's the thing being learned (the worksheet API uses the same words)
   var MK_W = {
     simplifyKind:{ simplify:"Simplify a ratio (12:18 → 2:3)", missing:"Fill in a missing number (3:4 = ?:20)", mix:"A mix of both" },
     simplifyParts:{ 2:"Two numbers (like 2:3)", 3:"Three numbers (like 2:3:5)" },

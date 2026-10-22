@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><img src="assets/icons/icon-192.png" width="96" height="96" alt="Arithmetic Helpers icon: the four operation signs on coloured tiles"></a>
+  <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><img src="assets/icons/icon-192.png" width="96" height="96" alt="Arithmetic Helpers icon: the four operation signs on colored tiles"></a>
 </p>
 
 <h1 align="center">Arithmetic Helpers</h1>
@@ -22,7 +22,7 @@
   <a href="#how-its-built"><img src="https://img.shields.io/badge/build%20step-none-brightgreen" alt="No build step"></a>
   <a href="#install-it-as-an-app"><img src="https://img.shields.io/badge/works%20offline-installable-5a4fcf" alt="Works offline and installs as an app"></a>
   <a href="#how-its-built"><img src="https://img.shields.io/badge/vanilla%20JS-ES5-f0db4f" alt="Vanilla JavaScript (ES5)"></a>
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test"><img src="https://img.shields.io/badge/self--test-12%2C200%2B%20checks-success" alt="Self-test: more than 12,200 checks"></a>
+  <a href="https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test"><img src="https://img.shields.io/badge/self--test-15%2C600%2B%20checks-success" alt="Self-test: more than 15,600 checks"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/commits/main"><img src="https://img.shields.io/github/last-commit/chrisdfennell/arithmetic-helpers" alt="Last commit"></a>
 </p>
 
@@ -53,9 +53,9 @@ Arithmetic Helpers is a free website for math from the early grades through firs
 
 | Level | What's here |
 | --- | --- |
-| **Early grades (K–5)** | Addition and subtraction facts, carrying and borrowing, times tables to 20 × 20, long division, place value, hundred charts, flash cards |
+| **Early grades (K–5)** | Place value, rounding and estimating, comparing numbers, skip counting, telling time, counting money, addition and subtraction facts, carrying and borrowing, times tables to 20 × 20, long division, hundred charts, flash cards |
 | **Middle school (6–8)** | Fractions, decimals and percents, ratios and rates, negative numbers, order of operations, exponents, equations, geometry, statistics, probability, story problems |
-| **High school (9–12)** | Algebra and systems, lines, graphing functions, transformations, inequalities, trigonometry (the unit circle, the laws of sines and cosines, sine and cosine graphs) |
+| **High school (9–12)** | Algebra and systems, lines, graphing functions, transformations, inequalities, quadratics and polynomials (factoring, the quadratic formula, completing the square, the vertex, polynomial division), logarithms and exponential equations, sequences and series, trigonometry (the unit circle, the laws of sines and cosines, sine and cosine graphs) |
 | **First-year college** | Calculus basics: limits, derivatives with every rule named, tangent lines, maximum and minimum, integrals and the area under a curve |
 
 - **Students** type in a problem and see how it's done, step through it one move at a time, or check their own answer and get told what probably went wrong.
@@ -73,6 +73,7 @@ Each helper is one page. Type a problem (or pick one, or have the page make one)
 
 | Page | What it does |
 | --- | --- |
+| [The Place Value Chart](https://chrisdfennell.github.io/arithmetic-helpers/helpers/number-sense) | Number sense for the early grades: place value with base-ten blocks, expanded form and number words, rounding on a number line, estimating, comparing and ordering, skip counting and even or odd, telling time and elapsed time, and counting money and making change |
 | [The Carry Column](https://chrisdfennell.github.io/arithmetic-helpers/helpers/addition) | Addition of whole numbers, decimals (2–4 numbers) and fractions, with every carry shown |
 | [The Borrow Bank](https://chrisdfennell.github.io/arithmetic-helpers/helpers/subtraction) | Subtraction with every borrow crossed out and written above |
 | [The Product Ladder](https://chrisdfennell.github.io/arithmetic-helpers/helpers/multiplication) | Multiplication with partial products, then placing the decimal point |
@@ -88,6 +89,9 @@ Each helper is one page. Type a problem (or pick one, or have the page make one)
 | [The Balance Scale](https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
 | [The Slope Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/lines-and-slope) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
 | [The Graph Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, scatter plots with a trend line, and a Free plot sheet of graph paper to draw on; tap or hover any point to see what it is |
+| [The Area Box](https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics) | Quadratics and polynomials: multiplying brackets with the box method (FOIL and the special products named), factoring (GCF, factor pairs, grouping, difference of squares, cubes), solving quadratics by factoring, square roots, completing the square or the formula, the vertex and vertex form, and long and synthetic division |
+| [The Log Ladder](https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms) | Logarithms: what a log means (it's the exponent), the log laws to expand and condense, change of base, exponential and log equations (with the check for extraneous answers), growth, decay, half-life and compound interest, and the graphs of bˣ and log_b x |
+| [The Number Staircase](https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences) | Sequences and series: spot the rule in a list, arithmetic and geometric sequences (any term, the nth-term rule, is it in the list?), sums of series and sigma notation, infinite geometric series, and word problems |
 | [The Shape Shop](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
 | [The Dot Plot](https://chrisdfennell.github.io/arithmetic-helpers/helpers/statistics) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
 | [The Chance Spinner](https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
@@ -146,7 +150,7 @@ The Story Problem reads a story as it's typed: it finds the numbers and the ques
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201"><img src="docs/screenshots/graphing-functions.png" width="100%" alt="The Graph Paper: y = x² − 4x + 3 and y = x − 1 on one grid, with the vertex, intercepts and crossing points labelled"></a>
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201"><img src="docs/screenshots/graphing-functions.png" width="100%" alt="The Graph Paper: y = x² − 4x + 3 and y = x − 1 on one grid, with the vertex, intercepts and crossing points labeled"></a>
       <br><b>The Graph Paper</b>: two functions with their key features
     </td>
     <td width="50%" valign="top">
@@ -164,6 +168,26 @@ The Story Problem reads a story as it's typed: it finds the numbers and the ques
       <br><b>The Rate Machine</b>: a tangent line, each rule of the derivative named
     </td>
   </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/number-sense?q=round%203%2C456%20to%20the%20nearest%20hundred"><img src="docs/screenshots/number-sense.png" width="100%" alt="The Place Value Chart: rounding 3,456 to the nearest hundred, with the hundreds digit ringed, the digit to its right in green, and a number line from 3,400 to 3,500 with the halfway mark at 3,450"></a>
+      <br><b>The Place Value Chart</b>: rounding on a number line
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics?q=(2x%2B3)(x-4)"><img src="docs/screenshots/quadratics.png" width="100%" alt="The Area Box: multiplying (2x + 3)(x − 4) in a box, the four cells 2x², 3x, −8x and −12 marked F, I, O and L, giving 2x² − 5x − 12"></a>
+      <br><b>The Area Box</b>: multiplying brackets with the box method
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms?q=3%5E(2x-1)%20%3D%2027"><img src="docs/screenshots/logarithms.png" width="100%" alt="The Log Ladder: solving 3^(2x − 1) = 27 by writing 27 as 3³ so the exponents match, 2x − 1 = 3, x = 2"></a>
+      <br><b>The Log Ladder</b>: an exponential equation, same base on both sides
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011"><img src="docs/screenshots/sequences.png" width="100%" alt="The Number Staircase: the nth-term rule of 5, 8, 11, with the common difference 3 found first"></a>
+      <br><b>The Number Staircase</b>: the nth-term rule of an arithmetic sequence
+    </td>
+  </tr>
 </table>
 
 ## For students
@@ -179,7 +203,7 @@ Every helper has three ways to work: **Show all work**, **One step at a time** a
 ### Practice sets, flash cards and the problem of the day
 
 - **[Practice sets](https://chrisdfennell.github.io/arithmetic-helpers/practice/sets):** open the link (or scan the QR code) your teacher shares and work through the problems one at a time with Check my answer. At the end you get a score and a line to send back.
-- **[The Flash Cards](https://chrisdfennell.github.io/arithmetic-helpers/practice/flash-cards):** times tables up to 20 × 20 (any of them, mixed together), division, addition and subtraction facts, negatives, ×10/×100/×1000, doubles and halves, primes, powers, easy percents, fractions, squares, cubes, fraction–decimal–percent pairs and math words. Study, Quiz, a Speed round, and a **Learn** mode that brings back the ones you miss. A mastery chart colours each fact by how well you know it, and the cards print as cut-outs.
+- **[The Flash Cards](https://chrisdfennell.github.io/arithmetic-helpers/practice/flash-cards):** times tables up to 20 × 20 (any of them, mixed together), division, addition and subtraction facts, negatives, ×10/×100/×1000, doubles and halves, primes, powers, easy percents, fractions, squares, cubes, fraction–decimal–percent pairs and math words. Study, Quiz, a Speed round, and a **Learn** mode that brings back the ones you miss. A mastery chart colors each fact by how well you know it, and the cards print as cut-outs.
 - **[Problem of the Day](https://chrisdfennell.github.io/arithmetic-helpers/practice/problem-of-the-day):** one problem a day, the same for everyone on that date (no sign-up, nothing to set up): easier on Monday, a challenge on Friday, a puzzle at the weekend, with a streak kept on the device.
 
 <table>
@@ -338,6 +362,10 @@ Every helper reads its problem from the address, so a link opens with that probl
 | [`helpers/statistics?q=4, 8, 6, 5, 7`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/statistics?q=4%2C%208%2C%206%2C%205%2C%207) | mean, median, mode and range |
 | [`helpers/exponents?q=(2x^2)^3`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/exponents?q=(2x%5E2)%5E3) | an exponent law |
 | [`helpers/probability?q=draw 2 without replacement from 4 red 6 blue, both red`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red) | two events without putting it back |
+| [`helpers/number-sense?q=round 3,456 to the nearest hundred`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/number-sense?q=round%203%2C456%20to%20the%20nearest%20hundred) | rounding on a number line |
+| [`helpers/quadratics?q=2x^2+3x-2=0`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics?q=2x%5E2%2B3x-2%3D0) | solving a quadratic (the page picks the best method and says why) |
+| [`helpers/logarithms?q=3^(2x-1) = 27`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms?q=3%5E(2x-1)%20%3D%2027) | an exponential equation |
+| [`helpers/sequences?q=nth term of 5, 8, 11`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011) | the nth-term rule of an arithmetic sequence |
 | [`helpers/geometry?q=circle radius 5`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry?q=circle%20radius%205) | a circle with radius 5 |
 | [`helpers/story-problems?q=Ana has 12 shells. …`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F) | a story problem |
 | [`helpers/scratch-paper?op=sub&q=5003-1278`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper?op=sub&q=5003-1278) | a subtraction to do by hand |

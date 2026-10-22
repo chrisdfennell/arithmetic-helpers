@@ -5,6 +5,7 @@
 (function(){
   "use strict";
   var PAGES = [
+    { href:"number-sense.html",   sign:"#",  name:"Place value", title:"The Place Value Chart: number sense", c:"num" },
     { href:"addition.html",       sign:"+",  name:"Add",       title:"The Carry Column",   c:"add" },
     { href:"subtraction.html",    sign:"−",  name:"Subtract",  title:"The Borrow Bank",    c:"sub" },
     { href:"multiplication.html", sign:"×",  name:"Multiply",  title:"The Product Ladder", c:"mul" },
@@ -20,6 +21,9 @@
     { href:"algebra.html",        sign:"x",  name:"Algebra",   title:"The Balance Scale",  c:"alg", italic:true },
     { href:"lines.html",          sign:"↗",  name:"Lines",     title:"The Slope Grid",     c:"lin" },
     { href:"graphing.html",        sign:"⌗",  name:"Graphing",   title:"The Graph Paper", c:"gra" },
+    { href:"quadratics.html",      sign:"x²", name:"Quadratics", title:"The Area Box: quadratics and polynomials", c:"qua" },
+    { href:"logarithms.html",      sign:"log", name:"Logs",      title:"The Log Ladder: logarithms", c:"log" },
+    { href:"sequences.html",       sign:"aₙ", name:"Sequences",  title:"The Number Staircase: sequences and series", c:"seq" },
     { href:"geometry.html",       sign:"△",  name:"Geometry",  title:"The Shape Shop",     c:"geo" },
     { href:"stats.html",          sign:"⁘",  name:"Statistics", title:"The Dot Plot",      c:"sta" },
     { href:"probability.html",     sign:"◔",  name:"Chance",     title:"The Chance Spinner", c:"pro" },
@@ -39,9 +43,9 @@
   ];
 
   var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;"
-            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-gra:#0369A1;--nv-exp:#BE185D;--nv-pro:#A21CAF;--nv-scr:#B45309;--nv-tri:#4D7C0F;--nv-cal:#7C3AED;";
+            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-gra:#0369A1;--nv-exp:#BE185D;--nv-pro:#A21CAF;--nv-scr:#B45309;--nv-tri:#4D7C0F;--nv-cal:#7C3AED;--nv-num:#EA580C;--nv-qua:#B91C1C;--nv-log:#1D4ED8;--nv-seq:#15803D;";
   var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;"
-            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-gra:#7DD3FC;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;--nv-scr:#FCD34D;--nv-tri:#BEF264;--nv-cal:#C4B5FD;";
+            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-gra:#7DD3FC;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;--nv-scr:#FCD34D;--nv-tri:#BEF264;--nv-cal:#C4B5FD;--nv-num:#FDBA74;--nv-qua:#FCA5A5;--nv-log:#93C5FD;--nv-seq:#86EFAC;";
   var CSS =
     ":root{" + LIGHT + "}" +
     "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + DARK + "}}" +

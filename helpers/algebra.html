@@ -194,7 +194,7 @@
     text-align:center;font-variant-numeric:tabular-nums}
   .stepper[hidden]{display:none}
 
-  /* colour by kind of move */
+  /* color by kind of move */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
@@ -1658,7 +1658,7 @@
           + "To square −3 you’d write <b>(−3)²</b> = 9.";
       st.tag = p.t === "neg" ? "Opposite" : VERBS[p.op];
     }
-    st.col = st.cls === "a" ? "a" : "m";                 // powers are repeated multiplying, so they share its colour
+    st.col = st.cls === "a" ? "a" : "m";                 // powers are repeated multiplying, so they share its color
     st.badge = { cls:st.col, text:st.cls === "e" ? "xⁿ" : st.cls === "a" ? "+ −" : "× ÷", pre:st.group ? { cls:"p", text:"( )" } : null };
     st.text = why.join(" ") + " " + did + " Now it reads <b>" + astH(st.after) + "</b>.";
   }

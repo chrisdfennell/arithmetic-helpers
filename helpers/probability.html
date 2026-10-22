@@ -228,7 +228,7 @@
   .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
     text-align:center;font-variant-numeric:tabular-nums}
 
-  /* colour by kind of step */
+  /* color by kind of step */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
@@ -582,7 +582,7 @@
    The same problem, structured (what the problem maker and the worksheet API write; links round-trip exactly):
      x       what is used. One of:
                die6 (any dieN, N = 2 to 20) · coin · deck (52 cards) · nums20 (a number 1 to N, N up to 100)
-               bag(red:3,blue:5,green:2)                       (marbles: colour:count, up to 100 in all)
+               bag(red:3,blue:5,green:2)                       (marbles: color:count, up to 100 in all)
                spin(red,red,red,white,white,white,white,white) (a spinner, equal parts, in order round the circle)
                spin(red:90,blue:120,green:150)                 (unequal parts, in degrees, adding up to 360)
                spin(1,2,3,4,5,6,7,8)                           (a numbered spinner)
@@ -591,7 +591,7 @@
                numbers   eq:4 · even · odd · prime · square · mult:3 · factor:12 · gt:4 · lt:3 · ge:5 · le:2
                labels    is:red · is:H (heads) · is:T (tails)
                cards     suit:hearts · color:red · face (J, Q, K) · ace · rank:K · rank:7 · numcard (2 to 10)
-                         card:K:hearts · card:K:red · card:face:black (rank and suit or colour, * for any)
+                         card:K:hearts · card:K:red · card:face:black (rank and suit or color, * for any)
                any of them can be turned round with not:  (not:eq:6)
              space events (over the whole outcome): sum:7 · sumgt:9 · sumlt:5 · double (all the same)
                exactly:2:is:H · atleast:1:eq:6 · atmost:1:is:H · all:even · none:eq:6 · each:is:H/even
@@ -781,8 +781,8 @@
     var tot = 0, seen = {};
     cats = cats.filter(function(c){ return c.c > 0; });
     if (!cats.length) throw new UserErr("The bag is empty — say what’s in it, like <b>3 red, 5 blue, 2 green</b>.");
-    if (cats.length > 6) throw new UserErr("Up to 6 colours in a bag, please.");
-    cats.forEach(function(c){ if (seen[c.lab]) throw new UserErr("<b>" + esc(c.lab) + "</b> is listed twice — give each colour once."); seen[c.lab] = 1; tot += c.c; });
+    if (cats.length > 6) throw new UserErr("Up to 6 colors in a bag, please.");
+    cats.forEach(function(c){ if (seen[c.lab]) throw new UserErr("<b>" + esc(c.lab) + "</b> is listed twice — give each color once."); seen[c.lab] = 1; tot += c.c; });
     if (tot > 100) throw new UserErr("Up to 100 marbles in a bag, please — that one has " + tot + ".");
     return { kind:"bag", code:"bag(" + cats.map(function(c){ return c.lab + ":" + c.c; }).join(",") + ")", cats:cats,
              outs:cats.map(function(c){ return { lab:c.lab, w:c.c }; }), tot:tot, numeric:false, equal:false };
@@ -820,7 +820,7 @@
     if ((m = /^bag\((.*)\)$/.exec(s))){
       var cats = m[1].split(",").filter(Boolean).map(function(p){
         var q = /^([a-z][a-z0-9]{0,11}):(\d{1,3})$/.exec(p);
-        if (!q) throw new UserErr("I can’t read <b>" + esc(p) + "</b> in the bag — write each colour with its count, like <b>red:3</b>.");
+        if (!q) throw new UserErr("I can’t read <b>" + esc(p) + "</b> in the bag — write each color with its count, like <b>red:3</b>.");
         return { lab:q[1], c:parseInt(q[2], 10) };
       });
       return mkBag(cats);
@@ -1333,7 +1333,7 @@
     var pairs = all(new RegExp("\\b(\\d+) (" + COLRE + ")(?:s)?(?: (?:marbles?|balls?|cubes?|counters?|beads?|chips?|socks?|sweets?|candies|jelly ?beans?|tiles?|buttons?|pens?|crayons?|cards?|sections?|parts?|spaces?))?\\b", "g")).filter(freeM);
     var assigns = all(new RegExp("\\b(\\d+) (?:of them |of the (?:parts|sections) |parts |sections )?(?:are|is) (" + COLRE + ")\\b", "g")).filter(freeM);
     var bagWord = one(/\b(?:bag|jar|box|marbles?|urn|sack|bowl|hat|drawer)\b/);
-    if (found.spin){ /* colours belong to the spinner */ }
+    if (found.spin){ /* colors belong to the spinner */ }
     else if (pairs.length){ seen("bag", Math.min(pairs[0].index, bagWord ? bagWord.index : 1e9), 0); }
     else if (bagWord) seen("bag", bagWord.index, 0);
     var deckM = one(/\bdeck\b|\bplaying cards?\b|\bcards?\b|\bhearts?\b|\bspades?\b|\bdiamonds?\b|\bclubs?\b|\baces?\b|\bkings?\b|\bqueens?\b|\bjacks?\b|\bface cards?\b|\bsuits?\b/);
@@ -1387,7 +1387,7 @@
       var secs = [];
       if (cnt.length){
         var sum = 0; cnt.forEach(function(c){ sum += c.c; });
-        if (parts !== null && sum > parts) throw new UserErr("That’s " + sum + " parts coloured in, but the spinner only has " + parts + ".");
+        if (parts !== null && sum > parts) throw new UserErr("That’s " + sum + " parts colored in, but the spinner only has " + parts + ".");
         cnt.forEach(function(c){ for (var i = 0; i < c.c; i++) secs.push(c.lab); });
         if (parts !== null && parts > sum){ var fill = ix.white === undefined ? "white" : "other"; for (var j = sum; j < parts; j++) secs.push(fill); }
         return "spin(" + secs.join(",") + ")";
@@ -1396,7 +1396,7 @@
       var named = [], at = [], cm, re3 = new RegExp("\\b(" + COLRE + ")\\b", "g");
       while ((cm = re3.exec(s))) if (named.indexOf(cm[1]) < 0 && free(cm.index, cm.index + cm[1].length)){ named.push(cm[1]); at.push(cm); }
       if (named.length >= 2 && (parts === null || parts === named.length)){
-        at.forEach(function(x){ eatM(x); });            // the list names the parts; a colour named again later is the event
+        at.forEach(function(x){ eatM(x); });            // the list names the parts; a color named again later is the event
         return "spin(" + named.join(",") + ")";
       }
       var lets = /\b(?:parts|sections|letters)?\s*([a-h](?:\s*,\s*[a-h]){2,})\b/.exec(s);
@@ -1698,7 +1698,7 @@
     });
     return svgWrap(hw + 13 * cw + 4, top + 4 * (chh + gap) + 2, aria, base + "<g" + ds(step) + ">" + hi + "</g>");
   }
-  /* a bag of marbles, one dot per marble, coloured by kind */
+  /* a bag of marbles, one dot per marble, colored by kind */
   function bagSVG(E, cls, W, step, aria){
     var m = E.tot, r = m <= 12 ? 10 : m <= 24 ? 8.5 : m <= 45 ? 7 : m <= 70 ? 5.6 : 4.6, cell = 2 * r + Math.max(r * 0.6, 8);
     var bw = Math.max(170, Math.min(W - 6, 300)), cols = Math.max(3, Math.floor((bw - 34) / cell));
@@ -1910,7 +1910,7 @@
     if (E.kind === "coin") return "A fair coin is just as likely to land on heads as on tails.";
     if (E.kind === "deck") return "After shuffling, each of the 52 cards is just as likely to be picked.";
     if (E.kind === "nums") return "Each of the " + E.N + " numbers is just as likely to be picked.";
-    if (E.kind === "bag") return "Every marble is just as likely to be picked, so count marbles, not colours.";
+    if (E.kind === "bag") return "Every marble is just as likely to be picked, so count marbles, not colors.";
     if (E.unequal) return "The parts aren’t the same size, so counting parts won’t work — a bigger part is more likely. Count degrees instead: the whole circle is 360°.";
     return "The " + E.n + " parts are all the same size, so the spinner is just as likely to stop on each one.";
   }
@@ -2003,7 +2003,7 @@
       + big(Pl(sh) + " = " + fH(fA, t) + simpH(fA, t)), 1);
     html += sect(lead("Not happening is everything else.") + " Every outcome is either " + esc(sh) + " or not, never both — so the two chances add up to 1.",
       big(Pl(nsh) + " = 1 − " + Pl(sh)) + big("= " + fH(t, t) + " − " + fH(fA, t) + " = " + fH(f, t) + simpH(f, t)), 2);
-    html += sect(lead("Check by counting.") + " The ones that are " + B(esc(nsh)) + " — marked in colour in the picture:",
+    html += sect(lead("Check by counting.") + " The ones that are " + B(esc(nsh)) + " — marked in color in the picture:",
       (E.kind === "spin" && E.unequal ? big(t + "° − " + fA + '° = <span class="eqk">' + f + "°</span>") : outToks(E, function(o){ return testAtom(A, o) ? "dim" : "on"; }) + big('<span class="eqk">' + favWords(E, negOf(A), f) + "</span>")), 3);
     html += sect(lead("As a decimal and a percent."), decPctH(p, f, t), 4);
     html += sect(lead("How likely is that?"), xs(scaleSVG(p, W, 5)), 5);

@@ -2406,7 +2406,7 @@
     } catch (e){}
     return s.replace(/\*/g, "×").replace(/-/g, MN).replace(/\s*;\s*/g, "; ");
   }
-  function wordsMsg(){ return LP && LP.kind === "word" ? "Save the words for your answer line, at the end." : "Write the maths on each line — numbers, letters and signs."; }
+  function wordsMsg(){ return LP && LP.kind === "word" ? "Save the words for your answer line, at the end." : "Write the math on each line — numbers, letters and signs."; }
   function setupLines(p){
     var kind = p.kind, o = { kind:kind, q:p.q }, gs;
     if (kind === "word"){ o.story = p.q; o.vars = []; return o; }

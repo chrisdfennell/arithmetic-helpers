@@ -310,7 +310,7 @@
                        toward the total solved, not the streak). A future day: a teacher's preview (nothing recorded).
      view=today|week   week = the Monday–Sunday list for teachers (of the week holding date, or this week),
                        with links, an answer key and a print layout (problems first, the answer key on its own page).
-     theme=light|dark  the colours for this visit (not saved; the theme button saves its choice on this device).
+     theme=light|dark  the colors for this visit (not saved; the theme button saves its choice on this device).
      The address bar is kept in step (history.replaceState): date (left out for today) and view=week; never the theme.
      Testing only, and only on 127.0.0.1 / localhost: today=YYYY-MM-DD or now=YYYY-MM-DDTHH:MM moves this page's
      clock (the clock keeps ticking from there). window.__daily has the same hooks for test pages.
@@ -323,7 +323,7 @@
      with the topics that have weekend:true. A round never starts with the topic the last round ended on.
 
    ADDING A TOPIC: add an entry to TOPICS below (probability and exponents were added this way from 2026-10-26, graphing from 2026-11-02):
-       { id:"probability", page:"probability.html", name:"Probability", title:"…", c:"pro",     // c: a colour token (--pro)
+       { id:"probability", page:"probability.html", name:"Probability", title:"…", c:"pro",     // c: a color token (--pro)
          weekday:true, weekend:true, from:"2026-11-02",
          make:function(r, L){ … return Q([["mode", "…"], ["q", "…"]], "the problem as text", "the answer"); } }
      - make(r, L): r() is the seeded random number generator (0 ≤ r() < 1; use ri(r, lo, hi), pick(r, list),
@@ -337,7 +337,7 @@
      - from: the first date the topic can be picked. Dates before it keep the rotation they had, so problems already
        set (and printed) don't change. Always give a new topic a from date in the future. Changing an existing
        make() changes that topic's problems on every date, past ones too.
-     - Add the colour token (--pro: light and dark) to the three CSS blocks at the top if it's new.
+     - Add the color token (--pro: light and dark) to the three CSS blocks at the top if it's new.
      - Then run the verification page (it opens every generated link) before publishing.
 
    Record: localStorage["daily-problem"] = { v:1, best:<best streak seen>, d:{ "YYYY-MM-DD":{ m, n, h, at, late } } }

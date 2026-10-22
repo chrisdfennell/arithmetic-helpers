@@ -27,7 +27,7 @@
     --m:#0D7361;     --m-bg:#D4EAE7;                          /* multiplying: the product law, repeated multiplication */
     --e:#9A5410;     --e-bg:#F6E5D2;                          /* exponents and counting */
     --v:#3346A8;     --v-bg:#E0E4F6;                          /* dividing: the quotient law, the pattern going down */
-    --r:#A8412A;     --r-bg:#F6DFD8;                          /* cancelled, crossed off, the minus sign */
+    --r:#A8412A;     --r-bg:#F6DFD8;                          /* canceled, crossed off, the minus sign */
     --a:#3D7A1C;     --a-bg:#E2EED8;                          /* answers and checks */
     --warm:#9A5410;  --warm-bg:#F6E5D2;                       /* notes */
     --focus:#BE185D;
@@ -227,7 +227,7 @@
   .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
     text-align:center;font-variant-numeric:tabular-nums}
 
-  /* colour by kind of step */
+  /* color by kind of step */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
@@ -1368,7 +1368,7 @@
     return P;
   }
 
-  // one number for the sci-notation maths: 3 × 10^4, 3x10^4, 3e4, 10^4 or a plain number
+  // one number for the sci-notation math: 3 × 10^4, 3x10^4, 3e4, 10^4 or a plain number
   function scanNum(s, i){
     var re = /^\s*(\(?)\s*([+-]?)\s*(?:10\s*\^\s*\(?\s*([+-]?\d+)\s*\)?(?![\d.])|(\d+(?:\.\d+)?|\.\d+)(?:\s*\*\s*10\s*\^\s*\(?\s*([+-]?\d+)\s*\)?|\s*[eE]\s*([+-]?\d+))?)\s*(\)?)/;
     var m = re.exec(s.slice(i));
@@ -1934,7 +1934,7 @@
     } else {
       var h = hopToSci(P.src.plain ? P.src.v : P.src.m), jj = -h.s;
       sv = hopSVG(h.D, h.p, h.s, "tosci", "The decimal point moves " + jumpsW(h.s));
-      html += sect(lead("Move the decimal point") + " until just one digit (not 0) is in front of it: " + B(jumpsW(h.s)) + ". The grey zeros drop off.",
+      html += sect(lead("Move the decimal point") + " until just one digit (not 0) is in front of it: " + B(jumpsW(h.s)) + ". The gray zeros drop off.",
         '<div class="xscroll">' + sv + "</div>", st);
       items.push({ step:st++, lines:[["e","Hop", "Move the point after the first digit that isn’t 0: " + B(stdT(P.src.plain ? absR(P.src.v) : absR(P.src.m))) + " → " + B(mT(absR(P.m))) + " is " + B(jumpsW(h.s)) + "."]] });
       if (P.src.plain){
@@ -1960,7 +1960,7 @@
     return items.length;
   }
 
-  /* ===================== tab 4: maths with scientific notation ===================== */
+  /* ===================== tab 4: math with scientific notation ===================== */
   function opSym(op){ return { mul:"×", div:"÷", add:"+", sub:"−" }[op] || ""; }
   function sciX(x){ return sciH(x.m, x.k); }
   function normSect(c, K, st, why, items, prefix){   // c × 10^K with c not between 1 and 10 → back into scientific notation
@@ -2894,7 +2894,7 @@
       var text = genText(mode, G), P;
       try { P = readProblem(mode, text); } catch (e){ if (e && e.user) continue; throw e; }
       if (avoid && avoid[paramsOf(P)] && t < 50) continue;
-      if (mode === "laws" && !P.nm && !P.sol.fin.items.length && P.ex.indexOf("^0") < 0 && t < 50) continue;   // everything cancelled
+      if (mode === "laws" && !P.nm && !P.sol.fin.items.length && P.ex.indexOf("^0") < 0 && t < 50) continue;   // everything canceled
       return { P:P, text:qText(P) };
     }
     return null;
@@ -2988,11 +2988,11 @@
     return [
       { key:"mode", label:"Kind of problem", type:"choice", default:"eval", values:[
         { v:"eval", label:"Work out a power (2⁵, (−3)², 5⁻²)" }, { v:"laws", label:"Exponent laws (simplify x³ · x⁴, (2x²)³)" },
-        { v:"sci", label:"Scientific notation (convert both ways)" }, { v:"scicalc", label:"Maths with scientific notation (× ÷ + − and compare)" },
+        { v:"sci", label:"Scientific notation (convert both ways)" }, { v:"scicalc", label:"Math with scientific notation (× ÷ + − and compare)" },
         { v:"roots", label:"Square and cube roots" }] },
       { key:"maxExp", label:"Biggest exponent", type:"choice", default:"5", modes:["eval"], values:[3, 5, 8].map(function(v){ return { v:String(v), label:"up to " + v }; }) },
       { key:"negBase", label:"Negative bases, and −3² vs (−3)²", type:"toggle", default:true, values:onOff, modes:["eval"] },
-      { key:"negExp", label:"Zero and negative exponents (negative powers of 10, for scientific notation maths)", type:"toggle", default:true, values:onOff, modes:["eval", "scicalc"] },
+      { key:"negExp", label:"Zero and negative exponents (negative powers of 10, for scientific notation math)", type:"toggle", default:true, values:onOff, modes:["eval", "scicalc"] },
       { key:"fractions", label:"Fractions as bases, like (2/3)³", type:"toggle", default:false, values:onOff, modes:["eval"] },
       { key:"decimals", label:"Decimals as bases, like 0.5²", type:"toggle", default:false, values:onOff, modes:["eval"] },
       { key:"tens", label:"Powers of 10", type:"toggle", default:false, values:onOff, modes:["eval"] },

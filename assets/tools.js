@@ -447,7 +447,7 @@
   }
 
 
-  /* ===================== the maths keypad (phones and tablets) ===================== */
+  /* ===================== the math keypad (phones and tablets) ===================== */
   // the symbols that are awkward to type on a phone, chosen for each page
   var PAD = {
     "addition.html":"+ − / . , space", "subtraction.html":"− + / . , space", "multiplication.html":"× / . , space",
@@ -456,7 +456,9 @@
     "pemdas.html":"+ − × ÷ ( ) ^ ² .", "algebra.html":"x y + − × ÷ ( ) = < > ^ / .",
     "lines.html":"x y ( ) , = + − / .", "geometry.html":". / π √ , °", "stats.html":", . − :",
     "wordproblems.html":". $ / % ,", "scratch.html":"+ − × ÷ . , space", "flashcards.html":"/ . % − ,",
-    "trigonometry.html":"° π √ / ( ) . − =", "calculus.html":"x ^ ( ) / √ π e − + ="
+    "trigonometry.html":"° π √ / ( ) . − =", "calculus.html":"x ^ ( ) / √ π e − + =",
+    "number-sense.html":", . $ ¢ : < > =", "quadratics.html":"x ^ ² ( ) − + = / √ ±",
+    "logarithms.html":"log ln ^ ( ) = / e − .", "sequences.html":", ^ / − ( ) = Σ ."
   };
   var padEl = null, padFor = null, padHide = null;
   function padWanted(){

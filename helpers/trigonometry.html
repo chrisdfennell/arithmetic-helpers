@@ -233,7 +233,7 @@
   .stepper .count{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);min-width:7.5ch;
     text-align:center;font-variant-numeric:tabular-nums}
 
-  /* colour by kind of step */
+  /* color by kind of step */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-o{--c:var(--o);--cb:var(--o-bg)}
   .c-j{--c:var(--j);--cb:var(--j-bg)}
@@ -2188,7 +2188,7 @@
       items.push({ step:st++, lines:[["e", "Period", B((rad ? "2π" : "360°") + "/b = " + (rad ? "2π" : "360°") + "/" + bT + " = " + gUnitX(P, P.per)) + "."]], aside:"Divide by b — don’t multiply. (" + (rad ? "2π" : "360°") + " × " + bT + " would be " + gUnitX(P, mul(rad ? TWO : R(360), P.b)) + ".)" });
       html += sect(lead("Phase shift.") + " " + (P.h.n === 0n ? "Nothing is added to x inside, so there’s no shift: the wave starts at x = 0." : "In x − h the wave moves " + B(gUnitX(P, absR(P.h))) + " to the " + B(P.h.n > 0n ? "right" : "left") + (P.h.n > 0n ? " (minus means right)." : " (plus means left).")), bl("h = " + '<span class="eqj">' + gUnitXH(P, P.h) + "</span>" + (P.h.n === 0n ? "" : nm(" → " + (P.h.n > 0n ? "right" : "left")))), st);
       items.push({ step:st++, lines:[["j", "Shift", P.h.n === 0n ? "No phase shift." : B(gUnitX(P, absR(P.h))) + " to the " + (P.h.n > 0n ? "right" : "left") + "."]] });
-      html += sect(lead("Midline, max and min.") + " The wave is centred on y = k and goes up and down by the amplitude.", bl("midline y = " + '<span class="eqk">' + kT + "</span>" + nm(" · ") + "max = " + kT + " + " + numT(amp) + " = " + numT(add(P.k, amp)) + nm(" · ") + "min = " + kT + " − " + numT(amp) + " = " + numT(sub(P.k, amp))), st);
+      html += sect(lead("Midline, max and min.") + " The wave is centered on y = k and goes up and down by the amplitude.", bl("midline y = " + '<span class="eqk">' + kT + "</span>" + nm(" · ") + "max = " + kT + " + " + numT(amp) + " = " + numT(add(P.k, amp)) + nm(" · ") + "min = " + kT + " − " + numT(amp) + " = " + numT(sub(P.k, amp))), st);
       items.push({ step:st++, lines:[["p", "Midline", B("y = " + kT)] , ["o", "Max/min", "max " + B(numT(add(P.k, amp))) + ", min " + B(numT(sub(P.k, amp))) + "."]] });
       var q = dvd(P.per, R(4));
       var tbl = '<table class="tbl ctr"><thead><tr><th class="l">x</th>' + keys.map(function(p){ return "<th>" + esc(gUnitX(P, p.x)) + "</th>"; }).join("") + '</tr></thead><tbody><tr><td class="l">y</td>' + keys.map(function(p){ return "<td>" + numT(p.y) + "</td>"; }).join("") + '</tr><tr><td class="l dim">where</td>' + keys.map(function(p){ return '<td class="dim">' + p.w + "</td>"; }).join("") + "</tr></tbody></table>";
@@ -2300,7 +2300,7 @@
     if (P.task === "pyth"){
       var f = P.f, v = P.v, v2 = qRat(qMul(v, v)), q = P.q, other = f === "sin" ? "cos" : f === "cos" ? "sin" : null;
       if (other){
-        html += sect(lead("The Pythagorean identity.") + " The point (cos θ, sin θ) is on the unit circle, 1 away from the centre, so by Pythagoras:", bl("sin²θ + cos²θ = 1"), st);
+        html += sect(lead("The Pythagorean identity.") + " The point (cos θ, sin θ) is on the unit circle, 1 away from the center, so by Pythagoras:", bl("sin²θ + cos²θ = 1"), st);
         items.push({ step:st++, lines:[["p", "Identity", B("sin²θ + cos²θ = 1") + " — Pythagoras on the unit circle."]] });
         var rest = sub(ONE, v2);
         html += sect(lead("Put in what we know.") + " " + B(f + " θ = " + qT(v)) + ".", bl("(" + qH(v) + ")² + " + other + "²θ = 1") + bl(other + "²θ = 1 − " + fracH(v2) + " = " + '<span class="eqe">' + fracH(rest) + "</span>"), st);
@@ -2681,7 +2681,7 @@
     if (I.turns !== 0) fc.mist.push({ deg:degOf(A), msg:"Take off full turns until it’s between 0 and " + (u === "deg" ? "360°" : "2π") + "." });
     fc.mist.push({ deg:cD - 360, msg:"Keep it between 0 and " + (u === "deg" ? "360°" : "2π") + " — add one more full turn." });
     fc.mist.push({ deg:cD + 360, msg:"Keep it between 0 and " + (u === "deg" ? "360°" : "2π") + " — take off one more full turn." });
-    var fq = { k:"q", label:"Quadrant", type:"quad", want:I.q, why:esc(I.cT) + " is " + (I.q ? "in quadrant " + QN[I.q] : "on an axis") + " — count from the positive x-axis, turning anticlockwise: I, II, III, IV." };
+    var fq = { k:"q", label:"Quadrant", type:"quad", want:I.q, why:esc(I.cT) + " is " + (I.q ? "in quadrant " + QN[I.q] : "on an axis") + " — count from the positive x-axis, turning counterclockwise: I, II, III, IV." };
     var fr = { k:"r", label:"Reference angle", type:"ang", unit:u, want:rD, minDp:ex ? 0 : 2, inexact:!ex, mist:[] };
     if (I.q && I.q !== 1){
       fr.mist.push({ deg:cD, msg:"That’s the angle itself. The reference angle is the sharp angle between the ray and the " + B("x-axis") + " (between 0 and " + (u === "deg" ? "90°" : "π/2") + ")." });

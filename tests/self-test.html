@@ -271,6 +271,8 @@
     { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" },
     { page:"scratch.html", name:"The Scratch Paper", kind:"byhand" }, { page:"wordproblems.html", name:"The Story Problem" }, { page:"probability.html", name:"The Chance Spinner" },
     { page:"trigonometry.html", name:"The Unit Circle" }, { page:"calculus.html", name:"The Rate Machine" },
+    { page:"number-sense.html", name:"The Place Value Chart" }, { page:"quadratics.html", name:"The Area Box" },
+    { page:"logarithms.html", name:"The Log Ladder" }, { page:"sequences.html", name:"The Number Staircase" },
     // not step-by-step helpers: each has its own checks (TOOLS below)
     { page:"flashcards.html", name:"The Flash Cards", kind:"cards" },
     { page:"reference.html", name:"Reference sheets", kind:"tool" }, { page:"results.html", name:"Class results", kind:"tool" },
@@ -280,6 +282,40 @@
 
   /* problems with known answers: open the link, and every value must show in the answer */
   var KNOWN = {
+    "sequences.html":[ ["mode=pattern&t=3,7,11,15",["19","23","27"]], ["mode=pattern&t=1,1,2,3,5",["8","13","21"]],
+                       ["q=" + encodeURIComponent("1, 4, 9, 16"),["25","36","49"]],
+                       ["mode=arith&task=term&a1=3&d=4&n=20&show=3",["79"]], ["mode=arith&task=two&i=3&ai=10&j=7&aj=22",["4","3"]],
+                       ["q=" + encodeURIComponent("is 100 in 3, 7, 11, …"),["~no"]],
+                       ["mode=geom&task=term&a1=81&r=1/3&n=6&show=ad",["1/3"]], ["mode=geom&task=term&a1=3&r=-2&n=6&show=3",["-96"]],
+                       ["mode=sum&task=arith&a1=1&d=1&n=100&show=3&last=1",["5050"]], ["mode=sum&task=inf&a1=12&r=1/2&show=3",["24"]],
+                       ["mode=sum&task=inf&a1=1&r=2&show=3",["~diverges"]], ["mode=sum&task=sigma&f=2k%2B1&lo=1&hi=5",["35"]],
+                       ["mode=apply&kind=seats&a=20&d=3&n=15",["62","615"]] ],
+    "logarithms.html":[ ["mode=meaning&task=eval&b=2&a=32",["5"]], ["mode=meaning&task=eval&b=9&a=27",["3/2"]],
+                        ["mode=meaning&task=eval&b=10&a=0.001",["-3"]], ["q=" + encodeURIComponent("ln e^3"),["3"]],
+                        ["mode=meaning&task=eval&b=2&a=20",["4","5",{ f:Math.log(20) / Math.LN2 }]],
+                        ["mode=meaning&task=eval&b=2&a=-8",["~undefined"]],
+                        ["mode=laws&task=expand&ex=" + encodeURIComponent("log_3(9x^2/y)"),["2","~log"]],
+                        ["mode=laws&task=condense&ex=" + encodeURIComponent("2ln(x)+ln(5)-ln(3)"),["5","~ln"]],
+                        ["mode=change&b=4&a=8",["3/2"]], ["mode=change&b=3&a=20",[{ f:Math.log(20) / Math.log(3) }]],
+                        ["mode=expeq&eq=" + encodeURIComponent("3^(2x-1)=27"),["2"]], ["mode=expeq&eq=" + encodeURIComponent("5^x=12"),[{ f:Math.log(12) / Math.log(5) }]],
+                        ["mode=expeq&eq=" + encodeURIComponent("4^x-3*2^x-4=0"),["2"]],
+                        ["mode=logeq&eq=" + encodeURIComponent("log(x)+log(x-3)=1"),["5"]], ["mode=logeq&eq=" + encodeURIComponent("log_2(x+3)=5"),["29"]],
+                        ["mode=growth&kind=compound&p=1000&r=5&n=12&t=10",["1647.01"]], ["mode=growth&kind=half&h=5&unit=year&find=t&pct=10",["16.61"]],
+                        ["mode=growth&kind=ph&h=0.0001",["4"]], ["mode=graph&b=3&f=log",["1","0","3"]] ],
+    "quadratics.html":[ ["mode=expand&ex=" + encodeURIComponent("(x+3)(x-5)"),["2","15"]], ["mode=expand&ex=" + encodeURIComponent("(2x-1)^2"),["4","1"]],
+                        ["mode=factor&p=" + encodeURIComponent("x^2+x+1"),["~prime"]], ["mode=factor&p=" + encodeURIComponent("2x^3-8x"),["2"]],
+                        ["mode=solve&eq=" + encodeURIComponent("x^2-5x+6=0"),["2","3"]], ["mode=solve&eq=" + encodeURIComponent("2x^2+3x-2=0"),["-2","1/2"]],
+                        ["mode=solve&eq=" + encodeURIComponent("x^2+4x+1=0") + "&how=formula",["-2",{ f:Math.sqrt(3) },Fl(-0.2679),Fl(-3.7321)]],
+                        ["mode=solve&eq=" + encodeURIComponent("x^2+2x+5=0"),["~none","-1"]],
+                        ["mode=vertex&p=" + encodeURIComponent("2x^2-8x+3"),["2","-5"]],
+                        ["mode=divide&n=" + encodeURIComponent("x^3-2x^2+4") + "&d=" + encodeURIComponent("x-3"),["13"]],
+                        ["mode=operate&a=" + encodeURIComponent("3x^2-2x+5") + "&b=" + encodeURIComponent("x^2+4x-1") + "&op=sub",["2","6"]] ],
+    "number-sense.html":[ ["mode=place&n=3742&task=value&at=2",["700"]], ["mode=place&n=4052&task=words",["~four thousand, fifty-two"]],
+                          ["mode=place&n=3742&task=expanded",["3000","700","40","2"]], ["mode=round&n=995&to=ten",["1000"]],
+                          ["mode=round&n=2.96&to=tenth",["3"]], ["mode=estimate&op=add&a=487&b=312&how=nearest",["800"]],
+                          ["mode=compare&nums=0.5,0.45",["0.5","0.45","~>"]], ["mode=skip&kind=count&by=5&from=15&n=5",["20","25","30","35","40"]],
+                          ["mode=time&kind=elapsed&from=2:45&to=4:10",["1","25","~hour"]], ["mode=time&kind=read&t=3:45",["~3:45"]],
+                          ["mode=money&kind=count&coins=25x3,10x2,5x1",["~$1.00"]], ["mode=money&kind=change&cost=365&pay=500",["1.35"]] ],
     "addition.html":[ ["q=47%2B38",["85"]], ["q=25.4%2B3.75",["29.15"]], ["q=2 3/4%2B1 5/6",["55/12"]], ["q=999%2B1%2B1",["1001"]] ],
     "subtraction.html":[ ["q=52-17",["35"]], ["q=25.4-3.75",["21.65"]], ["q=5003-1278",["3725"]], ["q=3 1/2-1 2/3",["11/6"]], ["q=17-52",["-35"]] ],
     "multiplication.html":[ ["q=23*14",["322"]], ["q=2.4*1.3",["3.12"]], ["q=2/3*3/4",["1/2"]], ["q=2 1/2*3/4",["15/8"]] ],
@@ -361,6 +397,44 @@
 
   /* Check my answer: [link, what to type, expected verdict] */
   var CHECKS = {
+    "sequences.html":[ ["mode=pattern&t=3,7,11,15",["19","3+4(n-1)"],"right"], ["mode=pattern&t=3,7,11,15",["19","4n-1"],"right"],
+                       ["mode=pattern&t=3,7,11,15",["19","a_(n-1)+4"],"simplify"], ["mode=pattern&t=3,7,11,15",["19","3+4n"],"wrong"],
+                       ["mode=pattern&t=2,6,18,54",["162","(2/3)*3^n"],"right"], ["mode=pattern&t=2,6,18,54",["162","2*3^n"],"wrong"],
+                       ["mode=arith&task=term&a1=3&d=4&n=20&show=3",["79"],"right"], ["mode=arith&task=term&a1=3&d=4&n=20&show=3",["83"],"wrong"],
+                       ["mode=arith&task=which&a1=3&d=4&v=100&show=3",["no",""],"right"], ["mode=arith&task=which&a1=3&d=4&v=100&show=3",["yes","25.25"],"wrong"],
+                       ["mode=geom&task=two&i=2&ai=12&j=4&aj=48",["±2","±6"],"right"], ["mode=geom&task=two&i=2&ai=12&j=4&aj=48",["2","6"],"simplify"],
+                       ["mode=sum&task=arith&a1=1&d=1&n=100&show=3&last=1",["4950"],"wrong"],
+                       ["mode=sum&task=inf&a1=1&r=2&show=3",["diverges"],"right"], ["mode=sum&task=inf&a1=1&r=2&show=3",["-1"],"wrong"],
+                       ["mode=apply&kind=salary&s=40000&p=3&n=10&ask=year",["52190.93"],"right"], ["mode=apply&kind=salary&s=40000&p=3&n=10&ask=year",["53756.66"],"wrong"] ],
+    "logarithms.html":[ ["mode=meaning&task=eval&b=2&a=32",["5"],"right"], ["mode=meaning&task=eval&b=2&a=32",["16"],"wrong"],
+                        ["mode=meaning&task=eval&b=9&a=27",["1.5"],"right"], ["mode=meaning&task=eval&b=9&a=27",["6/4"],"simplify"],
+                        ["mode=laws&task=expand&ex=" + encodeURIComponent("log_3(9x^2/y)"),["2 + 2log_3(x) - log_3(y)"],"right"],
+                        ["mode=laws&task=expand&ex=" + encodeURIComponent("log_3(9x^2/y)"),["2 + 2log_3(x) + log_3(y)"],"wrong"],
+                        ["mode=expeq&eq=" + encodeURIComponent("5^x=12"),["ln 12 / ln 5"],"right"], ["mode=expeq&eq=" + encodeURIComponent("5^x=12"),["1.544"],"right"],
+                        ["mode=expeq&eq=" + encodeURIComponent("5^x=12"),["2.4"],"wrong"],
+                        ["mode=logeq&eq=" + encodeURIComponent("log(x)+log(x-3)=1"),["x = 5"],"right"],
+                        ["mode=logeq&eq=" + encodeURIComponent("log(x)+log(x-3)=1"),["x = 5 or x = -2"],"wrong"],
+                        ["mode=growth&kind=compound&p=1000&r=5&n=12&t=10",["1647.01"],"right"], ["mode=growth&kind=compound&p=1000&r=5&n=12&t=10",["1628.89"],"wrong"],
+                        ["mode=graph&b=3&f=log",["(1, 0)","(3, 1)","x = 0"],"right"], ["mode=graph&b=3&f=log",["(0, 1)","(3, 1)","x = 0"],"wrong"] ],
+    "quadratics.html":[ ["mode=expand&ex=" + encodeURIComponent("(x+3)(x-5)"),["x^2-2x-15"],"right"], ["mode=expand&ex=" + encodeURIComponent("(x+3)(x-5)"),["x^2-15"],"wrong"],
+                        ["mode=expand&ex=" + encodeURIComponent("(x+3)(x-5)"),["x^2-5x+3x-15"],"simplify"],
+                        ["mode=factor&p=" + encodeURIComponent("2x^2+10x+12"),["2(x+2)(x+3)"],"right"], ["mode=factor&p=" + encodeURIComponent("2x^2+10x+12"),["(2x+4)(x+3)"],"simplify"],
+                        ["mode=factor&p=" + encodeURIComponent("2x^2+10x+12"),["(x+2)(x+3)"],"wrong"],
+                        ["mode=solve&eq=" + encodeURIComponent("x^2-5x+6=0"),["x = 2 or x = 3"],"right"], ["mode=solve&eq=" + encodeURIComponent("x^2-5x+6=0"),["-2, -3"],"wrong"],
+                        ["mode=solve&eq=" + encodeURIComponent("x^2+4x+1=0"),["-2 ± √3"],"right"], ["mode=solve&eq=" + encodeURIComponent("x^2+4x+1=0"),["(-4 ± 2√3)/2"],"simplify"],
+                        ["mode=vertex&p=" + encodeURIComponent("2x^2-8x+3"),["(2, -5)"],"right"], ["mode=vertex&p=" + encodeURIComponent("2x^2-8x+3"),["(-2, -5)"],"wrong"],
+                        ["mode=divide&n=" + encodeURIComponent("x^3-2x^2+4") + "&d=" + encodeURIComponent("x-3"),["x^2+x+3","13"],"right"],
+                        ["mode=divide&n=" + encodeURIComponent("x^3-2x^2+4") + "&d=" + encodeURIComponent("x-3"),["x^2+x+3","5"],"wrong"],
+                        ["mode=operate&a=" + encodeURIComponent("3x^2-2x+5") + "&b=" + encodeURIComponent("x^2+4x-1") + "&op=sub",["2x^2-6x+6"],"right"] ],
+    "number-sense.html":[ ["mode=place&n=3742&task=value&at=2",["seven hundred"],"right"], ["mode=place&n=3742&task=value&at=2",["7"],"wrong"],
+                          ["mode=place&n=3742&task=expanded",["3,700 + 40 + 2"],"simplify"], ["mode=round&n=995&to=ten",["1,000"],"right"],
+                          ["mode=round&n=995&to=ten",["900"],"wrong"], ["mode=compare&nums=0.5,0.45",["<"],"wrong"],
+                          ["mode=compare&nums=0.5,0.45",["greater than"],"right"], ["mode=time&kind=read&t=2:50",["3:50"],"wrong"],
+                          ["mode=time&kind=read&t=3:45",["quarter to 4"],"right"], ["mode=time&kind=hands&t=3:45",["9","between 3 and 4"],"right"],
+                          ["mode=time&kind=elapsed&from=2:45&to=4:10",["165 minutes"],"wrong"], ["mode=time&kind=elapsed&from=2:45&to=4:10",["1:25"],"right"],
+                          ["mode=money&kind=make&c=68",["2 quarters, 1 dime, 1 nickel, 3 pennies"],"right"],
+                          ["mode=money&kind=make&c=68",["1 quarter, 4 dimes, 3 pennies"],"simplify"],
+                          ["mode=money&kind=change&cost=365&pay=500",["135¢"],"right"], ["mode=money&kind=change&cost=365&pay=500",["$2.35"],"wrong"] ],
     "addition.html":[ ["q=2 3/4%2B1 5/6",["55/12"],"right"], ["q=2 3/4%2B1 5/6",["4 7/12"],"right"], ["q=2 3/4%2B1 5/6",["4 14/24"],"simplify"], ["q=2 3/4%2B1 5/6",["3 8/10"],"wrong"] ],
     "subtraction.html":[ ["q=52-17",["35"],"right"], ["q=52-17",["45"],"wrong"] ],
     "multiplication.html":[ ["q=23*14",["322"],"right"], ["q=23*14",["115"],"wrong"], ["q=2.4*1.3",["3.12"],"right"] ],
@@ -746,6 +820,33 @@
     return c.textContent;
   }
   var LINKCHECK = {
+    "sequences.html":function(answer, cells){
+      // a rule ("19; aₙ = 4n − 1", "d = 4; aₙ = 4n − 1") is checked as a function of n; anything else by the usual tokens
+      var t = String(answer); if (t.indexOf(";") < 0 || !/aₙ\s*=/.test(t)) return null;
+      var parts = t.split(";"), bad = { ok:false, msg:"the link shows " + cells.join(" | ") + ", the problem maker said “" + answer + "”" };
+      try {
+        var rc = cells.filter(function(c){ return /=/.test(c); })[0];
+        if (!rc) return bad;
+        var g = seqRule(parts[1]), h = seqRule(rhsOf(rc));
+        for (var n = 1; n <= 7; n++) if (!eq(g(n), h(n))) return bad;
+        var shown = tokens(cells.join(" | ").replace(/\(\(([−-]?[\d.,]+)\)\/\(([\d.,]+)\)\)/g, "$1/$2")), lead = tokens(parts[0]).filter(function(x){ return !has(shown, x); });
+        return lead.length ? bad : { ok:true };
+      } catch (e){ return null; }
+    },
+    "quadratics.html":function(answer, cells){
+      var t = String(answer), m, cell = function(i){ return String(cells[i] || "").replace(/^\s*y\s*=/, ""); };
+      var bad = { ok:false, msg:"the link shows " + cells.join(" | ") + ", the problem maker said “" + answer + "”" };
+      try {
+        if ((m = /^(.*),\s*remainder\s*(.*)$/.exec(t))) return cells.length >= 2 && quadSame(m[1], cell(0)) && quadSame(m[2], cell(1)) ? { ok:true } : bad;
+        if ((m = /vertex\s*\(([^,]+),\s*([^)]+)\)/.exec(t))){
+          var vf = /;\s*y\s*=/.test(t) ? t.split(";")[1].replace(/^\s*y\s*=/, "") : t.split(";")[0];
+          var pt = cell(1).replace(/^\s*\(|\)\s*$/g, "").split(",");
+          return pt.length === 2 && quadSame(vf, cell(0)) && eq(quadAt(pt[0], R(0)), num(m[1])) && eq(quadAt(pt[1], R(0)), num(m[2])) ? { ok:true } : bad;
+        }
+        if (/^\s*x\s*=|no real|prime/.test(t)) return null;          // solutions and "prime": the usual token check
+        return quadSame(t, cell(0)) ? { ok:true } : bad;
+      } catch (e){ return null; }
+    },
     "calculus.html":function(answer, cells){
       var parts = String(answer).split(";").map(function(x){ return x.replace(/^\s*(?:average|instantaneous)\s+/, "").replace(/\+\s*C\s*$/, "").trim(); });
       if (parts.some(function(x){ return /local|absolute|exist|∞|\band\b|points?/.test(x) || !/[\dxteπ]/.test(x); })) return null;
@@ -757,7 +858,630 @@
     }
   };
 
+  /* the Place Value Chart: each made problem worked out again from its params, as the text the problem maker should say.
+     Numbers are kept as whole thousandths (3,742.5 is 3742500), so nothing is rounded by floating point. */
+  function nsM(s){ var p = String(s).split("."), f = ((p[1] || "") + "000").slice(0, 3); return Number(p[0] || "0") * 1000 + Number(f); }
+  function nsG(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+  function nsT(m, dp){                         // thousandths -> "3,742.5"; dp: decimals to show (default: as many as it needs)
+    var w = Math.floor(m / 1000), f = ("00" + (m % 1000)).slice(-3);
+    if (dp === undefined){ f = f.replace(/0+$/, ""); return nsG(w) + (f ? "." + f : ""); }
+    return nsG(w) + (dp ? "." + f.slice(0, dp) : "");
+  }
+  function nsTyped(s){ var p = String(s).split("."); return nsG(p[0]) + (p.length > 1 ? "." + p[1] : ""); }
+  function nsDig(m, e){ return Math.floor(m / Math.pow(10, e + 3)) % 10; }
+  var NS_ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(" ");
+  var NS_TENS = ",,twenty,thirty,forty,fifty,sixty,seventy,eighty,ninety".split(",");
+  var NS_PL = { "8":["hundred million","hundred millions"], "7":["ten million","ten millions"], "6":["million","millions"], "5":["hundred thousand","hundred thousands"],
+    "4":["ten thousand","ten thousands"], "3":["thousand","thousands"], "2":["hundred","hundreds"], "1":["ten","tens"], "0":["one","ones"],
+    "-1":["tenth","tenths"], "-2":["hundredth","hundredths"], "-3":["thousandth","thousandths"] };
+  function nsSay3(n){
+    var h = Math.floor(n / 100), r = n % 100, out = [];
+    if (h) out.push(NS_ONES[h] + " hundred");
+    if (r || !h) out.push(r < 20 ? NS_ONES[r] : NS_TENS[Math.floor(r / 10)] + (r % 10 ? "-" + NS_ONES[r % 10] : ""));
+    return out.join(" ");
+  }
+  function nsSayInt(n){
+    if (!n) return "zero";
+    return [[1e6, " million"], [1e3, " thousand"], [1, ""]].map(function(g){ var v = Math.floor(n / g[0]) % 1000; return v ? nsSay3(v) + g[1] : ""; })
+      .filter(Boolean).join(", ");
+  }
+  function nsSay(m){
+    var w = Math.floor(m / 1000), f = ("00" + (m % 1000)).slice(-3).replace(/0+$/, "");
+    if (!f) return nsSayInt(w);
+    var fw = nsSayInt(Number(f)) + " " + NS_PL[-f.length][Number(f) === 1 ? 0 : 1];
+    return w ? nsSayInt(w) + " and " + fw : fw;
+  }
+  function nsMoney(c){ return "$" + nsG(Math.floor(c / 100)) + "." + ("0" + c % 100).slice(-2); }
+  function nsBoth(c){ return c < 100 ? nsG(c) + "¢ (" + nsMoney(c) + ")" : nsMoney(c); }
+  function nsClock(s){ var m = /^(\d{1,2}):(\d\d)(am|pm)?$/.exec(s); return { h:Number(m[1]), m:Number(m[2]), ap:m[3] || "" }; }
+  function nsMin(t){ return (t.h % 12) * 60 + t.m + (t.ap === "pm" ? 720 : 0); }
+  function nsTime(x, ap){
+    var D = ap ? 1440 : 720; x = ((x % D) + D) % D;
+    var h24 = Math.floor(x / 60), m = x % 60;
+    return ((h24 % 12) || 12) + ":" + ("0" + m).slice(-2) + (ap ? (h24 >= 12 ? " p.m." : " a.m.") : "");
+  }
+  function nsDur(d){
+    var h = Math.floor(d / 60), m = d % 60, out = [];
+    if (h) out.push(h + " hour" + (h === 1 ? "" : "s"));
+    if (m || !h) out.push(m + " minute" + (m === 1 ? "" : "s"));
+    return out.join(" ");
+  }
+  function nsLead(v, how){                     // round to the greatest place (half up), or keep only the first digit (front-end)
+    if (v < 10) return v;
+    var U = Math.pow(10, String(v).length - 1);
+    return how === "front" ? Math.floor(v / U) * U : Math.floor((v + U / 2) / U) * U;
+  }
+  function nsFewest(c, dens){                  // the fewest coins and bills, by dynamic programming (not greedy)
+    var best = [0];
+    for (var v = 1; v <= c; v++){ best[v] = Infinity; dens.forEach(function(d){ if (d <= v && best[v - d] + 1 < best[v]) best[v] = best[v - d] + 1; }); }
+    return best[c];
+  }
+  var NS_COIN = { quarter:25, quarters:25, dime:10, dimes:10, nickel:5, nickels:5, penny:1, pennies:1,
+    "$1 bill":100, "$1 bills":100, "$5 bill":500, "$5 bills":500, "$10 bill":1000, "$10 bills":1000, "$20 bill":2000, "$20 bills":2000 };
+  function nsAnswer(p){                        // the answer text the page's problem maker should give
+    var o = P(p), m, e, d, U, lo, r, out;
+    if (o.mode === "place"){
+      m = nsM(o.n);
+      if (o.task === "value"){ e = Number(o.at); d = nsDig(m, e); return nsT(d * Math.pow(10, e + 3)) + " (" + d + " " + NS_PL[e][d === 1 ? 0 : 1] + ")"; }
+      if (o.task === "digit") return String(nsDig(m, Number(o.at)));
+      if (o.task === "expanded"){
+        out = [];
+        for (e = 8; e >= -3; e--){ d = nsDig(m, e); if (d) out.push(nsT(d * Math.pow(10, e + 3))); }
+        return out.length ? out.join(" + ") : "0";
+      }
+      if (o.task === "words") return nsSay(m);
+      if (o.task === "more") return nsT(m + Number(o.by) * 1000);
+      return nsT(m);
+    }
+    if (o.mode === "round"){
+      e = { ten:1, hundred:2, thousand:3, whole:0, tenth:-1, hundredth:-2 }[o.to];
+      m = nsM(o.n); U = Math.pow(10, e + 3); lo = Math.floor(m / U) * U;
+      r = m - lo >= U / 2 ? lo + U : lo;
+      return nsT(r, e < 0 ? -e : 0);
+    }
+    if (o.mode === "estimate"){
+      var A = Number(o.a), B = Number(o.b), est, exacts;
+      if (o.op === "div"){
+        var rb = B < 10 ? B : nsLead(B, "nearest"), best = null;
+        for (var k = 0; k <= 7; k++) for (var dd = 1; dd <= 9; dd++){
+          var q = dd * Math.pow(10, k), c = q * rb;
+          if (!best || Math.abs(c - A) < Math.abs(best.c - A) || (Math.abs(c - A) === Math.abs(best.c - A) && c > best.c)) best = { q:q, c:c };
+        }
+        est = best.q; exacts = [Math.floor(A / B), Math.floor(A / B) + ((A % B) * 2 >= B ? 1 : 0)];
+      } else {
+        var ra = nsLead(A, o.how), rb2 = nsLead(B, o.how);
+        est = o.op === "add" ? ra + rb2 : o.op === "sub" ? ra - rb2 : ra * rb2;
+        exacts = [o.op === "add" ? A + B : o.op === "sub" ? A - B : A * B];
+      }
+      if (o.claim !== undefined){
+        var cl = Number(o.claim), yes = exacts.indexOf(cl) >= 0 || Math.abs(cl - est) <= 0.2 * est;
+        return (yes ? "Yes" : "No") + " (estimate: " + nsG(est) + ")";
+      }
+      return nsG(est);
+    }
+    if (o.mode === "compare"){
+      var toks = o.nums.split(","), vals = toks.map(nsM);
+      if (!o.order){ var sy = vals[0] < vals[1] ? "<" : vals[0] > vals[1] ? ">" : "="; return nsTyped(toks[0]) + " " + sy + " " + nsTyped(toks[1]); }
+      var idx = toks.map(function(_, i){ return i; }).sort(function(i, j){ var c = vals[i] - vals[j]; if (o.order === "down") c = -c; return c || i - j; });
+      return idx.map(function(i){ return nsTyped(toks[i]); }).join(", ");
+    }
+    if (o.mode === "skip"){
+      if (o.kind === "evenodd") return Number(o.n) % 2 ? "odd" : "even";
+      out = [];
+      for (var i = 1; i <= Number(o.n); i++) out.push(nsG(Number(o.from) + (o.dir === "down" ? -1 : 1) * Number(o.by) * i));
+      return out.join(", ");
+    }
+    if (o.mode === "time"){
+      var t;
+      if (o.kind === "read"){ t = nsClock(o.t); return t.h + ":" + ("0" + t.m).slice(-2); }
+      if (o.kind === "hands"){
+        t = nsClock(o.t); var nx = t.h % 12 + 1;
+        return "Minute hand: on the " + (t.m ? t.m / 5 : 12) + "; hour hand: " + (t.m === 0 ? "on the " + t.h
+          : "between the " + t.h + " and the " + nx + (t.m >= 45 ? ", close to the " + nx : t.m <= 10 ? ", just past the " + t.h : ""));
+      }
+      if (o.kind === "ampm") return nsClock(o.t).ap === "pm" ? "p.m." : "a.m.";
+      if (o.kind === "elapsed"){ var s0 = nsClock(o.from), e0 = nsClock(o.to), D = s0.ap ? 1440 : 720; return nsDur(((nsMin(e0) - nsMin(s0)) % D + D) % D); }
+      if (o.kind === "after"){ t = nsClock(o.from); return nsTime(nsMin(t) + Number(o.d), t.ap); }
+      if (o.kind === "before"){ t = nsClock(o.to); return nsTime(nsMin(t) - Number(o.d), t.ap); }
+    }
+    if (o.mode === "money"){
+      if (o.kind === "count") return nsBoth(o.coins.split(",").reduce(function(s, it){ var x = it.split("x"); return s + Number(x[0]) * Number(x[1]); }, 0));
+      if (o.kind === "change") return nsBoth(Number(o.pay) - Number(o.cost));
+      if (o.kind === "convert") return o.to === "dollars" ? nsMoney(Number(o.c)) : nsG(Number(o.c)) + "¢";
+      if (o.kind === "make") return null;      // checked by nsMake: any list of the fewest coins
+    }
+    return undefined;
+  }
+  function nsMake(p, ansText){                 // "2 quarters, 1 dime, 1 nickel, 3 pennies (7 coins)": the right total, with the fewest pieces
+    var c = Number(P(p).c), dens = c >= 100 ? [2000, 1000, 500, 100, 25, 10, 5, 1] : [25, 10, 5, 1];
+    var mt = /^(.*) \((\d+) (?:coins and bills|coins|coin or bill|coin|bills|bill)\)$/.exec(ansText);
+    if (!mt) return { ok:false, msg:"couldn’t read the list of coins" };
+    var tot = 0, n = 0, bad = null;
+    mt[1].split(", ").forEach(function(item){
+      var k = /^(\d+) (.+)$/.exec(item), v = k && NS_COIN[k[2]];
+      if (!v || dens.indexOf(v) < 0){ bad = item; return; }
+      tot += Number(k[1]) * v; n += Number(k[1]);
+    });
+    var fewest = nsFewest(c, dens);
+    if (bad) return { ok:false, msg:"unexpected coin “" + bad + "”" };
+    if (tot !== c) return { ok:false, msg:"the coins make " + tot + "¢, not " + c + "¢" };
+    if (n !== fewest || Number(mt[2]) !== fewest) return { ok:false, msg:n + " pieces (it says " + mt[2] + "); the fewest is " + fewest };
+    return { ok:true };
+  }
+
+  /* quadratics: polynomials worked out here exactly, by putting numbers in for x (the page's own solver isn't used) */
+  var QUAD_XS = [R(0), R(1), R(-1), R(2), R(-2), R(3), R(1, 2), R(-5, 3)];
+  function quadSup(t){ return String(t).replace(/[−–]/g, "-").replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, function(s){ return "^" + s.split("").map(function(c){ return SUPS[c]; }).join(""); }); }
+  function quadAt(t, v){ return evaluate(quadSup(t), { x:v }); }
+  // do two expressions in x agree at the test points (skipping any where one divides by zero)?
+  function quadSame(s, t){
+    var used = 0;
+    for (var i = 0; i < QUAD_XS.length; i++){
+      var a, b;
+      try { a = quadAt(s, QUAD_XS[i]); b = quadAt(t, QUAD_XS[i]); } catch (e){ if (/divide by zero/.test(e.message)) continue; throw e; }
+      used++;
+      if (!eq(a, b)) return false;
+    }
+    return used >= 4;
+  }
+  // the coefficients c0, c1, … of a polynomial of degree ≤ 8, from its values at x = 0 … 8
+  function quadCoefs(t){
+    var n = 9, A = [], i, j, k;
+    for (i = 0; i < n; i++){ var xv = R(i), row = [], pw = R(1); for (j = 0; j < n; j++){ row.push(pw); pw = mul(pw, xv); } row.push(quadAt(t, xv)); A.push(row); }
+    for (k = 0; k < n; k++){
+      var piv = k; while (A[piv][k].n === 0n) piv++;
+      var tmp = A[k]; A[k] = A[piv]; A[piv] = tmp;
+      for (i = 0; i < n; i++) if (i !== k && A[i][k].n !== 0n){ var f = div(A[i][k], A[k][k]); for (j = k; j <= n; j++) A[i][j] = sub(A[i][j], mul(f, A[k][j])); }
+    }
+    var c = []; for (k = 0; k < n; k++) c.push(div(A[k][n], A[k][k]));
+    while (c.length && c[c.length - 1].n === 0n) c.pop();
+    return c;
+  }
+  function quadIsSq(n){ if (n < 0n) return false; var r = BigInt(Math.round(Math.sqrt(Number(n)))); while (r * r > n) r -= 1n; while ((r + 1n) * (r + 1n) <= n) r += 1n; return r * r === n; }
+  function quadGcd(c){ var g = 0n; c.forEach(function(x){ var v = x.n < 0n ? -x.n : x.n; while (v){ var t = g % v; g = v; v = t; } }); return g; }
+  // is this bracket fully factored over the integers? (whole numbers, no common factor, no zero p/q, discriminant not a square)
+  function quadPrimeBracket(c){
+    if (!c.every(function(x){ return x.d === 1n; })) return "has fractions";
+    if (c.length >= 2 && quadGcd(c) !== 1n) return "still has a common factor";
+    var d = c.length - 1;
+    if (d === 2 && quadIsSq(c[1].n * c[1].n - 4n * c[2].n * c[0].n)) return "still factors";
+    if (d === 3 && c[0].n !== 0n){
+      var a0 = c[0].n < 0n ? -c[0].n : c[0].n, a3 = c[3].n < 0n ? -c[3].n : c[3].n;
+      var ex = c.map(function(x, k){ return "(" + txt(x) + ")*x^" + k; }).join("+");
+      for (var p = 1n; p <= a0; p++) if (a0 % p === 0n) for (var q = 1n; q <= a3; q++) if (a3 % q === 0n)
+        if (eq(quadAt(ex, R(p, q)), R(0)) || eq(quadAt(ex, R(-p, q)), R(0))) return "still has a factor (x − r)";
+    }
+    return "";
+  }
+  // "x = −2 ± √3 (x ≈ …)", "x = 2 or x = 3", "x = 3 (a double root)", "no real solutions (complex: …)" → the real values
+  function quadVals(t){
+    var main = String(t).split(/\s\((?:x ≈|complex|and complex)/)[0].replace(/\(a double root\)/, ""), out = [];
+    if (/no real/i.test(main)) return out;
+    main.split(/\bor\b/).forEach(function(part){
+      var e = part.replace(/^\s*x\s*=\s*/, "").trim();
+      if (!e) return;
+      if (e.indexOf("±") >= 0){ out.push(nxv(e.replace("±", "+"))); out.push(nxv(e.replace("±", "-"))); } else out.push(nxv(e));
+    });
+    return out;
+  }
+
+  /* the Log Ladder: worked out here with floating point. logEX(text) reads an expression with several letters the way
+     the page writes one, typed ("log_3(9x^2/y)", "2ln(x)+ln(5)-ln(3)", "4^x-3*2^x-4=0" sides) or as answer text
+     ("2 + 2 log₃ x − log₃ y", "ln(5x²/3)", "(ln 7/ln 5 − 1)/2", "(3 + √29)/2", "e² − 1"), and gives back a function
+     of an object of letter values. log is base 10, ln base e, log_b / log₃ base b; e is the number e. A log or root
+     with no brackets takes just the next factor (with its power). Undefined values (log of 0 or less) are NaN. */
+  var LOG_SUP = { "⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","⁻":"-","ˣ":"x","ᵗ":"t","ʸ":"y","ⁿ":"n" };
+  var LOG_SUB = { "₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9" };
+  function logEX(text){
+    var s = String(text).replace(/[−–]/g, "-").replace(/[×·]/g, "*").replace(/÷/g, "/").replace(/(\d),(?=\d{3}(?!\d))/g, "$1").replace(/\$/g, "")
+      .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻ˣᵗʸⁿ]+/g, function(x){ return "^(" + x.split("").map(function(c){ return LOG_SUP[c]; }).join("") + ")"; })
+      .replace(/[₀₁₂₃₄₅₆₇₈₉]+/g, function(x){ return "_" + x.split("").map(function(c){ return LOG_SUB[c]; }).join("") + " "; });
+    var tk = [], i = 0, m;
+    while (i < s.length){
+      var r = s.slice(i), c = s[i];
+      if (/\s/.test(c)){ i++; continue; }
+      if ((m = /^(\d+(?:\.\d*)?|\.\d+)/.exec(r))){ tk.push({ k:"n", v:Number(m[1]) }); i += m[1].length; continue; }
+      if ((m = /^(ln|log|sqrt|cbrt)/i.exec(r))){ tk.push({ k:"f", v:m[1].toLowerCase() }); i += m[1].length; continue; }
+      if (c === "e"){ tk.push({ k:"n", v:Math.E }); i++; continue; }
+      if (/[a-z]/i.test(c)){ tk.push({ k:"v", v:c.toLowerCase() }); i++; continue; }
+      if ("+-*/^()_√∛".indexOf(c) >= 0){ tk.push({ k:c }); i++; continue; }
+      throw new Error("can’t read “" + c + "” in " + text);
+    }
+    var p = 0;
+    function peek(){ return tk[p]; }
+    function starts(t){ return t && (t.k === "n" || t.k === "v" || t.k === "f" || t.k === "(" || t.k === "√" || t.k === "∛"); }
+    function bin(a, b, o){
+      return o === "+" ? function(e){ return a(e) + b(e); } : o === "-" ? function(e){ return a(e) - b(e); }
+        : o === "*" ? function(e){ return a(e) * b(e); } : o === "/" ? function(e){ return a(e) / b(e); }
+        : function(e){ var x = a(e), y = b(e); return x < 0 && Math.abs(y - Math.round(y)) > 1e-12 ? NaN : Math.pow(x, y); };
+    }
+    function expr(){ var a = term(); while (peek() && (peek().k === "+" || peek().k === "-")){ var o = tk[p++].k; a = bin(a, term(), o); } return a; }
+    function term(){
+      var a = unary();
+      for (;;){
+        var t = peek();
+        if (t && (t.k === "*" || t.k === "/")){ p++; a = bin(a, unary(), t.k); }
+        else if (starts(t)) a = bin(a, power(), "*");
+        else return a;
+      }
+    }
+    function unary(){
+      if (peek() && peek().k === "-"){ p++; var a = unary(); return function(e){ return -a(e); }; }
+      if (peek() && peek().k === "+"){ p++; return unary(); }
+      return power();
+    }
+    function power(){ var b = primary(); if (peek() && peek().k === "^"){ p++; return bin(b, unary(), "^"); } return b; }
+    function primary(){
+      var t = tk[p++];
+      if (!t) throw new Error("ends early: " + text);
+      if (t.k === "n"){ var v = t.v; return function(){ return v; }; }
+      if (t.k === "v"){ var nm = t.v; return function(e){ return e && nm in e ? e[nm] : NaN; }; }
+      if (t.k === "("){ var a = expr(); if (!tk[p] || tk[p].k !== ")") throw new Error("missing ) in " + text); p++; return a; }
+      if (t.k === "√" || t.k === "∛"){ var r = power(), cube = t.k === "∛"; return function(e){ var x = r(e); return cube ? Math.cbrt(x) : x < 0 ? NaN : Math.sqrt(x); }; }
+      if (t.k === "f"){
+        var fn = t.v, base = null;
+        if (fn === "log" && peek() && peek().k === "_"){ p++; base = primary(); }
+        var arg = peek() && peek().k === "(" ? primary() : power();
+        if (fn === "sqrt") return function(e){ var x = arg(e); return x < 0 ? NaN : Math.sqrt(x); };
+        if (fn === "cbrt") return function(e){ return Math.cbrt(arg(e)); };
+        return function(e){
+          var x = arg(e), b = fn === "ln" ? Math.E : base ? base(e) : 10;
+          return x > 0 && b > 0 && b !== 1 ? Math.log(x) / Math.log(b) : NaN;
+        };
+      }
+      throw new Error("unexpected " + t.k + " in " + text);
+    }
+    var f = expr();
+    if (p < tk.length) throw new Error("left over in " + text);
+    return f;
+  }
+  function logVal(text){ return logEX(text)({}); }
+  function logLetters(text){ var out = [], s = String(text).replace(/ln|log|sqrt|cbrt/g, ""), m, re = /[a-df-z]/g; while ((m = re.exec(s))) if (out.indexOf(m[0]) < 0) out.push(m[0]); return out; }
+  function logNear(a, b, rel){ return isFinite(a) && isFinite(b) && Math.abs(a - b) <= (rel || 1e-9) * Math.max(1, Math.abs(a), Math.abs(b)); }
+  // a value as a fraction with a small bottom, when it is one (log₉ 27 = 3/2)
+  function logFrac(v){ for (var q = 1; q <= 12; q++){ var pn = Math.round(v * q); if (Math.abs(pn / q - v) < 1e-10) return R(pn, q); } return null; }
+  // the real roots of f (where it's defined) between −60 and 3000, by sign changes
+  function logRoots(f){
+    var out = [], segs = [[-60, 60, 0.004], [60, 3000, 0.1]];
+    segs.forEach(function(sg){
+      var x0 = sg[0], y0 = f(x0);
+      for (var x = sg[0] + sg[2]; x <= sg[1] + 1e-9; x += sg[2]){
+        var y = f(x);
+        if (isFinite(y0) && isFinite(y) && (y0 === 0 || y0 * y < 0)){
+          var a = x0, b = x, fa = y0;
+          if (y0 === 0) out.push(x0);
+          else { for (var k = 0; k < 80; k++){ var c = (a + b) / 2, fc = f(c); if (!isFinite(fc)) break; if (fa * fc <= 0) b = c; else { a = c; fa = fc; } } out.push((a + b) / 2); }
+        }
+        x0 = x; y0 = y;
+      }
+    });
+    return out.filter(function(r, k){ return !out.slice(0, k).some(function(q){ return Math.abs(q - r) < 1e-6; }); });
+  }
+  // the growth formulas, from a made problem's params
+  function logGrowth(o){
+    var k = o.kind, find = o.find === "t" ? "t" : "A", n0 = function(x){ return x === undefined ? NaN : Number(x); };
+    var P0 = n0(o.p), r = n0(o.r) / 100, t = n0(o.t);
+    var goal = o.target !== undefined ? n0(o.target) / P0 : n0(o.mult);
+    if (k === "compound"){ var n = n0(o.n); return find === "t" ? Math.log(goal) / (n * Math.log(1 + r / n)) : P0 * Math.pow(1 + r / n, n * t); }
+    if (k === "cont") return find === "t" ? Math.log(goal) / r : P0 * Math.exp(r * t);
+    if (k === "rate"){ var g = o.dir === "down" ? 1 - r : 1 + r; return find === "t" ? Math.log(goal) / Math.log(g) : P0 * Math.pow(g, t); }
+    if (k === "half" || k === "double"){
+      var T = n0(k === "half" ? o.h : o.d), fac = k === "half" ? 0.5 : 2;
+      if (find === "t") return T * Math.log(k === "half" ? n0(o.pct) / 100 : n0(o.mult)) / Math.log(fac);
+      return n0(o.a0) * Math.pow(fac, t / T);
+    }
+    if (k === "ph") return o.ph !== undefined ? Math.pow(10, -n0(o.ph)) : -Math.log(n0(o.h)) / Math.LN10;
+    if (k === "db") return o.ratio !== undefined ? 10 * Math.log(n0(o.ratio)) / Math.LN10 : Math.pow(10, (n0(o.l1) - n0(o.l2)) / 10);
+    return NaN;
+  }
+  // "x = 5 (x = −2 is extraneous)", "x = ln 12/ln 5 ≈ 1.5440 or …", "no solution (…)": the claimed answers and the thrown-out ones
+  function logSols(t){
+    var m = /^(.*?)(?:\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\s+(?:is|are)\s+extraneous\))?\s*$/.exec(t), main = m[1], rej = m[2] || "";
+    function vals(part, sep){
+      return part.split(sep).map(function(x){ return x.replace(/^\s*[a-z]\s*=\s*/, "").split(/\s*≈\s*|\s+=\s+/)[0].trim(); }).filter(Boolean);
+    }
+    var dec = [], re = /≈\s*(-?\d+(?:\.\d+)?)/g, d;
+    while ((d = re.exec(main))) dec.push(d[1]);
+    return { none:/no solution/i.test(main), all:/every/i.test(main), sols:/no solution|every/i.test(main) ? [] : vals(main, /\s+or\s+/), rej:rej ? vals(rej, /\s*,\s*/) : [], dec:dec };
+  }
+
+  /* the Number Staircase: each made problem worked out again from its params with exact fractions */
+  function seqN(x){ var v = num(String(x)); if (!v) throw new Error("can’t read " + x); return v; }
+  function seqPow(a, k){ return pow(a, R(k)); }
+  function seqTerm(kind, a1, g, n){ return kind === "arith" ? add(a1, mul(R(n - 1), g)) : mul(a1, seqPow(g, n - 1)); }
+  function seqSame(arr){ for (var i = 1; i < arr.length; i++) if (!eq(arr[i], arr[0])) return false; return arr.length > 0; }
+  function seqDiffs(arr){ var o = []; for (var i = 1; i < arr.length; i++) o.push(sub(arr[i], arr[i - 1])); return o; }
+  // the next k terms of a list, by the first rule that fits: add the same, multiply by the same, add the two before,
+  // or a row of the difference table that stays the same
+  function seqNext(t, k){
+    var m = t.length, d = seqDiffs(t), out = [], s = t.slice(), j;
+    if (seqSame(d)){ for (j = 0; j < k; j++){ s.push(add(s[s.length - 1], d[0])); out.push(s[s.length - 1]); } return { fam:"arith", next:out }; }
+    if (t.every(function(x){ return x.n !== 0n; })){
+      var rs = []; for (j = 1; j < m; j++) rs.push(div(t[j], t[j - 1]));
+      if (seqSame(rs)){ for (j = 0; j < k; j++){ s.push(mul(s[s.length - 1], rs[0])); out.push(s[s.length - 1]); } return { fam:"geom", next:out }; }
+    }
+    var fib = m >= 4; for (j = 2; j < m; j++) if (!eq(t[j], add(t[j - 1], t[j - 2]))) fib = false;
+    if (fib){ for (j = 0; j < k; j++){ s.push(add(s[s.length - 1], s[s.length - 2])); out.push(s[s.length - 1]); } return { fam:"fib", next:out }; }
+    // consecutive cube numbers (one rule, so four terms are enough): 8, 27, 64, 125
+    if (t.every(function(x){ return x.d === 1n; })){
+      var c0 = Math.round(Math.cbrt(Number(t[0].n))), cube = function(x){ return R(BigInt(x) * BigInt(x) * BigInt(x)); };
+      if (t.every(function(x, i2){ return eq(x, cube(c0 + i2)); })){ for (j = 0; j < k; j++) out.push(cube(c0 + m + j)); return { fam:"cubes", next:out }; }
+    }
+    var rows = [t], cur = t;
+    while (cur.length > 1){ cur = seqDiffs(cur); rows.push(cur); if (cur.length >= 2 && seqSame(cur)) break; }
+    var lv = rows.length - 1;
+    if (rows[lv].length < 2 || !seqSame(rows[lv])) return { fam:"none", next:[] };
+    for (j = 0; j < k; j++){
+      rows[lv].push(rows[lv][0]);
+      for (var q = lv - 1; q >= 0; q--) rows[q].push(add(rows[q][rows[q].length - 1], rows[q + 1][rows[q + 1].length - 1]));
+      out.push(rows[0][rows[0].length - 1]);
+    }
+    return { fam:lv === 2 ? "quad" : "poly" + lv, next:out };
+  }
+  // "aₙ = 2 · 3^(n−1)" → a function of n with exact values (evaluate, above)
+  function seqRule(text){
+    var s = String(text).replace(/^\s*a\S*\s*=\s*/, "").replace(/[−–]/g, "-");
+    return function(n){ return evaluate(s, { n:R(n) }); };
+  }
+  function seqRuleOk(text, want, ns){
+    var f = seqRule(text), bad = null;
+    ns.forEach(function(n){ var u, w = want(n); try { u = f(n); } catch (e){ bad = bad || "can’t work out “" + text + "” at n = " + n; return; } if (!eq(u, w)) bad = bad || "the rule gives " + txt(u) + " at n = " + n + ", expected " + txt(w); });
+    return bad;
+  }
+  function seqMoney(toks, w){ return has(toks, { f:F(w) }, 0.0051) ? { ok:true } : { ok:false, msg:"expected about " + (Math.round(F(w) * 100) / 100) }; }
+  // an exact rational root r with rᵍ = q (the positive one, or the negative one for an odd g and a negative q)
+  function seqRoot(q, g){
+    var neg = q.n < 0n, a = neg ? R(-q.n, q.d) : q, out = null;
+    var top = Math.round(Math.pow(Number(a.n), 1 / g)), bot = Math.round(Math.pow(Number(a.d), 1 / g));
+    for (var x = Math.max(1, top - 1); x <= top + 1; x++) for (var y = Math.max(1, bot - 1); y <= bot + 1; y++){ var c = R(x, y); if (eq(seqPow(c, g), a)) out = c; }
+    if (!out) return null;
+    if (neg){ if (g % 2 === 0) return null; out = R(-out.n, out.d); }
+    return out;
+  }
+
   var ORACLE = {
+    "sequences.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText).replace(/[−–]/g, "-"), j;
+      function bad(m){ return { ok:false, msg:m }; }
+      if (o.mode === "pattern"){
+        var ts = o.t.split(",").map(seqN), m = ts.length, nx = seqNext(ts, 3);
+        if (nx.fam === "none") return bad("no rule fits " + o.t + " — a made problem should have one");
+        var parts = t.split(";");
+        if (parts.length > 1){
+          var first = tokens(parts[0]);
+          if (!has(first, X(nx.next[0]))) return bad("the next term is " + txt(nx.next[0]));
+          var err = seqRuleOk(parts[1], function(n){ return n <= m ? ts[n - 1] : nx.next[n - m - 1]; }, [1, 2, 3, m, m + 1, m + 2]);
+          return err ? bad(err) : { ok:true };
+        }
+        if (/not enough|no rule/i.test(t)) return bad("a made problem should have a rule");
+        return need(tokens(t), [X(nx.next[0]), X(nx.next[1])]);
+      }
+      if (o.mode === "arith" || o.mode === "geom"){
+        var kind = o.mode, gk = kind === "arith" ? "d" : "r";
+        if (o.task === "two"){
+          var i = +o.i, jj = +o.j, ai = seqN(o.ai), aj = seqN(o.aj);
+          if (kind === "arith"){
+            var d = div(sub(aj, ai), R(jj - i)), a1 = sub(ai, mul(R(i - 1), d));
+            return need(a, [X(a1), X(d)]);
+          }
+          var q = div(aj, ai), g = jj - i, r = seqRoot(q, g);
+          if (!r) return bad("no exact ratio fits");
+          var rs = g % 2 === 0 ? [r, R(-r.n, r.d)] : [r], want = [];
+          rs.forEach(function(x){ want.push(X(x)); want.push(X(div(ai, seqPow(x, i - 1)))); });
+          if (g % 2 && /\bor\b/.test(t)) return bad("only one ratio works when the gap is odd");
+          if (g % 2 === 0 && !/\bor\b/.test(t.split(";")[0])) return bad("an even gap has two ratios");
+          return need(a, want);
+        }
+        var A1 = seqN(o.a1), G = seqN(o[gk]);
+        if (o.task === "term") return need(a, [X(seqTerm(kind, A1, G, +o.n))]);
+        if (o.task === "rule"){
+          var pr = t.split(";");
+          if (pr.length < 2 || !has(tokens(pr[0]), X(G))) return bad("expected " + gk + " = " + txt(G));
+          var e2 = seqRuleOk(pr[1], function(n){ return seqTerm(kind, A1, G, n); }, [1, 2, 3, 5, 8, 12]);
+          return e2 ? bad(e2) : { ok:true };
+        }
+        var v = seqN(o.v), isIn = false, nn = null;
+        if (kind === "arith"){ var w = add(div(sub(v, A1), G), R(1)); isIn = w.d === 1n && w.n >= 1n; nn = w; }
+        else for (j = 1; j <= 400; j++){
+          var tk = seqTerm(kind, A1, G, j);
+          if (eq(tk, v)){ isIn = true; nn = R(j); break; }
+          if (F(abs(G)) > 1 && F(abs(tk)) > F(abs(v)) * F(abs(G)) + 1) break;
+          if (F(abs(G)) < 1 && F(abs(tk)) < F(abs(v)) / F(abs(G)) / 2) break;
+        }
+        if (isIn) return /^\s*yes/i.test(t) ? need(a, [X(nn)]) : bad("it is term " + txt(nn));
+        return /^\s*no/i.test(t) ? { ok:true } : bad("it isn’t a term");
+      }
+      if (o.mode === "sum"){
+        var S = R(0), k;
+        if (o.task === "sigma"){
+          var vv = o.v || "k", fs = String(o.f);
+          for (k = +o.lo; k <= +o.hi; k++){ var env = {}; env[vv] = R(k); S = add(S, evaluate(fs, env)); }
+          return need(a, [X(S)]);
+        }
+        var b1 = seqN(o.a1);
+        if (o.task === "inf"){
+          var rr = seqN(o.r);
+          if (cmp(abs(rr), R(1)) >= 0) return /^\s*diverges/i.test(t) ? { ok:true } : bad("|r| ≥ 1: it diverges");
+          // the running totals really do creep up on a₁/(1 − r)
+          var lim = div(b1, sub(R(1), rr)), part = R(0), tt = b1;
+          for (k = 0; k < 200; k++){ part = add(part, tt); tt = mul(tt, rr); }
+          if (Math.abs(F(part) - F(lim)) > 1e-9 * Math.max(1, Math.abs(F(lim)))) return bad("the totals don’t approach " + txt(lim));
+          return need(a, [X(lim)]);
+        }
+        var gg = seqN(o.task === "arith" ? o.d : o.r);
+        for (k = 1; k <= +o.n; k++) S = add(S, seqTerm(o.task === "arith" ? "arith" : "geom", b1, gg, k));
+        return need(a, [X(S)]);
+      }
+      // word problems
+      var n0 = function(key){ return seqN(o[key]); };
+      if (o.kind === "seats"){
+        var sa = n0("a"), sd = n0("d"), rows = +o.n, last = add(sa, mul(R(rows - 1), sd)), tot = R(0);
+        for (k = 0; k < rows; k++) tot = add(tot, add(sa, mul(R(k), sd)));
+        return need(a, [X(last), X(tot)]);
+      }
+      if (o.kind === "save"){
+        var st = n0("start"), ad = n0("add");
+        if (o.goal !== undefined){ var goal = n0("goal"), wk = 0; while (cmp(add(st, mul(R(wk), ad)), goal) < 0) wk++; return need(a, [X(R(wk))]); }
+        return need(a, [X(add(st, mul(R(+o.n), ad)))]);
+      }
+      if (o.kind === "bounce"){
+        var h = n0("h"), f = n0("f"), ans;
+        if (o.ask === "height") ans = mul(h, seqPow(f, +o.n));
+        else if (o.ask === "hits"){ ans = h; for (k = 1; k < +o.n; k++) ans = add(ans, mul(R(2), mul(h, seqPow(f, k)))); }
+        else {
+          ans = add(h, div(mul(R(2), mul(h, f)), sub(R(1), f)));
+          var sim = h, up = mul(h, f); for (k = 0; k < 300; k++){ sim = add(sim, mul(R(2), up)); up = mul(up, f); }
+          if (Math.abs(F(sim) - F(ans)) > 1e-6) return bad("the bounces don’t add up to " + txt(ans));
+        }
+        return need(a, [X(ans)]);
+      }
+      if (o.kind === "salary"){
+        var s0 = n0("s"), rate = add(R(1), div(n0("p"), R(100))), yrs = +o.n, pay;
+        if (o.ask === "year") pay = mul(s0, seqPow(rate, yrs - 1));
+        else { pay = R(0); for (k = 0; k < yrs; k++) pay = add(pay, mul(s0, seqPow(rate, k))); }
+        return seqMoney(a, pay);
+      }
+      if (o.kind === "pop"){
+        var dbl = div(n0("time"), n0("every"));
+        if (dbl.d !== 1n) return bad("not a whole number of doublings");
+        return need(a, [X(mul(n0("p0"), seqPow(R(2), Number(dbl.n))))]);
+      }
+      return { skip:true };
+    },
+    "logarithms.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText).replace(/[−–]/g, "-");
+      function bad(m){ return { ok:false, msg:m }; }
+      switch (o.mode){
+        case "meaning":
+          if (o.task === "tolog" || o.task === "toexp"){
+            var isL = function(x){ return /^[a-z]$/.test(x); }, bv = logVal(o.b);
+            if (!isL(o.e) && !isL(o.v) && !logNear(Math.pow(bv, logVal(o.e)), logVal(o.v), 1e-9)) return bad("the made problem isn’t a true fact");
+            var parts = t.split("=");
+            if (parts.length !== 2) return bad("expected an equation");
+            if (o.task === "tolog" && !/^\s*(log|ln)/.test(parts[0])) return bad("expected a log on the left");
+            if (o.task === "toexp" && /log|ln/.test(t)) return bad("expected a power, not a log");
+            if (isL(o.e) || isL(o.v)) return t.indexOf(isL(o.e) ? o.e : o.v) >= 0 ? { ok:true } : bad("the letter is missing");
+            // all numbers: both sides of the answer must be the same number, the exponent (a log) or the value (a power)
+            var wantV = logVal(o.task === "tolog" ? o.e : o.v), l1, l2;
+            try { l1 = logVal(parts[0]); l2 = logVal(parts[1]); } catch (e0){ return bad("can’t read the answer: " + e0.message); }
+            return logNear(l1, wantV, 1e-9) && logNear(l2, wantV, 1e-9) ? { ok:true } : bad("the two sides should both be " + wantV + ", they are " + l1 + " and " + l2);
+          }
+          var b = logVal(o.b), x = logVal(o.a);
+          if (!(x > 0)) return /undefined/.test(t) ? { ok:true } : bad("a log of a number ≤ 0 is undefined");
+          var v = Math.log(x) / Math.log(b), fr = logFrac(v);
+          if (fr) return need(a, [X(fr)]);
+          var lo = Math.floor(v);
+          return /between/.test(t) ? need(a, [X(String(lo)), X(String(lo + 1)), { f:v }]) : bad("expected between " + lo + " and " + (lo + 1));
+        case "change":
+          var v2 = Math.log(logVal(o.a)) / Math.log(logVal(o.b)), fr2 = logFrac(v2);
+          return need(a, [fr2 ? X(fr2) : { f:v2 }]);
+        case "laws":
+          var g = logEX(o.ex), h, used = 0;
+          try { h = logEX(t); } catch (e){ return bad("can’t read the answer: " + e.message); }
+          var vs = logLetters(o.ex);
+          for (var k = 0; k < 6; k++){
+            var env = {}; vs.forEach(function(L, j){ env[L] = 2.3 + 1.7 * k + 0.61 * j; });
+            var A = g(env), Bv = h(env);
+            if (!isFinite(A)) continue;
+            used++;
+            if (!logNear(A, Bv, 1e-9)) return bad("not equal to the problem: " + A.toPrecision(8) + " vs " + Bv.toPrecision(8));
+          }
+          if (!used) return { skip:true };
+          var nLogs = (t.match(/log|ln/g) || []).length;
+          if (o.task === "condense" && nLogs > 1) return bad("not condensed to one log");
+          if (o.task === "expand" && /(log[^(]*|ln)\(([^()]*[*\/^√]|[^()]*[a-z][a-z])/.test(t.replace(/\s+/g, "")) && !/[+-]/.test(t.replace(/^.*\(|\).*$/g, ""))) return bad("not fully expanded");
+          return { ok:true };
+        case "expeq":
+        case "logeq":
+          var sides = String(o.eq).split("="), L1 = logEX(sides[0]), R1 = logEX(sides[1]), vn = logLetters(o.eq)[0] || "x";
+          var F = function(xx){ var e = {}; e[vn] = xx; return L1(e) - R1(e); };
+          var S = logSols(t);
+          if (S.all) return { skip:true };
+          var claimed = [];
+          for (var q = 0; q < S.sols.length; q++){
+            var cv;
+            try { cv = logVal(S.sols[q]); } catch (e2){ return bad("can’t read “" + S.sols[q] + "”: " + e2.message); }
+            var e3 = {}; e3[vn] = cv;
+            var sc = Math.max(1, Math.abs(L1(e3)), Math.abs(R1(e3)));
+            if (!(Math.abs(F(cv)) <= 1e-7 * sc)) return bad(vn + " = " + S.sols[q] + " doesn’t solve " + o.eq);
+            claimed.push(cv);
+          }
+          for (var j2 = 0; j2 < S.rej.length; j2++){
+            var rv = logVal(S.rej[j2]);
+            if (isFinite(F(rv))) return bad(vn + " = " + S.rej[j2] + " is called extraneous but every log is defined there");
+          }
+          var found = logRoots(F), missed = found.filter(function(rt){ return !claimed.some(function(c){ return Math.abs(c - rt) <= 1e-5 * Math.max(1, Math.abs(rt)); }); });
+          if (missed.length) return bad("missed the solution " + vn + " ≈ " + missed[0].toFixed(4));
+          if (S.none && found.length) return bad("says no solution, but " + vn + " ≈ " + found[0].toFixed(4) + " works");
+          var decOk = S.dec.every(function(ds){ var dv = Number(ds), places = (ds.split(".")[1] || "").length; return claimed.some(function(c){ return Math.abs(c - dv) <= 0.51 * Math.pow(10, -places) + 1e-12; }); });
+          return decOk ? { ok:true } : bad("a rounded value doesn’t match a solution");
+        case "growth":
+          var w = logGrowth(o);
+          if (!isFinite(w)) return { skip:true };
+          if (o.kind === "ph" && o.ph !== undefined){
+            var mm = /≈\s*([\d.]+)\s*×\s*10\^?(-?\d+)/.exec(t.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+/g, function(x){ return "^" + x.split("").map(function(c){ return LOG_SUP[c]; }).join(""); }));
+            if (mm){ var got = Number(mm[1]) * Math.pow(10, Number(mm[2])); return Math.abs(got - w) <= 0.0051 * Math.pow(10, Number(mm[2])) ? { ok:true } : bad("[H+] should be ≈ " + w.toPrecision(3)); }
+          }
+          return need(a, [{ f:w }]);
+        case "graph":
+          var bt = String(o.b);
+          if (o.f === "log") return /x-intercept \(1, 0\)/.test(t) && t.indexOf("(" + bt + ", 1)") >= 0 && /asymptote x = 0/.test(t) ? { ok:true } : bad("expected (1, 0), (" + bt + ", 1) and x = 0");
+          return /y-intercept \(0, 1\)/.test(t) && t.indexOf("(1, " + bt + ")") >= 0 && /asymptote y = 0/.test(t) ? { ok:true } : bad("expected (0, 1), (1, " + bt + ") and y = 0");
+      }
+      return { skip:true };
+    },
+    "quadratics.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText).trim(), c, m;
+      switch (o.mode){
+        case "expand":
+          if (/[()]/.test(t)) return { ok:false, msg:"the answer still has brackets" };
+          return quadSame(o.ex, t) ? { ok:true } : { ok:false, msg:"“" + t + "” isn’t " + o.ex + " multiplied out" };
+        case "factor":
+          c = quadCoefs(o.p);
+          if (/prime/.test(t)){
+            if (c.length !== 3) return { skip:true };
+            var pr = quadPrimeBracket(c);
+            return pr ? { ok:false, msg:"the page says prime, but it " + pr } : { ok:true };
+          }
+          if (!quadSame(o.p, t)) return { ok:false, msg:"“" + t + "” doesn’t multiply back to " + o.p };
+          var re = /\(([^()]*)\)/g, bad = null;
+          while ((m = re.exec(t)) && !bad){ var why = quadPrimeBracket(quadCoefs(m[1])); if (why) bad = "(" + m[1] + ") " + why; }
+          return bad ? { ok:false, msg:bad } : { ok:true };
+        case "solve":
+          var sides = String(o.eq).split("=");
+          c = quadCoefs("(" + sides[0] + ")-(" + sides[1] + ")");
+          if (c.length !== 3) return { skip:true };
+          var A2 = F(c[2]), B2 = F(c[1]), C2 = F(c[0]), D = sub(mul(c[1], c[1]), mul(R(4), mul(c[2], c[0])));
+          var vals = quadVals(t), want = D.n < 0n ? 0 : D.n === 0n ? 1 : 2;
+          if (vals.length !== want) return { ok:false, msg:"expected " + want + " real solution(s), the answer gives " + vals.length };
+          if (want === 2 && Math.abs(vals[0] - vals[1]) < 1e-9) return { ok:false, msg:"the two solutions are the same" };
+          var off = vals.filter(function(v){ return Math.abs(A2 * v * v + B2 * v + C2) > 1e-7 * (Math.abs(A2) * v * v + Math.abs(B2 * v) + Math.abs(C2) + 1); });
+          if (off.length) return { ok:false, msg:"x = " + off[0] + " doesn’t make both sides equal" };
+          if (!want && !/no real/i.test(t)) return { ok:false, msg:"expected no real solutions" };
+          return { ok:true };
+        case "vertex":
+          c = quadCoefs(o.p); m = /vertex\s*\(([^,]+),\s*([^)]+)\)/.exec(t);
+          if (!m || c.length !== 3) return { ok:false, msg:"no vertex in the answer" };
+          var h = div(sub(R(0), c[1]), mul(R(2), c[2])), k = quadAt(o.p, h), gh = num(m[1]), gk = num(m[2]);
+          if (!gh || !gk || !eq(gh, h) || !eq(gk, k)) return { ok:false, msg:"expected the vertex (" + txt(h) + ", " + txt(k) + ")" };
+          var vf = o.cs === "1" ? t.split(";")[0] : (t.split(";")[1] || "").replace(/^\s*y\s*=/, "");
+          return quadSame(vf, o.p) ? { ok:true } : { ok:false, msg:"the vertex form “" + vf.trim() + "” isn’t " + o.p };
+        case "divide":
+          var qr = t.split(/,\s*remainder\s*/);
+          if (qr.length !== 2) return { ok:false, msg:"expected a quotient and a remainder" };
+          if (!quadSame(o.n, "(" + qr[0] + ")*(" + o.d + ")+(" + qr[1] + ")")) return { ok:false, msg:"quotient × divisor + remainder isn’t " + o.n };
+          return quadCoefs(qr[1]).length < quadCoefs(o.d).length ? { ok:true } : { ok:false, msg:"the remainder’s power isn’t lower than the divisor’s" };
+        case "operate":
+          return quadSame("(" + o.a + ")" + (o.op === "add" ? "+" : "-") + "(" + o.b + ")", t) ? { ok:true } : { ok:false, msg:"expected " + (o.op === "add" ? "the sum" : "the difference") + " of the two" };
+      }
+      return { skip:true };
+    },
+    "number-sense.html":function(p, a, ansText){
+      if (/(?:^|&)kind=make(?:&|$)/.test(p) && /(?:^|&)mode=money(?:&|$)/.test(p)) return nsMake(p, ansText);
+      var want = nsAnswer(p);
+      if (want === undefined) return { skip:true };
+      return want === ansText ? { ok:true } : { ok:false, msg:"expected “" + want + "”" };
+    },
     "scratch.html":function(p, a, ansText){
       var o = P(p), q = String(o.q || "").replace(/−/g, "-"), t;
       if (o.op === "add") return need(a, [X(q.split("+").map(num).reduce(add))]);

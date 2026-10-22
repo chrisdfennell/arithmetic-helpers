@@ -601,7 +601,7 @@
     var rows = nums.map(function(n){
       var i = n.i, f = n.f;
       while (i.length < intCols) i = " " + i;                // spaces stay blank on the page
-      while (f.length < maxF) f += "0";                      // padded zeros are shown, greyed
+      while (f.length < maxF) f += "0";                      // padded zeros are shown, grayed
       return { chars:(i+f).split(""), padFrom: intCols + n.f.length };
     });
     var out = new Array(L), steps = [], carry = 0;

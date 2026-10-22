@@ -257,7 +257,7 @@
     text-align:center;font-variant-numeric:tabular-nums}
   .stepper[hidden]{display:none}
 
-  /* colour by kind of move */
+  /* color by kind of move */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
@@ -688,7 +688,7 @@
       </div>
     </div>
     <div class="fr-bar fr-bar2">
-      <span class="fr-lab">Colour</span><div class="fr-cols" id="frCols" role="group" aria-label="Colour"></div>
+      <span class="fr-lab">Color</span><div class="fr-cols" id="frCols" role="group" aria-label="Color"></div>
       <span class="fr-lab">Line</span><div class="fr-cols" id="frDash" role="group" aria-label="Line style"></div>
       <span class="fr-lab">Snap</span><div class="modes small" id="frSnap" role="group" aria-label="Snap to"><button type="button" data-snap="grid" aria-pressed="true">Grid</button><button type="button" data-snap="half" aria-pressed="false">Half steps</button><button type="button" data-snap="off" aria-pressed="false">Off</button></div>
     </div>
@@ -833,7 +833,7 @@
                  transform     pts=x,y;x,y;…  t=<move>  [t2=<second move>]
                                moves: translate:a,b | reflect:x-axis | reflect:y-axis | reflect:y=x | reflect:y=-x |
                                reflect:x=k | reflect:y=k | rotate:90cw | rotate:90ccw | rotate:180 | rotate:270cw |
-                               rotate:270ccw (each with an optional :p,q centre) | dilate:k (optional :p,q centre)
+                               rotate:270ccw (each with an optional :p,q center) | dilate:k (optional :p,q center)
                  scatter       data=x,y;x,y;…  [px=<x to predict>]  [xl=<what x stands for>]  [yl=<what y stands for>]
      practice  all (default) | step (one step at a time) | check (check my answer)
      embed     1 = shown inside another page (a practice set): Check my answer only; no masthead, tabs, maker,
@@ -1602,7 +1602,7 @@
        ra     [{x, y, ux, uy, vx, vy, step}]           a right-angle mark at (x, y) between two directions
        aria   the text description; xl, yl: axis names (data) */
   var SZ = 400, PAD = 30, UID = 0;
-  var INL = {                                  // the same picture with fixed colours, for other pages (worksheets)
+  var INL = {                                  // the same picture with fixed colors, for other pages (worksheets)
     "gr-bg":'fill="#ffffff"', "gr-grid":'stroke="#CBD5DF" stroke-width="1"', "gr-axis":'stroke="#43546A" stroke-width="2"',
     "gr-axhead":'fill="#43546A"', "gr-num":'fill="#5B6B7E" font-size="12" font-family="monospace" font-weight="600"',
     "gr-ax":'fill="#43546A" font-size="18" font-style="italic" font-family="Georgia,serif"',
@@ -1954,7 +1954,7 @@
       placed.push(bestB);
       return bestB;
     }
-    // a halo in the surface colour (paint-order: stroke) keeps a label readable over grid lines
+    // a halo in the surface color (paint-order: stroke) keeps a label readable over grid lines
     var HALO = inline ? ' paint-order="stroke" stroke="#ffffff" stroke-width="4" stroke-linejoin="round"' : "";
     function haloCls(cls){ return inline ? cls : cls + " gr-halo"; }
     function textAt(b, txt, cls){ return '<text ' + C(cls) + HALO + ' x="' + f1(b[0] + b[2] / 2) + '" y="' + f1(b[1] + b[3] - 4.5) + '" text-anchor="middle">' + esc(txt) + "</text>"; }
@@ -3264,16 +3264,16 @@
       feats = tr.feats; fields = tr.fields; facts = facts.concat(tr.facts); xs = xs.concat(tr.xs); sp = sp.concat(tr.sp); yS = tr.yS; info = tr.info; piK = tr.piK || 0;
     } else if (fam.kind === "cubic" && fam.pure){
       var Cc = P(fam.h, fam.k);
-      var cS = sId([["p", lab + "Centre", pre + "It’s a <strong>cubic</strong> of the form <b>" + vH("y") + " = " + vH("a") + "(" + vH("x") + " − " + vH("h") + ")³ + " + vH("k") + "</b>, with " + vH("a") + " = " + nH(fam.a) + ", " + vH("h") + " = " + nH(fam.h) + ", " + vH("k") + " = " + nH(fam.k) + ". Its centre (where it flattens out and changes how it bends) is <b>" + ptH(Cc) + "</b>."]],
+      var cS = sId([["p", lab + "Center", pre + "It’s a <strong>cubic</strong> of the form <b>" + vH("y") + " = " + vH("a") + "(" + vH("x") + " − " + vH("h") + ")³ + " + vH("k") + "</b>, with " + vH("a") + " = " + nH(fam.a) + ", " + vH("h") + " = " + nH(fam.h) + ", " + vH("k") + " = " + nH(fam.k) + ". Its center (where it flattens out and changes how it bends) is <b>" + ptH(Cc) + "</b>."]],
         "<strong>What the numbers do:</strong> " + vH("a") + " stretches it and flips it when negative; " + vH("h") + " moves it right; " + vH("k") + " moves it up.",
-        [[lab + "centre", "p", ex(ptH(Cc), "res")]]);
-      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"centre " + ptT(Cc), cls:pcl, step:cS, tip:lab + "Centre " + ptT(Cc) });
+        [[lab + "center", "p", ex(ptH(Cc), "res")]]);
+      spec.pts.push({ x:F(fam.h), y:F(fam.k), lbl:"center " + ptT(Cc), cls:pcl, step:cS, tip:lab + "Center " + ptT(Cc) });
       yS = yStep();
       rS = sId([[badge, lab + "x-int", pre + "Set " + vH("y") + " = 0: <b>(" + vH("x") + " − " + nP(fam.h) + ")³ = " + nH(dvd(neg(fam.k), fam.a)) + "</b>. Every number has exactly one cube root, so <b>" + vH("x") + " = " + xiH(roots) + "</b>."]], null,
         [[lab + "y = 0", badge, ex(vH("x") + opS("=") + xiH(roots), "res")]]);
       roots.vals.forEach(function(v){ var x = v.r ? F(v.r) : v.f; xs.push(x); spec.pts.push({ x:x, y:0, lbl:v.r ? ptT(P(v.r, ZERO)) : "(" + rd(x) + ", 0)", cls:pcl, step:rS, tip:lab + "x-intercept " + (v.r ? ptT(P(v.r, ZERO)) : "≈ (" + rd(x) + ", 0)") }); });
       sId([["m", lab + "Shape", pre + "It’s " + (sgn(fam.a) > 0 ? "increasing" : "decreasing") + " everywhere. Domain and range: all real numbers."]], null, [[lab + "shape", "m", ex(wd(sgn(fam.a) > 0 ? "always uphill" : "always downhill"))]]);
-      feats = [["Centre", ptH(Cc), ptT(Cc)], ["x-intercept", xiH(roots), xiT(roots)], ["y-intercept", yiPtH(yi), yiPtT(yi)]];
+      feats = [["Center", ptH(Cc), ptT(Cc)], ["x-intercept", xiH(roots), xiT(roots)], ["y-intercept", yiPtH(yi), yiPtT(yi)]];
       fields.push({ key:"yi" + i, kind:"num", label:lab + "y-intercept", v:yi, ctx:{ what:"y-intercept" } });
       fields.push({ key:"xi" + i, kind:"xints", label:lab + "x-intercepts", v:roots, ctx:{ yi:yi } });
       facts.push(lab + "domain and range all real numbers");
@@ -3308,7 +3308,7 @@
     }
     // fix the y-intercept's reveal step now that it exists
     spec.pts.forEach(function(p){ if (p.step === -2) p.step = yS; });
-    var dS = ctx.add([[badge, lab + "Draw", pre + "Plot the key points, then sketch the " + (fam.kind === "linear" ? "line" : "curve") + " through them" + (many ? " — drawn " + DASHW[i % 5] + " in this colour" : "") + "."
+    var dS = ctx.add([[badge, lab + "Draw", pre + "Plot the key points, then sketch the " + (fam.kind === "linear" ? "line" : "curve") + " through them" + (many ? " — drawn " + DASHW[i % 5] + " in this color" : "") + "."
       + (fam.kind === "recip" ? " Never join the two pieces across the asymptote." : "")]], null, [[lab + "draw", badge, ex(eqH, "res")]]);
     spec.curves.push({ f:fam.f, cls:cls, step:dS, sp:sp.concat(xs), name:many ? name : "y", ast:ast, fam:fam, deg:!!fam.deg });
     var fx = spec.focus;
@@ -3347,7 +3347,7 @@
   function solveFunctions(pr){
     var ctx = new Ctx(), many = pr.fns.length > 1, spec = { kind:"plane", focus:{ xs:[], ys:[] }, pts:[], curves:[], asym:[], segs:[] }, outs = [];
     if (pr.fns.length > 5) throw new UserErr("Up to five functions at once, please.");
-    if (many) ctx.add([["p", "Several", "There are " + pr.fns.length + " functions. Work out each one’s key features, then draw them all on one grid — each in its own colour <i>and</i> its own line style, so you can tell them apart."]], null,
+    if (many) ctx.add([["p", "Several", "There are " + pr.fns.length + " functions. Work out each one’s key features, then draw them all on one grid — each in its own color <i>and</i> its own line style, so you can tell them apart."]], null,
       [["key", "p", ex(pr.fns.map(function(f, i){ return '<span class="nw">' + swatch(i) + "&nbsp;" + vH("y") + "<sub>" + (i + 1) + "</sub></span>"; }).join(opS(" ")))]]);
     pr.fns.forEach(function(fn, i){
       var fam = analyze(fn.ast, pr.deg);
@@ -4126,7 +4126,7 @@
     if (mv.t === "rotate"){
       var q = ((mv.dir === "cw" ? -mv.deg : mv.deg) % 360 + 360) % 360, c = mv.c || P(Z, Z), base;
       base = q === 90 ? M(Z, N1, Z, O, Z, Z) : q === 180 ? M(N1, Z, Z, Z, N1, Z) : q === 270 ? M(Z, O, Z, N1, Z, Z) : M(O, Z, Z, Z, O, Z);
-      // about (p, q): move the centre to the origin, turn, move back
+      // about (p, q): move the center to the origin, turn, move back
       return M(base.ax, base.bx, sub(c.x, add(mul(base.ax, c.x), mul(base.bx, c.y))), base.ay, base.by, sub(c.y, add(mul(base.ay, c.x), mul(base.by, c.y))));
     }
     var k = mv.k, cc = mv.c || P(Z, Z);
@@ -4184,15 +4184,15 @@
       var q = ((mv.dir === "cw" ? -mv.deg : mv.deg) % 360 + 360) % 360;
       var r0 = q === 90 ? "(" + vH("x") + ", " + vH("y") + ") → (−" + vH("y") + ", " + vH("x") + ")" : q === 180 ? "(" + vH("x") + ", " + vH("y") + ") → (−" + vH("x") + ", −" + vH("y") + ")" : "(" + vH("x") + ", " + vH("y") + ") → (" + vH("y") + ", −" + vH("x") + ")";
       return "A <strong>rotation</strong> of " + degName(mv) + " about " + (mv.c ? ptH(mv.c) : "the origin") + " turns the whole shape around that point. About the origin the rule is " + r0
-        + (mv.c ? "; about another point, first measure each point from the centre " + ptH(mv.c) + ", turn that, then add the centre back on." : ".")
+        + (mv.c ? "; about another point, first measure each point from the center " + ptH(mv.c) + ", turn that, then add the center back on." : ".")
         + (q === 180 ? " (180° is the same either way round.)" : "");
     }
-    return "A <strong>dilation</strong> by " + nH(mv.k) + " from " + (mv.c ? ptH(mv.c) : "the origin") + " multiplies <i>both</i> coordinates" + (mv.c ? " (measured from the centre)" : "") + " by " + nH(mv.k) + (cmpR(absR(mv.k), ONE) > 0 ? ": the shape gets bigger." : ": the shape gets smaller.");
+    return "A <strong>dilation</strong> by " + nH(mv.k) + " from " + (mv.c ? ptH(mv.c) : "the origin") + " multiplies <i>both</i> coordinates" + (mv.c ? " (measured from the center)" : "") + " by " + nH(mv.k) + (cmpR(absR(mv.k), ONE) > 0 ? ": the shape gets bigger." : ": the shape gets smaller.");
   }
   function solveTransform(pr){
     var ctx = new Ctx(), pts = pr.pts, n = pts.length, moves = pr.moves, poly = n >= 3, names = pts.map(function(Q, i){ return vName(i); });
     var spec = { kind:"plane", focus:fpts(pts), pts:[], polys:[], segs:[], lines:[] }, cur = pts, stage = [pts], maps = [], prime = "";
-    var s0 = ctx.add([["p", "Plot", "Plot the " + (poly ? "shape’s corners " : n > 1 ? "points " : "point ") + pts.map(function(Q, i){ return "<b>" + names[i] + " " + ptH(Q) + "</b>"; }).join(", ") + ". This is the <strong>pre-image</strong>; where it ends up is the <strong>image</strong>, labelled with primes (" + names[0] + "′)."]], null,
+    var s0 = ctx.add([["p", "Plot", "Plot the " + (poly ? "shape’s corners " : n > 1 ? "points " : "point ") + pts.map(function(Q, i){ return "<b>" + names[i] + " " + ptH(Q) + "</b>"; }).join(", ") + ". This is the <strong>pre-image</strong>; where it ends up is the <strong>image</strong>, labeled with primes (" + names[0] + "′)."]], null,
       [["pre-image", "p", ex(pts.map(function(Q, i){ return names[i] + ptH(Q); }).join(opS("&nbsp;")))]]);
     if (poly) spec.polys.push({ pts:pts.map(function(Q){ return [F(Q.x), F(Q.y)]; }), cls:"gr-poly1", step:s0 });
     else if (n === 2) spec.segs.push({ x1:F(pts[0].x), y1:F(pts[0].y), x2:F(pts[1].x), y2:F(pts[1].y), cls:"gr-s1", step:s0 });
@@ -4223,7 +4223,7 @@
         var o = { x:F(Q.x), y:F(Q.y), lbl:names[i] + prime, cls:pc, step:sR, tip:names[i] + pOld + " " + ptT(cur[i]) + arrow };
         tipObjs[i] = o; spec.pts.push(o); spec.focus.xs.push(F(Q.x)); spec.focus.ys.push(F(Q.y));
       });
-      if (mv.c){ spec.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"centre", step:sR, tip:"Centre " + ptT(mv.c) }); spec.focus.xs.push(F(mv.c.x)); spec.focus.ys.push(F(mv.c.y)); }
+      if (mv.c){ spec.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"center", step:sR, tip:"Center " + ptT(mv.c) }); spec.focus.xs.push(F(mv.c.x)); spec.focus.ys.push(F(mv.c.y)); }
       if (mv.t === "translate" && n <= 4) cur.forEach(function(Q, i){ spec.segs.push({ x1:F(Q.x), y1:F(Q.y), x2:F(nxt[i].x), y2:F(nxt[i].y), cls:"gr-aux", step:sR }); });
       cur = nxt; stage.push(nxt);
     });
@@ -4239,7 +4239,7 @@
     ctx.fig(CAP + "The pre-image (solid) and the image (dashed, " + names[0] + prime + "…)" + (moves.length > 1 ? ", with the halfway image dotted." : "."), spec);
     var vT = img.map(function(Q, i){ return lab[i] + ptT(Q); }).join(" "), vHt = img.map(function(Q, i){ return "<span>" + lab[i] + "&nbsp;" + ptH(Q) + "</span>"; }).join('<span class="sep">·</span>');
     var L = gridHalf(pts.concat(img)), given = { kind:"plane", focus:{ xs:[-L, L], ys:[-L, L] }, polys:poly ? [{ pts:pts.map(function(Q){ return [F(Q.x), F(Q.y)]; }), cls:"gr-poly1" }] : [], pts:pts.map(function(Q, i){ return { x:F(Q.x), y:F(Q.y), lbl:names[i], tip:names[i] + " " + ptT(Q) + " (the pre-image)" }; }), aria:"Answer grid with the pre-image " + pts.map(function(Q, i){ return names[i] + ptT(Q); }).join(" ") };
-    moves.forEach(function(mv){ if (mv.c) given.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"centre", tip:"Centre " + ptT(mv.c) }); });
+    moves.forEach(function(mv){ if (mv.c) given.pts.push({ x:F(mv.c.x), y:F(mv.c.y), cls:"sm", lbl:"center", tip:"Center " + ptT(mv.c) }); });
     var what = poly ? (n === 3 ? "triangle" : n === 4 ? "quadrilateral" : "polygon") + " " : n > 1 ? "points " : "point ";
     var ask = "<b>" + esc(moves.map(moveT).join(", then ")).replace(/^./, function(c){ return c.toUpperCase(); }) + "</b>: the " + what + pts.map(function(Q, i){ return names[i] + ptH(Q); }).join(" ") + ". Give the image" + (n > 1 ? " of each point" : "") + ".";
     var askT = moves.map(moveT).join(", then ").replace(/^./, function(c){ return c.toUpperCase(); }) + ": the " + what + pts.map(function(Q, i){ return names[i] + ptT(Q); }).join(" ") + ". Give the image" + (n > 1 ? " of each point" : "") + ".";
@@ -4306,7 +4306,7 @@
       + "It passes through the average point <b>(" + esc(sig(F(fit.mx))) + ", " + esc(sig(F(fit.my))) + ")</b>. The best one (the least-squares line) is <b>" + lineHt + "</b>: slope about <b>" + esc(mT) + "</b>, " + vH("y") + "-intercept about <b>" + esc(bT) + "</b>."]],
       null, [["y ≈ mx + b", "a", ex(lineHt, "res")]]);
     spec.lines.push({ A:-F(m), B:1, C:F(b), cls:"gr-s1", step:sL, noHeads:true, name:"trend line", approx:true });
-    spec.pts.push({ x:F(fit.mx), y:F(fit.my), cls:"sm", step:sL, r:4, tip:"Centre of the data (mean x, mean y): (" + sig(F(fit.mx)) + ", " + sig(F(fit.my)) + ")" });
+    spec.pts.push({ x:F(fit.mx), y:F(fit.my), cls:"sm", step:sL, r:4, tip:"Center of the data (mean x, mean y): (" + sig(F(fit.mx)) + ", " + sig(F(fit.my)) + ")" });
     var sI = ctx.add([["m", "Meaning", "The slope says: each time " + esc(xl) + " goes up by 1, " + esc(yl) + " " + (F(m) >= 0 ? "goes up" : "goes down") + " by about <b>" + esc(sig(Math.abs(F(m)))) + "</b> on average. "
       + "The intercept says: at " + esc(xl) + " = 0 the line gives about <b>" + esc(bT) + "</b>" + (x0 > 0 && x0 > 0.5 * (x1 - x0) ? " — but 0 is well outside the data, so that may not mean much." : ".")]], null,
       [["meaning", "m", ex(wd("+1 in x → " + (F(m) >= 0 ? "+" : "−") + sig(Math.abs(F(m))) + " in y"))]]);
@@ -4919,7 +4919,7 @@
         var cc = mv.c || P(ZERO, ZERO), onlyX = pts.map(function(Q){ return P(add(cc.x, mul(mv.k, sub(Q.x, cc.x))), Q.y); }), onlyY = pts.map(function(Q){ return P(Q.x, add(cc.y, mul(mv.k, sub(Q.y, cc.y)))); });
         if (moves.length === 1){ out.push({ img:onlyX, msg:"Only the " + vH("x") + "-coordinates were multiplied. A dilation multiplies <i>both</i> coordinates by the scale factor." }); out.push({ img:onlyY, msg:"Only the " + vH("y") + "-coordinates were multiplied. A dilation multiplies <i>both</i> coordinates by the scale factor." }); }
         out.push({ img:with1(cp(mv, { k:recip(mv.k) })), msg:"That divides by the scale factor instead of multiplying by it." });
-        if (mv.c) out.push({ img:with1(cp(mv, { c:null })), msg:"That dilated from the origin. Measure from the centre " + ptH(mv.c) + " instead: multiply each point’s distance from it." });
+        if (mv.c) out.push({ img:with1(cp(mv, { c:null })), msg:"That dilated from the origin. Measure from the center " + ptH(mv.c) + " instead: multiply each point’s distance from it." });
       }
       if (mv.t === "translate"){
         out.push({ img:with1({ t:"translate", a:neg(mv.a), b:neg(mv.b) }), msg:"That moved it the opposite way. Translating by (" + nH(mv.a) + ", " + nH(mv.b) + ") <i>adds</i> " + nH(mv.a) + " to " + vH("x") + " and " + nH(mv.b) + " to " + vH("y") + "." });
@@ -5523,12 +5523,12 @@
      The drawing lives in the address bar as  mode=free&paper=<x0,x1,y0,y1,step,label step,flags>&obj=<objects>
        flags   a = axes, n = numbers, d = dots (not lines), f = darker every 5th line, s = square units, h = snap to half steps, o = snap off
        objects separated by "~", each a letter and ":"-separated fields; points are numbered in order (0, 1, 2 …):
-         p:name:x:y[:c:d]        a point (c = colour 0–4, d = dash 0–2)
+         p:name:x:y[:c:d]        a point (c = color 0–4, d = dash 0–2)
          s:i:j[:c:d]  l:i:j[:c:d]  r:i:j[:c:d]   a segment, a line through two points, a ray from i through j
-         g:i:j:k…[:c:d]          a polygon (the last two fields are colour and dash when there are 2 more numbers than corners… so they're written as c<n> d<n>)
+         g:i:j:k…[:c:d]          a polygon (the last two fields are color and dash when there are 2 more numbers than corners… so they're written as c<n> d<n>)
          f:<expression in x>[:c:d]      y = … graphed
          x:x:y:<text>[:c:d]      a label
-     Colour and dash are written c0…c4 and d0…d2 so they can't be mistaken for point numbers. */
+     Color and dash are written c0…c4 and d0…d2 so they can't be mistaken for point numbers. */
   var FREE = { paper:null, objs:[], tool:"point", col:0, dash:0, pending:[], sel:null, undo:[], redo:[], nextId:1, fig:null, msg:"" };
   var FR_TOOLS = [["point", "Point", "•"], ["segment", "Segment", "—"], ["polygon", "Polygon", "△"], ["line", "Line", "↔"], ["ray", "Ray", "→"], ["label", "Label", "T"], ["move", "Move", "✥"], ["erase", "Erase", "⌫"]];
   var FR_PRESETS = [["-5,5", "−5 to 5"], ["-10,10", "−10 to 10"], ["-20,20", "−20 to 20"], ["0,10", "0 to 10"], ["0,20", "0 to 20"], ["custom", "Custom"]];

@@ -22,7 +22,7 @@ Open <http://localhost:8000/tests/self-test.html> and press **Run**. It checks e
 
 - **One page, one file.** Each helper is a single self-contained HTML file in `helpers/`. Shared scripts are in `assets/`: `site.js` (where every page lives, and its readable address; every link between pages is made through it), `nav.js` (the bar), `tools.js` (settings, read aloud, math keys, QR button…), `search.js`, `progress.js`, `glossary.js`, `qr.js`.
 - **ES5 JavaScript** (`var`, `function`), no frameworks, no build tools, so it runs anywhere and is easy to read.
-- **Exact maths**: use the pages' BigInt fractions, not floating point, wherever an answer should be exact.
+- **Exact math**: use the pages' BigInt fractions, not floating point, wherever an answer should be exact.
 - **Every helper follows the same contracts**, which the worksheet maker, practice sets, progress and the self-test rely on:
   - the problem is in the address (`?q=…`, `mode=…`, `practice=all|step|check`) and kept in step with `history.replaceState`
   - the main answer is in `.answer .v`, and the first `[aria-live]` element is the Check my answer verdict

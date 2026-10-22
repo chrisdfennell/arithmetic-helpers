@@ -301,9 +301,9 @@
      The area isn't the whole story (in small versions the fixed patterns take much of the symbol), so the plate is
      also made smaller until it spoils at most 60% of what any one Reed–Solomon block can correct; the rest is left
      for smudges, glare and a shaky camera.
-     The plate is a whole number of modules, centred on the grid (the grid is odd, so is the plate), and stays clear
+     The plate is a whole number of modules, centered on the grid (the grid is odd, so is the plate), and stays clear
      of the finders and separators, the timing patterns, the format and version information and the corner
-     alignment pattern. A centred plate that size can't miss the middle alignment pattern(s) from version 7 on;
+     alignment pattern. A centered plate that size can't miss the middle alignment pattern(s) from version 7 on;
      decoders find the grid from the finders and the bottom-right alignment pattern, so those are the ones kept. */
   // [level, the most of the symbol's area the plate may take, the most of any one block's correction it may use]
   var LOGO_LEVELS = [["H", 0.15, 0.6], ["Q", 0.09, 0.6]], LOGO_MIN_VERSION = 3, layouts = {};
@@ -327,7 +327,7 @@
     }
     return (layouts[key] = { size:size, cw:cw, blockOf:blockOf, nb:nb, fix:Math.floor(el / 2) });
   }
-  // the worst share of one block's correction (it fixes up to half its error correction codewords) a centred plate uses
+  // the worst share of one block's correction (it fixes up to half its error correction codewords) a centered plate uses
   function damage(L, p){
     var p0 = (L.size - p) / 2, seen = {}, per = [], worst = 0;
     for (var b = 0; b < L.nb; b++) per.push(0);

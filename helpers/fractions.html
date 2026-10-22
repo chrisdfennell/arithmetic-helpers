@@ -27,7 +27,7 @@
     --e:#9A5410;     --e-bg:#F6E5D2;                          /* factors, GCF and LCD */
     --m:#544696;     --m-bg:#E3E0F4;                          /* the same × or ÷ to top and bottom */
     --a:#3D7A1C;     --a-bg:#E2EED8;                          /* results and checks */
-    --r:#A8412A;     --r-bg:#F6DFD8;                          /* a fifth colour for comparing */
+    --r:#A8412A;     --r-bg:#F6DFD8;                          /* a fifth color for comparing */
     --warm:#9A5410;  --warm-bg:#F6E5D2;                       /* notes */
     --focus:#0B6E83;
     --shadow:0 1px 0 rgba(20,34,42,.05), 0 14px 30px -20px rgba(20,34,42,.5);
@@ -226,7 +226,7 @@
     text-align:center;font-variant-numeric:tabular-nums}
   .stepper[hidden]{display:none}
 
-  /* colour by kind of move */
+  /* color by kind of move */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
@@ -954,7 +954,7 @@
     });
     return h + "</div>";
   }
-  // a number line from lo to hi (whole numbers) with ticks every 1/sub, and labelled points { x:Number, lbl, cls }
+  // a number line from lo to hi (whole numbers) with ticks every 1/sub, and labeled points { x:Number, lbl, cls }
   function lineSVG(pts, lo, hi, sub){
     var W = 600, x0 = 26, x1 = 574, span = hi - lo;
     if (span * sub > 80) sub = 1;

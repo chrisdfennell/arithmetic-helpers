@@ -17,8 +17,9 @@
   if (window.HelperProgress) return;
   var KEY = "helper-progress", VERSION = 1, CAP = 3000, DAY = 86400000;
 
-  // the helpers in the order they're usually learned; c = the page colour on the home page (--add, --sub, …)
+  // the helpers in the order they're usually learned; c = the page color on the home page (--add, --sub, …)
   var TOPICS = [
+    { page:"number-sense.html",   name:"Number sense",        title:"The Place Value Chart", c:"num" },
     { page:"addition.html",       name:"Addition",            title:"The Carry Column",   c:"add" },
     { page:"subtraction.html",    name:"Subtraction",         title:"The Borrow Bank",    c:"sub" },
     { page:"multiplication.html", name:"Multiplication",      title:"The Product Ladder", c:"mul" },
@@ -34,6 +35,9 @@
     { page:"algebra.html",        name:"Algebra",             title:"The Balance Scale",  c:"alg" },
     { page:"lines.html",          name:"Lines & slope",       title:"The Slope Grid",     c:"lin" },
     { page:"graphing.html",      name:"Graphing",             title:"The Graph Paper",     c:"gra" },
+    { page:"quadratics.html",    name:"Quadratics & polynomials", title:"The Area Box",      c:"qua" },
+    { page:"logarithms.html",    name:"Logarithms",           title:"The Log Ladder",      c:"log" },
+    { page:"sequences.html",     name:"Sequences & series",   title:"The Number Staircase", c:"seq" },
     { page:"geometry.html",       name:"Geometry",            title:"The Shape Shop",     c:"geo" },
     { page:"stats.html",          name:"Statistics",          title:"The Dot Plot",       c:"sta" },
     { page:"probability.html",   name:"Probability",          title:"The Chance Spinner",  c:"pro" },

@@ -266,7 +266,7 @@
     text-align:center;font-variant-numeric:tabular-nums}
   .stepper[hidden]{display:none}
 
-  /* colour by part of the routine */
+  /* color by part of the routine */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
@@ -656,7 +656,7 @@
                                  shown read-only, no masthead, kinds, reader, maker, examples, footnote or theme
                                  button; nothing is saved in this browser; the page posts its height to the
                                  parent after every change: { type:"helper:height", h }
-       theme=light|dark          with embed=1: the colours to use
+       theme=light|dark          with embed=1: the colors to use
      The page keeps the address bar in step with the story on screen (history.replaceState: the fields, or q with
      any corrections; practice only when it isn't "all"; never the theme). Each graded "Check" and each "Show me
      the work" fires a "helper:checked" CustomEvent on document, and posts the same detail to the parent page if
@@ -1228,7 +1228,7 @@
           : "Not " + esc(nt(V.a)) + " + " + esc(nt(V.c)) + ": the ones that went away were part of the " + esc(nt(V.a)) + ", so the answer must be smaller than " + esc(nt(V.a)) + "." };
       M.fig = { svg:barsSVG(oneBar([sg(V.c, labOr(s, "c", u === "c"), u === "c" ? "q" : "k", "left"), sg(V.b, labOr(s, "b", u === "b"), u === "b" ? "q" : "x", "taken away")],
           u === "a" ? "? at first" : nt(V.a) + " at first"), "Bar model: what was taken away and what is left make the start"),
-        lead:"The whole bar is what " + N + " had at first. Part of it went away (grey), and the rest is what’s left. The dashed box with a ? is what we’re finding." };
+        lead:"The whole bar is what " + N + " had at first. Part of it went away (gray), and the rest is what’s left. The dashed box with a ? is what we’re finding." };
       M.calc = [s.calc];
       M.ans = { v:V[u], k:"n", w:it, say:u === "c" ? Nc + " " + hv + " " + B(esc(qty(V.c, it))) + " left." : u === "b" ? Nc + " " + W.V + " " + B(esc(qty(V.b, it))) + "." : Nc + " had " + B(esc(qty(V.a, it))) + " at first." };
       M.sense = back3(s) + (u === "a" ? ". The start is the biggest amount, as it should be." : ". What’s left is less than the start, as it should be.");
@@ -1894,7 +1894,7 @@
       M.fig = { svg:barsSVG({ rows:[{ name:"percent", segs:[sg(p, pT, "k"), sg(sub(H100, p), nt(sub(H100, p)) + "%", "e")] },
           { name:$m ? "dollars" : (it || "amount"), segs:[sg(p, k === "off" ? dl : "?", k === "off" ? "x" : "q"), sg(sub(H100, p), k === "off" ? "?" : rl, k === "off" ? "q" : "e")] }],
           tops:[{ row:0, from:0, to:1, lab:"100%", cls:"k" }], bots:[{ row:1, from:0, to:1, lab:(($m ? usd(a) : nt(a)) + " — all of it"), cls:"u" }], ticks:[{ row:0, n:10 }, { row:1, n:10 }] }, "Percent bar: " + pT + " of " + am(a)),
-        lead:"Two bars that match: the top one is percent, 0 to 100%; the bottom one is the " + (k === "of" ? "amount" : "price") + ", 0 to " + A + ". Each tick is 10%. " + (k === "off" ? "The grey part is the discount; the dashed part is what you pay." : "The dashed part is the " + pT + ".") };
+        lead:"Two bars that match: the top one is percent, 0 to 100%; the bottom one is the " + (k === "of" ? "amount" : "price") + ", 0 to " + A + ". Each tick is 10%. " + (k === "off" ? "The gray part is the discount; the dashed part is what you pay." : "The dashed part is the " + pT + ".") };
       M.calc = steps.concat(k === "off" ? [cl(a, "−", d, r, "$")] : []);
       M.ans = { v:r, k:kk, w:$m ? "" : it, say:k === "of" ? (W.an ? Q(W.an) : cap1(pT) + " of " + A + " is " + Be(am(r)) + ".") : k === "off" ? "The sale price is " + Be(usd(r)) + "." : "You save " + Be(usd(r)) + "." };
       M.sense = k === "off" ? "Check: the discount and the sale price make the full price: " + Be(usd(d) + " + " + usd(r) + " = " + usd(a)) + " ✓"
@@ -1957,7 +1957,7 @@
         var r0 = row("step 1", a, o1, b, r1), rr = row("now", r1, o2, c, r);
         if (o2 === "+"){ rr.segs[0].lab = shortT(r1); rr.segs[1].cls = "q"; rr.segs[1].lab = "+" + shortT(c); }
         M.fig = { svg:barsSVG({ rows:[{ name:"start", segs:[sg(a, shortT(a), "k")] }, r0, rr], right:{ from:2, to:2, lab:o2 === "+" ? "? now" : "", cls:"k" } }, "Bar model, one step per bar"),
-          lead:"One bar for each moment in the story: the start, after the first change, and now. Grey pieces go away; coloured pieces are added." };
+          lead:"One bar for each moment in the story: the start, after the first change, and now. Gray pieces go away; colored pieces are added." };
         if (o2 !== "+") M.fig.svg = barsSVG({ rows:[{ name:"start", segs:[sg(a, shortT(a), "k")] }, r0, rr] }, "Bar model, one step per bar");
         M.calc = [cl(o1 === "+" ? a : a, o1, b, r1), cl(r1, o2, c, r)];
         M.ans = { v:r, k:"n", w:it, say:Nc + " " + hv + " " + Be(q(r)) + " now." };
@@ -1993,7 +1993,7 @@
           eq:"(" + esc(g) + " × in each) − taken away = " + QM, trap:"Do both steps: " + esc(nt(g1t)) + " is how many there were before any went away. And take the " + esc(nt(c)) + " from the total, not from one " + esc(g1) + "." };
         var mg = isInt(a) && Number(a.n) <= 40, gs = mg ? [sg(b, shortT(b), "k", null, Number(a.n))] : [sg(g1t, shortT(g1t), "k")];
         M.fig = { svg:barsSVG({ rows:[{ name:"had", segs:gs }, { name:"now", segs:[sg(gl, "?", "q"), sg(c, "−" + shortT(c), "x")] }], tops:[{ row:0, from:0, to:0, lab:nt(g1t) + " in all" }] }, "Bar model: equal groups, then some taken away"),
-          lead:"The first bar is the equal " + esc(g) + ", one box each. The second bar is the same total with the " + esc(nt(c)) + " that went away in grey; the dashed part is what’s left." };
+          lead:"The first bar is the equal " + esc(g) + ", one box each. The second bar is the same total with the " + esc(nt(c)) + " that went away in gray; the dashed part is what’s left." };
         M.calc = [cl(a, "×", b, g1t), cl(g1t, "−", c, gl)];
         M.ans = { v:gl, k:"n", w:it, say:Nc + " " + hv + " " + Be(q(gl)) + " now." };
         M.sense = estimate("×", a, b, g1t) + "Work backwards: " + Be(nt(gl) + " + " + nt(c) + " = " + nt(g1t)) + ", and " + Be(nt(g1t) + " ÷ " + nt(a) + " = " + nt(b)) + " ✓";
@@ -2047,7 +2047,7 @@
         eq:"(start − given away) ÷ friends = " + QM, trap:"Share what’s <em>left</em>, not the whole " + esc(nt(a)) + " — the " + esc(nt(b)) + " were already gone." };
       var ok = isInt(c) && Number(c.n) <= 30;
       M.fig = { svg:barsSVG({ rows:[{ segs:[sg(b, shortT(b), "x", W.Vm), ok ? sg(each, "?", "q", null, Number(c.n)) : sg(left, "? each", "q")] }], tops:[{ row:0, from:0, to:1, lab:nt(a) + " at the start" }], bots:[{ row:0, from:1, to:1, lab:nt(left) + " shared by " + nt(c), cls:"u" }] }, "Bar model: take away, then share"),
-        lead:"The whole bar is the start. The grey piece goes away; the rest is cut into " + esc(nt(c)) + " equal boxes — one for each friend." };
+        lead:"The whole bar is the start. The gray piece goes away; the rest is cut into " + esc(nt(c)) + " equal boxes — one for each friend." };
       M.calc = [cl(a, "−", b, left), cl(left, "÷", c, each)];
       M.ans = { v:each, k:"n", w:it, say:"Each friend gets " + Be(q(each)) + "." };
       M.sense = "Work backwards: " + Be(nt(each) + " × " + nt(c) + " = " + nt(left)) + ", and " + Be(nt(left) + " + " + nt(b) + " = " + nt(a)) + " ✓";

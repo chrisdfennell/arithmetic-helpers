@@ -665,7 +665,7 @@
     return '<span class="fr"><span class="nu"><span>' + esc(n) + '</span></span>'
          + '<span class="de"><span>' + esc(d) + "</span></span></span>";
   }
-  // a fraction with cross-cancelling marks: struck original, smaller value beside it
+  // a fraction with cross-canceling marks: struck original, smaller value beside it
   function cancelFracHTML(n, nWas, d, dWas){
     var nu = (nWas !== null)
       ? '<span class="mini">' + n + '</span><span class="was">' + nWas + "</span>"
@@ -949,7 +949,7 @@
          + '<span class="op-s">×</span>'
          + cancelFracHTML(bn, g2 > 1 ? b.n : null, bd, g1 > 1 ? b.d : null), "=",
         [["m","Cancel", cancelWords(a, b, g1, g2)]],
-        "Cancelling now keeps the numbers small. It’s the same as simplifying at the end — "
+        "Canceling now keeps the numbers small. It’s the same as simplifying at the end — "
         + "just far less arithmetic.");
     }
     step(fracHTML(prod.n, prod.d), "=",
@@ -1020,7 +1020,7 @@
     var dec = simp.n / simp.d;
     band('<span class="k">Product</span><span class="v">' + final + "</span>", [
       "As a decimal: <b>" + trimNum(dec) + "</b>",
-      canCancel ? "Cross-cancelled before multiplying." : "Nothing to cancel — straight across."
+      canCancel ? "Cross-canceled before multiplying." : "Nothing to cancel — straight across."
     ], "answer");
     writeLog(items);
 

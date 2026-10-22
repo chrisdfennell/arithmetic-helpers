@@ -187,7 +187,7 @@
     text-align:center;font-variant-numeric:tabular-nums}
   .stepper[hidden]{display:none}
 
-  /* colour by kind of operation */
+  /* color by kind of operation */
   .c-p{--c:var(--key);--cb:var(--key-bg)}
   .c-e{--c:var(--e);--cb:var(--e-bg)}
   .c-m{--c:var(--m);--cb:var(--m-bg)}
@@ -1326,7 +1326,7 @@
     F.line([Z,Z], [Z,Z + Y], "fold"); F.line([Z + X,Z], [Z + X,Z + Y], "fold"); F.line([2 * Z + X,Z], [2 * Z + X,Z + Y], "fold");
     F.line([Z,Z], [Z + X,Z], "fold"); F.line([Z,Z + Y], [Z + X,Z + Y], "fold");
     F.poly(o, "out");
-    return F.svg("The net of the " + (cube ? "cube" : "box") + ": its six faces unfolded flat, each labelled with its area");
+    return F.svg("The net of the " + (cube ? "cube" : "box") + ": its six faces unfolded flat, each labeled with its area");
   }
   function ellipseD(C, rx, ry, a1, a2){                 // arc of an ellipse from parameter a1 to a2 (degrees, counter-clockwise on screen)
     var p1 = [C[0] + rx * Math.cos(a1 * Math.PI / 180), C[1] - ry * Math.sin(a1 * Math.PI / 180)];
@@ -1476,7 +1476,7 @@
       }
     }
     sqLabels(Sa, o.la, o.sa, "ka"); sqLabels(Sb, o.lb, o.sb, "km"); sqLabels(Sc, o.lc, o.sc, "kk");
-    return F.svg("A triangle with a square drawn on each side; each square is labelled with its area");
+    return F.svg("A triangle with a square drawn on each side; each square is labeled with its area");
   }
 
   /* ---------- angles ---------- */
@@ -1747,7 +1747,7 @@
     trapA:"Two copies of the trapezoid, one flipped over (dashed), fit together into a parallelogram. Its base is <b>a + b</b> and it has the same height, so it has area <b>(a + b) × h</b>. One trapezoid is half of that: <b>½ × (a + b) × h</b>.",
     trapAside:"Another way to see it: average the two parallel sides, (a + b) ÷ 2, then multiply by the height.",
     trapP:"Perimeter is the distance around: add all four sides.",
-    rFromD:"The radius goes from the centre to the edge; the diameter goes all the way across, so it’s two radii. Halve it: <b>r = d ÷ 2</b>.",
+    rFromD:"The radius goes from the center to the edge; the diameter goes all the way across, so it’s two radii. Halve it: <b>r = d ÷ 2</b>.",
     circA:"<b>A = π × r²</b>. The shaded square in the drawing is r × r, or r². A circle covers a bit more than 3 of those squares — exactly π of them (π ≈ 3.14).",
     circCr:"Every circle is π times as far around as it is across — that’s what π means. Across is the diameter, which is 2 radii, so <b>C = 2 × π × r</b>. The distance around a circle is called its <b>circumference</b>.",
     circCd:"Every circle is π times as far around as it is across — that’s what π means. Across is the diameter, so <b>C = π × d</b>. The distance around a circle is called its <b>circumference</b>.",
@@ -1926,7 +1926,7 @@
       ? { lhs:lhsH("SA"), f:"6 × s^2", vars:{ s:l }, pow:2, why:WHY.cubeS }
       : { lhs:lhsH("SA"), f:"2 × (l × w + l × h + w × h)", vars:{ l:l, w:w, h:h }, pow:2, why:WHY.boxS });
     addFig(C, figBox(l, w, h, cube), "<b class=\"lead\">A sketch.</b> The dashed edges are at the back, hidden behind the box.");
-    addFig(C, figNet(l, w, h, cube), "<b class=\"lead\">The net</b> — the " + (cube ? "cube" : "box") + " unfolded flat. Matching faces have matching colours; fold on the dashed lines to make it.");
+    addFig(C, figNet(l, w, h, cube), "<b class=\"lead\">The net</b> — the " + (cube ? "cube" : "box") + " unfolded flat. Matching faces have matching colors; fold on the dashed lines to make it.");
     answer(C, "Volume", Vv, 3); answer(C, "Surface area", SA, 2);
     var lw = num(apply("×", l.v, w.v)), lh = num(apply("×", l.v, h.v)), wh = num(apply("×", w.v, h.v));
     C.closer = "<b>Check with the net:</b> " + [lw.t, lw.t, lh.t, lh.t, wh.t, wh.t].join(" + ") + " = <b>" + vT(SA.v) + "</b> <span class=\"ok\">✓</span>";
@@ -2162,7 +2162,7 @@
   function runVert(C, g){
     var a = g("a");
     if (a.f >= 180) throw new FieldErr("An angle between two crossing lines has to be less than 180° — <b>" + a.t + "</b> is too big.", "a");
-    var Y = chain(C, block(C, "The angle next door", "neighbours make a straight line, 180°"), { lhs:lhsH("y"), f:"180° − a", vars:{ a:a }, pow:0, why:WHY.angVert });
+    var Y = chain(C, block(C, "The angle next door", "neighbors make a straight line, 180°"), { lhs:lhsH("y"), f:"180° − a", vars:{ a:a }, pow:0, why:WHY.angVert });
     var sY = C.lastStep;
     var s3 = logItem(C, [["a", "Vertical", "Angles <b>opposite</b> each other where two lines cross are called <b>vertical angles</b>, and they’re always equal: <b>∠3 = ∠1 = " + a.t + "</b>, and <b>∠4 = ∠2 = " + vT(Y.v) + "</b>."]],
       "Why? ∠1 + ∠2 = 180° and ∠2 + ∠3 = 180° (both pairs sit on a straight line), so ∠1 and ∠3 must be the same size.");
@@ -2173,8 +2173,8 @@
       { n:"∠4", v:vT(Y.v), r:"<b>vertical</b> to ∠2, so equal", c:"c-m", step:s3 }]);
     C.lastStep = s3;
     addFig(C, figVert(a.f, [{ t:"∠1 = " + esc(a.t) }, { t:"∠2 = " + esc(vT(Y.v)), q:"∠2", until:sY, cls:"km" }, { t:"∠3 = " + esc(a.t), q:"∠3", until:s3, cls:"q" },
-      { t:"∠4 = " + esc(vT(Y.v)), q:"∠4", until:s3, cls:"km" }]), "<b class=\"lead\">Drawn with the true angles.</b> Opposite angles (the same colour) are equal.");
-    C.answers.push({ k:"Vertical angle ∠3", main:vH(a.v), facts:[] }, { k:"∠2 and ∠4", main:vH(Y.v), facts:["Vertical angles are equal; neighbouring angles add to 180°."] });
+      { t:"∠4 = " + esc(vT(Y.v)), q:"∠4", until:s3, cls:"km" }]), "<b class=\"lead\">Drawn with the true angles.</b> Opposite angles (the same color) are equal.");
+    C.answers.push({ k:"Vertical angle ∠3", main:vH(a.v), facts:[] }, { k:"∠2 and ∠4", main:vH(Y.v), facts:["Vertical angles are equal; neighboring angles add to 180°."] });
     C.closer = "<b>Check:</b> all the way round, " + [a.t, vT(Y.v), a.t, vT(Y.v)].join(" + ") + " = <b>360°</b> <span class=\"ok\">✓</span>";
   }
   // where two parallel lines are crossed: 1 2 / 3 4 at the top crossing, 5 6 / 7 8 at the bottom one
@@ -3057,7 +3057,7 @@
     }
     return T;
   }
-  // three angles to ask about when one of the eight is given: a neighbour, the alternate one, and a same-side one
+  // three angles to ask about when one of the eight is given: a neighbor, the alternate one, and a same-side one
   function parPicks(p){
     function nbrs(q){ var base = q <= 4 ? 0 : 4, qq = q - base; return [1, 2, 3, 4].filter(function(x){ return x !== qq && x !== 5 - qq; }).map(function(x){ return base + x; }); }
     var corr = p <= 4 ? p + 4 : p - 4, cb = corr <= 4 ? 0 : 4, alt = cb + (5 - (corr - cb));

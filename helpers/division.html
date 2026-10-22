@@ -1243,7 +1243,7 @@
     var dec = simp.n / simp.d;
     band('<span class="k">Answer</span><span class="v">' + final + "</span>", [
       "As a decimal: <b>" + decOf(dec) + "</b>",
-      canCancel ? "Cross-cancelled before multiplying." : "Nothing to cancel — straight across."
+      canCancel ? "Cross-canceled before multiplying." : "Nothing to cancel — straight across."
     ]);
     writeLog(items);
 
@@ -1327,7 +1327,7 @@
     el.innerHTML = '<div class="fitcap"><b style="font-family:var(--f-body)">Area model.</b> '
       + "Cut every square into <b>" + L + "</b> equal pieces. <b>" + p1 + "</b> covers <b>" + aP
       + "</b> of them and one <b>" + p2 + "</b> is <b>" + bP + "</b>. Count off the shaded pieces <b>"
-      + bP + "</b> at a time" + (full > 1 ? " (the colours take turns)" : "") + ": "
+      + bP + "</b> at a time" + (full > 1 ? " (the colors take turns)" : "") + ": "
       + (full === 0
           ? "not even one group fills up — only <b>" + left + "</b> of the <b>" + bP + "</b> pieces, which is <b>"
             + esc(redText(left, bP)) + "</b> of a group"

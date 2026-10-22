@@ -1,7 +1,7 @@
 /* Works out which helper a typed problem belongs to ("47 + 38" → The Carry Column, "15% of 80" → The Hundred Grid,
    "what is a denominator" → the Word List) and builds the link that opens it there. Used by the home page's
    "Type any problem" box and by the search box in the bar across the top of every page.
-   HelperSearch.route(text) → { page, params, what, alt } (or { none:true }); HelperSearch.PAGE[file] → [name, colour class];
+   HelperSearch.route(text) → { page, params, what, alt } (or { none:true }); HelperSearch.PAGE[file] → [name, color class];
    HelperSearch.href(result) → the full address to open (for result.alt too), wherever the page that asks is */
 (function(){
   "use strict";
@@ -13,6 +13,8 @@
     "pemdas.html":["The Order Stack","c-ord"], "algebra.html":["The Balance Scale","c-alg"],
     "geometry.html":["The Shape Shop","c-geo"], "glossary.html":["the Word List","c-ink"], "ratios.html":["The Ratio Table","c-rat"],
     "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"], "graphing.html":["The Graph Paper","c-gra"], "exponents.html":["The Power Tower","c-exp"], "probability.html":["The Chance Spinner","c-pro"], "trigonometry.html":["The Unit Circle","c-tri"], "calculus.html":["The Rate Machine","c-cal"],
+    "number-sense.html":["The Place Value Chart","c-num"], "quadratics.html":["The Area Box","c-qua"],
+    "logarithms.html":["The Log Ladder","c-log"], "sequences.html":["The Number Staircase","c-seq"],
     "wordproblems.html":["The Story Problem","c-wrd"], "flashcards.html":["The Flash Cards","c-fla"],
     "reference.html":["the reference sheets","c-ink"], "daily.html":["the problem of the day","c-day"], "scratch.html":["The Scratch Paper","c-scr"]
   };
@@ -94,6 +96,46 @@
     if (/^\s*(?:graph\s*:?\s*)?(?:y|f\s*\(\s*x\s*\))\s*=/.test(low) && (s.match(/=/g) || []).length === 1 && /(?:^|[^a-z])x(?![a-z])/.test(low.replace(/^\s*f\s*\(\s*x\s*\)/, "")) &&
         /(?:^|[^a-z])(?:sin|cos|tan|ln|log)(?![a-z])|(?:^|[^a-z])e\s*(?:\^|\*\*)/.test(low) && !/\b(?:amplitude|period|midline|phase)\b/.test(low))
       return go("graphing.html", qp(s.replace(/^\s*graph\s*:?\s*/i, "")), "graphing");
+    // "what is a logarithm", "define place value": the Word List (below), not the helper
+    var asksWord = /^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s);
+    var story = isStory(s, low);
+    // sequences and series: "3, 7, 11, 15, …", "nth term of 5, 8, 11", "a1=4 d=3 n=10", "sum of the first 50 terms of …", "Σ"
+    if (!asksWord && (/\b(?:sequences?|series|n-?th\s+term|\d+(?:st|nd|rd|th)\s+term|next\s+(?:terms?|numbers?)|common\s+(?:difference|ratio)|sigma|(?:arithmetic|geometric)\s+progressions?|terms?\s+of|first\s+\d+\s+terms|infinite\s+(?:sum|series))\b/.test(low) || /[Σ∑]/.test(s) ||
+        /\d\s*,\s*(?:\.\.\.|…)/.test(s) ||                                                                            // is 100 in 3, 7, 11, …
+        /\ba_?\{?1\}?\s*=\s*[−-]?\d/.test(low) && /\b[dr]\s*=\s*[−-]?\d/.test(low) || (low.match(/\ba_?\{?\d+\}?\s*=\s*[−-]?\d/g) || []).length >= 2 ||
+        /^\s*[−-]?\d[\d.\/]*(?:\s*,\s*[−-]?\d[\d.\/]*){2,}\s*,?\s*(?:\.\.\.|…|_+|\?)\s*$/.test(s) ||                       // 3, 7, 11, ...
+        /^\s*\d+\s*\+\s*\d+\s*\+\s*\d+\s*\+\s*(?:\.\.\.|…)/.test(s)))                                                         // 1 + 2 + 3 + ... + 100
+      return go("sequences.html", qp(s), "a sequence");
+    // logarithms, and equations with x in the exponent: "log2 32", "ln e^3", "3^(2x-1) = 27", "half-life", "compounded monthly"
+    if (!asksWord && (/(?:^|[^a-z])(?:log|ln)(?![a-z])|\blogarithm(?:s|ic)?\b|\bhalf-?\s*life\b|\bcompound(?:ed|ing)?\b|\bexponential\s+(?:growth|decay|equations?)\b|\bdoubling\s+time\b|\bph\s+of\b/.test(low) ||
+        (s.match(/=/g) || []).length === 1 && !/(?:^|[^a-z])y(?![a-z])/.test(low) && /(?:[\d)]|(?:^|[^a-z])e)\s*(?:\^|\*\*)\s*\(?[−-]?[\d.]*x/.test(low)))
+      return go("logarithms.html", qp(s), "logarithms");
+    // quadratics and polynomials: "(x+3)(x-5)", "factor x^2+5x+6", "x^2-5x+6=0", "vertex of y=2x^2-8x+3", "(x^3-8)/(x-2)"
+    var sq = low.replace(/²/g, "^2").replace(/³/g, "^3").replace(/\*\*/g, "^");
+    var polyVars = sq.replace(/\b(?:factor\w*|solve|expand|simplify|multiply|divide|by|and|the|of|vertex|form|find|completely|fully|using|use|quadratics?|formula|completing|complete|square|synthetic|long|division|roots?|zeros?|polynomials?|trinomials?|binomials?|foil|discriminant|parabola|add|subtract|from|to|axis|symmetry|for|with|method|what|is|are|a|an)\b/g, " ")
+      .match(/[a-z]/g) || [];
+    polyVars = polyVars.filter(function(c){ return c !== "y"; });                                         // y = … is the same one
+    var oneVar = polyVars.length > 0 && polyVars.every(function(c){ return c === polyVars[0]; });
+    var squared = /[a-z]\s*\^\s*[2-9]|\([^()]*[a-z][^()]*\)\s*\^\s*[2-9]/.test(sq), sciNote = /\d\s*[x×*]\s*10\s*\^/.test(sq);
+    if (!asksWord && !sciNote && oneVar && (
+        /\b(?:quadratics?|polynomials?|trinomials?|binomials?|foil|discriminant|complet(?:e|ing)\s+the\s+square|synthetic\s+division|quadratic\s+formula)\b/.test(low) ||
+        /\b(?:vertex|parabola|zeros|roots\s+of|axis\s+of\s+symmetry)\b/.test(low) && squared ||
+        /\bfactor(?:i[sz]e|ing)?\b/.test(low) ||                                                            // factor 6x^2+7x-3 (letters: not a number to factor)
+        /\([^()]*[a-z][^()]*\)\s*\(\s*[^()]*[a-z]/.test(sq) || /\([^()]*[a-z][^()]*[+−-][^()]*\)\s*\^\s*[2-9]/.test(sq) ||   // (x+3)(x-5), (2x-1)^2
+        /\([^()]*[a-z]\s*\^\s*\d[^()]*\)\s*(?:\/|÷|[+−-])\s*\(/.test(sq) || /\bdivide\b[^=]*[a-z]\s*\^\s*\d[^=]*\bby\b/.test(sq) ||   // (x^3-8)/(x-2), (3x^2+1) - (x^2-4)
+        squared && !/[<>≤≥;,]/.test(s) && !/(?:^|[^a-z])y(?![a-z])/.test(sq) && /[a-z\d)]\s*[+−-]\s*[\d(a-z]|=/.test(sq)))   // x^2-5x+6=0, x^2 = 49, 3x^2 + 2x
+      return go("quadratics.html", qp(s), "a quadratic");
+    // the early grades: place value, rounding, estimating, comparing, skip counting, telling time and money ("round 3,456 to the
+    // nearest hundred", "45 minutes after 1:30", "3 quarters 2 dimes"); a story about them stays a story problem
+    if (!asksWord && !story && /\d|\bo'?clock\b/.test(low) && !/%|\bpercent/.test(low) && (
+        /\bround(?:ed|ing)?\b(?!\s+trip)|\bestimat(?:e|ing|ion)\b|\breasonable\b/.test(low) && !/\bprobab/.test(low) ||
+        /\bplace\s+value\b|\bexpanded\s+form\b|\bin\s+words\b|\bvalue\s+of\s+(?:the\s+)?(?:digit\s+)?\d\s+in\b|\bwhich\s+digit\b|\b(?:ones|tens|hundreds|thousands|millions|tenths|hundredths|thousandths)\s+place\b|\b(?:1|10|100|1,?000)\s+(?:more|less)\s+than\b/.test(low) ||
+        /\bskip\s*-?\s*count\w*|\bcount(?:ing)?\s+(?:back\s+)?by\b|\beven\s+or\s+odd\b|\bodd\s+or\s+even\b/.test(low) ||
+        /\b\d{1,2}:\d{2}(?!\d)/.test(low) &&/\b(?:a\.?m\b\.?|p\.?m\b\.?|minutes?|hours?|time|clock|hands)|\d(?:am|pm)\b/.test(low) ||
+        /\bo'?clock\b|\bquarter\s+(?:to|past|after)\s+\d|\bhalf\s+past\s+\d|\belapsed\s+time\b|\bfrom\s+\d{1,2}:\d{2}\s*(?:[ap]\.?m\.?)?\s+(?:to|until)\s+\d{1,2}:\d{2}/.test(low) ||
+        /\b(?:quarters?|dimes?|nickels?|pennies|penny|coins?|cents?)\b|¢|\bchange\s+from\s+\$/.test(low) && !/\b(?:heads?|tails?|toss\w*|flip\w*|roll\w*|probability|chances?)\b/.test(low) ||
+        /^\s*(?:compare|order)\b/.test(low) && !/\//.test(s) && !/[a-z]\s*[=<>]/.test(low)))
+      return go("number-sense.html", qp(s), "number sense");
     // trigonometry: sin, cos and tan of an angle, degrees and radians, the unit circle, the laws of sines and cosines,
     // right triangles with SOH-CAH-TOA, angles of elevation, and identities ("sin 30", "cos 135°", "a=7 b=10 C=40")
     var noXY = !/(?:^|[^a-z])[xy](?![a-z])/.test(low);

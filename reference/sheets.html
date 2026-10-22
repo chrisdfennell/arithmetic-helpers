@@ -579,7 +579,7 @@
         </fieldset>
         <fieldset><legend>Look</legend>
           <div class="mk-row">
-            <label>Lines <select id="pCol"><option value="grey">light grey</option><option value="blue">light blue</option><option value="black">black</option></select></label>
+            <label>Lines <select id="pCol"><option value="grey">light gray</option><option value="blue">light blue</option><option value="black">black</option></select></label>
             <label>Margins <select id="pMg"><option value="q">¼ inch</option><option value="h">½ inch</option><option value="tq">¾ inch</option></select></label>
           </div>
           <div class="mk-row" id="mkFiveWrap"><label class="ck"><input type="checkbox" id="pFive"> Darker every 5th line</label></div>
@@ -768,7 +768,7 @@
     /* ---- geometry and measurement ---- */
     { id:"geometry", g:"gm", title:"Geometry Formulas", short:"Geometry formulas",
       sub:"Area, perimeter, volume and surface area. Every height is measured at a right angle to the base.",
-      blurb:"Area and perimeter of six flat shapes, volume and surface area of seven solids, each drawn and labelled, and Pythagoras.",
+      blurb:"Area and perimeter of six flat shapes, volume and surface area of seven solids, each drawn and labeled, and Pythagoras.",
       href:"geometry.html?mode=area", hname:"The Shape Shop" },
     { id:"angles", g:"gm", title:"Angle Facts", short:"Angle facts",
       sub:"The rules that find a missing angle without a protractor.",
@@ -794,11 +794,11 @@
     /* ---- data and chance ---- */
     { id:"stats", g:"dc", title:"Statistics", short:"Statistics",
       sub:"One data set, summed up every way: its center, its spread and its box plot.",
-      blurb:"Mean, median, mode, range, quartiles, IQR and MAD for one data set, with a labelled dot plot and box plot.",
+      blurb:"Mean, median, mode, range, quartiles, IQR and MAD for one data set, with a labeled dot plot and box plot.",
       href:"statistics.html?mode=box&q=8,3,6,9,2,8,5,7,4,8", hname:"The Dot Plot" },
     { id:"probability", g:"dc", title:"Probability", short:"Probability",
       sub:"How likely something is, as a number from 0 (impossible) to 1 (certain).",
-      blurb:"The 0–1 scale, P = favourable ÷ all, not / and / or, with and without replacement, a tree, the two-dice table and a deck of cards.",
+      blurb:"The 0–1 scale, P = favorable ÷ all, not / and / or, with and without replacement, a tree, the two-dice table and a deck of cards.",
       href:"probability.html", hname:"The Chance Spinner" },
     /* ---- everyday math ---- */
     { id:"money-time", g:"ev", title:"Money & Time", short:"Money & time",
@@ -1034,7 +1034,7 @@
       "<div>" + group(12, "Twelfths") + "</div></div>";
 
     return box("The fraction wall", wallSvg, "lt", "rows of the same length; equal fractions line up") +
-      '<div><h3 class="sh-h">Equivalents <small>fraction · decimal · percent. Grey rows simplify to a fraction listed earlier.</small></h3>' + table + "</div>" +
+      '<div><h3 class="sh-h">Equivalents <small>fraction · decimal · percent. Gray rows simplify to a fraction listed earlier.</small></h3>' + table + "</div>" +
       '<div class="cols c3">' +
         box("Fraction → percent", '<p class="ex" style="line-height:1.7">' + fr(3, 8) + " = 3 ÷ 8 = 0.375<br>0.375 × 100 = 37.5%</p>" +
           '<p class="note">Divide the top by the bottom; then move the decimal point 2 places right for a percent.</p>', "") +
@@ -1081,13 +1081,13 @@
       var a = centers[i + 1] - 6, b = centers[i] + 6, mid = (a + b) / 2;
       arr += '<path class="th" d="M' + r1(a) + " 30 Q" + r1(mid) + " 6 " + r1(b) + ' 30"/>' + head(b, 30, b - mid, 24, 6) + T(mid, 14, "×10", "sm", "middle");
     }
-    var arrSvg = svg(720, 32, "Curved arrows from each place to the place on its left, each labelled times 10.", arr);
+    var arrSvg = svg(720, 32, "Curved arrows from each place to the place on its left, each labeled times 10.", arr);
     var arr2 = "";
     for (i = 0; i < centers.length - 1; i++){
       var a2 = centers[i] + 6, b2 = centers[i + 1] - 6, mid2 = (a2 + b2) / 2;
       arr2 += '<path class="th" d="M' + r1(a2) + " 2 Q" + r1(mid2) + " 26 " + r1(b2) + ' 2"/>' + head(b2, 2, b2 - mid2, -24, 6) + T(mid2, 28, "÷10", "sm", "middle");
     }
-    var arrSvg2 = svg(720, 32, "Curved arrows from each place to the place on its right, each labelled divided by 10.", arr2);
+    var arrSvg2 = svg(720, 32, "Curved arrows from each place to the place on its right, each labeled divided by 10.", arr2);
 
     var rnd = [["ten thousand", "4,040,000"], ["thousand", "4,037,000"], ["hundred", "4,036,500"], ["ten", "4,036,510"], ["one (whole number)", "4,036,513"],
                ["tenth", "4,036,512.7"], ["hundredth", "4,036,512.71"]];
@@ -1918,7 +1918,7 @@
     wt += "</tr></table>";
     return box("The probability scale", scale, "lt") +
       '<div class="cols c3">' +
-        box("One event", '<p class="fm" style="font-size:13px">P(event) = ' + fr("favourable outcomes", "all outcomes") + "</p>" +
+        box("One event", '<p class="fm" style="font-size:13px">P(event) = ' + fr("favorable outcomes", "all outcomes") + "</p>" +
           '<p class="note" style="margin-top:4px">A bag holds 3 red, 5 blue and 2 green marbles (10 in all).</p><p class="ex" style="line-height:1.7">P(blue) = ' + fr(5, 10) + " = " + fr(1, 2) + "<br>P(red) = " + fr(3, 10) + " = 0.3 = 30%</p>" +
           '<p class="note">All the outcomes add to 1: ' + fr(3, 10) + " + " + fr(5, 10) + " + " + fr(2, 10) + " = 1.</p>", "") +
         box("Not, and, or", '<p class="ex" style="line-height:1.75"><b>not:</b> P(not green) = 1 ' + MINUS + " " + fr(2, 10) + " = " + fr(8, 10) + " = " + fr(4, 5) + "<br>" +
