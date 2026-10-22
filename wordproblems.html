@@ -588,7 +588,8 @@
          parts       two parts and a whole    a=part    b=part      c=whole         leave out the one to find
          compare     how many more or fewer   a=smaller b=bigger    c=difference    leave out the one to find
          groups      equal groups             a=groups  b=in each   c=total         leave out the one to find
-                                              kind=count|money (money: b is a price, "each costs $3")
+                                              kind=count|money|share (money: b is a price, "each costs $3";
+                                              share: amounts that can be split, 9 tablespoons into 4 loaves → 2 1/4)
          array       rows, or area            kind=array: a=rows   b=in each row c=total
                                               kind=area:  a=length b=width       c=area   (unit=m|cm|ft|yd|in)
          times       times as many            a=smaller b=how many times c=bigger   leave out the one to find
@@ -608,7 +609,8 @@
                                               kind=shareleft  a=start b=given away c=friends who share the rest
                                               kind=multi      a=packs b=in each c=extra d=given away
          remainder   the leftover matters     a=total b=the size of one group; kind=up|down|left
-                                              (up: vans needed · down: full boxes, whole bows · left: the leftover)
+                                              (up: vans needed · down: full boxes, whole bows · left: the leftover ·
+                                               both: each share and the leftover, 6 R 1)
        ctx=<id>         the setting of the story (shells, stickers, bags, movie, vans …); left out, the type's first
        name=, name2=    the people in it                      item=  what is counted (plural, e.g. item=crayons)
        unit=            the measuring unit (cm, m, km, ft, miles …) for lengths, areas and speeds
@@ -789,6 +791,27 @@
   function an(w){ return (/^(?:[aeio]|u(?![nst][aeiou]|ni|se|su))/i.test(w) || /^hour/i.test(w) ? "an " : "a ") + w; }
   function noun(v, w){ return !w ? "" : v && eqR(v, ONE) ? singular(w) : w; }
   function qty(v, w, k){ return (k === "$" ? usd(v) : nt(v)) + (w ? " " + noun(v, w) : ""); }
+  // things that can be split into parts (2 1/4 tablespoons) and things that can't (people, stickers): equal sharing
+  // gives a fraction for the first, a remainder for the second; when it isn't clear, a fraction with a note
+  var SPLITW = /^(tablespoons?|tbsp|teaspoons?|tsp|cups?|pints?|quarts?|gallons?|liters?|litres?|ml|milliliters?|pounds?|lbs?|lb|ounces?|oz|grams?|g|kg|kilograms?|miles?|mi|km|kilometers?|kilometres?|meters?|metres?|m|cm|centimeters?|mm|feet|foot|ft|inches|inch|in|yards?|yd|hours?|minutes?|dollars?|pizzas?|pies?|cakes?|ribbons?|ropes?|loaves|loaf|bars?|sandwiches?|pans?|water|juice|milk|flour|sugar|butter|paint|rice|sand|soup|cheese|bread|chocolate|cloth|fabric|string|yarn|wire|land|fields?|gardens?|acres?)$/;
+  var NOSPLITW = /^(people|persons?|students?|kids?|children|child|friends?|players?|boys?|girls?|adults?|teachers?|buses|bus|vans?|cars?|bikes?|boats?|teams?|marbles?|stickers?|cards?|books?|pencils?|crayons?|pens?|balls?|eggs?|toys?|stamps?|shells?|coins?|beads?|tickets?|chairs?|desks?|tables?|seats?|rocks?|blocks?|dolls?|animals?|dogs?|cats?|fish|birds?|trees?|flowers?|games?|houses?|rooms?|tents?|boxes|box|bags?|bottles?|cans?|jars?|buttons?|keys?|shirts?|t-shirts?|hats?|shoes?|socks?|gifts?|presents?|cupcakes?|balloons?)$/;
+  function splitOf(w, L){
+    var ws = String(w || "").toLowerCase().split(/\s+/).filter(Boolean);
+    if (/\bwhole\b/.test(L || "")) return "no";
+    if (ws.some(function(x){ return SPLITW.test(x); })) return "yes";
+    if (ws.some(function(x){ return NOSPLITW.test(x); })) return "no";
+    return "maybe";
+  }
+  function mixT(v){ var m = mixP(v); return (m.ng ? "−" : "") + (m.w ? commas(m.w.toString()) + (m.r ? " " : "") : "") + (m.r ? m.r + "/" + m.d : m.w ? "" : "0"); }
+  function mixH(v){ var m = mixP(v); return (m.ng ? "−" : "") + (m.w ? commas(m.w.toString()) : "") + (m.r ? frH(bs(m.r), bs(m.d)) : m.w ? "" : "0"); }
+  function decT(v){ var d = termDec(v); return d !== null ? d : "≈ " + trimZ(fixed(v, 2)); }
+  function qPart(v, w){                         // 2 1/4 tablespoons · 3/5 of a pizza · 3 1/2 m
+    if (!w) return mixT(v);
+    if (ABBR[w]) return mixT(v) + " " + w;
+    if (cmpR(v, ONE) < 0) return mixT(v) + " of " + an(singular(w));
+    return mixT(v) + " " + (eqR(v, ONE) ? singular(w) : w);
+  }
+  function qText(v, w){ return isInt(v) ? qty(v, w) : qPart(v, w) + " (" + decT(v) + ")"; }
 
   /* ===================== clocks and lengths of time ===================== */
   // a time of day is the number of minutes after midnight; a length of time is a number of minutes
@@ -861,6 +884,8 @@
     if (f === "x") return eqR(v, R(2)) ? mark("twice") : mark(nt(v)) + " times";
     if (f === "f") return mark(P.fn + "/" + P.fd);
     if (f === "u") return mark(nt(v)) + " " + (W.u || "");
+    if (f === "q") return mark(qPart(v, W.it));
+    if (f === "qa") return mark(qText(v, W.it));
     return mark(nt(v)) + " " + noun(v, W[f] || f);
   }
   function valOf(P, k){ return k === "f" ? (P.fn ? R(P.fn, P.fd) : null) : P[k] || null; }
@@ -1285,14 +1310,20 @@
   /* ---- equal groups ---- */
   TY.groups = {
     label:"Equal groups", group:"groups", three:true, rn:{ a:"Groups", b:"In each group", c:"Total" },
-    kinds:[["count", "Things in groups"], ["money", "Prices (each costs …)"]],
-    rnK:{ money:{ a:"How many", b:"Price of one", c:"Total cost" } },
+    kinds:[["count", "Things in groups"], ["money", "Prices (each costs …)"], ["share", "Amounts that can be split (2 1/4 cups each)"]],
+    rnK:{ money:{ a:"How many", b:"Price of one", c:"Total cost" }, share:{ a:"Shares", b:"Each share", c:"Total" } },
     fmtK:{ money:{ b:"$", c:"$" } },
     ctxs:[
       { id:"bags", g:"bags", it:"marbles", pr:"in" }, { id:"boxes", g:"boxes", it:"crayons", pr:"in" }, { id:"packs", g:"packs", it:"pencils", pr:"in" },
       { id:"plates", g:"plates", it:"cookies", pr:"on" }, { id:"vases", g:"vases", it:"flowers", pr:"in" }, { id:"shelves", g:"shelves", it:"books", pr:"on" },
       { id:"cartons", g:"cartons", it:"eggs", pr:"in" },
-      { id:"notebooks", it:"notebooks", money:true }, { id:"tickets", it:"movie tickets", money:true }, { id:"plants", it:"plants", money:true }, { id:"kites", it:"kites", money:true }
+      { id:"notebooks", it:"notebooks", money:true }, { id:"tickets", it:"movie tickets", money:true }, { id:"plants", it:"plants", money:true }, { id:"kites", it:"kites", money:true },
+      { id:"butter", share:true, it:"tablespoons of butter", g:"loaves of bread", pr:"in", st:"{N} uses {c:it} to make {a:g}.", q:"How much butter goes into each {g1}?", an:"Each {g1} gets {r:qa}." },
+      { id:"flour", share:true, it:"cups of flour", g:"cakes", pr:"in", st:"A recipe uses {c:it} for {a:g}.", q:"How much flour goes into each {g1}?", an:"Each {g1} has {r:qa}." },
+      { id:"run", share:true, it:"miles", g:"days", pr:"on", st:"{N} ran {c:it} in {a:g}, the same distance each day.", q:"How far did {N} run each day?", an:"{N} ran {r:qa} each day." },
+      { id:"pizza", share:true, it:"pizzas", g:"friends", pr:"for", st:"{a:g} share {c:it} equally.", q:"How much pizza does each friend get?", an:"Each friend gets {r:qa}." },
+      { id:"rope", share:true, it:"meters", g:"pieces", pr:"in", st:"A rope {c:it} long is cut into {a} equal pieces.", q:"How long is each piece?", an:"Each piece is {r:qa} long." },
+      { id:"juice", share:true, it:"liters of juice", g:"bottles", pr:"in", st:"{N} pours {c:it} equally into {a:g}.", q:"How much juice goes into each {g1}?", an:"Each {g1} holds {r:qa}." }
     ],
     typed:{ g:"groups", pr:"in" },
     story:function(P, W, u){
@@ -1301,6 +1332,11 @@
         if (u === "b") return ["{N} buys {a:it} for {c:$} altogether.", "Each one costs the same.", "How much does one {it1} cost?"];
         return ["{N} spends {c:$} on {it}.", "Each one costs {b:$}.", "How many {it} does {N} buy?"];
       }
+      if (P.kind === "share" && W.st){
+        if (u === "b") return [W.st, W.q];
+        if (u === "c") return ["Each of {a:g} gets {b:q}.", "How many {it} is that altogether?"];
+        return ["Each share is {b:q}.", "How many shares can be made from {c:it}?"];
+      }
       if (u === "c") return ["{N} has {a:g}.", "Each {g1} has {b:it} {pr} it.", "How many {it} does {N} have in all?"];
       if (u === "b") return ["{N} has {c:it}.", "{N} puts them into {a:g}, the same number {pr} each.", "How many {it} go {pr} each {g1}?"];
       return ["{N} has {c:it}.", "{N} puts {b} {pr} each {g1}.", "How many {g} does {N} fill?"];
@@ -1308,9 +1344,13 @@
     model:function(P, W){
       var u = unk3(P), V = { a:P.a, b:P.b, c:P.c }, N = W.N, it = W.it, g = W.g || "groups", g1 = singular(g), $m = P.kind === "money", Nc = cap1(N), hv = hvW(W);
       var kk = $m ? "$" : "n";
+      // can the things be split into parts? then sharing that doesn't come out even gives a fraction, not a remainder
+      var spl = $m ? "money" : P.kind === "share" && !P.text ? "yes" : splitOf(it, P.text ? String(P.text).toLowerCase() : "");
+      if (P.kind === "share" && spl === "no") spl = "maybe";      // picked "can be split" by hand: trust it, but keep the remainder note
       if (u === "c") V.c = mul(V.a, V.b);
-      else if (u === "b") V.b = $m ? dvd(V.c, V.a) : exactDiv(V.c, V.a, "<b>" + esc(nt(V.c)) + "</b> doesn’t share equally into <b>" + esc(nt(V.a)) + "</b> groups — there would be some left over. That’s a <b>Remainders</b> story: pick it below, or change a number.");
-      else V.a = exactDiv(V.c, V.b, "<b>" + esc(nt(V.b)) + "</b> doesn’t go into <b>" + esc(nt(V.c)) + "</b> exactly — there would be some left over. That’s a <b>Remainders</b> story: pick it below, or change a number.");
+      else if (u === "b") V.b = $m || spl !== "no" ? dvd(V.c, V.a) : exactDiv(V.c, V.a, "<b>" + esc(nt(V.c)) + "</b> " + esc(it || "things") + " don’t share equally into <b>" + esc(nt(V.a)) + "</b> groups, and they can’t be cut into parts — there would be some left over. That’s a <b>Remainders</b> story: pick it below, or change a number.");
+      else V.a = spl === "yes" ? dvd(V.c, V.b) : exactDiv(V.c, V.b, "<b>" + esc(nt(V.b)) + "</b> doesn’t go into <b>" + esc(nt(V.c)) + "</b> exactly — there would be some left over. That’s a <b>Remainders</b> story: pick it below, or change a number.");
+      var frac = !$m && !isInt(V[u]), fk = frac ? "q" : "n";
       var M = { unit:$m ? "dollars" : it };
       M.known = [];
       if ($m){
@@ -1319,12 +1359,12 @@
         if (u !== "c") M.known.push(KN(V.c, "$", "", "what they cost altogether"));
       } else {
         if (u !== "a") M.known.push(KN(V.a, "n", g, "the equal groups"));
-        if (u !== "b") M.known.push(KN(V.b, "n", it, "how many " + it + " " + W.pr + " each " + g1));
+        if (u !== "b") M.known.push({ q:isInt(V.b) ? qty(V.b, it) : qPart(V.b, it), w:"how much " + W.pr + " each " + g1 });
         if (u !== "c") M.known.push(KN(V.c, "n", it, "all the " + it + " together"));
       }
       M.ask = $m ? { c:"how much " + N + " spends", b:"the price of one " + singular(it), a:"how many " + it + " " + N + " buys" }[u]
         : { c:"how many " + it + " " + N + " " + hv + " in all", b:"how many " + it + " go " + W.pr + " each " + g1, a:"how many " + g + " " + N + " fills" }[u];
-      var A = esc(nt(V.a)), Bb = $m ? esc(usd(V.b)) : esc(nt(V.b)), C = $m ? esc(usd(V.c)) : esc(nt(V.c));
+      var A = esc(nt(V.a)), Bb = $m ? esc(usd(V.b)) : esc(isInt(V.b) ? nt(V.b) : mixT(V.b)), C = $m ? esc(usd(V.c)) : esc(nt(V.c));
       M.idea = { tag:u === "c" ? "Multiply" : "Divide", sym:u === "c" ? "×" : "÷",
         h:u === "c" ? ($m ? "Every " + singular(it) + " costs the same, so the cost is " + B(A) + " equal amounts of " + B(Bb) + " → <strong>multiply</strong>: how many × the price of one."
             : "There are " + B(A) + " equal groups with " + B(Bb) + " in each. Equal groups put together → <strong>multiply</strong>: groups × how many in each = total. It’s a quick way to add " + Bb + " + " + Bb + " + … (" + A + " times).")
@@ -1335,21 +1375,30 @@
         eq:$m ? (u === "c" ? "how many × price of one = " + QM : u === "b" ? "how many × " + QM + " = total cost" : QM + " × price of one = total cost")
           : (u === "c" ? "groups × in each = " + QM : u === "b" ? "groups × " + QM + " = total" : QM + " × in each = total"),
         trap:u === "c" ? "“In all” often comes with adding, but these groups are all the same size — so multiplying is the shortcut. Adding " + A + " + " + Bb + " would be far too small."
+          : frac ? "It doesn’t come out even — " + esc(nt(V.c)) + " ÷ " + esc(nt(u === "b" ? V.a : V.b)) + " leaves a remainder. " + (spl === "yes" ? cap1(esc(it || "these")) + " can be split into parts, so the leftover is shared too and the answer is a fraction: " : "Here the leftover is shared out too, so the answer is a fraction: ")
+              + Be(mixT(V[u]) + " = " + decT(V[u])) + "." + (spl === "maybe" ? " (If the " + esc(it || "things") + " can’t be cut into parts, read it as a remainder instead: " + bs(V.c.n / (u === "b" ? V.a : V.b).n) + " each, with " + bs(V.c.n % (u === "b" ? V.a : V.b).n) + " left over.)" : "")
           : "The word “each” shows up in multiplying stories too. What matters is what’s missing: here it’s " + (u === "b" ? "the size of each group" : "the number of groups") + ", so we divide." };
       var many = Number(V.a.n) <= 60 && isInt(V.a);
-      var segs = many ? [sg(V.b, u === "b" ? "?" : $m ? usd(V.b) : nt(V.b), u === "b" ? "q" : u === "a" ? "c" : "k", null, Number(V.a.n))] : [sg(V.c, (u === "b" ? "? each" : "") , "k")];
+      var many = Number(V.a.n) <= 60 && isInt(V.a), blab = $m ? usd(V.b) : isInt(V.b) ? nt(V.b) : mixT(V.b);
+      var segs = many ? [sg(V.b, u === "b" ? (frac ? blab : "?") : blab, u === "b" ? "q" : u === "a" ? "c" : "k", null, Number(V.a.n))] : [sg(V.c, (u === "b" ? "? each" : "") , "k")];
       M.fig = { svg:barsSVG({ rows:[{ segs:segs }], tops:[{ row:0, from:0, to:0, lab:u === "c" ? "? in all" : ($m ? usd(V.c) : nt(V.c)) + " in all", cls:"k" }],
           bots:[{ row:0, from:0, to:0, lab:u === "a" ? "? " + ($m ? it : g) : nt(V.a) + " " + ($m ? it : g), cls:"u" }] }, "Bar model: equal groups"),
-        lead:"The whole bar is the total, cut into equal boxes — one box for each " + ($m ? singular(it) : g1) + ". Every box holds the same amount." };
-      M.calc = [u === "c" ? cl(V.a, "×", V.b, V.c, "n", kk, kk) : u === "b" ? cl(V.c, "÷", V.a, V.b, kk, "n", kk) : cl(V.c, "÷", V.b, V.a, kk, kk, "n")];
-      M.ans = { v:V[u], k:u === "a" ? "n" : kk, w:u === "a" ? ($m ? it : g) : $m ? "" : it,
+        lead:"The whole bar is the total, cut into equal boxes — one box for each " + ($m ? singular(it) : g1) + ". Every box holds the same amount" + (frac && u === "b" ? ": " + Be(mixT(V.b)) + "." : ".") };
+      M.calc = [u === "c" ? cl(V.a, "×", V.b, V.c, "n", isInt(V.b) || $m ? kk : "q", kk) : u === "b" ? cl(V.c, "÷", V.a, V.b, kk, "n", frac ? "q" : kk) : cl(V.c, "÷", V.b, V.a, kk, kk, fk)];
+      M.ans = { v:V[u], k:frac ? "q" : u === "a" ? "n" : kk, w:u === "a" ? ($m ? it : g) : $m ? "" : it,
         say:$m ? (u === "c" ? Nc + " spends " + Be(usd(V.c)) + "." : u === "b" ? "One " + esc(singular(it)) + " costs " + Be(fmtK(V.b, "$")) + "." : Nc + " buys " + Be(qty(V.a, it)) + ".")
+          : P.kind === "share" && W.an && u === "b" ? (function(){ var o = cloneP(P); o.r = V.b; return htmlOf(capS(fill(W.an, o, W))); })()
+          : frac && u === "b" ? "Each " + esc(g1) + " gets " + Be(qText(V.b, it)) + "."
+          : frac ? "That’s " + Be(qText(V[u], u === "a" ? "shares" : it)) + "."
           : (u === "c" ? Nc + " " + hv + " " + Be(qty(V.c, it)) + " in all." : u === "b" ? Be(qty(V.b, it)) + " go " + W.pr + " each " + esc(g1) + "." : Nc + " fills " + Be(qty(V.a, g)) + ".") };
       M.sense = u === "c" ? estimate("×", V.a, V.b, V.c) + "Work backwards: " + Be((kk === "$" ? usd(V.c) : nt(V.c)) + " ÷ " + nt(V.a) + " = " + (kk === "$" ? usd(V.b) : nt(V.b))) + " ✓"
-        : "Work backwards: " + Be(nt(V.a) + " × " + (kk === "$" ? usd(V.b) : nt(V.b)) + " = " + (kk === "$" ? usd(V.c) : nt(V.c))) + " ✓";
+        : "Work backwards: " + Be(nt(V.a) + " × " + (kk === "$" ? usd(V.b) : frac || !isInt(V.b) ? mixT(V.b) : nt(V.b)) + " = " + (kk === "$" ? usd(V.c) : nt(V.c))) + " ✓"
+          + (frac && u === "b" ? " — and " + Be(mixT(V.b)) + " is between " + bs(V.c.n / V.a.n) + " and " + bs(V.c.n / V.a.n + 1n) + ", as it should be: " + esc(nt(V.c)) + " doesn’t share into " + A + " evenly." : "");
       M.diag = u === "c" ? [{ v:add(V.a, V.b), msg:"You added the two numbers. There are " + A + " equal groups of " + Bb + " — multiply." }]
         : [{ v:mul(V.c, u === "b" ? V.a : V.b), msg:"You multiplied. The total is already known and is being split into equal groups — divide." },
-           { v:sub(V.c, u === "b" ? V.a : V.b), msg:"You subtracted. Sharing into equal groups is dividing: total ÷ " + (u === "b" ? "number of groups" : "how many in each") + "." }];
+           { v:sub(V.c, u === "b" ? V.a : V.b), msg:"You subtracted. Sharing into equal groups is dividing: total ÷ " + (u === "b" ? "number of groups" : "how many in each") + "." },
+           { v:dvd(u === "b" ? V.a : V.b, V.c), msg:"You divided the wrong way round: " + esc(nt(u === "b" ? V.a : V.b)) + " ÷ " + C + ". Share the total (" + C + ") among the " + esc(nt(u === "b" ? V.a : V.b)) + ": " + C + " ÷ " + esc(nt(u === "b" ? V.a : V.b)) + "." }];
+      if (frac) M.diag.push({ v:floorR(V[u]), msg:"That’s only the whole-number part. The " + bs(V.c.n % (u === "b" ? V.a : V.b).n) + " left over can be shared too — the answer is a fraction (or a decimal)." });
       M.hint = u === "c" ? "Equal groups: groups × how many in each." : u === "b" ? "Share the total equally: total ÷ number of groups." : "How many groups of " + Bb + " fit into " + C + "?";
       return M;
     }
@@ -1540,7 +1589,7 @@
       var unitK = per ? "n" : "$";
       M.calc = [cl(b, "÷", a, unit, kk, "n", unitK)];
       if (n) M.calc.push(cl(unit, "×", n, r, unitK, "n", kk));
-      M.ans = { v:r, k:kk, w:per ? what : "", say:per ? cap1(T) + " " + esc(sv(W, W.verb || "does", T)) + " " + Be(amt(r)) + " in " + esc(n ? qty(n, tu) : "1 " + tu1) + "."
+      M.ans = { v:r, k:per && !isInt(r) ? "q" : kk, w:per ? what : "", say:per ? cap1(T) + " " + esc(sv(W, W.verb || "does", T)) + " " + Be(amt(r)) + " in " + esc(n ? qty(n, tu) : "1 " + tu1) + "."
         : (n ? cap1(esc(qty(n, it))) + " cost " + Be(fmtK(r, "$")) + "." : "One " + esc(singular(it)) + " costs " + Be(fmtK(r, "$")) + ".") };
       M.sense = n ? "Does it make sense? " + (cmpR(n, a) > 0 ? "More of them cost more: " : "Fewer of them cost less: ") + Be((per ? nt(r) : usd(r)) + (cmpR(n, a) > 0 ? " > " : " < ") + (per ? nt(b) : usd(b))) + " ✓"
         : "Work backwards: " + Be(A + " × " + (per ? nt(unit) : (isCents(unit) ? usd(unit) : usdX(unit))) + " = " + (per ? nt(b) : usd(b))) + " ✓";
@@ -1975,7 +2024,7 @@
   /* ---- remainders that matter ---- */
   TY.remainder = {
     label:"Remainders that matter", group:"remainder",
-    kinds:[["up", "Round up"], ["down", "Ignore the leftover"], ["left", "The leftover"]],
+    kinds:[["up", "Round up"], ["down", "Ignore the leftover"], ["left", "The leftover"], ["both", "Each share and the leftover"]],
     fields:function(){ return [["a", "Total", "n"], ["b", "In each group", "n"]]; },
     ctxs:[
       { id:"vans", kind:"up", it:"students", g:"vans", s:["{a:it} are going on a field trip.", "Each van holds {b} students.", "How many vans are needed?"], ask:"how many vans are needed", an:"{r:g} are needed." },
@@ -1988,7 +2037,9 @@
       { id:"teams", kind:"down", it:"students", g:"teams", s:["{a:it} want to play in teams of {b}.", "How many full teams can they make?"], ask:"how many full teams they can make", an:"They can make {r:g}." },
       { id:"stickers", kind:"left", it:"stickers", g:"friends", s:["{N} shares {a:it} equally among {b} friends.", "Each friend gets as many as possible.", "How many stickers are left over?"], ask:"how many stickers are left over", an:"{r:it} are left over.", share:true },
       { id:"cookies", kind:"left", it:"cookies", g:"bags", s:["{N} puts {a:it} into bags of {b}.", "How many cookies are left over?"], ask:"how many cookies are left over", an:"{r:it} are left over." },
-      { id:"marbles", kind:"left", it:"marbles", g:"groups", s:["{a:it} are put into groups of {b}.", "How many marbles are left over?"], ask:"how many marbles are left over", an:"{r:it} are left over." }
+      { id:"marbles", kind:"left", it:"marbles", g:"groups", s:["{a:it} are put into groups of {b}.", "How many marbles are left over?"], ask:"how many marbles are left over", an:"{r:it} are left over." },
+      { id:"share", kind:"both", it:"stickers", g:"friends", share:true, s:["{N} has {a:it} to share equally among {b} friends.", "How many stickers does each friend get, and how many are left over?"], ask:"how many stickers each friend gets, and how many are left over" },
+      { id:"deal", kind:"both", it:"cards", g:"players", share:true, s:["{N} deals {a:it} equally to {b} players.", "How many cards does each player get, and how many are left over?"], ask:"how many cards each player gets, and how many are left over" }
     ],
     typed:{ g:"groups" },
     story:function(P, W){ return W.s.slice(); },
@@ -1996,7 +2047,7 @@
       needAll(P, ["a", "b"], { a:"the total", b:"how many fit in one group" });
       var k = P.kind, a = P.a, b = P.b, it = W.it, g = W.g || "groups", g1 = singular(g), $m = !!W.money;
       if (!isInt(a) || !isInt(b) || sgn(b) <= 0) throw new UserErr("Remainder stories need whole numbers.");
-      var q = a.n / b.n, rm = a.n % b.n, Q = R(q), Rm = R(rm), ans = k === "up" ? R(q + (rm ? 1n : 0n)) : k === "down" ? Q : Rm, share = !!W.share;
+      var q = a.n / b.n, rm = a.n % b.n, Q = R(q), Rm = R(rm), ans = k === "up" ? R(q + (rm ? 1n : 0n)) : k === "down" || k === "both" ? Q : Rm, share = !!W.share;
       var M = { unit:k === "left" ? it : g };
       var am = function(v){ return $m ? usd(v) : qty(v, it); };
       M.known = [{ q:am(a), w:"all of them" }, { q:$m ? usd(b) : share ? nt(b) + " " + g : qty(b, it), w:share ? "how many equal shares" : "how many go in one " + g1 }];
@@ -2005,28 +2056,35 @@
       var A = esc(nt(a)), Bb = esc(nt(b)), qT = bs(q), rT = bs(rm);
       M.idea = { tag:"Divide", sym:"÷",
         h:(share ? "Sharing " + A + " equally among " + Bb + " → <strong>divide</strong>: " + A + " ÷ " + Bb + "." : "Making groups of " + Bb + " from " + A + " → <strong>divide</strong>: " + A + " ÷ " + Bb + ".")
-          + (rm ? " It doesn’t come out even, so ask what the remainder means here: " + (k === "up" ? "the " + rT + " left over still need a " + esc(g1) + " → <strong>round up</strong>."
+          + (k === "both" ? " The question asks for both parts of the answer: the quotient is how many each one gets, and the remainder is how many are left over — they can’t be split."
+            : rm ? " It doesn’t come out even, so ask what the remainder means here: " + (k === "up" ? "the " + rT + " left over still need a " + esc(g1) + " → <strong>round up</strong>."
             : k === "down" ? "the " + rT + " left over aren’t enough for another whole " + esc(g1) + " → <strong>ignore the remainder</strong>." : "the question asks about the leftover → <strong>the remainder is the answer</strong>.") : " This time it comes out even — no remainder."),
         eq:A + " ÷ " + Bb + " = " + QM + " R " + QM,
         trap:k === "up" ? "Don’t stop at " + qT + ": that would leave " + rT + " " + esc(it) + " with no " + esc(g1) + ". And a decimal like " + esc(trimZ(fixed(dvd(a, b), 2))) + " " + esc(g) + " can’t happen."
           : k === "down" ? "Rounding up to " + bs(q + 1n) + " would need " + bs((q + 1n) * b.n - a.n) + " more than there are. Only whole " + esc(g) + " count."
+          : k === "both" ? "Give both numbers. A decimal (" + esc(trimZ(fixed(dvd(a, b), 2))) + ") doesn’t fit: " + esc(it) + " can’t be cut into parts."
           : "The quotient " + qT + " is " + (share ? "how many each friend gets" : "how many full " + esc(g)) + "; the leftover is the " + rT + "." };
-      var mq = q <= 40n, segs = mq && q > 0n ? [sg(b, $m ? usd(b) : nt(b), "k", null, Number(q))] : [sg(mul(Q, b), qT + " × " + Bb, "k")];
+      var mq = q <= 40n, segs = share && b.n <= 40n && q > 0n ? [sg(Q, qT, "k", null, Number(b.n))]
+        : mq && q > 0n ? [sg(b, $m ? usd(b) : nt(b), "k", null, Number(q))] : [sg(mul(Q, b), qT + " × " + Bb, "k")];
       if (rm) segs.push(sg(Rm, rT, "r", "left over"));
       if (k === "up" && rm) segs.push(sg(sub(b, Rm), "", "x", "room"));
       M.fig = { svg:barsSVG({ rows:[{ segs:segs }], tops:[{ row:0, from:0, to:rm ? 1 : 0, lab:($m ? usd(a) : nt(a)) + " in all" }] }, "Bar model: groups of " + nt(b) + " with " + rT + " left over"),
-        lead:"Each box is one " + (share ? "share" : esc(g1)) + " of " + Bb + ". The orange piece is what’s left over" + (k === "up" ? "; the dashed part shows the extra " + esc(g1) + " it needs, with room to spare." : ".") };
+        lead:(share ? "One box for each of the " + Bb + " " + esc(g) + ", each holding the same share: " + qT : "Each box is one " + esc(g1) + " of " + Bb) + ". The orange piece is what’s left over" + (k === "up" ? "; the dashed part shows the extra " + esc(g1) + " it needs, with room to spare." : ".") };
       M.calc = [{ o:"÷", h:esc(nt(a)) + '<span class="op-s">÷</span>' + esc(nt(b)) + '<span class="op-s">=</span><span class="res">' + qT + (rm ? " R " + rT : "") + "</span>", say:"Divide: " + Be(nt(a) + " ÷ " + nt(b) + " = " + qT + (rm ? " R " + rT : "")) + ".", link:{ o:"÷", a:a, b:b, rem:true } }];
       if (rm) M.calc.push(k === "up" ? { o:"+", h:qT + '<span class="op-s">+</span>1<span class="op-s">=</span><span class="res">' + bs(q + 1n) + "</span>", say:"Round up for the leftover: " + Be(qT + " + 1 = " + bs(q + 1n)) + "." }
         : k === "down" ? { h:'<span class="res">' + qT + '</span><span class="wd">— the ' + rT + " left over can’t make another</span>", say:"Keep the " + Be(qT) + "; the remainder isn’t enough for another." }
+        : k === "both" ? { h:'<span class="res">' + qT + '</span><span class="wd">each, and</span><span class="res">' + rT + '</span><span class="wd">left over</span>', say:"So " + Be(qT) + " each, with " + Be(rT) + " left over." }
         : { h:'<span class="wd">the remainder:</span><span class="res">' + rT + "</span>", say:"The answer is the remainder, " + Be(rT) + "." });
-      M.ans = { v:ans, k:"n", w:k === "left" ? ($m ? "dollars" : it) : g, say:W.an ? T(W.an) : (k === "left" ? Be(qty(ans, it)) + " are left over." : Be(qty(ans, g)) + (k === "up" ? " are needed." : ".")) };
-      M.sense = k === "up" ? "Check: " + Be(qT + " × " + nt(b) + " = " + bs(q * b.n)) + " — not enough for all " + A + "; " + Be(bs(q + 1n) + " × " + nt(b) + " = " + bs((q + 1n) * b.n)) + " is enough ✓"
+      M.ans = k === "both" ? { v:Q, k:"qr", r:Rm, w:it, say:"Each one gets " + Be(qty(Q, it)) + ", and " + Be(qty(Rm, it)) + (eqR(Rm, ONE) ? " is" : " are") + " left over." }
+        : { v:ans, k:"n", w:k === "left" ? ($m ? "dollars" : it) : g, say:W.an ? T(W.an) : (k === "left" ? Be(qty(ans, it)) + " are left over." : Be(qty(ans, g)) + (k === "up" ? " are needed." : ".")) };
+      M.sense = k === "both" ? "Check: " + Be(qT + " × " + nt(b) + " + " + rT + " = " + A) + " ✓, and " + rT + " is less than " + Bb + ", as a remainder must be."
+        : k === "up" ? "Check: " + Be(qT + " × " + nt(b) + " = " + bs(q * b.n)) + " — not enough for all " + A + "; " + Be(bs(q + 1n) + " × " + nt(b) + " = " + bs((q + 1n) * b.n)) + " is enough ✓"
         : k === "down" ? "Check: " + Be(qT + " × " + nt(b) + " = " + bs(q * b.n)) + " fits in " + A + ", but " + Be(bs(q + 1n) + " × " + nt(b) + " = " + bs((q + 1n) * b.n)) + " is too many ✓"
         : "Check: " + Be(qT + " × " + nt(b) + " + " + rT + " = " + A) + " ✓, and " + rT + " is less than " + Bb + ", as a remainder must be.";
       M.field = { kind:"num", rem:{ q:Q, r:Rm } };
       M.diag = k === "up" ? [{ v:Q, msg:"That leaves " + rT + " " + esc(it) + " out — they still need a " + esc(g1) + ". Round up." }]
         : k === "down" ? [{ v:R(q + 1n), msg:"There isn’t enough for that many — the last one would be short by " + bs((q + 1n) * b.n - a.n) + ". Ignore the leftover." }]
+        : k === "both" ? []
         : [{ v:Q, msg:"That’s the quotient — " + (share ? "how many each friend gets" : "how many full " + esc(g)) + ". The question asks how many are left over: the remainder." }, { v:R(b.n - rm), msg:"That’s how many more would be needed for another group. The leftover is the remainder." }];
       M.diag.push({ v:mul(a, b), msg:"You multiplied. Making groups of " + Bb + " is dividing." });
       M.hint = "Divide " + A + " by " + Bb + ". Then decide: what should happen to the remainder?";
@@ -2043,7 +2101,7 @@
   function groupOf(type){ return TY[type] ? TY[type].group : "any"; }
   function kindsOf(type){ return TY[type] && TY[type].kinds ? TY[type].kinds.map(function(k){ return k[0]; }) : []; }
   function ctxFits(type, kind, c){
-    if (type === "groups") return !!c.money === (kind === "money");
+    if (type === "groups") return kind === "money" ? !!c.money : kind === "share" ? !!c.share : !c.money && !c.share;
     if (type === "array") return !!c.area === (kind === "area");
     if (type === "rate") return !!c.per === (kind === "per");
     if (type === "percent") return !!c.sale === (kind !== "of");
@@ -2114,8 +2172,8 @@
     var href = HP[o][0] + "?q=" + encodeURIComponent(q) + extra;
     return '<span class="golink">Long ' + HP[o][2] + '? <a href="' + esc(href) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">Work it on " + HP[o][1] + " →</a></span>";
   }
-  function cvH(v, k){ return k === "$" ? esc(isCents(v) ? usd(v) : usdX(v)) : nh(v); }
-  function cvT(v, k){ return k === "$" ? (isCents(v) ? usd(v) : usdX(v)) : nt(v); }
+  function cvH(v, k){ return k === "$" ? esc(isCents(v) ? usd(v) : usdX(v)) : k === "q" && !isInt(v) ? mixH(v) + '<span class="op-s">=</span>' + esc(decT(v)) : nh(v); }
+  function cvT(v, k){ return k === "$" ? (isCents(v) ? usd(v) : usdX(v)) : k === "q" && !isInt(v) ? mixT(v) + " = " + decT(v) : nt(v); }
   var VERB = { "+":"Add", "−":"Subtract", "×":"Multiply", "÷":"Divide" };
   function calcRow(c){
     if (c.h) return ex(c.h) + (c.link ? linkFor(c) : "");
@@ -2128,12 +2186,20 @@
   }
   // the answer as plain words: 38 shells · $4.50 · 5:35 p.m. · 1 hour 50 minutes · 24 square meters
   function ansText(A){
+    if (A.k === "q") return qText(A.v, A.w);
+    if (A.k === "qr") return qty(A.v, A.w) + " each, " + nt(A.r) + " left over";
     if (A.k === "$") return isCents(A.v) ? usd(A.v) : usd(roundK(A.v, 2));
     if (A.k === "t") return clockT(A.v);
     if (A.k === "dur") return durT(A.v);
     return nt(A.v) + (A.w ? " " + noun(A.v, A.w) : "");
   }
   function ansHtml(A){
+    if (A.k === "q"){
+      if (isInt(A.v)) return "<span>" + nh(A.v) + "</span>" + (A.w ? '<span class="word">' + esc(noun(A.v, A.w)) + "</span>" : "");
+      var wq = !A.w ? "" : ABBR[A.w] ? A.w : cmpR(A.v, ONE) < 0 ? "of " + an(singular(A.w)) : A.w;
+      return "<span>" + mixH(A.v) + "</span>" + (wq ? '<span class="word">' + esc(wq) + "</span>" : "") + '<span class="apx">= ' + esc(decT(A.v)) + "</span>";
+    }
+    if (A.k === "qr") return "<span>" + nh(A.v) + '</span><span class="word">' + esc(noun(A.v, A.w)) + ' each,</span><span>' + nh(A.r) + '</span><span class="word">left over</span>';
     if (A.k === "$") return "<span>" + esc(isCents(A.v) ? usd(A.v) : usdX(A.v)) + "</span>" + (isCents(A.v) ? "" : '<span class="apx">≈ ' + esc(usd(roundK(A.v, 2))) + "</span>");
     if (A.k === "t") return "<span>" + esc(clockT(A.v)) + "</span>";
     if (A.k === "dur") return "<span>" + esc(durT(A.v)) + "</span>";
@@ -2170,16 +2236,17 @@
   // a typed story's answer, said with the question's own words: "How many buses are needed?" → "4 buses are needed."
   function fromQuestion(P, A){
     var q = P.rd.D.slice(P.rd.q[0], P.rd.q[1]).trim().replace(/[?.!]+$/, ""), m = /^how (?:many|much)\s+(.+)$/i.exec(q);
-    if (!m || A.k !== "n" || !A.w) return null;
+    if (!m || (A.k !== "n" && A.k !== "q") || !A.w) return null;
     var ws = m[1].split(/\s+/), aw = A.w.toLowerCase().split(" "), j = -1;
     for (var i = 0; i < Math.min(4, ws.length); i++) if (singular(ws[i].toLowerCase()) === singular(aw[aw.length - 1])) { j = i; break; }
     if (j < 0) return null;
+    if (ws[j + 1] && ws[j + 1].toLowerCase() === "of" && ws[j + 2]) j += 2;            // "tablespoons of butter"
     var noun = ws.slice(0, j + 1).join(" "), rest = ws.slice(j + 1), v = (rest[0] || "").toLowerCase(), nx = rest[1] || "";
-    if (!rest.length || /^(do|does|did)$/.test(v)) return null;
+    if (!rest.length || rest.slice(0, 3).some(function(x){ return /^(do|does|did)$/i.test(x); })) return null;
     if (/^(can|could|will|would|should|has|have|had|is|are|was|were|must|might)$/.test(v) && (/^(he|she|they|we|you|i|it|there)$/i.test(nx) || /^[A-Z]/.test(nx))) return null;
     var one = eqR(A.v, ONE), r = rest.slice();
     if (one){ r[0] = { are:"is", were:"was", have:"has", do:"does" }[v] || r[0]; noun = singular(noun); }
-    return B(esc(nt(A.v) + " " + noun)) + " " + esc(r.join(" ")) + ".";
+    return B(esc(A.k === "q" ? qText(A.v, noun) : nt(A.v) + " " + noun)) + " " + esc(r.join(" ")) + ".";
   }
   function solve(P){
     var T = TY[P.type];
@@ -2189,6 +2256,7 @@
     if (P.text && /^(remainder|fraction|percent|groups|array|twostep)$/.test(P.type)){
       var fq = fromQuestion(P, M.ans);
       if (fq) M.ans.say = fq;
+      else if (P.type === "groups" && M.ans.k === "q" && unkSafe(P) === "b") M.ans.say = "That’s " + Be(ansText(M.ans)) + " for each " + esc(singular(W.g || "group")) + ".";
       else if (P.type === "groups" || P.type === "twostep" || P.type === "remainder" && P.kind === "down") M.ans.say = "That’s " + Be(ansText(M.ans)) + (P.type === "remainder" ? " — the leftover isn’t enough for another." : M.ans.k === "n" && P.type !== "twostep" && unkSafe(P) === "c" ? " in all." : ".");
     }
     if (P.text && /^(groups|remainder|rate)$/.test(P.type) && P.rd){ var qs = P.rd.D.slice(P.rd.q[0], P.rd.q[1]).trim().replace(/[?.!]+$/, ""); if (/^(how|what|when)\b/i.test(qs)) M.ask = qs.charAt(0).toLowerCase() + qs.slice(1); }
@@ -2229,8 +2297,8 @@
     M.ans.say = dotfix(M.ans.say); M.sense = dotfix(M.sense);
     var text = sents ? sents.map(plainOf).join(" ") : P.text, answer = ansText(A) + (A.sq ? "" : "");
     var fieldKind = M.field && M.field.kind ? M.field.kind : A.k === "$" ? "money" : A.k === "t" ? "clock" : A.k === "dur" ? "dur" : "num";
-    var field = { key:"ans", kind:fieldKind, label:"Your answer", v:A.v, w:A.w || "", sq:!!A.sq, diag:M.diag || [], rem:M.field && M.field.rem, other:M.other || [], type:P.type };
-    var ph = { money:"e.g. 4.50", clock:"e.g. 5:35 pm", dur:"e.g. 1 h 25 min", num:A.w ? "e.g. 24 " + (A.sq ? "square " + (W.uw || "units") : A.w) : "e.g. 24" }[fieldKind];
+    var field = { key:"ans", kind:fieldKind, label:"Your answer", v:A.v, w:A.w || "", sq:!!A.sq, diag:M.diag || [], rem:M.field && M.field.rem, both:A.k === "qr", other:M.other || [], type:P.type };
+    var ph = { money:"e.g. 4.50", clock:"e.g. 5:35 pm", dur:"e.g. 1 h 25 min", num:A.k === "q" ? "e.g. 2 1/4 or 2.25" : A.k === "qr" ? "e.g. 6 R 1" : A.w ? "e.g. 24 " + (A.sq ? "square " + (W.uw || "units") : A.w) : "e.g. 24" }[fieldKind];
     field.ph = ph;
     var opWord = M.idea.tag === "Add" ? "add (+)" : M.idea.tag === "Subtract" ? "subtract (−)" : M.idea.tag === "Multiply" ? "multiply (×)" : M.idea.tag === "Divide" ? "divide (÷)" : esc(M.idea.tag) + " (" + esc(M.idea.sym) + ")";
     return {
@@ -2629,7 +2697,7 @@
       if (!sizeT) sizeT = sorted(ns)[0];
       var tot = ns.filter(function(t){ return t !== sizeT; })[0];
       if (!isInt(tot.v) || !isInt(sizeT.v) || sgn(sizeT.v) <= 0) return null;
-      var kind = /\bleft ?over\b|\bremain|\bleft\b/.test(A.Q) ? "left" : /\b(need|needs|needed|does it take|will it take|required|so that|so everyone|to (carry|hold|fit|pack|seat|take) (all|every))\b/.test(A.Q) ? "up" : "down";
+      var kind = /\beach\b/.test(A.Q) && /\bleft ?over\b|\bremain|\bleft\b/.test(A.Q) ? "both" : /\bleft ?over\b|\bremain|\bleft\b/.test(A.Q) ? "left" : /\b(need|needs|needed|does it take|will it take|required|so that|so everyone|to (carry|hold|fit|pack|seat|take) (all|every))\b/.test(A.Q) ? "up" : "down";
       var share = /\b(among|between)\s*$/.test(sizeT.before);
       var g = A.qn && !/^(more|fewer|of)$/.test(A.qn) && kind !== "left" ? A.qn : sizeT.unit && CONT.test(sizeT.head) ? sizeT.unit : (/\b(?:each|every|one|a)\s+([a-z]+)\s+(?:holds?|seats?|fits?|carries|can|takes?|needs?|has|costs?|is|uses?|makes?)/.exec(A.L) || [])[1];
       if (g && !/s$/.test(g) && !/people|children|fish|sheep/.test(g)) g = plural(g);
@@ -2666,6 +2734,27 @@
     groups:function(A){
       var ns = A.use.filter(function(t){ return t.k === "n" || t.k === "$"; });
       if (ns.length !== 2) return null;
+      var em = /\b(?:each|every|per)\s+([a-z]+)/.exec(A.Q);
+      if (em && !ALLQ.test(A.Q)){
+        var en = singular(em[1]), gT = ns.filter(function(t){ return t.k === "n" && t.unit && t.unit.split(" ").some(function(w){ return singular(w) === en; }); })[0];
+        if (gT){
+          var tT = ns.filter(function(t){ return t !== gT; })[0], mu0 = measureOf(A, [tT]);
+          var itw = tT.k === "$" ? "" : mu0 ? (function(x){ return /s$/.test(x) || x === "feet" ? x : plural(x); })(UNIT_SHORT[mu0.u] ? ({ in:"inches", ft:"feet", yd:"yards", m:"meters", cm:"centimeters", mi:"miles", kg:"kilograms", g:"grams", lb:"pounds", L:"liters" }[UNIT_SHORT[mu0.u]] || mu0.u) : mu0.u) : tT.unit || itemOf(A);
+          if (/^(mile|meter|metre|foot|feet|inch|yard|kilometer|centimeter)s?$/.test(itw)) itw = itw.replace(/^(mile|meter|metre|yard|kilometer|centimeter)$/, "$1s");
+          var gw0 = gT.unit.split(" ").filter(function(w){ return singular(w) === en; })[0] || gT.unit.split(" ").pop();
+          var Pe = base("groups", A, { kind:tT.k === "$" ? "money" : "count", a:gT.v, c:tT.v });
+          Pe.rw = { g:gw0, it:itw || "things", pr:"in" };
+          if (tT.k !== "$" && isInt(gT.v) && isInt(tT.v) && tT.v.n % gT.v.n !== 0n){
+            if (splitOf(itw, A.L) === "no"){                    // stickers among friends: a remainder, each share and the leftover
+              var Pr = ASSIGN.remainder(A);
+              if (Pr){ Pr.kind = "both"; return Pr; }
+              return null;
+            }
+            Pe.kind = "share";
+          }
+          return Pe;
+        }
+      }
       var ms = ns.filter(function(t){ return t.k === "$"; });
       if (ms.length){
         var cn = ns.filter(function(t){ return t.k === "n"; })[0];
@@ -2893,12 +2982,27 @@
   }
   function judgeNum(f, raw){
     var s = ansClean(raw), rm = /(\d+)\s*(?:r|rem|remainder)\s*(\d+)/.exec(s);
+    if (f.both && f.rem){
+      var q0 = f.rem.q.n, r0 = f.rem.r.n, nb = numsIn(s.replace(/(\d)\s*(?:r|rem|remainder)\s*(\d)/, "$1, $2"));
+      if (nb.length === 2 && isInt(nb[0].p.v) && isInt(nb[1].p.v)){
+        var x0 = nb[0].p.v.n, x1 = nb[1].p.v.n;
+        if (x0 === q0 && x1 === r0) return { st:"ok" };
+        if (x0 === r0 && x1 === q0) return { st:"part", msg:"Right numbers, other way round: <b>" + bs(q0) + "</b> each, and <b>" + bs(r0) + "</b> left over." };
+        return { st:"bad", msg:"Check the division: " + (x0 === q0 ? "the share is right, but not the leftover." : x1 === r0 ? "the leftover is right, but not the share." : "divide, then the remainder is what’s left over.") };
+      }
+      if (nb.length === 1 && isInt(nb[0].p.v)){
+        if (nb[0].p.v.n === q0) return { st:"part", msg:"Right — <b>" + bs(q0) + "</b> each. The question also asks how many are left over." };
+        if (nb[0].p.v.n === r0) return { st:"part", msg:"That’s the leftover. The question also asks how many each one gets." };
+      }
+    }
     if (rm && f.rem){
       if (BigInt(rm[1]) === f.rem.q.n && BigInt(rm[2]) === f.rem.r.n) return { st:"part", msg:"That’s the division done right: <b>" + rm[1] + " R " + rm[2] + "</b>. But the question wants one number — decide what the remainder means in this story." };
       return { st:"bad", msg:"Check the division first, then decide what the remainder means in this story." };
     }
     var ns = numsIn(s);
     if (!ns.length) return { st:"bad", msg:"I can’t find a number in <b>" + esc(raw) + "</b>. Type your answer as a number, with its unit if you like — like <b>" + esc(f.ph.replace(/^e\.g\. /, "")) + "</b>." };
+    // "2 1/4 (2.25)" or "4 5/7 (≈ 4.71)": the same amount twice, the second rounded
+    if (ns.length > 1 && ns.every(function(x){ return eqR(x.p.v, ns[0].p.v) || (!x.p.frac && x.p.k >= 1 && within(x.p.v, x.p.k, ns[0].p.v)); })) ns = [ns[0]];
     if (ns.length > 1) return { st:"bad", msg:"Type just one number — your answer — with its unit if you like, like <b>" + esc(f.ph.replace(/^e\.g\. /, "")) + "</b>." };
     var p = ns[0].p, v = p.v, unitW = s.slice(ns[0].end).replace(/[.!]+$/, "").trim(), before = s.slice(0, ns[0].i);
     if (/-\s*$/.test(before) || v.n < 0n) return { st:"bad", msg:"The answer to this story can’t be negative." };
@@ -3009,6 +3113,13 @@
     },
     groups:function(o, z){
       var u = { total:"c", each:"b", groups:"a" }[mixOf(o.groupsUnknown, ["total", "each", "groups"])], $m = o.groupsMoney === true;
+      if (o.groupsSplit === true && !$m){                      // shares that can be split: 9 tablespoons into 4 loaves → 2 1/4
+        var sa = rint(2, z.max <= 20 ? 5 : 8), sc = rint(1, z.max <= 20 ? 20 : z.max <= 100 ? 60 : 200);
+        while (sc % sa === 0) sc++;
+        var PS = { type:"groups", kind:"share", a:RN(sa), b:null, c:RN(sc) };
+        PS.ctx = ctxPick("groups", "share").id;
+        return PS;
+      }
       var a = rint(2, z.g === 5 ? 5 : z.g === 10 ? 10 : 25), b;
       if ($m) b = z.max <= 20 ? RN(rint(1, 5)) : z.max <= 100 ? cents(25, 1000, 25) : cents(50, 2500, 5);
       else b = RN(rint(2, z.g === 5 ? 5 : z.g === 10 ? 12 : 40));
@@ -3088,8 +3199,8 @@
       return P;
     },
     remainder:function(o){
-      var kind = mixOf(o.remainderKind, ["up", "down", "left"]), cx = ctxPick("remainder", kind);
-      var b = cx.id === "eggs" ? pickOf([6, 12]) : cx.id === "teams" ? rint(4, 6) : cx.id === "comics" ? rint(2, 8) : cx.id === "tables" ? pickOf([4, 6, 8]) : rint(3, 15);
+      var kind = mixOf(o.remainderKind, ["up", "down", "left", "both"]), cx = ctxPick("remainder", kind);
+      var b = cx.id === "eggs" ? pickOf([6, 12]) : cx.id === "teams" ? rint(4, 6) : cx.id === "comics" ? rint(2, 8) : cx.id === "tables" ? pickOf([4, 6, 8]) : kind === "both" ? rint(3, 8) : rint(3, 15);
       var q = rint(2, 12), r = rint(1, b - 1);
       return { type:"remainder", kind:kind, a:RN(b * q + r), b:RN(b), ctx:cx.id };
     }
@@ -3155,6 +3266,7 @@
     { key:"groupsUnknown", modes:["groups"], label:"What’s missing", type:"choice", "default":"mix",
       values:vl([["total", "The total (multiply)"], ["each", "How many in each group (divide)"], ["groups", "How many groups (divide)"], ["mix", "Any of them"]]) },
     { key:"groupsMoney", modes:["groups"], label:"Prices (each one costs …)", type:"toggle", "default":false, values:TOG },
+    { key:"groupsSplit", modes:["groups"], label:"Shares that can be split (2 1/4 cups each)", type:"toggle", "default":false, values:TOG },
     { key:"arrayKind", modes:["array"], label:"What kind", type:"choice", "default":"mix", values:vl([["array", "Things in rows"], ["area", "The area of a rectangle"], ["mix", "Both"]]) },
     { key:"arrayUnknown", modes:["array"], label:"What’s missing", type:"choice", "default":"mix", values:vl([["total", "The total or the area"], ["side", "A row or a side"], ["mix", "Either"]]) },
     { key:"timesUnknown", modes:["times"], label:"What’s missing", type:"choice", "default":"mix",
@@ -3170,7 +3282,7 @@
     { key:"twostepKind", modes:["twostep"], label:"What kind of steps", type:"choice", "default":"mix",
       values:vl([["addsub", "Add, then take away"], ["timestotal", "Times as many, then altogether"], ["groupsplus", "Equal groups plus extra"], ["groupsless", "Equal groups, then some taken away"], ["comparetotal", "More than, then altogether"], ["shareleft", "Take away, then share"], ["multi", "Three steps"], ["mix", "Any of them"]]) },
     { key:"remainderKind", modes:["remainder"], label:"What to do with the leftover", type:"choice", "default":"mix",
-      values:vl([["up", "Round up (vans needed)"], ["down", "Ignore it (full boxes)"], ["left", "It’s the answer (how many left over)"], ["mix", "Any of them"]]) },
+      values:vl([["up", "Round up (vans needed)"], ["down", "Ignore it (full boxes)"], ["left", "It’s the answer (how many left over)"], ["both", "Each share and the leftover (6 R 1)"], ["mix", "Any of them"]]) },
     { key:"extra", modes:["any", "addsub", "compare", "groups", "array", "times", "rate", "money", "time", "fraction", "percent", "twostep", "remainder"], label:"Add a number the story doesn’t need", type:"toggle", "default":false, values:TOG }
   ];
   function optOf(o, key){
@@ -3495,7 +3607,7 @@
     } else if (S.P){ for (k in o) S.P[k] = o[k]; }
     S.step = 1; render(); save();
   }
-  var KINDOPT = { groups:function(k){ return { groupsMoney:k === "money" }; }, array:function(k){ return { arrayKind:k }; }, rate:function(k){ return { rateKind:k }; }, money:function(k){ return { moneyKind:k }; },
+  var KINDOPT = { groups:function(k){ return { groupsMoney:k === "money", groupsSplit:k === "share" }; }, array:function(k){ return { arrayKind:k }; }, rate:function(k){ return { rateKind:k }; }, money:function(k){ return { moneyKind:k }; },
                   fraction:function(k){ return { fractionAsk:k }; }, percent:function(k){ return { percentKind:k }; }, twostep:function(k){ return { twostepKind:k }; }, remainder:function(k){ return { remainderKind:k }; } };
   function genOf(type, kind){
     var o = cloneP(S.gen), g = groupOf(type);

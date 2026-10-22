@@ -313,6 +313,9 @@
                           ["q=" + encodeURIComponent("Olivia buys a book for $7.45. She pays with a $10 bill. How much change does she get?"),["2.55"]],
                           ["q=" + encodeURIComponent("Jake bought 3 packs of cards with 8 cards in each pack. He gave 5 cards to his sister. How many cards does he have now?"),["19"]],
                           ["q=" + encodeURIComponent("Maria read 2/5 of a 60 page book. How many pages are left to read?"),["36","~pages"]],
+                          ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["9/4"]],
+                          ["q=" + encodeURIComponent("5 friends share 3 pizzas equally. How much pizza does each friend get?"),["3/5"]],
+                          ["q=" + encodeURIComponent("Lily has 25 stickers to share equally among 4 friends. How many stickers does each friend get, and how many are left?"),["6","1"]],
                           ["type=remainder&kind=up&a=73&b=9",["9"]], ["type=percent&kind=save&a=24&p=25",["6"]],
                           ["type=fraction&kind=rest&a=60&f=2%2F5",["36"]], ["type=twostep&kind=shareleft&a=18&b=10&c=2",["4"]],
                           ["type=time&b=135&c=1%3A20pm",["~11:05"]] ]
@@ -342,7 +345,10 @@
                       ["mode=area&shape=circle&r=5&rd=r",["25π","10π"],"right"] ],
     "wordproblems.html":[ ["type=compare&a=7&b=12&v=1",["5"],"right"], ["type=compare&a=7&b=12&v=1",["5 shells"],"right"],
                           ["type=compare&a=7&b=12&v=1",["19"],"wrong"], ["type=money&kind=one&a=7.45&pay=10",["$2.55"],"right"],
-                          ["type=money&kind=one&a=7.45&pay=10",["2.65"],"wrong"] ]
+                          ["type=money&kind=one&a=7.45&pay=10",["2.65"],"wrong"],
+                          ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["2 1/4"],"right"],
+                          ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["2.25"],"right"],
+                          ["q=" + encodeURIComponent("sasha uses 9 tablespoons of butter to make 4 loaves of bread.  how many tablespoons of butter does sasha use for each loaf of bread?"),["4/9"],"wrong"] ]
   };
 
   /* ===================== working out made problems here, independently ===================== */
@@ -375,7 +381,11 @@
     var h = /(\d+)\s*hours?/i.exec(t), mi = /(\d+)\s*min/i.exec(t);
     return h || mi ? (h ? Number(h[1]) * 60 : 0) + (mi ? Number(mi[1]) : 0) : NaN;
   }
-  function firstNum(t){ var m = /-?\d+(\.\d+)?/.exec(String(t).replace(/[$,]/g, "")); return m ? Number(m[0]) : NaN; }
+  function firstNum(t){                        // "2 1/4 tablespoons", "3/5 of a pizza", "$2.25"
+    var x = String(t).replace(/[$,]/g, ""), m = /(-?\d+)\s+(\d+)\/(\d+)|(-?\d+)\/(\d+)|-?\d+(\.\d+)?/.exec(x);
+    if (!m) return NaN;
+    return m[1] !== undefined ? Number(m[1]) + Number(m[2]) / Number(m[3]) : m[4] !== undefined ? Number(m[4]) / Number(m[5]) : Number(m[0]);
+  }
 
   var ORACLE = {
     "wordproblems.html":function(p, a, ansText){
@@ -409,7 +419,13 @@
           else if (k === "shareleft") want = (A - B) / C;
           else return { skip:true };
           break;
-        case "remainder": var q = Math.floor(A / B), r = A % B; want = k === "up" ? q + (r ? 1 : 0) : k === "down" ? q : r; break;
+        case "remainder":
+          var q = Math.floor(A / B), r = A % B;
+          if (k === "both"){                       // "6 stickers each, 1 left over"
+            var ns = (String(ansText).match(/\d+/g) || []).map(Number);
+            return ns[0] === q && ns[1] === r ? { ok:true } : { ok:false, msg:"expected " + q + " each and " + r + " left over" };
+          }
+          want = k === "up" ? q + (r ? 1 : 0) : k === "down" ? q : r; break;
         default: return { skip:true };
       }
       if (isNaN(want)) return { skip:true };
