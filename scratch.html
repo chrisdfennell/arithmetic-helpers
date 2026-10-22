@@ -1,0 +1,2419 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Scratch Paper</title>
+<meta name="description" content="Type a problem and do it by hand on squared paper: carry, borrow, multiply row by row and divide step by step, with every square checked as you go.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arithmetic Helpers">
+<meta property="og:title" content="The Scratch Paper · Arithmetic Helpers">
+<meta property="og:description" content="Type a problem and do it by hand on squared paper: carry, borrow, multiply row by row and divide step by step, with every square checked as you go.">
+<meta property="og:url" content="https://chrisdfennell.github.io/arithmetic-helpers/scratch.html">
+<meta property="og:image" content="https://chrisdfennell.github.io/arithmetic-helpers/icons/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
+<meta name="twitter:card" content="summary_large_image">
+<script src="nav.js" defer></script>
+<script src="progress.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E2E6DD;
+    --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
+    --key:#B45309;   --key-bg:#FBEBD5;  --key-line:#E0A35E;   /* scratch paper: the pencil */
+    --alt:#265AA5;   --alt-bg:#DEE8F6;                        /* squares the page filled in */
+    --bad:#C0362C;   --bad-bg:#FBE3DF;                        /* needs another look */
+    --ok:#0F7A55;
+    --sheet:#FCFBF6; --grid:#D5DDEA; --cell-bg:rgba(180,83,9,.045); --cell-line:#C7CFDD;
+    --focus:#B45309;
+    --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+    --sq:46px; --fs:27px; --fs-s:17px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#131817; --surface:#1B2220; --surface-2:#28322F;
+      --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+      --key:#FCD34D;  --key-bg:#3A3112;  --key-line:#8F7728;
+      --alt:#8CB1EC;  --alt-bg:#1A2740;
+      --bad:#FF8B7B;  --bad-bg:#3D1D18;
+      --ok:#57CBAB;
+      --sheet:#171D1C; --grid:#2A3533; --cell-bg:rgba(252,211,77,.05); --cell-line:#3A4644;
+      --focus:#FCD34D;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131817; --surface:#1B2220; --surface-2:#28322F;
+    --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+    --key:#FCD34D;  --key-bg:#3A3112;  --key-line:#8F7728;
+    --alt:#8CB1EC;  --alt-bg:#1A2740;
+    --bad:#FF8B7B;  --bad-bg:#3D1D18;
+    --ok:#57CBAB;
+    --sheet:#171D1C; --grid:#2A3533; --cell-bg:rgba(252,211,77,.05); --cell-line:#3A4644;
+    --focus:#FCD34D;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+  @media (max-width:560px){ :root{ --sq:42px; --fs:25px; --fs-s:16px; } }
+
+  *{box-sizing:border-box}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);
+    font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;margin:0}
+  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:22px}
+  @media (max-width:560px){ .page{padding:20px 16px 64px} }
+
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;
+    font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);max-width:52ch;margin:.5em 0 0;font-size:15.5px}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
+    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
+    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+  .problem{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:18px 22px 16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+  @media (max-width:560px){ .problem{padding:16px 14px 14px} }
+  .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3)}
+  .qrow{display:flex;gap:10px 12px;align-items:center;flex-wrap:wrap}
+  .q-in{font-family:var(--f-mono);font-size:clamp(22px,4.4vw,30px);font-weight:600;color:var(--ink);
+    background:transparent;border:0;border-bottom:2.5px solid var(--rule);padding:1px 4px 4px;
+    width:13ch;max-width:100%;min-width:0;outline:none;font-variant-numeric:tabular-nums}
+  .q-in:focus{border-bottom-color:var(--focus)}
+  .qhelp{margin:0;font-size:13px;color:var(--ink-3)}
+  .modes{display:flex;flex-wrap:wrap;background:var(--surface-2);border-radius:10px;padding:3px;gap:3px;align-self:flex-start}
+  .modes button{font-family:var(--f-body);font-size:14px;font-weight:500;border:0;background:transparent;
+    color:var(--ink-2);padding:8px 16px;border-radius:7px;cursor:pointer;min-height:36px}
+  .modes button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;
+    box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .modes button:hover:not([aria-pressed="true"]){color:var(--ink)}
+  .modes.small button{font-size:13px;padding:6px 12px}
+  .optrow{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+  .optrow[hidden],.modes[hidden]{display:none}
+
+  .examples{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    border-top:1px dashed var(--rule);padding-top:12px}
+  .chip{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);
+    color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer;min-height:32px}
+  .chip:hover{border-color:var(--key-line);color:var(--ink);background:var(--key-bg)}
+
+  /* ---- the problem maker ---- */
+  .maker{border:1px solid var(--rule);border-radius:12px;background:var(--paper)}
+  .maker > summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:11px 15px;
+    font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;flex-wrap:wrap}
+  .maker > summary::-webkit-details-marker{display:none}
+  .maker > summary::before{content:"+";font-family:var(--f-mono);color:var(--key);width:1ch}
+  .maker[open] > summary::before{content:"−"}
+  .maker > summary span{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3)}
+  .maker-body{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 16px;align-items:center;
+    padding:4px 15px 12px}
+  @media (max-width:620px){.maker-body{grid-template-columns:minmax(0,1fr);gap:6px}
+    .maker-body .lbl{margin-top:8px}}
+  .maker-go{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:0 15px 15px}
+  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);
+    border:0;border-radius:9px;padding:9px 18px;cursor:pointer;min-height:40px}
+  .go:hover{filter:brightness(1.08)}
+  :root[data-theme="dark"] .go{color:#1B1405}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .go{color:#1B1405} }
+  .maker-go .msg{font-size:13px;color:var(--ink-3)}
+  .sample{margin:0;padding:0 15px 12px;font-size:13.5px;color:var(--ink-2)}
+  .sample b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+
+  select:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{
+    outline:2.5px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+  .linknote{border-left:5px solid var(--key);background:var(--key-bg);color:var(--ink);
+    border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .linknote[hidden]{display:none}
+
+  /* ---- the feedback line ---- */
+  .say{margin:0;font-size:15.5px;color:var(--ink-2);min-height:1.55em;padding:0 2px}
+  .say b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .say .lead{font-weight:600;color:var(--ink)}
+  .say.ok .lead{color:var(--ok)}
+  .say.no .lead{color:var(--bad)}
+
+  /* ---- the sheet ---- */
+  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);overflow:hidden;min-width:0}
+  .sheet .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;
+    padding:12px 16px;border-bottom:1px solid var(--rule)}
+  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;
+    letter-spacing:.02em;margin:0;min-width:0}
+  .panel-head h2 b{font-family:var(--f-mono);font-weight:600;color:var(--key);font-size:15.5px}
+  .tools{display:flex;gap:6px;flex-wrap:wrap}
+  .tool{font-family:var(--f-body);font-size:13px;font-weight:600;background:var(--surface);
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:999px;padding:7px 13px;cursor:pointer;min-height:36px}
+  .tool:hover:not(:disabled){color:var(--ink);border-color:var(--ink-3)}
+  .tool:disabled{opacity:.45;cursor:not-allowed}
+  .tool.main{background:var(--key);border-color:var(--key);color:var(--surface)}
+  :root[data-theme="dark"] .tool.main{color:#1B1405}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tool.main{color:#1B1405} }
+  .tool[hidden]{display:none}
+
+  .paper{position:relative;overflow-x:auto;overflow-y:hidden;background-color:var(--sheet);
+    background-image:linear-gradient(to right,var(--grid) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);
+    background-size:var(--sq) var(--sq);padding:calc(var(--sq) * 2) var(--sq) calc(var(--sq) * 2);-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  @media (max-width:560px){ .paper{padding-left:8px;padding-right:8px} }
+  .paper .note{position:absolute;left:12px;top:8px;right:12px;font-size:12.5px;color:var(--ink-3);line-height:1.3;margin:0}
+  .grid{display:grid;width:max-content;margin:0 auto;position:relative;font-family:var(--f-mono);
+    font-variant-numeric:tabular-nums}
+  .sq{display:flex;align-items:center;justify-content:center;position:relative;font-family:var(--f-mono);
+    font-size:var(--fs);font-weight:600;color:var(--ink);line-height:1;padding:0;margin:0;border:0;
+    background:transparent;border-radius:0;z-index:1;min-width:0}
+  button.sq{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+  .sq:focus{outline:none}
+  .sq:focus-visible{outline:3px solid var(--focus);outline-offset:-3px;z-index:4}
+  .it.pad{color:var(--ink-3)}
+  .it.sign{color:var(--key)}
+  .it.small{font-size:var(--fs-s);color:var(--ink-3)}
+  .it.rlab{font-size:calc(var(--fs) * .8);color:var(--key)}
+  .it.ghost{color:var(--ink-3);font-weight:400}
+  .cell{background:var(--cell-bg);box-shadow:inset 0 0 0 1.5px var(--cell-line)}
+  .cell:hover{background:var(--key-bg)}
+  .cell.small{font-size:var(--fs-s);align-items:flex-end;padding-bottom:5px;color:var(--key)}
+  .cell .ghost{color:var(--ink-3);font-weight:400}
+  .cell.sel{box-shadow:inset 0 0 0 3px var(--key);background:var(--key-bg);z-index:3}
+  .cell.shown{color:var(--alt)}
+  .cell.shown::before{content:"";position:absolute;right:4px;top:4px;width:5px;height:5px;border-radius:50%;background:var(--alt);opacity:.7}
+  .cell.bad::after{content:"";position:absolute;left:7px;right:7px;bottom:3px;height:3px;border-radius:2px;background:var(--bad)}
+  .cell.bad{color:var(--bad)}
+  .cell.inset{align-items:flex-start;justify-content:flex-end;padding:3px 5px 0 0;font-size:var(--fs-s);color:var(--key)}
+  .cell.inset .under{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:var(--fs);color:var(--ink-3);font-weight:500}
+  .cell.inset .under::after{content:"";position:absolute;left:24%;right:24%;top:50%;height:2.5px;margin-top:-1px;
+    background:var(--key);transform:rotate(-56deg);border-radius:2px}
+  .cell.inset .nv{position:relative;z-index:1;line-height:1}
+  .tap{color:var(--ink)}
+  .tap:hover{background:var(--key-bg)}
+  .tap.pad{color:var(--ink-3)}
+  .tap.selt{box-shadow:inset 0 0 0 3px var(--key-line);background:var(--key-bg);z-index:3}
+  .tap.ghost{color:var(--ink-3);font-weight:400}
+  .tap.x{color:var(--ink-3);font-weight:500}
+  .tap.x .d::after{content:"";position:absolute;left:24%;right:24%;top:50%;height:2.5px;margin-top:-1px;
+    background:var(--key);transform:rotate(-56deg);border-radius:2px}
+  .tap.x.wide .d::after{left:8%;right:8%;transform:rotate(-38deg)}
+  .one{position:absolute;left:3px;top:50%;transform:translateY(-58%);font-size:calc(var(--fs-s) * .9);color:var(--key);font-weight:600;line-height:1}
+  .cell.small .one{top:auto;bottom:6px;transform:none;left:4px}
+  .dot{position:absolute;right:-4px;bottom:18%;width:8px;height:8px;border-radius:50%;background:var(--ink);z-index:4;pointer-events:none}
+  .q .dot,.cell.q .dot{background:var(--key)}
+  .rule{align-self:end;height:3px;background:var(--ink);border-radius:2px;margin-bottom:-1.5px;pointer-events:none;z-index:2}
+  .rule.thin{height:2px;background:var(--ink-2)}
+  .hl{background:var(--key-bg);opacity:.75;pointer-events:none;z-index:0;border-radius:4px}
+  .fade{opacity:.38}
+  .brk::before{content:"";position:absolute;left:-7px;top:1px;bottom:3px;width:12px;border-right:3px solid var(--ink);
+    border-radius:0 60% 60% 0 / 0 50% 50% 0;pointer-events:none}
+  .drop{justify-self:center;width:0;border-left:2px dashed var(--ink-3);margin:4px 0 10px;position:relative;pointer-events:none;z-index:0}
+  .drop::after{content:"";position:absolute;left:-6px;bottom:-9px;border:5px solid transparent;border-top:8px solid var(--ink-3);border-bottom:0}
+
+  .bubble{position:absolute;z-index:8;max-width:min(300px,calc(100% - 16px));background:var(--ink);color:var(--surface);
+    font-family:var(--f-body);font-size:13.5px;line-height:1.4;padding:8px 11px;border-radius:9px;
+    box-shadow:0 10px 24px -12px rgba(0,0,0,.6);pointer-events:none}
+  .bubble.offer{pointer-events:auto}
+  .bubble b{font-family:var(--f-mono);font-weight:600}
+  .bubble .row{display:flex;gap:8px;margin-top:7px}
+  .bubble button{font-family:var(--f-body);font-size:13px;font-weight:600;border-radius:7px;border:0;padding:7px 12px;cursor:pointer;min-height:36px}
+  .bubble button.yes{background:var(--key);color:var(--surface)}
+  .bubble button.no{background:var(--surface-2);color:var(--ink)}
+  .bubble[hidden]{display:none}
+
+  .pointstep{margin:0;padding:12px 16px 14px;border-top:1px dashed var(--rule);background:var(--key-bg);
+    display:flex;flex-direction:column;gap:9px}
+  .pointstep[hidden]{display:none}
+  .pointstep .cap{font-size:14px;color:var(--ink)}
+  .pointstep .cap b{font-family:var(--f-mono);font-weight:600}
+  .gaps{display:flex;align-items:stretch;flex-wrap:wrap;gap:0;font-family:var(--f-mono);font-weight:600;font-size:var(--fs)}
+  .gaps .dg{min-width:26px;display:flex;align-items:center;justify-content:center;height:46px}
+  .gaps .dg.ghost{color:var(--ink-3);font-weight:400}
+  .gaps .gap{width:30px;height:46px;border:0;background:transparent;cursor:pointer;position:relative;border-radius:6px;padding:0}
+  .gaps .gap::after{content:"";position:absolute;left:50%;bottom:10px;width:6px;height:6px;margin-left:-3px;border-radius:50%;
+    background:var(--key-line);opacity:.55}
+  .gaps .gap:hover{background:var(--surface)}
+  .gaps .gap.on::after{width:10px;height:10px;margin-left:-5px;background:var(--ink);opacity:1}
+  .gaps .gap.on.bad::after{background:var(--bad)}
+  .gaps .gap.sel{box-shadow:inset 0 0 0 3px var(--key)}
+  .gaps .gap.shown.on::after{background:var(--alt)}
+
+  .nextline{margin:0;padding:11px 16px;border-top:1px dashed var(--rule);font-size:15px;color:var(--ink);display:flex;gap:4px 10px;flex-wrap:wrap;align-items:baseline}
+  .nextline .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--key)}
+  .nextline b{font-family:var(--f-mono);font-weight:600}
+
+  .pad{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;padding:10px 12px 12px;
+    border-top:1px solid var(--rule);background:var(--surface-2)}
+  .pad button{height:46px;font-family:var(--f-mono);font-size:20px;font-weight:600;color:var(--ink);background:var(--surface);
+    border:1px solid var(--rule);border-radius:10px;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none;padding:0;min-width:0;
+    display:flex;align-items:center;justify-content:center;line-height:1}
+  .pad button:active{background:var(--rule)}
+  .pad button.act{grid-column:span 2;font-family:var(--f-body);font-size:14px}
+  .pad button.done{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+  .pad button:disabled{opacity:.4}
+  .pad.idle button:not(.done){opacity:.6}
+  .pad[hidden]{display:none}
+  @media (max-width:560px){ .pad{grid-template-columns:repeat(5,minmax(0,1fr));padding:8px 10px 10px}
+    .pad button.act{grid-column:span 1;font-size:12.5px} }
+  @media (pointer:coarse){ .pad{position:sticky;bottom:0;z-index:20;padding-bottom:calc(10px + env(safe-area-inset-bottom))} }
+
+  /* ---- finished ---- */
+  .answer{border-left:5px solid var(--key);background:var(--key-bg);border-radius:6px 12px 12px 6px;
+    padding:14px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 26px}
+  .answer .k{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--key)}
+  .answer .v{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;
+    font-size:clamp(24px,4.6vw,34px);color:var(--ink);line-height:1.1}
+  .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto}
+  .answer .fact{font-size:13.5px;color:var(--ink-2)}
+  .answer .fact b{font-family:var(--f-mono);font-weight:600;color:var(--ink)}
+  .done{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--rule);border-radius:14px;
+    box-shadow:var(--shadow);padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+  .done[hidden]{display:none}
+  .done .head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .stamp{font-family:var(--f-display);font-stretch:115%;font-weight:800;font-size:24px;color:var(--ok);
+    border:3px solid var(--ok);border-radius:12px;padding:4px 14px;transform:rotate(-4deg);display:inline-block}
+  .done.shownend .stamp{color:var(--alt);border-color:var(--alt)}
+  .done .score{font-size:15px;color:var(--ink-2)}
+  .done .score b{font-family:var(--f-mono);color:var(--ink)}
+  .done .acts{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap}
+  .done a{color:var(--ink);font-weight:600}
+  .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+  .confetti i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;opacity:0}
+  .confetti i:nth-child(3n){background:var(--key)} .confetti i:nth-child(3n+1){background:var(--ok)} .confetti i:nth-child(3n+2){background:var(--alt)}
+  @media (prefers-reduced-motion:no-preference){
+    .done.on .stamp{animation:pop .6s cubic-bezier(.2,1.5,.4,1) both}
+    .done.on .confetti i{animation:fall 1.6s ease-out both}
+    .cell.justok{animation:settle .45s ease-out}
+  }
+  @keyframes pop{0%{transform:scale(.3) rotate(-14deg);opacity:0}100%{transform:scale(1) rotate(-4deg);opacity:1}}
+  @keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(190px) rotate(320deg);opacity:0}}
+  @keyframes settle{0%{background:rgba(15,122,85,.22)}100%{background:var(--cell-bg)}}
+
+  .footnote{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--ink-3)}
+  .footnote .print{font-family:var(--f-body);font-size:13px;font-weight:600;background:transparent;
+    border:1px solid var(--rule);color:var(--ink-2);border-radius:8px;padding:6px 13px;cursor:pointer}
+  .footnote .print:hover{color:var(--ink);border-color:var(--ink-3)}
+  .footnote a{color:var(--ink-2)}
+  .ht-next{display:none !important}          /* this page has its own "New problem" on the finished sheet */
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  @media print{
+    :root:root{
+      --paper:#fff; --surface:#fff; --surface-2:#F0F2EE;
+      --ink:#111; --ink-2:#3A403C; --ink-3:#6B736F; --rule:#A6AEA3;
+      --key:#B45309; --key-bg:#FBEBD5; --key-line:#D99A55;
+      --alt:#1F4E93; --bad:#B3261E; --ok:#0F6E4C;
+      --sheet:#fff; --grid:#BFCBDF; --cell-bg:transparent; --cell-line:#BFCBDF;
+      --shadow:none; --sq:11mm; --fs:21px; --fs-s:13px;
+    }
+    @page{margin:12mm 11mm}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{background:#fff;font-size:12px}
+    .page{max-width:none;padding:0;gap:8px}
+    .theme-btn,.problem,.footnote,.tools,.pad,.bubble,.say,.linknote,.done .acts,.confetti,.nextline{display:none !important}
+    .masthead{border-bottom:1.5px solid var(--ink);padding-bottom:5px;gap:8px;break-after:avoid}
+    h1{font-size:21px} .eyebrow{font-size:9px} .tagline{display:none}
+    .panel{box-shadow:none;border:0;overflow:visible}
+    .sheet .panel-head{padding:4px 0 8px;border-bottom:0}
+    .paper{overflow:visible;padding:var(--sq);min-height:150mm;border:0;background-position:0 0 !important}
+    .grid{margin:0}
+    .cell.sel{box-shadow:none;background:transparent}
+    .cell.bad{color:var(--ink)} .hl{display:none}
+    .pointstep{background:transparent;border-top:0;padding:6px 0}
+    .done{border:0;padding:6px 0;box-shadow:none} .done .stamp{font-size:16px}
+    .answer{padding:8px 12px;break-inside:avoid} .answer .v{font-size:22px}
+  }
+</style>
+
+<div class="page" id="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Do it by hand</div>
+      <h1>The Scratch <em>Paper</em></h1>
+      <p class="tagline">Type a problem, then work it out yourself on squared paper &mdash; carry, borrow,
+        multiply row by row and divide step by step. The page checks each square as you go.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <section class="problem" id="problemBox" aria-label="The problem">
+    <div>
+      <label class="lbl" for="qIn">Your problem</label>
+      <div class="qrow">
+        <input class="q-in" id="qIn" type="text" inputmode="text" autocomplete="off" spellcheck="false"
+               placeholder="47 × 23" aria-describedby="qHelp">
+        <button type="button" class="go" id="startBtn">Start</button>
+      </div>
+      <p class="qhelp" id="qHelp">Add (+), subtract (−), multiply (× or *) or divide (÷ or /): like 478 + 356, 5003 − 1278, 47 × 23, 847 ÷ 12.</p>
+    </div>
+    <div class="optrow">
+      <div class="modes small" role="group" aria-label="When to check" id="checkModes">
+        <button type="button" data-check="each" aria-pressed="true">Check as you go</button>
+        <button type="button" data-check="end" aria-pressed="false">Check at the end</button>
+      </div>
+      <div class="modes small" role="group" aria-label="Division answer" id="ansModes" hidden>
+        <button type="button" data-ans="remainder" aria-pressed="true">Remainder</button>
+        <button type="button" data-ans="decimal" aria-pressed="false">Decimals</button>
+      </div>
+      <div class="modes small" role="group" aria-label="Decimal places" id="placeModes" hidden>
+        <button type="button" data-places="1" aria-pressed="false">1 place</button>
+        <button type="button" data-places="2" aria-pressed="false">2 places</button>
+        <button type="button" data-places="3" aria-pressed="true">3 places</button>
+        <button type="button" data-places="4" aria-pressed="false">4 places</button>
+      </div>
+    </div>
+
+    <details class="maker" id="maker">
+      <summary>Make a problem for me <span>&mdash; pick what goes in it</span></summary>
+      <div class="maker-body" id="makerBody"></div>
+      <p class="sample" id="sample"></p>
+      <div class="maker-go">
+        <button type="button" class="go" id="genBtn">New problem</button>
+        <span class="msg" id="genMsg"></span>
+      </div>
+    </details>
+
+    <div class="examples">
+      <span class="lbl">Try</span>
+      <span id="chips" style="display:contents"></span>
+    </div>
+  </section>
+
+  <div class="linknote" id="linkNote" hidden></div>
+  <p class="say" id="say" role="status" aria-live="polite"></p>
+
+  <section class="panel sheet" id="sheet" aria-label="Your sheet of squared paper">
+    <div class="panel-head">
+      <h2 id="sheetTitle">Your sheet</h2>
+      <div class="tools">
+        <button type="button" class="tool main" id="checkWorkBtn" hidden>Check my work</button>
+        <button type="button" class="tool" id="stepBtn">Show me the next step</button>
+        <button type="button" class="tool" id="showBtn">Show the answer</button>
+        <button type="button" class="tool" id="undoBtn" aria-label="Undo">Undo</button>
+        <button type="button" class="tool" id="redoBtn" aria-label="Redo">Redo</button>
+        <button type="button" class="tool" id="clearBtn">Clear</button>
+      </div>
+    </div>
+    <div class="paper" id="paper">
+      <div class="grid" id="grid" role="group" aria-label="Squares to fill in"></div>
+      <div class="bubble" id="bubble" hidden></div>
+    </div>
+    <div class="pointstep" id="pointstep" hidden></div>
+    <p class="nextline" id="nextLine"><span class="k">What to do next</span><span id="nextTxt"></span></p>
+    <div class="pad idle" id="pad" role="toolbar" aria-label="Digit pad">
+      <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+      <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+      <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+      <button type="button" data-k="0">0</button>
+      <button type="button" class="act" data-k="back" aria-label="Rub out">&#9003;</button>
+      <button type="button" class="act" data-k="left" aria-label="Move left">&larr;</button>
+      <button type="button" class="act" data-k="right" aria-label="Move right">&rarr;</button>
+      <button type="button" class="act" data-k="cross" aria-label="Cross out">cross out</button>
+      <button type="button" class="act done" data-k="done">Done</button>
+    </div>
+  </section>
+
+  <section class="done" id="doneBox" hidden aria-label="Finished">
+    <div class="confetti" aria-hidden="true"><i style="left:8%;animation-delay:.05s"></i><i style="left:17%;animation-delay:.25s"></i><i style="left:28%;animation-delay:.1s"></i><i style="left:39%;animation-delay:.35s"></i><i style="left:50%;animation-delay:0s"></i><i style="left:61%;animation-delay:.2s"></i><i style="left:72%;animation-delay:.4s"></i><i style="left:83%;animation-delay:.15s"></i><i style="left:92%;animation-delay:.3s"></i></div>
+    <div class="head"><span class="stamp" id="stamp">Solved!</span><span class="score" id="score"></span></div>
+    <div id="answerHost"></div>
+    <div class="acts">
+      <button type="button" class="go" id="againBtn">New problem</button>
+      <a id="seeLink" href="addition.html">See it worked out &rarr;</a>
+    </div>
+  </section>
+
+  <div class="footnote">
+    <button class="print" type="button" id="printBtn">Print this sheet</button>
+    <button class="print" type="button" id="copyBtn">Copy link</button>
+    <span>Tap a square, then type a digit. To borrow, tap the digit you borrow from. Arrow keys move around; Tab goes to the next square.</span>
+  </div>
+</div>
+
+<script>
+/* =============================== URL parameters ===============================
+   op         add | sub | mul | div. Optional when q shows the sign.
+   q          the problem: q=478%2B356 (up to four numbers), q=5003-1278, q=25*4 (×, x and · work too),
+              q=847/12 (÷ and : work too). Decimals are fine for +, − and ×; division takes whole
+              numbers (dividend up to 6 digits, divisor up to 3). A raw "+" counts as the plus sign only
+              when the link has no %2B in it (otherwise it is read as a form-encoded space).
+   check      each | end  =  Check as you go (default) | Check at the end
+   ans        remainder | decimal   (division only; default remainder)
+   places     1–6: how far a decimal division goes (default 3)
+   practice   all = open the sheet with the answer filled in (marked as shown); check | step = work it
+              yourself (the default)
+   A link's params win over what the page remembered (localStorage "scratch-paper"). A link that can't be
+   read shows a notice and the last problem instead. The page keeps op, q, check, ans and places in the
+   address bar with history.replaceState; practice and the theme are never written there.
+
+   Worksheet / practice-set API (window "message" events, for a page that loads this one in an iframe):
+     {type:"helper:options", id}
+        -> {type:"helper:optionsSchema", id, page:"scratch.html", title, options:[...]}   (options carry `modes`)
+     {type:"helper:make", id, count, options:{mode, count, digits, top, by, dividend, divisor, decimals,
+                                               regroup, ans, zero, check}}
+        -> {type:"helper:made", id, page, problems:[{text, html, params, answer, answerHtml}]}
+   Making problems never changes the page, its inputs or localStorage.
+
+   When a problem is finished (every square right, or "Show the answer"), and on every "Check my work" that
+   finds a mistake, the page reports helper:checked: a CustomEvent on document (progress.js keeps the log)
+   and, in a frame, a postMessage to the parent:
+     { page:"scratch.html", params, verdict:"right"|"wrong"|"shown", firstTry, hinted, text }
+   firstTry = no square or step was wrong before it was finished; hinted = "Show me the next step" was used.
+   embed=1: the sheet only (no masthead, problem box, maker or footnote), nothing saved, theme=light|dark
+   followed, and the height posted to the parent as {type:"helper:height", h}.
+   ============================================================================= */
+(function(){
+  "use strict";
+  var $ = function(id){ return document.getElementById(id); };
+  var PAGE = "scratch.html", KEY = "scratch-paper";
+  var EMBED = /(?:^|[?&])embed=1(?:&|$)/.test(location.search);
+  var EMBED_Q = location.search;                 // read before the page rewrites the address bar
+  var S = { check:"each", ans:"remainder", places:3, gen:null, sel:null };
+  var P = null, W = null, M = null, HIST = [], FUT = [];
+  var BUB = null;                                // { id, html, offer } — the bubble beside a square
+  var REVEAL_ON_LOAD = false;
+
+  /* ===================== little helpers ===================== */
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function commas(s){ var p = String(s).split("."); p[0] = p[0].replace(/\B(?=(\d{3})+(?!\d))/g, ","); return p.join("."); }
+  function placeName(e){
+    var pos = ["ones","tens","hundreds","thousands","ten thousands","hundred thousands","millions","ten millions","hundred millions"];
+    var neg = ["tenths","hundredths","thousandths","ten-thousandths","hundred-thousandths","millionths"];
+    return e >= 0 ? (pos[e] || "big place") : (neg[-e - 1] || "tiny place");
+  }
+  function parseNum(raw){
+    var s = String(raw).trim().replace(/[,\s_]/g, "");
+    if (s === "" || !/^\d*\.?\d*$/.test(s) || !/\d/.test(s)) return null;
+    var p = s.split("."), i = (p[0] || "").replace(/^0+(?=\d)/, "") || "0", f = (p[1] || "");
+    return { i:i, f:f };
+  }
+  function numStr(n){ var f = n.f.replace(/0+$/, ""); return f ? n.i + "." + f : n.i; }
+  function cmpNum(x, y){
+    var mi = Math.max(x.i.length, y.i.length), mf = Math.max(x.f.length, y.f.length);
+    function pad(n){ var i = n.i, f = n.f; while (i.length < mi) i = "0" + i; while (f.length < mf) f += "0"; return i + f; }
+    var A = pad(x), B = pad(y);
+    return A === B ? 0 : (A > B ? 1 : -1);
+  }
+  function stripZeros(s){ return s.replace(/^0+(?=\d)/, ""); }
+  function placePoint(digits, places){                // "100", 2 -> "1"; "15", 3 -> "0.015"
+    var s = digits;
+    if (!places) return stripZeros(s);
+    while (s.length <= places) s = "0" + s;
+    var out = stripZeros(s.slice(0, s.length - places)) + "." + s.slice(s.length - places);
+    return out.replace(/0+$/, "").replace(/\.$/, "");
+  }
+  function pl(n, w){ return n + " " + w + (n === 1 ? "" : "s"); }
+  function ri(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+  function rDigits(n, first){ var s = String(ri(first === undefined ? 1 : first, 9)); for (var i = 1; i < n; i++) s += ri(0, 9); return s; }
+  function each(a, f){ for (var i = 0; i < a.length; i++) f(a[i], i); }
+  function pow10(k){ var r = 1; while (k-- > 0) r *= 10; return r; }
+
+  /* ===================== reading a problem ===================== */
+  /* returns { p } or { err }; p = {op:"add", nums} | {op:"sub", a, b} | {op:"mul", a, b} | {op:"div", a, b, ans, places} */
+  function parseProblem(raw, opHint){
+    var s = String(raw == null ? "" : raw).replace(/[−–—]/g, "-").replace(/[×✕✖·∙]/g, "*").replace(/÷/g, "/")
+      .replace(/＋/g, "+").replace(/\s+/g, " ").trim();
+    s = s.replace(/(\d)\s*[xX]\s*(?=[\d.])/g, "$1*").replace(/=\s*\??\s*$/, "").trim();
+    if (!s) return { err:"it was empty" };
+    if (/[^\d.,+\-*\/: ]/.test(s)) return { err:"it should only have numbers and one of + − × ÷" };
+    var signs = (/\+/.test(s) ? 1 : 0) + (/\*/.test(s) ? 1 : 0) + (/[\/:]/.test(s) ? 1 : 0) + (/-/.test(s) ? 1 : 0);
+    var op = /\+/.test(s) ? "add" : /\*/.test(s) ? "mul" : /[\/:]/.test(s) ? "div" : /-/.test(s) ? "sub" : null;
+    if (!op && opHint && /\d \d/.test(s)){      // "478 356" from a link whose "+" became a space
+      op = opHint; s = s.replace(/ /g, { add:"+", sub:"-", mul:"*", div:"/" }[op]); signs = 1;
+    }
+    if (!op) return { err:"it needs a sign between the numbers: + − × or ÷" };
+    if (signs > 1) return { err:"use one kind of sign at a time" };
+    if (/^\s*-/.test(s)) return { err:"the numbers here can’t be negative" };
+    var parts = s.split(op === "add" ? "+" : op === "sub" ? "-" : op === "mul" ? "*" : /[\/:]/).map(function(t){ return t.trim(); });
+    if (parts.some(function(t){ return !t; })) return { err:"there’s a number missing" };
+    var nums = parts.map(parseNum);
+    if (nums.some(function(n){ return !n; })) return { err:"each number should be digits, with at most one decimal point" };
+    if (op === "add"){
+      if (parts.length < 2) return { err:"it needs two or more numbers joined by +" };
+      if (parts.length > 4) return { err:"the sheet adds up to four numbers at a time" };
+      if (nums.some(function(n){ return n.i.length > 8 || n.f.length > 4; })) return { err:"keep each number to 8 digits before the point and 4 after" };
+      return { p:{ op:"add", nums:nums.map(function(n){ return n.f ? n.i + "." + n.f : n.i; }) } };
+    }
+    if (parts.length !== 2) return { err:"it needs exactly two numbers" };
+    var a = nums[0], b = nums[1];
+    if (op === "sub"){
+      if (a.i.length > 8 || b.i.length > 8 || a.f.length > 4 || b.f.length > 4) return { err:"keep each number to 8 digits before the point and 4 after" };
+      return { p:{ op:"sub", a:a.f ? a.i + "." + a.f : a.i, b:b.f ? b.i + "." + b.f : b.i } };
+    }
+    if (op === "mul"){
+      var A = stripZeros(a.i + a.f.replace(/0+$/, "")), B = stripZeros(b.i + b.f.replace(/0+$/, ""));
+      var sa = numStr(a), sb = numStr(b), note = null;
+      if (A.length < B.length){ var t = sa; sa = sb; sb = t; t = A; A = B; B = t; note = "swap"; }
+      if (A.length > 4 || B.length > 3) return { err:"the sheet multiplies up to 4 digits by up to 3 digits (decimal points don’t count)" };
+      return { p:{ op:"mul", a:sa, b:sb }, note:note };
+    }
+    if (a.f || b.f) return { err:"long division here works with whole numbers — the Division House does decimals" };
+    if (a.i.length > 6) return { err:"keep the number you divide to 6 digits" };
+    if (b.i.length > 3) return { err:"keep the divisor to 3 digits" };
+    if (b.i === "0") return { err:"you can’t divide by 0" };
+    return { p:{ op:"div", a:a.i, b:b.i, ans:"remainder", places:3 } };
+  }
+  function qParam(p){
+    if (p.op === "add") return p.nums.join("+");
+    return p.a + { sub:"-", mul:"*", div:"/" }[p.op] + p.b;
+  }
+  function qText(p){
+    if (p.op === "add") return p.nums.map(commasBig).join(" + ");
+    return commasBig(p.a) + " " + { sub:"−", mul:"×", div:"÷" }[p.op] + " " + commasBig(p.b);
+  }
+  function commasBig(s){ var t = String(s).split("."); return (t[0].length >= 5 ? commas(t[0]) : t[0]) + (t.length > 1 ? "." + t[1] : ""); }
+  function keyOf(p){                                 // the problem's own params (no check mode)
+    var s = "op=" + p.op + "&q=" + encodeURIComponent(qParam(p)).replace(/%2F/gi, "/");
+    if (p.op === "div") s += "&ans=" + p.ans + (p.ans === "decimal" && p.places !== 3 ? "&places=" + p.places : "");
+    return s;
+  }
+  function paramsOf(p, check){ return keyOf(p) + (check === "end" ? "&check=end" : ""); }
+
+  /* ===================== the answer (independent of the sheet) ===================== */
+  function bigOf(n, f){ var s = n.i + n.f; while (s.length < n.i.length + f) s += "0"; return BigInt(s); }
+  function answerOf(p){
+    var text;
+    if (p.op === "add" || p.op === "sub"){
+      var ns = p.op === "add" ? p.nums.map(parseNum) : [parseNum(p.a), parseNum(p.b)];
+      var F = 0; ns.forEach(function(n){ F = Math.max(F, n.f.length); });
+      var tot;
+      if (p.op === "add"){ tot = BigInt(0); ns.forEach(function(n){ tot += bigOf(n, F); }); }
+      else tot = bigOf(ns[0], F) - bigOf(ns[1], F);
+      var neg = tot < BigInt(0); if (neg) tot = -tot;
+      text = (neg ? "−" : "") + commas(placePoint(tot.toString(), F));
+    } else if (p.op === "mul"){
+      var a = parseNum(p.a), b = parseNum(p.b);
+      var fa = a.f.replace(/0+$/, ""), fb = b.f.replace(/0+$/, "");
+      var prod = BigInt(stripZeros(a.i + fa)) * BigInt(stripZeros(b.i + fb));
+      text = commas(placePoint(prod.toString(), fa.length + fb.length));
+    } else {
+      var n = Number(p.a), d = Number(p.b), q = Math.floor(n / d), r = n % d;
+      if (p.ans !== "decimal") text = commas(String(q)) + (r ? " R " + r : "");
+      else {
+        var ds = "", k = 0;
+        while (r && k < p.places){ r *= 10; ds += Math.floor(r / d); r = r % d; k++; }
+        text = commas(String(q)) + (ds ? "." + ds : "") + (r ? "…" : "");
+      }
+    }
+    return { text:text, html:esc(text) };
+  }
+
+  /* ===================== the work, the state of the sheet ===================== */
+  function newWork(){
+    return { v:{}, x:{}, br:{}, shown:{}, mk:{}, first:{}, mistakes:0, hints:0, checks:0, done:false,
+             revealed:false, reported:false };
+  }
+  function val(id){ var v = W.v[id]; return (v === undefined || v === null || v === "") ? null : v; }
+  function stat(c){
+    var v = val(c.id);
+    if (v === null) return "empty";
+    return (c.exp !== null && v === c.exp) ? "ok" : "bad";
+  }
+  function snap(){ return JSON.stringify({ v:W.v, x:W.x, br:W.br, shown:W.shown, mk:W.mk }); }
+  function push(){ HIST.push(snap()); if (HIST.length > 300) HIST.shift(); FUT = []; }
+  function restore(s){ var o = JSON.parse(s); W.v = o.v; W.x = o.x; W.br = o.br; W.shown = o.shown; W.mk = o.mk; }
+
+  /* a model is what the sheet looks like right now: static marks (items), digits you can tap (taps),
+     squares you fill in (cells), and what the written method does next */
+  function blank(){ return { ncol:1, nrow:1, items:[], taps:[], cells:[], plan:null }; }
+  function item(M, r, c, t, cls, extra){ var o = { r:r, c:c, t:t, cls:cls || "" }; if (extra) for (var k in extra) o[k] = extra[k]; M.items.push(o); return o; }
+  function rule(M, r, c1, c2, cls){ M.items.push({ rule:true, r:r, c:c1, cs:c2 - c1 + 1, cls:cls || "" }); }
+
+  /* ===================== addition ===================== */
+  function buildAdd(p){
+    var M = blank(), nums = p.nums.map(parseNum), n = nums.length, maxI = 1, maxF = 0;
+    nums.forEach(function(x){ maxI = Math.max(maxI, x.i.length); maxF = Math.max(maxF, x.f.length); });
+    var IC = maxI + 1, L = IC + maxF;
+    var rows = nums.map(function(x){
+      var i = x.i, f = x.f;
+      while (i.length < IC) i = " " + i;
+      while (f.length < maxF) f += "0";
+      return { ch:(i + f).split(""), padFrom:IC + x.f.length };
+    });
+    var col = [], carry = 0, k;
+    for (k = L - 1; k >= 0; k--){
+      var parts = [], tot = carry;
+      rows.forEach(function(r){ var ch = r.ch[k]; if (ch !== " "){ parts.push(Number(ch)); tot += Number(ch); } });
+      col[k] = { parts:parts, cin:carry, tot:tot, d:tot % 10, cout:Math.floor(tot / 10), e:IC - 1 - k };
+      carry = col[k].cout;
+    }
+    var R_C = 1, R_A = n + 2, ones = IC - 1;
+    M.ncol = L + 1; M.nrow = R_A;
+    var C = function(k){ return 2 + k; };
+    rows.forEach(function(r, ri){
+      if (ri === n - 1) item(M, ri + 2, 1, "+", "sign");
+      for (var k = 0; k < L; k++){
+        if (r.ch[k] === " ") continue;
+        item(M, ri + 2, C(k), r.ch[k], k >= r.padFrom ? "pad" : "", { dot:maxF > 0 && k === ones });
+      }
+    });
+    rule(M, n + 1, 1, L + 1);
+    var lead = true;
+    function sumStr(k){ var c = col[k]; return c.parts.join(" + ") + (c.cin ? " + " + c.cin + " carried" : ""); }
+    for (k = 0; k < L; k++){
+      var c = col[k], isLead = lead && c.d === 0 && k < ones;
+      if (c.d !== 0 || k >= ones) lead = false;
+      (function(k, c, isLead){
+        M.cells.push({ id:"a" + k, r:R_A, c:C(k), kind:"ans", main:true, data:'data-e="' + c.e + '"',
+          label:"answer, " + placeName(c.e) + " place", exp:String(c.d), opt:isLead, ord:(L - 1 - k) * 2,
+          dot:maxF > 0 && k === ones, lit:[{ r1:1, r2:R_A, c1:C(k), c2:C(k) }],
+          todo: k === 0 && c.parts.length === 0
+            ? "Nothing is left to add in the next column — write what you carried, if anything, in front."
+            : "Add the " + placeName(c.e) + " column" + (c.cin ? ", and don’t forget the " + c.cin + " you carried" : "") + ".",
+          why: c.parts.length === 0
+            ? (c.cin ? "There’s nothing else in this column, so the carried <b>" + c.cin + "</b> comes straight down." : "Nothing here.")
+            : "<b>" + sumStr(k) + " = " + c.tot + "</b>" + (c.tot >= 10 ? ": write the <b>" + c.d + "</b> here and carry the <b>" + c.cout + "</b>." : ": write it under the line."),
+          hint:function(v){
+            if (c.parts.length === 0)
+              return c.cin ? "Bring the <b>" + c.cin + "</b> you carried straight down here." : "Nothing was carried into this column, so leave it empty.";
+            var noCarry = (c.tot - c.cin) % 10;
+            if (c.cin && Number(v) === noCarry)
+              return "That column needs the <b>" + c.cin + "</b> you carried: <b>" + sumStr(k) + " = " + c.tot + "</b>" + (c.tot >= 10 ? ", so write the <b>" + c.d + "</b>." : ".");
+            if (c.tot >= 10 && v === String(Math.floor(c.tot / 10)))
+              return "<b>" + sumStr(k) + " = " + c.tot + "</b>: the <b>" + c.d + "</b> goes here — the <b>" + c.cout + "</b> is carried.";
+            return "<b>" + sumStr(k) + " = " + c.tot + "</b>" + (c.tot >= 10 ? ": write the <b>" + c.d + "</b> here and carry the <b>" + c.cout + "</b>." : ": write <b>" + c.d + "</b> here.");
+          } });
+      })(k, c, isLead);
+    }
+    for (k = 0; k < L - 1; k++){
+      (function(k){
+        var from = col[k + 1], cv = from.cout;
+        M.cells.push({ id:"c" + k, r:R_C, c:C(k), kind:"carry", small:true, data:'data-e="' + col[k].e + '"',
+          label:"carry for the " + placeName(col[k].e) + " column", exp:String(cv), opt:cv === 0 || k === 0,
+          ord:(L - 2 - k) * 2 + 1, lit:[{ r1:1, r2:R_A, c1:C(k + 1), c2:C(k + 1) }],
+          todo:"Write what you carry above the " + placeName(col[k].e) + " column.",
+          why:"<b>" + sumStr(k + 1) + " = " + from.tot + "</b>: carry the <b>" + cv + "</b> into the " + placeName(col[k].e) + " column.",
+          hint:function(v){
+            if (cv === 0) return "<b>" + sumStr(k + 1) + " = " + from.tot + "</b> fits in one square, so there’s nothing to carry.";
+            return "<b>" + sumStr(k + 1) + " = " + from.tot + "</b>: carry the <b>" + cv + "</b> into the " + placeName(col[k].e) + " column.";
+          } });
+      })(k);
+    }
+    var plan = [];
+    for (k = L - 1; k >= 0; k--){
+      var ac = col[k];
+      if (!(k === 0 && ac.d === 0)) plan.push("a" + k);
+      if (k - 1 >= 0 && ac.cout > 0) plan.push("c" + (k - 1));
+    }
+    M.planList = plan.filter(function(id){ var c = cellBy(M, id); return !(c.opt && c.exp === "0"); });
+    M.next = staticNext;
+    M.colLabel = function(c){ return null; };
+    M.tap = function(){ return null; };
+    return M;
+  }
+  function cellBy(M, id){ for (var i = 0; i < M.cells.length; i++) if (M.cells[i].id === id) return M.cells[i]; return null; }
+  function actFill(c){ return { type:"fill", id:c.id, v:c.exp, why:c.why, todo:c.todo }; }
+  function staticNext(fix){
+    var M = this, i, c, s;
+    for (i = 0; i < M.planList.length; i++){
+      c = M.byId[M.planList[i]]; s = stat(c);
+      if (s === "ok") continue;
+      if (s === "bad" && !fix) continue;
+      return actFill(c);
+    }
+    if (fix) for (i = 0; i < M.order.length; i++){ c = M.order[i]; if (stat(c) === "bad") return actFill(c); }
+    return null;
+  }
+
+  /* ===================== subtraction ===================== */
+  /* the borrowing engine: tv = the top digits' values, list = the columns crossed out, in order.
+     Crossing out column j takes 1 from it (its new value goes above) and gives 10 to column j + 1. */
+  function borrowSim(tv, list){
+    var v = tv.slice(), lent = {}, recv = {};
+    each(list, function(j, e){
+      var pre = v[j];
+      lent[j] = { pre:pre, nv:pre - 1, e:e };
+      v[j] = pre - 1;
+      v[j + 1] += 10;
+      recv[j + 1] = { e:e, after:!!lent[j + 1] };
+    });
+    return { v:v, lent:lent, recv:recv };
+  }
+  function cleanList(tv, list, lastIdx){             // drop crossings that no longer make sense
+    var out = list.slice(), changed = true;
+    while (changed){
+      changed = false;
+      var v = tv.slice();
+      for (var e = 0; e < out.length; e++){
+        var j = out[e];
+        if (j >= lastIdx || v[j] <= 0){ out.splice(e, 1); changed = true; break; }
+        v[j] -= 1; v[j + 1] += 10;
+      }
+    }
+    return out;
+  }
+  function buildSub(p){
+    var M = blank(), a = parseNum(p.a), b = parseNum(p.b), neg = cmpNum(a, b) < 0;
+    var top = neg ? b : a, bot = neg ? a : b;
+    var maxI = Math.max(top.i.length, bot.i.length), maxF = Math.max(top.f.length, bot.f.length), L = maxI + maxF;
+    function lay(n){
+      var i = n.i, f = n.f;
+      while (i.length < maxI) i = " " + i;
+      while (f.length < maxF) f += "0";
+      return { ch:(i + f).split(""), padFrom:maxI + n.f.length };
+    }
+    var T = lay(top), B = lay(bot), k;
+    var tv = T.ch.map(function(c){ return c === " " ? 0 : Number(c); });
+    var bv = B.ch.map(function(c){ return c === " " ? 0 : Number(c); });
+    var list = cleanList(tv, W.x.s || [], L - 1);
+    if ((W.x.s || []).length !== list.length) W.x.s = list;
+    var sim = borrowSim(tv, list), v = sim.v, lent = sim.lent, recv = sim.recv;
+    var ones = maxI - 1, R_B = 1, R_T = 2, R_BOT = 3, R_A = 4;
+    var C = function(k){ return 2 + k; };
+    var E = function(k){ return maxI - 1 - k; };
+    M.ncol = L + 1; M.nrow = R_A; M.neg = neg;
+    M.top = top; M.bot = bot;
+    item(M, R_BOT, 1, "−", "sign");
+    for (k = 0; k < L; k++){
+      if (B.ch[k] !== " ") item(M, R_BOT, C(k), B.ch[k], k >= B.padFrom ? "pad" : "", { dot:maxF > 0 && k === ones });
+    }
+    rule(M, R_BOT, 1, L + 1);
+    if (neg) item(M, R_A, 1, "−", "sign");
+    function shown(j){ return lent[j] ? String(lent[j].nv + (recv[j] && recv[j].after ? 10 : 0)) : String(v[j]); }
+    function lender(k){ for (var j = k - 1; j >= 0; j--) if (!lent[j] && v[j] > 0) return j; return -1; }
+    function topLabel(k){ return T.ch[k] === " " ? "0" : T.ch[k]; }
+    M.shownVal = shown;
+    for (k = 0; k < L; k++){
+      if (T.ch[k] === " ") continue;
+      M.taps.push({ id:"t" + k, r:R_T, c:C(k), t:T.ch[k], kind:"top", data:'data-e="' + E(k) + '"',
+        cls:(k >= T.padFrom ? "pad" : ""), crossed:!!lent[k], one:!!(recv[k] && !recv[k].after),
+        wide:!!(recv[k] && !recv[k].after), dot:maxF > 0 && k === ones,
+        label:"top number, " + placeName(E(k)) + " digit " + T.ch[k] + (lent[k] ? ", crossed out" : "") + (recv[k] && !recv[k].after ? ", with a 1 in front" : "") + (lent[k] ? "" : ": tap to borrow from it") });
+    }
+    for (var j in lent){
+      if (!lent.hasOwnProperty(j)) continue;
+      (function(j){
+        var L0 = lent[j], pre = L0.pre;
+        M.cells.push({ id:"b" + j, r:R_B, c:C(j), kind:"borrow", small:true, data:'data-e="' + E(j) + '"',
+          label:"new value for the crossed-out " + placeName(E(j)) + " digit", exp:String(L0.nv), opt:false,
+          one:!!(recv[j] && recv[j].after), ord:2 * (L - 2 - j) + 1, lit:[{ r1:1, r2:R_A, c1:C(j), c2:C(j) }],
+          todo:"Write the new number above the crossed-out " + (pre >= 10 ? pre : topLabel(j)) + ".",
+          why:"<b>" + pre + " − 1 = " + L0.nv + "</b>: it lent 1 to the column on its right, so write <b>" + L0.nv + "</b> above it.",
+          hint:function(){
+            if (pre >= 10) return "This " + topLabel(j) + " became <b>" + pre + "</b> when it borrowed. It lends 1, so it’s <b>" + L0.nv + "</b> now.";
+            return "The <b>" + pre + "</b> lends 1 to the column on its right, so it becomes <b>" + L0.nv + "</b>.";
+          } });
+      })(Number(j));
+    }
+    var lead = true;
+    for (k = 0; k < L; k++){
+      (function(k){
+        var t = v[k], bb = bv[k], d = t - bb, ok = d >= 0 && d <= 9;
+        var isLead = lead && ok && d === 0 && k < ones;
+        if (!(ok && d === 0) || k >= ones) lead = false;
+        var cell = { id:"a" + k, r:R_A, c:C(k), kind:"ans", main:true, data:'data-e="' + E(k) + '"',
+          label:"answer, " + placeName(E(k)) + " place", exp:ok ? String(d) : null, opt:isLead, ord:2 * (L - 1 - k),
+          dot:maxF > 0 && k === ones, lit:[{ r1:1, r2:R_A, c1:C(k), c2:C(k) }] };
+        var L1 = lender(k);
+        cell.need = d < 0 ? (L1 >= 0 ? { type:"cross", id:"t" + L1 } : null) : (d > 9 ? { type:"uncross", id:"t" + (k - 1) } : null);
+        cell.todo = d < 0
+          ? "The " + placeName(E(k)) + " column: " + t + " − " + bb + " won’t go, so borrow. Tap the " + (L1 >= 0 ? shown(L1) : "digit") + " to cross it out."
+          : d > 9 ? "The " + placeName(E(k)) + " column has " + t + " — it didn’t need to borrow. Tap the crossed-out digit next to it to undo."
+          : "Subtract the " + placeName(E(k)) + " column: " + t + " − " + bb + ".";
+        cell.why = d < 0
+          ? "You can’t take <b>" + bb + "</b> from <b>" + t + "</b>, so borrow: cross out the <b>" + (L1 >= 0 ? shown(L1) : "") + "</b>" + (L1 >= 0 && L1 < k - 1 ? " (the 0" + (k - 1 - L1 > 1 ? "s" : "") + " in between have nothing to lend)" : "") + "."
+          : d > 9 ? "This column didn’t need to borrow, so undo that cross-out."
+          : "<b>" + t + " − " + bb + " = " + d + "</b>: write <b>" + d + "</b> under the line.";
+        cell.hint = function(vv){
+          if (d < 0){
+            if (L1 === k - 1) return "You can’t take <b>" + bb + "</b> from <b>" + t + "</b> — borrow from the <b>" + shown(L1) + "</b> first: tap it.";
+            if (L1 >= 0) return "You can’t take <b>" + bb + "</b> from <b>" + t + "</b>, and the 0 next door has nothing to lend — borrow from the <b>" + shown(L1) + "</b> first: tap it.";
+            return "You can’t take <b>" + bb + "</b> from <b>" + t + "</b> here.";
+          }
+          if (d > 9) return "This column has <b>" + t + "</b> now — too much for one square. It didn’t need to borrow: tap the crossed-out <b>" + topLabel(k - 1) + "</b> to undo it.";
+          if (lent[k] && Number(vv) === lent[k].pre - bb) return "Use the new number above the crossed-out digit: <b>" + t + " − " + bb + " = " + d + "</b>.";
+          return "<b>" + t + " − " + bb + " = " + d + "</b>: write <b>" + d + "</b> here.";
+        };
+        M.cells.push(cell);
+      })(k);
+    }
+    M.next = function(fix){
+      var M = this, i, c, s;
+      for (i = 0; i < M.order.length; i++){         // the new values above crossed-out digits come first
+        c = M.order[i]; if (c.kind !== "borrow") continue;
+        s = stat(c);
+        if (s === "empty" || (s === "bad" && fix)) return actFill(c);
+      }
+      for (var k = L - 1; k >= 0; k--){
+        c = M.byId["a" + k]; s = stat(c);
+        if (s === "ok") continue;
+        if (s === "empty" && c.opt) continue;
+        if (s === "bad" && !fix && c.exp !== null) continue;
+        if (c.exp === null){
+          if (!c.need) continue;
+          return { type:c.need.type, id:c.need.id, why:c.why, todo:c.todo };
+        }
+        return actFill(c);
+      }
+      return null;
+    };
+    M.tap = function(id, how){
+      var k = Number(id.slice(1));
+      if (lent[k]) return { offer:id, html:"Undo crossing out the <b>" + topLabel(k) + "</b>?" };
+      if (how === "check") return null;
+      if (k >= L - 1) return { refuse:"The last column has nobody on its right to lend to.", mistake:true };
+      if (v[k] <= 0){
+        var j = lender(k);
+        return { refuse:"This 0 has nothing to lend." + (j >= 0 ? " Borrow from the <b>" + shown(j) + "</b> first: tap it." : ""), mistake:true };
+      }
+      W.x.s = (W.x.s || []).concat([k]);
+      return { sel:"b" + k };
+    };
+    M.untap = function(id){
+      var k = Number(id.slice(1));
+      W.x.s = cleanList(tv, (W.x.s || []).filter(function(j){ return j !== k; }), L - 1);
+      var keep = {}; each(W.x.s, function(j){ keep[j] = 1; });
+      for (var j2 = 0; j2 < L; j2++) if (!keep[j2]) delete W.v["b" + j2];
+    };
+    return M;
+  }
+
+  /* ===================== multiplication ===================== */
+  function buildMul(p){
+    var M = blank(), a = parseNum(p.a), b = parseNum(p.b);
+    var fa = a.f.replace(/0+$/, ""), fb = b.f.replace(/0+$/, "");
+    var A = stripZeros(a.i + fa), B = stripZeros(b.i + fb), places = fa.length + fb.length;
+    var lA = A.length, lB = B.length, m = lB, Wd = Math.max(lA + lB, places + 1);
+    var ad = []; for (var j = 0; j < lA; j++) ad[j] = Number(A[lA - 1 - j]);     // ad[j] = digit j places from the right
+    var bd = []; for (j = 0; j < lB; j++) bd[j] = Number(B[lB - 1 - j]);
+    var C = function(pp){ return 1 + Wd - pp; };                               // column of position pp (from the right)
+    var Rc = function(r){ return 1 + (m - 1 - r); };
+    var RA = m + 1, RB = m + 2, RS = m + 3, Rp = function(r){ return m === 1 ? m + 3 : m + 4 + r; };
+    var RT = m === 1 ? m + 3 : m + 4 + m;
+    M.ncol = Wd + 1; M.nrow = RT; M.places = places; M.A = A; M.B = B; M.sa = numStr(a); M.sb = numStr(b);
+    M.RT = RT; M.Wd = Wd;
+    var ord = 0, plan = [], active = null;
+    for (j = 0; j < lA; j++) item(M, RA, C(j), String(ad[j]), "", { aid:j });
+    for (j = 0; j < lB; j++) item(M, RB, C(j), String(bd[j]), "", { bid:j });
+    item(M, RB, 1, "×", "sign");
+    rule(M, RB, 1, Wd + 1);
+    var parts = [];                                   // parts[r][pp] = the digit of row r at position pp
+    var rowInfo = [];
+    function dname(r){ return r === 0 ? "ones" : placeName(r); }
+    for (var r = 0; r < m; r++){
+      var bdig = bd[r], x = [], cin = 0, pr = {};
+      for (j = 0; j < lA; j++){
+        var raw = ad[j] * bdig, tot = raw + cin;
+        x[j] = { a:ad[j], raw:raw, cin:cin, tot:tot, w:tot % 10, cout:Math.floor(tot / 10) };
+        cin = x[j].cout;
+      }
+      var leadD = cin, value = (BigInt(A) * BigInt(bdig)).toString();
+      rowInfo[r] = { x:x, lead:leadD, value:value, b:bdig };
+      for (var pp = 0; pp < r; pp++) pr[pp] = 0;
+      for (j = 0; j < lA; j++) pr[r + j] = x[j].w;
+      pr[r + lA] = leadD;
+      parts[r] = pr;
+    }
+    function rowLabel(r){ return m === 1 ? "answer" : "row " + (r + 1); }
+    function bDesc(r){ return "the " + bd[r] + (m > 1 ? " in the " + dname(r) + " place" : ""); }
+    for (r = 0; r < m; r++){
+      (function(r){
+        var R = rowInfo[r], RR = Rp(r), lit0 = [];
+        for (var pp = 0; pp < r; pp++){
+          (function(pp){
+            var firstW = R.x[0].w;
+            M.cells.push({ id:"z" + r + "_" + pp, r:RR, c:C(pp), kind:"prod", main:true, row:r, data:'data-row="' + r + '" data-p="' + pp + '"',
+              label:rowLabel(r) + ", " + placeName(pp) + " place", exp:"0", opt:false, ord:ord++,
+              lit:[{ r1:RB, r2:RB, c1:C(r), c2:C(r) }],
+              todo:"Row " + (r + 1) + " multiplies by " + bDesc(r) + ": start it with a placeholder 0" + (r > 1 ? " in each empty place" : "") + ".",
+              why:"The " + bd[r] + " is worth <b>" + bd[r] + " " + placeName(r) + "</b>, so this row starts with " + (r > 1 ? r + " zeros" : "a 0") + ": write <b>0</b> here.",
+              hint:function(v){
+                if (Number(v) === firstW) return "Put a <b>0</b> here first: the " + bd[r] + " is in the " + dname(r) + " place, so this row starts " + (r > 1 ? r + " places" : "one place") + " to the left.";
+                return "This row multiplies by " + bDesc(r) + ", so it starts with a placeholder <b>0</b> here.";
+              } });
+            plan.push("z" + r + "_" + pp);
+          })(pp);
+        }
+        var carryOrd = {};
+        for (var j = 0; j <= lA; j++){
+          if (j >= 1 && j < lA) carryOrd[j] = ord++;          // the carry above a digit is written just before that digit's product
+          (function(j){
+            var pp = r + j, isLead = j === lA, xx = isLead ? null : R.x[j];
+            var digit = isLead ? R.lead : xx.w;
+            var vstr = R.value, posInValue = j;                       // leading zeros of this row's value are optional
+            var opt = j >= 1 && posInValue >= vstr.length;
+            var aLit = isLead ? [] : [{ r1:RA, r2:RA, c1:C(j), c2:C(j) }];
+            var c = { id:"m" + r + "_" + j, r:RR, c:C(pp), kind:"prod", main:true, row:r, data:'data-row="' + r + '" data-p="' + pp + '"',
+              label:rowLabel(r) + ", " + placeName(pp) + " place", exp:String(digit), opt:opt, ord:ord++,
+              lit:aLit.concat([{ r1:RB, r2:RB, c1:C(r), c2:C(r) }]) };
+            if (isLead){
+              var last = R.x[lA - 1];
+              c.todo = "Write what’s left of the last product in front.";
+              c.why = "<b>" + bd[r] + " × " + last.a + (last.cin ? " + " + last.cin : "") + " = " + last.tot + "</b>: the <b>" + R.lead + "</b> goes in front.";
+              c.hint = function(){
+                if (R.lead === 0) return "Nothing is left over from the last multiplication, so leave this square empty.";
+                return "<b>" + bd[r] + " × " + last.a + (last.cin ? " + " + last.cin + " carried" : "") + " = " + last.tot + "</b>: write the <b>" + R.lead + "</b> here, in front.";
+              };
+            } else {
+              var fact = "<b>" + bd[r] + " × " + xx.a + " = " + xx.raw + "</b>" + (xx.cin ? ", + " + xx.cin + " carried = <b>" + xx.tot + "</b>" : "");
+              c.todo = "Multiply the " + xx.a + " by " + bDesc(r) + (xx.cin ? ", then add the " + xx.cin + " you carried" : "") + ".";
+              c.why = fact + (j < lA - 1 && xx.tot >= 10 ? ": write the <b>" + xx.w + "</b> here and carry the <b>" + xx.cout + "</b>."
+                     : j === lA - 1 && xx.tot >= 10 ? ": write the <b>" + xx.w + "</b> here and the <b>" + xx.cout + "</b> in front of it." : ": write <b>" + xx.w + "</b> here.");
+              c.hint = function(v){
+                if (xx.cin && Number(v) === xx.raw % 10) return "Add the <b>" + xx.cin + "</b> you carried: " + fact + ", so write the <b>" + xx.w + "</b>.";
+                return c.why;
+              };
+            }
+            M.cells.push(c);
+            if (!(opt && digit === 0)) plan.push(c.id);
+            if (!isLead && j + 1 < lA && R.x[j].cout > 0) plan.push("k" + r + "_" + (j + 1));
+          })(j);
+        }
+        for (j = 1; j < lA; j++){
+          (function(j){
+            var from = R.x[j - 1];
+            M.cells.push({ id:"k" + r + "_" + j, r:Rc(r), c:C(j), kind:"carry", small:true, row:r, data:'data-row="' + r + '" data-p="' + j + '"',
+              label:(m > 1 ? "row " + (r + 1) + " " : "") + "carry above the " + ad[j], exp:String(from.cout), opt:from.cout === 0,
+              ord:carryOrd[j], lit:[{ r1:RA, r2:RA, c1:C(j - 1), c2:C(j - 1) }, { r1:RB, r2:RB, c1:C(r), c2:C(r) }],
+              todo:"Write what you carry above the " + ad[j] + ".",
+              why:"<b>" + bd[r] + " × " + from.a + (from.cin ? " + " + from.cin : "") + " = " + from.tot + "</b>: carry the <b>" + from.cout + "</b> — write it above the " + ad[j] + ".",
+              hint:function(){
+                var f = "<b>" + bd[r] + " × " + from.a + (from.cin ? " + " + from.cin + " carried" : "") + " = " + from.tot + "</b>";
+                if (from.cout === 0) return f + " has only one digit, so there’s nothing to carry.";
+                return f + ": carry the <b>" + from.cout + "</b>.";
+              } });
+          })(j);
+        }
+      })(r);
+    }
+    /* the sum of the rows */
+    var totalStr = (BigInt(A) * BigInt(B)).toString();
+    M.totalCell = function(pp){ return m === 1 ? (pp >= 0 && pp <= lA ? "m0_" + pp : null) : "t" + pp; };
+    if (m > 1){
+      item(M, Rp(m - 1), 1, "+", "sign");
+      rule(M, Rp(m - 1), 1, Wd + 1);
+      var cin = 0, sums = [];
+      for (var pp = 0; pp < Wd; pp++){
+        var dsum = [], tot = cin;
+        for (r = 0; r < m; r++) if (parts[r][pp] !== undefined){ dsum.push(parts[r][pp]); tot += parts[r][pp]; }
+        sums[pp] = { parts:dsum, cin:cin, tot:tot, d:tot % 10, cout:Math.floor(tot / 10) };
+        cin = sums[pp].cout;
+      }
+      var sumStr = function(pp){ var s = sums[pp]; return (s.parts.length ? s.parts.join(" + ") : "0") + (s.cin ? " + " + s.cin + " carried" : ""); };
+      for (pp = 0; pp < Wd; pp++){
+        (function(pp){
+          var s = sums[pp], opt = pp >= 1 && pp >= totalStr.length;
+          var c = { id:"t" + pp, r:RT, c:C(pp), kind:"sum", main:true, data:'data-p="' + pp + '"',
+            label:"sum, " + placeName(pp) + " place", exp:String(s.d), opt:opt, ord:ord++,
+            lit:[{ r1:RS, r2:RT, c1:C(pp), c2:C(pp) }],
+            todo:"Add the rows: the " + placeName(pp) + " column" + (s.cin ? ", with the " + s.cin + " you carried" : "") + ".",
+            why:"<b>" + sumStr(pp) + " = " + s.tot + "</b>" + (s.tot >= 10 ? ": write the <b>" + s.d + "</b> and carry the <b>" + s.cout + "</b>." : ": write <b>" + s.d + "</b> here."),
+            hint:function(v){
+              if (s.cin && Number(v) === (s.tot - s.cin) % 10) return "That column needs the <b>" + s.cin + "</b> you carried: <b>" + sumStr(pp) + " = " + s.tot + "</b>.";
+              return "<b>" + sumStr(pp) + " = " + s.tot + "</b>" + (s.tot >= 10 ? ": write the <b>" + s.d + "</b> here and carry the <b>" + s.cout + "</b>." : ": write <b>" + s.d + "</b> here.");
+            } };
+          M.cells.push(c);
+          if (!(opt && s.d === 0)) plan.push(c.id);
+          if (pp + 1 < Wd && s.cout > 0) plan.push("s" + (pp + 1));
+        })(pp);
+        if (pp + 1 < Wd){
+          (function(q){
+            var from = sums[q - 1];
+            M.cells.push({ id:"s" + q, r:RS, c:C(q), kind:"scarry", small:true, data:'data-p="' + q + '"',
+              label:"carry for the sum, " + placeName(q) + " column", exp:String(from.cout), opt:from.cout === 0, ord:ord - 0.5,
+              lit:[{ r1:RS, r2:RT, c1:C(q - 1), c2:C(q - 1) }],
+              todo:"Write what you carry above the " + placeName(q) + " column.",
+              why:"<b>" + sumStr(q - 1) + " = " + from.tot + "</b>: carry the <b>" + from.cout + "</b> into the " + placeName(q) + " column.",
+              hint:function(){
+                if (from.cout === 0) return "<b>" + sumStr(q - 1) + " = " + from.tot + "</b> fits in one square: nothing to carry.";
+                return "<b>" + sumStr(q - 1) + " = " + from.tot + "</b>: carry the <b>" + from.cout + "</b>.";
+              } });
+          })(pp + 1);
+        }
+      }
+    }
+    /* the decimal point goes back in */
+    if (places > 0){
+      M.cells.push({ id:"pt", kind:"point", main:true, exp:String(places), opt:false, ord:ord++, r:0, c:0,
+        label:"where the decimal point goes",
+        todo:"Put the decimal point back: count the decimal places in " + M.sa + " and " + M.sb + ", then tap where the point goes.",
+        why:"<b>" + M.sa + "</b> has " + pl(fa.length, "decimal place") + " and <b>" + M.sb + "</b> has " + fb.length + ", so the answer has <b>" + places + "</b>: count " + places + " from the right.",
+        hint:function(){ return "<b>" + M.sa + "</b> has " + pl(fa.length, "decimal place") + " and <b>" + M.sb + "</b> has " + fb.length + ", so the answer needs <b>" + places + "</b>: count " + places + " from the right."; } });
+      plan.push("pt");
+    }
+    M.planList = plan;
+    M.next = function(fix){
+      var M = this, i, c, s;
+      for (i = 0; i < M.planList.length; i++){
+        c = M.byId[M.planList[i]]; if (!c) continue;
+        s = stat(c);
+        if (s === "ok" || (s === "empty" && c.opt && c.exp === "0")) continue;
+        if (s === "bad" && !fix) continue;
+        return actFill(c);
+      }
+      if (fix) for (i = 0; i < M.order.length; i++){ c = M.order[i]; if (stat(c) === "bad") return actFill(c); }
+      return null;
+    };
+    M.tap = function(){ return null; };
+    M.fadeRow = function(sel){                        // only the working row's carries stay bright
+      if (m === 1) return null;
+      var c = sel && M.byId[sel];
+      if (!c){ var a = M.next(true); c = a && M.byId[a.id]; }
+      if (!c) return null;
+      return c.row !== undefined ? c.row : -1;
+    };
+    return M;
+  }
+
+  /* ===================== long division ===================== */
+  function buildDiv(p){
+    var M = blank(), D = Number(p.b), lD = p.b.length, dg = p.a.split(""), oL = dg.length;
+    var dec = p.ans === "decimal", places = p.places;
+    var colOf = function(i){ return lD + 1 + i; };
+    var rem = 0, started = false, i = 0, extra = 0, row = 3, ord = 0, frontier = null, reached = -1;
+    var line = null;                       // the line you subtract from next: { row, map:{pos: entry} }
+    var dvdLine = { row:2, map:{} };
+    var dvdTaps = [], stepsAt = {}, q, k;
+    for (k = 0; k < lD; k++) item(M, 2, 1 + k, p.b[k], "");
+    function dvdEntry(pos){ return { kind:"tap", id:"x" + pos, v:Number(dg[pos]) }; }
+    function finishLine(){ return line || dvdLine; }
+    var steps = [];
+    while (true){
+      if (i >= dg.length) break;
+      var cur = rem * 10 + Number(dg[i]), qE = Math.floor(cur / D), qid = "q" + i;
+      reached = i;
+      if (!started) dvdLine.map[i] = dvdEntry(i);
+      var leadOpt = !started && qE === 0 && i < oL - 1;
+      var qc = { id:qid, r:1, c:colOf(i), kind:"q", main:true, data:'data-pos="' + i + '"',
+        label:"answer on top, above the " + dg[i] + (i >= oL ? " (a 0 after the point)" : ""), exp:qE <= 9 ? String(qE) : null,
+        opt:leadOpt, ord:ord++, cur:cur, qE:qE, pos:i, lit:[{ r1:1, r2:2, c1:colOf(Math.max(0, i - lD)), c2:colOf(i) }] };
+      (function(qc, cur, qE, leadOpt, started){
+        var group = cur;
+        qc.todo = leadOpt ? "Does " + D + " go into " + cur + "? Look at more digits." : "How many " + D + "s fit into " + group + "? Write it on top, above the " + dg[qc.pos] + ".";
+        qc.why = qE > 9 ? "Something above went wrong: fix the squares marked in red first."
+          : qE === 0 ? "<b>" + D + "</b> doesn’t fit into <b>" + cur + "</b>" + (leadOpt ? ", so nothing goes on top here." : ": write <b>0</b> on top.")
+          : "<b>" + D + " × " + qE + " = " + (qE * D) + "</b>" + (qE < 9 ? " and <b>" + D + " × " + (qE + 1) + " = " + ((qE + 1) * D) + "</b> is too much" : "") + ": write <b>" + qE + "</b> on top.";
+        qc.hint = function(v){
+          var g = Number(v);
+          if (qE > 9) return "The number to divide here is <b>" + cur + "</b>, which is too big — something above needs fixing first.";
+          if (leadOpt) return "<b>" + D + "</b> doesn’t go into <b>" + cur + "</b>: leave this square empty and look at more digits.";
+          if (qE === 0) return "<b>" + D + "</b> doesn’t go into <b>" + cur + "</b>: write <b>0</b> here.";
+          if (g > qE) return "<b>" + D + " × " + g + " = " + (g * D) + "</b>, which is more than <b>" + cur + "</b>: try a smaller number.";
+          return "<b>" + D + " × " + g + " = " + (g * D) + "</b>, and <b>" + cur + " − " + (g * D) + " = " + (cur - g * D) + "</b> still has room for another " + D + ": try a bigger number.";
+        };
+      })(qc, cur, qE, leadOpt, started);
+      M.cells.push(qc);
+      if (leadOpt){ rem = cur; i++; continue; }
+      var qv = val(qid);
+      if (qv === null){ frontier = actFill(qc); frontier.pos = i; break; }
+      // checking as you go: a wrong digit on top is fixed before anything is written under it
+      if (S.check === "each" && qc.exp !== null && qv !== qc.exp){ frontier = actFill(qc); frontier.pos = i; break; }
+      q = Number(qv);
+      if (q > 0){
+        var prod = q * D, diff = cur - prod, s0 = Math.max(0, i - lD), pr = row, drw = row + 1;
+        row += 2;
+        var top = started ? finishLine() : dvdLine;
+        item(M, pr, colOf(s0) - 1, "−", "sign");
+        rule(M, pr, colOf(s0) - 1, colOf(i));
+        var st = { pos:i, cur:cur, q:q, prod:prod, diff:diff, s0:s0, pr:pr, dr:drw, top:top, prodCells:[], diffCells:[] };
+        steps.push(st); stepsAt[i] = st;
+        var prodS = String(prod), diffS = diff >= 0 ? String(diff) : "";
+        var hasNext = i + 1 < dg.length || (dec && diff > 0 && extra < places);
+        for (var c = i; c >= s0; c--){
+          (function(c){
+            var t = i - c, lead = t >= prodS.length, dgt = lead ? 0 : Number(prodS[prodS.length - 1 - t]);
+            var pc = { id:"p" + i + "_" + c, r:pr, c:colOf(c), kind:"prod", main:true, data:'data-pos="' + i + '" data-col="' + c + '"',
+              label:"multiply line, under the " + (c < oL ? placeName(oL - 1 - c) : placeName(oL - 1 - c)) + " place", exp:String(dgt), opt:lead,
+              ord:ord++, lit:[{ r1:1, r2:drw, c1:colOf(s0), c2:colOf(i) }],
+              todo:"Multiply: " + q + " × " + D + ". Write it under " + cur + ", lined up on the right.",
+              why:"<b>" + q + " × " + D + " = " + prod + "</b>: " + (lead ? "it has only " + pl(prodS.length, "digit") + ", so leave this square empty." : "write the <b>" + dgt + "</b> here."),
+              hint:function(){ return "<b>" + q + " × " + D + " = " + prod + "</b>" + (lead ? " — only " + pl(prodS.length, "digit") + ": leave this square empty." : ": write the <b>" + dgt + "</b> here."); } };
+            M.cells.push(pc); st.prodCells.push(pc);
+          })(c);
+        }
+        for (c = i; c >= s0; c--){
+          (function(c){
+            var t = i - c, ok = diff >= 0, lead = ok && (t >= diffS.length || (diff === 0 && t === 0 && hasNext));
+            var dgt = ok && t < diffS.length ? Number(diffS[diffS.length - 1 - t]) : 0;
+            var dc = { id:"d" + i + "_" + c, r:drw, c:colOf(c), kind:"diff", main:true, data:'data-pos="' + i + '" data-col="' + c + '"',
+              label:"subtract line, " + placeName(oL - 1 - c) + " place", exp:ok ? String(dgt) : null, opt:lead, ord:ord++, pos:c,
+              lit:[{ r1:1, r2:drw, c1:colOf(s0), c2:colOf(i) }],
+              todo:"Subtract: " + cur + " − " + prod + ".",
+              why:ok ? "<b>" + cur + " − " + prod + " = " + diff + "</b>: " + (lead ? (diff === 0 && t === 0 ? "nothing is left, so this square can stay empty." : "leave this square empty.") : "write the <b>" + dgt + "</b> here.") : "That multiplication is too big.",
+              hint:function(){
+                if (!ok) return "<b>" + q + " × " + D + " = " + prod + "</b> is bigger than <b>" + cur + "</b>: the " + q + " on top is too big. Fix it first.";
+                return "<b>" + cur + " − " + prod + " = " + diff + "</b>" + (lead ? ": leave this square empty." : ": write the <b>" + dgt + "</b> here.");
+              } };
+            M.cells.push(dc); st.diffCells.push(dc);
+          })(c);
+        }
+        var prodDone = st.prodCells.every(function(c){ return val(c.id) !== null || c.opt; });
+        var firstEmpty = null;
+        each(st.prodCells, function(c){ if (!firstEmpty && !c.opt && val(c.id) === null) firstEmpty = c; });
+        if (!prodDone){ frontier = actFill(firstEmpty); frontier.pos = i; frontier.step = st; started = true; break; }
+        st.borrowOK = true;
+        firstEmpty = null;
+        each(st.diffCells, function(c){ if (!firstEmpty && !c.opt && val(c.id) === null) firstEmpty = c; });
+        if (firstEmpty){ frontier = actFill(firstEmpty); frontier.pos = i; frontier.step = st; started = true; st.active = true; break; }
+        var ds = "";
+        for (c = s0; c <= i; c++){ var dv = val("d" + i + "_" + c); ds += dv === null ? "0" : dv; }
+        rem = Number(ds);
+        started = true;
+        line = { row:drw, map:{} };
+        each(st.diffCells, function(c){ if (val(c.id) !== null) line.map[c.pos] = { kind:"cell", id:c.id, v:Number(val(c.id)) }; });
+        st.active = false;
+      } else {
+        rem = cur;
+      }
+      if (i + 1 >= dg.length){
+        if (dec && rem !== 0 && extra < places){ dg.push("0"); extra++; }
+        else { i++; break; }
+      }
+      if (started){
+        var nx = i + 1, ln = finishLine();
+        if (!W.br[nx]){
+          frontier = { type:"bring", pos:nx, id:"x" + nx,
+            todo:"Bring down the next digit: tap the " + dg[nx] + (nx >= oL ? " (a 0 written after the point)" : "") + ".",
+            why:"Bring down the <b>" + dg[nx] + "</b>" + (nx >= oL ? " (a 0 added after the point)" : "") + ": now there’s <b>" + (rem * 10 + Number(dg[nx])) + "</b> to divide." };
+          reached = i; i++;
+          break;
+        }
+        ln.map[nx] = { kind:"tap", id:"y" + nx, v:Number(dg[nx]), brought:true };
+        M.items.push({ drop:true, r:3, re:ln.row, c:colOf(nx) });
+      }
+      i++;
+    }
+    var N = dg.length, finished = frontier === null;
+    M.dg = dg; M.oL = oL; M.extra = extra; M.D = D; M.reached = reached; M.frontier = frontier;
+    M.ncol = lD + N + (!dec ? 2 + lD : 0);
+    M.nrow = Math.max(2, row - 1);
+    rule(M, 1, colOf(0), colOf(N - 1));
+    /* borrowing inside a subtraction: allowed on the line you are subtracting from */
+    var borrowCells = {};
+    each(steps, function(st){
+      var key = "d" + st.pos, list0 = W.x[key] || [];
+      if (!list0.length) return;
+      var cols = [], tvs = [];
+      for (var c = st.s0; c <= st.pos; c++){ var en = st.top.map[c]; cols.push(c); tvs.push(en ? valOfEntry(en) : 0); }
+      var idx = list0.map(function(c){ return c - st.s0; });
+      idx = cleanList(tvs, idx, cols.length - 1);
+      W.x[key] = idx.map(function(t){ return t + st.s0; });
+      var sim = borrowSim(tvs, idx);
+      st.sim = sim;
+      each(idx, function(t){
+        var c = t + st.s0, en = st.top.map[c], L0 = sim.lent[t];
+        en.crossed = true;
+        var bc = { id:"w" + st.pos + "_" + c, r:st.top.row, c:colOf(c), kind:"borrow", inset:true, data:'data-pos="' + st.pos + '" data-col="' + c + '"',
+          label:"new value for the crossed-out " + entryText(en), exp:String(L0.nv), opt:false, ord:st.diffCells[0].ord - 0.5,
+          under:{ t:entryText(en), one:!!(sim.recv[t] && !sim.recv[t].after) }, one:!!(sim.recv[t] && sim.recv[t].after),
+          todo:"Write the new number for the crossed-out " + entryText(en) + ".",
+          why:"<b>" + L0.pre + " − 1 = " + L0.nv + "</b>: write <b>" + L0.nv + "</b> for it.",
+          hint:function(){ return (L0.pre >= 10 ? "It became <b>" + L0.pre + "</b> when it borrowed. " : "") + "It lends 1, so it becomes <b>" + L0.nv + "</b>."; } };
+        if (st.top === dvdLine && c === 0) bc.cls = "brk";
+        M.cells.push(bc); borrowCells[bc.id] = bc;
+      });
+      for (var t in sim.recv) if (sim.recv.hasOwnProperty(t)){
+        var en2 = st.top.map[Number(t) + st.s0];
+        if (en2 && !sim.recv[t].after) en2.one = true;
+      }
+    });
+    function valOfEntry(en){ return en.kind === "cell" ? en.v : en.v; }
+    function entryText(en){ return String(en.v); }
+    /* the dividend: digits you tap to bring down (and, in the first subtraction, to borrow from) */
+    for (k = 0; k < N; k++){
+      var en = dvdLine.map[k] || {};
+      if (en.crossed) continue;
+      M.taps.push({ id:"x" + k, r:2, c:colOf(k), t:dg[k], kind:"dvd", data:'data-pos="' + k + '"',
+        cls:(k >= oL ? "ghost" : "") + (k === 0 ? " brk" : ""), one:!!en.one, dot:extra > 0 && k === oL - 1,
+        label:"dividend digit " + dg[k] + (k >= oL ? ", a 0 after the point" : "") + ": tap to bring it down" });
+    }
+    /* brought-down digits */
+    var lines = [];
+    each(steps, function(st){ if (lines.indexOf(st.top) < 0) lines.push(st.top); });
+    if (line && lines.indexOf(line) < 0) lines.push(line);
+    each(lines, function(ln){
+      if (ln === dvdLine) return;
+      for (var pos in ln.map){
+        if (!ln.map.hasOwnProperty(pos)) continue;
+        var en = ln.map[pos];
+        if (en.kind === "tap" && en.brought){
+          if (en.crossed) continue;
+          M.taps.push({ id:en.id, r:ln.row, c:colOf(Number(pos)), t:dg[pos], kind:"brought", data:'data-pos="' + pos + '"',
+            cls:Number(pos) >= oL ? "ghost" : "", one:!!en.one, label:"brought-down digit " + dg[pos] });
+        } else if (en.kind === "cell"){
+          var dc = cellBy(M, en.id);
+          if (dc){ dc.one = !!en.one; if (en.crossed) dc.hidden = true; }
+        }
+      }
+    });
+    each(M.cells, function(c){ if (c.kind === "q" && extra > 0 && c.pos === oL - 1) c.dot = true; });
+    /* the remainder, once there is nothing left to bring down */
+    if (finished && !dec){
+      var rc = lD + N + 3;
+      item(M, 1, lD + N + 2, "R", "rlab");
+      var rs = String(rem);
+      for (k = 0; k < lD; k++){
+        (function(k){
+          var t = lD - 1 - k, lead = t >= rs.length || rem === 0, dgt = t < rs.length ? Number(rs[rs.length - 1 - t]) : 0;
+          M.cells.push({ id:"r" + t, r:1, c:rc + k, kind:"rem", main:true, data:'data-t="' + t + '"',
+            label:"remainder, " + placeName(t) + " place", exp:String(dgt), opt:lead, ord:1000 + (lD - k),
+            todo:"Nothing left to bring down. Write what’s left over after the R.",
+            why:"Nothing left to bring down: <b>" + rem + "</b> is left over, so it’s <b>R " + rem + "</b>.",
+            hint:function(){ return rem === 0 ? "Nothing is left over, so the remainder squares can stay empty." : "The last subtraction left <b>" + rem + "</b>: that’s the remainder."; } });
+        })(k);
+      }
+      M.remCells = true;
+    }
+    M.rem = rem; M.finished = finished;
+    M.steps = steps;
+    M.next = function(fix){
+      var M = this, i2, c2;
+      if (fix) for (i2 = 0; i2 < M.order.length; i2++){
+        c2 = M.order[i2];
+        if (stat(c2) === "bad"){
+          if (c2.exp === null) continue;
+          return actFill(c2);
+        }
+      }
+      for (i2 = 0; i2 < M.order.length; i2++){ c2 = M.order[i2]; if (c2.kind === "borrow" && stat(c2) === "empty") return actFill(c2); }
+      if (frontier) return frontier;
+      for (i2 = 0; i2 < M.order.length; i2++){
+        c2 = M.order[i2];
+        if (c2.kind === "rem" && stat(c2) === "empty" && !c2.opt) return actFill(c2);
+        if (c2.kind === "rem" && stat(c2) === "bad" && fix) return actFill(c2);
+      }
+      return null;
+    };
+    M.tap = function(id, how){
+      var kind = id.charAt(0), pos = kind === "d" ? Number(id.split("_")[1]) : Number(id.slice(1).split("_")[0]);
+      var fr = frontier, st = fr && fr.step && fr.step.active ? fr.step : null;
+      // borrowing: a digit on the line you are subtracting from, while you subtract
+      if (kind === "w") return { offer:id, html:"Undo crossing this out?" };
+      var inTop = !!(st && st.top.map[pos] && st.top.map[pos].id === id && pos >= st.s0 && pos <= st.pos);
+      if (how === "cross" || (inTop && kind !== "d")){
+        if (!inTop){
+          if (st) return { refuse:"You can only borrow from the number you are subtracting from right now." };
+          return { refuse:"Write the multiplication under it first; then you can borrow if you need to." };
+        }
+        var key = "d" + st.pos, list0 = W.x[key] || [];
+        var tvs = [], cols = [];
+        for (var c = st.s0; c <= st.pos; c++){ var en = st.top.map[c]; cols.push(c); tvs.push(en ? en.v : 0); }
+        var idx = list0.map(function(c){ return c - st.s0; }), sim = borrowSim(tvs, idx), t = pos - st.s0;
+        if (sim.lent[t]) return { offer:id, html:"Undo crossing this out?" };
+        if (pos >= st.pos) return { refuse:"The last digit has nobody on its right to lend to.", mistake:true };
+        if (sim.v[t] <= 0) return { refuse:"This 0 has nothing to lend. Borrow from the digit to its left first.", mistake:true };
+        if (st.top.map[pos].kind === "cell" && stat(cellBy(M, st.top.map[pos].id)) !== "ok") return { refuse:"Fix this digit before you borrow from it." };
+        W.x[key] = list0.concat([pos]);
+        return { sel:"w" + st.pos + "_" + pos };
+      }
+      if (kind === "x" || kind === "y"){
+        if (fr && fr.type === "bring"){
+          if (kind === "x" && pos === fr.pos){ W.br[pos] = true; return { sel:"q" + pos }; }
+          if (kind === "x" && pos < fr.pos) return { refuse:"That digit has already been used. Bring down the next one: the <b>" + dg[fr.pos] + "</b>.", mistake:true };
+          if (kind === "x") return { refuse:"Bring down the next digit, the <b>" + dg[fr.pos] + "</b> — the one just to the right of the last digit you used.", mistake:true };
+          return { refuse:"Bring down the next digit from the top: the <b>" + dg[fr.pos] + "</b>." };
+        }
+        if (fr && fr.type === "fill"){
+          if (kind === "x" && pos > M.reached) return { refuse:"Not yet — " + lowerFirst(fr.todo) };
+          return { refuse:"That’s a digit to work with, not a square to fill. " + fr.todo };
+        }
+        return { refuse:"There’s nothing left to bring down." };
+      }
+      return null;
+    };
+    M.untap = function(id){
+      var parts = id.slice(1).split("_"), sp = Number(parts[0]), cc = Number(parts[1]);
+      var key = "d" + sp; W.x[key] = (W.x[key] || []).filter(function(c){ return c !== cc; });
+      delete W.v[id];
+    };
+    M.crossTarget = function(id){                        // what the "cross out" key crosses for a selected square
+      if (!id) return null;
+      var c = cellBy(M, id);
+      if (c && c.kind === "diff") return id;
+      return id;
+    };
+    return M;
+  }
+  function lowerFirst(s){ return s ? s.charAt(0).toLowerCase() + s.slice(1) : ""; }
+
+  /* ===================== putting a model together ===================== */
+  function build(){
+    var M0 = P.op === "add" ? buildAdd(P) : P.op === "sub" ? buildSub(P) : P.op === "mul" ? buildMul(P) : buildDiv(P);
+    M0.byId = {}; M0.tapById = {};
+    each(M0.cells, function(c){ M0.byId[c.id] = c; });
+    each(M0.taps, function(t){ M0.tapById[t.id] = t; });
+    M0.order = M0.cells.filter(function(c){ return !c.hidden || c.kind === "diff"; }).slice().sort(function(a, b){ return a.ord - b.ord; });
+    M0.focusOrder = M0.order.filter(function(c){ return !c.hidden; });
+    M0.cellsOK = M0.cells.every(function(c){ var s = stat(c); return s === "ok" || (s === "empty" && c.opt); });
+    M0.isDone = M0.cellsOK && !(M0.frontier && M0.frontier.type !== "fill");
+    return M0;
+  }
+  function model(){
+    var m = build(), live = {}, changed = false;
+    each(m.cells, function(c){ live[c.id] = 1; });
+    for (var id in W.v) if (W.v.hasOwnProperty(id) && !live[id]){ delete W.v[id]; changed = true; }
+    if (changed) m = build();
+    return m;
+  }
+
+  /* ===================== drawing the sheet ===================== */
+  function marked(c){
+    if (stat(c) !== "bad") return false;
+    return S.check === "each" || W.done || !!W.mk[c.id];
+  }
+  function cellLabel(c){
+    var v = val(c.id), s = c.label;
+    if (c.kind === "point") s += v === null ? ", not placed yet" : ", " + pl(Number(v), "place") + " from the right";
+    else s += v === null ? ", empty" : ", " + v;
+    if (W.shown[c.id]) s += ", filled in for you";
+    if (marked(c)) s += ", needs another look: " + strip(c.hint(v));
+    return s;
+  }
+  function strip(h){ return String(h).replace(/<[^>]+>/g, ""); }
+  function litRects(){
+    var c = S.sel && M.byId[S.sel];
+    if (!c && S.sel && M.tapById[S.sel]) return [];
+    if (!c){ var a = M.next(S.check === "each"); c = a && M.byId[a.id]; }
+    return (c && c.lit) || [];
+  }
+  function inner(t, o){
+    var h = "";
+    if (o.one) h += '<span class="one" aria-hidden="true">1</span>';
+    h += '<span class="d">' + esc(t) + "</span>";
+    if (o.dot) h += '<span class="dot" aria-hidden="true"></span>';
+    return h;
+  }
+  function draw(){
+    var g = $("grid"), h = [], fadeRow = M.fadeRow ? M.fadeRow(S.sel) : null;
+    g.style.gridTemplateColumns = "repeat(" + M.ncol + ",var(--sq))";
+    g.style.gridTemplateRows = "repeat(" + M.nrow + ",var(--sq))";
+    each(litRects(), function(r){
+      h.push('<div class="hl" style="grid-area:' + r.r1 + " / " + r.c1 + " / " + (r.r2 + 1) + " / " + (r.c2 + 1) + '"></div>');
+    });
+    each(M.items, function(it){
+      if (it.rule){ h.push('<div class="rule ' + it.cls + '" style="grid-area:' + it.r + " / " + it.c + " / span 1 / span " + it.cs + '"></div>'); return; }
+      if (it.drop){ if (it.re > it.r) h.push('<div class="drop" style="grid-area:' + it.r + " / " + it.c + " / " + it.re + " / span 1" + '"></div>'); return; }
+      h.push('<div class="sq it ' + it.cls + '" style="grid-area:' + it.r + " / " + it.c + '" aria-hidden="true">' + inner(it.t, it) + "</div>");
+    });
+    var tabSet = false, sel = S.sel;
+    var tabTarget = sel && (M.byId[sel] || M.tapById[sel]) ? sel : null;
+    if (!tabTarget){ var a = M.next(S.check === "each"); if (a && M.byId[a.id] && !M.byId[a.id].hidden && M.byId[a.id].kind !== "point") tabTarget = a.id; else if (M.focusOrder[0]) tabTarget = M.focusOrder[0].id; }
+    each(M.taps, function(t){
+      var cls = "sq tap " + (t.cls || "") + (t.crossed ? " x" : "") + (t.wide ? " wide" : "") + (sel === t.id ? " selt" : "");
+      h.push('<button type="button" class="' + cls + '" data-id="' + t.id + '" data-kind="' + t.kind + '" ' + (t.data || "")
+        + ' style="grid-area:' + t.r + " / " + t.c + '" tabindex="' + (tabTarget === t.id ? 0 : -1) + '" aria-label="' + esc(t.label) + '">'
+        + inner(t.t, t) + "</button>");
+    });
+    each(M.cells, function(c){
+      if (c.kind === "point" || c.hidden) return;
+      var v = val(c.id), cls = "sq cell " + c.kind + (c.small ? " small" : "") + (c.inset ? " inset" : "") + (c.cls ? " " + c.cls : "")
+        + (sel === c.id ? " sel" : "") + (W.shown[c.id] ? " shown" : "") + (marked(c) ? " bad" : "")
+        + (fadeRow !== null && c.kind === "carry" && c.row !== fadeRow ? " fade" : "")
+        + (fadeRow !== null && c.kind === "scarry" && fadeRow >= 0 ? " fade" : "")
+        + (JUSTOK === c.id ? " justok" : "");
+      var body = "";
+      if (c.inset){
+        body = '<span class="under" aria-hidden="true">' + (c.under.one ? '<span class="one">1</span>' : "") + esc(c.under.t) + "</span>"
+             + '<span class="nv">' + (c.one ? '<span class="one" style="position:static;transform:none;margin-right:1px">1</span>' : "") + esc(v === null ? "" : v) + "</span>";
+      } else {
+        body = (c.one ? '<span class="one" aria-hidden="true">1</span>' : "") + '<span class="d">' + (v === null ? (c.ghost ? '<span class="ghost">' + c.ghost + "</span>" : "") : esc(v)) + "</span>"
+             + (c.dot ? '<span class="dot" aria-hidden="true"></span>' : "");
+      }
+      h.push('<button type="button" class="' + cls + '" data-id="' + c.id + '" data-kind="' + c.kind + '" ' + (c.data || "")
+        + ' style="grid-area:' + c.r + " / " + c.c + '" tabindex="' + (tabTarget === c.id ? 0 : -1) + '" aria-label="' + esc(cellLabel(c)) + '">' + body + "</button>");
+    });
+    g.innerHTML = h.join("");
+    drawPoint();
+    alignPaper();
+  }
+  var JUSTOK = null;
+  function alignPaper(){
+    var pa = $("paper"), g = $("grid"), sq = g.firstElementChild ? parseFloat(getComputedStyle(g).gridTemplateColumns) || 46 : 46;
+    var x = ((g.offsetLeft % sq) + sq) % sq, y = ((g.offsetTop % sq) + sq) % sq;
+    pa.style.backgroundPosition = x + "px " + y + "px";
+  }
+  /* the decimal point: tap the gap where it goes */
+  function drawPoint(){
+    var box = $("pointstep"), c = M.byId.pt;
+    if (!c){ box.hidden = true; box.innerHTML = ""; return; }
+    box.hidden = false;
+    var v = val("pt"), Wd = M.Wd, pp;
+    var bad = marked(c), sel = S.sel === "pt";
+    var h = '<div class="cap">' + (v === null ? "Put the decimal point back in the answer: tap the gap where it goes." :
+      "The point is <b>" + pl(Number(v), "place") + "</b> from the right." + (W.shown.pt ? " (filled in for you)" : "")) + "</div>";
+    h += '<div class="gaps" role="group" aria-label="Where the decimal point goes">';
+    for (pp = Wd - 1; pp >= 0; pp--){
+      var id2 = M.totalCell(pp), d2 = id2 ? val(id2) : null, ghost = d2 === null;
+      h +='<span class="dg' + (ghost ? " ghost" : "") + '" aria-hidden="true">' + (ghost ? "0" : esc(d2)) + "</span>";
+      if (pp > 0){
+        var on = v !== null && Number(v) === pp;
+        h += '<button type="button" class="gap' + (on ? " on" : "") + (on && bad ? " bad" : "") + (on && W.shown.pt ? " shown" : "") + (sel && (on || (v === null && pp === 1)) ? " sel" : "")
+          + '" data-id="pt" data-kind="point" data-p="' + pp + '" tabindex="' + ((on || (v === null && pp === 1)) ? 0 : -1)
+          + '" aria-label="' + esc("put the point with " + pl(pp, "digit") + " after it" + (on ? ", the point is here" : "") + (on && bad ? ", needs another look" : "")) + '"></button>';
+      }
+    }
+    h += "</div>";
+    box.innerHTML = h;
+  }
+
+  /* ===================== the bubble beside a square ===================== */
+  function elFor(id){ return document.querySelector('#grid [data-id="' + id + '"]') || (id === "pt" ? document.querySelector('#pointstep .gap.on, #pointstep .gap.sel, #pointstep .gap') : null); }
+  function placeBubble(){
+    var b = $("bubble");
+    var info = BUB;
+    if (!info){
+      var c = S.sel && M.byId[S.sel];
+      if (c && marked(c)) info = { id:c.id, html:c.hint(val(c.id)) };
+    }
+    if (!info){ b.hidden = true; b.innerHTML = ""; return; }
+    var el = elFor(info.id);
+    if (!el || info.id === "pt"){ b.hidden = true; return; }
+    b.className = "bubble" + (info.offer ? " offer" : "");
+    b.innerHTML = info.html + (info.offer ? '<div class="row"><button type="button" class="yes" data-offer="undo">Undo cross-out</button><button type="button" class="no" data-offer="keep">Keep it</button></div>' : "");
+    b.hidden = false;
+    var pa = $("paper"), pr = pa.getBoundingClientRect(), er = el.getBoundingClientRect();
+    var below = er.bottom - pr.top + pa.scrollTop + 4, above = er.top - pr.top + pa.scrollTop - b.offsetHeight - 4;
+    var left = er.left - pr.left + pa.scrollLeft + er.width / 2 - b.offsetWidth / 2;
+    var minL = pa.scrollLeft + 6, maxL = pa.scrollLeft + pa.clientWidth - b.offsetWidth - 6;
+    left = Math.max(minL, Math.min(maxL, left));
+    // squares on the top lines (answers on top, carries, new values) get it above, so it doesn't hide the digits they belong to
+    var c0 = M.byId[info.id] || M.tapById[info.id], up = c0 && /^(q|carry|scarry|borrow)$/.test(c0.kind);
+    var top = up && above >= 2 ? above : below;
+    if (!up && top + b.offsetHeight > pa.scrollHeight - 2 && above >= 2) top = above;
+    b.style.left = left + "px"; b.style.top = Math.max(2, top) + "px";
+  }
+
+  /* ===================== the feedback line, the next step ===================== */
+  function say(html, cls){ var el = $("say"); el.className = "say " + (cls || ""); el.innerHTML = html || ""; }
+  function paintNext(){
+    var t;
+    if (W.done) t = W.revealed ? "That’s the whole answer, filled in. Try another one yourself!" : "Done — every square is right.";
+    else {
+      var a = M.next(S.check === "each");
+      if (!a && S.check === "end" && !M.isDone) a = null;
+      if (a) t = a.todo;
+      else if (S.check === "end") t = "Everything is filled in: press <b>Check my work</b>.";
+      else t = "Fix the squares marked in red.";
+    }
+    $("nextTxt").innerHTML = t || "";
+  }
+  function paintTools(){
+    $("checkWorkBtn").hidden = S.check !== "end" || W.done;
+    $("stepBtn").disabled = W.done;
+    $("showBtn").disabled = W.done;
+    $("undoBtn").disabled = W.done || !HIST.length;
+    $("redoBtn").disabled = W.done || !FUT.length;
+    $("pad").classList.toggle("idle", !S.sel);
+    $("pad").hidden = W.done;
+    var cb = document.querySelector('#pad [data-k="cross"]');
+    if (cb) cb.disabled = !(P.op === "sub" || P.op === "div");
+  }
+
+  /* ===================== render ===================== */
+  function render(opts){
+    opts = opts || {};
+    var hadFocus = $("sheet").contains(document.activeElement) && document.activeElement !== $("stepBtn")
+      && !document.activeElement.closest(".tools, .pad, .bubble");
+    var padFocus = document.activeElement && document.activeElement.closest && document.activeElement.closest(".pad");
+    M = model();
+    if (S.sel && !M.byId[S.sel] && !M.tapById[S.sel]) S.sel = null;
+    if (S.sel && M.byId[S.sel] && M.byId[S.sel].hidden) S.sel = null;
+    draw();
+    paintTools();
+    paintNext();
+    if (!W.done && M.isDone){
+      if (S.check === "each" || W.revealed){ finish(); draw(); paintTools(); paintNext(); }
+      else if (!opts.quiet) say('<span class="lead">Everything is filled in.</span> Press <b>Check my work</b> to see how you did.');
+    }
+    if (W.done) paintDone();
+    if ((hadFocus || opts.focus || padFocus) && S.sel) focusSel();
+    placeBubble();
+    syncURL();
+    save();
+    JUSTOK = null;
+  }
+  function focusSel(){
+    var el = S.sel === "pt" ? document.querySelector("#pointstep .gap.on, #pointstep .gap.sel") : elFor(S.sel);
+    if (el) try { el.focus({ preventScroll:false }); } catch (e){ el.focus(); }
+  }
+
+  /* ===================== working on the sheet ===================== */
+  function select(id){
+    if (W.done) { S.sel = id; BUB = null; render({ focus:true }); return; }
+    S.sel = id; BUB = null;
+    render({ focus:true });
+  }
+  function nextMain(fromId){
+    var list = M.focusOrder, i0 = -1, i;
+    for (i = 0; i < list.length; i++) if (list[i].id === fromId){ i0 = i; break; }
+    function ok(c){ return c.main && val(c.id) === null && !(c.opt && c.exp === "0") && c.kind !== "borrow"; }
+    if (i0 >= 0 && list[i0].kind === "borrow") i0 = -1;   // after a borrow, back to the column that needed it
+    for (i = i0 + 1; i < list.length; i++) if (ok(list[i])) return list[i].id;
+    for (i = 0; i < i0; i++) if (ok(list[i])) return list[i].id;
+    return null;
+  }
+  function enter(d){
+    if (W.done) return;
+    var c = S.sel && M.byId[S.sel];
+    if (!c){
+      if (S.sel && M.tapById[S.sel]){ say("That’s a digit of the problem. Tap a square to write in.", ""); return; }
+      var a = M.next(S.check === "each");
+      if (a && a.type === "fill" && M.byId[a.id]){ c = M.byId[a.id]; S.sel = c.id; }
+      else { say("Tap a square first, then type the digit.", ""); render(); return; }
+    }
+    if (c.kind === "point" && Number(d) >= M.Wd){ say("The answer doesn’t have that many digits.", ""); return; }
+    push();
+    W.v[c.id] = String(d);
+    delete W.shown[c.id]; delete W.mk[c.id];
+    BUB = null;
+    M = model();
+    var c2 = M.byId[c.id], s = c2 ? stat(c2) : "ok";
+    if (S.check === "each" && c2){
+      if (W.first[c.id] === undefined){ W.first[c.id] = s === "ok"; if (s === "bad") W.mistakes++; }
+      if (s === "bad") say('<span class="lead">Not quite.</span> ' + c2.hint(String(d)), "no");
+      else { say("", ""); JUSTOK = c.id; }
+    } else say("", "");
+    if (!(S.check === "each" && s === "bad")){
+      var nx = c.kind === "point" ? null : nextMain(c.id);
+      if (nx) S.sel = nx;
+    }
+    render({ focus:true });
+  }
+  function rubOut(){
+    if (W.done) return;
+    var c = S.sel && M.byId[S.sel];
+    if (!c) return;
+    if (val(c.id) === null){
+      var list = M.focusOrder, i0 = -1;
+      for (var i = 0; i < list.length; i++) if (list[i].id === c.id) i0 = i;
+      for (i = i0 - 1; i >= 0; i--) if (list[i].main){ S.sel = list[i].id; break; }
+      render({ focus:true }); return;
+    }
+    push();
+    delete W.v[c.id]; delete W.shown[c.id]; delete W.mk[c.id];
+    BUB = null; say("", "");
+    render({ focus:true });
+  }
+  function tap(id, how){
+    if (W.done) return;
+    var pre = snap(), r = M.tap(id, how);
+    if (!r) return;
+    if (r.offer){ S.sel = id; BUB = { id:id, html:r.html, offer:true }; render({ focus:true }); return; }
+    if (r.refuse){
+      if (r.mistake && S.check === "each") W.mistakes++;
+      BUB = { id:id, html:r.refuse };
+      say('<span class="lead">' + (r.mistake ? "Not that one." : "Hold on.") + "</span> " + r.refuse, r.mistake ? "no" : "");
+      S.sel = id;
+      render({ focus:true });
+      return;
+    }
+    HIST.push(pre); if (HIST.length > 300) HIST.shift(); FUT = [];       // the tap has already changed the sheet
+    BUB = null; say("", "");
+    S.sel = r.sel || S.sel;
+    render({ focus:true });
+  }
+  function undoCross(id){
+    push();
+    M.untap(id);
+    BUB = null; say("Cross-out undone.", "");
+    S.sel = null;
+    render();
+  }
+  function move(dir){
+    var cur = S.sel && (M.byId[S.sel] || M.tapById[S.sel]);
+    var all = M.focusOrder.filter(function(c){ return c.kind !== "point"; }).concat(M.taps);
+    if (!cur || cur.kind === "point"){ if (all[0]) select(all[0].id); return; }
+    var best = null, bd = 1e9;
+    each(all, function(o){
+      if (o.id === cur.id) return;
+      var dr = o.r - cur.r, dc = o.c - cur.c, score;
+      if (dir === "left"){ if (dc >= 0 || dr !== 0) return; score = -dc; }
+      else if (dir === "right"){ if (dc <= 0 || dr !== 0) return; score = dc; }
+      else if (dir === "up"){ if (dr >= 0) return; score = -dr * 10 + Math.abs(dc) * 11; }
+      else { if (dr <= 0) return; score = dr * 10 + Math.abs(dc) * 11; }
+      if (score < bd){ bd = score; best = o; }
+    });
+    if (!best && (dir === "left" || dir === "right")){        // nothing on this line: the nearest line above or below
+      each(all, function(o){
+        if (o.id === cur.id) return;
+        var dc = o.c - cur.c;
+        if ((dir === "left" && dc >= 0) || (dir === "right" && dc <= 0)) return;
+        var score = Math.abs(o.r - cur.r) * 100 + Math.abs(dc);
+        if (score < bd){ bd = score; best = o; }
+      });
+    }
+    if (!best && dir === "down" && M.byId.pt){ select("pt"); return; }
+    if (best) select(best.id);
+  }
+  function tabMove(back){
+    var list = M.focusOrder, i0 = -1, i;
+    for (i = 0; i < list.length; i++) if (list[i].id === S.sel) i0 = i;
+    if (i0 < 0 && S.sel && M.tapById[S.sel]){
+      // from a digit of the problem: the nearest square in working order
+      i0 = back ? list.length : -1;
+    }
+    i = back ? i0 - 1 : i0 + 1;
+    if (i < 0 || i >= list.length) return false;
+    select(list[i].id);
+    return true;
+  }
+
+  /* ===================== the buttons ===================== */
+  function apply(a, shown){
+    if (a.type === "fill"){ W.v[a.id] = a.v; if (shown) W.shown[a.id] = true; delete W.mk[a.id]; return a.id; }
+    if (a.type === "cross"){ var r = M.tap(a.id, "force"); return r && r.sel; }
+    if (a.type === "uncross"){ M.untap(a.id.charAt(0) === "t" ? a.id : a.id); return null; }
+    if (a.type === "bring"){ W.br[a.pos] = true; return "q" + a.pos; }
+    return null;
+  }
+  function stepOnce(){
+    if (W.done) return;
+    var a = M.next(true);
+    if (!a){ say("There’s nothing left to do on this sheet.", ""); return; }
+    push();
+    W.hints++; noteHint();
+    var sel = apply(a, true);
+    say('<span class="lead">Next step:</span> ' + a.why, "");
+    BUB = null;
+    M = model();
+    S.sel = sel || (a.type === "fill" ? a.id : S.sel);
+    render({ focus:true, quiet:true });
+  }
+  function showAll(silent){
+    if (W.done) return;
+    if (!silent) push();
+    for (var n = 0; n < 600; n++){
+      M = model();
+      var a = M.next(true);
+      if (!a) break;
+      apply(a, true);
+    }
+    W.revealed = true; S.sel = null; BUB = null;
+    if (silent) W.reported = true;                     // practice=all only shows the work; nothing to report
+    say("", "");
+    render();
+  }
+  function checkWork(){
+    if (W.done) return;
+    var bad = [], filled = 0;
+    W.mk = {};
+    each(M.cells, function(c){
+      var s = stat(c);
+      if (s === "empty") return;
+      filled++;
+      if (!W.shown[c.id] && W.first[c.id] === undefined){ W.first[c.id] = s === "ok"; if (s === "bad") W.mistakes++; }
+      if (s === "bad"){ bad.push(c); W.mk[c.id] = 1; }
+    });
+    W.checks++;
+    if (bad.length){
+      report("wrong");
+      say('<span class="lead">' + (bad.length === 1 ? "One square needs" : bad.length + " squares need") + " another look.</span> They’re underlined in red — tap one to see a hint.", "no");
+      S.sel = bad[0].id; BUB = null;
+      render({ focus:true, quiet:true });
+      return;
+    }
+    if (M.isDone){ finish(); render(); return; }
+    say('<span class="lead">Everything so far is right.</span> ' + (filled ? "Keep going." : "Start with the first square."), "ok");
+    render({ quiet:true });
+  }
+  function clearSheet(){
+    push();
+    W.v = {}; W.x = {}; W.br = {}; W.shown = {}; W.mk = {};
+    var was = W.done; W.done = false; W.revealed = false;
+    S.sel = null; BUB = null; say(was ? "A fresh sheet for the same problem." : "", "");
+    $("doneBox").hidden = true; $("answerHost").innerHTML = "";
+    render();
+  }
+
+  /* ===================== finished ===================== */
+  function finish(){
+    W.done = true; S.sel = null; BUB = null;
+    if (S.check === "end") each(M.cells, function(c){ if (!W.shown[c.id] && val(c.id) !== null && W.first[c.id] === undefined) W.first[c.id] = true; });
+    if (!W.reported){ W.reported = true; report(W.revealed ? "shown" : "right"); }
+    if (W.revealed) say('<span class="lead">Here’s the whole answer.</span> The squares in blue were filled in for you.', "");
+    else say('<span class="lead">✓ Correct!</span> You worked it out by hand: <b>' + esc(answerOf(P).text) + "</b>.", "ok");
+    paintDone();
+    var box = $("doneBox");
+    box.classList.remove("on"); void box.offsetWidth; if (!W.revealed) box.classList.add("on");
+  }
+  function score(){
+    var right = 0, tried = 0, shown = 0;
+    for (var id in W.first) if (W.first.hasOwnProperty(id) && M.byId[id]){ tried++; if (W.first[id]) right++; }
+    for (var s in W.shown) if (W.shown.hasOwnProperty(s) && M.byId[s]) shown++;
+    return { right:right, tried:tried, shown:shown };
+  }
+  function paintDone(){
+    var box = $("doneBox"), sc = score(), A = answerOf(P);
+    box.hidden = false;
+    box.classList.toggle("shownend", W.revealed);
+    $("stamp").textContent = W.revealed ? "Shown" : (W.mistakes === 0 && !W.hints ? "Perfect!" : "Solved!");
+    var t;
+    if (W.revealed && !sc.tried) t = "Every square was filled in for you. Try it yourself with <b>New problem</b>.";
+    else {
+      t = "<b>" + sc.right + "</b> of <b>" + sc.tried + "</b> square" + (sc.tried === 1 ? "" : "s") + " right first time";
+      if (sc.shown) t += " · " + pl(sc.shown, "square") + " filled in for you";
+      if (W.mistakes > sc.tried - sc.right) t += " · " + pl(W.mistakes - (sc.tried - sc.right), "slip") + " with a cross-out or bring-down";
+      t += ".";
+    }
+    $("score").innerHTML = t;
+    $("answerHost").innerHTML = '<div class="answer"><span class="k">Answer</span><span class="v">' + A.html + "</span>"
+      + '<div class="facts"><div class="fact">' + esc(qText(P)) + " = <b>" + A.html + "</b></div></div></div>";
+    $("seeLink").href = helperLink(P);
+    $("againBtn").hidden = EMBED;
+    $("seeLink").hidden = EMBED;
+  }
+  function helperLink(p){
+    if (p.op === "add") return "addition.html?q=" + encodeURIComponent(p.nums.join("+"));
+    if (p.op === "sub") return "subtraction.html?q=" + encodeURIComponent(p.a + "-" + p.b);
+    if (p.op === "mul") return "multiplication.html?q=" + encodeURIComponent(p.a + "*" + p.b);
+    return "division.html?q=" + p.a + "/" + p.b + "&ans=" + (p.ans === "decimal" ? "decimal&places=" + (p.places <= 3 ? 3 : 6) : "remainder");
+  }
+
+  /* ===================== events ===================== */
+  $("grid").addEventListener("click", function(e){
+    var el = e.target.closest("[data-id]");
+    if (!el) return;
+    var id = el.getAttribute("data-id");
+    if (M.tapById[id]) { tap(id); return; }
+    var c = M.byId[id];
+    if (!c) return;
+    if (c.kind === "borrow" && c.inset && S.sel === id && !W.done){ tap(id); return; }
+    select(id);
+  });
+  $("pointstep").addEventListener("click", function(e){
+    var g = e.target.closest(".gap");
+    if (!g || W.done) return;
+    S.sel = "pt";
+    enter(g.getAttribute("data-p"));
+  });
+  $("bubble").addEventListener("click", function(e){
+    var b = e.target.closest("[data-offer]");
+    if (!b || !BUB) return;
+    var id = BUB.id;
+    if (b.getAttribute("data-offer") === "undo") undoCross(id);
+    else { BUB = null; render({ focus:true }); }
+  });
+  function onKey(e){
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var k = e.key, inPoint = !!(e.target.closest && e.target.closest("#pointstep"));
+    var handled = true;
+    if (inPoint && /^[0-9]$/.test(k)) S.sel = "pt";
+    if (/^[0-9]$/.test(k)) enter(k);
+    else if (k === "Backspace" || k === "Delete") rubOut();
+    else if (k === "ArrowLeft" || k === "ArrowRight"){
+      if (inPoint){
+        var gs = [].slice.call(document.querySelectorAll("#pointstep .gap")), i0 = gs.indexOf(document.activeElement);
+        var nx = gs[i0 + (k === "ArrowLeft" ? -1 : 1)];
+        if (nx) nx.focus();
+      } else move(k === "ArrowLeft" ? "left" : "right");
+    }
+    else if (k === "ArrowUp"){ if (inPoint){ var last = M.focusOrder.filter(function(c){ return c.kind !== "point"; }); if (last.length) select(last[last.length - 1].id); } else move("up"); }
+    else if (k === "ArrowDown") { if (!inPoint) move("down"); }
+    else if (k === "Tab"){ handled = tabMove(e.shiftKey); }
+    else if (k === "Enter" || k === " "){
+      if (inPoint){ var gg = e.target.closest(".gap"); if (gg){ S.sel = "pt"; enter(gg.getAttribute("data-p")); } }
+      else if (S.sel && M.tapById[S.sel]) tap(S.sel);
+      else if (S.sel && M.byId[S.sel] && M.byId[S.sel].inset && k === "Enter") tap(S.sel);
+      else if (k === "Enter"){ var nx2 = S.sel && nextMain(S.sel); if (nx2) select(nx2); }
+    }
+    else if (k === "x" || k === "X") crossKey();
+    else if (k === "Escape"){ if (BUB || S.sel){ BUB = null; S.sel = null; render(); } else handled = false; }
+    else if (k === "+" || k === "-" || k === "=" || k === "_" || k === "/" || k === "*" || k === ".") handled = true;
+    else handled = false;
+    if (handled){ e.preventDefault(); e.stopPropagation(); }
+  }
+  $("grid").addEventListener("keydown", onKey);
+  $("pointstep").addEventListener("keydown", onKey);
+  function crossKey(){
+    if (!S.sel){ say("Tap the digit you want to cross out.", ""); return; }
+    if (M.tapById[S.sel]){ tap(S.sel, "cross"); return; }
+    var c = M.byId[S.sel];
+    if (c && c.inset){ tap(S.sel); return; }
+    if (c && P.op === "div" && c.kind === "diff"){ tap(S.sel, "cross"); return; }
+    say("Only a digit you borrow from can be crossed out.", "");
+  }
+  /* the digit pad: keep the square focused while it is used */
+  $("pad").addEventListener("pointerdown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
+  $("pad").addEventListener("mousedown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
+  $("pad").addEventListener("click", function(e){
+    var b = e.target.closest("button");
+    if (!b) return;
+    var k = b.getAttribute("data-k");
+    if (/^[0-9]$/.test(k)) enter(k);
+    else if (k === "back") rubOut();
+    else if (k === "left") move("left");
+    else if (k === "right") move("right");
+    else if (k === "cross") crossKey();
+    else if (k === "done"){ S.sel = null; BUB = null; render(); }
+  });
+  $("stepBtn").addEventListener("click", stepOnce);
+  $("showBtn").addEventListener("click", function(){ showAll(false); });
+  $("checkWorkBtn").addEventListener("click", checkWork);
+  $("clearBtn").addEventListener("click", clearSheet);
+  $("undoBtn").addEventListener("click", function(){
+    if (!HIST.length || W.done) return;
+    FUT.push(snap()); restore(HIST.pop()); BUB = null; say("", ""); render();
+  });
+  $("redoBtn").addEventListener("click", function(){
+    if (!FUT.length || W.done) return;
+    HIST.push(snap()); restore(FUT.pop()); BUB = null; say("", ""); render();
+  });
+  window.addEventListener("resize", function(){ alignPaper(); placeBubble(); });
+  $("paper").addEventListener("scroll", function(){ if (BUB) placeBubble(); });
+
+  /* ===================== setting up a problem ===================== */
+  function setProblem(p, keepWork){
+    P = p;
+    if (!keepWork){ W = newWork(); HIST = []; FUT = []; }
+    S.sel = null; BUB = null;
+    $("doneBox").hidden = true; $("answerHost").innerHTML = "";
+    $("qIn").value = qText(p);
+    $("sheetTitle").innerHTML = "Your sheet: <b>" + esc(qText(p)) + "</b>";
+    paintOpts();
+    M = model();
+    var note = "";
+    if (p.op === "sub" && M.neg) note = "<b>" + esc(commasBig(p.b)) + "</b> is bigger, so work out <b>" + esc(commasBig(p.b)) + " − " + esc(commasBig(p.a)) + "</b> and the answer is negative.";
+    if (p.op === "mul" && M.places > 0) note = "Ignore the decimal points for now: work out <b>" + M.A + " × " + M.B + "</b>, then put the point back at the end.";
+    say(note, "");
+    render();
+  }
+  function startFromBox(){
+    var r = parseProblem($("qIn").value);
+    if (r.err){ say('<span class="lead">Hmm.</span> That problem couldn’t be read: ' + r.err + ".", "no"); $("qIn").focus(); return; }
+    if (r.p.op === "div"){ r.p.ans = S.ans; r.p.places = S.places; }
+    setProblem(r.p);
+    if (r.note === "swap") say("The longer number goes on top, so the sheet works out <b>" + esc(qText(r.p)) + "</b>.", "");
+    var first = M.focusOrder.filter(function(c){ return c.main; })[0];
+    if (first && !W.done){ S.sel = first.id; render({ focus:true }); }
+  }
+  $("startBtn").addEventListener("click", startFromBox);
+  $("qIn").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); startFromBox(); } });
+
+  function paintOpts(){
+    each(document.querySelectorAll("[data-check]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-check") === S.check)); });
+    var isDiv = P && P.op === "div";
+    $("ansModes").hidden = !isDiv; $("placeModes").hidden = !(isDiv && P.ans === "decimal");
+    each(document.querySelectorAll("[data-ans]"), function(b){ b.setAttribute("aria-pressed", String(isDiv && b.getAttribute("data-ans") === P.ans)); });
+    each(document.querySelectorAll("[data-places]"), function(b){ b.setAttribute("aria-pressed", String(isDiv && Number(b.getAttribute("data-places")) === P.places)); });
+  }
+  each(document.querySelectorAll("[data-check]"), function(b){
+    b.addEventListener("click", function(){ S.check = b.getAttribute("data-check"); W.mk = {}; BUB = null; paintOpts(); say("", ""); render(); });
+  });
+  each(document.querySelectorAll("[data-ans]"), function(b){
+    b.addEventListener("click", function(){
+      S.ans = b.getAttribute("data-ans");
+      if (P.op === "div" && P.ans !== S.ans) setProblem({ op:"div", a:P.a, b:P.b, ans:S.ans, places:P.places });
+    });
+  });
+  each(document.querySelectorAll("[data-places]"), function(b){
+    b.addEventListener("click", function(){
+      S.places = Number(b.getAttribute("data-places"));
+      if (P.op === "div" && P.places !== S.places) setProblem({ op:"div", a:P.a, b:P.b, ans:P.ans, places:S.places });
+    });
+  });
+
+  var EX = ["478+356", "5003-1278", "25*4", "47*23", "847/12", "2.5+3.75+0.8", "6.4-2.75", "3.2*1.5"];
+  function buildChips(){
+    var host = $("chips"); host.innerHTML = "";
+    each(EX, function(q){
+      var r = parseProblem(q), b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = qText(r.p);
+      b.addEventListener("click", function(){
+        if (r.p.op === "div"){ r.p.ans = S.ans; r.p.places = S.places; }
+        setProblem(JSON.parse(JSON.stringify(r.p)));
+        var first = M.focusOrder.filter(function(c){ return c.main; })[0];
+        if (first){ S.sel = first.id; render({ focus:true }); }
+      });
+      host.appendChild(b);
+    });
+  }
+
+  /* ===================== the problem maker (pure: it never touches the page) ===================== */
+  var ALL = ["add", "sub", "mul", "div"];
+  var OPTS = [
+    { key:"mode", label:"Kind of problem", type:"choice", "default":"add",
+      values:[{ v:"add", label:"Adding" }, { v:"sub", label:"Subtracting" }, { v:"mul", label:"Multiplying" }, { v:"div", label:"Long division" }] },
+    { key:"count", label:"How many numbers", type:"choice", "default":2, modes:["add"],
+      values:[{ v:2, label:"2 numbers" }, { v:3, label:"3 numbers" }, { v:4, label:"4 numbers" }] },
+    { key:"digits", label:"Digits in each number", type:"choice", "default":3, modes:["add", "sub"],
+      values:[1, 2, 3, 4, 5].map(function(v){ return { v:v, label:v + " (like " + ["7", "47", "347", "5347", "65,347"][v - 1] + ")" }; }) },
+    { key:"top", label:"Digits on top", type:"choice", "default":2, modes:["mul"],
+      values:[1, 2, 3, 4].map(function(v){ return { v:v, label:v + " (like " + ["7", "47", "347", "5347"][v - 1] + ")" }; }) },
+    { key:"by", label:"Digits in the number you multiply by", type:"choice", "default":1, modes:["mul"],
+      values:[1, 2, 3].map(function(v){ return { v:v, label:v + " (like " + ["6", "23", "152"][v - 1] + ")" }; }) },
+    { key:"dividend", label:"Digits in the number you divide", type:"choice", "default":3, modes:["div"],
+      values:[2, 3, 4, 5, 6].map(function(v){ return { v:v, label:v + " (like " + ["84", "847", "5847", "35,847", "135,847"][v - 2] + ")" }; }) },
+    { key:"divisor", label:"Digits in the divisor", type:"choice", "default":1, modes:["div"],
+      values:[1, 2, 3].map(function(v){ return { v:v, label:v + " (like " + ["7", "12", "125"][v - 1] + ")" }; }) },
+    { key:"decimals", label:"Decimals", type:"toggle", "default":false, modes:["add", "sub", "mul"], glyph:"0.5" },
+    { key:"regroup", label:"Carrying or borrowing", type:"choice", "default":"some", modes:["add", "sub", "mul"],
+      values:[{ v:"none", label:"None" }, { v:"some", label:"Some" }, { v:"lots", label:"Lots" }] },
+    { key:"ans", label:"Answer as", type:"choice", "default":"remainder", modes:["div"],
+      values:[{ v:"remainder", label:"A remainder" }, { v:"decimal", label:"Decimals (zeros brought down)" }] },
+    { key:"zero", label:"A 0 inside the answer", type:"toggle", "default":false, modes:["div"], glyph:"0" },
+    { key:"check", label:"Marking", type:"choice", "default":"each", modes:ALL,
+      values:[{ v:"each", label:"Check as you go" }, { v:"end", label:"Check at the end" }] }
+  ];
+  function normOpts(o){
+    o = (o && typeof o === "object") ? o : {};
+    var G = {};
+    each(OPTS, function(op){
+      var v = o[op.key];
+      if (op.type === "toggle"){
+        G[op.key] = (v === undefined || v === null || v === "") ? op["default"] : (v === true || v === 1 || /^(true|1|on|yes)$/i.test(String(v)));
+        return;
+      }
+      var s = String(v === undefined || v === null ? "" : v).trim().toLowerCase();
+      if (op.key === "mode") s = { addition:"add", subtraction:"sub", multiplication:"mul", division:"div", adding:"add", subtracting:"sub", multiplying:"mul", dividing:"div" }[s] || s;
+      var hit = op.values.filter(function(x){ return String(x.v).toLowerCase() === s; });
+      G[op.key] = hit.length ? hit[0].v : op["default"];
+    });
+    return G;
+  }
+  /* how much regrouping a problem needs, counted the way the sheet does it */
+  function addCarries(nums){
+    var ns = nums.map(parseNum), maxI = 1, maxF = 0;
+    ns.forEach(function(x){ maxI = Math.max(maxI, x.i.length); maxF = Math.max(maxF, x.f.length); });
+    var cols = maxI + maxF, carry = 0, C = 0;
+    for (var e = -maxF; e < maxI; e++){
+      var t = carry;
+      ns.forEach(function(x){ t += digitAt(x, e); });
+      carry = Math.floor(t / 10); if (carry) C++;
+    }
+    return { carries:C, cols:cols };
+  }
+  function digitAt(n, e){
+    var k = e >= 0 ? n.i.length - 1 - e : -e - 1, s = e >= 0 ? n.i : n.f;
+    return k >= 0 && k < s.length ? Number(s[k]) : 0;
+  }
+  function subBorrows(a, b){
+    var x = parseNum(a), y = parseNum(b), maxI = Math.max(x.i.length, y.i.length), maxF = Math.max(x.f.length, y.f.length);
+    var t = [], u = [], e, B = 0, zero = false;
+    for (e = maxI - 1; e >= -maxF; e--){ t.push(digitAt(x, e)); u.push(digitAt(y, e)); }
+    for (var k = t.length - 1; k >= 0; k--){
+      if (t[k] < u[k]){
+        var j = k - 1; while (j >= 0 && t[j] === 0){ t[j] = 9; j--; zero = true; }
+        if (j >= 0) t[j]--;
+        t[k] += 10; B++;
+      }
+    }
+    return { borrows:B, cols:t.length, zero:zero };
+  }
+  function mulCarries(A, B){
+    var C = 0, possible = 0, rows = [];
+    for (var r = 0; r < B.length; r++){
+      var bd = Number(B[B.length - 1 - r]), cin = 0;
+      for (var j = A.length - 1; j >= 0; j--){ var t = Number(A[j]) * bd + cin; cin = Math.floor(t / 10); if (j > 0){ possible++; if (cin) C++; } }
+      rows.push((BigInt(A) * BigInt(bd)).toString() + new Array(r + 1).join("0"));
+    }
+    if (rows.length > 1){
+      var L = 0; rows.forEach(function(s){ L = Math.max(L, s.length); });
+      var cin2 = 0;
+      for (var e = 0; e < L; e++){ var t2 = cin2; rows.forEach(function(s){ var k = s.length - 1 - e; if (k >= 0) t2 += Number(s[k]); }); cin2 = Math.floor(t2 / 10); if (e < L - 1){ possible++; if (cin2) C++; } }
+    }
+    return { carries:C, possible:possible };
+  }
+  function mulRegroupOK(r, want){
+    var lotsT = Math.max(1, Math.ceil(r.possible * 0.6));
+    if (want === "none") return r.carries === 0;
+    if (want === "lots") return r.carries >= lotsT && r.carries >= 1;
+    return r.carries >= 1 && (r.carries < lotsT || r.possible <= 1);
+  }
+  function regroupOK(C, cols, want){
+    var lotsT = cols <= 1 ? 1 : Math.max(2, cols - 1);
+    if (want === "none") return C === 0;
+    if (want === "lots") return C >= lotsT;
+    return C >= 1 && (C < lotsT || cols <= 2);
+  }
+  function numWith(whole, places){                      // whole-part digits, then decimal places (last one not 0)
+    var w = whole === 0 ? "0" : rDigits(whole), f = "";
+    for (var i = 0; i < places; i++) f += i === places - 1 ? ri(1, 9) : ri(0, 9);
+    return f ? w + "." + f : w;
+  }
+  function genAdd(G){
+    var fb = null;
+    for (var t = 0; t < 700; t++){
+      var nums = [];
+      for (var k = 0; k < G.count; k++){
+        var pl0 = G.decimals ? ri(1, 2) : 0;
+        if (G.regroup === "none" && t > 200){        // build it column by column so nothing carries
+          nums = null; break;
+        }
+        nums.push(numWith(G.digits, pl0));
+      }
+      if (!nums){ nums = noCarryAdd(G); if (!nums) continue; }
+      if (G.decimals && nums.every(function(s){ return s.indexOf(".") < 0; })) continue;
+      var r = addCarries(nums);
+      if (!fb) fb = nums;
+      if (!regroupOK(r.carries, r.cols, G.regroup)) continue;
+      return { p:{ op:"add", nums:nums }, exact:true };
+    }
+    return fb ? { p:{ op:"add", nums:fb }, exact:false } : null;
+  }
+  function noCarryAdd(G){
+    var n = G.count, places = [], maxP = 0, k, e, dig = [];
+    for (k = 0; k < n; k++){ places.push(G.decimals ? ri(1, 2) : 0); maxP = Math.max(maxP, places[k]); dig.push({}); }
+    for (e = G.digits - 1; e >= -maxP; e--){
+      var slots = [], budget = 9;
+      for (k = 0; k < n; k++){
+        if (e < -places[k]) continue;
+        var min = (e === G.digits - 1 || (places[k] > 0 && e === -places[k])) ? 1 : 0;
+        slots.push({ k:k, min:min }); budget -= min;
+      }
+      if (budget < 0) return null;
+      slots.forEach(function(s){ var x = ri(0, Math.min(budget, 9 - s.min)); x = Math.min(x, ri(0, budget)); budget -= x; dig[s.k][e] = s.min + x; });
+    }
+    return dig.map(function(d, k){
+      var w = "", f = "", e2;
+      for (e2 = G.digits - 1; e2 >= 0; e2--) w += d[e2];
+      for (e2 = -1; e2 >= -places[k]; e2--) f += d[e2];
+      return f ? w + "." + f : w;
+    });
+  }
+  function genSub(G){
+    var fb = null;
+    for (var t = 0; t < 900; t++){
+      var dTop = G.digits, dBot = dTop > 1 && ri(0, 3) === 0 ? dTop - 1 : dTop;
+      var pa = G.decimals ? ri(1, 2) : 0, pb = G.decimals ? ri(1, 2) : 0;
+      var a = numWith(dTop, pa), b = numWith(dBot, pb);
+      if (G.regroup === "lots" && dTop >= 3 && ri(0, 1)){       // zeros in the top make borrowing travel
+        var ai = a.split("."), w = ai[0].split("");
+        for (var z = 1; z < w.length - 1; z++) if (ri(0, 1)) w[z] = "0";
+        if (ri(0, 2) === 0) w[w.length - 1] = "0";
+        a = w.join("") + (ai[1] ? "." + ai[1] : "");
+      }
+      if (G.regroup === "none"){
+        var x = parseNum(a), y = parseNum(b), maxI = Math.max(x.i.length, y.i.length), maxF = Math.max(x.f.length, y.f.length);
+        var top = "", e;
+        for (e = maxI - 1; e >= -maxF; e--){
+          var bd = digitAt(y, e), td = digitAt(x, e);
+          if (td < bd) td = ri(bd, 9);
+          top += td; if (e === 0 && maxF) top += ".";
+        }
+        top = top.replace(/^0+(?=\d)/, "");
+        if (top.indexOf(".") >= 0) top = top.replace(/0+$/, "").replace(/\.$/, "");
+        a = top;
+      }
+      if (cmpNum(parseNum(a), parseNum(b)) <= 0) continue;
+      var r = subBorrows(a, b);
+      if (!fb) fb = [a, b];
+      var C = r.borrows;
+      if (G.regroup === "lots" && !(regroupOK(C, r.cols, "lots") || (r.zero && C >= 2))) continue;
+      if (G.regroup !== "lots" && !regroupOK(C, r.cols, G.regroup)) continue;
+      return { p:{ op:"sub", a:a, b:b }, exact:true };
+    }
+    return fb ? { p:{ op:"sub", a:fb[0], b:fb[1] }, exact:false } : null;
+  }
+  function genMul(G){
+    var fb = null;
+    for (var t = 0; t < 900; t++){
+      var lo = G.regroup === "none" ? 1 : 2, hi = G.regroup === "none" ? 4 : 9;
+      var A = String(ri(1, 9)), B = String(ri(lo === 1 ? 2 : 2, hi)), k;
+      for (k = 1; k < G.top; k++) A += ri(G.regroup === "none" ? 0 : 0, G.regroup === "none" ? 4 : 9);
+      for (k = 1; k < G.by; k++) B += ri(G.regroup === "none" ? 1 : 1, hi);
+      if (G.regroup === "none" && G.by === 1 && B === "1") continue;
+      var r = mulCarries(A, B);
+      if (!fb) fb = [A, B];
+      if (!mulRegroupOK(r, G.regroup)) continue;
+      var sa = A, sb = B;
+      if (G.decimals){
+        var pa = ri(1, Math.min(2, A.length)), pb = B.length > 1 && ri(0, 1) ? 1 : 0;
+        if (A[A.length - 1] === "0") continue;
+        if (pb && B[B.length - 1] === "0") continue;
+        sa = pointIn(A, pa); sb = pointIn(B, pb);
+      }
+      return { p:{ op:"mul", a:sa, b:sb }, exact:true };
+    }
+    return fb ? { p:{ op:"mul", a:fb[0], b:fb[1] }, exact:false } : null;
+  }
+  function pointIn(digits, places){
+    if (!places) return digits;
+    var s = digits; while (s.length <= places) s = "0" + s;
+    return s.slice(0, s.length - places) + "." + s.slice(s.length - places);
+  }
+  function divInfo(a, b, ans, places){
+    var dg = String(a).split(""), D = Number(b), rem = 0, started = false, zero = false, i = 0, extra = 0;
+    while (i < dg.length){
+      var cur = rem * 10 + Number(dg[i]), q = Math.floor(cur / D);
+      if (q > 0) started = true; else if (started) zero = true;
+      rem = cur - q * D; i++;
+      if (i === dg.length && ans === "decimal" && rem && extra < places){ dg.push("0"); extra++; }
+    }
+    return { zero:zero, rem:rem, extra:extra, wholeRem:Number(a) % D };
+  }
+  function genDiv(G){
+    var fb = null, nd = G.dividend, md = Math.min(G.divisor, nd - 1 || 1);
+    for (var t = 0; t < 1500; t++){
+      var b = md === 1 ? String(ri(2, 9)) : rDigits(md);
+      var a = rDigits(nd);
+      if (Number(a) < Number(b)) continue;
+      var info = divInfo(a, b, G.ans, 3);
+      if (!fb) fb = [a, b];
+      if (G.zero && !info.zero) continue;
+      if (G.ans === "decimal"){
+        if (!info.wholeRem) continue;
+        if (info.rem && t < 1100) continue;          // prefer ones that finish within 3 places
+      }
+      return { p:{ op:"div", a:a, b:b, ans:G.ans, places:3 }, exact:true };
+    }
+    return fb ? { p:{ op:"div", a:fb[0], b:fb[1], ans:G.ans, places:3 }, exact:false } : null;
+  }
+  function makeOne(G){
+    var m = G.mode;
+    return m === "sub" ? genSub(G) : m === "mul" ? genMul(G) : m === "div" ? genDiv(G) : genAdd(G);
+  }
+  function describe(p, check){
+    var a = answerOf(p), text = qText(p);
+    return { text:text, html:esc(text), params:paramsOf(p, check), answer:a.text, answerHtml:a.html };
+  }
+  function schema(){
+    return OPTS.map(function(op){
+      var o = { key:op.key, label:op.label, type:op.type, "default":op["default"] };
+      o.values = op.type === "toggle" ? [{ v:false, label:"Off" }, { v:true, label:"On" }] : op.values.map(function(v){ return { v:v.v, label:v.label }; });
+      if (op.modes){ o.modes = op.modes.slice(); }
+      return o;
+    });
+  }
+  function makeSet(count, opts){
+    var G = normOpts(opts), seen = {}, out = [];
+    count = Math.max(1, Math.min(100, Math.floor(Number(count)) || 10));
+    for (var guard = 0; out.length < count && guard < count * 40; guard++){
+      var r = makeOne(G);
+      if (!r) break;
+      var it = describe(r.p, G.check);
+      if (seen[it.text] && guard < count * 30) continue;
+      seen[it.text] = true; out.push(it);
+    }
+    return out;
+  }
+  window.addEventListener("message", function(ev){
+    var d = ev.data, msg = null;
+    if (!d || typeof d !== "object" || typeof d.type !== "string") return;
+    try {
+      if (d.type === "helper:options") msg = { type:"helper:optionsSchema", id:d.id, page:PAGE, title:document.title, options:schema() };
+      else if (d.type === "helper:make") msg = { type:"helper:made", id:d.id, page:PAGE, problems:makeSet(d.count, d.options) };
+    } catch (e){
+      msg = { type:d.type === "helper:make" ? "helper:made" : "helper:optionsSchema", id:d.id, page:PAGE,
+              error:String(e && e.message || e), problems:[], options:[] };
+    }
+    if (!msg) return;
+    try { (ev.source || window.parent).postMessage(msg, "*"); } catch (e){}
+  });
+
+  /* the maker on the page */
+  function buildMaker(){
+    var host = $("makerBody"); host.innerHTML = "";
+    each(OPTS, function(op){
+      if (op.key === "check") return;
+      var lbl = document.createElement("span"); lbl.className = "lbl"; lbl.setAttribute("data-for", op.key);
+      lbl.textContent = op.key === "regroup" ? "Carrying" : op.label;
+      host.appendChild(lbl);
+      var g = document.createElement("div");
+      g.className = "modes small"; g.setAttribute("role", "group"); g.setAttribute("aria-label", op.label); g.setAttribute("data-for", op.key);
+      var vals = op.type === "toggle" ? [{ v:false, label:"No" }, { v:true, label:"Yes" }] : op.values;
+      each(vals, function(v){
+        var btn = document.createElement("button");
+        btn.type = "button"; btn.textContent = v.label;
+        btn.setAttribute("data-key", op.key); btn.setAttribute("data-v", String(v.v));
+        btn.addEventListener("click", function(){ S.gen[op.key] = v.v; paintMaker(); save(); });
+        g.appendChild(btn);
+      });
+      host.appendChild(g);
+    });
+  }
+  function paintMaker(){
+    each(document.querySelectorAll("#maker [data-key]"), function(b){
+      b.setAttribute("aria-pressed", String(String(S.gen[b.getAttribute("data-key")]) === b.getAttribute("data-v")));
+    });
+    each(OPTS, function(op){
+      var show = !op.modes || op.modes.indexOf(S.gen.mode) >= 0;
+      each(document.querySelectorAll('#makerBody [data-for="' + op.key + '"]'), function(el){ el.hidden = !show; el.style.display = show ? "" : "none"; });
+    });
+    var rl = document.querySelector('#makerBody .lbl[data-for="regroup"]');
+    if (rl) rl.textContent = S.gen.mode === "sub" ? "Borrowing" : "Carrying";
+    paintSample();
+  }
+  function paintSample(){
+    var el = $("sample"), r = null;
+    try { r = makeOne(S.gen); } catch (e){ r = null; }
+    el.innerHTML = r ? "Makes problems like: <b>" + esc(qText(r.p)) + "</b>" : "Those choices don’t make a problem — try different ones.";
+  }
+  function fromMaker(G){
+    var r = makeOne(G);
+    if (!r){ $("genMsg").textContent = "Couldn’t make one with those settings — try different choices."; return; }
+    $("genMsg").textContent = r.exact ? "" : "Couldn’t match every setting, so this one is a little different.";
+    if (r.p.op === "div"){ S.ans = r.p.ans; r.p.places = S.places; }
+    setProblem(r.p);
+    var first = M.focusOrder.filter(function(c){ return c.main; })[0];
+    if (first){ S.sel = first.id; render({ focus:!EMBED }); }
+  }
+  $("genBtn").addEventListener("click", function(){ fromMaker(S.gen); });
+  $("againBtn").addEventListener("click", function(){
+    var G = JSON.parse(JSON.stringify(S.gen)); G.mode = P.op;
+    fromMaker(G);
+  });
+  $("maker").addEventListener("toggle", function(){ if ($("maker").open) paintSample(); save(); });
+
+  /* ===================== links ===================== */
+  function syncURL(){
+    if (!window.history || !history.replaceState || !P) return;
+    var qs = "?" + paramsOf(P, S.check);
+    if (location.search === qs) return;
+    try { history.replaceState(history.state, "", location.pathname + qs + location.hash); } catch (e){}
+  }
+  function rawParam(name){
+    var m = new RegExp("[?&]" + name + "=([^&#]*)").exec(location.search);
+    if (!m) return null;
+    var r = m[1];
+    if (/%2B/i.test(r)) r = r.replace(/\+/g, " ");
+    try { return decodeURIComponent(r); } catch (e){ return r; }
+  }
+  function fromURL(){
+    var sp, notes = [], out = null;
+    try { sp = new URLSearchParams(location.search); } catch (e){ return null; }
+    var ck = sp.get("check");
+    if (ck !== null){ ck = ck.trim().toLowerCase(); if (ck === "each" || ck === "end") S.check = ck; else notes.push("“check” can be each or end"); }
+    var an = sp.get("ans");
+    if (an !== null){ an = an.trim().toLowerCase(); if (an === "remainder" || an === "decimal") S.ans = an; else notes.push("“ans” can be remainder or decimal"); }
+    var plc = sp.get("places");
+    if (plc !== null){ var n = parseInt(plc, 10); if (n >= 1 && n <= 6) S.places = n; else notes.push("“places” can be 1 to 6"); }
+    var pr = sp.get("practice");
+    if (pr !== null){ pr = pr.trim().toLowerCase(); if (pr === "all") REVEAL_ON_LOAD = true; else if (pr !== "check" && pr !== "step") notes.push("“practice” can be all, step or check"); }
+    var op = sp.get("op"), hint = null;
+    if (op !== null){
+      op = op.trim().toLowerCase();
+      hint = { add:"add", sub:"sub", mul:"mul", div:"div", plus:"add", minus:"sub", times:"mul", divide:"div" }[op] || null;
+      if (!hint) notes.push("“op” can be add, sub, mul or div");
+    }
+    if (sp.has("q")){
+      var raw = rawParam("q") || "", r = parseProblem(raw, hint);
+      if (!r.err && hint && r.p.op !== hint) r = { err:"its op says " + hint + " but the problem uses another sign" };
+      if (r.err) notes.unshift("its problem, “" + esc(raw) + "”, couldn’t be read: " + r.err);
+      else {
+        out = r.p;
+        if (out.op === "div"){                          // a link's division is the same everywhere: remainder, 3 places unless it says
+          out.ans = an === "remainder" || an === "decimal" ? an : "remainder";
+          out.places = S.places = plc !== null && parseInt(plc, 10) >= 1 && parseInt(plc, 10) <= 6 ? parseInt(plc, 10) : 3;
+          S.ans = out.ans;
+        }
+      }
+    }
+    return { p:out, msg:notes.length ? "That link didn’t quite work — " + notes.join("; ") + ". Here’s the last problem instead." : null };
+  }
+
+  /* ===================== saving ===================== */
+  function save(){
+    if (EMBED || !P) return;
+    try {
+      localStorage.setItem(KEY, JSON.stringify({ q:qParam(P), op:P.op, check:S.check, ans:S.ans, places:S.places, gen:S.gen,
+        maker:$("maker").open, theme:document.documentElement.getAttribute("data-theme") || "",
+        work:{ key:keyOf(P), v:W.v, x:W.x, br:W.br, shown:W.shown, mk:W.mk, first:W.first, mistakes:W.mistakes,
+               hints:W.hints, checks:W.checks, done:W.done, revealed:W.revealed, reported:W.reported } }));
+    } catch (e){}
+  }
+  var SAVED = null;
+  function load(){
+    try {
+      var v = JSON.parse(localStorage.getItem(KEY) || "null");
+      if (!v) return;
+      if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
+      if (v.check === "each" || v.check === "end") S.check = v.check;
+      if (v.ans === "remainder" || v.ans === "decimal") S.ans = v.ans;
+      if (v.places >= 1 && v.places <= 6) S.places = v.places;
+      if (v.gen && typeof v.gen === "object") S.gen = normOpts(v.gen);
+      if (v.maker) $("maker").open = true;
+      if (typeof v.q === "string"){
+        var r = parseProblem(v.q, v.op);
+        if (!r.err){ if (r.p.op === "div"){ r.p.ans = S.ans; r.p.places = S.places; } SAVED = { p:r.p, work:v.work }; }
+      }
+    } catch (e){}
+  }
+
+  /* ===================== theme, print, copy ===================== */
+  var themeBtn = $("themeBtn");
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paintTheme(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", function(){
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    paintTheme(); save();
+  });
+  $("printBtn").addEventListener("click", function(){ window.print(); });
+  var copyTimer = null;
+  $("copyBtn").addEventListener("click", function(){
+    var btn = $("copyBtn"), url = location.href;
+    function show(t){ btn.textContent = t; clearTimeout(copyTimer); copyTimer = setTimeout(function(){ btn.textContent = "Copy link"; }, 2000); }
+    function fallback(){
+      var ta = document.createElement("textarea"), ok = false;
+      ta.value = url; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { ok = document.execCommand("copy"); } catch (e){}
+      document.body.removeChild(ta);
+      show(ok ? "Link copied ✓" : "Couldn’t copy — use the address bar");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(function(){ show("Link copied ✓"); }, fallback);
+    else fallback();
+  });
+
+  /* ===================== practice hooks ===================== */
+  var RPT = { key:null, graded:0, hinted:false };
+  function rptFor(){
+    var k = keyOf(P);
+    if (RPT.key !== k) RPT = { key:k, graded:0, hinted:false };
+    return RPT;
+  }
+  function noteHint(){ rptFor().hinted = true; }
+  function report(verdict){
+    var r = rptFor();
+    var d = { page:PAGE, params:paramsOf(P, S.check), verdict:verdict,
+              firstTry:verdict === "right" && r.graded === 0 && W.mistakes === 0 && !W.hints,
+              hinted:r.hinted || W.hints > 0, text:qText(P).slice(0, 120) };
+    if (verdict !== "shown") r.graded++;
+    try { document.dispatchEvent(new CustomEvent("helper:checked", { detail:d })); } catch (e){}
+    if (window.parent !== window) try { window.parent.postMessage({ type:"helper:checked", detail:d }, "*"); } catch (e){}
+  }
+  var lastH = 0;
+  function postHeight(){
+    if (window.parent === window) return;
+    var pg = document.querySelector(".page") || document.body, h = Math.ceil(pg.getBoundingClientRect().bottom + (window.pageYOffset || 0));
+    if (h === lastH) return;
+    lastH = h;
+    try { window.parent.postMessage({ type:"helper:height", h:h }, "*"); } catch (e){}
+  }
+  function embedSetup(){
+    var root = document.documentElement, th = /(?:^|[?&])theme=(light|dark)(?:&|$)/.exec(EMBED_Q);
+    root.classList.add("embed");
+    if (th) root.setAttribute("data-theme", th[1]);
+    var st = document.createElement("style");
+    st.textContent = "html.embed body{margin:0}html.embed .page{padding:12px 12px 16px;gap:14px}"
+      + "html.embed .sitenav,html.embed .masthead,html.embed .footnote,html.embed .problem{display:none !important}";
+    document.head.appendChild(st);
+    if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.querySelector(".page") || document.body);
+    setInterval(postHeight, 500);
+    window.addEventListener("load", postHeight);
+    window.addEventListener("resize", postHeight);
+    postHeight();
+  }
+
+  /* ===================== start ===================== */
+  S.gen = normOpts({});
+  if (!EMBED) load();
+  var U = fromURL();
+  if (EMBED) embedSetup();
+  paintTheme();
+  buildChips();
+  buildMaker();
+  paintMaker();
+  var start = (U && U.p) || (SAVED && SAVED.p) || parseProblem("478+356").p;
+  var keep = false;
+  if (SAVED && SAVED.work && !REVEAL_ON_LOAD && SAVED.work.key === keyOf(start)){
+    W = newWork();
+    var sw = SAVED.work;
+    ["v", "x", "br", "shown", "mk", "first"].forEach(function(k){ if (sw[k] && typeof sw[k] === "object") W[k] = sw[k]; });
+    ["mistakes", "hints", "checks"].forEach(function(k){ if (typeof sw[k] === "number") W[k] = sw[k]; });
+    W.done = !!sw.done; W.revealed = !!sw.revealed; W.reported = !!sw.reported;
+    keep = true;
+  }
+  setProblem(start, keep);
+  if (REVEAL_ON_LOAD) showAll(true);
+  if (U && U.msg){ $("linkNote").innerHTML = U.msg; $("linkNote").hidden = false; }
+
+})();
+</script>
