@@ -198,7 +198,7 @@
           <button type="button" class="tog" id="keyT">Answer key</button>
           <button type="button" class="tog" id="mixT">Mix the sections</button>
         </div>
-        <label class="chk" id="qrWrap" hidden><input type="checkbox" id="qrT"> QR code to practise on screen</label>
+        <label class="chk" id="qrWrap" hidden><input type="checkbox" id="qrT"> QR code to practice on screen</label>
         <span class="sec-msg" id="qrMsg" role="status" aria-live="polite"></span>
         <div class="row">
           <div class="field"><span class="lbl">Columns</span><div class="modes" id="colsT"></div></div>
@@ -480,7 +480,7 @@
     if (!window.HelperQR || !$("setOut").value) return;
     var n = +$("setOut").getAttribute("data-n") || 0;
     window.HelperQR.show($("setOut").value, {
-      title:S.title || "Math practice", sub:n + " problem" + (n === 1 ? "" : "s") + " · scan to practise them on screen",
+      title:S.title || "Math practice", sub:n + " problem" + (n === 1 ? "" : "s") + " · scan to practice them on screen",
       filename:"worksheet-practice-qr.svg", tooLongHint:"Use fewer problems, or copy the link and send it instead."
     });
   });
@@ -511,7 +511,7 @@
       sheet.style.setProperty("--qrw", mm.toFixed(1) + "mm");
       sheet.style.setProperty("--qrx", extra + "px");
       box.style.width = mm.toFixed(1) + "mm";
-      box.innerHTML = window.HelperQR.svg(url, { ecc:ecc, label:"QR code: practise these problems on screen" });
+      box.innerHTML = window.HelperQR.svg(url, { ecc:ecc, label:"QR code: practice these problems on screen" });
       if (mm / mods < 0.25) $("qrMsg").textContent = "That’s a lot of problems for one QR code: it prints small and dense. Fewer problems make it easier to scan.";
     }, function(){ if (my === qrSeq) drop(); });
   }
@@ -553,7 +553,7 @@
     }
     var title = esc(S.title || "Math practice");
     var withQR = S.qr && window.HelperQR;
-    var head = (withQR ? '<div class="sh-qr"><span>Practise<br>on screen:<br>scan me</span><span class="sh-qr-c" id="shQR" style="width:18mm"></span></div>' : "")
+    var head = (withQR ? '<div class="sh-qr"><span>Practice<br>on screen:<br>scan me</span><span class="sh-qr-c" id="shQR" style="width:18mm"></span></div>' : "")
       + '<div class="sh-top"><h2 class="sh-title">' + title + "</h2>"
       + (S.name ? '<div class="sh-lines"><span>Name <i></i></span><span>Date <i class="short"></i></span></div>' : "")
       + "</div>";

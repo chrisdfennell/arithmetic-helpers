@@ -211,12 +211,12 @@ On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/help
 
 ### Your progress
 
-**[Your progress](https://chrisdfennell.github.io/arithmetic-helpers/practice/progress)** is a private record, kept on the device, of what's been practised, right first time per topic, and mistakes to revisit, each with a **Try again** link. The home page shows a short "Your practice" summary too.
+**[Your progress](https://chrisdfennell.github.io/arithmetic-helpers/practice/progress)** is a private record, kept on the device, of what's been practiced, right first time per topic, and mistakes to revisit, each with a **Try again** link. The home page shows a short "Your practice" summary too.
 
 <details>
 <summary>Screenshot: Your progress</summary>
 <br>
-<img src="docs/screenshots/progress.png" width="760" alt="Your progress: streak, days practised, problems tried and right-first-time percentage, a calendar of practice days, a table by topic, mistakes to revisit and recent problems">
+<img src="docs/screenshots/progress.png" width="760" alt="Your progress: streak, days practiced, problems tried and right-first-time percentage, a calendar of practice days, a table by topic, mistakes to revisit and recent problems">
 </details>
 
 ### The Word List
@@ -235,7 +235,7 @@ On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/help
 
 ### Worksheets and practice sets
 
-The Worksheet Maker builds a sheet from sections (any helper, with that helper's own problem settings), in one to three columns with a little, some or lots of room to work, name and date lines, an answer key, and an optional QR code to practise the sheet on screen. A practice set is the same idea on screen: the whole set lives in the link, so there's nothing to sign up for, and the **QR code** button puts it on the projector for phones to scan.
+The Worksheet Maker builds a sheet from sections (any helper, with that helper's own problem settings), in one to three columns with a little, some or lots of room to work, name and date lines, an answer key, and an optional QR code to practice the sheet on screen. A practice set is the same idea on screen: the whole set lives in the link, so there's nothing to sign up for, and the **QR code** button puts it on the projector for phones to scan.
 
 <table>
   <tr>
@@ -266,7 +266,7 @@ At the end of a practice set each student copies a short result line and sends i
 
 ### Reference sheets and graph paper
 
-Forty one-page sheets to print: times tables to 12, 15 and 20 (and blank ones), table strips, addition, hundred charts, primes to 200, prime factorizations, squares, cubes and powers, fractions–decimals–percents, ratios and percents, place value, divisibility, order of operations, exponents, geometry, angles, units, algebra, graphing, integers, statistics, probability, money and time, word problems, math words and Roman numerals. Tick the ones you want and print them together, open any sheet full size, or follow its **Practise this** link to the helper.
+Forty one-page sheets to print: times tables to 12, 15 and 20 (and blank ones), table strips, addition, hundred charts, primes to 200, prime factorizations, squares, cubes and powers, fractions–decimals–percents, ratios and percents, place value, divisibility, order of operations, exponents, geometry, angles, units, algebra, graphing, integers, statistics, probability, money and time, word problems, math words and Roman numerals. Tick the ones you want and print them together, open any sheet full size, or follow its **Practice this** link to the helper.
 
 The **graph paper maker** (`reference/sheets#paper`) prints square grids, coordinate planes, dot paper, isometric dots and number lines, on Letter or A4, with your spacing, margins and title, as a page or a downloadable SVG.
 

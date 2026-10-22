@@ -122,7 +122,7 @@
   select{font-family:var(--f-body);font-size:14.5px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;
     padding:8px 10px;min-width:0;max-width:100%;min-height:40px}
 
-  /* ---- the ways to practise ---- */
+  /* ---- the ways to practice ---- */
   .play{display:flex;flex-direction:column;min-width:0}
   .tabs{display:flex;flex-wrap:wrap;gap:4px;padding:10px 12px;border-bottom:1px solid var(--rule)}
   .tabs [role="tab"]{font-family:var(--f-body);font-size:15px;font-weight:600;color:var(--ink-2);background:transparent;border:1px solid transparent;
@@ -301,7 +301,7 @@
 <div class="page">
   <header class="masthead">
     <div>
-      <div class="eyebrow">Math facts, practised</div>
+      <div class="eyebrow">Math facts, practiced</div>
       <h1>The Flash <em>Cards</em></h1>
       <p class="tagline">Pick the facts you want to know by heart. Flip the cards to study, type answers in a quiz, race the clock,
         or let Learn bring back the ones you miss until you know them all.</p>
@@ -356,8 +356,8 @@
       </details>
     </section>
 
-    <section class="panel play" aria-label="Practise">
-      <div class="tabs" role="tablist" aria-label="Ways to practise" id="tabs">
+    <section class="panel play" aria-label="Practice">
+      <div class="tabs" role="tablist" aria-label="Ways to practice" id="tabs">
         <button type="button" role="tab" id="tab-study" aria-controls="panel-study" data-mode="study">Study<small>flip the cards</small></button>
         <button type="button" role="tab" id="tab-quiz" aria-controls="panel-quiz" data-mode="quiz">Quiz<small>type the answer</small></button>
         <button type="button" role="tab" id="tab-speed" aria-controls="panel-speed" data-mode="speed">Speed round<small>race the clock</small></button>
@@ -366,7 +366,7 @@
 
       <!-- Study -->
       <div class="tabpanel" role="tabpanel" id="panel-study" aria-labelledby="tab-study">
-        <div class="empty" id="sEmpty" hidden>Pick some facts to practise first.</div>
+        <div class="empty" id="sEmpty" hidden>Pick some facts to practice first.</div>
         <div id="sMain">
           <div class="stage">
             <div class="fc" id="sCard" tabindex="0" role="button" aria-describedby="sHelp">
@@ -404,7 +404,7 @@
 
       <!-- Quiz -->
       <div class="tabpanel" role="tabpanel" id="panel-quiz" aria-labelledby="tab-quiz" hidden>
-        <div class="empty" id="qEmpty" hidden>Pick some facts to practise first.</div>
+        <div class="empty" id="qEmpty" hidden>Pick some facts to practice first.</div>
         <div class="qcard" id="qCard">
           <span class="corner" id="qTag"></span><span class="badge" id="qBadge"></span>
           <div class="bigq" id="qQ"></div>
@@ -426,7 +426,7 @@
 
       <!-- Speed round -->
       <div class="tabpanel" role="tabpanel" id="panel-speed" aria-labelledby="tab-speed" hidden>
-        <div class="empty" id="pEmpty" hidden>Pick some facts to practise first.</div>
+        <div class="empty" id="pEmpty" hidden>Pick some facts to practice first.</div>
         <div class="optrow"><span>How long</span><div class="modes" id="secsSeg"></div></div>
         <div class="clock" id="pClock"><b id="pTime">60</b><span>seconds</span><span>·</span><span><b id="pRight" style="font-size:22px">0</b> right</span></div>
         <div class="meter" aria-hidden="true"><i id="pMeter" style="background:var(--key);width:100%"></i></div>
@@ -446,7 +446,7 @@
 
       <!-- Learn -->
       <div class="tabpanel" role="tabpanel" id="panel-learn" aria-labelledby="tab-learn" hidden>
-        <div class="empty" id="lEmpty" hidden>Pick some facts to practise first.</div>
+        <div class="empty" id="lEmpty" hidden>Pick some facts to practice first.</div>
         <div class="shelf" id="lShelf" aria-label="Boxes"></div>
         <div class="meter" aria-hidden="true"><i id="lMeter"></i></div>
         <div class="done-msg" id="lMastered" aria-live="polite"></div>
@@ -473,7 +473,7 @@
       <div class="legend"><span><i></i>New</span><span><i class="l"></i>Learning</span><span><i class="m"></i>Mastered</span>
         <span id="chartCounts"></span></div></div>
     <div class="chart-body">
-      <p class="note">Each square is one fact, coloured by how well you know it. Tap one to practise it now.
+      <p class="note">Each square is one fact, coloured by how well you know it. Tap one to practice it now.
         Faded squares aren’t in the deck you picked.</p>
       <div id="chart"></div>
     </div>
@@ -1969,15 +1969,15 @@
         if (!ids.length){ return; }
         body = '<div class="chips">' + ids.map(function(id){ var c = card(id); return c ? cellBtn(id, c.text, chipLabel(c), "chip" + (k === "words" ? " wordchip" : "")) : ""; }).join("") + "</div>";
       }
-      html += '<div class="chart-sec"><h3>' + esc(DNAME[k]) + (k === "div" ? "<small>rows: divide by · columns: the answer</small>" : k === "times" ? "<small>tap a square to practise it</small>" : k === "prime" ? "<small>1 to 100</small>" : "") + "</h3>" + body + "</div>";
+      html += '<div class="chart-sec"><h3>' + esc(DNAME[k]) + (k === "div" ? "<small>rows: divide by · columns: the answer</small>" : k === "times" ? "<small>tap a square to practice it</small>" : k === "prime" ? "<small>1 to 100</small>" : "") + "</h3>" + body + "</div>";
     });
     host.innerHTML = html;
   }
   $("chart").addEventListener("click", function(e){
     var b = e.target.closest("[data-id]");
-    if (b){ userActed = true; practise(b.getAttribute("data-id")); }
+    if (b){ userActed = true; practice(b.getAttribute("data-id")); }
   });
-  function practise(id){
+  function practice(id){
     if (!card(id)) return;
     if (S.mode === "study"){ ST.extra = id; showMode(); }
     else { S.mode = "quiz"; QZ.pend = id; showMode(); syncURL(); save(); }
@@ -2035,7 +2035,7 @@
     old();
   });
   $("clearBtn").addEventListener("click", function(){
-    if (!window.confirm("Forget every card you’ve practised on this device, and your best speed scores?")) return;
+    if (!window.confirm("Forget every card you’ve practiced on this device, and your best speed scores?")) return;
     R.f = {}; R.step = 0; R.best = {};
     save(); rebuild(true);
     $("footMsg").textContent = "Your record is cleared.";
@@ -2183,7 +2183,7 @@
   /* ===================== start ===================== */
   window.FlashCards = { card:card, deckIds:deckIds, check:check, parseNum:parseNum, pickNext:pickNext, grade:grade, status:status,
     cardParams:cardParams, deckQuery:deckQuery, apiMake:apiMake, apiOptions:apiOptions, timesTip:timesTip, GAP:GAP,
-    state:function(){ return { S:S, R:R, IDS:IDS, ORDER:ORDER, ST:ST, QZ:QZ, SP:SP, LN:LN }; }, rebuild:rebuild, practise:practise,
+    state:function(){ return { S:S, R:R, IDS:IDS, ORDER:ORDER, ST:ST, QZ:QZ, SP:SP, LN:LN }; }, rebuild:rebuild, practice:practice,
     setMode:setMode, speedFinish:speedFinish, buildPrint:buildPrint };
 
   if (!EMBED) load();

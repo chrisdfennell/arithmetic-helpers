@@ -144,7 +144,7 @@
     var log = read(), probs = problems(log), today = startOfDay(now);
     var days = {}, byTopic = {};
     log.forEach(function(x){ days[dayKey(x.t)] = true; });
-    // the streak: days in a row with practice, up to today (or up to yesterday, if today hasn't been practised yet)
+    // the streak: days in a row with practice, up to today (or up to yesterday, if today hasn't been practiced yet)
     var streak = 0, d = today;
     if (!days[dayKey(d)]) d = startOfDay(d - DAY / 2);
     while (days[dayKey(d)]){ streak++; d = startOfDay(d - DAY / 2); }
@@ -181,7 +181,7 @@
     return {
       total:log.length, problems:probs.length, rightFirst:rf, rightFirstPct:pct(rf, probs.length),
       hinted:probs.filter(function(P){ return P.hinted; }).length, shown:probs.filter(function(P){ return P.shown; }).length,
-      days:Object.keys(days).length, streak:streak, practisedToday:!!days[dayKey(today)],
+      days:Object.keys(days).length, streak:streak, practicedToday:!!days[dayKey(today)],
       week:week, last:log.length ? log[log.length - 1].t : 0, first:log.length ? log[0].t : 0,
       topics:topics,
       revisit:probs.filter(function(P){ return !P.firstRight && !P.redeemed; }).sort(function(a, b){ return b.last - a.last; }),
@@ -299,7 +299,7 @@
     }
     var html = '<div class="hp"><div class="hp-main"><div class="hp-stats">'
       + '<div class="hp-stat"><b>' + s.streak + "<small>" + (s.streak === 1 ? "day" : "days") + "</small></b><span>"
-      + (s.streak ? (s.practisedToday ? "in a row, today too" : "in a row — practise today to keep it") : "streak — practise today to start one") + "</span></div>"
+      + (s.streak ? (s.practicedToday ? "in a row, today too" : "in a row — practice today to keep it") : "streak — practice today to start one") + "</span></div>"
       + '<div class="hp-stat"><b>' + s.week.problems + "</b><span>problem" + (s.week.problems === 1 ? "" : "s") + " in the last 7 days</span></div>"
       + '<div class="hp-stat"><b>' + s.rightFirstPct + "<small>%</small></b><span>right first time (" + s.rightFirst + " of " + s.problems + ")</span></div>"
       + '</div><div style="margin-top:16px"><p class="hp-lbl">By topic &middot; right first time</p><ul class="hp-topics">';
@@ -314,7 +314,7 @@
       html += '<a class="hp-sug" style="--c:' + cvar(g.c) + '" href="' + esc(g.href) + '"><b>' + esc(g.head) + "</b><span>" + esc(g.body) + "</span></a>";
     });
     html += "</div>";
-    html += '<div class="hp-foot"><span>Last practised ' + ago(s.last, now) + " &middot; " + s.days + " day" + (s.days === 1 ? "" : "s")
+    html += '<div class="hp-foot"><span>Last practiced ' + ago(s.last, now) + " &middot; " + s.days + " day" + (s.days === 1 ? "" : "s")
       + " in all &middot; kept on this device only</span>"
       + '<a href="' + esc(U("progress.html")) + '">See all your progress <span aria-hidden="true">→</span></a></div></div>';
     return html;

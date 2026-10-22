@@ -517,8 +517,8 @@
       <div class="row">
         <button type="button" class="ghost" id="fitBtn" aria-pressed="false" title="Show the sheet at its real size">Actual size</button>
         <button type="button" class="go" id="printOne">Print this sheet</button>
-        <a class="ghost" id="practise" href="../index.html">Practise this <span aria-hidden="true">→</span></a>
-        <a class="ghost" id="practise2" href="../index.html" hidden><span id="practise2T">More</span> <span aria-hidden="true">→</span></a>
+        <a class="ghost" id="practice" href="../index.html">Practice this <span aria-hidden="true">→</span></a>
+        <a class="ghost" id="practice2" href="../index.html" hidden><span id="practice2T">More</span> <span aria-hidden="true">→</span></a>
       </div>
     </div>
     <div class="stage" id="stage"><div class="frame" id="frame"></div></div>
@@ -2415,7 +2415,7 @@
       "<p>" + s.blurb + "</p>" +
       '<label class="pick"><input type="checkbox" value="' + s.id + '"> Pick to print</label>' +
       kids.map(function(k){ return '<label class="pick sub"><input type="checkbox" value="' + k.id + '"> ' + k.pick + "</label>"; }).join("") +
-      '<div class="c-links"><a href="#' + s.id + '">View full size</a>' + (s.href ? '<a href="' + helperURL(s.href) + '">Practise this <span aria-hidden="true">→</span></a>' : "") + "</div>" +
+      '<div class="c-links"><a href="#' + s.id + '">View full size</a>' + (s.href ? '<a href="' + helperURL(s.href) + '">Practice this <span aria-hidden="true">→</span></a>' : "") + "</div>" +
       "</div></li>";
   }
   var MAKER_ICON = '<svg viewBox="0 0 120 150" width="120" height="150" aria-hidden="true" style="background:#fff;box-shadow:var(--paper-shadow)">' +
@@ -2546,10 +2546,10 @@
       $("viewT").textContent = s.title;
       $("prevLink").href = "#" + prev.id; $("prevT").textContent = prev.short;
       $("nextLink").href = "#" + next.id; $("nextT").textContent = next.short;
-      $("practise").hidden = !s.href;
-      if (s.href){ $("practise").href = helperURL(s.href); $("practise").title = "Practise on " + s.hname; }
-      $("practise2").hidden = !s.also;
-      if (s.also){ $("practise2").href = helperURL(s.also[0]); $("practise2T").textContent = s.also[1]; }
+      $("practice").hidden = !s.href;
+      if (s.href){ $("practice").href = helperURL(s.href); $("practice").title = "Practice on " + s.hname; }
+      $("practice2").hidden = !s.also;
+      if (s.also){ $("practice2").href = helperURL(s.also[0]); $("practice2T").textContent = s.also[1]; }
       document.title = s.title + " · Reference Sheets";
       sizeThumbs();
       if (fromHash){
