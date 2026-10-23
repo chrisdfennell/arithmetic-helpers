@@ -271,6 +271,8 @@
     { page:"geometry.html", name:"The Shape Shop" }, { page:"stats.html", name:"The Dot Plot" },
     { page:"scratch.html", name:"The Scratch Paper", kind:"byhand" }, { page:"wordproblems.html", name:"The Story Problem" }, { page:"probability.html", name:"The Chance Spinner" },
     { page:"trigonometry.html", name:"The Unit Circle" }, { page:"calculus.html", name:"The Rate Machine" },
+    { page:"money-math.html", name:"The Money Jar" },
+    { page:"unit-conversions.html", name:"The Measuring Tape" },
     { page:"number-sense.html", name:"The Place Value Chart" }, { page:"quadratics.html", name:"The Area Box" },
     { page:"logarithms.html", name:"The Log Ladder" }, { page:"sequences.html", name:"The Number Staircase" },
     { page:"functions.html", name:"The Function Machine" }, { page:"radicals.html", name:"The Root Cellar" }, { page:"complex-numbers.html", name:"The Complex Plane" },
@@ -279,11 +281,25 @@
     { page:"flashcards.html", name:"The Flash Cards", kind:"cards" },
     { page:"reference.html", name:"Reference sheets", kind:"tool" }, { page:"results.html", name:"Class results", kind:"tool" },
     { page:"daily.html", name:"Problem of the day", kind:"tool" }, { page:"qr.js", name:"QR codes (qr.js)", kind:"tool" },
-    { page:"keypad", name:"Math keys (tools.js)", kind:"tool" }
+    { page:"keypad", name:"Math keys (tools.js)", kind:"tool" },
+    { page:"tutor.html", name:"Tutor me (tutor.js)", kind:"tool" }
   ];
 
   /* problems with known answers: open the link, and every value must show in the answer */
   var KNOWN = {
+    "money-math.html":[ ["mode=compound&task=amount&p=5000&r=4&n=12&t=10",["7454.16","2454.16"]], ["q=" + encodeURIComponent("$1000 at 5% compounded continuously for 3 years"),["1161.83","161.83"]],
+                        ["mode=compound&task=apy&r=4&n=12",["4.07"]], ["mode=save&task=fv&pmt=200&r=5&t=20",["82206.73","34206.73"]],
+                        ["mode=save&task=goal&goal=10000&r=4&t=5",["150.84"]], ["q=" + encodeURIComponent("$20000 car loan 6% 5 years monthly payment"),["386.66","3199.60"]],
+                        ["mode=loan&amt=250000&r=6.5&t=30&kind=home",["1580.17","318861.20"]], ["q=" + encodeURIComponent("credit card $3000 at 22% APR paying $100 a month"),["44","1395.37"]],
+                        ["mode=card&task=month&bal=3000&apr=22",["55.00"]], ["q=" + encodeURIComponent("45 hours at $18 an hour"),["855.00"]],
+                        ["mode=pay&task=net&gross=1500&per=biweek&fed=12&state=5&fica=7.65&ret=5",["1068.00"]], ["mode=budget&task=rule&inc=4000",["2000","1200","800"]],
+                        ["q=" + encodeURIComponent("20% off then 15% off $80"),["54.40","32"]], ["mode=shop&task=unit&items=3.99:12:oz,5.49:18:oz",["~b · 18 oz","0.305"]] ],
+    "unit-conversions.html":[ ["mode=length&m=5ft7in&to=in",["67"]], ["mode=length&m=67in&to=ft,in",["5","7"]], ["mode=length&a=5ft7in&b=3ft8in&op=add",["9","3"]],
+                              ["mode=weight&m=2gal&to=cup",["32"]], ["mode=metric&m=3.2km&to=m",["3200"]], ["mode=systems&m=5mi&to=km",[{ f:8.04672, loose:0.001 }]],
+                              ["mode=time&m=2h45min&to=min",["165"]], ["mode=temp&m=98.6degF&to=degC",["37"]], ["mode=rates&m=60mi/h&to=ft/s",["88"]],
+                              ["mode=rates&m=3ft%5E2&to=in%5E2",["432"]], ["q=" + encodeURIComponent("5 ft 7 in to inches"),["67"]], ["q=" + encodeURIComponent("3.2 km to m"),["3200"]],
+                              ["q=" + encodeURIComponent("60 mph to ft/s"),["88"]], ["q=" + encodeURIComponent("98.6 F to C"),["37"]], ["q=" + encodeURIComponent("2 gallons to cups"),["32"]],
+                              ["q=" + encodeURIComponent("how many square inches in 3 square feet"),["432"]] ],
     "functions.html":[ ["mode=eval&f=" + encodeURIComponent("x^2-3x+2") + "&at=4",["6"]], ["mode=eval&f=" + encodeURIComponent("2x+5") + "&at=-3",["-1"]],
                        ["mode=eval&f=" + encodeURIComponent("1/(x-2)") + "&at=2",["~undefined"]], ["mode=eval&f=" + encodeURIComponent("sqrt(x+8)") + "&at=4",[{ f:2 * Math.sqrt(3) }]],
                        ["mode=func&pts=1,2;2,3;1,4",["~not a function"]], ["mode=domain&f=" + encodeURIComponent("sqrt(x+4)"),["-4","0"]],
@@ -434,6 +450,19 @@
 
   /* Check my answer: [link, what to type, expected verdict] */
   var CHECKS = {
+    "money-math.html":[ ["mode=compound&task=amount&p=5000&r=4&n=12&t=10",["$7,454.16","$2,454.16"],"right"], ["mode=compound&task=amount&p=5000&r=4&n=12&t=10",["7000","2000"],"wrong"],
+                        ["mode=compound&task=apy&r=4&n=12",["4.07%"],"right"], ["mode=compound&task=apy&r=4&n=12",["4%"],"wrong"],
+                        ["mode=loan&amt=20000&r=6&t=5&kind=car",["386.66","3199.60"],"right"], ["mode=loan&amt=20000&r=6&t=5&kind=car",["386.66","23199.60"],"wrong"],
+                        ["mode=card&task=month&bal=3000&apr=22",["660"],"wrong"], ["mode=card&task=payoff&bal=3000&apr=22&pay=100",["44","1,395.37"],"right"],
+                        ["mode=pay&task=hourly&hrs=45&rate=18",["855"],"right"], ["mode=pay&task=hourly&hrs=45&rate=18",["1215"],"wrong"],
+                        ["mode=shop&task=stack&price=80&d=20,15",["54.40","32%"],"right"], ["mode=shop&task=stack&price=80&d=20,15",["52","35"],"wrong"],
+                        ["mode=shop&task=markpct&cost=40&price=60",["33.3"],"wrong"] ],
+    "unit-conversions.html":[ ["mode=length&m=5ft7in&to=in",["67"],"right"], ["mode=length&m=5ft7in&to=in",["67 inches"],"right"], ["mode=length&m=5ft7in&to=in",["57"],"wrong"],
+                              ["mode=length&m=30in&to=ft",["2 6/12"],"simplify"], ["mode=length&m=30in&to=ft",["2 1/2"],"right"], ["mode=metric&m=3.2km&to=m",["320"],"wrong"],
+                              ["mode=systems&m=5mi&to=km",["8.05 km"],"right"], ["mode=temp&m=98.6degF&to=degC",["37 °C"],"right"], ["mode=temp&m=98.6degF&to=degC",["66.6"],"wrong"],
+                              ["mode=rates&m=3ft%5E2&to=in%5E2",["36"],"wrong"], ["mode=rates&m=3ft%5E2&to=in%5E2",["432 sq in"],"right"],
+                              ["mode=length&a=5ft7in&b=3ft8in&op=add",["8 ft 15 in"],"simplify"], ["mode=time&m=200min&to=h,min",["3 h 20 min"],"right"],
+                              ["mode=weight&m=40floz&to=cup",["2.5"],"wrong"] ],
     "functions.html":[ ["mode=eval&f=" + encodeURIComponent("x^2-3x+2") + "&at=4",["6"],"right"], ["mode=eval&f=" + encodeURIComponent("x^2-3x+2") + "&at=4",["12/2"],"simplify"],
                        ["mode=eval&f=" + encodeURIComponent("x^2+1") + "&at=-3",["-8"],"wrong"], ["mode=eval&f=" + encodeURIComponent("x^2+1") + "&at=" + encodeURIComponent("a+1"),["(a+1)^2+1"],"simplify"],
                        ["mode=domain&f=" + encodeURIComponent("1/(x-2)") + "&ask=domain",["all real numbers except 2"],"right"], ["mode=domain&f=" + encodeURIComponent("sqrt(x-3)") + "&ask=domain",["(3, ∞)"],"wrong"],
@@ -1880,7 +1909,180 @@
     return roots.filter(function(r, i){ return !i || r - roots[i - 1] > 0.05; }).length;
   }
 
+  /* The Measuring Tape: every unit as an exact amount of one base unit (meters, kilograms, cubic meters, seconds, square
+     meters, dollars), built from the definitions (1 in = 2.54 cm, 1 lb = 0.45359237 kg, 1 gal = 231 in³) */
+  var UNI_IN = R(254n, 10000n), UNI_LB = R(45359237n, 100000000n), UNI_GAL = mul(mul(mul(R(231), UNI_IN), UNI_IN), UNI_IN);
+  var UNI_U = (function(){
+    var u = { "in":["L", UNI_IN], ft:["L", mul(R(12), UNI_IN)], yd:["L", mul(R(36), UNI_IN)], mi:["L", mul(R(63360), UNI_IN)],
+              lb:["M", UNI_LB], oz:["M", div(UNI_LB, R(16))], ton:["M", mul(UNI_LB, R(2000))],
+              gal:["V", UNI_GAL], qt:["V", div(UNI_GAL, R(4))], pt:["V", div(UNI_GAL, R(8))], cup:["V", div(UNI_GAL, R(16))], floz:["V", div(UNI_GAL, R(128))],
+              tbsp:["V", div(UNI_GAL, R(256))], tsp:["V", div(UNI_GAL, R(768))],
+              s:["T", R(1)], min:["T", R(60)], h:["T", R(3600)], d:["T", R(86400)], wk:["T", R(604800)], yr:["T", R(31536000)], mo:["T", R(2628000)],
+              usd:["$", R(1)], cent:["$", R(1, 100)] };
+    [["k", 3], ["h", 2], ["da", 1], ["", 0], ["d", -1], ["c", -2], ["m", -3]].forEach(function(p){
+      var f = p[1] >= 0 ? R(10n ** BigInt(p[1])) : R(1n, 10n ** BigInt(-p[1]));
+      u[p[0] + "m"] = ["L", f]; u[p[0] + "g"] = ["M", div(f, R(1000))]; u[p[0] + "L"] = ["V", div(f, R(1000))];
+    });
+    u.acre = ["A", mul(R(43560), mul(u.ft[1], u.ft[1]))]; u.ha = ["A", R(10000)];
+    return u;
+  })();
+  function uniAtom(k){                          // "ft", "ft^2", "acre" → [dimension, factor]
+    var m = /^([a-zA-Z]+)(?:\^([23]))?$/.exec(k), key = null;
+    if (!m) throw new Error("unit " + k);
+    Object.keys(UNI_U).forEach(function(x){ if (x.toLowerCase() === m[1].toLowerCase()) key = x; });
+    if (!key) throw new Error("unit " + k);
+    var u = UNI_U[key], p = Number(m[2] || 1);
+    if (u[0] === "L"){ var f = R(1); for (var i = 0; i < p; i++) f = mul(f, u[1]); return ["L" + p, f]; }
+    if (u[0] === "V") return ["L3", u[1]];
+    if (u[0] === "A") return ["L2", u[1]];
+    return [u[0], u[1]];
+  }
+  function uniUnit(s){ var p = s.split("/"), a = uniAtom(p[0]); if (p.length === 1) return a; var b = uniAtom(p[1]); return [a[0] + "/" + b[0], div(a[1], b[1])]; }
+  function uniMeas(s){
+    var re = /(-?\d+(?:\.\d+)?(?:\/\d+)?)([a-zA-Z]+(?:\^[23])?(?:\/[a-zA-Z]+(?:\^[23])?)?)/g, m, out = [];
+    while ((m = re.exec(s))) out.push({ v:num(m[1]), u:m[2] });
+    return out;
+  }
+  function uniTemp(v, a, b){
+    var k = R(27315n, 100n), c = a === "degC" ? v : a === "degF" ? mul(sub(v, R(32)), R(5, 9)) : sub(v, k);
+    return b === "degC" ? c : b === "degF" ? add(mul(c, R(9, 5)), R(32)) : add(c, k);
+  }
+  function uniSplit(total, units){              // a total (base units) → whole numbers of each unit, the rest in the last
+    var sm = uniUnit(units[units.length - 1])[1], rest = div(total, sm), vals = [];
+    units.slice(0, -1).forEach(function(u){
+      var r = div(uniUnit(u)[1], sm), q = div(rest, r), w = q.n / q.d;
+      vals.push(R(w)); rest = sub(rest, mul(R(w), r));
+    });
+    vals.push(rest);
+    return vals;
+  }
+
+  /* ===================== the Money Jar: money worked out here with raw BigInt fractions (no gcd, so 9,000-period
+     powers stay quick), every amount rounded half up to the cent once, at the end ===================== */
+  var MON_PERK = { hour:2080, week:52, biweek:26, semimonth:24, month:12, year:1 };
+  function monQ(s){                               // "3.99" → { n:399n, d:100n }
+    var m = /^(-?)(\d*)(?:\.(\d+))?$/.exec(String(s).trim()); if (!m) throw new Error("not a number: " + s);
+    var f = m[3] || ""; return { n:BigInt((m[1] || "") + ((m[2] || "0") + f)), d:10n ** BigInt(f.length) };
+  }
+  function monI(k){ return { n:BigInt(k), d:1n }; }
+  function monM(a, b){ return { n:a.n * b.n, d:a.d * b.d }; }
+  function monD(a, b){ return b.n < 0n ? { n:-a.n * b.d, d:a.d * -b.n } : { n:a.n * b.d, d:a.d * b.n }; }
+  function monA(a, b){ return { n:a.n * b.d + b.n * a.d, d:a.d * b.d }; }
+  function monS(a, b){ return { n:a.n * b.d - b.n * a.d, d:a.d * b.d }; }
+  function monPow(a, k){ var r = { n:1n, d:1n }, b = a; while (k > 0){ if (k % 2) r = monM(r, b); k = Math.floor(k / 2); if (k) b = monM(b, b); } return r; }
+  function monCmp(a, b){ var x = a.n * b.d - b.n * a.d; return x < 0n ? -1 : x > 0n ? 1 : 0; }
+  function monRound(x, k){ var s = 10n ** BigInt(k), v = x.n * s, neg = v < 0n; if (neg) v = -v; var q = (2n * v + x.d) / (2n * x.d); return neg ? -q : q; }
+  function monCeil(x){ var v = x.n * 100n, q = v / x.d; return q * x.d < v ? q + 1n : q; }
+  function monStr(c, k){ var neg = c < 0n, s = (neg ? -c : c).toString(); k = k === undefined ? 2 : k; if (k){ while (s.length <= k) s = "0" + s; s = s.slice(0, -k) + "." + s.slice(-k); } return (neg ? "-" : "") + s; }
+  function monTrim(s){ return s.indexOf(".") < 0 ? s : s.replace(/0+$/, "").replace(/\.$/, ""); }
+  function monExp(x){ var SC = 10n ** 40n, sum = SC, t = SC; for (var k = 1n; k < 300n && t; k++){ t = t * x.n / (x.d * k); sum += t; } return { n:sum, d:SC }; }
+  function monRc(c, i){ return monRound(monM({ n:c, d:100n }, i), 2); }      // c cents × a rate, to the cent
+  function monYears(o){ return o.t !== undefined ? monQ(o.t) : monD(monQ(o.mo), monI(12)); }
+  function monWhole(x){ if (x.n % x.d !== 0n) throw new Error("not whole"); return Number(x.n / x.d); }
+  // the answers, in order, as plain strings (what the problem maker’s answer has to say)
+  function monWork(o){
+    var t = o.task || "", r, i, N, c, out = [];
+    if (o.mode === "compound"){
+      r = monD(monQ(o.r), monI(100));
+      var n = o.n === "cont" ? 0 : Number(o.n);
+      if (t === "apy"){ var g = n ? monPow(monA(monI(1), monD(r, monI(n))), n) : monExp(r); return [monStr(monRound(monM(monS(g, monI(1)), monI(100)), 2))]; }
+      var p = monQ(o.p), T = monYears(o), A = n ? monM(p, monPow(monA(monI(1), monD(r, monI(n))), monWhole(monM(T, monI(n))))) : monM(p, monExp(monM(r, T)));
+      var Ac = monRound(A, 2); return [monStr(Ac), monStr(Ac - monRound(p, 2))];
+    }
+    if (o.mode === "save"){
+      r = monD(monQ(o.r), monI(100)); var f = Number(o.n || 12); N = monWhole(monM(monYears(o), monI(f))); i = monD(r, monI(f));
+      var G = monPow(monA(monI(1), i), N), S = r.n === 0n ? monI(N) : monD(monS(G, monI(1)), i);
+      if (o.due === "1") S = monM(S, monA(monI(1), i));
+      if (t === "goal") return [monStr(monCeil(monD(monQ(o.goal), S)))];
+      var st = monQ(o.start || "0"), fv = monRound(monA(monM(st, G), monM(monQ(o.pmt), S)), 2), dep = monRound(st, 2) + monRound(monQ(o.pmt), 2) * BigInt(N);
+      return [monStr(fv), monStr(fv - dep)];
+    }
+    if (o.mode === "loan"){
+      var L = o.price !== undefined ? monS(monQ(o.price), monQ(o.down || "0")) : monQ(o.amt);
+      N = monWhole(monM(monYears(o), monI(12))); i = monD(monQ(o.r), monI(1200));
+      var F = monPow(monA(monI(1), i), N), M = i.n === 0n ? monD(L, monI(N)) : monD(monM(monM(L, i), F), monS(F, monI(1))), Mc = monRound(M, 2), Lc = monRound(L, 2);
+      out = [monStr(Mc), monStr(i.n === 0n ? 0n : Mc * BigInt(N) - Lc)];
+      if (o.extra !== undefined){ var pay = Mc + monRound(monQ(o.extra), 2), bal = Lc, k = 0; while (bal > 0n && k < 1000){ k++; var it = monRc(bal, i); bal = bal + it - (bal + it <= pay ? bal + it : pay); } out.push(String(k)); }
+      return out;
+    }
+    if (o.mode === "card"){
+      i = monD(monQ(o.apr), monI(1200)); c = monRound(monQ(o.bal), 2);
+      if (t === "month") return [monStr(monRc(c, i))];
+      var fixed = o.pay === "min" ? null : monRound(monQ(o.pay), 2), m2 = 0, ti = 0n;
+      while (c > 0n && m2 < 600){ m2++; var it2 = monRc(c, i), owe = c + it2, py = fixed === null ? it2 + monRc(c, { n:1n, d:100n }) : fixed; if (fixed === null && py < 2500n) py = 2500n; if (py > owe) py = owe; ti += it2; c = owe - py; }
+      return [String(m2), monStr(ti)];
+    }
+    if (o.mode === "pay"){
+      if (t === "hourly"){ var h = monQ(o.hrs), w = monQ(o.rate), reg = monCmp(h, monI(40)) > 0 ? monI(40) : h, ot = monS(h, reg); return [monStr(monRound(monA(monM(reg, w), monM(ot, monM(w, { n:3n, d:2n }))), 2))]; }
+      if (t === "salary"){ var s = monQ(o.sal); return [monStr(monRound(monD(s, monI(2080)), 2)), monStr(monRound(monD(s, monI(MON_PERK[o.per])), 2))]; }
+      if (t === "convert") return [monStr(monRound(monD(monM(monQ(o.amt), monI(MON_PERK[o.from])), monI(MON_PERK[o.to])), 2))];
+      var g2 = monRound(monQ(o.gross), 2), pc = function(k){ return monD(monQ(o[k] || "0"), monI(100)); }, ret = monRc(g2, pc("ret")), tax = g2 - ret;
+      return [monStr(g2 - ret - monRc(tax, pc("fed")) - monRc(tax, pc("state")) - monRc(g2, pc("fica")))];
+    }
+    if (o.mode === "budget"){
+      var inc = monQ(o.inc), ic = monRound(inc, 2);
+      if (t === "rule") return (o.split || "50-30-20").split("-").map(function(x){ return monStr(monRc(ic, monD(monQ(x), monI(100)))); });
+      if (t === "pct") return [monTrim(monStr(monRound(monM(monD(monQ(o.amt), inc), monI(100)), 1), 1))];
+      var tot = 0n; o.items.split(",").forEach(function(x){ tot += monRound(monQ(x.split(":")[1]), 2); });
+      return [monStr(tot), monStr(ic - tot)];
+    }
+    if (t === "stack"){ var kf = monI(1); o.d.split(",").forEach(function(x){ kf = monM(kf, monS(monI(1), monD(monQ(x), monI(100)))); }); return [monStr(monRound(monM(monQ(o.price), kf), 2)), monTrim(monStr(monRound(monM(monS(monI(1), kf), monI(100)), 2)))]; }
+    if (t === "taxtip"){ var b = monRound(monQ(o.bill), 2), tx = monRc(b, monD(monQ(o.tax || "0"), monI(100))), tp = monRc(o.on === "post" ? b + tx : b, monD(monQ(o.tip), monI(100))); return [monStr(tp), monStr(b + tx + tp)]; }
+    if (t === "unit"){
+      var CONV = { lb:16, kg:1000, l:1000, gal:4 }, offs = o.items.split(",").map(function(x){ return x.split(":"); }), same = offs.every(function(x){ return x[2] === offs[0][2]; });
+      var ups = offs.map(function(x){ var q = monQ(x[1]); if (!same && CONV[x[2]]) q = monM(q, monI(CONV[x[2]])); return monD(monQ(x[0]), q); });
+      var best = 0; ups.forEach(function(u, j){ if (monCmp(u, ups[best]) < 0) best = j; });
+      var tie = ups.filter(function(u){ return monCmp(u, ups[best]) === 0; }).length > 1;
+      return [tie ? "same" : "ABC".charAt(best), monStr(monRound(ups[best], 3), 3)];
+    }
+    if (t === "markup"){ var pr = monM(monQ(o.cost), monA(monI(1), monD(monQ(o.up), monI(100)))); out = [monStr(monRound(pr, 2))]; if (o.down !== undefined) out.push(monStr(monRound(monM(pr, monS(monI(1), monD(monQ(o.down), monI(100)))), 2))); return out; }
+    if (t === "markpct"){ var cs = monQ(o.cost); return [monTrim(monStr(monRound(monM(monD(monS(monQ(o.price), cs), cs), monI(100)), 1), 1))]; }
+    var gi = monPow(monA(monI(1), monD(monQ(o.r), monI(100))), Number(o.t));
+    return [monStr(monRound(o.dir === "power" ? monD(monQ(o.amt), gi) : monM(monQ(o.amt), gi), 2))];
+  }
+  function monNums(t){ return (String(t).replace(/[−–]/g, "-").replace(/\$/g, "").replace(/(\d),(?=\d{3}(?!\d))/g, "$1").match(/-?\d+(?:\.\d+)?/g) || []); }
+
   var ORACLE = {
+    "money-math.html":function(p, a, ansText){
+      var o = P(p), want, got, t = String(ansText);
+      try { want = monWork(o); } catch (e){ return { ok:false, msg:"couldn’t re-work it (" + e.message + ")" }; }
+      if (o.mode === "shop" && o.task === "unit"){
+        var lead = /^\s*(same|[ABC])\b/.exec(t), nums = monNums(t);
+        return lead && lead[1] === want[0] && nums.length && Number(nums[nums.length - 1]) === Number(want[1]) ? { ok:true } : { ok:false, msg:"expected " + want.join(", ") };
+      }
+      got = monNums(t);
+      if (o.mode === "save" && o.task === "goal") got = got.slice(0, 1);
+      var same = got.length === want.length && got.every(function(x, k){ return Number(x) === Number(want[k]); });
+      return same ? { ok:true } : { ok:false, msg:"expected " + want.join(", ") + " (read " + got.join(", ") + ")" };
+    },
+    "unit-conversions.html":function(p, a, ansText){
+      var o = P(p), total, vals;
+      if (o.m !== undefined && /^(degF|degC|K)$/.test(o.to || "")){
+        var t = /^(-?[\d.\/]+)(degF|degC|K)$/.exec(o.m);
+        return need(a, [X(uniTemp(num(t[1]), t[2], o.to))]);
+      }
+      if (o.m !== undefined){
+        var to = o.to.split(","), ms = uniMeas(o.m), d0 = uniUnit(to[0])[0];
+        total = R(0);
+        ms.forEach(function(x){ var u = uniUnit(x.u); if (u[0] !== d0) throw new Error("units don’t match"); total = add(total, mul(x.v, u[1])); });
+        if (to.length === 1) return need(a, [X(div(total, uniUnit(to[0])[1]))]);
+        return need(a, uniSplit(total, to).map(function(v){ return X(v); }));
+      }
+      if (o.a !== undefined){
+        var A = uniMeas(o.a), Bm = uniMeas(o.b), units = [], ta = R(0), tb = R(0);
+        A.concat(Bm).forEach(function(x){ if (units.indexOf(x.u) < 0) units.push(x.u); });
+        units.sort(function(x, y){ return cmp(uniUnit(y)[1], uniUnit(x)[1]); });
+        A.forEach(function(x){ ta = add(ta, mul(x.v, uniUnit(x.u)[1])); });
+        Bm.forEach(function(x){ tb = add(tb, mul(x.v, uniUnit(x.u)[1])); });
+        return need(a, uniSplit(o.op === "sub" ? sub(ta, tb) : add(ta, tb), units).map(function(v){ return X(v); }));
+      }
+      if (o.top !== undefined){
+        var tp = uniMeas(o.top)[0], pr = uniMeas(o.per)[0], rate = div(tp.v, pr.v);
+        if (o.to){ var from = uniUnit(tp.u + "/" + pr.u), into = uniUnit(o.to); rate = mul(rate, div(from[1], into[1])); }
+        return need(a, [X(rate)]);
+      }
+      return { skip:true };
+    },
     "functions.html":function(p, a, ansText){
       var o = P(p), t = String(ansText), bad = function(m){ return { ok:false, msg:m }; }, res;
       var def = function(fn){ return function(xv){ return funOk(fn({ x:xv })); }; };
@@ -3795,6 +3997,112 @@
             drop(fr);
           });
         });
+      });
+    },
+    /* Tutor me (practice=tutor, tutor.js): every step is asked about before it's shown, with 3 or 4 different
+       choices and one right one; a wrong pick keeps the question, the right one shows exactly the next step; the
+       answer stays hidden until the end, and the end has the score and the same answer as Show all work.
+       load: it starts from the link, and the Tutor me button turns it on and another practice button off.
+       known: problems with known links, then (thorough: more) problems from each page's own problem maker. */
+    "tutor.html":function(T){
+      var page = T.page, sp = 0, sf = 0, kp = 0, kf = 0;
+      function until(test, ms){
+        var t0 = Date.now();
+        return new Promise(function(ok){
+          (function poll(){ var v = false; try { v = test(); } catch (e){} if (v || Date.now() - t0 > ms) ok(!!v); else setTimeout(poll, 80); })();
+        });
+      }
+      function walk(link){
+        var bad = [];
+        return load(link + "&practice=all").then(function(fr0){
+          var want = answerText(docOf(fr0), true); drop(fr0);
+          return load(link + "&practice=tutor").then(function(fr){
+            var w = fr.f.contentWindow, d = docOf(fr);
+            return until(function(){ return w.HelperTutor && w.HelperTutor.active() && w.HelperTutor.peek().n > 0; }, 4000).then(function(started){
+              if (!started){ drop(fr); return ["Tutor me didn’t start"]; }
+              var H = w.HelperTutor, n = H.peek().n, k = 0;
+              var v0 = d.querySelector(".answer .v");
+              if (!d.documentElement.classList.contains("ht-tmask") || (v0 && w.getComputedStyle(v0).visibility !== "hidden")) bad.push("the answer shows before the steps");
+              for (var guard = 0; guard < 80; guard++){
+                var p = H.peek();
+                if (!p.step) break;
+                k++;
+                if (p.step !== k){ bad.push("asked about step " + p.step + ", expected " + k); break; }
+                var keys = p.options.map(function(o){ return (o.chip + "|" + o.text).toLowerCase().replace(/\s+/g, " "); });
+                if (p.options.length < 3 || p.options.length > 4) bad.push("step " + k + ": " + p.options.length + " choices");
+                if (keys.some(function(x, i){ return keys.indexOf(x) !== i; })) bad.push("step " + k + ": two choices the same");
+                if (p.options.filter(function(o){ return o.kind === "right"; }).length !== 1){ bad.push("step " + k + ": not exactly one right choice"); break; }
+                var wrong = p.options.map(function(o, i){ return o.kind === "right" ? -1 : i; }).filter(function(i){ return i >= 0; })[0];
+                if (k % 2 === 0){
+                  H.pick(wrong);
+                  var q = H.peek();
+                  if (q.step !== k || q.cur !== p.cur || q.pre !== p.pre || !/^Not quite/.test(q.feedback)) bad.push("step " + k + ": a wrong pick didn’t keep the question");
+                }
+                H.pick(p.right);
+                var r = H.peek(), shown = r.pre ? 0 : r.cur;
+                if (shown !== k) bad.push("step " + k + ": the right pick showed " + shown + " steps");
+                if (!/^✓ Yes/.test(r.feedback)) bad.push("step " + k + ": no “✓ Yes”");
+              }
+              if (k !== n) bad.push("asked " + k + " of " + n + " steps");
+              var sc = d.querySelector("#htTutor .ht-tq-score"), m = sc && /picked (\d+) of (\d+)/.exec(sc.textContent);
+              if (!m || Number(m[2]) !== n) bad.push("no score at the end");
+              if (d.documentElement.classList.contains("ht-tmask")) bad.push("the answer is still hidden at the end");
+              var got = answerText(d, true);
+              if (got !== want) bad.push("answer “" + got.slice(0, 60) + "”, Show all work has “" + want.slice(0, 60) + "”");
+              if (fr.errs.length) bad.push("script error: " + fr.errs[0]);
+              drop(fr);
+              return bad;
+            });
+          });
+        });
+      }
+      function tally(bad, link){
+        if (bad.length){ kf++; fail(page, "known answer", bad.slice(0, 3).join("; "), link + "&practice=tutor"); } else { kp++; pass(); }
+        score(page, "known", kp, kf);
+      }
+      var LINKS = ["addition.html?q=25.4%2B3.75", "division.html?q=847%C3%B712&ans=remainder", "fractions.html?mode=simplify&q=18/24",
+                   "quadratics.html?mode=solve&eq=" + encodeURIComponent("x^2-5x+6=0"), "wordproblems.html?q=" + encodeURIComponent("Sam had 45 stickers. He gave away 17. How many stickers does he have left?"),
+                   "matrices-and-vectors.html?mode=mult&A=1,2;3,4&B=5,6;7,8"];
+      if (depth === "thorough") LINKS = LINKS.concat(["subtraction.html?q=5003-1278", "multiplication.html?q=1%2F3*5%2F8", "integers.html?q=-2*(-7)",
+                   "pemdas.html?q=" + encodeURIComponent("20 − 12 ÷ 4 × 2 + 1"), "stats.html?mode=center&q=4, 8, 6, 5, 7", "geometry.html?mode=area&shape=rect&l=8&w=5"]);
+      var MAKERS = depth === "thorough" ? ["addition.html", "algebra.html", "percents.html", "probability.html", "logarithms.html", "college-statistics.html", "graphing.html", "calculus.html"]
+                                        : ["algebra.html", "percents.html"];
+      // load: from the link, and the button
+      var link0 = "pemdas.html?q=" + encodeURIComponent("3 + 4 × 2") + "&practice=step";
+      return load(link0).then(function(fr){
+        var w = fr.f.contentWindow, d = docOf(fr);
+        return until(function(){ return !!d.getElementById("tutorBtn"); }, 4000).then(function(has){
+          var bad = [];
+          if (!has) bad.push("no Tutor me button");
+          else {
+            if (w.HelperTutor.active()) bad.push("on in plain step mode");
+            d.getElementById("tutorBtn").click();
+            if (!w.HelperTutor.active() || d.getElementById("tutorBtn").getAttribute("aria-pressed") !== "true" || !d.querySelector("#htTutor:not([hidden]) .ht-tq-opt")) bad.push("the Tutor me button didn’t start it");
+            var all = [].filter.call(d.querySelectorAll("button"), function(b){ return b.textContent.trim() === "Show all work"; })[0];
+            if (all) all.click();
+            if (w.HelperTutor.active() || (d.getElementById("htTutor") && !d.getElementById("htTutor").hidden)) bad.push("Show all work didn’t turn it off");
+          }
+          drop(fr);
+          if (bad.length){ sf++; fail(page, "loads", bad.join("; "), link0); } else { sp++; pass(); }
+          score(page, "load", sp, sf);
+          cell(page, "links", '<span class="na">—</span>');
+        });
+      }).then(function(){
+        return LINKS.reduce(function(chain, l){ return chain.then(function(){ return walk(l).then(function(bad){ tally(bad, l); }); }); }, Promise.resolve());
+      }).then(function(){
+        return MAKERS.reduce(function(chain, pg){
+          return chain.then(function(){
+            return load(pg).then(function(fr){
+              return ask(fr, { type:"helper:make", count:depth === "thorough" ? 4 : 2, options:{} }, "helper:made").then(function(m){
+                drop(fr);
+                return (m.problems || []).reduce(function(c2, P){
+                  var l = pg + "?" + String(P.params || "").replace(/^\?/, "");
+                  return c2.then(function(){ return walk(l).then(function(bad){ tally(bad, l); }); });
+                }, Promise.resolve());
+              }, function(e){ drop(fr); kf++; fail(page, "known answer", pg + ": " + e.message, pg); score(page, "known", kp, kf); });
+            });
+          });
+        }, Promise.resolve());
       });
     }
   };

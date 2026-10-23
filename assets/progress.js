@@ -9,6 +9,11 @@
                done inside a practice set }
    A problem counts as "right first time" (the evidence that it's mastered) when its first try was right, with no hint.
 
+   Tutor me (tutor.js) reports each problem it finishes as helper:tutored, { page, params, text, picked, moves }:
+   "picked 6 of 8 moves first time". Those go in a log of their own, so they never change the numbers above:
+     localStorage["helper-tutor-log"] = { v:1, e:[ { t, p, q, x, k:moves picked first time, n:moves }, … ] }, at most 1000.
+   HelperProgress.tutorEntries() lists them, summary().tutor adds them up, and clear() clears them too.
+
    window.HelperProgress = { record(detail), entries(), summary(), clear(), exportCSV(), topics, topic(page), link(page, params) }
    A page with an element #progressPanel gets a "Your practice" panel drawn into it.
    Nothing here ever throws on a page: no localStorage (private mode, blocked) just means nothing is kept. */
@@ -27,9 +32,11 @@
     { page:"scratch.html",       name:"By hand",              title:"The Scratch Paper",   c:"scr" },
     { page:"fractions.html",      name:"Fractions",           title:"The Fraction Bar",   c:"fra" },
     { page:"percents.html",       name:"Percents",            title:"The Hundred Grid",   c:"pct" },
+    { page:"money-math.html",     name:"Money math",          title:"The Money Jar",      c:"mon" },
     { page:"factors.html",        name:"Factors & primes",    title:"The Factor Tree",    c:"fac" },
     { page:"integers.html",       name:"Integers",            title:"The Number Line",    c:"int" },
     { page:"ratios.html",         name:"Ratios & rates",      title:"The Ratio Table",    c:"rat" },
+    { page:"unit-conversions.html", name:"Unit conversions",  title:"The Measuring Tape", c:"uni" },
     { page:"exponents.html",     name:"Exponents",            title:"The Power Tower",     c:"exp" },
     { page:"pemdas.html",         name:"Order of operations", title:"The Order Stack",    c:"ord" },
     { page:"algebra.html",        name:"Algebra",             title:"The Balance Scale",  c:"alg" },
@@ -111,8 +118,41 @@
   }
   function clear(){
     cache = [];
-    try { localStorage.removeItem(KEY); } catch (e){}
+    try { localStorage.removeItem(KEY); localStorage.removeItem(TKEY); } catch (e){}
     changed();
+  }
+
+  /* ===================== Tutor me: its own log ===================== */
+  var TKEY = "helper-tutor-log", TCAP = 1000;
+  function readTutor(){
+    try {
+      var v = JSON.parse(localStorage.getItem(TKEY) || "null");
+      if (v && v.v === VERSION && Array.isArray(v.e)) return v.e.filter(function(x){ return x && typeof x.t === "number" && typeof x.p === "string" && x.n > 0; });
+    } catch (e){}
+    return [];
+  }
+  function recordTutor(d){
+    if (!d || typeof d !== "object") return false;
+    var page = String(d.page || (window.HelperSite && window.HelperSite.here) || "");
+    var n = Math.floor(Number(d.moves)), k = Math.floor(Number(d.picked));
+    if (!BY[page] || !(n > 0) || !(k >= 0) || k > n) return false;
+    var x = { t:Date.now(), p:page.replace(/\.html$/, ""), q:String(d.params || "").replace(/^\?/, "").slice(0, 600),
+              x:String(d.text || "").replace(/\s+/g, " ").trim().slice(0, 140), k:k, n:n };
+    if (document.documentElement.classList.contains("embed")) x.s = 1;
+    var log = readTutor();
+    log.push(x);
+    if (log.length > TCAP) log = log.slice(log.length - TCAP);
+    try { localStorage.setItem(TKEY, JSON.stringify({ v:VERSION, e:log })); } catch (e){ return false; }
+    changed();
+    return true;
+  }
+  function tutorEntries(){
+    return readTutor().map(function(x){ return { time:x.t, page:x.p + ".html", params:x.q, text:x.x, picked:x.k, moves:x.n, inSet:!!x.s }; });
+  }
+  function tutorSummary(){
+    var log = readTutor(), s = { problems:log.length, picked:0, moves:0 };
+    log.forEach(function(x){ s.picked += x.k; s.moves += x.n; });
+    return s;
   }
   function link(page, params){
     var q = String(params || "").replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); });
@@ -239,7 +279,7 @@
     }
     return out.slice(0, 2);
   }
-  function fullSummary(now){ var s = summary(now); s.suggestions = suggest(s); return s; }
+  function fullSummary(now){ var s = summary(now); s.suggestions = suggest(s); s.tutor = tutorSummary(); return s; }
 
   function exportCSV(){
     function cell(v){ v = String(v === undefined || v === null ? "" : v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
@@ -324,7 +364,9 @@
     });
     html += "</div>";
     html += '<div class="hp-foot"><span>Last practiced ' + ago(s.last, now) + " &middot; " + s.days + " day" + (s.days === 1 ? "" : "s")
-      + " in all &middot; kept on this device only</span>"
+      + " in all"
+      + (s.tutor && s.tutor.problems ? " &middot; Tutor me: " + s.tutor.picked + " of " + s.tutor.moves + " moves picked first time" : "")
+      + " &middot; kept on this device only</span>"
       + '<a href="' + esc(U("progress.html")) + '">See all your progress <span aria-hidden="true">→</span></a></div></div>';
     return html;
   }
@@ -345,6 +387,7 @@
 
   /* ===================== wiring ===================== */
   document.addEventListener("helper:checked", function(e){ try { record(e.detail); } catch (x){} });
+  document.addEventListener("helper:tutored", function(e){ try { recordTutor(e.detail); } catch (x){} });
   document.addEventListener("helper:progress", drawPanel);
   window.addEventListener("storage", function(e){
     if (e.key === KEY || e.key === null){ cache = null; drawPanel(); }
@@ -353,6 +396,7 @@
     record:record, entries:entries, summary:fullSummary, clear:clear, exportCSV:exportCSV,
     topics:TOPICS.map(function(t){ return { page:t.page, name:t.name, title:t.title, c:t.c }; }),
     topic:topic, link:link, problems:function(){ return problems(read()); }, dayKey:dayKey,
+    recordTutor:recordTutor, tutorEntries:tutorEntries,
     reload:function(){ cache = null; }
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", drawPanel);

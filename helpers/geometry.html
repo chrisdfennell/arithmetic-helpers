@@ -2,17 +2,19 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Shape Shop</title>
+<title>Geometry: area, volume and angles, step by step – The Shape Shop | Show The Steps</title>
 <meta name="description" content="Area, perimeter, volume, right triangles and angles. Pick a shape and type its measurements: you get a drawing to scale, the formula and why it works, the numbers put in, then every bit of…">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Show The Steps">
-<meta property="og:title" content="The Shape Shop · Show The Steps">
+<meta property="og:title" content="Geometry: area, volume and angles, step by step – The Shape Shop">
 <meta property="og:description" content="Area, perimeter, volume, right triangles and angles. Pick a shape and type its measurements: you get a drawing to scale, the formula and why it works, the numbers put in, then every bit of…">
 <meta property="og:url" content="https://showthesteps.org/helpers/geometry">
 <meta property="og:image" content="https://showthesteps.org/assets/icons/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Show The Steps: every step, written out.">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://showthesteps.org/helpers/geometry">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"Geometry: area, volume and angles, step by step – The Shape Shop","description":"Area, perimeter, volume, right triangles and angles. Pick a shape and type its measurements: you get a drawing to scale, the formula and why it works, the numbers put in, then every bit of…","url":"https://showthesteps.org/helpers/geometry","inLanguage":"en-US","isAccessibleForFree":true,"learningResourceType":["Interactive worked examples","Practice problems"],"interactivityType":"active","educationalUse":["Practice","Self-assessment"],"teaches":"Geometry: area, volume and angles","educationalLevel":["Elementary school (grades K–5)","Middle school (grades 6–8)","High school (grades 9–12)"],"audience":{"@type":"EducationalAudience","educationalRole":"student"},"publisher":{"@type":"Organization","name":"Show The Steps","url":"https://showthesteps.org/"},"isPartOf":{"@type":"WebSite","name":"Show The Steps","url":"https://showthesteps.org/"}}</script>
 <script src="../assets/site.js"></script>
 <script src="../assets/nav.js" defer></script>
 <script src="../assets/progress.js" defer></script>
@@ -2744,6 +2746,7 @@
     var u = get("unit"), pi = get("pi"), pr = get("practice");
     if (u != null){ if (UNITS.indexOf(u) >= 0) S.unit = u; else bad.push("unit"); }
     if (pi != null){ if (pi === "3.14") pi = "314"; if (["exact","314","calc"].indexOf(pi) >= 0) S.pi = pi; else bad.push("pi"); }
+    if (pr === "tutor") pr = "step";      // Tutor me (assets/tutor.js) runs on top of step mode
     if (pr != null){ if (["all","step","check"].indexOf(pr) >= 0){ S.practice = pr; S.stepMode = pr === "step"; } else bad.push("practice"); }
     if (bad.length && !note) note = "Part of that link didn’t make sense to me (<b>" + bad.map(function(key){ return esc(key + "=" + String(P.get(key)).slice(0, 30)); }).join(", ")
       + "</b>), so I’ve used the nearest problem I could make. Check the numbers above.";

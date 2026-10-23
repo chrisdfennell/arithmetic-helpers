@@ -17,10 +17,10 @@ var PAGES = [
   "helpers/probability.html", "helpers/trigonometry.html", "helpers/calculus.html", "helpers/story-problems.html",
   "helpers/scratch-paper.html", "helpers/number-sense.html", "helpers/quadratics.html", "helpers/logarithms.html",
   "helpers/sequences.html", "helpers/functions.html", "helpers/radicals.html", "helpers/complex-numbers.html",
-  "helpers/college-statistics.html", "helpers/matrices-and-vectors.html",
+  "helpers/college-statistics.html", "helpers/matrices-and-vectors.html", "helpers/unit-conversions.html", "helpers/money-math.html",
   "practice/sets.html", "practice/worksheets.html", "practice/flash-cards.html", "practice/problem-of-the-day.html", "practice/progress.html", "practice/class-results.html",
-  "reference/sheets.html", "reference/definitions.html", "tests/self-test.html",
-  "assets/site.js", "assets/nav.js", "assets/progress.js", "assets/glossary.js", "assets/search.js", "assets/tools.js", "assets/qr.js",
+  "reference/sheets.html", "reference/definitions.html", "info/about.html", "info/privacy.html", "tests/self-test.html",
+  "assets/site.js", "assets/nav.js", "assets/progress.js", "assets/glossary.js", "assets/search.js", "assets/tools.js", "assets/tutor.js", "assets/qr.js",
   "assets/manifest.webmanifest", "assets/icons/icon.svg", "assets/icons/icon-192.png", "assets/icons/icon-512.png",
   "assets/icons/icon-maskable-512.png", "assets/icons/apple-touch-icon.png", "assets/icons/favicon.svg", "assets/icons/og.png"
 ];

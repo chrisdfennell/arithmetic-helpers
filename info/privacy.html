@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy · Show The Steps</title>
+<meta name="description" content="Show The Steps has no accounts, no ads and no cookies. The problems you type never leave your browser; visits are counted anonymously with GoatCounter. Here is exactly what is stored and sent.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Show The Steps">
+<meta property="og:title" content="Privacy · Show The Steps">
+<meta property="og:description" content="Show The Steps has no accounts, no ads and no cookies. The problems you type never leave your browser; visits are counted anonymously with GoatCounter. Here is exactly what is stored and sent.">
+<meta property="og:url" content="https://showthesteps.org/info/privacy">
+<meta property="og:image" content="https://showthesteps.org/assets/icons/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Show The Steps: every step, written out.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://showthesteps.org/info/privacy">
+<link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+<script src="../assets/site.js"></script>
+<script src="../assets/nav.js" defer></script>
+<script>
+  /* counting visits with GoatCounter (no cookies, no personal data); not when testing on this computer */
+  if (/^https?:$/.test(location.protocol) && !/^(localhost|127\.[0-9.]+|\[::1\])$/.test(location.hostname) && window.top === window.self){
+    window.goatcounter = { path: function(){ return location.pathname; } };
+    document.write('<script data-goatcounter="https://fennell.goatcounter.com/count" async src="https://gc.zgo.at/count.js"><\/script>');
+  }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
+    --key:#1F5E8C;
+    --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
+    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
+    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+      --key:#7DB8E8;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
+    --key:#7DB8E8;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .page{max-width:820px;margin:0 auto;padding:22px 20px 70px}
+  @media (max-width:520px){.page{padding:16px 16px 56px}}
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px 20px;flex-wrap:wrap;margin:26px 0 8px}
+  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(34px,6vw,54px);line-height:1;letter-spacing:-.02em;margin:.25em 0 .2em}
+  h1 em{font-style:normal;color:var(--key)}
+  .tagline{color:var(--ink-2);font-size:18px;margin:0;max-width:40em}
+  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;background:var(--surface);color:var(--ink-2);
+    border:1px solid var(--rule);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
+  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+  h2{font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:clamp(21px,3vw,25px);letter-spacing:-.01em;margin:38px 0 8px}
+  p, li{color:var(--ink-2)}
+  p{margin:0 0 14px}
+  ul{padding-left:1.25em;margin:0 0 14px} li{margin:0 0 6px}
+  strong, b{color:var(--ink)}
+  a{color:var(--key);text-underline-offset:2px}
+  .card{background:var(--surface);border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow);padding:20px 22px;margin:18px 0}
+  .card p:last-child, .card ul:last-child{margin-bottom:0}
+  table{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0 14px}
+  th, td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--rule)}
+  th{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+  td{color:var(--ink-2)} td:first-child{color:var(--ink);font-weight:600;white-space:nowrap}
+  @media (max-width:560px){ td:first-child{white-space:normal} }
+  .small{font-size:14px;color:var(--ink-3)}
+  :focus-visible{outline:2.5px solid var(--key);outline-offset:3px}
+  @media print{ .sitenav,.theme-btn{display:none !important} body{background:#fff} .card{box-shadow:none} }
+</style>
+<div class="page">
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Privacy</div>
+      <h1>Your work stays <em>with you.</em></h1>
+      <p class="tagline">No accounts, no ads and no cookies. Here is exactly what Show The Steps keeps, where, and what (little) is sent anywhere.</p>
+    </div>
+    <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <div class="card">
+    <p><b>The short version:</b> every problem is worked out in your own browser, and nothing you type is sent to anyone.
+      Your progress and settings are saved only on your device. The site counts visits anonymously, without cookies. It
+      collects no personal information from anyone, including children, so there is no student data to share or sell.</p>
+  </div>
+
+  <h2>What stays on your device</h2>
+  <p>The site saves a few things in your browser's local storage, so they're still there next time. They never leave the device:</p>
+  <table>
+    <tr><th>What</th><th>Why</th></tr>
+    <tr><td>Settings</td><td>Light or dark theme, text size, the read-aloud voice and speed, and whether the math keypad shows.</td></tr>
+    <tr><td>Each helper's last problem</td><td>So a page opens where you left it.</td></tr>
+    <tr><td>Recent problems</td><td>The <b>Recent</b> list at the top of each page.</td></tr>
+    <tr><td>Your progress</td><td>What you've practiced and which mistakes to revisit, shown on <a href="../practice/progress.html">Your progress</a>.</td></tr>
+    <tr><td>Problem of the day</td><td>Your streak, and which days you've done.</td></tr>
+    <tr><td>Flash cards, practice sets, worksheets</td><td>How well you know each card, a practice set in progress, and the worksheet maker's choices.</td></tr>
+    <tr><td>Class results</td><td>Only if a teacher chooses to keep pasted results on their own device.</td></tr>
+  </table>
+  <p>To delete it: <a href="../practice/progress.html">Your progress</a> has a <b>Clear my progress</b> button, and clearing this
+    site's data in your browser's settings removes everything. If you install the site as an app, your browser also keeps a
+    copy of the pages so they work offline; removing the app or clearing site data deletes that too.</p>
+
+  <h2>What is sent, and to whom</h2>
+  <table>
+    <tr><th>Service</th><th>What it gets</th></tr>
+    <tr><td><a href="https://www.goatcounter.com">GoatCounter</a><br><span class="small">visit counts</span></td>
+      <td>Each page view: the page's address <b>without</b> the problem in it (so what you typed is never included), the site
+        you came from, your screen size, and your browser and operating system. GoatCounter works out the country from your
+        IP address and then discards the address. No cookies, and nothing that identifies you.
+        <a href="https://www.goatcounter.com/help/privacy">GoatCounter's privacy policy</a>.</td></tr>
+    <tr><td>Google Fonts<br><span class="small">the lettering</span></td>
+      <td>Your browser downloads the site's fonts from Google's servers, which see your IP address like any download.
+        Google says it doesn't set cookies for this or use it to build profiles.
+        <a href="https://developers.google.com/fonts/faq/privacy">Google Fonts privacy</a>.</td></tr>
+    <tr><td>GitHub Pages<br><span class="small">the hosting</span></td>
+      <td>The site is served by GitHub, which may log visitors' IP addresses for security.
+        <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</td></tr>
+  </table>
+  <p>Nothing else is sent. In particular:</p>
+  <ul>
+    <li><b>Read aloud</b> uses the voices built into your device or browser. Some browsers offer online voices (with names like
+      "Online" or "Google"); if you pick one of those, your browser may send the text being read to its maker's speech service.
+      The other voices work entirely on your device.</li>
+    <li><b>Practice sets and class results</b> are never uploaded: a student copies their result line and hands it to the
+      teacher, who pastes it in.</li>
+    <li><b>QR codes</b> are drawn on your device, and the <b>problem of the day</b> is worked out from the date, on your device.</li>
+    <li>There are no accounts, logins, ads, trackers or cookies.</li>
+  </ul>
+
+  <h2>Questions</h2>
+  <p>Ask on <a href="https://github.com/chrisdfennell/arithmetic-helpers/issues">GitHub</a>, or report a security concern privately through
+    <a href="https://github.com/chrisdfennell/arithmetic-helpers/security">the repository's security page</a>.</p>
+  <p class="small">Last updated October 23, 2026.</p>
+</div>
+<script>
+(function(){
+  /* the theme switch, remembered with the other pages' settings */
+  var KEY = "helpers-info", btn = document.getElementById("themeBtn");
+  try { var t = localStorage.getItem(KEY); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e){}
+  function isDark(){
+    var t = document.documentElement.getAttribute("data-theme");
+    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function paint(){ btn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  btn.addEventListener("click", function(){
+    var next = isDark() ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next); paint();
+    try { localStorage.setItem(KEY, next); } catch (e){}
+  });
+  paint();
+  /* the version number, written into tools.js when the site is published */
+  window.addEventListener("load", function(){
+    var v = window.HelperTools && window.HelperTools.version, el = document.getElementById("ver");
+    if (el && v && v !== "dev") el.textContent = "version " + v;
+  });
+})();
+</script>
+</html>

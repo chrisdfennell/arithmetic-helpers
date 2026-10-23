@@ -102,7 +102,7 @@ jobs:
           python3 - <<'PY'
           import subprocess, glob
           base = "https://showthesteps.org/"
-          pages = ["index.html"] + sorted(p.replace("\\", "/") for p in glob.glob("helpers/*.html") + glob.glob("practice/*.html") + glob.glob("reference/*.html"))
+          pages = ["index.html"] + sorted(p.replace("\\", "/") for p in glob.glob("helpers/*.html") + glob.glob("practice/*.html") + glob.glob("reference/*.html") + glob.glob("info/*.html"))
           rows = []
           for f in pages:
               if f.split("/")[-1].startswith("_"):

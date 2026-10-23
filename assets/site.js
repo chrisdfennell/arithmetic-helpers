@@ -36,17 +36,19 @@
     stats:"helpers/statistics", probability:"helpers/probability", wordproblems:"helpers/story-problems",
     scratch:"helpers/scratch-paper", trigonometry:"helpers/trigonometry", calculus:"helpers/calculus",
     "number-sense":"helpers/number-sense", quadratics:"helpers/quadratics", logarithms:"helpers/logarithms", sequences:"helpers/sequences",
+    "unit-conversions":"helpers/unit-conversions", "money-math":"helpers/money-math",
     functions:"helpers/functions", radicals:"helpers/radicals", "complex-numbers":"helpers/complex-numbers",
     "college-statistics":"helpers/college-statistics", "matrices-and-vectors":"helpers/matrices-and-vectors",
     practice:"practice/sets", worksheet:"practice/worksheets", flashcards:"practice/flash-cards", daily:"practice/problem-of-the-day",
     progress:"practice/progress", results:"practice/class-results",
     reference:"reference/sheets", glossary:"reference/definitions",
+    about:"info/about", privacy:"info/privacy",
     tests:"tests/self-test"
   };
   var FILES = { "404.html":"404.html", "sw.js":"sw.js" };
-  ["site.js", "nav.js", "tools.js", "search.js", "progress.js", "glossary.js", "qr.js", "manifest.webmanifest"].forEach(function(a){ FILES[a] = "assets/" + a; });
+  ["site.js", "nav.js", "tools.js", "tutor.js", "search.js", "progress.js", "glossary.js", "qr.js", "manifest.webmanifest"].forEach(function(a){ FILES[a] = "assets/" + a; });
   ["icon.svg", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "favicon.svg", "og.png"].forEach(function(i){ FILES["icons/" + i] = "assets/icons/" + i; });
-  var FOLDERS = ["helpers", "practice", "reference", "tests"];
+  var FOLDERS = ["helpers", "practice", "reference", "info", "tests"];
   var ALIAS = {};                                               // a page's own file name → its short name
   Object.keys(PAGES).forEach(function(k){ ALIAS[k] = k; if (PAGES[k]) ALIAS[PAGES[k].split("/")[1]] = k; });
   var has = function(o, k){ return Object.prototype.hasOwnProperty.call(o, k); };

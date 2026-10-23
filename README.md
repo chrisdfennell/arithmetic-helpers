@@ -22,7 +22,7 @@
   <a href="#how-its-built"><img src="https://img.shields.io/badge/build%20step-none-brightgreen" alt="No build step"></a>
   <a href="#install-it-as-an-app"><img src="https://img.shields.io/badge/works%20offline-installable-5a4fcf" alt="Works offline and installs as an app"></a>
   <a href="#how-its-built"><img src="https://img.shields.io/badge/vanilla%20JS-ES5-f0db4f" alt="Vanilla JavaScript (ES5)"></a>
-  <a href="https://showthesteps.org/tests/self-test"><img src="https://img.shields.io/badge/self--test-18%2C000%2B%20checks-success" alt="Self-test: more than 18,000 checks"></a>
+  <a href="https://showthesteps.org/tests/self-test"><img src="https://img.shields.io/badge/self--test-22%2C000%2B%20checks-success" alt="Self-test: more than 22,000 checks"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/commits/main"><img src="https://img.shields.io/github/last-commit/chrisdfennell/arithmetic-helpers" alt="Last commit"></a>
 </p>
 
@@ -53,9 +53,9 @@ Show The Steps is a free website for math from the early grades through first-ye
 
 | Level | What's here |
 | --- | --- |
-| **Early grades (K–5)** | Place value, rounding and estimating, comparing numbers, skip counting, telling time, counting money, addition and subtraction facts, carrying and borrowing, times tables to 20 × 20, long division, hundred charts, flash cards |
+| **Early grades (K–5)** | Place value, rounding and estimating, comparing numbers, skip counting, telling time, measurement and unit conversions, counting money, addition and subtraction facts, carrying and borrowing, times tables to 20 × 20, long division, hundred charts, flash cards |
 | **Middle school (6–8)** | Fractions, decimals and percents, ratios and rates, negative numbers, order of operations, exponents, equations, geometry, statistics, probability, story problems |
-| **High school (9–12)** | Algebra and systems, lines, graphing functions, transformations, inequalities, functions (domain and range, composition, inverses, piecewise), quadratics and polynomials (factoring, the quadratic formula, completing the square, the vertex, polynomial division), radicals and rational expressions, complex numbers, logarithms and exponential equations, sequences and series, trigonometry (the unit circle, the laws of sines and cosines, sine and cosine graphs) |
+| **High school (9–12)** | Money math (compound interest, loans and payments, budgets), algebra and systems, lines, graphing functions, transformations, inequalities, functions (domain and range, composition, inverses, piecewise), quadratics and polynomials (factoring, the quadratic formula, completing the square, the vertex, polynomial division), radicals and rational expressions, complex numbers, logarithms and exponential equations, sequences and series, trigonometry (the unit circle, the laws of sines and cosines, sine and cosine graphs) |
 | **First-year college** | Calculus basics: limits, derivatives with every rule named, tangent lines, maximum and minimum, integrals and the area under a curve; statistics (the normal curve, z-scores, the binomial, confidence intervals, hypothesis tests, regression); matrices and vectors (determinants, inverses, row reduction, dot and cross products) |
 
 - **Students** type in a problem and see how it's done, step through it one move at a time, or check their own answer and get told what probably went wrong.
@@ -84,6 +84,8 @@ Each helper is one page. Type a problem (or pick one, or have the page make one)
 | [The Factor Tree](https://showthesteps.org/helpers/factors-and-primes) | Factors and primes: factor pairs, prime factorization, prime or composite, GCF and LCM, divisibility rules |
 | [The Number Line](https://showthesteps.org/helpers/negative-numbers) | Integers: adding, subtracting, multiplying and dividing negative numbers, absolute value and ordering |
 | [The Ratio Table](https://showthesteps.org/helpers/ratios) | Ratios: simplifying, unit rates and better buys, proportions, sharing in a ratio, and scale |
+| [The Measuring Tape](https://showthesteps.org/helpers/unit-conversions) | Unit conversions: inches, feet, yards and miles (and mixed measures like 5 ft 7 in), customary weight and capacity, the metric staircase, converting between systems, time, °F, °C and K, and rates with units canceled (60 mph → 88 ft/s), including area and volume units |
+| [The Money Jar](https://showthesteps.org/helpers/money-math) | Money math: compound interest (and APY), saving every month, loan payments with an amortization schedule, credit card interest and payoff, paychecks with overtime, budgets and the 50/30/20 rule, and shopping math (stacked discounts, tax and tip, unit prices, inflation) |
 | [The Power Tower](https://showthesteps.org/helpers/exponents) | Exponents: powers (zero, negative, negative bases), the exponent laws with the reason for each, scientific notation both ways, calculating and comparing with it, and square and cube roots |
 | [The Order Stack](https://showthesteps.org/helpers/order-of-operations) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
 | [The Balance Scale](https://showthesteps.org/helpers/algebra) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
@@ -219,13 +221,23 @@ The Story Problem reads a story as it's typed: it finds the numbers and the ques
       <br><b>The Matrix Grid</b>: three equations by row reduction, each row operation named
     </td>
   </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://showthesteps.org/helpers/unit-conversions?q=60%20mph%20to%20ft%2Fs"><img src="docs/screenshots/unit-conversions.png" width="100%" alt="The Measuring Tape: 60 miles per hour changed to feet per second by multiplying unit fractions, with miles and hours canceled, giving 88 ft/s"></a>
+      <br><b>The Measuring Tape</b>: a rate, with the units canceled
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://showthesteps.org/helpers/money-math?q=%2420000%20car%20loan%206%25%205%20years%20monthly%20payment"><img src="docs/screenshots/money-math.png" width="100%" alt="The Money Jar: the monthly payment on a $20,000 car loan at 6% for 5 years from the amortization formula, with the total interest and the first rows of the schedule"></a>
+      <br><b>The Money Jar</b>: a loan payment and its schedule
+    </td>
+  </tr>
 </table>
 
 ## For students
 
 ### Check my answer, with a hint for the mistake
 
-Every helper has three ways to work: **Show all work**, **One step at a time** and **Check my answer**. In Check my answer the work stays hidden until you've answered. Any equivalent answer counts (3/4, 0.75, 6/8); when a problem asks for simplest form, an unsimplified answer is told to simplify; and a wrong answer gets told what probably went wrong. **Show a hint** opens the work one step at a time.
+Every helper has four ways to work: **Show all work**, **One step at a time**, **Check my answer** and **Tutor me**, which asks what you'd do next before it shows each step. In Check my answer the work stays hidden until you've answered. Any equivalent answer counts (3/4, 0.75, 6/8); when a problem asks for simplest form, an unsimplified answer is told to simplify; and a wrong answer gets told what probably went wrong. **Show a hint** opens the work one step at a time.
 
 <p align="center">
   <img src="docs/screenshots/check-my-answer.png" width="760" alt="Check my answer on the Order Stack: the answer 5 is marked Not quite, that's what you get going straight left to right, and the hint has opened the first steps of the work">
@@ -343,6 +355,7 @@ The **graph paper maker** (`reference/sheets#paper`) prints square grids, coordi
 Every helper page has:
 
 - a plain-English explanation of each step, including why it comes next; math words in it link to their definition, with a popup on hover, focus or tap
+- **Tutor me**: before each step it asks "What would you do next?" with three or four choices, gives a hint after a wrong pick, keeps the answer hidden to the end, and gives a score
 - **One step at a time** and **Check my answer** practice modes; checking accepts any equivalent answer (3/4, 0.75, 6/8) and points out common mistakes
 - a **problem maker** in plain language, with a live "Makes problems like: …" preview
 - a picture of the problem: tape diagrams, area models, fraction bars, hundred grids, factor trees, number lines, ratio tables, expression trees, balance scales, graphs, dot plots and shapes drawn to scale
@@ -496,7 +509,7 @@ Each version gets a git tag `vX.Y.Z`, a [GitHub Release](https://github.com/chri
 
 ## Privacy
 
-There are no accounts and no cookies. Visits are counted with [GoatCounter](https://www.goatcounter.com/) (no cookies, nothing personal); pages shown inside other pages and local testing aren't counted. Everything else stays in the browser: settings, recent problems, progress, flash-card records, streaks and pasted class results are kept on the device only, and clearing the browser's site data clears them.
+The full details are on the site's [privacy page](https://showthesteps.org/info/privacy) (and there's an [About page](https://showthesteps.org/info/about)). There are no accounts and no cookies. Visits are counted with [GoatCounter](https://www.goatcounter.com/) (no cookies, nothing personal); pages shown inside other pages and local testing aren't counted. Everything else stays in the browser: settings, recent problems, progress, flash-card records, streaks and pasted class results are kept on the device only, and clearing the browser's site data clears them.
 
 ## License
 

@@ -99,6 +99,23 @@
     // "what is a logarithm", "define place value": the Word List (below), not the helper
     var asksWord = /^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s);
     var story = isStory(s, low);
+    // unit conversions: a measure to another unit ("5 ft 7 in to inches", "3.2 km to m", "60 mph to ft/s", "98.6 F to C",
+    // "how many cups in a gallon"); "convert 7/4 to a decimal" stays with the fractions, below
+    var UNIT = "(?:in(?:ch(?:es)?)?|ft|feet|foot|yd|yards?|mi|miles?|mm|cm|km|m|meters?|metres?|millimeters?|centimeters?|kilometers?|mg|g|kg|grams?|milligrams?|kilograms?|oz|ounces?|lbs?|pounds?|tons?|tsp|tbsp|teaspoons?|tablespoons?|cups?|pt|pints?|qt|quarts?|gal|gallons?|ml|l|liters?|litres?|milliliters?|fl\\.?\\s*oz|sec(?:onds?)?|s|min(?:utes?)?|h|hr|hours?|days?|weeks?|years?|yr|°\\s*[fck]|[fck]|degrees?\\s+(?:fahrenheit|celsius)|fahrenheit|celsius|kelvin|mph|km\\/h|kph|ft\\/s|m\\/s|acres?|hectares?|ha|(?:square|sq\\.?|cubic|cu\\.?)\\s+(?:inch(?:es)?|feet|foot|yards?|miles?|meters?|centimeters?))";
+    var unitTo = new RegExp("\\d[\\d.,\\/ ]*\\s*" + UNIT + "\\b(?:[\\s\\d.,]*" + UNIT + "\\b)*\\s*(?:to|in|into|=|→|->)\\s*(?:how\\s+many\\s+)?" + UNIT + "(?![a-z])", "i");
+    var unitHowMany = new RegExp("\\bhow\\s+many\\s+" + UNIT + "\\s+(?:are\\s+)?(?:in|make)\\b", "i");
+    if (!asksWord && !story && (unitTo.test(low) || unitHowMany.test(low) || /\bconvert\b[^%$]*\d[\d.,]*\s*(?:°|degrees?)\s*[fc]\b/.test(low)))
+      return go("unit-conversions.html", qp(s), "unit conversions");
+    // money math: compound interest, saving monthly, loans and payments, credit cards, paychecks, budgets, stacked discounts,
+    // tax and tip, inflation; "how long until it doubles" stays with the Log Ladder and one plain percent with the Hundred Grid
+    if (!asksWord && (/\bcompound(?:ed|ing)?\b/.test(low) && !/\bhow\s+(?:long|many\s+years)\b|\bdoubl|\btripl|\bhalf-?\s*life/.test(low) ||
+        /\bloans?\b|\bmortgage\b|\bmonthly\s+payments?\b|\bamortiz|\bapr\b|\bapy\b|\bcredit\s+cards?\b|\bpaychecks?\b|\bsalary\b|\bovertime\b|\btime\s+and\s+a\s+half\b|\bbudget\b|\b50\s*\/\s*30\s*\/\s*20\b|\binflation\b|\bpurchasing\s+power\b|\bgross\s+pay\b|\bnet\s+pay\b|\b401\s*\(?k\)?/.test(low) ||
+        /\d+\s*hours?\s+(?:at|@)\s+\$?\d/.test(low) ||
+        /\d\s*%\s*off\b.*\b(?:then|and\s+then|plus|another|extra)\b.*\d\s*%\s*off/.test(low) ||
+        /\btax\b.*\btip\b|\btip\b.*\btax\b/.test(low) && /\d/.test(low) ||
+        /\bmarkup\b.*\bmarkdown\b|\bmark(?:ed)?\s+up\b.*\bmark(?:ed)?\s+down\b/.test(low) ||
+        /\b(?:save|saving|deposit(?:ing)?)\s+\$?\d[\d,.]*\s+(?:a|per|each|every)\s+month\b/.test(low)))
+      return go("money-math.html", qp(s), "money math");
     // college statistics: the normal curve, z-scores, binomial, intervals, tests, regression ("P(X < 85) mean 70 sd 10")
     // ("line of best fit" and "scatter" stay on the Graph Paper, above)
     if (!asksWord && (/\bz[-\s]?(?:scores?|tests?)\b|\bnormal(?:ly)?\s+distribut|\bbell\s+curve\b|\bbinomial\b|\bconfidence\s+intervals?\b|\bmargin\s+of\s+error\b|\bhypothes[ie]s\b|\bnull\b|\bp-?values?\b|\bt-?tests?\b|\bregression\b|\bcorrelation\b|\bleast[-\s]squares\b|\bcentral\s+limit\b|\bsampling\s+distribution\b|\bstandard\s+error\b|\bempirical\s+rule\b|\b68\s*[-–]\s*95\s*[-–]\s*99/.test(low) ||

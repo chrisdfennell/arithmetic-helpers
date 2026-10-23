@@ -8,6 +8,9 @@
    - the "type any problem" search box in the bar at the top
    - a QR code for this page's address, to open the same problem on a phone (button QR, key Q); qr.js, next to this
      file, is only fetched the first time it's needed
+   - Tutor me (practice=tutor), the fourth practice mode: tutor.js, next to this file, is fetched on pages that have
+     the practice buttons and a "Say it out loud" list (embedded, only when the link asks for it); while it's on,
+     Read aloud reads its question and choices
    Everything is wrapped so a problem here can never break a helper page. */
 (function(){
   "use strict";
@@ -147,7 +150,7 @@
   }
 
   /* ===================== read aloud ===================== */
-  var speaking = false, readBtn = null;
+  var speaking = false, readBtn = null, tutorReading = false;
   function spoken(el){
     var c = el.cloneNode(true);
     [].forEach.call(c.querySelectorAll("svg, .sr-only, button"), function(x){ x.remove(); });
@@ -184,7 +187,7 @@
     });
   }
   function stopReading(){
-    speaking = false;
+    speaking = false; tutorReading = false; sayTok++;
     try { window.speechSynthesis.cancel(); } catch (e){}
     [].forEach.call(document.querySelectorAll(".ht-reading"), function(x){ x.classList.remove("ht-reading"); });
     if (readBtn){ readBtn.textContent = "Read aloud"; readBtn.setAttribute("aria-pressed", "false"); }
@@ -218,22 +221,49 @@
     return all[0] || null;
   }
   var lastUtter = null;                                          // kept, or Chrome can drop it before onend fires
+  var sayTok = 0;                                                // a newer say() (or Stop) ends the one before
   function say(text, done){
     // a sentence at a time: Chrome stops some voices part-way through a long one
     var parts = String(text).replace(/([.!?:;])\s+(?=\S)/g, "$1\u0001").split("\u0001").filter(function(x){ return /\w/.test(x); });
-    var v = pickVoice(), k = 0;
+    var v = pickVoice(), k = 0, tok = ++sayTok;
     (function one(){
+      if (tok !== sayTok) return;
       if (k >= parts.length){ if (done) done(); return; }
       var u = lastUtter = new SpeechSynthesisUtterance(parts[k++]);
       if (v){ u.voice = v; u.lang = v.lang; }
       u.rate = S.rate || 1; u.pitch = 1;
-      u.onend = function(){ if (speaking || !done) one(); };
-      u.onerror = function(){ if (done) done(); };
+      u.onend = function(){ if (tok === sayTok && (speaking || !done)) one(); };
+      u.onerror = function(){ if (tok === sayTok && done) done(); };
       window.speechSynthesis.speak(u);
     })();
   }
+  /* Tutor me (tutor.js): read its question and choices, not the steps still hidden. While reading is on, each new
+     question is read as it comes up, after what just happened and the step just shown. */
+  function tutorOn(){ return !!(window.HelperTutor && window.HelperTutor.active && window.HelperTutor.active()); }
+  function readTutor(){
+    var sp = window.HelperTutor.speech();
+    [].forEach.call(document.querySelectorAll(".ht-reading"), function(x){ x.classList.remove("ht-reading"); });
+    if (!sp || !sp.parts.length) return;
+    try { window.speechSynthesis.cancel(); } catch (e){}
+    var text = sp.parts.map(function(p){ return p.el ? spoken(p.el) : words(p.text); }).join(". ");
+    sp.box.classList.add("ht-reading");
+    say(text, function(){ sp.box.classList.remove("ht-reading"); });
+  }
+  var tutorTimer = null;
+  function onTutor(e){
+    if (!tutorReading) return;
+    if (e.detail && e.detail.what === "off"){ stopReading(); return; }
+    clearTimeout(tutorTimer);
+    tutorTimer = setTimeout(safe(function(){ if (tutorReading && tutorOn()) readTutor(); }), 150);
+  }
   function readAloud(){
     if (speaking){ stopReading(); return; }
+    if (tutorOn()){
+      speaking = true; tutorReading = true;
+      if (readBtn){ readBtn.textContent = "Stop reading"; readBtn.setAttribute("aria-pressed", "true"); }
+      readTutor();
+      return;
+    }
     var items = logItems();
     if (!items.length){ announce("Nothing to read yet"); return; }
     try { window.speechSynthesis.cancel(); } catch (e){}
@@ -367,6 +397,7 @@
       "<tr><td><kbd>/</kbd></td><td>Jump to the problem box</td></tr>" +
       "<tr><td><kbd>N</kbd></td><td>A new problem (or the next one after a right answer)</td></tr>" +
       "<tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Back and forward a step in One step at a time</td></tr>" +
+      "<tr><td><kbd>1</kbd>–<kbd>4</kbd></td><td>Pick a choice in Tutor me</td></tr>" +
       "<tr><td><kbd>R</kbd></td><td>Read the explanation aloud</td></tr>" +
       "<tr><td><kbd>D</kbd></td><td>Switch light and dark</td></tr>" +
       "<tr><td><kbd>+</kbd> <kbd>−</kbd></td><td>Bigger or smaller text</td></tr>" +
@@ -461,7 +492,8 @@
     "logarithms.html":"log ln ^ ( ) = / e − .", "sequences.html":", ^ / − ( ) = Σ .",
     "functions.html":"x f( ) ^ √ / − + = , |", "radicals.html":"√ ∛ x ^ / ( ) − + =",
     "complex-numbers.html":"i ^ √ / ( ) − + ° π", "college-statistics.html":", . = < > ± % ( )",
-    "matrices-and-vectors.html":"[ ] , ; < > − / ( ) |"
+    "matrices-and-vectors.html":"[ ] , ; < > − / ( ) |",
+    "unit-conversions.html":"/ . ° ′ ″ , ²", "money-math.html":"$ % . , / ( )"
   };
   var padEl = null, padFor = null, padHide = null;
   function padWanted(){
@@ -621,6 +653,25 @@
     setTimeout(safe(byHand), 300);
   }
 
+  /* ===================== Tutor me: tutor.js, next to this file ===================== */
+  function linkPractice(){                     // practice= as the page was opened (it may have rewritten its address since)
+    var href = location.href;
+    try { var nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0]; if (nav && nav.name) href = nav.name; } catch (e){}
+    var m = /[?&]practice=([^&#]*)/.exec(href);
+    return m ? m[1].toLowerCase() : null;
+  }
+  function loadTutor(){
+    if (window.HelperTutor || page === "tests.html") return;
+    var modes = [].some.call(document.querySelectorAll('[role="group"] button'), function(b){ return /^one step at a time$/i.test(b.textContent.trim()); });
+    if (!modes || !document.querySelector(".log")) return;
+    if (embedded() && linkPractice() !== "tutor") return;      // practice sets and worksheets: only when the link asks
+    var src = SELF;
+    if (!src){ var s = document.querySelector('script[src$="tools.js"], script[src*="tools.js?"]'); src = s ? s.src : "tools.js"; }
+    var sc = document.createElement("script");
+    sc.src = src.replace(/tools\.js([?#].*)?$/, "tutor.js"); sc.async = true;
+    document.head.appendChild(sc);
+  }
+
   /* ===================== the bar: search, recent, text size, big screen, shortcuts ===================== */
   function goSearch(text){
     var r = window.HelperSearch && window.HelperSearch.route(text);
@@ -668,6 +719,8 @@
   var main = safe(function(){
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
     if (page !== "tests.html") initPad();    // the math keys also help inside practice sets on a phone
+    loadTutor();                             // framed too (the self-test); embedded, only when the link says practice=tutor
+    document.addEventListener("helper:tutor", safe(onTutor));
     if (passive) return;                     // framed or embedded: nothing else to add, nothing to save
     applySettings();
     watchTheme();
