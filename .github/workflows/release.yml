@@ -101,7 +101,7 @@ jobs:
           # every page at its readable address (no .html), dated by its last commit; the self-test and 404 page left out
           python3 - <<'PY'
           import subprocess, glob
-          base = "https://chrisdfennell.github.io/arithmetic-helpers/"
+          base = "https://showthesteps.org/"
           pages = ["index.html"] + sorted(p.replace("\\", "/") for p in glob.glob("helpers/*.html") + glob.glob("practice/*.html") + glob.glob("reference/*.html"))
           rows = []
           for f in pages:

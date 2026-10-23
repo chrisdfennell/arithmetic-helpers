@@ -12,7 +12,7 @@ body:
     attributes:
       label: Link to the problem
       description: Press "Copy link" on the page and paste it here.
-      placeholder: https://chrisdfennell.github.io/arithmetic-helpers/helpers/order-of-operations?q=3%2B4%C3%972
+      placeholder: https://showthesteps.org/helpers/order-of-operations?q=3%2B4%C3%972
     validations:
       required: true
   - type: dropdown

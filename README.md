@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><img src="assets/icons/icon-192.png" width="96" height="96" alt="Arithmetic Helpers icon: the four operation signs on colored tiles"></a>
+  <a href="https://showthesteps.org/"><img src="assets/icons/icon-192.png" width="96" height="96" alt="Arithmetic Helpers icon: the four operation signs on colored tiles"></a>
 </p>
 
 <h1 align="center">Arithmetic Helpers</h1>
@@ -9,11 +9,11 @@
 </p>
 
 <p align="center">
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><strong>Open the site &rarr;</strong></a>
+  <a href="https://showthesteps.org/"><strong>Open the site &rarr;</strong></a>
 </p>
 
 <p align="center">
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/"><img src="https://img.shields.io/badge/live%20site-chrisdfennell.github.io-2f6f5e" alt="Live site"></a>
+  <a href="https://showthesteps.org/"><img src="https://img.shields.io/badge/live%20site-showthesteps.org-2f6f5e" alt="Live site"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/releases"><img src="https://img.shields.io/github/v/release/chrisdfennell/arithmetic-helpers?label=version" alt="Latest version"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/release.yml"><img src="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/release.yml/badge.svg" alt="Release and deploy workflow status"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/test.yml"><img src="https://github.com/chrisdfennell/arithmetic-helpers/actions/workflows/test.yml/badge.svg" alt="Self-test workflow status"></a>
@@ -22,7 +22,7 @@
   <a href="#how-its-built"><img src="https://img.shields.io/badge/build%20step-none-brightgreen" alt="No build step"></a>
   <a href="#install-it-as-an-app"><img src="https://img.shields.io/badge/works%20offline-installable-5a4fcf" alt="Works offline and installs as an app"></a>
   <a href="#how-its-built"><img src="https://img.shields.io/badge/vanilla%20JS-ES5-f0db4f" alt="Vanilla JavaScript (ES5)"></a>
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test"><img src="https://img.shields.io/badge/self--test-18%2C000%2B%20checks-success" alt="Self-test: more than 18,000 checks"></a>
+  <a href="https://showthesteps.org/tests/self-test"><img src="https://img.shields.io/badge/self--test-18%2C000%2B%20checks-success" alt="Self-test: more than 18,000 checks"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/commits/main"><img src="https://img.shields.io/github/last-commit/chrisdfennell/arithmetic-helpers" alt="Last commit"></a>
 </p>
 
@@ -73,36 +73,36 @@ Each helper is one page. Type a problem (or pick one, or have the page make one)
 
 | Page | What it does |
 | --- | --- |
-| [The Place Value Chart](https://chrisdfennell.github.io/arithmetic-helpers/helpers/number-sense) | Number sense for the early grades: place value with base-ten blocks, expanded form and number words, rounding on a number line, estimating, comparing and ordering, skip counting and even or odd, telling time and elapsed time, and counting money and making change |
-| [The Carry Column](https://chrisdfennell.github.io/arithmetic-helpers/helpers/addition) | Addition of whole numbers, decimals (2–4 numbers) and fractions, with every carry shown |
-| [The Borrow Bank](https://chrisdfennell.github.io/arithmetic-helpers/helpers/subtraction) | Subtraction with every borrow crossed out and written above |
-| [The Product Ladder](https://chrisdfennell.github.io/arithmetic-helpers/helpers/multiplication) | Multiplication with partial products, then placing the decimal point |
-| [The Division House](https://chrisdfennell.github.io/arithmetic-helpers/helpers/division) | Long division with remainders, fractions or decimals (including repeating) |
-| [The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper) | Do it by hand: work + − × ÷ yourself on squared paper (carries, borrowing with cross-outs, partial products, long division), checked square by square with a hint for each mistake |
-| [The Fraction Bar](https://chrisdfennell.github.io/arithmetic-helpers/helpers/fractions) | Fractions: simplifying, converting to decimals and percents, comparing and ordering, equivalent fractions |
-| [The Hundred Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/percents) | Percents: percent of a number, what percent, finding the whole, percent change, discounts, tax, tips and interest |
-| [The Factor Tree](https://chrisdfennell.github.io/arithmetic-helpers/helpers/factors-and-primes) | Factors and primes: factor pairs, prime factorization, prime or composite, GCF and LCM, divisibility rules |
-| [The Number Line](https://chrisdfennell.github.io/arithmetic-helpers/helpers/negative-numbers) | Integers: adding, subtracting, multiplying and dividing negative numbers, absolute value and ordering |
-| [The Ratio Table](https://chrisdfennell.github.io/arithmetic-helpers/helpers/ratios) | Ratios: simplifying, unit rates and better buys, proportions, sharing in a ratio, and scale |
-| [The Power Tower](https://chrisdfennell.github.io/arithmetic-helpers/helpers/exponents) | Exponents: powers (zero, negative, negative bases), the exponent laws with the reason for each, scientific notation both ways, calculating and comparing with it, and square and cube roots |
-| [The Order Stack](https://chrisdfennell.github.io/arithmetic-helpers/helpers/order-of-operations) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
-| [The Balance Scale](https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
-| [The Slope Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/lines-and-slope) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
-| [The Graph Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, scatter plots with a trend line, and a Free plot sheet of graph paper to draw on; tap or hover any point to see what it is |
-| [The Function Machine](https://chrisdfennell.github.io/arithmetic-helpers/helpers/functions) | Functions: evaluating f(x) (and f(a + 1)), is it a function, domain and range in interval notation, adding and multiplying functions, composition f(g(x)), inverse functions, piecewise functions, and even or odd |
-| [The Area Box](https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics) | Quadratics and polynomials: multiplying brackets with the box method (FOIL and the special products named), factoring (GCF, factor pairs, grouping, difference of squares, cubes), solving quadratics by factoring, square roots, completing the square or the formula, the vertex and vertex form, and long and synthetic division |
-| [The Root Cellar](https://chrisdfennell.github.io/arithmetic-helpers/helpers/radicals) | Radicals and rational expressions: simplifying roots (√72 = 6√2), adding and multiplying roots, rationalizing the denominator (with the conjugate), fraction exponents, radical equations with the check for extraneous answers, and simplifying, multiplying, adding and solving rational expressions with their excluded values |
-| [The Complex Plane](https://chrisdfennell.github.io/arithmetic-helpers/helpers/complex-numbers) | Complex numbers: powers of i, square roots of negatives, adding, multiplying and dividing (by the conjugate), the complex plane, modulus and argument, polar form, De Moivre's powers and roots, and quadratics with complex solutions |
-| [The Log Ladder](https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms) | Logarithms: what a log means (it's the exponent), the log laws to expand and condense, change of base, exponential and log equations (with the check for extraneous answers), growth, decay, half-life and compound interest, and the graphs of bˣ and log_b x |
-| [The Number Staircase](https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences) | Sequences and series: spot the rule in a list, arithmetic and geometric sequences (any term, the nth-term rule, is it in the list?), sums of series and sigma notation, infinite geometric series, and word problems |
-| [The Shape Shop](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
-| [The Dot Plot](https://chrisdfennell.github.io/arithmetic-helpers/helpers/statistics) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
-| [The Chance Spinner](https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
-| [The Unit Circle](https://chrisdfennell.github.io/arithmetic-helpers/helpers/trigonometry) | Trigonometry: right triangles with SOH-CAH-TOA (and angle-of-elevation stories), exact values of the special angles, the unit circle with reference angles, quadrants and radians, the laws of sines and cosines (the ambiguous case too), reading and writing sine and cosine graphs, and the Pythagorean and sum identities |
-| [The Rate Machine](https://chrisdfennell.github.io/arithmetic-helpers/helpers/calculus) | Calculus: limits (0/0, one-sided, at infinity), derivatives with each rule named (power, product, quotient, chain, trig, eˣ and ln), tangent lines, local and absolute maximum and minimum, antiderivatives and definite integrals (u-substitution too), and average and instantaneous rates of change |
-| [The Bell Curve](https://chrisdfennell.github.io/arithmetic-helpers/helpers/college-statistics) | College statistics: z-scores, normal probabilities and percentiles (shaded on the curve), the binomial distribution, sampling distributions and the central limit theorem, confidence intervals, hypothesis tests with p-values, and correlation and regression |
-| [The Matrix Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/matrices-and-vectors) | Matrices and vectors: adding and multiplying matrices (row times column), determinants, inverses, solving systems by row reduction (Gaussian and Gauss-Jordan, Cramer's rule), vectors, magnitude, dot and cross products, and projections |
-| [The Story Problem](https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems) | Word problems: paste or type one and see what it tells you, what it asks, which operation the words point to, a picture of the story, the working and a check |
+| [The Place Value Chart](https://showthesteps.org/helpers/number-sense) | Number sense for the early grades: place value with base-ten blocks, expanded form and number words, rounding on a number line, estimating, comparing and ordering, skip counting and even or odd, telling time and elapsed time, and counting money and making change |
+| [The Carry Column](https://showthesteps.org/helpers/addition) | Addition of whole numbers, decimals (2–4 numbers) and fractions, with every carry shown |
+| [The Borrow Bank](https://showthesteps.org/helpers/subtraction) | Subtraction with every borrow crossed out and written above |
+| [The Product Ladder](https://showthesteps.org/helpers/multiplication) | Multiplication with partial products, then placing the decimal point |
+| [The Division House](https://showthesteps.org/helpers/division) | Long division with remainders, fractions or decimals (including repeating) |
+| [The Scratch Paper](https://showthesteps.org/helpers/scratch-paper) | Do it by hand: work + − × ÷ yourself on squared paper (carries, borrowing with cross-outs, partial products, long division), checked square by square with a hint for each mistake |
+| [The Fraction Bar](https://showthesteps.org/helpers/fractions) | Fractions: simplifying, converting to decimals and percents, comparing and ordering, equivalent fractions |
+| [The Hundred Grid](https://showthesteps.org/helpers/percents) | Percents: percent of a number, what percent, finding the whole, percent change, discounts, tax, tips and interest |
+| [The Factor Tree](https://showthesteps.org/helpers/factors-and-primes) | Factors and primes: factor pairs, prime factorization, prime or composite, GCF and LCM, divisibility rules |
+| [The Number Line](https://showthesteps.org/helpers/negative-numbers) | Integers: adding, subtracting, multiplying and dividing negative numbers, absolute value and ordering |
+| [The Ratio Table](https://showthesteps.org/helpers/ratios) | Ratios: simplifying, unit rates and better buys, proportions, sharing in a ratio, and scale |
+| [The Power Tower](https://showthesteps.org/helpers/exponents) | Exponents: powers (zero, negative, negative bases), the exponent laws with the reason for each, scientific notation both ways, calculating and comparing with it, and square and cube roots |
+| [The Order Stack](https://showthesteps.org/helpers/order-of-operations) | Order of operations (PEMDAS) for long problems with + − × ÷, parentheses and exponents |
+| [The Balance Scale](https://showthesteps.org/helpers/algebra) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
+| [The Slope Grid](https://showthesteps.org/helpers/lines-and-slope) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
+| [The Graph Paper](https://showthesteps.org/helpers/graphing) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, scatter plots with a trend line, and a Free plot sheet of graph paper to draw on; tap or hover any point to see what it is |
+| [The Function Machine](https://showthesteps.org/helpers/functions) | Functions: evaluating f(x) (and f(a + 1)), is it a function, domain and range in interval notation, adding and multiplying functions, composition f(g(x)), inverse functions, piecewise functions, and even or odd |
+| [The Area Box](https://showthesteps.org/helpers/quadratics) | Quadratics and polynomials: multiplying brackets with the box method (FOIL and the special products named), factoring (GCF, factor pairs, grouping, difference of squares, cubes), solving quadratics by factoring, square roots, completing the square or the formula, the vertex and vertex form, and long and synthetic division |
+| [The Root Cellar](https://showthesteps.org/helpers/radicals) | Radicals and rational expressions: simplifying roots (√72 = 6√2), adding and multiplying roots, rationalizing the denominator (with the conjugate), fraction exponents, radical equations with the check for extraneous answers, and simplifying, multiplying, adding and solving rational expressions with their excluded values |
+| [The Complex Plane](https://showthesteps.org/helpers/complex-numbers) | Complex numbers: powers of i, square roots of negatives, adding, multiplying and dividing (by the conjugate), the complex plane, modulus and argument, polar form, De Moivre's powers and roots, and quadratics with complex solutions |
+| [The Log Ladder](https://showthesteps.org/helpers/logarithms) | Logarithms: what a log means (it's the exponent), the log laws to expand and condense, change of base, exponential and log equations (with the check for extraneous answers), growth, decay, half-life and compound interest, and the graphs of bˣ and log_b x |
+| [The Number Staircase](https://showthesteps.org/helpers/sequences) | Sequences and series: spot the rule in a list, arithmetic and geometric sequences (any term, the nth-term rule, is it in the list?), sums of series and sigma notation, infinite geometric series, and word problems |
+| [The Shape Shop](https://showthesteps.org/helpers/geometry) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
+| [The Dot Plot](https://showthesteps.org/helpers/statistics) | Statistics: mean, median, mode and range, box plots, frequency tables, spread, and missing values |
+| [The Chance Spinner](https://showthesteps.org/helpers/probability) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
+| [The Unit Circle](https://showthesteps.org/helpers/trigonometry) | Trigonometry: right triangles with SOH-CAH-TOA (and angle-of-elevation stories), exact values of the special angles, the unit circle with reference angles, quadrants and radians, the laws of sines and cosines (the ambiguous case too), reading and writing sine and cosine graphs, and the Pythagorean and sum identities |
+| [The Rate Machine](https://showthesteps.org/helpers/calculus) | Calculus: limits (0/0, one-sided, at infinity), derivatives with each rule named (power, product, quotient, chain, trig, eˣ and ln), tangent lines, local and absolute maximum and minimum, antiderivatives and definite integrals (u-substitution too), and average and instantaneous rates of change |
+| [The Bell Curve](https://showthesteps.org/helpers/college-statistics) | College statistics: z-scores, normal probabilities and percentiles (shaded on the curve), the binomial distribution, sampling distributions and the central limit theorem, confidence intervals, hypothesis tests with p-values, and correlation and regression |
+| [The Matrix Grid](https://showthesteps.org/helpers/matrices-and-vectors) | Matrices and vectors: adding and multiplying matrices (row times column), determinants, inverses, solving systems by row reduction (Gaussian and Gauss-Jordan, Cramer's rule), vectors, magnitude, dot and cross products, and projections |
+| [The Story Problem](https://showthesteps.org/helpers/story-problems) | Word problems: paste or type one and see what it tells you, what it asks, which operation the words point to, a picture of the story, the working and a check |
 
 The Story Problem reads a story as it's typed: it finds the numbers and the question, says what kind of story it looks like, and works it out.
 
@@ -115,107 +115,107 @@ The Story Problem reads a story as it's typed: it finds the numbers and the ques
 <table>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/order-of-operations?q=20%20%E2%88%92%2012%20%C3%B7%204%20%C3%97%202%20%2B%201"><img src="docs/screenshots/order-of-operations.png" width="100%" alt="The Order Stack: 20 − 12 ÷ 4 × 2 + 1 worked line by line to 15, each operation boxed and tagged with its PEMDAS letter, an expression tree, and the reasons in plain English"></a>
+      <a href="https://showthesteps.org/helpers/order-of-operations?q=20%20%E2%88%92%2012%20%C3%B7%204%20%C3%97%202%20%2B%201"><img src="docs/screenshots/order-of-operations.png" width="100%" alt="The Order Stack: 20 − 12 ÷ 4 × 2 + 1 worked line by line to 15, each operation boxed and tagged with its PEMDAS letter, an expression tree, and the reasons in plain English"></a>
       <br><b>The Order Stack</b>: one operation per line, with an expression tree
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/multiplication?q=47*23"><img src="docs/screenshots/multiplication.png" width="100%" alt="The Product Ladder: 47 × 23 with partial products 141 and 940 adding to 1081, a tape diagram and an area model"></a>
+      <a href="https://showthesteps.org/helpers/multiplication?q=47*23"><img src="docs/screenshots/multiplication.png" width="100%" alt="The Product Ladder: 47 × 23 with partial products 141 and 940 adding to 1081, a tape diagram and an area model"></a>
       <br><b>The Product Ladder</b>: partial products, a tape diagram and an area model
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/division?q=847%C3%B712&ans=remainder"><img src="docs/screenshots/division.png" width="100%" alt="The Division House: 847 ÷ 12 by long division, answer 70 R 7, with a tape diagram and an area model"></a>
+      <a href="https://showthesteps.org/helpers/division?q=847%C3%B712&ans=remainder"><img src="docs/screenshots/division.png" width="100%" alt="The Division House: 847 ÷ 12 by long division, answer 70 R 7, with a tape diagram and an area model"></a>
       <br><b>The Division House</b>: divide, multiply, subtract, bring down
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/fractions?q=3%2F4%2C5%2F8%2C2%2F3"><img src="docs/screenshots/fractions.png" width="100%" alt="The Fraction Bar: putting 3/4, 5/8 and 2/3 in order using a common denominator of 24, with fraction bars and a number line"></a>
+      <a href="https://showthesteps.org/helpers/fractions?q=3%2F4%2C5%2F8%2C2%2F3"><img src="docs/screenshots/fractions.png" width="100%" alt="The Fraction Bar: putting 3/4, 5/8 and 2/3 in order using a common denominator of 24, with fraction bars and a number line"></a>
       <br><b>The Fraction Bar</b>: comparing with a common denominator
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/percents?q=20%25%20off%2045"><img src="docs/screenshots/percents.png" width="100%" alt="The Hundred Grid: 20% off $45, worked two ways to $36.00, with a bar and a hundred grid"></a>
+      <a href="https://showthesteps.org/helpers/percents?q=20%25%20off%2045"><img src="docs/screenshots/percents.png" width="100%" alt="The Hundred Grid: 20% off $45, worked two ways to $36.00, with a bar and a hundred grid"></a>
       <br><b>The Hundred Grid</b>: a discount worked two ways
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra?mode=solve&q=5x%20-%204%20%3D%202x%20%2B%208"><img src="docs/screenshots/algebra-solve.png" width="100%" alt="The Balance Scale: solving 5x − 4 = 2x + 8 to x = 4, doing the same thing to both sides, with balance-scale pictures and a check"></a>
+      <a href="https://showthesteps.org/helpers/algebra?mode=solve&q=5x%20-%204%20%3D%202x%20%2B%208"><img src="docs/screenshots/algebra-solve.png" width="100%" alt="The Balance Scale: solving 5x − 4 = 2x + 8 to x = 4, doing the same thing to both sides, with balance-scale pictures and a check"></a>
       <br><b>The Balance Scale</b>: solving an equation, both sides at once
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F"><img src="docs/screenshots/story-problem.png" width="100%" alt="The Story Problem: Ana has 12 shells, that is 5 more than Ben has; the page finds what is asked, picks subtract, draws a bar model and answers Ben has 7 shells"></a>
+      <a href="https://showthesteps.org/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F"><img src="docs/screenshots/story-problem.png" width="100%" alt="The Story Problem: Ana has 12 shells, that is 5 more than Ben has; the page finds what is asked, picks subtract, draws a bar model and answers Ben has 7 shells"></a>
       <br><b>The Story Problem</b>: “more” that means subtract, with a bar model
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red"><img src="docs/screenshots/probability.png" width="100%" alt="The Chance Spinner: drawing 2 marbles without replacement from 4 red and 6 blue, both red, 2/15, with marble pictures and a tree diagram"></a>
+      <a href="https://showthesteps.org/helpers/probability?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red"><img src="docs/screenshots/probability.png" width="100%" alt="The Chance Spinner: drawing 2 marbles without replacement from 4 red and 6 blue, both red, 2/15, with marble pictures and a tree diagram"></a>
       <br><b>The Chance Spinner</b>: two picks without putting it back
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201"><img src="docs/screenshots/graphing-functions.png" width="100%" alt="The Graph Paper: y = x² − 4x + 3 and y = x − 1 on one grid, with the vertex, intercepts and crossing points labeled"></a>
+      <a href="https://showthesteps.org/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201"><img src="docs/screenshots/graphing-functions.png" width="100%" alt="The Graph Paper: y = x² − 4x + 3 and y = x − 1 on one grid, with the vertex, intercepts and crossing points labeled"></a>
       <br><b>The Graph Paper</b>: two functions with their key features
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=rotate%20triangle%20(1%2C1)%20(3%2C1)%20(1%2C4)%2090%20clockwise"><img src="docs/screenshots/graphing-transform.png" width="100%" alt="The Graph Paper: rotating triangle (1,1) (3,1) (1,4) 90° clockwise with the rule (x, y) → (y, −x), the image drawn dashed on the grid"></a>
+      <a href="https://showthesteps.org/helpers/graphing?q=rotate%20triangle%20(1%2C1)%20(3%2C1)%20(1%2C4)%2090%20clockwise"><img src="docs/screenshots/graphing-transform.png" width="100%" alt="The Graph Paper: rotating triangle (1,1) (3,1) (1,4) 90° clockwise with the rule (x, y) → (y, −x), the image drawn dashed on the grid"></a>
       <br><b>The Graph Paper</b>: a rotation and its rule
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/trigonometry?q=a%20%3D%207%2C%20b%20%3D%2010%2C%20C%20%3D%2040%C2%B0"><img src="docs/screenshots/trigonometry.png" width="100%" alt="The Unit Circle: solving a triangle with a = 7, b = 10 and C = 40° by the law of cosines, c ≈ 6.46, then the other angles, with the triangle drawn to scale"></a>
+      <a href="https://showthesteps.org/helpers/trigonometry?q=a%20%3D%207%2C%20b%20%3D%2010%2C%20C%20%3D%2040%C2%B0"><img src="docs/screenshots/trigonometry.png" width="100%" alt="The Unit Circle: solving a triangle with a = 7, b = 10 and C = 40° by the law of cosines, c ≈ 6.46, then the other angles, with the triangle drawn to scale"></a>
       <br><b>The Unit Circle</b>: two sides and the angle between them, by the law of cosines
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/calculus?q=tangent%20line%20to%20x%5E3%20-%203x%20at%20x%20%3D%202"><img src="docs/screenshots/calculus.png" width="100%" alt="The Rate Machine: the tangent line to x³ − 3x at x = 2 is y = 9x − 16, found from the point (2, 2) and the slope f′(2) = 9, each derivative rule named"></a>
+      <a href="https://showthesteps.org/helpers/calculus?q=tangent%20line%20to%20x%5E3%20-%203x%20at%20x%20%3D%202"><img src="docs/screenshots/calculus.png" width="100%" alt="The Rate Machine: the tangent line to x³ − 3x at x = 2 is y = 9x − 16, found from the point (2, 2) and the slope f′(2) = 9, each derivative rule named"></a>
       <br><b>The Rate Machine</b>: a tangent line, each rule of the derivative named
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/number-sense?q=round%203%2C456%20to%20the%20nearest%20hundred"><img src="docs/screenshots/number-sense.png" width="100%" alt="The Place Value Chart: rounding 3,456 to the nearest hundred, with the hundreds digit ringed, the digit to its right in green, and a number line from 3,400 to 3,500 with the halfway mark at 3,450"></a>
+      <a href="https://showthesteps.org/helpers/number-sense?q=round%203%2C456%20to%20the%20nearest%20hundred"><img src="docs/screenshots/number-sense.png" width="100%" alt="The Place Value Chart: rounding 3,456 to the nearest hundred, with the hundreds digit ringed, the digit to its right in green, and a number line from 3,400 to 3,500 with the halfway mark at 3,450"></a>
       <br><b>The Place Value Chart</b>: rounding on a number line
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics?q=(2x%2B3)(x-4)"><img src="docs/screenshots/quadratics.png" width="100%" alt="The Area Box: multiplying (2x + 3)(x − 4) in a box, the four cells 2x², 3x, −8x and −12 marked F, I, O and L, giving 2x² − 5x − 12"></a>
+      <a href="https://showthesteps.org/helpers/quadratics?q=(2x%2B3)(x-4)"><img src="docs/screenshots/quadratics.png" width="100%" alt="The Area Box: multiplying (2x + 3)(x − 4) in a box, the four cells 2x², 3x, −8x and −12 marked F, I, O and L, giving 2x² − 5x − 12"></a>
       <br><b>The Area Box</b>: multiplying brackets with the box method
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms?q=3%5E(2x-1)%20%3D%2027"><img src="docs/screenshots/logarithms.png" width="100%" alt="The Log Ladder: solving 3^(2x − 1) = 27 by writing 27 as 3³ so the exponents match, 2x − 1 = 3, x = 2"></a>
+      <a href="https://showthesteps.org/helpers/logarithms?q=3%5E(2x-1)%20%3D%2027"><img src="docs/screenshots/logarithms.png" width="100%" alt="The Log Ladder: solving 3^(2x − 1) = 27 by writing 27 as 3³ so the exponents match, 2x − 1 = 3, x = 2"></a>
       <br><b>The Log Ladder</b>: an exponential equation, same base on both sides
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011"><img src="docs/screenshots/sequences.png" width="100%" alt="The Number Staircase: the nth-term rule of 5, 8, 11, with the common difference 3 found first"></a>
+      <a href="https://showthesteps.org/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011"><img src="docs/screenshots/sequences.png" width="100%" alt="The Number Staircase: the nth-term rule of 5, 8, 11, with the common difference 3 found first"></a>
       <br><b>The Number Staircase</b>: the nth-term rule of an arithmetic sequence
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/functions?q=f(x)%20%3D%20x%5E2%2C%20g(x)%20%3D%20x%20%2B%201%2C%20find%20f(g(x))"><img src="docs/screenshots/functions.png" width="100%" alt="The Function Machine: with f(x) = x² and g(x) = x + 1, f(g(x)) is worked inside first, giving (x + 1)² = x² + 2x + 1"></a>
+      <a href="https://showthesteps.org/helpers/functions?q=f(x)%20%3D%20x%5E2%2C%20g(x)%20%3D%20x%20%2B%201%2C%20find%20f(g(x))"><img src="docs/screenshots/functions.png" width="100%" alt="The Function Machine: with f(x) = x² and g(x) = x + 1, f(g(x)) is worked inside first, giving (x + 1)² = x² + 2x + 1"></a>
       <br><b>The Function Machine</b>: a composition, inside first
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/radicals?q=rationalize%204%2F(3%20-%20%E2%88%9A5)"><img src="docs/screenshots/radicals.png" width="100%" alt="The Root Cellar: rationalizing 4/(3 − √5) by multiplying top and bottom by the conjugate 3 + √5, giving 3 + √5"></a>
+      <a href="https://showthesteps.org/helpers/radicals?q=rationalize%204%2F(3%20-%20%E2%88%9A5)"><img src="docs/screenshots/radicals.png" width="100%" alt="The Root Cellar: rationalizing 4/(3 − √5) by multiplying top and bottom by the conjugate 3 + √5, giving 3 + √5"></a>
       <br><b>The Root Cellar</b>: rationalizing with the conjugate
     </td>
   </tr>
   <tr>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/complex-numbers?q=(2%2B3i)%2F(1-i)"><img src="docs/screenshots/complex-numbers.png" width="100%" alt="The Complex Plane: dividing (2 + 3i) by (1 − i) by multiplying by the conjugate 1 + i, giving −1/2 + (5/2)i"></a>
+      <a href="https://showthesteps.org/helpers/complex-numbers?q=(2%2B3i)%2F(1-i)"><img src="docs/screenshots/complex-numbers.png" width="100%" alt="The Complex Plane: dividing (2 + 3i) by (1 − i) by multiplying by the conjugate 1 + i, giving −1/2 + (5/2)i"></a>
       <br><b>The Complex Plane</b>: dividing by the conjugate
     </td>
     <td width="50%" valign="top">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/college-statistics?q=P(X%20%3C%2085)%20mean%2070%20sd%2010"><img src="docs/screenshots/college-statistics.png" width="100%" alt="The Bell Curve: P(X < 85) for a normal distribution with mean 70 and standard deviation 10, z = 1.5, the area shaded under the curve, about 0.9332"></a>
+      <a href="https://showthesteps.org/helpers/college-statistics?q=P(X%20%3C%2085)%20mean%2070%20sd%2010"><img src="docs/screenshots/college-statistics.png" width="100%" alt="The Bell Curve: P(X < 85) for a normal distribution with mean 70 and standard deviation 10, z = 1.5, the area shaded under the curve, about 0.9332"></a>
       <br><b>The Bell Curve</b>: a normal probability, shaded
     </td>
   </tr>
   <tr>
     <td width="100%" valign="top" colspan="2">
-      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/matrices-and-vectors?q=x%20%2B%20y%20%2B%20z%20%3D%206%3B%202x%20-%20y%20%2B%20z%20%3D%203%3B%20x%20%2B%202y%20-%20z%20%3D%202"><img src="docs/screenshots/matrices-and-vectors.png" width="50%" alt="The Matrix Grid: a system of three equations written as an augmented matrix and solved by Gauss-Jordan elimination, every row operation named, giving x = 1, y = 2, z = 3"></a>
+      <a href="https://showthesteps.org/helpers/matrices-and-vectors?q=x%20%2B%20y%20%2B%20z%20%3D%206%3B%202x%20-%20y%20%2B%20z%20%3D%203%3B%20x%20%2B%202y%20-%20z%20%3D%202"><img src="docs/screenshots/matrices-and-vectors.png" width="50%" alt="The Matrix Grid: a system of three equations written as an augmented matrix and solved by Gauss-Jordan elimination, every row operation named, giving x = 1, y = 2, z = 3"></a>
       <br><b>The Matrix Grid</b>: three equations by row reduction, each row operation named
     </td>
   </tr>
@@ -233,9 +233,9 @@ Every helper has three ways to work: **Show all work**, **One step at a time** a
 
 ### Practice sets, flash cards and the problem of the day
 
-- **[Practice sets](https://chrisdfennell.github.io/arithmetic-helpers/practice/sets):** open the link (or scan the QR code) your teacher shares and work through the problems one at a time with Check my answer. At the end you get a score and a line to send back.
-- **[The Flash Cards](https://chrisdfennell.github.io/arithmetic-helpers/practice/flash-cards):** times tables up to 20 × 20 (any of them, mixed together), division, addition and subtraction facts, negatives, ×10/×100/×1000, doubles and halves, primes, powers, easy percents, fractions, squares, cubes, fraction–decimal–percent pairs and math words. Study, Quiz, a Speed round, and a **Learn** mode that brings back the ones you miss. A mastery chart colors each fact by how well you know it, and the cards print as cut-outs.
-- **[Problem of the Day](https://chrisdfennell.github.io/arithmetic-helpers/practice/problem-of-the-day):** one problem a day, the same for everyone on that date (no sign-up, nothing to set up): easier on Monday, a challenge on Friday, a puzzle at the weekend, with a streak kept on the device.
+- **[Practice sets](https://showthesteps.org/practice/sets):** open the link (or scan the QR code) your teacher shares and work through the problems one at a time with Check my answer. At the end you get a score and a line to send back.
+- **[The Flash Cards](https://showthesteps.org/practice/flash-cards):** times tables up to 20 × 20 (any of them, mixed together), division, addition and subtraction facts, negatives, ×10/×100/×1000, doubles and halves, primes, powers, easy percents, fractions, squares, cubes, fraction–decimal–percent pairs and math words. Study, Quiz, a Speed round, and a **Learn** mode that brings back the ones you miss. A mastery chart colors each fact by how well you know it, and the cards print as cut-outs.
+- **[Problem of the Day](https://showthesteps.org/practice/problem-of-the-day):** one problem a day, the same for everyone on that date (no sign-up, nothing to set up): easier on Monday, a challenge on Friday, a puzzle at the weekend, with a streak kept on the device.
 
 <table>
   <tr>
@@ -252,7 +252,7 @@ Every helper has three ways to work: **Show all work**, **One step at a time** a
 
 ### The Scratch Paper: do it by hand
 
-On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper)** you do the written method yourself on squared paper: tap above a digit to write the carry, tap a digit to cross it out and borrow, write each row, bring down in long division. It checks each square as you go (or at the end) with a hint when something's off, and **Show me the next step** fills in one square at a time when you're stuck. The four written-method helpers (+ − × ÷) have a **Now try it by hand** button that opens the same problem here.
+On **[The Scratch Paper](https://showthesteps.org/helpers/scratch-paper)** you do the written method yourself on squared paper: tap above a digit to write the carry, tap a digit to cross it out and borrow, write each row, bring down in long division. It checks each square as you go (or at the end) with a hint when something's off, and **Show me the next step** fills in one square at a time when you're stuck. The four written-method helpers (+ − × ÷) have a **Now try it by hand** button that opens the same problem here.
 
 <p align="center">
   <img src="docs/scratch-paper-steps.gif" width="784" alt="The Scratch Paper filling in 5003 − 1278 one square at a time with Show me the next step: borrowing across the zeros (5 becomes 4, each 0 becomes 10 then 9, the 3 becomes 13), then writing 5, 2, 7 and 3 under the line, ending Solved with the answer 3,725">
@@ -266,7 +266,7 @@ On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/help
 
 ### Your progress
 
-**[Your progress](https://chrisdfennell.github.io/arithmetic-helpers/practice/progress)** is a private record, kept on the device, of what's been practiced, right first time per topic, and mistakes to revisit, each with a **Try again** link. The home page shows a short "Your practice" summary too.
+**[Your progress](https://showthesteps.org/practice/progress)** is a private record, kept on the device, of what's been practiced, right first time per topic, and mistakes to revisit, each with a **Try again** link. The home page shows a short "Your practice" summary too.
 
 <details>
 <summary>Screenshot: Your progress</summary>
@@ -276,17 +276,17 @@ On **[The Scratch Paper](https://chrisdfennell.github.io/arithmetic-helpers/help
 
 ### The Word List
 
-**[The Word List](https://chrisdfennell.github.io/arithmetic-helpers/reference/definitions)** has definitions of the math words the site uses, with examples and pictures. On every page those words link to their definition, with a popup on hover, focus or tap.
+**[The Word List](https://showthesteps.org/reference/definitions)** has definitions of the math words the site uses, with examples and pictures. On every page those words link to their definition, with a popup on hover, focus or tap.
 
 ## For teachers
 
 | Tool | What it does |
 | --- | --- |
-| [The Worksheet Maker](https://chrisdfennell.github.io/arithmetic-helpers/practice/worksheets) | Printable worksheets mixing any of the topics, with an answer key on its own page where every answer links to its worked steps (or turn the sheet into a practice link) |
-| [Practice sets](https://chrisdfennell.github.io/arithmetic-helpers/practice/sets) | Build a set of problems from any helpers and share it as one link or QR code; students work through it with Check my answer and get a score to hand in |
-| [Class results](https://chrisdfennell.github.io/arithmetic-helpers/practice/class-results) | Paste the lines students hand in after a practice set and see scores, a heat map of who got which problem, the hardest problems and who needs help, with CSV export; nothing is uploaded |
-| [Reference sheets](https://chrisdfennell.github.io/arithmetic-helpers/reference/sheets) | Forty one-page sheets to print, plus a graph paper maker |
-| [Problem of the Day](https://chrisdfennell.github.io/arithmetic-helpers/practice/problem-of-the-day?view=week) | The week's problems in one list, with links and a printable answer key, so a whole class can do the same problem each day |
+| [The Worksheet Maker](https://showthesteps.org/practice/worksheets) | Printable worksheets mixing any of the topics, with an answer key on its own page where every answer links to its worked steps (or turn the sheet into a practice link) |
+| [Practice sets](https://showthesteps.org/practice/sets) | Build a set of problems from any helpers and share it as one link or QR code; students work through it with Check my answer and get a score to hand in |
+| [Class results](https://showthesteps.org/practice/class-results) | Paste the lines students hand in after a practice set and see scores, a heat map of who got which problem, the hardest problems and who needs help, with CSV export; nothing is uploaded |
+| [Reference sheets](https://showthesteps.org/reference/sheets) | Forty one-page sheets to print, plus a graph paper maker |
+| [Problem of the Day](https://showthesteps.org/practice/problem-of-the-day?view=week) | The week's problems in one list, with links and a printable answer key, so a whole class can do the same problem each day |
 
 ### Worksheets and practice sets
 
@@ -383,31 +383,31 @@ Every helper reads its problem from the address, so a link opens with that probl
 
 | Link | Opens |
 | --- | --- |
-| [`helpers/addition?q=2 3/4+1 5/6`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/addition?q=2%203%2F4%2B1%205%2F6) | adding mixed numbers |
-| [`helpers/division?q=847÷12&ans=fraction`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/division?q=847%C3%B712&ans=fraction) | long division, answer as a fraction |
-| [`helpers/algebra?mode=sys&q=2x+y=7;x-y=2`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra?mode=sys&q=2x%2By%3D7%3Bx-y%3D2) | a system of two equations |
-| [`helpers/percents?q=15% of 80`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/percents?q=15%25%20of%2080) | percent of a number |
-| [`helpers/ratios?q=share 60 in 2:3`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/ratios?q=share%2060%20in%202%3A3) | sharing in a ratio |
-| [`helpers/lines-and-slope?q=(1,2) (5,4)`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/lines-and-slope?q=(1%2C2)%20(5%2C4)) | the slope between two points |
-| [`helpers/graphing?q=y = x^2 - 4x + 3; y = x - 1`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201) | two functions on one grid |
-| [`helpers/statistics?q=4, 8, 6, 5, 7`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/statistics?q=4%2C%208%2C%206%2C%205%2C%207) | mean, median, mode and range |
-| [`helpers/exponents?q=(2x^2)^3`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/exponents?q=(2x%5E2)%5E3) | an exponent law |
-| [`helpers/probability?q=draw 2 without replacement from 4 red 6 blue, both red`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red) | two events without putting it back |
-| [`helpers/number-sense?q=round 3,456 to the nearest hundred`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/number-sense?q=round%203%2C456%20to%20the%20nearest%20hundred) | rounding on a number line |
-| [`helpers/quadratics?q=2x^2+3x-2=0`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics?q=2x%5E2%2B3x-2%3D0) | solving a quadratic (the page picks the best method and says why) |
-| [`helpers/logarithms?q=3^(2x-1) = 27`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms?q=3%5E(2x-1)%20%3D%2027) | an exponential equation |
-| [`helpers/sequences?q=nth term of 5, 8, 11`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011) | the nth-term rule of an arithmetic sequence |
-| [`helpers/functions?q=f(x) = x^2, g(x) = x + 1, find f(g(x))`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/functions?q=f(x)%20%3D%20x%5E2%2C%20g(x)%20%3D%20x%20%2B%201%2C%20find%20f(g(x))) | a composition of functions |
-| [`helpers/radicals?q=rationalize 4/(3 - √5)`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/radicals?q=rationalize%204%2F(3%20-%20%E2%88%9A5)) | rationalizing with the conjugate |
-| [`helpers/complex-numbers?q=(2+3i)/(1-i)`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/complex-numbers?q=(2%2B3i)%2F(1-i)) | dividing complex numbers |
-| [`helpers/college-statistics?q=95% confidence interval mean 52 s 8 n 25`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/college-statistics?q=95%25%20confidence%20interval%20mean%2052%20s%208%20n%2025) | a confidence interval with t |
-| [`helpers/matrices-and-vectors?q=x + y + z = 6; 2x - y + z = 3; x + 2y - z = 2`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/matrices-and-vectors?q=x%20%2B%20y%20%2B%20z%20%3D%206%3B%202x%20-%20y%20%2B%20z%20%3D%203%3B%20x%20%2B%202y%20-%20z%20%3D%202) | a system of three equations by row reduction |
-| [`helpers/geometry?q=circle radius 5`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry?q=circle%20radius%205) | a circle with radius 5 |
-| [`helpers/story-problems?q=Ana has 12 shells. …`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F) | a story problem |
-| [`helpers/scratch-paper?op=sub&q=5003-1278`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper?op=sub&q=5003-1278) | a subtraction to do by hand |
-| [`practice/flash-cards?deck=times&t=6,7,8&mode=quiz`](https://chrisdfennell.github.io/arithmetic-helpers/practice/flash-cards?deck=times&t=6,7,8&mode=quiz) | a times-table quiz |
-| [`practice/problem-of-the-day?view=week`](https://chrisdfennell.github.io/arithmetic-helpers/practice/problem-of-the-day?view=week) | this week's problems with an answer key |
-| [`reference/sheets#geometry`](https://chrisdfennell.github.io/arithmetic-helpers/reference/sheets#geometry) | one reference sheet (or `reference/sheets?print=times,geometry` to pick sheets to print) |
+| [`helpers/addition?q=2 3/4+1 5/6`](https://showthesteps.org/helpers/addition?q=2%203%2F4%2B1%205%2F6) | adding mixed numbers |
+| [`helpers/division?q=847÷12&ans=fraction`](https://showthesteps.org/helpers/division?q=847%C3%B712&ans=fraction) | long division, answer as a fraction |
+| [`helpers/algebra?mode=sys&q=2x+y=7;x-y=2`](https://showthesteps.org/helpers/algebra?mode=sys&q=2x%2By%3D7%3Bx-y%3D2) | a system of two equations |
+| [`helpers/percents?q=15% of 80`](https://showthesteps.org/helpers/percents?q=15%25%20of%2080) | percent of a number |
+| [`helpers/ratios?q=share 60 in 2:3`](https://showthesteps.org/helpers/ratios?q=share%2060%20in%202%3A3) | sharing in a ratio |
+| [`helpers/lines-and-slope?q=(1,2) (5,4)`](https://showthesteps.org/helpers/lines-and-slope?q=(1%2C2)%20(5%2C4)) | the slope between two points |
+| [`helpers/graphing?q=y = x^2 - 4x + 3; y = x - 1`](https://showthesteps.org/helpers/graphing?q=y%20%3D%20x%5E2%20-%204x%20%2B%203%3B%20y%20%3D%20x%20-%201) | two functions on one grid |
+| [`helpers/statistics?q=4, 8, 6, 5, 7`](https://showthesteps.org/helpers/statistics?q=4%2C%208%2C%206%2C%205%2C%207) | mean, median, mode and range |
+| [`helpers/exponents?q=(2x^2)^3`](https://showthesteps.org/helpers/exponents?q=(2x%5E2)%5E3) | an exponent law |
+| [`helpers/probability?q=draw 2 without replacement from 4 red 6 blue, both red`](https://showthesteps.org/helpers/probability?q=draw%202%20without%20replacement%20from%204%20red%206%20blue%2C%20both%20red) | two events without putting it back |
+| [`helpers/number-sense?q=round 3,456 to the nearest hundred`](https://showthesteps.org/helpers/number-sense?q=round%203%2C456%20to%20the%20nearest%20hundred) | rounding on a number line |
+| [`helpers/quadratics?q=2x^2+3x-2=0`](https://showthesteps.org/helpers/quadratics?q=2x%5E2%2B3x-2%3D0) | solving a quadratic (the page picks the best method and says why) |
+| [`helpers/logarithms?q=3^(2x-1) = 27`](https://showthesteps.org/helpers/logarithms?q=3%5E(2x-1)%20%3D%2027) | an exponential equation |
+| [`helpers/sequences?q=nth term of 5, 8, 11`](https://showthesteps.org/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011) | the nth-term rule of an arithmetic sequence |
+| [`helpers/functions?q=f(x) = x^2, g(x) = x + 1, find f(g(x))`](https://showthesteps.org/helpers/functions?q=f(x)%20%3D%20x%5E2%2C%20g(x)%20%3D%20x%20%2B%201%2C%20find%20f(g(x))) | a composition of functions |
+| [`helpers/radicals?q=rationalize 4/(3 - √5)`](https://showthesteps.org/helpers/radicals?q=rationalize%204%2F(3%20-%20%E2%88%9A5)) | rationalizing with the conjugate |
+| [`helpers/complex-numbers?q=(2+3i)/(1-i)`](https://showthesteps.org/helpers/complex-numbers?q=(2%2B3i)%2F(1-i)) | dividing complex numbers |
+| [`helpers/college-statistics?q=95% confidence interval mean 52 s 8 n 25`](https://showthesteps.org/helpers/college-statistics?q=95%25%20confidence%20interval%20mean%2052%20s%208%20n%2025) | a confidence interval with t |
+| [`helpers/matrices-and-vectors?q=x + y + z = 6; 2x - y + z = 3; x + 2y - z = 2`](https://showthesteps.org/helpers/matrices-and-vectors?q=x%20%2B%20y%20%2B%20z%20%3D%206%3B%202x%20-%20y%20%2B%20z%20%3D%203%3B%20x%20%2B%202y%20-%20z%20%3D%202) | a system of three equations by row reduction |
+| [`helpers/geometry?q=circle radius 5`](https://showthesteps.org/helpers/geometry?q=circle%20radius%205) | a circle with radius 5 |
+| [`helpers/story-problems?q=Ana has 12 shells. …`](https://showthesteps.org/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F) | a story problem |
+| [`helpers/scratch-paper?op=sub&q=5003-1278`](https://showthesteps.org/helpers/scratch-paper?op=sub&q=5003-1278) | a subtraction to do by hand |
+| [`practice/flash-cards?deck=times&t=6,7,8&mode=quiz`](https://showthesteps.org/practice/flash-cards?deck=times&t=6,7,8&mode=quiz) | a times-table quiz |
+| [`practice/problem-of-the-day?view=week`](https://showthesteps.org/practice/problem-of-the-day?view=week) | this week's problems with an answer key |
+| [`reference/sheets#geometry`](https://showthesteps.org/reference/sheets#geometry) | one reference sheet (or `reference/sheets?print=times,geometry` to pick sheets to print) |
 
 Each page lists the parameters it accepts in a `URL parameters` comment at the top of its script. `embed=1` shows just the problem and the answer box (practice sets use this).
 
@@ -431,7 +431,7 @@ It opens in its own window, works without a connection, and updates itself when 
 
 [`tests/self-test.html`](tests/self-test.html) checks every helper in the browser: each page loads with all its parts, a list of problems with known answers, **Check my answer** (right, equivalent, needs simplifying, wrong), problems from each page's problem maker re-worked by separate code on the test page, and each made problem reopened from its link. It also checks the flash cards (each card opens from its link, answers in any form are marked right, the problem maker's facts are re-worked), the reference sheets (every square of the times table, a few formulas, and every link), class results (a handed-in line is verified, and a changed score, name or mark is caught) and the math keys (they come up, type where the cursor is, and go away on Done). **Thorough** tries every problem-maker option (about 12,200 checks).
 
-Run it from the [live site](https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test) or a local server:
+Run it from the [live site](https://showthesteps.org/tests/self-test) or a local server:
 
 ```sh
 python -m http.server

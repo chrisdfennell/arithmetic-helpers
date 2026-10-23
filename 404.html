@@ -9,6 +9,12 @@
      folder, and a <base> points there: the first folder of the address on github.io (a project site) or on a copy
      served under /arithmetic-helpers/, and the top of the site anywhere else */
   (function(){
+    // on the site's own domain (showthesteps.org) an old github.io address can arrive with /arithmetic-helpers/ in front:
+    // the page is the same address without it
+    if (!/\.github\.io$|^(localhost|127\.[0-9.]+|\[::1\])$/.test(location.hostname) && /^\/arithmetic-helpers(\/|$)/i.test(location.pathname)){
+      location.replace(location.pathname.replace(/^\/arithmetic-helpers/i, "") + location.search + location.hash);
+      return;
+    }
     var m = /^\/[^\/]+\//.exec(location.pathname);
     var base = m && (/\.github\.io$/.test(location.hostname) || /^\/arithmetic-helpers\/$/i.test(m[0])) ? m[0] : "/";
     document.write('<base href="' + base + '">');
@@ -22,7 +28,7 @@
      Anything else stays here and shows the page below. */
   (function(){
     var S = window.HelperSite;
-    if (!S) return;
+    if (!S || !document.querySelector("base")) return;                 // no <base>: already on its way (above)
     var base = document.querySelector("base").href, here = location.href.split(/[?#]/)[0];
     if (here.indexOf(base) !== 0) return;
     var rel; try { rel = decodeURIComponent(here.slice(base.length)); } catch (e){ rel = here.slice(base.length); }
