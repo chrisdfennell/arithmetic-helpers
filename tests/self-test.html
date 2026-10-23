@@ -273,6 +273,8 @@
     { page:"trigonometry.html", name:"The Unit Circle" }, { page:"calculus.html", name:"The Rate Machine" },
     { page:"number-sense.html", name:"The Place Value Chart" }, { page:"quadratics.html", name:"The Area Box" },
     { page:"logarithms.html", name:"The Log Ladder" }, { page:"sequences.html", name:"The Number Staircase" },
+    { page:"functions.html", name:"The Function Machine" }, { page:"radicals.html", name:"The Root Cellar" }, { page:"complex-numbers.html", name:"The Complex Plane" },
+    { page:"college-statistics.html", name:"The Bell Curve" }, { page:"matrices-and-vectors.html", name:"The Matrix Grid" },
     // not step-by-step helpers: each has its own checks (TOOLS below)
     { page:"flashcards.html", name:"The Flash Cards", kind:"cards" },
     { page:"reference.html", name:"Reference sheets", kind:"tool" }, { page:"results.html", name:"Class results", kind:"tool" },
@@ -282,6 +284,41 @@
 
   /* problems with known answers: open the link, and every value must show in the answer */
   var KNOWN = {
+    "functions.html":[ ["mode=eval&f=" + encodeURIComponent("x^2-3x+2") + "&at=4",["6"]], ["mode=eval&f=" + encodeURIComponent("2x+5") + "&at=-3",["-1"]],
+                       ["mode=eval&f=" + encodeURIComponent("1/(x-2)") + "&at=2",["~undefined"]], ["mode=eval&f=" + encodeURIComponent("sqrt(x+8)") + "&at=4",[{ f:2 * Math.sqrt(3) }]],
+                       ["mode=func&pts=1,2;2,3;1,4",["~not a function"]], ["mode=domain&f=" + encodeURIComponent("sqrt(x+4)"),["-4","0"]],
+                       ["mode=domain&f=" + encodeURIComponent("(x-1)^2+3") + "&ask=range",["3"]], ["mode=combine&f=3x&g=" + encodeURIComponent("x^2+1") + "&op=add&at=2",["11"]],
+                       ["mode=compose&f=" + encodeURIComponent("x^2+1") + "&g=" + encodeURIComponent("2x-3") + "&ask=fg&at=3",["10"]],
+                       ["mode=compose&f=" + encodeURIComponent("1/(x-2)") + "&g=sqrt(x)&ask=dfg",["0","4"]], ["mode=inverse&f=" + encodeURIComponent("sqrt(x-2)"),["2","0"]],
+                       ["mode=piece&pw=" + encodeURIComponent("x+2 if x<0;x^2 if x>=0") + "&at=-3",["-1"]], ["mode=parity&f=" + encodeURIComponent("x^3-x"),["~odd"]] ],
+    "college-statistics.html":[ ["mode=z&find=z&x=85&mu=70&sd=10",["1.50"]], ["mode=z&find=compare&x=85&mu=70&sd=10&x2=32&mu2=25&sd2=4",["1.50","1.75","~second"]],
+                                ["mode=normal&mu=70&sd=10&type=lt&a=85",["0.9332"]], ["mode=normal&mu=70&sd=10&type=between&a=60&b=80",["0.6826"]],
+                                ["mode=normal&mu=500&sd=100&type=top&p=10",["628"]], ["q=" + encodeURIComponent("P(Z > 1.23)"),["0.1093"]],
+                                ["mode=normal&mu=70&sd=10&type=between&a=50&b=90&rule=1",["95"]],
+                                ["mode=binom&n=10&p=0.3&ask=eq&k=4",["0.2001"]], ["mode=binom&n=20&p=0.5&ask=ge&k=12",["0.2517"]], ["mode=binom&n=10&p=0.3&ask=mean",["3",{ f:1.4491, loose:0.0001 }]],
+                                ["mode=sampling&kind=mean&mu=50&sd=12&n=36&type=gt&a=53",["2","0.0668"]], ["mode=ci&kind=t&xbar=52&s=8&n=25&conf=95",["48.70","55.30"]],
+                                ["mode=ci&kind=size&of=mean&sigma=15&me=3&conf=95",["97"]], ["mode=test&kind=t&mu0=40&xbar=38.5&s=4&n=30&alt=lt&alpha=0.05",["-2.05","0.0245","~reject"]],
+                                ["mode=test&kind=prop&p0=0.5&x=60&n=100&alt=ne&alpha=0.01",["2","0.0456","~fail to reject"]], ["mode=regress&xs=1,2,3,4,5&ys=2,4,5,4,5&at=6",[{ f:0.7746, loose:0.0001 },"5.8"]] ],
+    "matrices-and-vectors.html":[ ["mode=arith&A=1,2;3,4&B=0,-1;5,2&ex=2A-3B",["2","7","-9"]], ["mode=mult&A=1,2;3,4&B=5,6;7,8",["19","22","43","50"]],
+                       ["mode=det&A=2,-1;3,4",["11"]], ["mode=det&A=2,-1,3;0,4,1;5,2,-2&how=sarrus",["-85"]], ["mode=det&A=3,1,0,2;1,0,2,1;0,2,1,3;2,1,1,0",["28"]],
+                       ["mode=inv&A=4,7;2,6",["3/5","-7/10","-1/5","2/5"]], ["mode=inv&A=1,2;2,4",["~no inverse"]],
+                       ["q=" + encodeURIComponent("2x + y = 5; x - y = 1"),["2","1"]], ["mode=sys&M=1,1,1,2;2,2,2,5;1,-1,0,0",["~no solution"]],
+                       ["mode=sys&M=1,1,-1,1;2,3,1,4;3,4,0,5&how=gj",["-1","4","2","~t"]],
+                       ["mode=vec&task=mag&u=1,1",[{ f:Math.SQRT2 }]], ["q=" + encodeURIComponent("from P(1, 2) to Q(4, 6)"),["3","4"]],
+                       ["mode=dot&task=cross&u=2,-1,3&v=1,4,-2",["-10","7","9"]], ["mode=dot&task=angle&u=1,0&v=1,1",["45"]] ],
+    "radicals.html":[ ["mode=simplify&r=" + encodeURIComponent("sqrt(72)"),[{ f:6 * Math.sqrt(2) }]], ["mode=simplify&r=" + encodeURIComponent("cbrt(54)"),["3","~∛2"]],
+                      ["mode=simplify&r=" + encodeURIComponent("sqrt(5/12)"),[{ f:Math.sqrt(15) },"6"]], ["mode=simplify&r=" + encodeURIComponent("sqrt(50x^5y^2)"),["5","~√"]],
+                      ["mode=operate&ex=" + encodeURIComponent("(2+sqrt(3))(1-sqrt(3))"),["-1",{ f:-Math.sqrt(3) }]], ["mode=operate&ex=" + encodeURIComponent("sqrt(12)+sqrt(27)"),[{ f:5 * Math.sqrt(3) }]],
+                      ["mode=rationalize&n=4&d=" + encodeURIComponent("3-sqrt(5)"),["3",{ f:Math.sqrt(5) }]], ["mode=exponents&task=value&ex=" + encodeURIComponent("16^(-3/4)"),["1/8"]],
+                      ["mode=exponents&task=laws&ex=" + encodeURIComponent("x^(1/2)*x^(1/3)"),["5/6"]], ["mode=radeq&eq=" + encodeURIComponent("sqrt(2x+3)=x"),["3","-1"]],
+                      ["mode=rateq&eq=" + encodeURIComponent("3/(x-2)=5/(x+1)"),["13/2"]], ["mode=ratsimp&f=" + encodeURIComponent("(x^2-9)/(x^2+5x+6)"),["~x − 3","-3","-2"]],
+                      ["mode=ratadd&f=" + encodeURIComponent("2/(x+1)") + "&g=" + encodeURIComponent("3/(x-2)") + "&op=add",["~5x − 1","-1","2"]] ],
+    "complex-numbers.html":[ ["mode=i&task=pow&n=23",["~−i"]], ["mode=i&task=root&r=-48",["~4i√3"]], ["mode=i&task=prod&a=-4&b=-9",["-6"]],
+                             ["mode=add&a=3%2B2i&b=1-4i&op=sub",["~2 + 6i"]], ["mode=mul&a=3%2B2i&b=1-4i",["~11 − 10i"]], ["mode=div&a=3%2B2i&b=1-4i",["5/17","14/17"]],
+                             ["mode=plane&z=3-4i",["5",{ f:306.87 },"~3 + 4i"]], ["mode=polar&task=topolar&z=1%2Bsqrt(3)i",["2","60","~2(cos 60° + i sin 60°)"]],
+                             ["mode=polar&task=torect&r=4&t=150",["~−2√3 + 2i"]], ["mode=demoivre&task=pow&z=1%2Bi&n=8",["16"]],
+                             ["mode=demoivre&task=roots&w=8i&n=3",["~√3 + i","~−√3 + i","~−2i"]], ["mode=solve&eq=x^2%2B4x%2B13%3D0",["~−2 + 3i","~−2 − 3i"]],
+                             ["q=" + encodeURIComponent("(1 + i)^8"),["16"]] ],
     "sequences.html":[ ["mode=pattern&t=3,7,11,15",["19","23","27"]], ["mode=pattern&t=1,1,2,3,5",["8","13","21"]],
                        ["q=" + encodeURIComponent("1, 4, 9, 16"),["25","36","49"]],
                        ["mode=arith&task=term&a1=3&d=4&n=20&show=3",["79"]], ["mode=arith&task=two&i=3&ai=10&j=7&aj=22",["4","3"]],
@@ -397,6 +434,44 @@
 
   /* Check my answer: [link, what to type, expected verdict] */
   var CHECKS = {
+    "functions.html":[ ["mode=eval&f=" + encodeURIComponent("x^2-3x+2") + "&at=4",["6"],"right"], ["mode=eval&f=" + encodeURIComponent("x^2-3x+2") + "&at=4",["12/2"],"simplify"],
+                       ["mode=eval&f=" + encodeURIComponent("x^2+1") + "&at=-3",["-8"],"wrong"], ["mode=eval&f=" + encodeURIComponent("x^2+1") + "&at=" + encodeURIComponent("a+1"),["(a+1)^2+1"],"simplify"],
+                       ["mode=domain&f=" + encodeURIComponent("1/(x-2)") + "&ask=domain",["all real numbers except 2"],"right"], ["mode=domain&f=" + encodeURIComponent("sqrt(x-3)") + "&ask=domain",["(3, ∞)"],"wrong"],
+                       ["mode=domain&f=" + encodeURIComponent("sqrt(x-3)"),["x >= 3","y >= 0"],"right"], ["mode=combine&f=" + encodeURIComponent("x^2-9") + "&g=" + encodeURIComponent("x-3") + "&op=div",["x+3","all real numbers"],"wrong"],
+                       ["mode=compose&f=" + encodeURIComponent("x^2+1") + "&g=" + encodeURIComponent("2x-3") + "&ask=fg",["4x^2-12x+10"],"right"],
+                       ["mode=compose&f=" + encodeURIComponent("x^2+1") + "&g=" + encodeURIComponent("2x-3") + "&ask=fg",["2x^2-1"],"wrong"],
+                       ["mode=inverse&f=" + encodeURIComponent("2x+3"),["(x-3)/2"],"right"], ["mode=inverse&f=" + encodeURIComponent("2x+3"),["1/(2x+3)"],"wrong"],
+                       ["mode=func&pts=1,5;2,5;3,7",["yes"],"right"], ["mode=parity&f=" + encodeURIComponent("x^3+1"),["odd"],"wrong"] ],
+    "college-statistics.html":[ ["mode=z&find=z&x=85&mu=70&sd=10",["1.50"],"right"], ["mode=z&find=z&x=85&mu=70&sd=10",["-1.5"],"wrong"],
+                                ["mode=normal&mu=70&sd=10&type=lt&a=85",["93.32%"],"right"], ["mode=normal&mu=70&sd=10&type=lt&a=85",["0.0668"],"wrong"],
+                                ["mode=binom&n=20&p=0.5&ask=ge&k=12",["0.2517"],"right"], ["mode=binom&n=20&p=0.5&ask=ge&k=12",["0.1316"],"wrong"],
+                                ["mode=sampling&kind=mean&mu=50&sd=12&n=36&type=gt&a=53",["2","0.0668"],"right"], ["mode=sampling&kind=mean&mu=50&sd=12&n=36&type=gt&a=53",["12","0.4013"],"wrong"],
+                                ["mode=ci&kind=t&xbar=52&s=8&n=25&conf=95",["52 ± 3.30"],"right"], ["mode=ci&kind=t&xbar=52&s=8&n=25&conf=95",["(48.86, 55.14)"],"wrong"],
+                                ["mode=test&kind=t&mu0=40&xbar=38.5&s=4&n=30&alt=lt&alpha=0.05",["-2.05","0.0245","Reject H0: there is convincing evidence that the mean is less than 40"],"right"],
+                                ["mode=test&kind=t&mu0=40&xbar=38.5&s=4&n=30&alt=lt&alpha=0.05",["-2.05","0.0245","Accept H0"],"wrong"],
+                                ["mode=regress&xs=1,2,3,4,5&ys=2,4,5,4,5&at=6",["0.7746","0.6","2.2","0.6","5.8"],"right"], ["mode=regress&xs=1,2,3,4,5&ys=2,4,5,4,5&at=6",["0.6","0.6","2.2","0.6","5.8"],"wrong"] ],
+    "matrices-and-vectors.html":[ ["mode=mult&A=1,2;3,4&B=5,6;7,8",["19","22","43","50"],"right"], ["mode=mult&A=1,2;3,4&B=5,6;7,8",["5","12","21","32"],"wrong"],
+                       ["mode=det&A=2,-1;3,4",["11"],"right"], ["mode=det&A=2,-1;3,4",["5"],"wrong"],
+                       ["mode=inv&A=4,7;2,6",["0.6","-0.7","-0.2","0.4"],"right"], ["mode=inv&A=4,7;2,6",["6/10","-7/10","-2/10","4/10"],"simplify"],
+                       ["mode=inv&A=4,7;2,6",["6","-7","-2","4"],"wrong"], ["mode=inv&A=1,2;2,4",["none","","",""],"right"],
+                       ["mode=sys&M=2,1,5;1,-1,1",["x = 2","y = 1"],"right"], ["mode=sys&M=2,1,5;1,-1,1",["1","2"],"wrong"],
+                       ["mode=sys&M=1,1,-1,1;2,3,1,4;3,4,0,5",["-1 + 4z","2 - 3z","z"],"right"],
+                       ["mode=vec&task=unit&u=1,1",["<√2/2, √2/2>"],"right"], ["mode=vec&task=unit&u=1,1",["<1/√2, 1/√2>"],"simplify"],
+                       ["mode=dot&task=dot&u=1,2&v=3,4",["11"],"right"], ["mode=dot&task=cross&u=2,-1,3&v=1,4,-2",["<10, -7, -9>"],"wrong"] ],
+    "radicals.html":[ ["mode=simplify&r=" + encodeURIComponent("sqrt(72)"),["6√2"],"right"], ["mode=simplify&r=" + encodeURIComponent("sqrt(72)"),["3√8"],"simplify"],
+                      ["mode=simplify&r=" + encodeURIComponent("sqrt(72)"),["36√2"],"wrong"], ["mode=operate&ex=" + encodeURIComponent("sqrt(12)+sqrt(27)"),["5√3"],"right"],
+                      ["mode=operate&ex=" + encodeURIComponent("sqrt(12)+sqrt(27)"),["√39"],"wrong"], ["mode=rationalize&n=5&d=" + encodeURIComponent("sqrt(3)"),["5√3/3"],"right"],
+                      ["mode=rationalize&n=5&d=" + encodeURIComponent("sqrt(3)"),["5/√3"],"simplify"], ["mode=exponents&task=value&ex=" + encodeURIComponent("8^(2/3)"),["4"],"right"],
+                      ["mode=radeq&eq=" + encodeURIComponent("sqrt(2x+3)=x"),["x = 3"],"right"], ["mode=radeq&eq=" + encodeURIComponent("sqrt(2x+3)=x"),["x = 3 or x = -1"],"wrong"],
+                      ["mode=ratsimp&f=" + encodeURIComponent("(x^2-9)/(x^2+5x+6)"),["(x-3)/(x+2)","-3, -2"],"right"], ["mode=ratsimp&f=" + encodeURIComponent("(x^2-9)/(x^2+5x+6)"),["(x-3)/(x+2)","-2"],"wrong"],
+                      ["mode=ratsimp&f=" + encodeURIComponent("(x^2-9)/(x^2+5x+6)"),["(x^2-9)/(x^2+5x+6)","-3, -2"],"simplify"], ["mode=rateq&eq=" + encodeURIComponent("x/(x-2)+1=2/(x-2)"),["no solution"],"right"] ],
+    "complex-numbers.html":[ ["mode=i&task=pow&n=23",["-i"],"right"], ["mode=i&task=pow&n=23",["i"],"wrong"], ["mode=i&task=prod&a=-4&b=-9",["6"],"wrong"],
+                             ["mode=i&task=root&r=-48",["i√48"],"simplify"], ["mode=mul&a=3%2B2i&b=1-4i",["11-10i"],"right"], ["mode=mul&a=3%2B2i&b=1-4i",["3 - 10i - 8i^2"],"simplify"],
+                             ["mode=mul&a=3%2B2i&b=1-4i",["-5-10i"],"wrong"], ["mode=div&a=3%2B2i&b=1-4i",["-5/17 + 14/17i"],"right"], ["mode=div&a=3%2B2i&b=1-4i",["(-5+14i)/17"],"simplify"],
+                             ["mode=div&a=3%2B2i&b=1-4i",["11/17 - 10/17i"],"wrong"], ["mode=plane&z=-2%2B5i",["√29","111.8","-2-5i"],"right"], ["mode=plane&z=-2%2B5i",["√29","-68.2","-2-5i"],"wrong"],
+                             ["mode=polar&task=mul&r1=2&t1=30&r2=3&t2=60",["6","90"],"right"], ["mode=polar&task=mul&r1=2&t1=30&r2=3&t2=60",["5","90"],"wrong"],
+                             ["mode=demoivre&task=roots&w=8i&n=3",["√3 + i, -√3 + i, -2i"],"right"], ["mode=demoivre&task=roots&w=8i&n=3",["√3 + i"],"wrong"],
+                             ["mode=solve&eq=x^2%2B4x%2B13%3D0",["-2 ± 3i"],"right"], ["mode=solve&eq=x^2%2B4x%2B13%3D0",["(-4 ± 6i)/2"],"simplify"] ],
     "sequences.html":[ ["mode=pattern&t=3,7,11,15",["19","3+4(n-1)"],"right"], ["mode=pattern&t=3,7,11,15",["19","4n-1"],"right"],
                        ["mode=pattern&t=3,7,11,15",["19","a_(n-1)+4"],"simplify"], ["mode=pattern&t=3,7,11,15",["19","3+4n"],"wrong"],
                        ["mode=pattern&t=2,6,18,54",["162","(2/3)*3^n"],"right"], ["mode=pattern&t=2,6,18,54",["162","2*3^n"],"wrong"],
@@ -820,6 +895,50 @@
     return c.textContent;
   }
   var LINKCHECK = {
+    "functions.html":function(answer, cells){
+      // each answer cell carries its plain form (data-s); compare by value: expressions at test points, sets as sets
+      var t = String(answer), bad = { ok:false, msg:"the link shows " + cells.join(" | ") + ", the problem maker said “" + answer + "”" }, m;
+      var sameE = function(a, b){ if (a === "undefined" || b === "undefined") return a === b; return funSame(funNX(a), funNX(b), ["x", "a", "h"]).ok || funNear(funNX(a)({}), funNX(b)({})); };
+      var sameS = function(a, b){ return funSetEq(funSet(a), funSet(b)); };
+      try {
+        if ((m = /^Domain:\s*([^;]+)(?:;\s*Range:\s*(.+))?$/.exec(t))) return sameS(m[1], cells[0]) && (!m[2] || sameS(m[2], cells[1])) ? { ok:true } : bad;
+        if ((m = /^Range:\s*(.+)$/.exec(t))) return sameS(m[1], cells[0]) ? { ok:true } : bad;
+        if ((m = /^f\^-1\(x\) = (.+?)(?:, x in (.+))?$/.exec(t))) return sameE(m[1], cells[0]) && (!m[2] || sameS(m[2], cells[1])) ? { ok:true } : bad;
+        if ((m = /^f\(x\) = (.+), g\(x\) = (.+)$/.exec(t))) return sameE(m[1], cells[0]) && sameE(m[2], cells[1]) ? { ok:true } : bad;
+        if (/^(?:not a function|function)/.test(t)) return (/^function/.test(t) === (cells[0] === "function")) ? { ok:true } : bad;
+        if (/^(?:even|odd|neither|both)/.test(t)) return t.indexOf(cells[0]) === 0 ? { ok:true } : bad;
+        if (/^(?:yes|no)\b/.test(t)) return t.indexOf(cells[0]) === 0 ? { ok:true } : bad;
+        var parts = t.split(";").map(function(x){ return x.trim(); });
+        if (parts.length > 1 && /^domain:/.test(parts[1])) return sameE(funMain(parts[0]), cells[0]) && sameS(parts[1].replace(/^domain:\s*/, ""), cells[1]) ? { ok:true } : bad;
+        if (parts.length > cells.length) return bad;
+        return parts.every(function(x, i){ return sameE(funMain(x), cells[i]); }) ? { ok:true } : bad;
+      } catch (e){ return { ok:false, msg:"couldn’t compare (" + e.message + ")" }; }
+    },
+    "radicals.html":function(answer, cells){
+      // compare by value: the first cell holds the answer (data-s), the next the excluded values or the extraneous answers
+      var t = String(answer), bad = { ok:false, msg:"the link shows " + cells.join(" | ") + ", the problem maker said “" + answer + "”" };
+      try {
+        if (/;/.test(t)){
+          var parts = t.split(";"), c0 = radFn(cells[0]), a0 = radFn(parts[0]), xs = [1.37, 2.71, -3.3, 0.61];
+          var same = xs.every(function(x){ var u = a0({ x:x }), w = c0({ x:x }); return !isFinite(u) && !isFinite(w) || radNear(u, w); });
+          return same && cells.length > 1 && radSameSet(radList(parts[1].replace(/^\s*no excluded values\s*$/, "none")), radList(cells[1])) ? { ok:true } : bad;
+        }
+        if (/^\s*(?:x\s*=|no solution|all real)/i.test(t)){
+          var S = radSols(t), good = radList(cells[0]), ext = cells.length > 1 ? radList(cells[1]) : [];
+          return radSameSet(S.good, good) && radSameSet(S.bad, ext) ? { ok:true } : bad;
+        }
+        return radSameVal(t, cells[0]) ? { ok:true } : bad;
+      } catch (e){ return null; }
+    },
+    "complex-numbers.html":function(answer, cells){
+      var sq = function(x){ return String(x || "").replace(/[\s≈]/g, ""); }, t = String(answer);
+      var bad = { ok:false, msg:"the link shows " + cells.join(" | ") + ", the problem maker said “" + answer + "”" };
+      if (/^\|z\|/.test(t)){
+        var parts = t.split(";");
+        return cells.length === 3 && sq(cells[0]) === sq(parts[0].split("=")[1]) && sq(parts[1]).indexOf(sq(cells[1])) >= 0 && sq(cells[2]) === sq(parts[2].replace("conjugate", "")) ? { ok:true } : bad;
+      }
+      return sq(t) === sq(cells[0]) || sq(t) === sq(cells.join(" = ")) ? { ok:true } : bad;
+    },
     "sequences.html":function(answer, cells){
       // a rule ("19; aₙ = 4n − 1", "d = 4; aₙ = 4n − 1") is checked as a function of n; anything else by the usual tokens
       var t = String(answer); if (t.indexOf(";") < 0 || !/aₙ\s*=/.test(t)) return null;
@@ -1239,7 +1358,895 @@
     return out;
   }
 
+  /* a small reader for the complex numbers in the answers: 4i√3, -5/17 + (14/17)i, 2(cos 60° + i sin 60°), 2e^(iπ/3), x */
+  function cpxM(a, b){ return { x:a.x * b.x - a.y * b.y, y:a.x * b.y + a.y * b.x }; }
+  function cpxD(a, b){ var d = b.x * b.x + b.y * b.y; return { x:(a.x * b.x + a.y * b.y) / d, y:(a.y * b.x - a.x * b.y) / d }; }
+  function cpxPow(a, n){ var r = { x:1, y:0 }, k; for (k = 0; k < Math.abs(n); k++) r = cpxM(r, a); return n < 0 ? cpxD({ x:1, y:0 }, r) : r; }
+  function cpxAbs(a){ return Math.sqrt(a.x * a.x + a.y * a.y); }
+  function cpxNear(a, b, tol){ return Math.abs(a.x - b.x) <= tol * Math.max(1, cpxAbs(b)) && Math.abs(a.y - b.y) <= tol * Math.max(1, cpxAbs(b)); }
+  function cpxEval(src, xv){
+    var s = String(src).replace(/[−–]/g, "-").replace(/[·×]/g, "*").replace(/÷/g, "/").replace(/√/g, " sqrt ").replace(/π/g, " pi ").replace(/°/g, " deg ");
+    var T = [], m, re = /\s*(\d+\.\d+|\d+|sqrt|pi|deg|cos|sin|cis|e|i|x|[-+*\/^()])/g, p = 0, last = 0;
+    while ((m = re.exec(s)) && m.index === last){ T.push(m[1]); last = re.lastIndex; }
+    if (s.slice(last).trim()) throw new Error("can’t read “" + src + "”");
+    function pk(){ return T[p]; }
+    function starts(t){ return t !== undefined && (/^[\d(]/.test(t) || /^(sqrt|pi|cos|sin|cis|e|i|x)$/.test(t)); }
+    function expr(){ var a = term(); while (pk() === "+" || pk() === "-"){ var o = T[p++], b = term(); a = o === "+" ? { x:a.x + b.x, y:a.y + b.y } : { x:a.x - b.x, y:a.y - b.y }; } return a; }
+    function term(){ var a = unary(); while (pk() === "*" || pk() === "/"){ var o = T[p++], b = unary(); a = o === "*" ? cpxM(a, b) : cpxD(a, b); } return a; }
+    function unary(){ if (pk() === "-"){ p++; var a = unary(); return { x:-a.x, y:-a.y }; } if (pk() === "+"){ p++; return unary(); } return jux(); }
+    function jux(){ var a = post(); while (starts(pk())) a = cpxM(a, post()); return a; }
+    function post(){ var a = power(); if (pk() === "deg"){ p++; a = { x:a.x * Math.PI / 180, y:a.y * Math.PI / 180 }; } return a; }
+    function power(){
+      var isE = pk() === "e", a = atom();
+      if (pk() !== "^") return a;
+      p++;
+      var neg = false; if (pk() === "-"){ neg = true; p++; }
+      var b = atom(); if (neg) b = { x:-b.x, y:-b.y };
+      if (isE){ var r = Math.exp(b.x); return { x:r * Math.cos(b.y), y:r * Math.sin(b.y) }; }
+      return cpxPow(a, Math.round(b.x));
+    }
+    function arg(){ if (pk() === "("){ var g = atom(); if (pk() === "deg"){ p++; g = { x:g.x * Math.PI / 180, y:0 }; } return g; } var a = post(); if (pk() === "/" && /^\d/.test(T[p + 1] || "")){ p++; var d = post(); a = cpxD(a, d); } return a; }
+    function atom(){
+      var t = T[p++];
+      if (t === undefined) throw new Error("missing a number in “" + src + "”");
+      if (/^\d/.test(t)) return { x:Number(t), y:0 };
+      if (t === "i") return { x:0, y:1 };
+      if (t === "pi") return { x:Math.PI, y:0 };
+      if (t === "e") return { x:Math.E, y:0 };
+      if (t === "x"){ if (!xv) throw new Error("x in an answer"); return xv; }
+      if (t === "(") { var e = expr(); if (T[p++] !== ")") throw new Error("bracket in “" + src + "”"); return e; }
+      if (t === "sqrt"){ var v = pk() === "-" ? (p++, { x:-power().x, y:0 }) : power(); return v.x < 0 ? { x:0, y:Math.sqrt(-v.x) } : { x:Math.sqrt(v.x), y:0 }; }
+      if (t === "cos" || t === "sin" || t === "cis"){ var w = arg().x; return t === "cos" ? { x:Math.cos(w), y:0 } : t === "sin" ? { x:Math.sin(w), y:0 } : { x:Math.cos(w), y:Math.sin(w) }; }
+      throw new Error("can’t read “" + t + "” in “" + src + "”");
+    }
+    var out = expr();
+    if (p < T.length) throw new Error("can’t read the end of “" + src + "”");
+    return out;
+  }
+  function cpxList(t){ var out = [], depth = 0, cur = ""; String(t).split("").forEach(function(c){ if (c === "(") depth++; if (c === ")") depth--; if (c === "," && !depth){ out.push(cur.trim()); cur = ""; } else cur += c; }); out.push(cur.trim()); return out; }
+  function cpxReduced(t){ var m, re = /(^|[^√\d])(\d+)\/(\d+)/g; while ((m = re.exec(t))) if (gcdN(Number(m[2]), Number(m[3])) > 1) return false; m = /√(\d+)/g; var r; while ((r = m.exec(t))){ var n = Number(r[1]); for (var k = 2; k * k <= n; k++) if (n % (k * k) === 0) return false; } return true; }
+  function cpxDeg(z){ var a = Math.atan2(z.y, z.x) * 180 / Math.PI; return a < -1e-12 ? a + 360 : a; }
+  function cpxAng(t, u){ var v = cpxEval(t).x; return u === "rad" ? v * 180 / Math.PI : v; }          // a link’s angle, in degrees
+  function cpxCis(r, d){ return { x:r * Math.cos(d * Math.PI / 180), y:r * Math.sin(d * Math.PI / 180) }; }
+  function cpxPolarDeg(part){ var m = /cos\s*\(?([^)+]*)\)?/.exec(part); return m ? cpxEval(m[1].trim()).x * 180 / Math.PI : NaN; }   // the angle inside cos(…)
+
+  /* the Root Cellar: roots, fraction powers and rational expressions worked out here with floating point (the page's own
+     solver isn't used). radFn(text) reads an expression the way the page writes one — "5x^2y√(2x)", "(−1 + √3)/3", "4∛9",
+     "∜(x^3)", "⁵√(x^2)", "sqrt(5)/6", "x^(5/6)", "(x − 3)/(x + 2)", "2(x − 3)", the cells' "x^(2)", "((13)/(2))" — and gives a
+     function of the letters. A root with no bracket takes the number and letters right after it; side by side multiplies
+     before × and ÷; odd roots of negatives are real; anything undefined is NaN. */
+  var RAD_SUP = { "⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","⁻":"-" };
+  var RAD_ENV = [{ x:1.37, y:2.21, z:0.83, a:1.61, b:2.47, c:0.59 }, { x:3.1, y:0.7, z:1.9, a:0.45, b:1.35, c:2.6 }];
+  function radNorm(t){
+    return String(t).replace(/[−–]/g, "-").replace(/[×·∙⋅]/g, "*").replace(/÷/g, "/")
+      .replace(/([⁰¹²³⁴⁵⁶⁷⁸⁹]+)√/g, function(m, d){ return " root" + d.split("").map(function(c){ return RAD_SUP[c]; }).join("") + " "; })
+      .replace(/∛/g, " cbrt ").replace(/∜/g, " root4 ")
+      .replace(/[⁻]?[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, function(m){ return "^" + m.split("").map(function(c){ return RAD_SUP[c]; }).join("") + " "; })
+      .replace(/√/g, " sqrt ");
+  }
+  function radRealRoot(v, n){ return v < 0 ? (n % 2 ? -Math.pow(-v, 1 / n) : NaN) : Math.pow(v, 1 / n); }
+  function radFn(text){
+    var s = radNorm(text), tk = [], i = 0, m;
+    while (i < s.length){
+      var r = s.slice(i), c = s[i];
+      if (/\s/.test(c)){ i++; continue; }
+      if ((m = /^(\d+(?:\.\d+)?|\.\d+)/.exec(r))){ tk.push({ k:"n", v:Number(m[1]) }); i += m[1].length; continue; }
+      if ((m = /^(sqrt|cbrt|root(\d+))/.exec(r))){ tk.push({ k:"f", n:m[1] === "sqrt" ? 2 : m[1] === "cbrt" ? 3 : Number(m[2]) }); i += m[1].length; continue; }
+      if (/[a-z]/i.test(c)){ tk.push({ k:"v", s:c.toLowerCase() }); i++; continue; }
+      if ("+-*/^()".indexOf(c) >= 0){ tk.push({ k:c }); i++; continue; }
+      throw new Error("can’t read “" + c + "” in " + text);
+    }
+    var p = 0;
+    function pk(){ return tk[p]; }
+    function starts(t){ return t && (t.k === "n" || t.k === "v" || t.k === "f" || t.k === "("); }
+    function bin(a, b, o){ return function(e){ var x = a(e), y = b(e); return o === "+" ? x + y : o === "-" ? x - y : o === "*" ? x * y : y === 0 ? NaN : x / y; }; }
+    function expr(){ var a = term(); while (pk() && (pk().k === "+" || pk().k === "-")){ var o = tk[p++].k; a = bin(a, term(), o); } return a; }
+    function term(){ var a = imp(); while (pk() && (pk().k === "*" || pk().k === "/")){ var o = tk[p++].k; a = bin(a, imp(), o); } return a; }
+    function imp(){ var a = unary(); while (starts(pk())) a = bin(a, power(), "*"); return a; }
+    function unary(){ if (pk() && pk().k === "-"){ p++; var a = unary(); return function(e){ return -a(e); }; } if (pk() && pk().k === "+"){ p++; return unary(); } return power(); }
+    function power(){
+      var b = primary();
+      if (pk() && pk().k === "^"){
+        p++; var neg = false; if (pk() && pk().k === "-"){ neg = true; p++; }
+        var ex = primary();
+        return function(e){
+          var x = b(e), y = ex(e) * (neg ? -1 : 1);
+          if (x < 0 && Math.abs(y - Math.round(y)) > 1e-12){ for (var q = 2; q <= 12; q++){ var pp = y * q; if (Math.abs(pp - Math.round(pp)) < 1e-9) return q % 2 ? Math.pow(radRealRoot(x, q), Math.round(pp)) : NaN; } return NaN; }
+          return Math.pow(x, y);
+        };
+      }
+      return b;
+    }
+    function primary(){
+      var t = tk[p++];
+      if (!t) throw new Error("ends early: " + text);
+      if (t.k === "n"){ var v = t.v; return function(){ return v; }; }
+      if (t.k === "v"){ var nm = t.s; return function(e){ return nm in e ? e[nm] : NaN; }; }
+      if (t.k === "("){ var a = expr(); if (!pk() || pk().k !== ")") throw new Error("missing ) in " + text); p++; return a; }
+      if (t.k === "f"){
+        var n = t.n, arg;
+        if (pk() && pk().k === "(") arg = primary();
+        else { arg = power(); while (pk() && pk().k === "v") arg = bin(arg, power(), "*"); }
+        return function(e){ return radRealRoot(arg(e), n); };
+      }
+      throw new Error("unexpected " + t.k + " in " + text);
+    }
+    var f = expr();
+    if (p < tk.length) throw new Error("left over in " + text);
+    return f;
+  }
+  function radNear(u, w){ return isFinite(u) && isFinite(w) && Math.abs(u - w) <= 1e-9 * Math.max(1, Math.abs(u), Math.abs(w)); }
+  function radSameVal(s, t){ var f = radFn(s), g = radFn(t); return RAD_ENV.every(function(e){ return radNear(f(e), g(e)); }); }
+  function radSplitTop(s, chars){                  // split at + − (or /) outside brackets, keeping signs
+    var out = [], depth = 0, cur = "";
+    for (var i = 0; i < s.length; i++){
+      var c = s[i];
+      if (c === "(") depth++; else if (c === ")") depth--;
+      if (!depth && chars.indexOf(c) >= 0 && cur.trim() && !/[\^*\/(]\s*$/.test(cur)){ out.push(cur); cur = chars === "/" ? "" : c; continue; }
+      cur += c;
+    }
+    out.push(cur);
+    return out.filter(function(x){ return x.trim(); });
+  }
+  function radUnwrap(s){ s = s.trim(); while (/^\(/.test(s) && /\)$/.test(s)){ var d = 0, whole = true; for (var i = 0; i < s.length; i++){ if (s[i] === "(") d++; else if (s[i] === ")"){ d--; if (!d && i < s.length - 1){ whole = false; break; } } } if (!whole) break; s = s.slice(1, -1).trim(); } return s; }
+  function radCompact(t){ return radNorm(t).replace(/(sqrt|cbrt|root\d+)\s+/g, "$1@").replace(/\s+/g, ""); }
+  function radRoots(s){                            // every root in an answer: [{ n, inner }]
+    var t = radCompact(s), out = [], re = /(?:sqrt|cbrt|root(\d+))@?/g, m;
+    while ((m = re.exec(t))){
+      var n = /^sqrt/.test(m[0]) ? 2 : /^cbrt/.test(m[0]) ? 3 : Number(m[1]), i = re.lastIndex, inner;
+      if (t[i] === "("){ var d = 0, j = i; for (; j < t.length; j++){ if (t[j] === "(") d++; else if (t[j] === ")"){ d--; if (!d) break; } } inner = t.slice(i + 1, j); }
+      else inner = (/^\d*(?:[a-z](?:\^\d+)?)*/.exec(t.slice(i)) || [""])[0];
+      out.push({ n:n, inner:inner });
+    }
+    return out;
+  }
+  function radPrimes(n){ var o = {}; for (var d = 2; d * d <= n; d++) while (n % d === 0){ o[d] = (o[d] || 0) + 1; n /= d; } if (n > 1) o[n] = (o[n] || 0) + 1; return o; }
+  function radGcdN(a, b){ while (b){ var t = a % b; a = b; b = t; } return a; }
+  function radInnerIssue(n, inner){                // simplest radicand: a whole number and letters, nothing that comes out, the smallest index
+    var m = /^(\d*)((?:[a-z](?:\^\d+)?)*)$/.exec(inner);
+    if (!m) return "√(" + inner + ") isn’t a plain number and letters";
+    var N = m[1] ? Number(m[1]) : 1, exps = [], pf = radPrimes(N), k;
+    for (k in pf){ if (pf[k] >= n) return rootName(n) + inner + " still has a perfect power factor"; exps.push(pf[k]); }
+    var lm, lre = /([a-z])(?:\^(\d+))?/g, seen = {};
+    while ((lm = lre.exec(m[2]))){ var e = lm[2] ? Number(lm[2]) : 1; if (seen[lm[1]]) return "a letter twice under one root"; seen[lm[1]] = 1; if (e >= n) return "a letter power under the root that could come out"; exps.push(e); }
+    if (!exps.length) return "a root of 1";
+    var g = n; exps.forEach(function(e){ g = radGcdN(g, e); });
+    return g > 1 ? "the index of the root can be smaller" : "";
+    function rootName(k){ return k === 2 ? "√" : k === 3 ? "∛" : "root" + k + " "; }
+  }
+  function radRootForm(t, opt){                    // simplest root form of the page's answer text
+    var s = radCompact(t), roots = radRoots(t), i, why;
+    for (i = 0; i < roots.length; i++){ why = radInnerIssue(roots[i].n, roots[i].inner); if (why) return why + " (“" + t + "”)"; }
+    var parts = radSplitTop(s, "/"), top = parts[0], bot = parts.length > 1 ? parts.slice(1).join("/") : null;
+    if (parts.length > 2) return "more than one fraction bar: “" + t + "”";
+    if (bot !== null && /sqrt|cbrt|root/.test(bot) && !(opt && opt.bottom)) return "a root left on the bottom: “" + t + "”";
+    var terms = radSplitTop(radUnwrap(top), "+-"), keys = {};
+    if (opt && opt.one && terms.length > 1) return "more than one term: “" + t + "”";
+    for (i = 0; i < terms.length; i++){
+      var rs = radRoots(terms[i]);
+      if (rs.length > 1) return "two roots multiplied in one term: “" + t + "”";
+      var outside = terms[i].replace(/(sqrt|cbrt|root\d+)@?(\([^()]*(\([^()]*\))*[^()]*\)|\d*(?:[a-z](?:\^\d+)?)*)/g, "").replace(/[\d+\-*() ]/g, "");
+      var key = (rs[0] ? rs[0].n + ":" + rs[0].inner : "") + "|" + outside;
+      if (keys[key]) return "like terms not combined: “" + t + "”";
+      keys[key] = 1;
+    }
+    if (bot !== null && /^\d+$/.test(bot)){
+      var g = Number(bot);
+      terms.forEach(function(x){ var c = /^[+-]?(\d*)/.exec(x)[1]; g = radGcdN(g, c ? Number(c) : 1); });
+      if (g > 1) return "the fraction isn’t reduced: “" + t + "”";
+    }
+    return "";
+  }
+  function radExpForm(t){
+    if (/[√∛∜]|sqrt|cbrt|root/.test(t)) return "a root in a fraction-power answer: “" + t + "”";
+    var m, re = /\^\((-?\d+)\/(\d+)\)/g;
+    while ((m = re.exec(t))) if (radGcdN(Math.abs(Number(m[1])), Number(m[2])) > 1) return "a power not in lowest terms: “" + t + "”";
+    var ls = (t.match(/[a-z]/g) || []);
+    return ls.length !== ls.filter(function(x, i){ return ls.indexOf(x) === i; }).length ? "a letter more than once: “" + t + "”" : "";
+  }
+  function radList(t){                             // "x ≠ −3, −2", "x = 3 or x = 0", "no solution", "none" → numbers (null: every number)
+    t = String(t).trim();
+    if (/^(?:no\b|none\b)/i.test(t)) return [];
+    if (/^all\s+real/i.test(t)) return null;
+    return t.replace(/\b[a-z]\s*[≠=]\s*/g, "").replace(/\bor\b/g, ",").split(",").filter(function(x){ return x.trim(); }).map(function(x){ return radFn(x)({}); });
+  }
+  function radSameSet(a, b){ if (a === null || b === null) return a === b; return a.length === b.length && a.every(function(x){ return b.some(function(y){ return Math.abs(x - y) < 1e-7; }); }); }
+  function radSols(t){                             // the page's answer to an equation → { good, bad }
+    var m = /^(.*?)\s*\((.*) (?:is|are) extraneous\)\s*$/.exec(String(t));
+    return { good:radList(m ? m[1] : t), bad:m ? radList(m[2]) : [] };
+  }
+  function radZeros(fn){                           // the fraction zeros p/q (|p| ≤ 80, q ≤ 12) of a function of x
+    var out = [];
+    for (var q = 1; q <= 12; q++) for (var p = -80 * q; p <= 80 * q; p++){
+      if (radGcdN(Math.abs(p), q) !== 1 && p !== 0) continue;
+      var v = p / q, y = fn({ x:v });
+      if (isFinite(y) && Math.abs(y) < 1e-9 && !out.some(function(o){ return Math.abs(o - v) < 1e-9; })) out.push(v);
+    }
+    return out;
+  }
+  function radBottoms(text){                       // the bottom of every fraction typed in a side, read from the text (so nothing cancels first)
+    var out = [];
+    radSplitTop(radNorm(text).replace(/\s+/g, ""), "+-").forEach(function(term){ radSplitTop(term.replace(/^[+]/, ""), "/").slice(1).forEach(function(d){ out.push(radFn(d)); }); });
+    return out;
+  }
+  function radEqCheck(o, t){
+    var sides = String(o.eq).split("="), L = radFn(sides[0]), Rr = radFn(sides[1]);
+    var f = function(x){ return L({ x:x }) - Rr({ x:x }); }, S = radSols(t);
+    function bad(m){ return { ok:false, msg:m }; }
+    if (S.good === null) return { skip:true };
+    for (var i = 0; i < S.good.length; i++) if (!(Math.abs(f(S.good[i])) < 1e-7 * Math.max(1, Math.abs(L({ x:S.good[i] }))))) return bad("x = " + S.good[i] + " doesn’t make both sides equal");
+    for (i = 0; i < S.bad.length; i++){
+      var v = f(S.bad[i]);
+      if (o.mode === "radeq" && isFinite(v) && Math.abs(v) < 1e-9) return bad("x = " + S.bad[i] + " is called extraneous, but it works");
+      if (o.mode === "rateq" && !radBottoms(sides[0]).concat(radBottoms(sides[1])).some(function(d){ return Math.abs(d({ x:S.bad[i] })) < 1e-12; })) return bad("x = " + S.bad[i] + " is called extraneous, but no bottom is 0 there");
+    }
+    // nothing missing: every place the two sides cross between −80 and 80
+    var found = [], prev = f(-80), px = -80;
+    for (var k = -16000; k <= 16000; k++){
+      var x = k / 200, y = f(x);
+      if (isFinite(y) && Math.abs(y) < 1e-12) { if (!found.some(function(r){ return Math.abs(r - x) < 0.01; })) found.push(x); }
+      else if (isFinite(y) && isFinite(prev) && prev * y < 0 && Math.abs(prev) < 5 && Math.abs(y) < 5){
+        var a = px, b = x;
+        for (var it = 0; it < 60; it++){ var mid = (a + b) / 2, fm = f(mid); if (!isFinite(fm)) break; if (f(a) * fm <= 0) b = mid; else a = mid; }
+        var root = (a + b) / 2;
+        if (Math.abs(f(root)) < 1e-6 && !found.some(function(r){ return Math.abs(r - root) < 0.01; })) found.push(root);
+      }
+      prev = y; px = x;
+    }
+    if (found.length !== S.good.length || !found.every(function(r){ return S.good.some(function(g){ return Math.abs(g - r) < 1e-4; }); }))
+      return bad("the sides cross at x ≈ " + (found.map(function(r){ return Math.round(r * 1e4) / 1e4; }).join(", ") || "nowhere") + ", the page says “" + t + "”");
+    return { ok:true };
+  }
+  function radRatCheck(o, t){
+    function bad(m){ return { ok:false, msg:m }; }
+    var parts = String(t).split(";");
+    if (parts.length !== 2) return bad("expected “answer; excluded values”");
+    var f = radFn(o.f), g = o.g ? radFn(o.g) : null, op = o.op;
+    var orig = function(e){ var a = f(e); if (!g) return a; var b = g(e); return op === "mul" ? a * b : op === "div" ? (b === 0 ? NaN : a / b) : op === "add" ? a + b : a - b; };
+    var ans = radFn(parts[0]), xs = [1.37, 2.71, -3.3, 0.61, 5.9, -1.7], used = 0;
+    for (var i = 0; i < xs.length; i++){ var u = orig({ x:xs[i] }), w = ans({ x:xs[i] }); if (!isFinite(u)) continue; used++; if (!radNear(u, w)) return bad("“" + parts[0] + "” isn’t the same as the problem at x = " + xs[i]); }
+    if (used < 3) return { skip:true };
+    var bots = radBottoms(o.f).concat(o.g ? radBottoms(o.g) : []);
+    if (op === "div") bots.push(radFn(radSplitTop(radNorm(o.g).replace(/\s+/g, ""), "/")[0]));
+    var want = []; bots.forEach(function(d){ radZeros(d).forEach(function(z){ if (!want.some(function(w2){ return Math.abs(w2 - z) < 1e-9; })) want.push(z); }); });
+    var got = radList(parts[1].replace(/^\s*no excluded values\s*$/, "none"));
+    if (!radSameSet(got, want)) return bad("excluded values: the page says “" + parts[1].trim() + "”, the bottoms are 0 at " + (want.join(", ") || "no x"));
+    // lowest terms: the answer's top isn't 0 where its bottom is
+    var ap = radSplitTop(radNorm(parts[0]).replace(/\s+/g, ""), "/");
+    if (ap.length > 2) return bad("more than one fraction bar in “" + parts[0] + "”");
+    if (ap.length === 2){ var nt = radFn(ap[0]), common = radZeros(radFn(ap[1])).filter(function(z){ return Math.abs(nt({ x:z })) < 1e-9; }); if (common.length) return bad("“" + parts[0] + "” still has a common factor (both are 0 at x = " + common[0] + ")"); }
+    return { ok:true };
+  }
+
+  /* ===================== the Matrix Grid: matrices and vectors, worked out here with fractions ===================== */
+  function matM(s){ return String(s).split(";").map(function(r){ return r.split(",").map(function(x){ return num(x); }); }); }
+  function matV(s){ return String(s).split(",").map(function(x){ return num(x); }); }
+  function matAns(t){                            // "[[1, −2], [3, 4]]" → rows of fractions
+    var inner = String(t).trim().replace(/[−–]/g, "-").slice(1, -1), rows = inner.match(/\[[^\[\]]*\]/g) || [];
+    return rows.map(function(r){ return r.slice(1, -1).split(",").map(function(x){ return num(x); }); });
+  }
+  function matSame(A, B){
+    if (!A || !B || A.length !== B.length) return false;
+    for (var i = 0; i < A.length; i++){ if (!A[i] || A[i].length !== B[i].length) return false; for (var j = 0; j < A[i].length; j++) if (!A[i][j] || !eq(A[i][j], B[i][j])) return false; }
+    return true;
+  }
+  function matShow(M){ return "[" + M.map(function(r){ return "[" + r.map(txt).join(", ") + "]"; }).join(", ") + "]"; }
+  function matMul(A, B){ return A.map(function(r){ return B[0].map(function(_, j){ var s = R(0); for (var k = 0; k < B.length; k++) s = add(s, mul(r[k], B[k][j])); return s; }); }); }
+  function matMinor(A, i, j){ return A.filter(function(_, r){ return r !== i; }).map(function(r){ return r.filter(function(_, c){ return c !== j; }); }); }
+  function matDet(A){                            // cofactor expansion along the first row (the page uses elimination)
+    if (A.length === 1) return A[0][0];
+    var s = R(0);
+    for (var j = 0; j < A.length; j++){ var t = mul(A[0][j], matDet(matMinor(A, 0, j))); s = j % 2 ? sub(s, t) : add(s, t); }
+    return s;
+  }
+  function matInv(A){                            // the adjugate over the determinant
+    var d = matDet(A), n = A.length;
+    if (d.n === 0n) return null;
+    if (n === 1) return [[div(R(1), d)]];
+    var out = [];
+    for (var i = 0; i < n; i++){ var row = []; for (var j = 0; j < n; j++){ var c = matDet(matMinor(A, j, i)); if ((i + j) % 2) c = sub(R(0), c); row.push(div(c, d)); } out.push(row); }
+    return out;
+  }
+  function matRref(M0, ncoef){                   // Gauss-Jordan, pivot = the first nonzero entry
+    var M = M0.map(function(r){ return r.slice(); }), r = 0, piv = [];
+    for (var c = 0; c < ncoef && r < M.length; c++){
+      var p = -1; for (var i = r; i < M.length; i++) if (M[i][c].n !== 0n){ p = i; break; }
+      if (p < 0) continue;
+      var t = M[p]; M[p] = M[r]; M[r] = t;
+      var pv = M[r][c]; M[r] = M[r].map(function(x){ return div(x, pv); });
+      for (i = 0; i < M.length; i++){ if (i === r || M[i][c].n === 0n) continue; var f = M[i][c]; M[i] = M[i].map(function(x, k){ return sub(x, mul(f, M[r][k])); }); }
+      piv.push(c); r++;
+    }
+    return { M:M, piv:piv, rank:r };
+  }
+  function matComb(ex, mats){                    // 2A-3B, (1/2)A+B, -u+3v
+    var re = /([+-]?)(\(-?\d+(?:\/\d+)?\)|\d+(?:\/\d+)?)?([A-Cu-w])/g, m, tot = null;
+    while ((m = re.exec(ex))){
+      var k = m[2] ? num(m[2].replace(/[()]/g, "")) : R(1); if (m[1] === "-") k = sub(R(0), k);
+      var X = mats[m[3]], term = X.map(function(r){ return Array.isArray(r) ? r.map(function(x){ return mul(x, k); }) : mul(r, k); });
+      tot = tot ? tot.map(function(r, i){ return Array.isArray(r) ? r.map(function(x, j){ return add(x, term[i][j]); }) : add(r, term[i]); }) : term;
+    }
+    return tot;
+  }
+  function matSurd(s){                           // "2√5/5", "−√3", "3/4", "5" → a float
+    var t = String(s).trim().replace(/[−–]/g, "-"), m = /^(-?)(\d*)√(\d+)(?:\/(\d+))?$/.exec(t);
+    if (m) return (m[1] ? -1 : 1) * Number(m[2] || 1) * Math.sqrt(Number(m[3])) / Number(m[4] || 1);
+    var v = num(t); return v ? F(v) : NaN;
+  }
+  function matVecAns(t){ var s = String(t).trim(); if (!/^⟨.*⟩$/.test(s)) return null; return s.slice(1, -1).split(",").map(function(x){ return x.trim(); }); }
+  function matDot(u, v){ var s = R(0); u.forEach(function(x, i){ s = add(s, mul(x, v[i])); }); return s; }
+  function matCross(u, v){ return [sub(mul(u[1], v[2]), mul(u[2], v[1])), sub(mul(u[2], v[0]), mul(u[0], v[2])), sub(mul(u[0], v[1]), mul(u[1], v[0]))]; }
+  function matLin(s){                            // "−1 + 4t", "2 − (3/2)s + t" → { c, k:{ t:… } }
+    var t = String(s).replace(/[−–]/g, "-").replace(/\s+/g, ""), out = { c:R(0), k:{} }, re = /([+-]?)(\(-?\d+(?:\/\d+)?\)|\d+(?:\/\d+)?)?([a-z])?/g, m, used = 0;
+    while ((m = re.exec(t)) && m[0]){
+      used += m[0].length;
+      var k = m[2] ? num(m[2].replace(/[()]/g, "")) : R(1); if (m[1] === "-") k = sub(R(0), k);
+      if (m[3]) out.k[m[3]] = add(out.k[m[3]] || R(0), k); else if (m[2]) out.c = add(out.c, k); else return null;
+    }
+    return used === t.length ? out : null;
+  }
+  function matRank(rows){ return rows.length ? matRref(rows, rows[0].length).rank : 0; }
+
+  /* The Bell Curve, worked out a different way: Simpson's rule on the densities, a Stirling log-gamma, bisection for the
+     critical values. Every shown value is checked as a correct rounding of the value worked out here (a hair of slack for
+     exact halves and for the table's own rounding). */
+  var BELL_SQ2PI = Math.sqrt(2 * Math.PI);
+  function bellPhi(z){                                   // P(Z < z)
+    if (z > 9) return 1; if (z < -9) return 0;
+    var n = 2000, h = z / n, s = 0;
+    for (var i = 0; i <= n; i++){ var x = i * h; s += (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * Math.exp(-x * x / 2); }
+    return 0.5 + s * h / 3 / BELL_SQ2PI;
+  }
+  function bellLg(x){ var s = 0; while (x < 12){ s -= Math.log(x); x += 1; } return s + (x - 0.5) * Math.log(x) - x + 0.5 * Math.log(2 * Math.PI) + 1 / (12 * x) - 1 / (360 * x * x * x) + 1 / (1260 * Math.pow(x, 5)); }
+  function bellT(t, df){                                 // P(T < t)
+    var c = Math.exp(bellLg((df + 1) / 2) - bellLg(df / 2)) / Math.sqrt(df * Math.PI), n = 6000, h = t / n, s = 0;
+    for (var i = 0; i <= n; i++){ var x = i * h; s += (i === 0 || i === n ? 1 : i % 2 ? 4 : 2) * Math.pow(1 + x * x / df, -(df + 1) / 2); }
+    return 0.5 + c * s * h / 3;
+  }
+  function bellInv(f, p){ var lo = -60, hi = 60; for (var i = 0; i < 90; i++){ var m = (lo + hi) / 2; if (f(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; }
+  function bellPmf(n, k, p){ return Math.exp(bellLg(n + 1) - bellLg(k + 1) - bellLg(n - k + 1) + k * Math.log(p) + (n - k) * Math.log(1 - p)); }
+  function bellZr(z){                                    // the 2-decimal z a table uses (both, at an exact half)
+    var y = Math.abs(z) * 100, s = z < 0 ? -1 : 1, f = y - Math.floor(y);
+    return Math.abs(f - 0.5) < 1e-6 ? [s * Math.floor(y) / 100, s * Math.ceil(y) / 100] : [s * Math.round(y) / 100];
+  }
+  function bellHas(a, v, tol){ return a.some(function(t){ return Math.abs(t.f - v) <= tol + 1e-9; }); }
+  function bellAny(a, list, tol){ return list.some(function(v){ return bellHas(a, v, tol); }); }
+  function bellDec(s){ s = String(s); return s.indexOf(".") < 0 ? 0 : s.length - s.indexOf(".") - 1; }
+  function bellTable(type, zs1, zs2){                    // the possible table answers (left areas rounded to 4, then combined)
+    var out = [], r4 = function(x){ return Math.round(x * 1e4) / 1e4; };
+    zs1.forEach(function(z1){
+      var t1 = bellPhi(z1);
+      if (type === "lt") out.push(t1); else if (type === "gt") out.push(1 - t1);
+      else zs2.forEach(function(z2){ out.push(r4(bellPhi(z2)) - r4(t1)); });
+    });
+    return out;
+  }
+
+  /* The Function Machine: worked out here with floating point. funNX(text) reads an expression the way the page writes one,
+     as params (2x^2-3x+1, sqrt(x+4), abs(x-2), cbrt(x), log_2(x), ln(x), e^x, (1/2)*x) or as answer text (−, √(x + 4), ∛x,
+     |x − 2|, log₂(x), x², 2·2^x), and gives back a function of an object of letter values; NaN where it isn't defined
+     (a bottom of 0, an even root or log of something too small). 1/2x is ½·x and 2x(x + 1) multiplies, as on the page. */
+  var FUN_SUP = { "⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9","⁻":"-" };
+  var FUN_SUB = { "₀":"0","₁":"1","₂":"2","₃":"3","₄":"4","₅":"5","₆":"6","₇":"7","₈":"8","₉":"9" };
+  function funNX(text){
+    var s = String(text).replace(/[−–]/g, "-").replace(/[·×]/g, "*").replace(/π/g, "pi").replace(/∛/g, "cbrt ").replace(/√/g, "sqrt ")
+      .replace(/log([₀₁₂₃₄₅₆₇₈₉]+)/g, function(m, d){ return "log_" + d.split("").map(function(c){ return FUN_SUB[c]; }).join(""); })
+      .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻]+/g, function(m){ return "^(" + m.split("").map(function(c){ return FUN_SUP[c]; }).join("") + ")"; });
+    var tk = [], i = 0, m;
+    while (i < s.length){
+      var r = s.slice(i), c = s.charAt(i), prev = tk[tk.length - 1], start = !prev || (prev.k === "op" && prev.s !== ")" && prev.s !== "|");
+      if (c === " "){ i++; continue; }
+      if (start && (m = /^(\d+)\s*\/\s*(\d+)(?=\s*[a-z(])/.exec(r)) && !/^(?:sqrt|cbrt|abs|ln|log|pi|e(?![a-z]))/.test(r.slice(m[0].length).trim())){ tk.push({ k:"n", v:Number(m[1]) / Number(m[2]) }); i += m[0].length; continue; }
+      if ((m = /^(\d+(?:\.\d*)?|\.\d+)/.exec(r))){ tk.push({ k:"n", v:Number(m[1]) }); i += m[1].length; continue; }
+      if ((m = /^log_\(?(\d+(?:\.\d+)?)(?:\/(\d+))?\)?/.exec(r))){ tk.push({ k:"f", f:"log", b:m[2] ? Number(m[1]) / Number(m[2]) : Number(m[1]) }); i += m[0].length; continue; }
+      if ((m = /^(sqrt|cbrt|abs|ln|log|pi)/.exec(r))){ if (m[1] === "pi") tk.push({ k:"n", v:Math.PI }); else tk.push({ k:"f", f:m[1], b:10 }); i += m[1].length; continue; }
+      if (c === "e"){ tk.push({ k:"n", v:Math.E }); i++; continue; }
+      if (/[a-z]/.test(c)){ tk.push({ k:"v", s:c }); i++; continue; }
+      if ("+-*/^()|".indexOf(c) >= 0){ tk.push({ k:"op", s:c }); i++; continue; }
+      throw new Error("can’t read “" + c + "” in " + text);
+    }
+    var p = 0, bars = 0;
+    function pk(){ return tk[p]; }
+    function isOp(t, o){ return t && t.k === "op" && t.s === o; }
+    function bin(a, b, o){ return function(e){ var u = a(e), v = b(e); return o === "+" ? u + v : o === "-" ? u - v : o === "*" ? u * v : v === 0 ? NaN : u / v; }; }
+    function expr(){ var a = term(); while (isOp(pk(), "+") || isOp(pk(), "-")){ var o = tk[p++].s; a = bin(a, term(), o); } return a; }
+    function term(){ var a = imp(); while (isOp(pk(), "*") || isOp(pk(), "/")){ var o = tk[p++].s; a = bin(a, imp(), o); } return a; }
+    function starts(t){ return t && (t.k === "n" || t.k === "v" || t.k === "f" || isOp(t, "(") || (isOp(t, "|") && !bars)); }
+    function imp(){ var a = unary(); while (starts(pk())) a = bin(a, power(), "*"); return a; }
+    function unary(){ if (isOp(pk(), "-")){ p++; var a = unary(); return function(e){ return -a(e); }; } if (isOp(pk(), "+")){ p++; return unary(); } return power(); }
+    function power(){
+      var b = primary();
+      if (isOp(pk(), "^")){
+        p++; var ex = isOp(pk(), "-") ? (p++, (function(q){ return function(e){ return -q(e); }; })(power())) : power();
+        return function(e){
+          var u = b(e), v = ex(e);
+          if (u === 0 && v < 0) return NaN;
+          if (u < 0 && Math.abs(v - Math.round(v)) > 1e-12){ var t3 = v * 3; if (Math.abs(t3 - Math.round(t3)) < 1e-9 && Math.round(t3) % 3 !== 0) return Math.pow(Math.cbrt(u), Math.round(t3)); return NaN; }
+          return Math.pow(u, v);
+        };
+      }
+      return b;
+    }
+    function primary(){
+      var t = tk[p++];
+      if (!t) throw new Error("ends early: " + text);
+      if (t.k === "n"){ var v = t.v; return function(){ return v; }; }
+      if (t.k === "v"){ var nm = t.s; return function(e){ return nm in e ? e[nm] : NaN; }; }
+      if (isOp(t, "(")){ var a = expr(); if (!isOp(pk(), ")")) throw new Error("missing ) in " + text); p++; return a; }
+      if (isOp(t, "|")){ bars++; var b2 = expr(); bars--; if (!isOp(pk(), "|")) throw new Error("missing | in " + text); p++; return function(e){ return Math.abs(b2(e)); }; }
+      if (t.k === "f"){
+        var arg = isOp(pk(), "(") ? primary() : isOp(pk(), "-") ? unary() : power(), f = t.f, base = t.b;
+        return function(e){
+          var u = arg(e);
+          if (f === "sqrt") return u < -1e-12 ? NaN : Math.sqrt(Math.max(u, 0));   // −1e-15 at x = −√6 is rounding, not a negative
+          if (f === "cbrt") return Math.cbrt(u);
+          if (f === "abs") return Math.abs(u);
+          if (!(u > 0)) return NaN;
+          return f === "ln" ? Math.log(u) : Math.log(u) / Math.log(base);
+        };
+      }
+      throw new Error("unexpected " + (t.s || t.k) + " in " + text);
+    }
+    var out = expr();
+    if (p < tk.length) throw new Error("left over in " + text);
+    return out;
+  }
+  function funOk(v){ return typeof v === "number" && isFinite(v); }
+  var FUN_XS = [0.7, 1.3, 2.9, -1.1, 3.7, -2.3, 0.45, 5.2, -0.35, 1.85, -3.3, -4.6, 7.4, -0.9, -6.2, 9.6, 12.3, -11.7];
+  // do g and h agree wherever h is defined (at least 3 points)? letters: the other letters get values too
+  function funSame(g, h, letters){
+    var used = 0, bad = null;
+    FUN_XS.forEach(function(xv, i){
+      var e = { x:xv }; (letters || []).forEach(function(l, k){ if (l !== "x") e[l] = FUN_XS[(i + 3 * k + 1) % FUN_XS.length] * 0.8; });
+      var w = h(e); if (!funOk(w) || Math.abs(w) > 1e9) return;
+      var u = g(e); used++;
+      if (!funOk(u) || Math.abs(u - w) > 1e-7 * (1 + Math.abs(w))) bad = bad || { x:xv, u:u, w:w };
+    });
+    return used < 3 ? { ok:false, msg:"too few test points" } : bad ? { ok:false, msg:"at x = " + bad.x + " the answer gives " + bad.u + ", expected " + bad.w } : { ok:true };
+  }
+  // a set the way the page writes it: "(−∞, 2) ∪ (2, ∞)", "[3, ∞)", "{1, 3, 5}", "∅", or as data-s: "(-inf, 2) U (2, inf)"
+  function funSet(t){
+    t = String(t).trim();
+    if (t === "∅" || t === "{}") return [];
+    return t.split(/\s*(?:∪|\bU\b)\s*/).map(function(part){
+      var m = /^([\[(])\s*(.+?)\s*,\s*(.+?)\s*([\])])$/.exec(part);
+      var endv = function(x){ x = x.trim(); if (/^(?:-|−)(?:∞|inf)$/.test(x)) return -Infinity; if (/^(?:∞|inf)$/.test(x)) return Infinity; return funNX(x)({}); };
+      if (m) return { lo:endv(m[2]), hi:endv(m[3]), lc:m[1] === "[", hc:m[4] === "]" };
+      m = /^\{(.*)\}$/.exec(part);
+      if (m) return m[1].split(",").map(function(v){ var f = endv(v); return { lo:f, hi:f, lc:true, hc:true }; });
+      throw new Error("can’t read the set “" + part + "”");
+    }).reduce(function(a, b){ return a.concat(b); }, []);
+  }
+  function funIn(S, v){ return S.some(function(iv){ return (v > iv.lo || (iv.lc && Math.abs(v - iv.lo) < 1e-9)) && (v < iv.hi || (iv.hc && Math.abs(v - iv.hi) < 1e-9)); }); }
+  function funEnds(S){ var o = []; S.forEach(function(iv){ [iv.lo, iv.hi].forEach(function(v){ if (isFinite(v)) o.push(v); }); }); return o; }
+  // the domain, checked: membership matches "defined there" at many x's and at every finite end, just inside and outside
+  function funDomCheck(def, S){
+    var pts = []; for (var i = 0; i <= 1600; i++) pts.push(-40 + 80 * i / 1600 + 0.0137);
+    funEnds(S).forEach(function(v){ pts.push(v, v - 1e-6, v + 1e-6); });
+    for (var k = 0; k < pts.length; k++) if (funIn(S, pts[k]) !== def(pts[k])) return "at x = " + pts[k] + " the domain says " + funIn(S, pts[k]);
+    return null;
+  }
+  // the range, checked: sampled outputs lie in it; each part is reached; a closed end is reached, an open one isn't (where the curve is sampled)
+  function funRngCheck(f, D, R){
+    var xs = [];
+    for (var i = 0; i <= 12000; i++){ var xv = -60 + 120 * i / 12000 + 0.00731; if (funIn(D, xv)) xs.push(xv); }
+    funEnds(D).forEach(function(v){ xs.push(v); for (var e10 = 1; e10 <= 12; e10++){ xs.push(v + Math.pow(10, -e10), v - Math.pow(10, -e10)); } });
+    [1e3, -1e3, 1e5, -1e5].forEach(function(v){ if (funIn(D, v)) xs.push(v); });
+    xs = xs.filter(function(v){ return funIn(D, v); }).sort(function(a, b){ return a - b; });
+    var vals = xs.map(function(v){ var y = f({ x:v }); return funOk(y) ? y : null; });
+    for (var k = 0; k < vals.length; k++) if (vals[k] !== null && !funIn(R, vals[k]) && !funEnds(R).some(function(e){ return Math.abs(e - vals[k]) < 1e-6 * (1 + Math.abs(e)); })) return "f(" + xs[k] + ") = " + vals[k] + " isn’t in the range";
+    var reach = function(t){
+      var best = -1, bd = Infinity;
+      for (var j = 0; j < vals.length; j++){
+        if (vals[j] === null) continue;
+        if (Math.abs(vals[j] - t) < 1e-9 * (1 + Math.abs(t))) return true;
+        if (j + 1 < vals.length && vals[j + 1] !== null && (vals[j] - t) * (vals[j + 1] - t) <= 0 && Math.abs(vals[j] - vals[j + 1]) < 1) return true;
+        if (Math.abs(vals[j] - t) < bd){ bd = Math.abs(vals[j] - t); best = j; }
+      }
+      if (best < 0) return false;
+      // home in near the closest sample (a turning point, or an end of the domain)
+      var lo = xs[Math.max(0, best - 1)], hi = xs[Math.min(xs.length - 1, best + 1)], g = function(v){ var y = f({ x:v }); return funIn(D, v) && funOk(y) ? Math.abs(y - t) : Infinity; };
+      for (var it = 0; it < 120; it++){ var m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3; if (g(m1) < g(m2)) hi = m2; else lo = m1; }
+      return Math.min(g(lo), g(hi), g((lo + hi) / 2)) < 1e-6 * (1 + Math.abs(t));
+    };
+    for (var q = 0; q < R.length; q++){
+      var iv = R[q], targets = iv.lo === iv.hi ? [iv.lo] : (function(){ var lo = isFinite(iv.lo) ? iv.lo : (isFinite(iv.hi) ? iv.hi - 5 : -5), hi = isFinite(iv.hi) ? iv.hi : lo + 5; return [lo + (hi - lo) / 4, (lo + hi) / 2, lo + 3 * (hi - lo) / 4]; })();
+      for (var z = 0; z < targets.length; z++) if (!reach(targets[z])) return "the range value " + targets[z] + " is never reached";
+      if (iv.lc && isFinite(iv.lo) && !reach(iv.lo)) return "the range includes " + iv.lo + " but f never reaches it";
+      if (iv.hc && isFinite(iv.hi) && !reach(iv.hi)) return "the range includes " + iv.hi + " but f never reaches it";
+    }
+    return null;
+  }
+  function funMain(t){ t = String(t); var k = t.indexOf(" = "); return (k >= 0 ? t.slice(k + 3) : t).replace(/\s*\(≈[^)]*\)\s*$/, "").trim(); }
+  function funVal(t){ return t === "undefined" ? NaN : funNX(t)({}); }
+  function funNear(u, w){ return (isNaN(u) && isNaN(w)) || (funOk(u) && funOk(w) && Math.abs(u - w) <= 1e-9 * (1 + Math.abs(w))); }
+  function funCond(c){                          // a piece's condition: x<0, 0<=x<3, x>=3, x=2, x!=2 → a set
+    var m = /^(-?[\d.\/]+)(<=|<)x(<=|<)(-?[\d.\/]+)$/.exec(c);
+    if (m) return [{ lo:funNX(m[1])({}), hi:funNX(m[4])({}), lc:m[2] === "<=", hc:m[3] === "<=" }];
+    m = /^x(<=|>=|<|>|=|!=)(-?[\d.\/]+)$/.exec(c);
+    if (!m) throw new Error("can’t read the condition " + c);
+    var v = funNX(m[2])({});
+    return { "<":[{ lo:-Infinity, hi:v, lc:false, hc:false }], "<=":[{ lo:-Infinity, hi:v, lc:false, hc:true }], ">":[{ lo:v, hi:Infinity, lc:false, hc:false }], ">=":[{ lo:v, hi:Infinity, lc:true, hc:false }],
+             "=":[{ lo:v, hi:v, lc:true, hc:true }], "!=":[{ lo:-Infinity, hi:v, lc:false, hc:false }, { lo:v, hi:Infinity, lc:false, hc:false }] }[m[1]];
+  }
+  function funSetEq(A, B){                        // two sets, as unions of intervals and points, are the same (they're written merged)
+    var probe = [0, 1, -1, 7.3, -7.3, 50, -50];
+    A.concat(B).forEach(function(iv){ [iv.lo, iv.hi].forEach(function(v){ if (isFinite(v)) probe.push(v, v - 1e-4, v + 1e-4); }); });
+    return probe.every(function(v){ return funIn(A, v) === funIn(B, v); });
+  }
+  function funYScan(G, xv){                       // how many different y's solve G(x, y) = 0 for this x
+    var roots = [], prev = null;
+    for (var k = -6000; k <= 6000; k++){ var yv = k / 100, v = G({ x:xv, y:yv }); if (!funOk(v)) { prev = null; continue; } if (prev !== null && ((prev < 0) !== (v < 0) || v === 0)) roots.push(yv); prev = v; }
+    return roots.filter(function(r, i){ return !i || r - roots[i - 1] > 0.05; }).length;
+  }
+
   var ORACLE = {
+    "functions.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText), bad = function(m){ return { ok:false, msg:m }; }, res;
+      var def = function(fn){ return function(xv){ return funOk(fn({ x:xv })); }; };
+      switch (o.mode){
+        case "eval":
+          var f = funNX(o.f);
+          if (o.xs){
+            var parts = t.split(";"), xs = o.xs.split(",");
+            if (parts.length !== xs.length) return bad("expected " + xs.length + " table entries");
+            for (var i = 0; i < xs.length; i++){ var w0 = f({ x:funNX(xs[i])({}) }); if (!funNear(funVal(funMain(parts[i])), w0)) return bad("f(" + xs[i] + ") should be " + w0); }
+            return { ok:true };
+          }
+          if (o.dq === "1") return funSame(funNX(funMain(t)), function(e){ return (f({ x:e.x + e.h }) - f({ x:e.x })) / e.h; }, ["x", "h"]);
+          var at = funNX(o.at), lets = (o.at.match(/[a-df-z]/g) || []).filter(function(l, k, arr){ return arr.indexOf(l) === k; });
+          if (!lets.length){ var w = f({ x:at({}) }); return funNear(funVal(funMain(t)), w) ? { ok:true } : bad("expected " + (funOk(w) ? w : "undefined")); }
+          return funSame(funNX(funMain(t)), function(e){ return f({ x:at(e) }); }, lets);
+        case "func":
+          var isF;
+          if (o.pts){ var seen = {}; isF = true; o.pts.split(";").forEach(function(xy){ var q = xy.split(","); if (seen[q[0]] !== undefined && seen[q[0]] !== q[1]) isF = false; seen[q[0]] = q[1]; }); }
+          else {
+            var sides = o.eq.split("="), Lf = funNX(sides[0]), Rf = funNX(sides[1]), G = function(e){ return Lf(e) - Rf(e); };
+            if (!/y/.test(o.eq)){ isF = true; for (var xv = -50; xv <= 50; xv += 0.001){ var g0 = G({ x:xv }), g1 = G({ x:xv + 0.001 }); if (funOk(g0) && funOk(g1) && (g0 === 0 || g0 * g1 < 0)){ isF = false; break; } } }
+            else { isF = true; for (var xq = -6; xq <= 12 && isF; xq += 0.5) if (funYScan(G, xq) >= 2) isF = false; }
+          }
+          return (/^function/.test(t)) === isF ? { ok:true } : bad("expected " + (isF ? "a function" : "not a function"));
+        case "domain":
+          var dm = /Domain:\s*([^;]+)/.exec(t), rm = /Range:\s*([^;]+)/.exec(t);
+          if (o.pts){
+            var D0 = [], R0 = [];
+            o.pts.split(";").forEach(function(xy){ var q = xy.split(",").map(function(v){ return funNX(v)({}); }); D0.push({ lo:q[0], hi:q[0], lc:true, hc:true }); R0.push({ lo:q[1], hi:q[1], lc:true, hc:true }); });
+            if (dm && !funSetEq(funSet(dm[1]), D0)) return bad("the domain should be the x's");
+            if (rm && !funSetEq(funSet(rm[1]), R0)) return bad("the range should be the y's");
+            return { ok:true };
+          }
+          var fd = funNX(o.f), Dd = dm ? funSet(dm[1]) : null;
+          if (Dd){ res = funDomCheck(def(fd), Dd); if (res) return bad("domain: " + res); }
+          if (rm){
+            if (!Dd){
+              // the domain by scanning, each edge found exactly by halving the gap between a bad x and a good one
+              Dd = []; var prevIn = null, lo = null, px = null, dfd = def(fd);
+              var edge = function(a, b){ var ga = dfd(a); for (var k3 = 0; k3 < 200; k3++){ var mid = (a + b) / 2; if (dfd(mid) === ga) a = mid; else b = mid; } return ga ? a : b; };
+              for (var j = 0; j <= 80000; j++){ var xj = -400 + j / 100 + 0.0001; var ok = dfd(xj); if (ok && prevIn === false) lo = edge(px, xj); else if (ok && prevIn === null) lo = -Infinity; if (!ok && prevIn) Dd.push({ lo:lo, hi:edge(px, xj), lc:true, hc:true }); prevIn = ok; px = xj; }
+              if (prevIn) Dd.push({ lo:lo, hi:Infinity, lc:true, hc:false });
+            }
+            res = funRngCheck(fd, Dd, funSet(rm[1])); if (res) return bad("range: " + res);
+          }
+          return { ok:true };
+        case "combine":
+          var fa = funNX(o.f), fb = funNX(o.g), A = o.rev === "1" ? fb : fa, Bq = o.rev === "1" ? fa : fb;
+          var op = function(u, v){ return o.op === "add" ? u + v : o.op === "sub" ? u - v : o.op === "mul" ? u * v : v === 0 ? NaN : u / v; };
+          var comb = function(e){ var u = A(e), v = Bq(e); return funOk(u) && funOk(v) ? op(u, v) : NaN; };
+          if (o.at){ var wv = comb({ x:funNX(o.at)({}) }); return funNear(funVal(funMain(t)), wv) ? { ok:true } : bad("expected " + (funOk(wv) ? wv : "undefined")); }
+          res = funSame(funNX(funMain(t.split(";")[0])), comb);
+          if (!res.ok) return res;
+          if (o.op === "div"){ var dd = /domain:\s*(.+)$/.exec(t); if (!dd) return bad("no domain"); res = funDomCheck(def(comb), funSet(dd[1])); if (res) return bad("domain: " + res); }
+          return { ok:true };
+        case "compose":
+          if (o.ask === "decompose"){
+            var mm = /^f\(x\) = (.+), g\(x\) = (.+)$/.exec(t); if (!mm) return bad("can’t read f and g");
+            var F2 = funNX(mm[1]), G2 = funNX(mm[2]), H = funNX(o.h), id = function(e){ return e.x; };
+            if (funSame(F2, id).ok || funSame(G2, id).ok) return bad("one of them is just x");
+            return funSame(function(e){ return F2({ x:G2(e) }); }, H);
+          }
+          var ff = funNX(o.f), gg = funNX(o.g), Ou = o.ask === "fg" || o.ask === "dfg" ? ff : gg, In = Ou === ff ? gg : ff;
+          var cmp = function(e){ var u = In(e); return funOk(u) ? Ou({ x:u }) : NaN; };
+          if (o.at){ var wc = cmp({ x:funNX(o.at)({}) }); return funNear(funVal(funMain(t)), wc) ? { ok:true } : bad("expected " + (funOk(wc) ? wc : "undefined")); }
+          if (o.ask === "fg" || o.ask === "gf") return funSame(funNX(funMain(t)), cmp);
+          res = funDomCheck(def(cmp), funSet(t.replace(/^Domain:\s*/, "")));
+          return res ? bad("domain: " + res) : { ok:true };
+        case "inverse":
+          var fi = funNX(o.f), Dn = [{ lo:-Infinity, hi:Infinity, lc:false, hc:false }];
+          if (o.dom){ var dc = funCond(o.dom.replace(/\s/g, "")); Dn = dc; }
+          var inD = function(v){ return funIn(Dn, v) && def(fi)(v); };
+          // one-to-one, by sampling: strictly up or strictly down on each stretch, and the stretches' outputs don't overlap
+          var runs = [], cur = null;
+          for (var s2 = -3000; s2 <= 3000; s2++){ var xs2 = s2 / 100 + 0.00317; if (!inD(xs2)){ cur = null; continue; } var ys = fi({ x:xs2 }); if (cur && Math.abs(ys - cur[cur.length - 1]) > 20) cur = null; if (!cur){ cur = []; runs.push(cur); } cur.push(ys); }
+          var mono = runs.every(function(r){ var up = true, dn = true; for (var k = 1; k < r.length; k++){ if (!(r[k] > r[k - 1])) up = false; if (!(r[k] < r[k - 1])) dn = false; } return up || dn; });
+          var spans = runs.map(function(r){ return [Math.min.apply(null, r), Math.max.apply(null, r)]; }).sort(function(u, v){ return u[0] - v[0]; });
+          for (var k2 = 1; k2 < spans.length; k2++) if (spans[k2][0] < spans[k2 - 1][1] - 1e-9) mono = false;
+          if (o.ask === "test") return (/^yes/.test(t)) === mono ? { ok:true } : bad("expected " + (mono ? "yes" : "no"));
+          if (!mono) return /^no inverse/.test(t) ? { ok:true } : bad("f isn’t one-to-one, so there is no inverse");
+          var mi = /^f\^-1\(x\) = (.+?)(?:, x in (.+))?$/.exec(t); if (!mi) return bad("can’t read the inverse");
+          var inv = funNX(mi[1]), n = 0;
+          for (var q2 = 0; q2 < FUN_XS.length; q2++){ var tv = FUN_XS[q2]; if (!inD(tv)) continue; var sv = fi({ x:tv }), back = inv({ x:sv }); if (!funOk(back) || Math.abs(back - tv) > 1e-7 * (1 + Math.abs(tv))) return bad("f⁻¹(f(" + tv + ")) = " + back); n++; }
+          if (n < 3) return { skip:true };
+          if (mi[2]){ res = funRngCheck(fi, Dn.filter(function(){ return true; }), funSet(mi[2])); if (res) return bad("domain of f⁻¹: " + res); }
+          return { ok:true };
+        case "piece":
+          var pcs = o.pw.split(";").map(function(seg){ var bits = seg.split(" if "); return { f:funNX(bits[0]), S:funCond(bits[1].replace(/\s/g, "")) }; });
+          var pf = function(e){ for (var r2 = 0; r2 < pcs.length; r2++) if (funIn(pcs[r2].S, e.x)) return pcs[r2].f(e); return NaN; };
+          if (o.at){ var wp = pf({ x:funNX(o.at)({}) }); return funNear(funVal(funMain(t)), wp) ? { ok:true } : bad("expected " + (funOk(wp) ? wp : "undefined")); }
+          var Dp = pcs.reduce(function(acc, pc){ return acc.concat(pc.S); }, []);
+          var dmp = /Domain:\s*([^;]+)/.exec(t), rmp = /Range:\s*([^;]+)/.exec(t);
+          if (!dmp || !funSetEq(funSet(dmp[1]), Dp)) return bad("the domain should join the pieces’ conditions");
+          res = funRngCheck(pf, Dp, funSet(rmp[1]));
+          return res ? bad("range: " + res) : { ok:true };
+        case "parity":
+          var fp = funNX(o.f), sym = true, ev = true, od = true, used = 0;
+          for (var z = 0; z < FUN_XS.length; z++){
+            var v = FUN_XS[z], d1 = def(fp)(v), d2 = def(fp)(-v);
+            if (d1 !== d2) sym = false;
+            if (!d1 || !d2) continue;
+            var y1 = fp({ x:v }), y2 = fp({ x:-v }); used++;
+            if (Math.abs(y2 - y1) > 1e-9 * (1 + Math.abs(y1))) ev = false;
+            if (Math.abs(y2 + y1) > 1e-9 * (1 + Math.abs(y1))) od = false;
+          }
+          if (used < 3) return { skip:true };
+          var want = !sym ? "neither" : ev && od ? "both" : ev ? "even" : od ? "odd" : "neither";
+          return t.indexOf(want) === 0 ? { ok:true } : bad("expected " + want);
+      }
+      return { skip:true };
+    },
+    "college-statistics.html":function(p, a, ansText){
+      var o = P(p), N = function(k){ return o[k] === undefined || o[k] === "" ? null : Number(o[k]); }, fails = [];
+      var want = function(ok, what){ if (!ok) fails.push(what); };
+      var H4 = 0.00005 + 1e-7, H2 = 0.005 + 1e-7;
+      switch (o.mode){
+        case "z":
+          if (o.find === "z") want(bellHas(a, (N("x") - N("mu")) / N("sd"), H2), "z = " + ((N("x") - N("mu")) / N("sd")).toFixed(4));
+          else if (o.find === "x") want(bellHas(a, N("mu") + N("z") * N("sd"), 0.00005), "x = " + (N("mu") + N("z") * N("sd")));
+          else {
+            var z1 = (N("x") - N("mu")) / N("sd"), z2 = (N("x2") - N("mu2")) / N("sd2"), wb = Math.abs(z1 - z2) < 1e-12 ? "equally" : z1 > z2 ? "first" : "second";
+            want(bellHas(a, z1, H2) && bellHas(a, z2, H2), "z-scores " + z1.toFixed(3) + ", " + z2.toFixed(3)); want(ansText.indexOf(wb) >= 0, "the " + wb + " is better");
+          }
+          break;
+        case "normal":
+          var mu = N("mu"), sd = N("sd"), t = o.type;
+          if (t === "lt" || t === "gt" || t === "between"){
+            var za = (N("a") - mu) / sd, zb = t === "between" ? (N("b") - mu) / sd : null;
+            var exact = t === "lt" ? bellPhi(za) : t === "gt" ? 1 - bellPhi(za) : bellPhi(zb) - bellPhi(za);
+            if (o.rule === "1"){
+              var B = [0.0015, 0.0235, 0.135, 0.34, 0.34, 0.135, 0.0235, 0.0015], k1 = Math.round(za), k2 = zb === null ? null : Math.round(zb), lo = t === "lt" ? -4 : k1, hi = t === "gt" ? 4 : t === "lt" ? k1 : k2, rp = 0;
+              for (var i = 0; i < 8; i++) if (i - 4 >= lo && i - 3 <= hi) rp += B[i];
+              want(bellHas(a, rp * 100, 1e-6), "rule " + (rp * 100) + "%");
+            } else {
+              var tb = bellTable(t, bellZr(za), zb === null ? [] : bellZr(zb));
+              want(bellAny(a, tb, t === "between" ? 0.0001 + 1e-7 : H4), "table value about " + tb[0].toFixed(4));
+              if (Math.abs(Math.round(exact * 1e4) - Math.round(tb[0] * 1e4)) > 1) want(bellHas(a, exact, H4), "exact " + exact.toFixed(4));
+            }
+          } else {
+            var pp = N("p") / 100, area = t === "pct" ? pp : t === "top" ? 1 - pp : 1 - (1 - pp) / 2, z = bellInv(bellPhi, area), cands = [];
+            var z2d = Math.round(z * 100) / 100;           // the table's z: the nearest entry, a neighbor, or halfway between two
+            [-0.01, -0.005, 0, 0.005, 0.01].forEach(function(dz){ cands.push(Math.round((z2d + dz) * 1000) / 1000); });
+            if (mu === 0 && sd === 1){ want(bellAny(a, cands, 0.0006), "table z near " + z.toFixed(3)); want(bellHas(a, z, 0.00005 + 1e-7), "z " + z.toFixed(4)); }
+            else {
+              want(bellAny(a, cands.map(function(c){ return mu + c * sd; }), 0.00006 * sd + 1e-6), "table x near " + (mu + z * sd).toFixed(2));
+              want(bellHas(a, mu + z * sd, H2), "x " + (mu + z * sd).toFixed(2));
+              if (t === "middle") want(bellHas(a, mu - z * sd, H2), "lower x " + (mu - z * sd).toFixed(2));
+            }
+          }
+          break;
+        case "binom":
+          var n = N("n"), pb = N("p"), ask = o.ask, k = N("k"), kk = N("k2"), j, s = 0;
+          if (ask === "mean"){ want(bellHas(a, n * pb, 0.00005), "mean " + n * pb); want(bellHas(a, Math.sqrt(n * pb * (1 - pb)), H4), "sd " + Math.sqrt(n * pb * (1 - pb)).toFixed(4)); break; }
+          if (ask === "atleast1"){ want(bellHas(a, 1 - Math.pow(1 - pb, n), H4), "1 − (1 − p)ⁿ"); break; }
+          var L = { eq:[k, k], le:[0, k], lt:[0, k - 1], ge:[k, n], gt:[k + 1, n], between:[k, kk] }[ask];
+          for (j = L[0]; j <= L[1]; j++) s += bellPmf(n, j, pb);
+          if (o.approx === "1"){
+            var m = n * pb, sg = Math.sqrt(n * pb * (1 - pb)), lo2 = L[0] === 0 ? null : (L[0] - 0.5 - m) / sg, hi2 = L[1] === n ? null : (L[1] + 0.5 - m) / sg, r4 = function(x){ return Math.round(x * 1e4) / 1e4; }, opts = [];
+            (lo2 === null ? [null] : bellZr(lo2)).forEach(function(zl){ (hi2 === null ? [null] : bellZr(hi2)).forEach(function(zh){ opts.push((zh === null ? 1 : r4(bellPhi(zh))) - (zl === null ? 0 : r4(bellPhi(zl)))); }); });
+            want(bellAny(a, opts, H4), "approximation about " + opts[0].toFixed(4)); want(bellHas(a, s, H4), "exact binomial " + s.toFixed(4));
+          } else want(bellHas(a, s, H4), ask + " = " + s.toFixed(4));
+          break;
+        case "sampling":
+          var nn = N("n"), c0 = o.kind === "mean" ? N("mu") : N("p"), se = o.kind === "mean" ? N("sd") / Math.sqrt(nn) : Math.sqrt(c0 * (1 - c0) / nn);
+          want(bellHas(a, se, H4), "SE " + se.toFixed(4));
+          var sa = (N("a") - c0) / se, sb = o.type === "between" ? (N("b") - c0) / se : null, tbs = bellTable(o.type, bellZr(sa), sb === null ? [] : bellZr(sb));
+          want(bellAny(a, tbs, o.type === "between" ? 0.0001 + 1e-7 : H4), "probability about " + tbs[0].toFixed(4));
+          break;
+        case "ci":
+          var conf = N("conf"), al = 1 - conf / 100, zs = Math.round(bellInv(bellPhi, 1 - al / 2) * 1000) / 1000;
+          if (o.kind === "size"){
+            var raw = o.of === "mean" ? Math.pow(zs * N("sigma") / N("me"), 2) : (N("p") === null ? 0.25 : N("p") * (1 - N("p"))) * Math.pow(zs / N("me"), 2);
+            want(bellHas(a, Math.ceil(raw - 1e-7), 0) || bellHas(a, Math.ceil(raw + 1e-7), 0), "n = " + Math.ceil(raw - 1e-7));
+            break;
+          }
+          var est, sei, cv, dp;
+          if (o.kind === "prop"){ est = N("x") / N("n"); sei = Math.sqrt(est * (1 - est) / N("n")); cv = zs; dp = 4; }
+          else {
+            est = N("xbar"); sei = (o.kind === "t" ? N("s") : N("sigma")) / Math.sqrt(N("n")); dp = Math.min(4, Math.max(2, bellDec(o.xbar) + 1));
+            cv = o.kind === "t" ? Math.round(bellInv(function(x){ return bellT(x, N("n") - 1); }, 1 - al / 2) * 1000) / 1000 : zs;
+            want(bellHas(a, cv, 0), "critical value " + cv);
+          }
+          var hd = 0.5 * Math.pow(10, -dp) + 1e-7;
+          want(bellHas(a, est - cv * sei, hd) && bellHas(a, est + cv * sei, hd), "interval (" + (est - cv * sei).toFixed(dp) + ", " + (est + cv * sei).toFixed(dp) + ")");
+          break;
+        case "test":
+          var kind = o.kind, alt = o.alt, alpha = N("alpha"), st, nt = N("n");
+          if (kind === "prop") st = (N("x") / nt - N("p0")) / Math.sqrt(N("p0") * (1 - N("p0")) / nt);
+          else st = (N("xbar") - N("mu0")) / ((kind === "t" ? N("s") : N("sigma")) / Math.sqrt(nt));
+          want(bellHas(a, st, H2), "statistic " + st.toFixed(3));
+          var cdf = kind === "t" ? function(x){ return bellT(x, nt - 1); } : bellPhi;
+          var pv = alt === "lt" ? cdf(st) : alt === "gt" ? 1 - cdf(st) : 2 * (1 - cdf(Math.abs(st)));
+          var shown = [pv];
+          if (kind !== "t") bellZr(st).forEach(function(zr){ var l = Math.round(bellPhi(zr) * 1e4) / 1e4; shown.push(alt === "lt" ? l : alt === "gt" ? 1 - l : 2 * Math.min(l, 1 - l)); });
+          if (shown.every(function(v){ return v < 0.00005; })) want(bellHas(a, 0.0001, 0), "p-value < 0.0001");
+          else want(bellAny(a, shown, H4), "p-value about " + pv.toFixed(4));
+          want((/fail to reject/.test(ansText)) === (pv > alpha), pv > alpha ? "fail to reject H₀" : "reject H₀");
+          break;
+        case "regress":
+          var X = o.xs.split(",").map(Number), Y = o.ys.split(",").map(Number), q = X.length, mx = 0, my = 0, sxx = 0, syy = 0, sxy = 0;
+          X.forEach(function(v, i){ mx += v / q; my += Y[i] / q; });
+          X.forEach(function(v, i){ sxx += (v - mx) * (v - mx); syy += (Y[i] - my) * (Y[i] - my); sxy += (v - mx) * (Y[i] - my); });
+          var r = sxy / Math.sqrt(sxx * syy), bs = sxy / sxx, ai = my - bs * mx;
+          want(bellHas(a, r, H4), "r " + r.toFixed(4)); want(bellHas(a, r * r, H4), "r² " + (r * r).toFixed(4));
+          want(bellHas(a, bs, H4) && bellHas(a, ai, H4), "line ŷ = " + ai.toFixed(4) + " + (" + bs.toFixed(4) + ")x");
+          if (o.at !== undefined){
+            var at = Number(o.at), yh = ai + bs * at; want(bellHas(a, yh, H2), "ŷ " + yh.toFixed(2));
+            if (X.indexOf(at) >= 0) want(bellHas(a, Y[X.indexOf(at)] - yh, H2), "residual " + (Y[X.indexOf(at)] - yh).toFixed(2));
+          }
+          break;
+        default: return { skip:true };
+      }
+      return fails.length ? { ok:false, msg:"expected " + fails.join("; ") } : { ok:true };
+    },
+    "matrices-and-vectors.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText).trim(), bad = function(m){ return { ok:false, msg:m }; }, good = { ok:true }, close = function(x, y, e){ return Math.abs(x - y) <= (e || 1e-9) * Math.max(1, Math.abs(y)); };
+      var want, A, Bm, u, v;
+      switch (o.mode){
+        case "arith":
+          var ms = {}; ["A", "B", "C"].forEach(function(k){ if (o[k]) ms[k] = matM(o[k]); });
+          want = matComb(o.ex || "A+B", ms);
+          return matSame(matAns(t), want) ? good : bad("expected " + matShow(want));
+        case "mult":
+          A = matM(o.A); Bm = matM(o.B); var parts = t.split("; ");
+          if (!matSame(matAns(parts[0]), matMul(A, Bm))) return bad("expected AB = " + matShow(matMul(A, Bm)));
+          if (o.ba === "1" && Bm[0].length === A.length && !(parts[1] && matSame(matAns(parts[1].replace(/^[^=]*=\s*/, "")), matMul(Bm, A)))) return bad("expected BA = " + matShow(matMul(Bm, A)));
+          return good;
+        case "det":
+          want = matDet(matM(o.A));
+          return num(t) && eq(num(t), want) ? good : bad("expected det = " + txt(want));
+        case "inv":
+          A = matM(o.A); want = matInv(A);
+          if (!want) return /no inverse/.test(t) ? good : bad("det = 0, so there is no inverse");
+          return matSame(matAns(t), want) ? good : bad("expected the inverse " + matShow(want));
+        case "sys":
+          var M = matM(o.M), n = M[0].length - 1, vars = o.vars ? o.vars.split(",") : n <= 4 ? ["x", "y", "z", "w"].slice(0, n) : [1, 2, 3, 4, 5].map(function(i){ return "x" + i; });
+          var rr = matRref(M, n), Ac = M.map(function(r){ return r.slice(0, n); });
+          var incons = rr.M.some(function(r){ return r.slice(0, n).every(function(x){ return x.n === 0n; }) && r[n].n !== 0n; });
+          if (incons) return /^no solution$/.test(t) ? good : bad("there is no solution");
+          var got = {}, re = /([a-z]\d?) = ([^,]+)/g, m;
+          while ((m = re.exec(t.replace(/^infinitely many solutions:\s*/, "")))) got[m[1]] = m[2].trim();
+          if (!vars.every(function(x){ return got[x] !== undefined; })) return bad("the answer doesn’t give every unknown");
+          if (rr.rank === n){
+            var bad1 = vars.filter(function(x, i){ var row = rr.M[rr.piv.indexOf(i)]; return !num(got[x]) || !eq(num(got[x]), row[n]); });
+            return bad1.length ? bad("expected " + vars.map(function(x, i){ return x + " = " + txt(rr.M[rr.piv.indexOf(i)][n]); }).join(", ")) : good;
+          }
+          if (!/^infinitely many/.test(t)) return bad("there are infinitely many solutions");
+          var L = vars.map(function(x){ return matLin(got[x]); });
+          if (L.some(function(x){ return !x; })) return bad("couldn’t read the parametric form");
+          var pars = {}; L.forEach(function(x){ Object.keys(x.k).forEach(function(k){ pars[k] = 1; }); }); pars = Object.keys(pars);
+          var c0 = L.map(function(x){ return x.c; });
+          if (!Ac.every(function(r, i){ return eq(matDot(r, c0), M[i][n]); })) return bad("the parametric form doesn’t work with the parameters at 0");
+          var dirs = pars.map(function(pn){ return L.map(function(x){ return x.k[pn] || R(0); }); });
+          if (!dirs.every(function(d){ return Ac.every(function(r){ return matDot(r, d).n === 0n; }); })) return bad("the parametric form doesn’t work for every value of the parameters");
+          return pars.length === n - rr.rank && matRank(dirs) === pars.length ? good : bad("expected " + (n - rr.rank) + " free parameter(s)");
+        case "vec":
+          if (o.task === "points"){ want = matV(o.Q).map(function(x, i){ return sub(x, matV(o.P)[i]); }); var g = matVecAns(t); return g && g.length === want.length && g.every(function(x, i){ return num(x) && eq(num(x), want[i]); }) ? good : bad("expected Q − P"); }
+          if (o.task === "combo"){ var vs = {}; ["u", "v", "w"].forEach(function(k){ if (o[k]) vs[k] = matV(o[k]); }); want = matComb(o.ex, vs); var g2 = matVecAns(t); return g2 && g2.length === want.length && g2.every(function(x, i){ return num(x) && eq(num(x), want[i]); }) ? good : bad("expected " + want.map(txt).join(", ")); }
+          u = matV(o.u); var len = Math.sqrt(F(matDot(u, u)));
+          if (o.task === "mag") return close(matSurd(t.split("≈")[0]), len) ? good : bad("expected |u| ≈ " + len.toFixed(4));
+          if (o.task === "unit"){ var g3 = matVecAns(t); if (/\/√/.test(t)) return bad("not rationalized"); return g3 && g3.length === u.length && g3.every(function(x, i){ return close(matSurd(x), F(u[i]) / len); }) ? good : bad("expected u ÷ |u|"); }
+          var th = Math.atan2(F(u[1]), F(u[0])) * 180 / Math.PI; if (th < 0) th += 360;
+          var gd = /([\d.]+)°/.exec(t); return gd && Math.abs(Number(gd[1]) - th) < 0.006 ? good : bad("expected θ ≈ " + th.toFixed(2) + "°");
+        case "dot":
+          u = matV(o.u); v = matV(o.v); var d = matDot(u, v), uu = F(matDot(u, u)), vv = F(matDot(v, v));
+          if (o.task === "dot") return num(t) && eq(num(t), d) ? good : bad("expected u · v = " + txt(d));
+          if (o.task === "angle"){ var ang = Math.acos(Math.max(-1, Math.min(1, F(d) / Math.sqrt(uu * vv)))) * 180 / Math.PI, ga = /([\d.]+)°/.exec(t); return ga && Math.abs(Number(ga[1]) - ang) < 0.006 ? good : bad("expected θ ≈ " + ang.toFixed(2) + "°"); }
+          if (o.task === "test"){ var par = u.every(function(x, i){ return u.every(function(y, j){ return eq(mul(x, v[j]), mul(y, v[i])); }); }), w = d.n === 0n ? "perpendicular" : par ? "parallel" : "neither"; return t === w ? good : bad("expected " + w); }
+          if (o.task === "proj"){ var k = div(d, matDot(v, v)), g4 = matVecAns(t); return g4 && g4.length === v.length && g4.every(function(x, i){ return num(x) && eq(num(x), mul(k, v[i])); }) ? good : bad("expected (u · v ÷ v · v) v"); }
+          var cr = u.length === 3 ? matCross(u, v) : [R(0), R(0), sub(mul(u[0], v[1]), mul(u[1], v[0]))];
+          if (o.task === "cross"){ var g5 = matVecAns(t); return g5 && g5.length === 3 && g5.every(function(x, i){ return num(x) && eq(num(x), cr[i]); }) ? good : bad("expected u × v = " + cr.map(txt).join(", ")); }
+          var area = Math.sqrt(F(matDot(cr, cr))) * (o.tri === "1" ? 0.5 : 1);
+          return close(matSurd(t.split("≈")[0]), area) ? good : bad("expected area ≈ " + area.toFixed(4));
+      }
+      return { skip:true };
+    },
+    "radicals.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText).trim(), why;
+      switch (o.mode){
+        case "simplify": case "operate": case "rationalize": case "exponents":
+          var src = o.mode === "simplify" ? o.r : o.mode === "rationalize" ? "(" + o.n + ")/(" + o.d + ")" : o.ex;
+          if (!radSameVal(src, t)) return { ok:false, msg:"“" + t + "” isn’t equal to " + src };
+          if (o.mode === "exponents" && (o.task === "exponent" || o.task === "laws")) why = radExpForm(t);
+          else {
+            why = radRootForm(t, { bottom:o.mode === "exponents" && o.task === "radical", one:o.mode === "simplify" });
+            if (!why && o.mode === "exponents" && o.task === "radical" && /\^\(/.test(t)) why = "a fraction power left in a root answer: “" + t + "”";
+            if (!why && o.mode === "exponents" && o.task === "value" && /[a-z]/.test(radNorm(t).replace(/sqrt|cbrt|root\d*/g, ""))) why = "a letter in a number answer";
+          }
+          return why ? { ok:false, msg:why } : { ok:true };
+        case "radeq": case "rateq": return radEqCheck(o, t);
+        case "ratsimp": case "ratmul": case "ratadd": return radRatCheck(o, t);
+      }
+      return { skip:true };
+    },
+    "complex-numbers.html":function(p, a, ansText){
+      var o = P(p), t = String(ansText).trim(), u = o.u === "rad" ? "rad" : "deg", n, want, got, i, j;
+      function bad(m){ return { ok:false, msg:m }; }
+      function same(g, w, tol){ return cpxNear(g, w, tol || 1e-9) ? { ok:true } : bad("expected about " + (Math.round(w.x * 1e4) / 1e4) + " + " + (Math.round(w.y * 1e4) / 1e4) + "i, the answer says “" + t + "”"); }
+      if (/−/.test(t)) return bad("the plain answer should use ASCII minus signs");
+      switch (o.mode){
+        case "i":
+          if (o.task === "pow"){ n = Number(o.n); want = [{ x:1, y:0 }, { x:0, y:1 }, { x:-1, y:0 }, { x:0, y:-1 }][((n % 4) + 4) % 4]; }
+          else if (o.task === "root") want = cpxEval("sqrt(" + o.r + ")");
+          else if (o.task === "prod") want = cpxM(cpxEval("sqrt(" + o.a + ")"), cpxEval("sqrt(" + o.b + ")"));
+          else want = cpxEval(o.e);
+          if (!cpxReduced(t)) return bad("“" + t + "” isn’t simplified");
+          return same(cpxEval(t), want);
+        case "add": case "mul": case "div":
+          var A = cpxEval(o.a), Bz = o.b !== undefined ? cpxEval(o.b) : null;
+          want = o.mode === "add" ? (o.op === "add" ? { x:A.x + Bz.x, y:A.y + Bz.y } : { x:A.x - Bz.x, y:A.y - Bz.y }) : o.mode === "mul" ? (o.pow ? cpxPow(A, Number(o.pow)) : cpxM(A, Bz)) : cpxD(A, Bz);
+          if (!cpxReduced(t) || /\^|i.*i/.test(t)) return bad("“" + t + "” isn’t in simplest a + bi form");
+          return same(cpxEval(t), want, 1e-12);
+        case "plane":
+          var z = cpxEval(o.z), parts = t.split(";");
+          if (parts.length !== 3) return bad("expected |z|; θ; the conjugate");
+          if (Math.abs(cpxEval(parts[0].split("=")[1]).x - cpxAbs(z)) > 1e-9 * Math.max(1, cpxAbs(z)) || !cpxReduced(parts[0])) return bad("|z| should be " + cpxAbs(z));
+          var dg = /(-?[\d.]+)°/.exec(parts[1]), th = cpxDeg(z);
+          if (!dg || Math.abs(Number(dg[1]) - th) > 0.0051) return bad("θ should be " + (Math.round(th * 100) / 100) + "° (between 0° and 360°)");
+          var rd = /[=≈]\s*([^=≈]+?)\s*rad/.exec(parts[1]);
+          if (!rd || Math.abs(cpxEval(rd[1]).x - th * Math.PI / 180) > 0.00051) return bad("θ in radians should be " + (Math.round(th * Math.PI / 180 * 1000) / 1000));
+          return same(cpxEval(parts[2].replace("conjugate", "")), { x:z.x, y:-z.y });
+        case "polar":
+          if (o.task === "topolar"){
+            var z1 = cpxEval(o.z), lr = t.split(" = ");
+            if (lr.length !== 2) return bad("expected r(cos θ + i sin θ) = re^(iθ)");
+            var r0 = /^([^(]*)\(/.exec(lr[0]);
+            if (Math.abs((r0 && r0[1] ? cpxEval(r0[1]).x : 1) - cpxAbs(z1)) > 1e-9 * Math.max(1, cpxAbs(z1))) return bad("r should be " + cpxAbs(z1));
+            var d1 = cpxPolarDeg(lr[0]);
+            if (!(d1 > -1e-9 && d1 < 360)) return bad("θ should be between 0° and 360°");
+            if (!cpxNear(cpxEval(lr[1]), z1, 2e-3)) return bad("the exponential form isn’t " + o.z);
+            return same(cpxEval(lr[0]), z1, 2e-3);
+          }
+          if (o.task === "torect"){
+            want = cpxCis(cpxEval(o.r).x, cpxAng(o.t, u));
+            return /^≈/.test(t) ? same(cpxEval(t.slice(1)), want, 6e-4) : !cpxReduced(t) ? bad("“" + t + "” isn’t simplified") : same(cpxEval(t), want);
+          }
+          var r1 = cpxEval(o.r1).x, r2 = cpxEval(o.r2).x, t1 = cpxAng(o.t1, u), t2 = cpxAng(o.t2, u);
+          want = o.task === "mul" ? cpxCis(r1 * r2, t1 + t2) : cpxCis(r1 / r2, t1 - t2);
+          var pp = t.split(" = "), d2 = cpxPolarDeg(pp[0]);
+          if (!(d2 > -1e-9 && d2 < 360)) return bad("θ should be between 0° and 360°");
+          for (i = 0; i < pp.length; i++) if (!cpxNear(cpxEval(pp[i]), want, 1e-9)) return bad("“" + pp[i] + "” isn’t the " + (o.task === "mul" ? "product" : "quotient"));
+          return { ok:true };
+        case "demoivre":
+          n = Number(o.n);
+          var base = o.z !== undefined ? cpxEval(o.z) : o.w !== undefined ? cpxEval(o.w) : cpxCis(cpxEval(o.r).x, cpxAng(o.t, u));
+          if (o.task === "pow"){ want = cpxPow(base, n); return /^≈/.test(t) ? same(cpxEval(t.slice(1)), want, 6e-4) : same(cpxEval(t), want, 1e-9); }
+          var items = cpxList(t);
+          if (items.length !== n) return bad(items.length + " roots listed, there are " + n);
+          var vals = items.map(function(x){ return cpxEval(x); });
+          for (i = 0; i < n; i++){
+            if (!cpxNear(cpxPow(vals[i], n), base, 1e-9)) return bad("(" + items[i] + ")^" + n + " isn’t " + (o.w || "w"));
+            for (j = 0; j < i; j++) if (cpxNear(vals[i], vals[j], 1e-9)) return bad("the same root twice");
+          }
+          return { ok:true };
+        case "solve":
+          var sides = String(o.eq).split("="), f = function(x){ var L = cpxEval(sides[0], x), R0 = cpxEval(sides[1], x); return { x:L.x - R0.x, y:L.y - R0.y }; };
+          var c0 = f({ x:0, y:0 }).x, f1 = f({ x:1, y:0 }).x, fm = f({ x:-1, y:0 }).x, qa = (f1 + fm) / 2 - c0, qb = (f1 - fm) / 2, D = qb * qb - 4 * qa * c0;
+          var roots = D < 0 ? [{ x:-qb / (2 * qa), y:Math.sqrt(-D) / (2 * qa) }, { x:-qb / (2 * qa), y:-Math.sqrt(-D) / (2 * qa) }] : D === 0 ? [{ x:-qb / (2 * qa), y:0 }] : [{ x:(-qb + Math.sqrt(D)) / (2 * qa), y:0 }, { x:(-qb - Math.sqrt(D)) / (2 * qa), y:0 }];
+          got = t.split(/\s+or\s+/).map(function(x){ return cpxEval(x.replace(/^\s*[a-z]\s*=\s*/, "")); });
+          if (got.length !== roots.length) return bad("expected " + roots.length + " solution(s)");
+          if (!roots.every(function(r){ return got.some(function(g){ return cpxNear(g, r, 1e-9); }); })) return bad("those don’t solve " + o.eq);
+          return cpxReduced(t) ? { ok:true } : bad("“" + t + "” isn’t simplified");
+      }
+      return { skip:true };
+    },
     "sequences.html":function(p, a, ansText){
       var o = P(p), t = String(ansText).replace(/[−–]/g, "-"), j;
       function bad(m){ return { ok:false, msg:m }; }
@@ -2507,7 +3514,8 @@
             var words = !want.length && it.pr.answer ? String(it.pr.answer).replace(/\([^)]*\)/g, "").toLowerCase().split(/\W+/).filter(function(x){ return x.length > 3; }) : [];
             var missWord = words.filter(function(w){ return text.toLowerCase().indexOf(w) < 0; });
             // an expression answer (14x − 17) is easier to compare as text with the spaces taken out
-            var squash = function(x){ return String(x).replace(/[\s|:()]/g, "").replace(/[−–]/g, "-").toLowerCase(); };
+            // subscript digits as plain ones: the maker writes log₅ m, the page's <sub> reads as log5 m
+            var squash = function(x){ return String(x).replace(/[\s|:()]/g, "").replace(/[−–]/g, "-").replace(/[₀-₉]/g, function(c){ return String(c.charCodeAt(0) - 0x2080); }).toLowerCase(); };
             // an answer in several parts ("y = −3x − 27 (standard form: 3x + y = −27)") can show in several places on the page
             var parts = it.pr.answer ? String(it.pr.answer).split(/;|\(\s*standard form\s*:?|\)/).map(squash).filter(function(x){ return /\d/.test(x); }) : [];
             if ((miss.length || missWord.length) && parts.length && parts.every(function(x){ return squash(text).indexOf(x) >= 0; })){ miss = []; missWord = []; }

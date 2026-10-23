@@ -21,6 +21,9 @@
     { href:"algebra.html",        sign:"x",  name:"Algebra",   title:"The Balance Scale",  c:"alg", italic:true },
     { href:"lines.html",          sign:"↗",  name:"Lines",     title:"The Slope Grid",     c:"lin" },
     { href:"graphing.html",        sign:"⌗",  name:"Graphing",   title:"The Graph Paper", c:"gra" },
+    { href:"functions.html", sign:"f(x)", name:"Functions", title:"The Function Machine: functions", c:"fun" },
+    { href:"radicals.html", sign:"√", name:"Radicals", title:"The Root Cellar: radicals and rational expressions", c:"rad" },
+    { href:"complex-numbers.html", sign:"i", name:"Complex", title:"The Complex Plane: complex numbers", c:"cpx" },
     { href:"quadratics.html",      sign:"x²", name:"Quadratics", title:"The Area Box: quadratics and polynomials", c:"qua" },
     { href:"logarithms.html",      sign:"log", name:"Logs",      title:"The Log Ladder: logarithms", c:"log" },
     { href:"sequences.html",       sign:"aₙ", name:"Sequences",  title:"The Number Staircase: sequences and series", c:"seq" },
@@ -29,6 +32,8 @@
     { href:"probability.html",     sign:"◔",  name:"Chance",     title:"The Chance Spinner", c:"pro" },
     { href:"trigonometry.html",    sign:"∠",  name:"Trig",       title:"The Unit Circle: trigonometry", c:"tri" },
     { href:"calculus.html",        sign:"∫",  name:"Calculus",   title:"The Rate Machine: calculus", c:"cal" },
+    { href:"college-statistics.html", sign:"σ", name:"Statistics II", title:"The Bell Curve: college statistics", c:"bel" },
+    { href:"matrices-and-vectors.html", sign:"[ ]", name:"Matrices", title:"The Matrix Grid: matrices and vectors", c:"mat" },
     { href:"wordproblems.html",   sign:"✎",  name:"Stories",   title:"The Story Problem",  c:"wrd" }
   ];
   var TOOLS = [
@@ -43,9 +48,9 @@
   ];
 
   var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;"
-            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-gra:#0369A1;--nv-exp:#BE185D;--nv-pro:#A21CAF;--nv-scr:#B45309;--nv-tri:#4D7C0F;--nv-cal:#7C3AED;--nv-num:#EA580C;--nv-qua:#B91C1C;--nv-log:#1D4ED8;--nv-seq:#15803D;";
+            + "--nv-fra:#0B6E83;--nv-pct:#8A6D00;--nv-fac:#7B3FA0;--nv-int:#46596E;--nv-rat:#B0263E;--nv-lin:#1E7A3C;--nv-sta:#3346A8;--nv-wrd:#0F766E;--nv-gra:#0369A1;--nv-exp:#BE185D;--nv-pro:#A21CAF;--nv-scr:#B45309;--nv-tri:#4D7C0F;--nv-cal:#7C3AED;--nv-num:#EA580C;--nv-qua:#B91C1C;--nv-log:#1D4ED8;--nv-seq:#15803D;--nv-fun:#0E7490;--nv-rad:#92400E;--nv-cpx:#4F46E5;--nv-bel:#047857;--nv-mat:#57534E;";
   var DARK  = "--nv-add:#4FCCB0;--nv-sub:#F08A6E;--nv-mul:#A99CF0;--nv-div:#F2A85C;--nv-ord:#7DB8E8;--nv-alg:#F08CC0;--nv-geo:#B5D06A;"
-            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-gra:#7DD3FC;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;--nv-scr:#FCD34D;--nv-tri:#BEF264;--nv-cal:#C4B5FD;--nv-num:#FDBA74;--nv-qua:#FCA5A5;--nv-log:#93C5FD;--nv-seq:#86EFAC;";
+            + "--nv-fra:#5FC9DE;--nv-pct:#E3C04D;--nv-fac:#C9A0EE;--nv-int:#A9BDD2;--nv-rat:#F27D8F;--nv-lin:#6FD38E;--nv-sta:#93A2F2;--nv-wrd:#5EEAD4;--nv-gra:#7DD3FC;--nv-exp:#FDA4AF;--nv-pro:#F0ABFC;--nv-scr:#FCD34D;--nv-tri:#BEF264;--nv-cal:#C4B5FD;--nv-num:#FDBA74;--nv-qua:#FCA5A5;--nv-log:#93C5FD;--nv-seq:#86EFAC;--nv-fun:#67E8F9;--nv-rad:#FBBF24;--nv-cpx:#A5B4FC;--nv-bel:#6EE7B7;--nv-mat:#D6D3D1;";
   var CSS =
     ":root{" + LIGHT + "}" +
     "@media (prefers-color-scheme: dark){:root:not([data-theme=\"light\"]){" + DARK + "}}" +

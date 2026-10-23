@@ -1739,6 +1739,9 @@
       return '<div class="ck">Check ' + vI() + " = " + numH(it.v) + ": " + B(rn(P.L, "h")) + " = " + B(numH(pEval(P.Lp, it.v))) + " and " + B(rn(P.R, "h")) + " = " + B(numH(pEval(P.Rp, it.v))) + OK + "</div>";
     }).join("");
     if (!chk) chk = '<div class="ck">Put each answer back in and both sides match. (With square roots, the check is easiest with the decimals: they come out equal to about 3 decimal places.)</div>';
+    // complex solutions: the Complex Plane explains them (i, and checking them by substitution)
+    if (cxs.length) chk += '<div class="ck">What <i class="vr">i</i> means, and these two solutions worked out with complex numbers: <a href="'
+      + esc(siteUrl("complex-numbers", "mode=solve&q=" + encodeURIComponent(rn(P.L, "t") + " = " + rn(P.R, "t")))) + '">the Complex Plane</a>.</div>';
     return finish(W, chk + (closerExtra || ""), "eq");
   }
   function drawSolveLinear(W, P){

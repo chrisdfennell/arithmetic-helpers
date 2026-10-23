@@ -458,7 +458,10 @@
     "wordproblems.html":". $ / % ,", "scratch.html":"+ − × ÷ . , space", "flashcards.html":"/ . % − ,",
     "trigonometry.html":"° π √ / ( ) . − =", "calculus.html":"x ^ ( ) / √ π e − + =",
     "number-sense.html":", . $ ¢ : < > =", "quadratics.html":"x ^ ² ( ) − + = / √ ±",
-    "logarithms.html":"log ln ^ ( ) = / e − .", "sequences.html":", ^ / − ( ) = Σ ."
+    "logarithms.html":"log ln ^ ( ) = / e − .", "sequences.html":", ^ / − ( ) = Σ .",
+    "functions.html":"x f( ) ^ √ / − + = , |", "radicals.html":"√ ∛ x ^ / ( ) − + =",
+    "complex-numbers.html":"i ^ √ / ( ) − + ° π", "college-statistics.html":", . = < > ± % ( )",
+    "matrices-and-vectors.html":"[ ] , ; < > − / ( ) |"
   };
   var padEl = null, padFor = null, padHide = null;
   function padWanted(){

@@ -99,6 +99,42 @@
     // "what is a logarithm", "define place value": the Word List (below), not the helper
     var asksWord = /^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s);
     var story = isStory(s, low);
+    // college statistics: the normal curve, z-scores, binomial, intervals, tests, regression ("P(X < 85) mean 70 sd 10")
+    // ("line of best fit" and "scatter" stay on the Graph Paper, above)
+    if (!asksWord && (/\bz[-\s]?(?:scores?|tests?)\b|\bnormal(?:ly)?\s+distribut|\bbell\s+curve\b|\bbinomial\b|\bconfidence\s+intervals?\b|\bmargin\s+of\s+error\b|\bhypothes[ie]s\b|\bnull\b|\bp-?values?\b|\bt-?tests?\b|\bregression\b|\bcorrelation\b|\bleast[-\s]squares\b|\bcentral\s+limit\b|\bsampling\s+distribution\b|\bstandard\s+error\b|\bempirical\s+rule\b|\b68\s*[-–]\s*95\s*[-–]\s*99/.test(low) ||
+        /\bp\s*\(\s*[x-z]?\s*[<>≤≥=]/.test(low) && /\b(?:mean|sd|standard\s+deviation|μ|σ|mu|sigma)\b|[μσ]/.test(low)))
+      return go("college-statistics.html", qp(s), "statistics");
+    // matrices and vectors: [[1,2],[3,4]], det, row reduce, <3, 4>, dot and cross products, three or more equations at once
+    var eqList = s.split(/\s*(?:;|\band\b)\s*/i).filter(function(x){ return /=/.test(x); });
+    if (!asksWord && (/\[\s*\[|\bmatri(?:x|ces)\b|\bdeterminants?\b|\bdet\s*[\[(]|\brref\b|\brow[-\s]?(?:reduc|echelon|operations?)|\baugmented\b|\bgauss(?:ian|-jordan)?\b|\bcramer|\bvectors?\b|\bdot\s+product\b|\bcross\s+product\b|\bunit\s+vector\b|\bprojection\s+of\b|\borthogonal\b/.test(low) ||
+        /<\s*[−-]?\d+(?:\.\d+)?\s*,\s*[−-]?\d+(?:\.\d+)?(?:\s*,\s*[−-]?\d+(?:\.\d+)?)?\s*>/.test(s) || /\b\d*\s*i\s*[+−-]\s*\d*\s*j\b/.test(low) ||
+        eqList.length >= 3 && eqList.every(function(x){ return /^[\s\d.a-z+\-−*×=\/()]+$/i.test(x) && !/[a-z]\s*\^/i.test(x); })))
+      return go("matrices-and-vectors.html", qp(s), "matrices and vectors");
+    // complex numbers: 3 + 2i, i^23, √−48, the conjugate, polar form, De Moivre
+    var iOnly = low.replace(/\b(?:simplify|divide|multiply|add|subtract|find|write|in|as|form|the|of|and|polar|rectangular|standard|trig(?:onometric)?|modulus|argument|conjugate|plot|by|cos|sin|cis|to|what|is|degrees?|radians?|pi|e|sqrt|cbrt|square|cube|root)\b/g, " ");
+    if (!asksWord && (/\bcomplex\b|\bimaginary\b|\bde\s*moivre\b|\bconjugate\b|\bcis\b|\bpolar\s+form\b|\bmodulus\b/.test(low) ||
+        /(?:\d|\))\s*i(?![a-z])|[+−-]\s*i(?![a-z])|(?:^|[^a-z])i\s*(?:\^|\*\*)\s*[−-]?\d|(?:√|sqrt\s*\(?)\s*\(?\s*[−-]\s*\d/.test(low) && !/[a-hj-z]/.test(iOnly) ||
+        /(?:^|[^a-z])i\s+sin\b/.test(low)))
+      return go("complex-numbers.html", qp(s), "complex numbers");
+    // functions: f(4) with the rule given, f(g(x)), domain and range of a formula, inverses, piecewise, even or odd
+    var hasRule = /\b[fgh]\s*\(\s*x\s*\)\s*=/.test(low);
+    if (!asksWord && !story && (/\bdomain\b|\bcompositions?\b|\bcompos(?:e|ite)\b|\bpiecewise\b|(?:\beven\s+or\s+odd\b|\bodd\s+or\s+even\b)(?=.*(?:x|[fgh]\s*\())|\bone[-\s]to[-\s]one\b|\bis\s+(?:it|this|that)\s+a\s+function\b|\bvertical\s+line\s+test\b|\bmapping\b/.test(low) ||
+        /\b[fgh]\s*\(\s*[fgh]\s*\(/.test(low) || /\(\s*[fgh]\s*[∘o]\s*[fgh]\s*\)/.test(low) || /\b[fgh]\s*(?:\^\s*\(?\s*[−-]\s*1\s*\)?|⁻¹)/.test(low) ||
+        /\binverse\b/.test(low) && /x/.test(low) ||
+        /\brange\b/.test(low) && /x/.test(low) ||
+        hasRule && /\b[fgh]\s*\(\s*(?:[−-]?\d|[a-wyz]\b|[a-z]\s*[+−-])/.test(low.replace(/\b[fgh]\s*\(\s*x\s*\)\s*=/g, " "))))
+      return go("functions.html", qp(s), "functions");
+    // radicals and rational expressions: rationalize, √ with letters, √12 + √27, radical and rational equations, 8^(2/3)
+    // (a plain √50 or cube root of 64 stays on the Power Tower, below)
+    var nRad = (s.match(/√|∛|sqrt|cbrt|square\s+root|cube\s+root/gi) || []).length;
+    var ratTerms = (s.match(/\/\s*\(\s*[^()]*[a-z][^()]*\)|\/\s*[a-z]\b|\/\s*\d*[a-z]\s*(?:\^|²)/gi) || []).length;
+    if (!asksWord && (/\brationali[sz]e\b|\brational\s+(?:expressions?|equations?|exponents?)\b|\bradicals?\b|\bsurds?\b|\bextraneous\b/.test(low) ||
+        nRad >= 2 && /[+−\-×*·]|\)\s*\(/.test(s) ||
+        nRad >= 1 && (/√\s*\(?[\d\s.]*[a-z](?![a-z])/.test(low.replace(/square\s+root\s+of|cube\s+root\s+of|sqrt|cbrt|square\s+root|cube\s+root|∛/g, "√")) ||
+                      /\/\s*(?:√|sqrt)|(?:√|sqrt)[^\/]*\/|\/\s*\([^)]*(?:√|sqrt)/.test(low) || /\bsimplify\b/.test(low)) ||
+        /^\s*\(?[−-]?\d+\)?\s*(?:\^|\*\*)\s*\(\s*[−-]?\d+\s*\/\s*\d+\s*\)\s*$/.test(s) ||
+        ratTerms >= 1 && (/\bsimplify\b/.test(low) || ratTerms >= 2 || /=/.test(s) && !/^\s*y\s*=/.test(low))))
+      return go("radicals.html", qp(s), "radicals and rational expressions");
     // sequences and series: "3, 7, 11, 15, …", "nth term of 5, 8, 11", "a1=4 d=3 n=10", "sum of the first 50 terms of …", "Σ"
     if (!asksWord && (/\b(?:sequences?|series|n-?th\s+term|\d+(?:st|nd|rd|th)\s+term|next\s+(?:terms?|numbers?)|common\s+(?:difference|ratio)|sigma|(?:arithmetic|geometric)\s+progressions?|terms?\s+of|first\s+\d+\s+terms|infinite\s+(?:sum|series))\b/.test(low) || /[Σ∑]/.test(s) ||
         /\d\s*,\s*(?:\.\.\.|…)/.test(s) ||                                                                            // is 100 in 3, 7, 11, …
@@ -111,7 +147,7 @@
         (s.match(/=/g) || []).length === 1 && !/(?:^|[^a-z])y(?![a-z])/.test(low) && /(?:[\d)]|(?:^|[^a-z])e)\s*(?:\^|\*\*)\s*\(?[−-]?[\d.]*x/.test(low)))
       return go("logarithms.html", qp(s), "logarithms");
     // quadratics and polynomials: "(x+3)(x-5)", "factor x^2+5x+6", "x^2-5x+6=0", "vertex of y=2x^2-8x+3", "(x^3-8)/(x-2)"
-    var sq = low.replace(/²/g, "^2").replace(/³/g, "^3").replace(/\*\*/g, "^");
+    var sq = low.replace(/²/g, "^2").replace(/³/g, "^3").replace(/\*\*/g, "^").replace(/\b[fgh]\s*\(\s*x\s*\)/g, "y");   // f(x) = … is y = …
     var polyVars = sq.replace(/\b(?:factor\w*|solve|expand|simplify|multiply|divide|by|and|the|of|vertex|form|find|completely|fully|using|use|quadratics?|formula|completing|complete|square|synthetic|long|division|roots?|zeros?|polynomials?|trinomials?|binomials?|foil|discriminant|parabola|add|subtract|from|to|axis|symmetry|for|with|method|what|is|are|a|an)\b/g, " ")
       .match(/[a-z]/g) || [];
     polyVars = polyVars.filter(function(c){ return c !== "y"; });                                         // y = … is the same one

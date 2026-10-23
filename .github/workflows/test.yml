@@ -40,8 +40,8 @@ jobs:
           echo "Using $chrome ($($chrome --version))"
           # A thorough run is split in two, because headless Chrome's time budget for one page runs out on the whole site.
           if [ "$DEPTH" = "thorough" ]; then
-            runs="depth=thorough&pages=number-sense,addition,subtraction,multiplication,division,scratch,fractions,percents,factors,integers,ratios,exponents,pemdas,algebra,lines,quadratics
-          depth=thorough&pages=graphing,geometry,stats,wordproblems,probability,logarithms,sequences,trigonometry,calculus,flashcards,reference,results,daily,qr,keypad"
+            runs="depth=thorough&pages=number-sense,addition,subtraction,multiplication,division,scratch,fractions,percents,factors,integers,ratios,exponents,pemdas,algebra,lines,quadratics,functions,radicals,complex-numbers
+          depth=thorough&pages=graphing,geometry,stats,wordproblems,probability,logarithms,sequences,trigonometry,calculus,college-statistics,matrices-and-vectors,flashcards,reference,results,daily,qr,keypad"
           else
             runs="depth=quick"
           fi
@@ -50,6 +50,7 @@ jobs:
             n=$((n + 1))
             echo "::group::Part $n: $q"
             "$chrome" --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+              --disable-background-timer-throttling --disable-renderer-backgrounding \
               --host-resolver-rules="MAP gc.zgo.at 127.0.0.1" --user-data-dir="$RUNNER_TEMP/chrome-$n" \
               --virtual-time-budget=6000000 --dump-dom "http://127.0.0.1:8000/tests/self-test.html?run=1&$q" > "report-$n.html" 2> "chrome-$n.log" || true
             echo "::endgroup::"

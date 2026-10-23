@@ -22,7 +22,7 @@
   <a href="#how-its-built"><img src="https://img.shields.io/badge/build%20step-none-brightgreen" alt="No build step"></a>
   <a href="#install-it-as-an-app"><img src="https://img.shields.io/badge/works%20offline-installable-5a4fcf" alt="Works offline and installs as an app"></a>
   <a href="#how-its-built"><img src="https://img.shields.io/badge/vanilla%20JS-ES5-f0db4f" alt="Vanilla JavaScript (ES5)"></a>
-  <a href="https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test"><img src="https://img.shields.io/badge/self--test-15%2C600%2B%20checks-success" alt="Self-test: more than 15,600 checks"></a>
+  <a href="https://chrisdfennell.github.io/arithmetic-helpers/tests/self-test"><img src="https://img.shields.io/badge/self--test-18%2C000%2B%20checks-success" alt="Self-test: more than 18,000 checks"></a>
   <a href="https://github.com/chrisdfennell/arithmetic-helpers/commits/main"><img src="https://img.shields.io/github/last-commit/chrisdfennell/arithmetic-helpers" alt="Last commit"></a>
 </p>
 
@@ -55,8 +55,8 @@ Arithmetic Helpers is a free website for math from the early grades through firs
 | --- | --- |
 | **Early grades (K–5)** | Place value, rounding and estimating, comparing numbers, skip counting, telling time, counting money, addition and subtraction facts, carrying and borrowing, times tables to 20 × 20, long division, hundred charts, flash cards |
 | **Middle school (6–8)** | Fractions, decimals and percents, ratios and rates, negative numbers, order of operations, exponents, equations, geometry, statistics, probability, story problems |
-| **High school (9–12)** | Algebra and systems, lines, graphing functions, transformations, inequalities, quadratics and polynomials (factoring, the quadratic formula, completing the square, the vertex, polynomial division), logarithms and exponential equations, sequences and series, trigonometry (the unit circle, the laws of sines and cosines, sine and cosine graphs) |
-| **First-year college** | Calculus basics: limits, derivatives with every rule named, tangent lines, maximum and minimum, integrals and the area under a curve |
+| **High school (9–12)** | Algebra and systems, lines, graphing functions, transformations, inequalities, functions (domain and range, composition, inverses, piecewise), quadratics and polynomials (factoring, the quadratic formula, completing the square, the vertex, polynomial division), radicals and rational expressions, complex numbers, logarithms and exponential equations, sequences and series, trigonometry (the unit circle, the laws of sines and cosines, sine and cosine graphs) |
+| **First-year college** | Calculus basics: limits, derivatives with every rule named, tangent lines, maximum and minimum, integrals and the area under a curve; statistics (the normal curve, z-scores, the binomial, confidence intervals, hypothesis tests, regression); matrices and vectors (determinants, inverses, row reduction, dot and cross products) |
 
 - **Students** type in a problem and see how it's done, step through it one move at a time, or check their own answer and get told what probably went wrong.
 - **Teachers** make worksheets with answer keys, share practice sets as one link or QR code, read the class's results, print reference sheets and graph paper, and put any problem on the projector.
@@ -89,7 +89,10 @@ Each helper is one page. Type a problem (or pick one, or have the page make one)
 | [The Balance Scale](https://chrisdfennell.github.io/arithmetic-helpers/helpers/algebra) | Algebra: simplifying expressions, solving equations and inequalities, and systems of two equations |
 | [The Slope Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/lines-and-slope) | Lines: slope, the equation of a line, converting forms, graphing, and parallel or perpendicular lines |
 | [The Graph Paper](https://chrisdfennell.github.io/arithmetic-helpers/helpers/graphing) | Graphing: plot and read points (tap the grid), distance, midpoint and area, tables of values, several functions at once with their key features, systems by graphing, inequalities, transformations, scatter plots with a trend line, and a Free plot sheet of graph paper to draw on; tap or hover any point to see what it is |
+| [The Function Machine](https://chrisdfennell.github.io/arithmetic-helpers/helpers/functions) | Functions: evaluating f(x) (and f(a + 1)), is it a function, domain and range in interval notation, adding and multiplying functions, composition f(g(x)), inverse functions, piecewise functions, and even or odd |
 | [The Area Box](https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics) | Quadratics and polynomials: multiplying brackets with the box method (FOIL and the special products named), factoring (GCF, factor pairs, grouping, difference of squares, cubes), solving quadratics by factoring, square roots, completing the square or the formula, the vertex and vertex form, and long and synthetic division |
+| [The Root Cellar](https://chrisdfennell.github.io/arithmetic-helpers/helpers/radicals) | Radicals and rational expressions: simplifying roots (√72 = 6√2), adding and multiplying roots, rationalizing the denominator (with the conjugate), fraction exponents, radical equations with the check for extraneous answers, and simplifying, multiplying, adding and solving rational expressions with their excluded values |
+| [The Complex Plane](https://chrisdfennell.github.io/arithmetic-helpers/helpers/complex-numbers) | Complex numbers: powers of i, square roots of negatives, adding, multiplying and dividing (by the conjugate), the complex plane, modulus and argument, polar form, De Moivre's powers and roots, and quadratics with complex solutions |
 | [The Log Ladder](https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms) | Logarithms: what a log means (it's the exponent), the log laws to expand and condense, change of base, exponential and log equations (with the check for extraneous answers), growth, decay, half-life and compound interest, and the graphs of bˣ and log_b x |
 | [The Number Staircase](https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences) | Sequences and series: spot the rule in a list, arithmetic and geometric sequences (any term, the nth-term rule, is it in the list?), sums of series and sigma notation, infinite geometric series, and word problems |
 | [The Shape Shop](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry) | Geometry: area and perimeter, volume and surface area, the Pythagorean theorem, and angles |
@@ -97,6 +100,8 @@ Each helper is one page. Type a problem (or pick one, or have the page make one)
 | [The Chance Spinner](https://chrisdfennell.github.io/arithmetic-helpers/helpers/probability) | Probability: one event, "not", two events (and, or, with and without putting it back), sample spaces as lists, tree diagrams and dice tables, and expected vs experimental results |
 | [The Unit Circle](https://chrisdfennell.github.io/arithmetic-helpers/helpers/trigonometry) | Trigonometry: right triangles with SOH-CAH-TOA (and angle-of-elevation stories), exact values of the special angles, the unit circle with reference angles, quadrants and radians, the laws of sines and cosines (the ambiguous case too), reading and writing sine and cosine graphs, and the Pythagorean and sum identities |
 | [The Rate Machine](https://chrisdfennell.github.io/arithmetic-helpers/helpers/calculus) | Calculus: limits (0/0, one-sided, at infinity), derivatives with each rule named (power, product, quotient, chain, trig, eˣ and ln), tangent lines, local and absolute maximum and minimum, antiderivatives and definite integrals (u-substitution too), and average and instantaneous rates of change |
+| [The Bell Curve](https://chrisdfennell.github.io/arithmetic-helpers/helpers/college-statistics) | College statistics: z-scores, normal probabilities and percentiles (shaded on the curve), the binomial distribution, sampling distributions and the central limit theorem, confidence intervals, hypothesis tests with p-values, and correlation and regression |
+| [The Matrix Grid](https://chrisdfennell.github.io/arithmetic-helpers/helpers/matrices-and-vectors) | Matrices and vectors: adding and multiplying matrices (row times column), determinants, inverses, solving systems by row reduction (Gaussian and Gauss-Jordan, Cramer's rule), vectors, magnitude, dot and cross products, and projections |
 | [The Story Problem](https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems) | Word problems: paste or type one and see what it tells you, what it asks, which operation the words point to, a picture of the story, the working and a check |
 
 The Story Problem reads a story as it's typed: it finds the numbers and the question, says what kind of story it looks like, and works it out.
@@ -186,6 +191,32 @@ The Story Problem reads a story as it's typed: it finds the numbers and the ques
     <td width="50%" valign="top">
       <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011"><img src="docs/screenshots/sequences.png" width="100%" alt="The Number Staircase: the nth-term rule of 5, 8, 11, with the common difference 3 found first"></a>
       <br><b>The Number Staircase</b>: the nth-term rule of an arithmetic sequence
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/functions?q=f(x)%20%3D%20x%5E2%2C%20g(x)%20%3D%20x%20%2B%201%2C%20find%20f(g(x))"><img src="docs/screenshots/functions.png" width="100%" alt="The Function Machine: with f(x) = x² and g(x) = x + 1, f(g(x)) is worked inside first, giving (x + 1)² = x² + 2x + 1"></a>
+      <br><b>The Function Machine</b>: a composition, inside first
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/radicals?q=rationalize%204%2F(3%20-%20%E2%88%9A5)"><img src="docs/screenshots/radicals.png" width="100%" alt="The Root Cellar: rationalizing 4/(3 − √5) by multiplying top and bottom by the conjugate 3 + √5, giving 3 + √5"></a>
+      <br><b>The Root Cellar</b>: rationalizing with the conjugate
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/complex-numbers?q=(2%2B3i)%2F(1-i)"><img src="docs/screenshots/complex-numbers.png" width="100%" alt="The Complex Plane: dividing (2 + 3i) by (1 − i) by multiplying by the conjugate 1 + i, giving −1/2 + (5/2)i"></a>
+      <br><b>The Complex Plane</b>: dividing by the conjugate
+    </td>
+    <td width="50%" valign="top">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/college-statistics?q=P(X%20%3C%2085)%20mean%2070%20sd%2010"><img src="docs/screenshots/college-statistics.png" width="100%" alt="The Bell Curve: P(X < 85) for a normal distribution with mean 70 and standard deviation 10, z = 1.5, the area shaded under the curve, about 0.9332"></a>
+      <br><b>The Bell Curve</b>: a normal probability, shaded
+    </td>
+  </tr>
+  <tr>
+    <td width="100%" valign="top" colspan="2">
+      <a href="https://chrisdfennell.github.io/arithmetic-helpers/helpers/matrices-and-vectors?q=x%20%2B%20y%20%2B%20z%20%3D%206%3B%202x%20-%20y%20%2B%20z%20%3D%203%3B%20x%20%2B%202y%20-%20z%20%3D%202"><img src="docs/screenshots/matrices-and-vectors.png" width="50%" alt="The Matrix Grid: a system of three equations written as an augmented matrix and solved by Gauss-Jordan elimination, every row operation named, giving x = 1, y = 2, z = 3"></a>
+      <br><b>The Matrix Grid</b>: three equations by row reduction, each row operation named
     </td>
   </tr>
 </table>
@@ -366,6 +397,11 @@ Every helper reads its problem from the address, so a link opens with that probl
 | [`helpers/quadratics?q=2x^2+3x-2=0`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/quadratics?q=2x%5E2%2B3x-2%3D0) | solving a quadratic (the page picks the best method and says why) |
 | [`helpers/logarithms?q=3^(2x-1) = 27`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/logarithms?q=3%5E(2x-1)%20%3D%2027) | an exponential equation |
 | [`helpers/sequences?q=nth term of 5, 8, 11`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/sequences?q=nth%20term%20of%205%2C%208%2C%2011) | the nth-term rule of an arithmetic sequence |
+| [`helpers/functions?q=f(x) = x^2, g(x) = x + 1, find f(g(x))`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/functions?q=f(x)%20%3D%20x%5E2%2C%20g(x)%20%3D%20x%20%2B%201%2C%20find%20f(g(x))) | a composition of functions |
+| [`helpers/radicals?q=rationalize 4/(3 - √5)`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/radicals?q=rationalize%204%2F(3%20-%20%E2%88%9A5)) | rationalizing with the conjugate |
+| [`helpers/complex-numbers?q=(2+3i)/(1-i)`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/complex-numbers?q=(2%2B3i)%2F(1-i)) | dividing complex numbers |
+| [`helpers/college-statistics?q=95% confidence interval mean 52 s 8 n 25`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/college-statistics?q=95%25%20confidence%20interval%20mean%2052%20s%208%20n%2025) | a confidence interval with t |
+| [`helpers/matrices-and-vectors?q=x + y + z = 6; 2x - y + z = 3; x + 2y - z = 2`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/matrices-and-vectors?q=x%20%2B%20y%20%2B%20z%20%3D%206%3B%202x%20-%20y%20%2B%20z%20%3D%203%3B%20x%20%2B%202y%20-%20z%20%3D%202) | a system of three equations by row reduction |
 | [`helpers/geometry?q=circle radius 5`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/geometry?q=circle%20radius%205) | a circle with radius 5 |
 | [`helpers/story-problems?q=Ana has 12 shells. …`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/story-problems?q=Ana%20has%2012%20shells.%20That%20is%205%20more%20than%20Ben%20has.%20How%20many%20shells%20does%20Ben%20have%3F) | a story problem |
 | [`helpers/scratch-paper?op=sub&q=5003-1278`](https://chrisdfennell.github.io/arithmetic-helpers/helpers/scratch-paper?op=sub&q=5003-1278) | a subtraction to do by hand |

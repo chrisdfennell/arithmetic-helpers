@@ -36,6 +36,8 @@
     stats:"helpers/statistics", probability:"helpers/probability", wordproblems:"helpers/story-problems",
     scratch:"helpers/scratch-paper", trigonometry:"helpers/trigonometry", calculus:"helpers/calculus",
     "number-sense":"helpers/number-sense", quadratics:"helpers/quadratics", logarithms:"helpers/logarithms", sequences:"helpers/sequences",
+    functions:"helpers/functions", radicals:"helpers/radicals", "complex-numbers":"helpers/complex-numbers",
+    "college-statistics":"helpers/college-statistics", "matrices-and-vectors":"helpers/matrices-and-vectors",
     practice:"practice/sets", worksheet:"practice/worksheets", flashcards:"practice/flash-cards", daily:"practice/problem-of-the-day",
     progress:"practice/progress", results:"practice/class-results",
     reference:"reference/sheets", glossary:"reference/definitions",
