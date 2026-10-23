@@ -375,7 +375,7 @@
       "<tr><td><kbd>K</kbd></td><td>Show or hide the math keys (they come up by themselves on phones)</td></tr>" +
       "<tr><td><kbd>Esc</kbd></td><td>Close this, or leave big screen</td></tr>" +
       "<tr><td><kbd>?</kbd></td><td>Show this list</td></tr></table>" +
-      '<p class="ht-sm" style="margin:10px 8px 2px">Arithmetic Helpers ' + (SITE_VERSION === "dev" ? "(a copy that isn’t published yet)" : "version " + esc(SITE_VERSION)) + ' · <a href="https://github.com/chrisdfennell/arithmetic-helpers/releases" target="_blank" rel="noopener" style="display:inline;padding:0">what’s new</a></p></div>');
+      '<p class="ht-sm" style="margin:10px 8px 2px">Show The Steps ' + (SITE_VERSION === "dev" ? "(a copy that isn’t published yet)" : "version " + esc(SITE_VERSION)) + ' · <a href="https://github.com/chrisdfennell/arithmetic-helpers/releases" target="_blank" rel="noopener" style="display:inline;padding:0">what’s new</a></p></div>');
     if (!anchor && openMenu){ openMenu.style.position = "fixed"; openMenu.style.top = "70px"; openMenu.style.left = "50%"; openMenu.style.transform = "translateX(-50%)"; }
   }
   function problemBox(){

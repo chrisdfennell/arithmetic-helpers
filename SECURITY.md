@@ -1,6 +1,6 @@
 # Security
 
-Arithmetic Helpers is a static website: plain HTML and JavaScript pages with no server, no accounts and no logins. Everything a visitor saves (progress, settings, streaks) stays in their own browser. The only outside service is [GoatCounter](https://www.goatcounter.com), which counts page visits without cookies or personal data.
+Show The Steps is a static website: plain HTML and JavaScript pages with no server, no accounts and no logins. Everything a visitor saves (progress, settings, streaks) stays in their own browser. The only outside service is [GoatCounter](https://www.goatcounter.com), which counts page visits without cookies or personal data.
 
 ## Reporting a problem
 

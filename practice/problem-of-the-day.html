@@ -5,13 +5,13 @@
 <title>Problem of the Day</title>
 <meta name="description" content="One math problem a day, the same for everyone on that date, so a whole class can do it together. Check your answer, see the steps, and keep your streak going.">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Arithmetic Helpers">
-<meta property="og:title" content="Problem of the Day · Arithmetic Helpers">
+<meta property="og:site_name" content="Show The Steps">
+<meta property="og:title" content="Problem of the Day · Show The Steps">
 <meta property="og:description" content="One math problem a day, the same for everyone on that date, so a whole class can do it together. Check your answer, see the steps, and keep your streak going.">
 <meta property="og:url" content="https://showthesteps.org/practice/problem-of-the-day">
 <meta property="og:image" content="https://showthesteps.org/assets/icons/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Arithmetic Helpers: every step, written out.">
+<meta property="og:image:alt" content="Show The Steps: every step, written out.">
 <meta name="twitter:card" content="summary_large_image">
 <script src="../assets/site.js"></script>
 <script src="../assets/nav.js" defer></script>
@@ -2766,7 +2766,7 @@
         + '<span class="links"><a class="small-link" href="problem-of-the-day.html?date=' + p.key + '">Open</a><a class="small-link" href="' + esc(link(p, "practice=check")) + '" target="_blank" rel="noopener">On its helper ↗</a></span></li>';
     }).join("");
     $("klist").innerHTML = days.map(function(p){ return "<li><b>" + esc(p.day.name) + ":</b> " + esc(p.answer) + "</li>"; }).join("");
-    $("printSheet").innerHTML = '<div><h2>Problem of the Day · ' + esc(span) + '</h2><p class="sub">Arithmetic Helpers · one problem a day. Each one opens at '
+    $("printSheet").innerHTML = '<div><h2>Problem of the Day · ' + esc(span) + '</h2><p class="sub">Show The Steps · one problem a day. Each one opens at '
       + esc(U("daily.html").replace(/^https?:\/\//, "")) + "?date=YYYY-MM-DD</p><ol>"
       + days.map(function(p){ return '<li><span class="day">' + esc(words(p.key)) + "</span> <span class=\"tpn\">· " + esc(p.topic.name) + (p.day.theme !== p.day.name ? " · " + esc(p.day.theme) : "") + "</span><br>"
           + esc(p.text) + '<div class="work"></div></li>'; }).join("")

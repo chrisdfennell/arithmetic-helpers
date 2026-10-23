@@ -40,7 +40,7 @@ jobs:
           last=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)
           if [ -z "$last" ]; then
             version="1.0.0"
-            { echo "The first versioned release of Arithmetic Helpers."; echo; echo "Recent changes:"; git log -30 --format='- %s'; } > notes.md
+            { echo "The first versioned release of Show The Steps."; echo; echo "Recent changes:"; git log -30 --format='- %s'; } > notes.md
             echo "new=true" >> "$GITHUB_OUTPUT"
           elif [ -z "$(git log --format=%H "$last..HEAD")" ]; then
             version="${last#v}"

@@ -1,8 +1,8 @@
 <p align="center">
-  <a href="https://showthesteps.org/"><img src="assets/icons/icon-192.png" width="96" height="96" alt="Arithmetic Helpers icon: the four operation signs on colored tiles"></a>
+  <a href="https://showthesteps.org/"><img src="assets/icons/icon-192.png" width="96" height="96" alt="Show The Steps icon: the four operation signs on colored tiles"></a>
 </p>
 
-<h1 align="center">Arithmetic Helpers</h1>
+<h1 align="center">Show The Steps</h1>
 
 <p align="center">
   Type in a math problem and see every step written out, the way it's done on paper, with the reason for each move.
@@ -49,7 +49,7 @@
 
 ## What it is and who it's for
 
-Arithmetic Helpers is a free website for math from the early grades through first-year college. **Twenty helper pages**, from carrying in addition to derivatives, work through a problem step by step the way it's done on paper; **the Scratch Paper** lets students do the working by hand, line by line or on squared paper; and there are tools for practice and for the classroom. Each step comes with a plain-English reason, including why it comes next, and a picture of the problem.
+Show The Steps is a free website for math from the early grades through first-year college. **Twenty helper pages**, from carrying in addition to derivatives, work through a problem step by step the way it's done on paper; **the Scratch Paper** lets students do the working by hand, line by line or on squared paper; and there are tools for practice and for the classroom. Each step comes with a plain-English reason, including why it comes next, and a picture of the problem.
 
 | Level | What's here |
 | --- | --- |
@@ -64,7 +64,7 @@ Arithmetic Helpers is a free website for math from the early grades through firs
 There are no accounts and nothing to sign up for: it's plain web pages. It also installs like an app and works offline.
 
 <p align="center">
-  <img src="docs/screenshots/home.png" width="900" alt="The home page: Arithmetic Helpers in big letters over one search box; x^2 − 5x + 6 = 0 is typed in and the suggestion under it says Show the steps on the Area Box, a quadratic. Example problems and links to browse all topics, worksheets, practice sets and flash cards sit underneath">
+  <img src="docs/screenshots/home.png" width="900" alt="The home page: Show The Steps in big letters over one search box; x^2 − 5x + 6 = 0 is typed in and the suggestion under it says Show the steps on the Area Box, a quadratic. Example problems and links to browse all topics, worksheets, practice sets and flash cards sit underneath">
 </p>
 
 ## The helpers

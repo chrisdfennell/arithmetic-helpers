@@ -1,6 +1,6 @@
 {
-  "name": "Arithmetic Helpers",
-  "short_name": "Math Helpers",
+  "name": "Show The Steps",
+  "short_name": "Show The Steps",
   "description": "Type in a math problem and see every step written out, the way it's done on paper.",
   "start_url": "../index.html",
   "scope": "../",
