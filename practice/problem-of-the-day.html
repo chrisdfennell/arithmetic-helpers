@@ -29,6 +29,7 @@
     --focus:#4338CA;
     --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C; --pro:#A21CAF; --exp:#BE185D; --gra:#0369A1;
     --num:#EA580C; --qua:#B91C1C; --log:#1D4ED8; --seq:#15803D; --tri:#4D7C0F; --cal:#7C3AED;
+    --fun:#0E7490; --rad:#92400E; --cpx:#4F46E5; --bel:#047857; --mat:#57534E;
     --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
     --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -44,6 +45,7 @@
       --focus:#A5B4FC;
       --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF; --gra:#7DD3FC;
       --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --tri:#BEF264; --cal:#C4B5FD;
+      --fun:#67E8F9; --rad:#FBBF24; --cpx:#A5B4FC; --bel:#6EE7B7; --mat:#D6D3D1;
       --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     }
@@ -56,6 +58,7 @@
     --focus:#A5B4FC;
     --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF; --gra:#7DD3FC;
     --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --tri:#BEF264; --cal:#C4B5FD;
+    --fun:#67E8F9; --rad:#FBBF24; --cpx:#A5B4FC; --bel:#6EE7B7; --mat:#D6D3D1;
     --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
   }
@@ -326,7 +329,8 @@
      with the topics that have weekend:true. A round never starts with the topic the last round ended on.
 
    ADDING A TOPIC: add an entry to TOPICS below (probability and exponents were added this way from 2026-10-26, graphing from 2026-11-02,
-   and number sense, quadratics, logarithms, sequences, trigonometry and calculus from 2026-11-09; number sense is weekdays only):
+   number sense, quadratics, logarithms, sequences, trigonometry and calculus from 2026-11-09, and functions, radicals, complex
+   numbers, college statistics and matrices from 2026-11-16; number sense and college statistics are weekdays only):
        { id:"probability", page:"probability.html", name:"Probability", title:"…", c:"pro",     // c: a color token (--pro)
          weekday:true, weekend:true, from:"2026-11-02",
          make:function(r, L){ … return Q([["mode", "…"], ["q", "…"]], "the problem as text", "the answer"); } }
@@ -455,6 +459,7 @@
   var UNITS = ["cm", "m", "in", "ft"];
   var NEW_FROM = "2026-10-26";     // probability, exponents and the algebra stories join the rotation on this Monday
   var MORE_FROM = "2026-11-09";    // and number sense, quadratics, logarithms, sequences, trigonometry and calculus on this one
+  var LATEST_FROM = "2026-11-16";  // and functions, radicals, complex numbers, college statistics and matrices on this one
 
   /* ===================== the topics =====================
      make(r, L) → Q(params, text, answer). See "ADDING A TOPIC" at the top. */
@@ -893,7 +898,17 @@
     { id:"trigonometry", page:"trigonometry.html", name:"Trigonometry", title:"The Unit Circle", c:"tri", weekday:true, weekend:true, from:MORE_FROM,
       make:function(r, L){ return trigonometry(r, L); } },
     { id:"calculus", page:"calculus.html", name:"Calculus", title:"The Rate Machine", c:"cal", weekday:true, weekend:true, from:MORE_FROM,
-      make:function(r, L){ return calculus(r, L); } }
+      make:function(r, L){ return calculus(r, L); } },
+    { id:"functions", page:"functions.html", name:"Functions", title:"The Function Machine", c:"fun", weekday:true, weekend:true, from:LATEST_FROM,
+      make:function(r, L){ return functionsP(r, L); } },
+    { id:"radicals", page:"radicals.html", name:"Radicals and rational expressions", title:"The Root Cellar", c:"rad", weekday:true, weekend:true, from:LATEST_FROM,
+      make:function(r, L){ return radicals(r, L); } },
+    { id:"complex", page:"complex-numbers.html", name:"Complex numbers", title:"The Complex Plane", c:"cpx", weekday:true, weekend:true, from:LATEST_FROM,
+      make:function(r, L){ return complexP(r, L); } },
+    { id:"collegestats", page:"college-statistics.html", name:"College statistics", title:"The Bell Curve", c:"bel", weekday:true, weekend:false, from:LATEST_FROM,
+      make:function(r, L){ return collegeStats(r, L); } },
+    { id:"matrices", page:"matrices-and-vectors.html", name:"Matrices and vectors", title:"The Matrix Grid", c:"mat", weekday:true, weekend:true, from:LATEST_FROM,
+      make:function(r, L){ return matrices(r, L); } }
   ];
   var BY = {};
   TOPICS.forEach(function(t){ BY[t.id] = t; BY[t.page] = t; });
@@ -1871,6 +1886,507 @@
     cs = [nz(r, -2, 2), ri(r, -4, 4), ri(r, -6, 6), ri(r, -6, 6)]; a = nz(r, -2, 2);
     m = at(Dp(cs), a); y0 = at(cs, a);
     return Q([["mode", "tangent"], ["f", poly(cs, true)], ["a", a]], "Find the tangent line to f(x) = " + poly(cs) + " at x = " + M(a) + ".", "y = " + lin([[m, "x"], [y0 - m * a, ""]]));
+  }
+
+  /* ===== the topics from LATEST_FROM. As with MORE_FROM, each answer is written the way its helper's answer box writes
+     it, part by part in the helper's order. ===== */
+  function pmulP(a, b){ var out = [], i; for (i = 0; i < a.length + b.length - 1; i++) out.push(0);
+    a.forEach(function(x, i){ b.forEach(function(y, j){ out[i + j] += x * y; }); }); return out; }
+  function paddP(a, b){ var n = Math.max(a.length, b.length), out = [];
+    for (var i = 0; i < n; i++) out.push((a[i - n + a.length] || 0) + (b[i - n + b.length] || 0)); return out; }
+  function pcompP(f, g){ return f.reduce(function(s, c){ return paddP(pmulP(s, g), [c]); }, [0]); }   // f(g(x))
+  function trimP(cs){ var i = 0; while (i < cs.length - 1 && cs[i] === 0) i++; return cs.slice(i); }
+  function holes(ps){                          // the real line without the points ps (sorted): (−∞, −3) ∪ (−3, 3) ∪ (3, ∞)
+    var e = ["−∞"].concat(ps.map(M)).concat(["∞"]), out = [];
+    for (var i = 0; i < e.length - 1; i++) out.push("(" + e[i] + ", " + e[i + 1] + ")");
+    return out.join(" ∪ ");
+  }
+  function sqf(n){ var s = 1; for (var k = 2; k * k <= n; k++) while (n % (k * k) === 0){ n /= k * k; s *= k; } return [s, n]; }   // n = s²·m
+  function rootS(k, m){ return m === 1 ? M(k) : (k === 1 ? "" : k === -1 ? "−" : M(k)) + "√" + m; }    // k√m: 6√2, √2, −√3
+
+  /* ---- functions (functions.html: eval f, at | dq · compose f, g, ask[, at] · combine f, g, op · inverse f[, dom] ·
+     domain f, ask · piece pw, at · parity f) ---- */
+  function fnS(cs, ascii){ return poly(trimP(cs), ascii); }
+  function functionsP(r, L){
+    var a, b, c, d, f, g, x0, k, v;
+    if (L <= 1){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        f = [pick(r, [1, 2, 3, -1, -2]), ri(r, -6, 6), ri(r, -9, 9)]; x0 = nz(r, -4, 5);
+        return Q([["mode", "eval"], ["f", fnS(f, true)], ["at", x0]], "Find f(" + M(x0) + ") for f(x) = " + fnS(f) + ".", "f(" + M(x0) + ") = " + M(at(f, x0)));
+      }
+      if (k === 1){
+        f = [nz(r, -4, 5), ri(r, -9, 9)]; g = [nz(r, -4, 5), ri(r, -9, 9)]; x0 = ri(r, -4, 5);
+        return Q([["mode", "compose"], ["f", fnS(f, true)], ["g", fnS(g, true)], ["ask", "fg"], ["at", x0]],
+          "For f(x) = " + fnS(f) + " and g(x) = " + fnS(g) + ", find f(g(" + M(x0) + ")).", "f(g(" + M(x0) + ")) = " + M(at(f, at(g, x0))));
+      }
+      if (k === 2){
+        // two pieces that meet (or jump) at b; sometimes asked right at b, to see which piece counts
+        b = ri(r, -3, 3);
+        var p1 = [nz(r, -3, 3), ri(r, -6, 6)], p2 = chance(r, .5) ? [1, 0, ri(r, -5, 5)] : [nz(r, -3, 3), ri(r, -6, 6)], le = chance(r, .5);
+        x0 = chance(r, .3) ? b : b + nz(r, -5, 5);
+        var c1 = le ? "x ≤ " + M(b) : "x < " + M(b), c2 = le ? "x > " + M(b) : "x ≥ " + M(b), c1a = le ? "x<=" + b : "x<" + b, c2a = le ? "x>" + b : "x>=" + b;
+        v = (le ? x0 <= b : x0 < b) ? at(p1, x0) : at(p2, x0);
+        return Q([["mode", "piece"], ["pw", fnS(p1, true) + " if " + c1a + ";" + fnS(p2, true) + " if " + c2a], ["at", x0]],
+          "For f(x) = {" + fnS(p1) + " if " + c1 + "; " + fnS(p2) + " if " + c2 + "}, find f(" + M(x0) + ").", "f(" + M(x0) + ") = " + M(v));
+      }
+      var kind = ri(r, 0, 2);
+      if (kind === 0) f = chance(r, .5) ? [nz(r, -3, 3), 0, nz(r, -6, 6), 0, ri(r, -9, 9)] : [nz(r, -4, 4), 0, nz(r, -9, 9)];
+      else if (kind === 1) f = chance(r, .5) ? [nz(r, -3, 3), 0, nz(r, -6, 6), 0] : [nz(r, -2, 2), 0, ri(r, -5, 5), 0, nz(r, -6, 6), 0];
+      else f = chance(r, .5) ? [nz(r, -3, 3), nz(r, -6, 6), 0, ri(r, -6, 6)] : [nz(r, -3, 3), nz(r, -6, 6), nz(r, -9, 9)];
+      return Q([["mode", "parity"], ["f", fnS(f, true)]], "Is f(x) = " + fnS(f) + " even, odd or neither?",
+        ["Even (symmetric about the y-axis)", "Odd (symmetric about the origin)", "Neither even nor odd"][kind]);
+    }
+    if (L === 2){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        f = chance(r, .6) ? [pick(r, [1, 2, -1, 3]), 0, ri(r, -9, 9)] : [nz(r, -4, 5), ri(r, -9, 9)];
+        g = [nz(r, -4, 4), nz(r, -6, 6)];
+        var gf = chance(r, .4), res = gf ? pcompP(g, f) : pcompP(f, g), nm = gf ? "g(f(x))" : "f(g(x))";
+        return Q([["mode", "compose"], ["f", fnS(f, true)], ["g", fnS(g, true)], ["ask", gf ? "gf" : "fg"]],
+          "For f(x) = " + fnS(f) + " and g(x) = " + fnS(g) + ", find " + nm + " and simplify.", nm + " = " + fnS(res));
+      }
+      if (k === 1){
+        a = ri(r, 2, 5); b = nz(r, -9, 9);
+        return Q([["mode", "inverse"], ["f", fnS([a, b], true)]], "Find the inverse of f(x) = " + fnS([a, b]) + ".", "f⁻¹(x) = (" + xp(-b) + ")/" + a);
+      }
+      if (k === 2){
+        if (chance(r, .4)){
+          c = nz(r, -8, 8);
+          var up = chance(r, .65), inA = up ? xp(-c, true) : lin([[-1, "x"], [c, ""]], true), inS = up ? xp(-c) : lin([[-1, "x"], [c, ""]]);
+          return Q([["mode", "domain"], ["f", "sqrt(" + inA + ")"], ["ask", "domain"]],
+            "Find the domain of f(x) = √(" + inS + "). Write it in interval notation.", "Domain: " + (up ? "[" + M(c) + ", ∞)" : "(−∞, " + M(c) + "]"));
+        }
+        var p, q, s;
+        do { p = nz(r, -6, 6); q = nz(r, -6, 6); s = nz(r, -7, 7); } while (p >= q || s === -p || s === -q || p === -q);
+        var num = [1, s], den = [1, -(p + q), p * q];
+        return Q([["mode", "domain"], ["f", "(" + fnS(num, true) + ")/(" + fnS(den, true) + ")"], ["ask", "domain"]],
+          "Find the domain of f(x) = (" + fnS(num) + ")/(" + fnS(den) + "). Write it in interval notation.", "Domain: " + holes([p, q]));
+      }
+      f = [nz(r, -3, 4), nz(r, -6, 6)]; g = [nz(r, -2, 3), ri(r, -5, 5), nz(r, -6, 6)];
+      return Q([["mode", "combine"], ["f", fnS(f, true)], ["g", fnS(g, true)], ["op", "mul"]], "For f(x) = " + fnS(f) + " and g(x) = " + fnS(g) + ", find (fg)(x).",
+        "(fg)(x) = " + fnS(pmulP(f, g)));
+    }
+    if (L === 3){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        f = [pick(r, [1, 2, 3, -1, -2]), ri(r, -7, 7), ri(r, -9, 9)];
+        return Q([["mode", "eval"], ["f", fnS(f, true)], ["dq", 1]], "Find the difference quotient (f(x + h) − f(x))/h for f(x) = " + fnS(f) + ".",
+          lin([[2 * f[0], "x"], [f[0], "h"], [f[1], ""]]));
+      }
+      if (k === 1){
+        // f(x) = (ax + b)/(x + c), c < 0 < b: the inverse is (|c|x + b)/(x − a)
+        do { a = ri(r, 1, 3); b = ri(r, 1, 9); c = -ri(r, 1, 6); } while (gcd(-c, b) !== 1 || gcd(a, b) !== 1);
+        return Q([["mode", "inverse"], ["f", "(" + lin([[a, "x"], [b, ""]], true) + ")/(" + xp(c, true) + ")"]],
+          "Find the inverse of f(x) = (" + lin([[a, "x"], [b, ""]]) + ")/(" + xp(c) + ").", "f⁻¹(x) = (" + lin([[-c, "x"], [b, ""]]) + ")/(" + xp(-a) + ")");
+      }
+      a = pick(r, [1, -1, 2, -2, 3, -3]); var h = nz(r, -6, 6); k = ri(r, -9, 9);
+      var aS = a === 1 ? "" : a === -1 ? "−" : M(a), aA = a === 1 ? "" : a === -1 ? "-" : String(a), tail = k ? (k < 0 ? " − " : " + ") + Math.abs(k) : "", tailA = k ? (k < 0 ? "-" : "+") + Math.abs(k) : "";
+      return Q([["mode", "domain"], ["f", aA + "(" + xp(-h, true) + ")^2" + tailA]],
+        "Find the domain and range of f(x) = " + aS + "(" + xp(-h) + ")²" + tail + ". Write them in interval notation.",
+        "Domain: (−∞, ∞); Range: " + (a > 0 ? "[" + M(k) + ", ∞)" : "(−∞, " + M(k) + "]"));
+    }
+    k = ri(r, 0, 2);
+    if (k === 0){
+      var hh = nz(r, -6, 6), kk = nz(r, -9, 9), tl = (kk < 0 ? " − " : " + ") + Math.abs(kk);
+      return Q([["mode", "inverse"], ["f", "(" + xp(-hh, true) + ")^2" + (kk < 0 ? "-" : "+") + Math.abs(kk)], ["dom", "x>=" + hh]],
+        "Find the inverse of f(x) = (" + xp(-hh) + ")²" + tl + ", x ≥ " + M(hh) + ".", "f⁻¹(x) = √(" + xp(-kk) + ")" + (hh < 0 ? " − " : " + ") + Math.abs(hh));
+    }
+    if (k === 1){
+      var p1r, q1r;
+      do { p1r = nz(r, -7, 7); q1r = nz(r, -7, 7); } while (p1r === q1r);
+      f = [1, -(p1r + q1r), p1r * q1r]; g = [1, -p1r];
+      return Q([["mode", "combine"], ["f", fnS(f, true)], ["g", fnS(g, true)], ["op", "div"]],
+        "For f(x) = " + fnS(f) + " and g(x) = " + fnS(g) + ", find (f / g)(x) and its domain.", "(f / g)(x) = " + xp(-q1r) + "; domain: " + holes([p1r]));
+    }
+    // the domain of f(g(x)), g(x) = cx + d: f = √(x + s) needs cx + d + s ≥ 0; f = 1/(x − s) needs cx + d ≠ s
+    c = pick(r, [1, 2, 3, -1, -2]);
+    var root = chance(r, .6), sv, bound;
+    do { bound = ri(r, -6, 6); d = ri(r, -9, 9); sv = root ? -(c * bound + d) : c * bound + d; } while (!sv || !d || Math.abs(sv) > 12);
+    var fA = root ? "sqrt(" + xp(sv, true) + ")" : "1/(" + xp(-sv, true) + ")", fT = root ? "√(" + xp(sv) + ")" : "1/(" + xp(-sv) + ")";
+    return Q([["mode", "compose"], ["f", fA], ["g", fnS([c, d], true)], ["ask", "dfg"]],
+      "For f(x) = " + fT + " and g(x) = " + fnS([c, d]) + ", find the domain of f(g(x)). Write it in interval notation.",
+      "Domain of f(g(x)): " + (!root ? holes([bound]) : c > 0 ? "[" + M(bound) + ", ∞)" : "(−∞, " + M(bound) + "]"));
+  }
+
+  /* ---- radicals and rational expressions (radicals.html: simplify r · operate ex · rationalize n, d · exponents task, ex ·
+     radeq eq · ratsimp f · ratadd f, g, op · rateq eq) ---- */
+  var SQF = [2, 3, 5, 6, 7, 10, 11, 13, 14, 15];
+  var RATPOW = [[8, 2, 3], [27, 2, 3], [16, 3, 4], [32, 3, 5], [64, 2, 3], [81, 3, 4], [25, 3, 2], [9, 3, 2], [4, 5, 2], [125, 2, 3],
+                [16, 5, 4], [36, 3, 2], [49, 3, 2], [1000, 2, 3], [64, 5, 6], [32, 2, 5], [8, 4, 3], [4, 3, 2], [27, 4, 3], [81, 5, 4]];   // [base, top, bottom]
+  function rpVal(t){ return Math.round(Math.pow(Math.round(Math.pow(t[0], 1 / t[2])), t[1])); }
+  function sqA(k, n){ return (k === 1 ? "" : String(k)) + "sqrt(" + n + ")"; }
+  function sqT(k, n){ return (k === 1 ? "" : String(k)) + "√" + n; }
+  function radicals(r, L){
+    var s, m, n, k, a, b, c, t, x0;
+    if (L <= 1){
+      if (chance(r, .6)){
+        do { s = ri(r, 2, 9); m = pick(r, SQF); } while (s * s * m > 600);
+        return Q([["mode", "simplify"], ["r", "sqrt(" + s * s * m + ")"]], "Simplify √" + s * s * m + ".", rootS(s, m));
+      }
+      t = pick(r, RATPOW);
+      return Q([["mode", "exponents"], ["task", "value"], ["ex", t[0] + "^(" + t[1] + "/" + t[2] + ")"]], "Evaluate " + t[0] + "^(" + t[1] + "/" + t[2] + ").", String(rpVal(t)));
+    }
+    if (L === 2){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        var s1, s2, p, q, minus;
+        do { m = pick(r, [2, 3, 5, 6, 7]); s1 = ri(r, 1, 5); s2 = ri(r, 1, 5); p = ri(r, 1, 4); q = ri(r, 1, 4); minus = chance(r, .45); }
+        while ((s1 === 1 && s2 === 1) || s1 === s2 || (minus && p * s1 === q * s2) || s1 * s1 * m > 200 || s2 * s2 * m > 200);
+        var tot = minus ? p * s1 - q * s2 : p * s1 + q * s2;
+        return Q([["mode", "operate"], ["ex", sqA(p, s1 * s1 * m) + (minus ? "-" : "+") + sqA(q, s2 * s2 * m)]],
+          "Simplify " + sqT(p, s1 * s1 * m) + (minus ? " − " : " + ") + sqT(q, s2 * s2 * m) + ".", rootS(tot, m));
+      }
+      if (k === 1){
+        do { m = pick(r, SQF); n = ri(r, 1, 12); } while (n === m);     // not 11/√11
+        var g = gcd(n, m), kk = n / g, dd = m / g;
+        return Q([["mode", "rationalize"], ["n", n], ["d", "sqrt(" + m + ")"]], "Rationalize the denominator: " + n + "/√" + m + ".",
+          dd === 1 ? rootS(kk, m) : (kk === 1 ? "" : kk) + "√" + m + "/" + dd);
+      }
+      if (k === 2){
+        t = pick(r, RATPOW.filter(function(x){ return rpVal(x) <= 100; }));
+        return Q([["mode", "exponents"], ["task", "value"], ["ex", t[0] + "^(-" + t[1] + "/" + t[2] + ")"]], "Evaluate " + t[0] + "^(−" + t[1] + "/" + t[2] + ").", "1/" + rpVal(t));
+      }
+      var P, sq;
+      do { a = ri(r, 2, 15); b = ri(r, 2, 20); P = a * b; sq = sqf(P); } while (a === b || sq[1] === 1 || sq[0] === 1 || sqf(a)[0] > 1 || sqf(b)[0] > 1);
+      return Q([["mode", "operate"], ["ex", "sqrt(" + a + ")*sqrt(" + b + ")"]], "Simplify √" + a + " · √" + b + ".", rootS(sq[0], sq[1]));
+    }
+    if (L === 3){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        // n/(a ± √m) with a² − m dividing n: the answer has whole numbers
+        var D, plus;
+        do { a = ri(r, 2, 6); m = pick(r, SQF); D = a * a - m; } while (D <= 0 || D > 30);
+        k = ri(r, 1, 4); plus = chance(r, .5); n = k * D;
+        return Q([["mode", "rationalize"], ["n", n], ["d", a + (plus ? "+" : "-") + "sqrt(" + m + ")"]], "Rationalize the denominator: " + n + "/(" + a + (plus ? " + " : " − ") + "√" + m + ").",
+          k * a + (plus ? " − " : " + ") + rootS(k, m));
+      }
+      if (k === 1){
+        var v;
+        do { a = ri(r, 1, 5); x0 = ri(r, -6, 12); v = ri(r, 1, 7); b = v * v - a * x0; c = nz(r, -9, 9); } while (!b || Math.abs(b) > 40);
+        var inS = lin([[a, "x"], [b, ""]]), inA = lin([[a, "x"], [b, ""]], true), cT = (c < 0 ? " − " : " + ") + Math.abs(c), cA = (c < 0 ? "-" : "+") + Math.abs(c);
+        return Q([["mode", "radeq"], ["eq", "sqrt(" + inA + ")" + cA + "=" + (v + c)]], "Solve √(" + inS + ")" + cT + " = " + M(v + c) + " and check for extraneous solutions.", "x = " + M(x0));
+      }
+      // (x − p)(x − r)/((x − r)(x − q)) = (x − p)/(x − q)
+      var p0, q0, r0;
+      do { p0 = nz(r, -7, 7); q0 = nz(r, -7, 7); r0 = nz(r, -7, 7); } while (p0 === q0 || p0 === r0 || q0 === r0);
+      var nu = [1, -(p0 + r0), p0 * r0], de = [1, -(r0 + q0), r0 * q0], ex = [r0, q0].sort(function(u, w){ return u - w; });
+      return Q([["mode", "ratsimp"], ["f", "(" + poly(nu, true) + ")/(" + poly(de, true) + ")"]], "Simplify (" + poly(nu) + ")/(" + poly(de) + ") and state the excluded values.",
+        "(" + xp(-p0) + ")/(" + xp(-q0) + "); x ≠ " + ex.map(M).join(", "));
+    }
+    k = ri(r, 0, 2);
+    if (k === 0){
+      // √(ax + b) = x + c with one root that works and one that doesn't: (x + c)² = ax + b has roots r1 (x + c ≥ 1) and r2 (x + c < 0)
+      var r1, r2;
+      do { c = ri(r, -4, 4); r1 = ri(r, 1 - c, 9 - c); r2 = ri(r, -8 - c, -1 - c); a = 2 * c + r1 + r2; b = c * c - r1 * r2; } while (a < 1 || a > 12 || !b || Math.abs(b) > 40);
+      var rhs = c ? xp(c) : "x", rhsA = c ? xp(c, true) : "x";
+      return Q([["mode", "radeq"], ["eq", "sqrt(" + lin([[a, "x"], [b, ""]], true) + ")=" + rhsA]], "Solve √(" + lin([[a, "x"], [b, ""]]) + ") = " + rhs + " and check for extraneous solutions.",
+        "x = " + M(r1) + " (x = " + M(r2) + " is extraneous)");
+    }
+    if (k === 1){
+      // x − s = t/x: x² − sx − t = 0, with roots u < w (neither 0)
+      var u, w;
+      do { u = nz(r, -9, 9); w = nz(r, -9, 9); } while (u >= w || u === -w);
+      var sm = u + w, tt = -u * w;
+      return Q([["mode", "rateq"], ["eq", xp(-sm, true) + "=" + tt + "/x"]], "Solve " + xp(-sm) + " = " + M(tt) + "/x and check for extraneous solutions.",
+        "x = " + M(u) + " or x = " + M(w));
+    }
+    // a/(x + p) ± b/(x + q) = (Ax + B)/((x + p)(x + q)): A > 0, no common factor, nothing cancels
+    var pp, qq, sub, A, B;
+    do { a = ri(r, 1, 6); b = ri(r, 1, 6); pp = nz(r, -6, 6); qq = nz(r, -6, 6); sub = chance(r, .5); A = sub ? a - b : a + b; B = sub ? a * qq - b * pp : a * qq + b * pp; }
+    while (pp === qq || A <= 0 || !B || gcd(A, B) !== 1 || (B % A === 0 && (B / A === pp || B / A === qq)));
+    var ex2 = [-pp, -qq].sort(function(u2, w2){ return u2 - w2; });
+    return Q([["mode", "ratadd"], ["f", a + "/(" + xp(pp, true) + ")"], ["g", b + "/(" + xp(qq, true) + ")"], ["op", sub ? "sub" : "add"]],
+      (sub ? "Subtract" : "Add") + " and simplify: " + a + "/(" + xp(pp) + ")" + (sub ? " − " : " + ") + b + "/(" + xp(qq) + "). State the excluded values.",
+      "(" + lin([[A, "x"], [B, ""]]) + ")/((" + xp(pp) + ")(" + xp(qq) + ")); x ≠ " + ex2.map(M).join(", "));
+  }
+
+  /* ---- complex numbers (complex-numbers.html: i task, … · add a, b, op · mul a, b | pow · div a, b · polar task, … ·
+     demoivre task, z, n · solve eq) ---- */
+  function cS(a, b, ascii){            // a + bi as the Complex Plane writes it: 3 − 4i, −i, 6, 2i (ascii, for a link: 3-4i)
+    var mi = ascii ? "-" : "−", ib = Math.abs(b) === 1 ? "i" : Math.abs(b) + "i";
+    if (!b) return (a < 0 ? mi : "") + Math.abs(a);
+    if (!a) return (b < 0 ? mi : "") + ib;
+    return (a < 0 ? mi : "") + Math.abs(a) + (ascii ? (b < 0 ? "-" : "+") : (b < 0 ? " − " : " + ")) + ib;
+  }
+  function iRoot(n){ var q = sqf(n); return q[1] === 1 ? (q[0] === 1 ? "i" : q[0] + "i") : (q[0] === 1 ? "" : q[0]) + "i√" + q[1]; }   // √(−n): 4i√3, 7i, i√10
+  var DM = [["1+i", "1 + i", 2, 45], ["1-i", "1 − i", 2, 315], ["-1+i", "−1 + i", 2, 135], ["-1-i", "−1 − i", 2, 225],
+            ["1+sqrt(3)i", "1 + i√3", 4, 60], ["1-sqrt(3)i", "1 − i√3", 4, 300], ["-1+sqrt(3)i", "−1 + i√3", 4, 120],
+            ["sqrt(3)+i", "√3 + i", 4, 30], ["sqrt(3)-i", "√3 − i", 4, 330], ["-sqrt(3)+i", "−√3 + i", 4, 150]];   // [link, shown, |z|², angle]
+  function axisS(R, A){ return A === 0 ? String(R) : A === 90 ? R + "i" : A === 180 ? "−" + R : "−" + R + "i"; }   // R(cos A + i sin A) on an axis
+  function complexP(r, L){
+    var a, b, c, d, n, k, e, f;
+    if (L <= 1){
+      k = ri(r, 0, 2);
+      if (k === 0){ n = ri(r, 5, 99); return Q([["mode", "i"], ["task", "pow"], ["n", n]], "Simplify i" + sup(n) + ".", ["1", "i", "−1", "−i"][n % 4]); }
+      if (k === 1){
+        var sub, re, im;
+        do { a = nz(r, -9, 9); b = nz(r, -9, 9); c = nz(r, -9, 9); d = nz(r, -9, 9); sub = chance(r, .5); re = sub ? a - c : a + c; im = sub ? b - d : b + d; } while (!re && !im);
+        return Q([["mode", "add"], ["a", cS(a, b, true)], ["b", cS(c, d, true)], ["op", sub ? "sub" : "add"]],
+          (sub ? "Subtract" : "Add") + ": (" + cS(a, b) + ") " + (sub ? "−" : "+") + " (" + cS(c, d) + ").", cS(re, im));
+      }
+      do { n = ri(r, 2, 99); } while (sqf(n)[0] === 1 && n > 15);
+      return Q([["mode", "i"], ["task", "root"], ["r", -n]], "Simplify √(−" + n + ").", iRoot(n));
+    }
+    if (L === 2){
+      k = ri(r, 0, 4);
+      if (k <= 2){
+        do { a = ri(r, -7, 7); b = nz(r, -7, 7); c = ri(r, -7, 7); d = nz(r, -7, 7); } while (!a && !c);
+        return Q([["mode", "mul"], ["a", cS(a, b, true)], ["b", cS(c, d, true)]], "Multiply: (" + cS(a, b) + ")(" + cS(c, d) + "). Write the answer as a + bi.", cS(a * c - b * d, a * d + b * c));
+      }
+      if (k === 3){
+        a = nz(r, -6, 6); b = nz(r, -6, 6);
+        return Q([["mode", "mul"], ["a", cS(a, b, true)], ["pow", 2]], "Simplify (" + cS(a, b) + ")². Write the answer as a + bi.", cS(a * a - b * b, 2 * a * b));
+      }
+      var m, s1, s2;
+      do { m = pick(r, [1, 1, 2, 3, 5]); s1 = ri(r, 1, 6); s2 = ri(r, 1, 6); } while (s1 === s2 || s1 * s1 * m > 75 || s2 * s2 * m > 75 || (m === 1 && (s1 === 1 || s2 === 1)));
+      return Q([["mode", "i"], ["task", "prod"], ["a", -s1 * s1 * m], ["b", -s2 * s2 * m]], "Simplify √(−" + s1 * s1 * m + ") · √(−" + s2 * s2 * m + ").", M(-s1 * s2 * m));
+    }
+    if (L === 3){
+      if (chance(r, .5)){
+        // (a + bi) ÷ (c + di) with a whole-number answer e + fi
+        do { e = ri(r, -6, 6); f = nz(r, -6, 6); c = nz(r, -5, 5); d = nz(r, -5, 5); } while (Math.abs(e * c - f * d) > 40 || Math.abs(e * d + f * c) > 40);
+        a = e * c - f * d; b = e * d + f * c;
+        return Q([["mode", "div"], ["a", cS(a, b, true)], ["b", cS(c, d, true)]], "Divide: (" + cS(a, b) + ") ÷ (" + cS(c, d) + "). Write the answer as a + bi.", cS(e, f));
+      }
+      var h = ri(r, -6, 6), kk = ri(r, 1, 7), cs = [1, -2 * h, h * h + kk * kk];
+      return Q([["mode", "solve"], ["eq", poly(cs, true) + "=0"]], "Solve " + poly(cs) + " = 0.", "x = " + cS(h, kk) + " or x = " + cS(h, -kk));
+    }
+    if (chance(r, .55)){
+      // De Moivre: (1 + i)ⁿ, (1 + i√3)ⁿ, … with nθ a multiple of 90°, so the answer is a whole number or a whole number times i
+      var z = pick(r, DM);
+      n = z[2] === 2 ? pick(r, [4, 6, 8, 10, 12, 14, 16]) : pick(r, [3, 6, 9, 12]);
+      return Q([["mode", "demoivre"], ["task", "pow"], ["z", z[0]], ["n", n]], "Use De Moivre’s theorem to find (" + z[1] + ")" + sup(n) + " in the form a + bi.",
+        axisS(Math.round(Math.pow(z[2], n / 2)), z[3] * n % 360));
+    }
+    // two numbers in polar form, multiplied or divided, landing on an axis
+    var div = chance(r, .45), r1, r2, t1, t2, tgt = pick(r, [0, 90, 180, 270]), RR;
+    do { t1 = 10 * ri(r, 1, 35); t2 = div ? ((t1 - tgt) % 360 + 360) % 360 : ((tgt - t1) % 360 + 360) % 360; } while (t2 < 10 || t2 > 350);
+    if (div){ r2 = ri(r, 2, 6); RR = ri(r, 2, 9); r1 = r2 * RR; } else { r1 = ri(r, 2, 9); r2 = ri(r, 2, 9); RR = r1 * r2; }
+    var pf = function(rr, tt){ return rr + "(cos " + tt + "° + i sin " + tt + "°)"; };
+    return Q([["mode", "polar"], ["task", div ? "div" : "mul"], ["r1", r1], ["t1", t1], ["r2", r2], ["t2", t2]],
+      (div ? "Divide " + pf(r1, t1) + " by " + pf(r2, t2) : "Multiply " + pf(r1, t1) + " · " + pf(r2, t2)) + ". Write the answer in polar form and as a + bi.",
+      pf(RR, tgt) + " = " + axisS(RR, tgt));
+  }
+
+  /* ---- college statistics (college-statistics.html: z find, x | z, mu, sd · normal mu, sd, type, a[, b][, rule] · binom n, p, ask, k ·
+     sampling kind, mu, sd, n, type, a · ci kind, xbar, sigma, n, conf | of, me · test kind, mu0, xbar, sigma, n, alt, alpha).
+     Weekdays only. The Bell Curve rounds z to 2 decimals and reads the table to 4, so the numbers here make z come out exact,
+     and the normal curve is worked out with the page's own steps (so the rounding is the same). ---- */
+  var SQRTPI = Math.sqrt(Math.PI);
+  function bErfc(x){                          // erfc(x), x ≥ 0, as the Bell Curve works it out
+    if (x < 2.5){
+      var term = x, sum = x, n = 0;
+      while (term > 1e-17 * sum && n < 400){ n++; term *= 2 * x * x / (2 * n + 1); sum += term; }
+      return 1 - 2 / SQRTPI * Math.exp(-x * x) * sum;
+    }
+    var tiny = 1e-300, f = x, C = x, D = 0, k, a, del;
+    for (k = 1; k < 600; k++){
+      a = k / 2;
+      D = x + a * D; if (Math.abs(D) < tiny) D = tiny; D = 1 / D;
+      C = x + a / C; if (Math.abs(C) < tiny) C = tiny;
+      del = C * D; f *= del;
+      if (Math.abs(del - 1) < 1e-16) break;
+    }
+    return Math.exp(-x * x) / SQRTPI / f;
+  }
+  function bPhi(z){ return z < 0 ? 0.5 * bErfc(-z / Math.SQRT2) : 1 - 0.5 * bErfc(z / Math.SQRT2); }
+  function bRnd(x, d){ var m = Math.pow(10, d), y = Math.abs(x) * m, q = Math.floor(y + 0.5 + Math.max(1e-7, y * 1e-12)); return (x < 0 ? -q : q) / m; }
+  function bFx(x, d){ var v = bRnd(x, d); if (v === 0) v = 0; return M(v.toFixed(d)); }
+  var BANDS = [15, 235, 1350, 3400, 3400, 1350, 235, 15];       // the 68–95–99.7 rule in hundredths of a percent, from below −3 SD up
+  function ruleBP(k1, k2){ var s = 0; for (var i = 0; i < 8; i++){ var lo = i ? i - 4 : -99, hi = i < 7 ? i - 3 : 99; if (lo >= k1 && hi <= k2) s += BANDS[i]; } return s; }
+  var MUSD = [[70, 10], [100, 15], [500, 100], [50, 8], [60, 12], [80, 5], [24, 4], [200, 25], [150, 20], [40, 6], [65, 3], [300, 40]];
+  var ZSTAR = { 90:1.645, 95:1.96, 99:2.576 };
+  function evS(V, type, a, b){ return type === "lt" ? "P(" + V + " < " + M(a) + ")" : type === "gt" ? "P(" + V + " > " + M(a) + ")" : "P(" + M(a) + " < " + V + " < " + M(b) + ")"; }
+  function zOff(r, sd){ var k; do { k = ri(r, -3 * sd, 3 * sd); } while (!k || (100 * k) % sd); return k; }   // x − μ, with z = (x − μ)/σ exact to 2 decimals
+  function tableP(type, za, zb){             // the table's answer, for z (and z₂) already rounded to 2 decimals
+    var t1 = bRnd(bPhi(za), 4);
+    if (type === "lt") return t1;
+    if (type === "gt") return bRnd(1 - t1, 4);
+    return bRnd(bRnd(bPhi(zb), 4) - t1, 4);
+  }
+  function collegeStats(r, L){
+    var ms, mu, sd, k, k2, x, z, type, a, b, n;
+    var head = function(mu, sd){ return "X is normally distributed with mean μ = " + mu + " and standard deviation σ = " + sd + ". "; };
+    if (L <= 1){
+      k = ri(r, 0, 2); ms = pick(r, MUSD); mu = ms[0]; sd = ms[1];
+      if (k === 0){
+        x = mu + zOff(r, sd); z = bRnd((x - mu) / sd, 2);
+        return Q([["mode", "z"], ["find", "z"], ["x", x], ["mu", mu], ["sd", sd]],
+          "A value x = " + x + " comes from a distribution with mean μ = " + mu + " and standard deviation σ = " + sd + ". Find its z-score.",
+          "z = " + bFx(z, 2) + " (" + (z > 0 ? "above" : "below") + " the mean)");
+      }
+      if (k === 1){
+        var off = zOff(r, sd), zt = dec(100 * off / sd, 2);
+        return Q([["mode", "z"], ["find", "x"], ["z", zt], ["mu", mu], ["sd", sd]],
+          "In a distribution with mean μ = " + mu + " and standard deviation σ = " + sd + ", which value x has a z-score of " + M(zt) + "?", "x = " + (mu + off));
+      }
+      type = pick(r, ["lt", "gt", "between", "between"]);
+      if (type === "between"){ do { k = ri(r, -3, 2); k2 = ri(r, k + 1, 3); } while (k === -3 && k2 === 3); }
+      else k = ri(r, -3, 3);
+      var bp = type === "lt" ? ruleBP(-99, k) : type === "gt" ? ruleBP(k, 99) : ruleBP(k, k2), ev = evS("X", type, mu + k * sd, mu + k2 * sd);
+      return Q([["mode", "normal"], ["mu", mu], ["sd", sd], ["type", type], ["a", mu + k * sd]].concat(type === "between" ? [["b", mu + k2 * sd]] : []).concat([["rule", 1]]),
+        head(mu, sd) + "Find " + ev + ". Use the empirical rule (68–95–99.7).", ev + " ≈ " + dec(bp, 2) + "%");
+    }
+    if (L === 2){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        ms = pick(r, MUSD); mu = ms[0]; sd = ms[1]; type = pick(r, ["lt", "gt", "between"]);
+        a = mu + zOff(r, sd);
+        if (type === "between"){ do { b = mu + zOff(r, sd); } while (b === a); if (b < a){ var t0 = a; a = b; b = t0; } }
+        var pv = tableP(type, bRnd((a - mu) / sd, 2), type === "between" ? bRnd((b - mu) / sd, 2) : 0);
+        return Q([["mode", "normal"], ["mu", mu], ["sd", sd], ["type", type], ["a", a]].concat(type === "between" ? [["b", b]] : []),
+          head(mu, sd) + "Find " + evS("X", type, a, b) + ".", evS("X", type, a, b) + " ≈ " + bFx(pv, 4));
+      }
+      if (k === 1){
+        // binomial with p in tenths: P = C(n, k)·aᵏ·(10 − a)ⁿ⁻ᵏ / 10ⁿ exactly, rounded to 4 decimals (never a tie)
+        var pa, kk, N, den, q4, rem, atl;
+        do {
+          n = ri(r, 4, 10); pa = ri(r, 1, 9); atl = chance(r, .2); kk = ri(r, 0, n);
+          var Cn = 1; for (var i = 1; i <= kk; i++) Cn = Cn * (n - i + 1) / i;
+          N = atl ? Math.pow(10, n) - Math.pow(10 - pa, n) : Cn * Math.pow(pa, kk) * Math.pow(10 - pa, n - kk);
+          den = Math.pow(10, n - 4); q4 = Math.floor(N / den); rem = N - q4 * den;
+          if (2 * rem > den) q4++;
+        } while (2 * rem === den || q4 < 10 || q4 > 9990);
+        var pr = "0." + ("000" + q4).slice(-4), pS = dec(pa, 1);
+        if (atl) return Q([["mode", "binom"], ["n", n], ["p", pS], ["ask", "atleast1"]],
+          "X is binomial with n = " + n + " trials and probability of success p = " + pS + ". Find the probability of at least one success.", "P(X ≥ 1) ≈ " + pr);
+        return Q([["mode", "binom"], ["n", n], ["p", pS], ["ask", "eq"], ["k", kk]],
+          "X is binomial with n = " + n + " trials and probability of success p = " + pS + ". Find P(X = " + kk + ").", "P(X = " + kk + ") ≈ " + pr);
+      }
+      // a sample mean, with σ/√n a whole number
+      var rn = pick(r, [4, 5, 6, 8, 10]), se = ri(r, 1, 5);
+      n = rn * rn; sd = rn * se; mu = pick(r, [50, 60, 72, 100, 120, 250, 400]); type = pick(r, ["lt", "gt"]);
+      a = mu + zOff(r, se);
+      var ps = tableP(type, bRnd((a - mu) / (sd / Math.sqrt(n)), 2));
+      return Q([["mode", "sampling"], ["kind", "mean"], ["mu", mu], ["sd", sd], ["n", n], ["type", type], ["a", a]],
+        (n < 30 ? "A normal population" : "A population") + " has mean μ = " + mu + " and standard deviation σ = " + sd + ". For random samples of n = " + n
+          + ", find the standard error of x̄ and the probability that x̄ is " + (type === "lt" ? "less than " : "more than ") + a + ".",
+        "standard error " + se + "; " + evS("x̄", type, a) + " ≈ " + bFx(ps, 4));
+    }
+    k = ri(r, 0, 2);
+    var conf = pick(r, [90, 95, 95, 99]), cv = ZSTAR[conf];
+    if (k === 0){
+      var rt = pick(r, [4, 5, 6, 7, 8, 9, 10]), sg = ri(r, 3, 30), xb = ri(r, 200, 1200) / 10, sem, me;
+      n = rt * rt; sem = sg / Math.sqrt(n); me = cv * sem;
+      return Q([["mode", "ci"], ["kind", "z"], ["xbar", xb], ["sigma", sg], ["n", n], ["conf", conf]],
+        "A random sample of n = " + n + " has mean x̄ = " + xb + "; the population standard deviation is known to be σ = " + sg + ". Find a " + conf + "% confidence interval for the population mean μ.",
+        "(" + bFx(xb - me, 2) + ", " + bFx(xb + me, 2) + "); margin of error " + bFx(me, 2));
+    }
+    if (k === 1){
+      // a z test for a mean, with z exact to 2 decimals and the p-value well clear of α
+      var mu0, rt2, e2, dd, xb2, st, sr, alt, alpha, pval, ptab, up = function(v){ return bPhi(-v); }, ta = function(v){ return bRnd(1 - bRnd(bPhi(v), 4), 4); };
+      do {
+        mu0 = pick(r, [20, 40, 50, 75, 100, 120, 200, 500]); rt2 = pick(r, [4, 5, 6, 8, 10]); e2 = ri(r, 1, 4); alpha = pick(r, [0.05, 0.05, 0.01]);
+        do { dd = nz(r, -35 * e2, 35 * e2); } while ((10 * dd) % e2);
+        xb2 = Number(dec(mu0 * 10 + dd, 1)); n = rt2 * rt2; sd = rt2 * e2;
+        st = (xb2 - mu0) / (sd / Math.sqrt(n)); sr = bRnd(st, 2);
+        alt = pick(r, ["ne", "ne", st < 0 ? "lt" : "gt"]);
+        pval = alt === "gt" ? up(st) : alt === "lt" ? up(-st) : Math.min(1, 2 * up(Math.abs(st)));
+        ptab = alt === "gt" ? ta(sr) : alt === "lt" ? bRnd(bPhi(sr), 4) : bRnd(2 * Math.min(bRnd(bPhi(sr), 4), ta(sr)), 4);
+      } while (Math.abs(pval - alpha) < 0.004 || ptab < 0.0005 || ptab > 0.9995);
+      var ALT = { lt:"<", gt:">", ne:"≠" };
+      return Q([["mode", "test"], ["kind", "z"], ["mu0", mu0], ["xbar", xb2], ["sigma", sd], ["n", n], ["alt", alt], ["alpha", alpha]],
+        "H₀ says the population mean is μ = " + mu0 + ". A random sample of n = " + n + " has x̄ = " + xb2 + "; σ = " + sd + " is known. Test H₀: μ = " + mu0 + " against Hₐ: μ " + ALT[alt] + " " + mu0
+          + " at α = " + alpha + ": find the test statistic, the p-value and the conclusion.",
+        "z = " + bFx(sr, 2) + ", p-value " + bFx(ptab, 4) + ": " + (pval <= alpha ? "reject H₀" : "fail to reject H₀"));
+    }
+    var sg3, E, raw;
+    do { sg3 = pick(r, [5, 6, 8, 10, 12, 15, 18, 20, 25, 30]); E = pick(r, [1, 1.5, 2, 2.5, 3, 4, 5]); raw = Math.pow(cv * sg3 / E, 2); } while (raw < 10 || raw > 5000 || Math.abs(raw - Math.round(raw)) < 1e-6);
+    return Q([["mode", "ci"], ["kind", "size"], ["of", "mean"], ["sigma", sg3], ["me", E], ["conf", conf]],
+      "How large a sample is needed to estimate the population mean μ within " + E + " with " + conf + "% confidence, if σ = " + sg3 + "?", "n = " + Math.ceil(raw - 1e-9));
+  }
+
+  /* ---- matrices and vectors (matrices-and-vectors.html: arith A, B, ex · mult A, B · det A · inv A · sys M · vec task, … ·
+     dot task, u, v). A matrix answer is written with its rows in brackets: [[1, 2], [3, 4]]. ---- */
+  function mS(A){ return "[" + A.map(function(row){ return "[" + row.map(M).join(", ") + "]"; }).join(", ") + "]"; }
+  function mA(A){ return A.map(function(row){ return row.join(","); }).join(";"); }
+  function vS(v){ return "⟨" + v.map(M).join(", ") + "⟩"; }
+  function rmat(r, R, C, lo, hi){ var A = []; for (var i = 0; i < R; i++){ A.push([]); for (var j = 0; j < C; j++) A[i].push(ri(r, lo, hi)); } return A; }
+  function mmul(A, B){ return A.map(function(row){ return B[0].map(function(z, j){ return row.reduce(function(s, x, k){ return s + x * B[k][j]; }, 0); }); }); }
+  function det3(A){ return A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1]) - A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0]) + A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]); }
+  function zcount(A){ return A.reduce(function(s, row){ return s + row.filter(function(x){ return !x; }).length; }, 0); }
+  function eqS(row, vars, rhs){ return lin(row.map(function(c, i){ return [c, vars[i]]; })) + " = " + M(rhs); }
+  function combS(p, q, a, b, ascii){ var mi = ascii ? "-" : "−";        // 2A − 3B, −u + 4v (ascii: 2A-3B)
+    return (p === 1 ? "" : p === -1 ? mi : ascii ? p : M(p)) + a + (ascii ? (q < 0 ? "-" : "+") : (q < 0 ? " − " : " + ")) + (Math.abs(q) === 1 ? "" : Math.abs(q)) + b; }
+  function matrices(r, L){
+    var A, B, k, u, v, p, q;
+    if (L <= 1){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        A = rmat(r, 2, 2, -6, 6); B = rmat(r, 2, 2, -6, 6); p = pick(r, [1, 2, 3]); q = pick(r, [1, -1, 2, -2, 3, -3]);
+        return Q([["mode", "arith"], ["A", mA(A)], ["B", mA(B)], ["ex", combS(p, q, "A", "B", true)]], "Find " + combS(p, q, "A", "B") + " for A = " + mS(A) + " and B = " + mS(B) + ".",
+          mS(A.map(function(row, i){ return row.map(function(x, j){ return p * x + q * B[i][j]; }); })));
+      }
+      if (k === 1){
+        do { A = rmat(r, 2, 2, -7, 9); } while (zcount(A) > 1);
+        return Q([["mode", "det"], ["A", mA(A)]], "Find det A for A = " + mS(A) + ".", "det A = " + M(A[0][0] * A[1][1] - A[0][1] * A[1][0]));
+      }
+      if (k === 2){
+        var dim = pick(r, [2, 3]); u = rmat(r, 1, dim, -6, 6)[0]; v = rmat(r, 1, dim, -6, 6)[0];
+        return Q([["mode", "dot"], ["task", "dot"], ["u", u.join(",")], ["v", v.join(",")]], "Find u · v for u = " + vS(u) + " and v = " + vS(v) + ".",
+          "u · v = " + M(u.reduce(function(s, x, i){ return s + x * v[i]; }, 0)));
+      }
+      var P0 = [ri(r, -6, 6), ri(r, -6, 6)], dv = [nz(r, -8, 8), nz(r, -8, 8)], Q0 = [P0[0] + dv[0], P0[1] + dv[1]];
+      return Q([["mode", "vec"], ["task", "points"], ["P", P0.join(",")], ["Q", Q0.join(",")]], "Find the vector from P" + pt(P0[0], P0[1]) + " to Q" + pt(Q0[0], Q0[1]) + ".", vS(dv));
+    }
+    if (L === 2){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        A = rmat(r, 2, 2, -5, 6); B = rmat(r, 2, 2, -5, 6);
+        return Q([["mode", "mult"], ["A", mA(A)], ["B", mA(B)]], "Find AB for A = " + mS(A) + " and B = " + mS(B) + ".", mS(mmul(A, B)));
+      }
+      if (k === 1){
+        do { A = rmat(r, 3, 3, -4, 5); } while (zcount(A) > 3 || !det3(A));
+        return Q([["mode", "det"], ["A", mA(A)]], "Find det A for A = " + mS(A) + ".", "det A = " + M(det3(A)));
+      }
+      if (k === 2){
+        var xs = [nz(r, -6, 6), ri(r, -6, 6)];
+        do { A = rmat(r, 2, 2, -5, 5); } while (!(A[0][0] * A[1][1] - A[0][1] * A[1][0]) || zcount(A) > 1);
+        var bb = A.map(function(row){ return row[0] * xs[0] + row[1] * xs[1]; });
+        return Q([["mode", "sys"], ["M", mA(A.map(function(row, i){ return row.concat([bb[i]]); }))]],
+          "Solve the system by Gaussian elimination: " + eqS(A[0], ["x", "y"], bb[0]) + "; " + eqS(A[1], ["x", "y"], bb[1]) + ".", "x = " + M(xs[0]) + ", y = " + M(xs[1]));
+      }
+      u = rmat(r, 1, 2, -6, 6)[0]; v = rmat(r, 1, 2, -6, 6)[0]; p = pick(r, [1, 2, 3, -1, -2]); q = pick(r, [1, -1, 2, -2, 3, -3, 4]);
+      return Q([["mode", "vec"], ["task", "combo"], ["u", u.join(",")], ["v", v.join(",")], ["ex", combS(p, q, "u", "v", true)]], "Find " + combS(p, q, "u", "v") + " for u = " + vS(u) + " and v = " + vS(v) + ".",
+        vS([p * u[0] + q * v[0], p * u[1] + q * v[1]]));
+    }
+    if (L === 3){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        var dt;
+        do { A = rmat(r, 2, 2, -6, 7); dt = A[0][0] * A[1][1] - A[0][1] * A[1][0]; } while (Math.abs(dt) !== 1 || zcount(A) > 1 || (Math.abs(A[0][0] * A[1][1]) <= 1 && Math.abs(A[0][1] * A[1][0]) <= 1));
+        return Q([["mode", "inv"], ["A", mA(A)]], "Find the inverse of A = " + mS(A) + ".", "A⁻¹ = " + mS([[A[1][1] * dt, -A[0][1] * dt], [-A[1][0] * dt, A[0][0] * dt]]));
+      }
+      if (k === 1){
+        var cr;
+        do { u = rmat(r, 1, 3, -5, 5)[0]; v = rmat(r, 1, 3, -5, 5)[0]; cr = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]]; }
+        while (zcount([u, v]) > 1 || zcount([cr]) > 1);
+        return Q([["mode", "dot"], ["task", "cross"], ["u", u.join(",")], ["v", v.join(",")]], "Find u × v for u = " + vS(u) + " and v = " + vS(v) + ".", "u × v = " + vS(cr));
+      }
+      A = rmat(r, 2, 3, -4, 5); B = rmat(r, 3, 2, -4, 5);
+      return Q([["mode", "mult"], ["A", mA(A)], ["B", mA(B)]], "Find AB for A = " + mS(A) + " and B = " + mS(B) + ".", mS(mmul(A, B)));
+    }
+    if (chance(r, .6)){
+      // three equations, a whole-number solution
+      var sol = [ri(r, -5, 5), ri(r, -5, 5), ri(r, -5, 5)];
+      do { A = rmat(r, 3, 3, -4, 5); } while (!det3(A) || zcount(A) > 3 || A.some(function(row){ return zcount([row]) > 1; }));
+      var rhs = A.map(function(row){ return row[0] * sol[0] + row[1] * sol[1] + row[2] * sol[2]; }), V = ["x", "y", "z"];
+      return Q([["mode", "sys"], ["M", mA(A.map(function(row, i){ return row.concat([rhs[i]]); }))]],
+        "Solve the system by Gaussian elimination: " + A.map(function(row, i){ return eqS(row, V, rhs[i]); }).join("; ") + ".",
+        "x = " + M(sol[0]) + ", y = " + M(sol[1]) + ", z = " + M(sol[2]));
+    }
+    // a 3 × 3 with determinant 1 (a lower times an upper triangle, 1s down both diagonals), so its inverse is whole numbers
+    var Lm, Um, inv;
+    do {
+      Lm = [[1, 0, 0], [ri(r, -2, 2), 1, 0], [ri(r, -2, 2), ri(r, -2, 2), 1]]; Um = [[1, ri(r, -2, 2), ri(r, -2, 2)], [0, 1, ri(r, -2, 2)], [0, 0, 1]];
+      A = mmul(Lm, Um);
+      inv = [0, 1, 2].map(function(i){ return [0, 1, 2].map(function(j){      // the adjugate (det A = 1)
+        var m = A.filter(function(z, rr){ return rr !== j; }).map(function(row){ return row.filter(function(z, cc){ return cc !== i; }); });
+        return ((i + j) % 2 ? -1 : 1) * (m[0][0] * m[1][1] - m[0][1] * m[1][0]);
+      }); });
+    } while (zcount(A) > 3 || zcount(inv) > 4 || inv.some(function(row){ return row.some(function(x){ return Math.abs(x) > 15; }); }));
+    return Q([["mode", "inv"], ["A", mA(A)]], "Find the inverse of A = " + mS(A) + ".", "A⁻¹ = " + mS(inv));
   }
 
   function repeating(n, d){                   // n/d (0 < n < d) as a decimal with the repeating digits in brackets: 5/12 → 0.41(6)
