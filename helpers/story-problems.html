@@ -3666,6 +3666,12 @@
       /\bapart\b/.test(L) && (/\beast(?:bound|ward)?\b/.test(L) && /\bwest(?:bound|ward)?\b/.test(L) ||
                               /\bnorth(?:bound|ward)?\b/.test(L) && /\bsouth(?:bound|ward)?\b/.test(L));
   }
+  // a faster mover leaving later on the same route: "catch up (to/with)", "overtake", "pass" (pass only next to "later",
+  // so "pass the ball" or "pass a test" doesn't count)
+  function catchingUp(L){
+    return /\bcatch(?:es|ing)? up\b|\bcatch(?:es)? (?:him|her|them|it|the (?:first|other|slower))\b|\bovertak(?:e|es|ing|en)\b/.test(L) ||
+      /\bpass(?:es|ing)?\b/.test(L) && /\blater\b/.test(L);
+  }
   var COINV = { pennies:1, penny:1, nickels:5, nickel:5, dimes:10, dime:10, quarters:25, quarter:25 };
   ASSIGN.algebra = function(A){
     var L = A.L, Q = A.Q, ns = A.use.filter(function(t){ return (t.k === "n" || t.k === "$") && !/^\s*(?:of the )?(numbers?|integers?)\b/.test(t.after); }), ms = A.use.filter(function(t){ return t.k === "$"; });
@@ -3767,12 +3773,13 @@
     var sp = ns.filter(speed);
     // going opposite ways: "opposite direction(s)", "eastbound … westbound", "one heads north and the other south", "away from each other"
     var opposite = oppositeWays(L);
-    if (sp.length >= 2 && (opposite || /\bcatch(es)? up\b/.test(L) || /\b(round trip|back|home|returns?)\b/.test(L))){
+    var catchUp = catchingUp(L);
+    if (sp.length >= 2 && (opposite || catchUp || /\b(round trip|back|home|returns?)\b/.test(L))){
       var su = /km|kilomet/.test(sp[0].after) ? { s:"km/h", u:"kilometers" } : { s:"mph", u:"miles" };
       // the vehicles, in the order the story names them ("the Autonomous Express Truck", "a courier motorcycle")
       var nouns = (A.L.match(/\b(train|truck|car|bus|cyclist|runner|plane|jet|boat|ship|bike|bicycle|motorcycle|scooter|van|jogger|walker|hiker|swimmer|drone)s?\b/g) || [])
         .map(function(w){ return w.replace(/s$/, ""); }).filter(function(w, i, all){ return all.indexOf(w) === i; });
-      if (/\bcatch(es)? up\b/.test(L)){
+      if (catchUp){
         var head = A.use.filter(function(t){ return t.k === "dur" && /^\s*later\b/.test(t.after); })[0] || ns.filter(function(t){ return !speed(t) && /^\s*hours?\s+later\b/.test(t.after); })[0];
         if (!head) return null;
         var mp = P("motion", "catchup", { a:sp[0].v, b:sp[1].v, c:head.k === "dur" ? dvd(head.v, R60) : head.v });
@@ -3832,7 +3839,7 @@
   function classify(A){
     var u = A.use, cnt = function(k){ return u.filter(function(t){ return t.k === k; }).length; }, nums = u.filter(function(t){ return t.k === "n" || t.k === "$"; }).length;
     var Q = A.Q, L = A.L, tries = [];
-    if (ALGCUE.test(L) || oppositeWays(L)) tries.push("algebra");
+    if (ALGCUE.test(L) || oppositeWays(L) || catchingUp(L)) tries.push("algebra");
     if (cnt("t") >= 1 && cnt("t") + cnt("dur") >= 2 && /\b(what time|when|how long|how many (minutes|hours)|how much time)\b/.test(Q)) tries.push("time");
     if (cnt("%")) tries.push("percent");
     if (u.some(function(t){ return t.k === "f" && t.fn && (/^\s*of\b/.test(t.after) || /\bof (?:the |all )?\d+\b[^.?!]*,?\s*$/.test(t.before)); })) tries.push("fraction");
