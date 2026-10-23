@@ -2704,7 +2704,9 @@
             return chain.then(function(){
               var link = pr.page + "?" + withPractice(pr.params, "all");
               return load(link).then(function(f3){
-                var text = answerText(docOf(f3), true), want = tokens(String(pr.answer || "")), got = tokens(text);
+                // a negative power in the daily answer is written with superscripts (10⁻⁶); read it as the helper's ^−6
+                var ans = String(pr.answer || "").replace(/⁻([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, function(m, e){ return "^-" + e.split("").map(function(c){ return SUPS[c]; }).join(""); });
+                var text = answerText(docOf(f3), true), want = tokens(ans), got = tokens(text);
                 drop(f3);
                 var miss = want.filter(function(x){ return !x.base && !has(got, x.exact && !x.approx ? { exact:x.exact } : { f:x.f, loose:0.002 }); });
                 var sq = function(x){ return String(x).replace(/[\s|]/g, "").replace(/[−–]/g, "-").toLowerCase(); };

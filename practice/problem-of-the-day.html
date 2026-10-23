@@ -28,6 +28,7 @@
     --warm:#9A5410; --warm-bg:#F6E5D2;
     --focus:#4338CA;
     --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --fla:#C2410C; --pro:#A21CAF; --exp:#BE185D; --gra:#0369A1;
+    --num:#EA580C; --qua:#B91C1C; --log:#1D4ED8; --seq:#15803D; --tri:#4D7C0F; --cal:#7C3AED;
     --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
     --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
     --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
@@ -42,6 +43,7 @@
       --warm:#E8A45C; --warm-bg:#37270F;
       --focus:#A5B4FC;
       --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF; --gra:#7DD3FC;
+      --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --tri:#BEF264; --cal:#C4B5FD;
       --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
       --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
     }
@@ -53,6 +55,7 @@
     --warm:#E8A45C; --warm-bg:#37270F;
     --focus:#A5B4FC;
     --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --fla:#FB923C; --pro:#F0ABFC; --exp:#FDA4AF; --gra:#7DD3FC;
+    --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --tri:#BEF264; --cal:#C4B5FD;
     --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
     --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
   }
@@ -322,7 +325,8 @@
      number), so a week mixes five different helpers and every helper comes up once per round. Weekends do the same
      with the topics that have weekend:true. A round never starts with the topic the last round ended on.
 
-   ADDING A TOPIC: add an entry to TOPICS below (probability and exponents were added this way from 2026-10-26, graphing from 2026-11-02):
+   ADDING A TOPIC: add an entry to TOPICS below (probability and exponents were added this way from 2026-10-26, graphing from 2026-11-02,
+   and number sense, quadratics, logarithms, sequences, trigonometry and calculus from 2026-11-09; number sense is weekdays only):
        { id:"probability", page:"probability.html", name:"Probability", title:"…", c:"pro",     // c: a color token (--pro)
          weekday:true, weekend:true, from:"2026-11-02",
          make:function(r, L){ … return Q([["mode", "…"], ["q", "…"]], "the problem as text", "the answer"); } }
@@ -450,6 +454,7 @@
   function names(r){ var a = pick(r, NAMES), b; do { b = pick(r, NAMES); } while (b === a); return [a, b]; }
   var UNITS = ["cm", "m", "in", "ft"];
   var NEW_FROM = "2026-10-26";     // probability, exponents and the algebra stories join the rotation on this Monday
+  var MORE_FROM = "2026-11-09";    // and number sense, quadratics, logarithms, sequences, trigonometry and calculus on this one
 
   /* ===================== the topics =====================
      make(r, L) → Q(params, text, answer). See "ADDING A TOPIC" at the top. */
@@ -876,7 +881,19 @@
     { id:"exponents", page:"exponents.html", name:"Exponents", title:"The Power Tower", c:"exp", weekday:true, weekend:true, from:NEW_FROM,
       make:function(r, L){ return exponents(r, L); } },
     { id:"graphing", page:"graphing.html", name:"Graphing", title:"The Graph Paper", c:"gra", weekday:true, weekend:true, from:"2026-11-02",
-      make:function(r, L){ return graphing(r, L); } }
+      make:function(r, L){ return graphing(r, L); } },
+    { id:"numbersense", page:"number-sense.html", name:"Number sense", title:"The Place Value Chart", c:"num", weekday:true, weekend:false, from:MORE_FROM,
+      make:function(r, L){ return numberSense(r, L); } },
+    { id:"quadratics", page:"quadratics.html", name:"Quadratics", title:"The Area Box", c:"qua", weekday:true, weekend:true, from:MORE_FROM,
+      make:function(r, L){ return quadratics(r, L); } },
+    { id:"logarithms", page:"logarithms.html", name:"Logarithms", title:"The Log Ladder", c:"log", weekday:true, weekend:true, from:MORE_FROM,
+      make:function(r, L){ return logarithms(r, L); } },
+    { id:"sequences", page:"sequences.html", name:"Sequences", title:"The Number Staircase", c:"seq", weekday:true, weekend:true, from:MORE_FROM,
+      make:function(r, L){ return sequences(r, L); } },
+    { id:"trigonometry", page:"trigonometry.html", name:"Trigonometry", title:"The Unit Circle", c:"tri", weekday:true, weekend:true, from:MORE_FROM,
+      make:function(r, L){ return trigonometry(r, L); } },
+    { id:"calculus", page:"calculus.html", name:"Calculus", title:"The Rate Machine", c:"cal", weekday:true, weekend:true, from:MORE_FROM,
+      make:function(r, L){ return calculus(r, L); } }
   ];
   var BY = {};
   TOPICS.forEach(function(t){ BY[t.id] = t; BY[t.page] = t; });
@@ -1341,6 +1358,519 @@
     return Q([["mode", "scatter"], ["data", ptsA(data)], ["px", pxv]],
       "Make a scatter plot of " + data.map(P2).join(" ") + ", describe the association and predict y when x = " + pxv + ".",
       (rr >= 0.7 ? "strong " : "weak ") + (sm > 0 ? "positive" : "negative") + "; y ≈ " + M(sm * pxv + bb) + " when x = " + pxv);
+  }
+
+  /* ===== the topics from MORE_FROM. Each answer is written the way its helper writes it (its answer box), part by part
+     in the helper's order, so the answer key and the helper agree. ===== */
+  var SUBD = "₀₁₂₃₄₅₆₇₈₉";
+  function subS(n){ return String(n).replace(/\d/g, function(c){ return SUBD.charAt(+c); }); }
+  function ordN(n){ var v = n % 100; return n + (v >= 11 && v <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] || "th"); }
+  // a polynomial from its coefficients, highest power first: [2, -3, 0, 1] → 2x³ − 3x² + 1 (ascii: 2x^3-3x^2+1)
+  function poly(cs, ascii, v){
+    var n = cs.length - 1; v = v || "x";
+    return lin(cs.map(function(c, i){ var e = n - i; return [c, e === 0 ? "" : e === 1 ? v : v + (ascii ? "^" + e : sup(e))]; }), ascii);
+  }
+  function xp(c, ascii){ return lin([[1, "x"], [c, ""]], ascii); }                          // x + c
+  function at(cs, x){ return cs.reduce(function(s, c){ return s * x + c; }, 0); }           // the polynomial's value at x
+  function Dp(cs){ var n = cs.length - 1; return cs.slice(0, -1).map(function(c, i){ return c * (n - i); }); }   // its derivative
+  function notCents(v){ var c = v * 100, f = c - Math.floor(c); return Math.abs(f) > 1e-6 && Math.abs(f - 1) > 1e-6 && Math.abs(f - 0.5) > 1e-6; }
+  function dollars(v){ var c = Math.round(v * 100); return "$" + commas(String(Math.floor(c / 100))) + "." + ("0" + c % 100).slice(-2); }
+
+  /* ---- number sense (number-sense.html: round n, to · place n, task · compare nums · estimate op, a, b · time · money).
+     Weekdays only: the weekend puzzles are for the topics that take a few steps. ---- */
+  function nsN(v){ return commas(String(v)); }                  // the Place Value Chart writes 3,405 and 12,690
+  function clock(m, ascii){                                     // minutes after midnight → 2:45 p.m. (a link: 2:45pm)
+    var h = Math.floor(m / 60) % 24, pm = h >= 12;
+    return (h % 12 || 12) + ":" + p2(m % 60) + (ascii ? (pm ? "pm" : "am") : (pm ? " p.m." : " a.m."));
+  }
+  function hm(d){ var h = Math.floor(d / 60), m = d % 60; return [h ? plural(h, "hour", "hours") : "", m ? plural(m, "minute", "minutes") : ""].filter(Boolean).join(" "); }
+  function numberSense(r, L){
+    var n, k, v, a, b;
+    if (L <= 1){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        var to = pick(r, [["ten", 10], ["hundred", 100], ["thousand", 1000]]);
+        do { n = ri(r, 1050, 98950); } while (n % to[1] === 0 || n % to[1] * 2 === to[1]);
+        return Q([["mode", "round"], ["n", n], ["to", to[0]]], "Round " + nsN(n) + " to the nearest " + to[0] + ".", nsN(Math.round(n / to[1]) * to[1]));
+      }
+      if (k === 1){
+        var ds, at1;
+        do { n = ri(r, 10000, 99999); at1 = ri(r, 1, 4); ds = String(n); v = +ds.charAt(4 - at1); } while (!v || ds.split(String(v)).length !== 2);
+        return Q([["mode", "place"], ["n", n], ["task", "value"], ["at", at1]], "What is the value of the " + v + " in " + nsN(n) + "?", nsN(v * Math.pow(10, at1)));
+      }
+      if (k === 2){
+        var w = ri(r, 0, 9), x = ri(r, 1, 9), y, sw = chance(r, .5);
+        do { y = x * 10 + nz(r, -9, 9); } while (y < 1 || y > 99 || y % 10 === 0);
+        var A = w + "." + x, B = w + "." + p2(y), first = sw ? B : A, second = sw ? A : B;
+        return Q([["mode", "compare"], ["nums", first + "," + second]], "Compare " + first + " and " + second + ". Use <, > or =.",
+          first + " " + ((sw ? y > x * 10 : x * 10 > y) ? ">" : "<") + " " + second);
+      }
+      var by = pick(r, [10, 100, 1000]), more = chance(r, .5);
+      do { n = ri(r, 10100, 98899); } while (Math.floor(n / by) % 10 !== (more ? 9 : 0));
+      return Q([["mode", "place"], ["n", n], ["task", "more"], ["by", more ? by : -by]],
+        "What is " + nsN(by) + (more ? " more" : " less") + " than " + nsN(n) + "?", nsN(more ? n + by : n - by));
+    }
+    if (L === 2){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        var tos = pick(r, [["whole", 1000, 0, "whole number"], ["tenth", 100, 1, "tenth"], ["hundredth", 10, 2, "hundredth"]]), N, s;
+        do { N = ri(r, 1001, 99999); } while (N % 10 === 0 || N % tos[1] * 2 === tos[1]);      // three decimal places, and no tie
+        s = String(Math.floor((N + tos[1] / 2) / tos[1]));
+        if (tos[2]){ while (s.length <= tos[2]) s = "0" + s; s = s.slice(0, -tos[2]) + "." + s.slice(-tos[2]); }   // keeps a last 0: 3.0
+        return Q([["mode", "round"], ["n", dec(N, 3)], ["to", tos[0]]], "Round " + dec(N, 3) + " to the nearest " + tos[3] + ".", s);
+      }
+      if (k === 1){
+        var dg;
+        do { n = ri(r, 10001, 99999); dg = String(n).split(""); } while (dg.indexOf("0") < 0);
+        var parts = [];
+        dg.forEach(function(c, i){ if (c !== "0") parts.push(nsN(+c * Math.pow(10, 4 - i))); });
+        return Q([["mode", "place"], ["n", n], ["task", "expanded"]], "Write " + nsN(n) + " in expanded form.", parts.join(" + "));
+      }
+      if (k === 2){
+        var sub = chance(r, .5), ra, rb;
+        do { a = ri(r, 120, 940); b = ri(r, 110, 940); ra = Math.round(a / 100) * 100; rb = Math.round(b / 100) * 100; }
+        while (a % 100 === 50 || b % 100 === 50 || a % 100 === 0 || b % 100 === 0 || (sub && ra <= rb));
+        return Q([["mode", "estimate"], ["op", sub ? "sub" : "add"], ["a", a], ["b", b], ["how", "nearest"]],
+          "Estimate " + a + (sub ? " − " : " + ") + b + " by rounding each number to its greatest place.", nsN(sub ? ra - rb : ra + rb));
+      }
+      var w2 = ri(r, 1, 12), vals;
+      do { vals = [0, 0, 0, 0].map(function(){ return chance(r, .5) ? ri(r, 1, 9) * 10 : ri(r, 1, 99); }); }
+      while (vals.some(function(z, i){ return vals.indexOf(z) !== i; }) || vals.every(function(z){ return z % 10 === 0; }) || vals.every(function(z){ return z % 10; }));
+      var strs = vals.map(function(z){ return dec(w2 * 100 + z, 2); });
+      return Q([["mode", "compare"], ["nums", strs.join(",")], ["order", "up"]], "Put these in order from least to greatest: " + strs.join(", ") + ".",
+        vals.slice().sort(function(p, q){ return p - q; }).map(function(z){ return dec(w2 * 100 + z, 2); }).join(", "));
+    }
+    k = ri(r, 0, 3);
+    if (k === 0){
+      do { a = ri(r, 110, 940); b = ri(r, 11, 94); } while (a % 100 === 50 || b % 10 === 5 || a % 100 === 0 || b % 10 === 0);
+      return Q([["mode", "estimate"], ["op", "mul"], ["a", a], ["b", b], ["how", "nearest"]],
+        "Estimate " + a + " × " + b + " by rounding each number to its greatest place.", nsN(Math.round(a / 100) * 100 * Math.round(b / 10) * 10));
+    }
+    if (k < 3){
+      var st = ri(r, 96, 191) * 5, du;                       // from 8:00 a.m. to 3:55 p.m.; 1 to 4 hours, not whole hours
+      do { du = ri(r, 13, 46) * 5; } while (du % 60 === 0);
+      if (k === 1) return Q([["mode", "time"], ["kind", "elapsed"], ["from", clock(st, true)], ["to", clock(st + du, true)]],
+        "How much time passes from " + clock(st) + " to " + clock(st + du) + "?", hm(du));
+      return Q([["mode", "time"], ["kind", "after"], ["from", clock(st, true)], ["d", du]], "What time is it " + hm(du) + " after " + clock(st) + "?", clock(st + du));
+    }
+    var pay = pick(r, [500, 1000, 2000]), cost;
+    do { cost = ri(r, pay / 5, pay - 100); } while (cost % 100 === 0);    // at least $1 back: the chart writes less as cents (35¢)
+    return Q([["mode", "money"], ["kind", "change"], ["cost", cost], ["pay", pay]],
+      "Something costs " + cents(cost) + ". You pay with a $" + pay / 100 + " bill. How much change do you get?", cents(pay - cost));
+  }
+
+  /* ---- quadratics (quadratics.html: expand ex · factor p · solve eq, how · vertex p · divide n, d, how) ---- */
+  function facts(p, q){       // (x + p)(x + q) in the Area Box's order: the smaller number first (by size; on a tie, the minus one)
+    if (Math.abs(q) < Math.abs(p) || (Math.abs(q) === Math.abs(p) && q < p)){ var t = p; p = q; q = t; }
+    return "(" + xp(p) + ")(" + xp(q) + ")";
+  }
+  function quadratics(r, L){
+    var p, q, a, h, k, kk, cs;
+    if (L <= 1){
+      p = nz(r, -9, 9);
+      if (chance(r, .25)) return Q([["mode", "expand"], ["ex", "(" + xp(p, true) + ")^2"]], "Expand (" + xp(p) + ")².", poly([1, 2 * p, p * p]));
+      q = nz(r, -9, 9);
+      return Q([["mode", "expand"], ["ex", "(" + xp(p, true) + ")(" + xp(q, true) + ")"]], "Expand (" + xp(p) + ")(" + xp(q) + ").", poly([1, p + q, p * q]));
+    }
+    if (L === 2){
+      do { p = nz(r, -9, 9); q = nz(r, -9, 9); } while (p === q || Math.abs(p * q) > 60);
+      cs = [1, p + q, p * q];
+      if (chance(r, .5)) return Q([["mode", "factor"], ["p", poly(cs, true)]], "Factor " + poly(cs) + ".", facts(p, q));
+      return Q([["mode", "solve"], ["eq", poly(cs, true) + "=0"], ["how", "factor"]], "Solve " + poly(cs) + " = 0 by factoring.",
+        "x = " + M(Math.min(-p, -q)) + " or x = " + M(Math.max(-p, -q)));
+    }
+    if (L === 3){
+      kk = ri(r, 0, 2);
+      if (kk === 0){
+        var m, s;
+        do { m = nz(r, -9, 9); s = nz(r, -6, 6); } while (m % 2 === 0);
+        cs = [2, -(m + 2 * s), m * s];                          // (2x − m)(x − s): the roots m/2 and s
+        var rs = [F(m, 2), F(s, 1)].sort(function(u, w){ return u.n * w.d - w.n * u.d; });
+        return Q([["mode", "solve"], ["eq", poly(cs, true) + "=0"], ["how", "factor"]], "Solve " + poly(cs) + " = 0 by factoring.", "x = " + fS(rs[0]) + " or x = " + fS(rs[1]));
+      }
+      if (kk === 1){
+        a = pick(r, [1, -1, 2, -2, 3]); h = nz(r, -5, 5); k = nz(r, -9, 9);
+        cs = [a, -2 * a * h, a * h * h + k];
+        return Q([["mode", "vertex"], ["p", poly(cs, true)]], "Find the vertex of y = " + poly(cs) + " and write it in vertex form.",
+          "y = " + (a === 1 ? "" : a === -1 ? "−" : M(a)) + "(" + xp(-h) + ")² " + (k < 0 ? "− " : "+ ") + Math.abs(k) + "; vertex " + P2([h, k]) + "; axis x = " + M(h));
+      }
+      do { p = nz(r, -6, 6); q = nz(r, -6, 6); } while (p === q);
+      a = ri(r, 2, 5); cs = [a, a * (p + q), a * p * q];
+      return Q([["mode", "factor"], ["p", poly(cs, true)]], "Factor completely: " + poly(cs) + ".", a + facts(p, q));
+    }
+    kk = ri(r, 0, 2);
+    if (kk === 0){
+      h = nz(r, -6, 6);
+      var d = pick(r, [2, 3, 5, 6, 7, 10, 11]), sq = Math.sqrt(d);
+      cs = [1, -2 * h, h * h - d];
+      return Q([["mode", "solve"], ["eq", poly(cs, true) + "=0"], ["how", "square"]], "Solve " + poly(cs) + " = 0 by completing the square.",
+        "x = " + M(h) + " ± √" + d + " (x ≈ " + M((h + sq).toFixed(3)) + " or x ≈ " + M((h - sq).toFixed(3)) + ")");
+    }
+    if (kk === 1){
+      a = pick(r, [1, 1, 2, 3]);
+      do { p = nz(r, -6, 6); q = nz(r, -6, 6); } while (p === q);
+      cs = [a, a * (p + q), a * p * q, 0];
+      return Q([["mode", "factor"], ["p", poly(cs, true)]], "Factor completely: " + poly(cs) + ".", (a === 1 ? "" : a) + "x" + facts(p, q));
+    }
+    var dv = nz(r, -4, 4), qs;
+    cs = [ri(r, 1, 3), ri(r, -6, 6), ri(r, -9, 9), ri(r, -12, 12)]; qs = [cs[0]];
+    for (var i = 1; i < 4; i++) qs.push(cs[i] + qs[i - 1] * dv);
+    var rem = qs.pop();
+    return Q([["mode", "divide"], ["n", poly(cs, true)], ["d", xp(-dv, true)], ["how", "synth"]],
+      "Divide (" + poly(cs) + ") ÷ (" + xp(-dv) + ") using synthetic division.", "quotient " + poly(qs) + ", remainder " + M(rem));
+  }
+
+  /* ---- logarithms (logarithms.html: meaning task, b, a / e, v · expeq eq · logeq eq · growth kind, …) ---- */
+  function logS(b){ return b === 10 ? "log" : "log" + subS(b); }               // log₂ (shown), log_2 (a link)
+  function logA(b){ return b === 10 ? "log" : "log_" + b; }
+  function powA(p, q){ var e = lin([[p, "x"], [q, ""]], true); return e === "x" ? "^x" : "^(" + e + ")"; }
+  function powS(p, q){ var e = lin([[p, "x"], [q, ""]]); return e === "x" ? "^x" : "^(" + e + ")"; }
+  var COMPOUND = { 1:"once a year", 2:"twice a year", 4:"quarterly", 12:"monthly" };
+  function logarithms(r, L){
+    var b, e, a, k, x0, m, p, q;
+    if (L <= 1){
+      k = ri(r, 0, 2);
+      b = pick(r, [2, 3, 4, 5, 6, 7, 10]); e = ri(r, 2, b === 2 ? 7 : b < 6 ? 4 : 3); a = Math.pow(b, e);
+      if (k === 0) return Q([["mode", "meaning"], ["task", "eval"], ["b", b], ["a", a]], "Evaluate " + logS(b) + " " + a + ".", String(e));
+      if (k === 1) return Q([["mode", "meaning"], ["task", "tolog"], ["b", b], ["e", e], ["v", a]], "Write " + b + sup(e) + " = " + a + " as a logarithm.", logS(b) + " " + a + " = " + e);
+      return Q([["mode", "meaning"], ["task", "toexp"], ["b", b], ["e", e], ["v", a]], "Write " + logS(b) + " " + a + " = " + e + " as a power.", b + sup(e) + " = " + a);
+    }
+    if (L === 2){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        if (chance(r, .25)){ e = ri(r, 1, 4); return Q([["mode", "meaning"], ["task", "eval"], ["b", 10], ["a", dec(1, e)]], "Evaluate log " + dec(1, e) + ".", M(-e)); }
+        b = pick(r, [2, 3, 4, 5]); e = ri(r, 1, b === 2 ? 6 : 3); a = Math.pow(b, e);
+        return Q([["mode", "meaning"], ["task", "eval"], ["b", b], ["a", "1/" + a]], "Evaluate " + logS(b) + " (1/" + a + ").", M(-e));
+      }
+      if (k === 1){
+        var mb = pick(r, [2, 3, 5, 10]), ke = pick(r, mb === 2 ? [1, 3, 5, 7] : [1, 3]);
+        b = mb * mb; a = Math.pow(mb, ke);
+        return Q([["mode", "meaning"], ["task", "eval"], ["b", b], ["a", a]], "Evaluate " + logS(b) + " " + a + ".", ke + "/2 = " + dec(ke * 5, 1));
+      }
+      do { b = pick(r, [2, 3, 5]); p = ri(r, 1, 3); x0 = ri(r, -2, 5); m = ri(r, 1, b === 2 ? 7 : b === 3 ? 4 : 3); q = m - p * x0; } while (Math.abs(q) > 12);
+      return Q([["mode", "expeq"], ["eq", b + powA(p, q) + "=" + Math.pow(b, m)]], "Solve " + b + powS(p, q) + " = " + Math.pow(b, m) + ".", "x = " + M(x0));
+    }
+    if (L === 3){
+      if (chance(r, .5)){
+        // two powers of one number: (s^i)^(x + p) = (s^j)^(x + q)
+        var sij = pick(r, [[2, 2, 3], [2, 3, 2], [3, 2, 3], [3, 3, 2], [2, 1, 3], [2, 3, 1], [2, 2, 1], [3, 1, 2], [3, 2, 1], [5, 2, 3], [5, 3, 2], [2, 4, 3], [2, 3, 4]]);
+        var i = sij[1], j = sij[2], g = gcd(i, j), u;
+        do { x0 = ri(r, -4, 6); u = ri(r, -3, 3); p = j / g * u - x0; q = i / g * u - x0; } while (Math.abs(p) > 6 || Math.abs(q) > 6 || p === q);
+        var B1 = Math.pow(sij[0], i), B2 = Math.pow(sij[0], j);
+        return Q([["mode", "expeq"], ["eq", B1 + powA(1, p) + "=" + B2 + powA(1, q)]], "Solve " + B1 + powS(1, p) + " = " + B2 + powS(1, q) + ".", "x = " + M(x0));
+      }
+      b = pick(r, [2, 3, 5, 10]); m = ri(r, 1, b === 2 ? 6 : b === 10 ? 2 : 3); p = ri(r, 1, 3);
+      var bm = Math.pow(b, m);
+      do { x0 = ri(r, 1, Math.floor(bm / p) + 3); q = bm - p * x0; } while (q === 0 || Math.abs(q) > 40);
+      return Q([["mode", "logeq"], ["eq", logA(b) + "(" + lin([[p, "x"], [q, ""]], true) + ")=" + m]], "Solve " + logS(b) + "(" + lin([[p, "x"], [q, ""]]) + ") = " + m + ".", "x = " + x0);
+    }
+    k = ri(r, 0, 3);
+    if (k === 0){
+      // log x + log(x ∓ a) = m: x(x ∓ a) = b^m; the other root is negative, so it doesn't count
+      b = pick(r, [2, 3, 10]); m = b === 2 ? ri(r, 2, 6) : b === 3 ? ri(r, 1, 4) : ri(r, 1, 2);
+      var bm2 = Math.pow(b, m), prs = [];
+      for (var y = 1; y * y < bm2; y++) if (bm2 % y === 0) prs.push([bm2 / y, y]);
+      var pr = pick(r, prs), minus = chance(r, .5), da = pr[0] - pr[1];
+      return Q([["mode", "logeq"], ["eq", logA(b) + "(x)+" + logA(b) + "(x" + (minus ? "-" : "+") + da + ")=" + m]],
+        "Solve " + logS(b) + " x + " + logS(b) + "(x " + (minus ? "−" : "+") + " " + da + ") = " + m + ".", "x = " + (minus ? pr[0] : pr[1]));
+    }
+    if (k === 1){
+      var hl = pick(r, [2, 3, 4, 5, 6, 8, 10, 12]), nh = ri(r, 2, 5), left = pick(r, [3, 5, 6, 7, 9, 10, 12, 15, 20, 25]), un = pick(r, ["years", "days", "hours"]);
+      a = left * Math.pow(2, nh);
+      return Q([["mode", "growth"], ["kind", "half"], ["h", hl], ["unit", un], ["find", "amt"], ["a0", a], ["t", hl * nh]],
+        "A substance has a half-life of " + hl + " " + un + ". How much of " + an(a) + " " + a + "-gram sample is left after " + hl * nh + " " + un + "?", "A = " + left + " grams");
+    }
+    if (k === 2){
+      var dt, nd, a0, un2 = pick(r, ["hours", "minutes", "days"]);
+      do { dt = pick(r, [2, 3, 4, 5, 6, 10, 20, 30]); nd = ri(r, 3, 6); a0 = pick(r, [10, 20, 25, 50, 100, 150, 200, 300]); } while (a0 * Math.pow(2, nd) >= 10000);
+      return Q([["mode", "growth"], ["kind", "double"], ["d", dt], ["unit", un2], ["find", "amt"], ["a0", a0], ["t", dt * nd]],
+        "A colony of " + a0 + " bacteria doubles every " + dt + " " + un2 + ". How many bacteria are there after " + dt * nd + " " + un2 + "?", "A = " + a0 * Math.pow(2, nd) + " bacteria");
+    }
+    var P0, rt, nn, yrs, Am;
+    do { P0 = pick(r, [500, 1000, 1500, 2000, 2500, 3000, 5000]); rt = ri(r, 2, 8); nn = pick(r, [1, 2, 4, 12]); yrs = ri(r, 2, 10); Am = P0 * Math.pow(1 + rt / 100 / nn, nn * yrs); }
+    while (!notCents(Am));                                  // never a whole number of cents (or a tie): the amount is "≈"
+    return Q([["mode", "growth"], ["kind", "compound"], ["p", P0], ["r", rt], ["n", nn], ["t", yrs]],
+      "$" + commas(String(P0)) + " is saved at " + rt + "% interest, compounded " + COMPOUND[nn] + ", for " + yrs + " years. How much is it worth then?", "A ≈ " + dollars(Am));
+  }
+
+  /* ---- sequences (sequences.html: arith / geom task, a1, d or r, … · sum task, … · apply kind, …) ---- */
+  function seqN(v){ return Math.abs(v) >= 10000 ? M(commas(String(v))) : M(v); }       // the Number Staircase writes 5050 but 12,690
+  function terms(a1, step, geo, k){ var t = [], v = a1; for (var i = 0; i < k; i++){ t.push(v); v = geo ? v * step : v + step; } return t; }
+  function seqList(t){ return t.map(M).join(", ") + ", …"; }
+  function sequences(r, L){
+    var a1, d, n, k, rr, i, j;
+    if (L <= 1){
+      if (chance(r, .6)){
+        a1 = ri(r, -10, 20); d = nz(r, -6, 9); n = ri(r, 8, 30);
+        return Q([["mode", "arith"], ["task", "term"], ["a1", a1], ["d", d], ["n", n]], "Find the " + ordN(n) + " term of the arithmetic sequence " + seqList(terms(a1, d, false, 4)), seqN(a1 + (n - 1) * d));
+      }
+      do { a1 = ri(r, 1, 6); rr = pick(r, [2, 3]); n = ri(r, 5, 8); } while (a1 * Math.pow(rr, n - 1) >= 10000);
+      return Q([["mode", "geom"], ["task", "term"], ["a1", a1], ["r", rr], ["n", n]], "Find the " + ordN(n) + " term of the geometric sequence " + seqList(terms(a1, rr, true, 4)), seqN(a1 * Math.pow(rr, n - 1)));
+    }
+    if (L === 2){
+      k = ri(r, 0, 2);
+      a1 = ri(r, -8, 20); d = nz(r, -7, 9);
+      if (k === 0) return Q([["mode", "arith"], ["task", "rule"], ["a1", a1], ["d", d]], "Find the common difference and a rule for the nth term of " + seqList(terms(a1, d, false, 4)),
+        "aₙ = " + lin([[d, "n"], [a1 - d, ""]]) + ", d = " + M(d));
+      if (k === 1){
+        d = Math.abs(d); n = ri(r, 12, 60);
+        var v = a1 + (n - 1) * d;
+        return Q([["mode", "arith"], ["task", "which"], ["a1", a1], ["d", d], ["v", v]], "Is " + M(v) + " a term of " + seqList(terms(a1, d, false, 4)) + "? If it is, which term?", "Yes — it’s a" + subS(n));
+      }
+      do { a1 = ri(r, 1, 6) * (chance(r, .3) ? -1 : 1); rr = pick(r, [-2, -3]); n = ri(r, 5, 8); } while (Math.abs(a1 * Math.pow(rr, n - 1)) >= 10000);
+      return Q([["mode", "geom"], ["task", "term"], ["a1", a1], ["r", rr], ["n", n]], "Find the " + ordN(n) + " term of the geometric sequence " + seqList(terms(a1, rr, true, 4)), seqN(a1 * Math.pow(rr, n - 1)));
+    }
+    if (L === 3){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        a1 = ri(r, -10, 15); d = nz(r, -6, 8); i = ri(r, 2, 5); j = i + ri(r, 2, 6);
+        var ai = a1 + (i - 1) * d, aj = a1 + (j - 1) * d;
+        return Q([["mode", "arith"], ["task", "two"], ["i", i], ["ai", ai], ["j", j], ["aj", aj]],
+          "In an arithmetic sequence, a" + subS(i) + " = " + M(ai) + " and a" + subS(j) + " = " + M(aj) + ". Find a₁ and d.", "a₁ = " + M(a1) + ", d = " + M(d));
+      }
+      if (k === 1){
+        a1 = ri(r, 1, 15); d = ri(r, 2, 9); n = ri(r, 10, 60);
+        return Q([["mode", "sum"], ["task", "arith"], ["a1", a1], ["d", d], ["n", n]], "Find the sum of the first " + n + " terms of " + seqList(terms(a1, d, false, 4)), seqN(n * (2 * a1 + (n - 1) * d) / 2));
+      }
+      if (k === 2){
+        do { a1 = ri(r, 1, 6); rr = pick(r, [2, 3, 4]); n = ri(r, 5, 9); } while (a1 * (Math.pow(rr, n) - 1) / (rr - 1) >= 100000);
+        return Q([["mode", "sum"], ["task", "geom"], ["a1", a1], ["r", rr], ["n", n]], "Find the sum of the first " + n + " terms of " + terms(a1, rr, true, 4).join(" + ") + " + …",
+          seqN(a1 * (Math.pow(rr, n) - 1) / (rr - 1)));
+      }
+      var ca = nz(r, -4, 6), cb = ri(r, -6, 6), hi = ri(r, 5, 15), sum = 0;
+      for (i = 1; i <= hi; i++) sum += ca * i + cb;
+      return Q([["mode", "sum"], ["task", "sigma"], ["f", lin([[ca, "k"], [cb, ""]], true)], ["lo", 1], ["hi", hi]],
+        "Evaluate the sum Σ (" + lin([[ca, "k"], [cb, ""]]) + ") for k = 1 to " + hi + ".", seqN(sum));
+    }
+    k = ri(r, 0, 4);
+    if (k === 0){
+      a1 = ri(r, 12, 30); d = ri(r, 1, 4); n = ri(r, 10, 25);
+      return Q([["mode", "apply"], ["kind", "seats"], ["a", a1], ["d", d], ["n", n]],
+        "A theater’s first row has " + a1 + " seats, and each row has " + d + " more than the row in front of it. There are " + n + " rows. How many seats are in the last row, and how many in all?",
+        (a1 + (n - 1) * d) + " seats in the last row, " + seqN(n * (2 * a1 + (n - 1) * d) / 2) + " seats in all");
+    }
+    if (k === 1){
+      var fr = pick(r, [[1, 2], [3, 4], [2, 3]]), un = pick(r, ["feet", "meters"]), hh, nb;
+      if (chance(r, .5)){
+        do { hh = pick(r, [8, 16, 24, 27, 32, 48, 54, 64, 81, 96]); nb = ri(r, 2, 4); } while (hh * Math.pow(fr[0], nb) * 100 % Math.pow(fr[1], nb));
+        return Q([["mode", "apply"], ["kind", "bounce"], ["h", hh], ["f", fr[0] + "/" + fr[1]], ["ask", "height"], ["n", nb], ["unit", un]],
+          "A ball is dropped from " + hh + " " + un + ". Each bounce goes " + fr[0] + "/" + fr[1] + " as high as the one before. How high does it go on the " + ordN(nb) + " bounce?",
+          dec(hh * Math.pow(fr[0], nb) * 100 / Math.pow(fr[1], nb), 2) + " " + un);
+      }
+      hh = pick(r, [6, 8, 10, 12, 15, 16, 20, 24, 30]);
+      return Q([["mode", "apply"], ["kind", "bounce"], ["h", hh], ["f", fr[0] + "/" + fr[1]], ["ask", "total"], ["unit", un]],
+        "A ball is dropped from " + hh + " " + un + ". Each bounce goes " + fr[0] + "/" + fr[1] + " as high as the one before. If it keeps bouncing, how far does it travel in all, up and down?",
+        seqN(hh * (fr[1] + fr[0]) / (fr[1] - fr[0])) + " " + un);
+    }
+    if (k === 2){
+      var sal, rp, yr, pay;
+      do { sal = pick(r, [30000, 32000, 35000, 40000, 42000, 45000, 50000]); rp = ri(r, 2, 5); yr = ri(r, 3, 8); pay = sal * Math.pow(1 + rp / 100, yr - 1); } while (!notCents(pay));
+      return Q([["mode", "apply"], ["kind", "salary"], ["s", sal], ["p", rp], ["n", yr], ["ask", "year"]],
+        "A job pays $" + commas(String(sal)) + " in the first year, with a " + rp + "% raise every year. What does it pay in year " + yr + "?", dollars(pay));
+    }
+    if (k === 3){
+      var p0, ev, nd, un3 = pick(r, ["hour", "day"]), what = un3 === "hour" ? "bacteria" : "cells";      // unit: the page reads hour, day (not hours)
+      do { p0 = pick(r, [20, 25, 40, 50, 75, 100, 150, 200]); ev = pick(r, [2, 3, 4, 5, 6]); nd = ri(r, 3, 6); } while (p0 * Math.pow(2, nd) >= 10000);
+      return Q([["mode", "apply"], ["kind", "pop"], ["p0", p0], ["every", ev], ["time", ev * nd], ["unit", un3], ["what", what]],
+        "A dish starts with " + p0 + " " + what + ", and the number doubles every " + ev + " " + un3 + "s. How many are there after " + ev * nd + " " + un3 + "s?", p0 * Math.pow(2, nd) + " " + what);
+    }
+    var opt = pick(r, [[1, 2, [8, 16, 24, 32, 40, 48, 64, 80]], [1, 3, [54, 108]], [2, 3, [27, 54, 81]], [3, 4, [64, 128]], [1, 4, [192]]]), A1 = pick(r, opt[2]), ts = [];
+    for (i = 0; i < 4; i++) ts.push(A1 * Math.pow(opt[0], i) / Math.pow(opt[1], i));
+    return Q([["mode", "sum"], ["task", "inf"], ["a1", A1], ["r", opt[0] + "/" + opt[1]]], "Find the sum of the infinite geometric series " + ts.join(" + ") + " + …", seqN(A1 * opt[1] / (opt[1] - opt[0])));
+  }
+
+  /* ---- trigonometry (trigonometry.html: special f, a, u · circle task, … · right find, … · identities task, … · graph · laws) ---- */
+  var TRIG = { sin:{ 30:"1/2", 45:"√2/2", 60:"√3/2" }, cos:{ 30:"√3/2", 45:"√2/2", 60:"1/2" }, tan:{ 30:"√3/3", 45:"1", 60:"√3" } };
+  var TRIG_DEC = { "1/2":"= 0.5", "√2/2":"≈ 0.707", "√3/2":"≈ 0.866", "√3/3":"≈ 0.577", "√3":"≈ 1.732", "1":"" };
+  var ROMAN = ["I", "II", "III", "IV"];
+  function quad(deg){ var d = ((deg % 360) + 360) % 360; return { d:d, q:d < 90 ? 1 : d < 180 ? 2 : d < 270 ? 3 : 4, ref:d < 90 ? d : d < 180 ? 180 - d : d < 270 ? d - 180 : 360 - d }; }
+  function trigVal(f, deg){                   // the exact value and its decimal, as the Unit Circle writes them: −√2/2 ≈ −0.707
+    var Qd = quad(deg), base = TRIG[f][Qd.ref], neg = f === "sin" ? Qd.q > 2 : f === "cos" ? Qd.q === 2 || Qd.q === 3 : Qd.q === 2 || Qd.q === 4, s = neg ? "−" : "";
+    return s + base + (TRIG_DEC[base] ? " " + TRIG_DEC[base].charAt(0) + " " + s + TRIG_DEC[base].slice(2) : "");
+  }
+  function piS(f, ascii){ var n = Math.abs(f.n); return (f.n < 0 ? (ascii ? "-" : "−") : "") + (n === 1 ? "" : n) + (ascii ? "pi" : "π") + (f.d === 1 ? "" : "/" + f.d); }
+  function radS(deg, ascii){ return piS(F(deg, 180), ascii); }
+  function fracDec(f){                        // −4/5 = −0.8 · 12/13 ≈ 0.923
+    var d = f.d; while (d % 2 === 0) d /= 2; while (d % 5 === 0) d /= 5;
+    return fS(f) + (d === 1 ? " = " + M(dec(f.n * 1000 / f.d, 3)) : " ≈ " + M((f.n / f.d).toFixed(3)));
+  }
+  var SUMS = { sin:{ 15:"(√6 − √2)/4 ≈ 0.259", 75:"(√6 + √2)/4 ≈ 0.966", 105:"(√6 + √2)/4 ≈ 0.966" },
+               cos:{ 15:"(√6 + √2)/4 ≈ 0.966", 75:"(√6 − √2)/4 ≈ 0.259", 105:"(√2 − √6)/4 ≈ −0.259" },
+               tan:{ 15:"2 − √3 ≈ 0.268", 75:"2 + √3 ≈ 3.732", 105:"−(2 + √3) ≈ −3.732" } };
+  var SIDE = { opp:"the side opposite the angle", adj:"the side next to the angle (not the hypotenuse)", hyp:"the hypotenuse" };
+  function trigonometry(r, L){
+    var f, a, k, rad, R = Math.PI / 180;
+    var D9 = [120, 135, 150, 210, 225, 240, 300, 315, 330];
+    if (L <= 1){
+      if (chance(r, .3)){
+        a = pick(r, [30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330]);
+        return Q([["mode", "circle"], ["task", "convert"], ["a", a], ["u", "deg"]], "Convert " + a + "° to radians.", radS(a));
+      }
+      f = pick(r, ["sin", "cos", "tan"]); a = pick(r, [30, 45, 60]); rad = chance(r, .3);
+      return Q([["mode", "special"], ["f", f], ["a", rad ? radS(a, true) : a], ["u", rad ? "rad" : "deg"]],
+        "Find the exact value of " + f + (rad ? "(" + radS(a) + ")" : " " + a + "°") + ".", trigVal(f, a));
+    }
+    if (L === 2){
+      k = ri(r, 0, 2);
+      if (k === 0){
+        f = pick(r, ["sin", "cos", "tan"]); a = pick(r, D9); rad = chance(r, .35);
+        return Q([["mode", "circle"], ["task", "value"], ["f", f], ["a", rad ? radS(a, true) : a], ["u", rad ? "rad" : "deg"]],
+          "Find the exact value of " + f + (rad ? "(" + radS(a) + ")" : " " + a + "°") + ".", trigVal(f, a));
+      }
+      if (k === 1){
+        a = pick(r, D9.concat([30, 45, 60]));
+        var th = a + 360 * pick(r, [-2, -1, 1, 2]), Qd = quad(th);
+        return Q([["mode", "circle"], ["task", "ref"], ["a", th], ["u", "deg"]], "For θ = " + M(th) + "°, find the coterminal angle from 0° to 360°, the quadrant and the reference angle.",
+          "coterminal " + Qd.d + "°, quadrant " + ROMAN[Qd.q - 1] + ", reference angle " + Qd.ref + "°");
+      }
+      a = pick(r, D9.concat([30, 45, 60, 90, 180, 270]));
+      return Q([["mode", "circle"], ["task", "convert"], ["a", radS(a, true)], ["u", "rad"]], "Convert " + radS(a) + " to degrees.", a + "°");
+    }
+    if (L === 3){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        // find a side from an angle (not a special one: those come out exact) and one side
+        var ang, side = ri(r, 4, 30), cs = pick(r, [["opp", "hyp"], ["adj", "hyp"], ["opp", "adj"], ["hyp", "adj"], ["hyp", "opp"], ["adj", "opp"]]), val;
+        do { ang = ri(r, 16, 74); } while (ang % 15 === 0);
+        var sn = Math.sin(ang * R), cn = Math.cos(ang * R), tn = Math.tan(ang * R);
+        val = { "opp|hyp":side * sn, "adj|hyp":side * cn, "opp|adj":side * tn, "hyp|adj":side / cn, "hyp|opp":side / sn, "adj|opp":side / tn }[cs.join("|")];
+        return Q([["mode", "right"], ["find", cs[0]], ["ang", ang], [cs[1], side]],
+          "In a right triangle, one angle is " + ang + "° and " + SIDE[cs[1]].replace("the angle", "it") + " is " + side + ". Find " + SIDE[cs[0]].replace("the angle", "it") + ".", "≈ " + val.toFixed(2));
+      }
+      if (k === 1){
+        var pp = pick(r, [["opp", "hyp"], ["adj", "hyp"], ["opp", "adj"]]), s1, s2, t;
+        do { s1 = ri(r, 3, 20); s2 = ri(r, 3, 25); } while (pp[1] === "hyp" ? s1 >= s2 || s1 * 2 === s2 : s1 === s2);
+        t = pp[1] === "adj" ? Math.atan(s1 / s2) : pp[0] === "opp" ? Math.asin(s1 / s2) : Math.acos(s1 / s2);
+        return Q([["mode", "right"], ["find", "angle"], [pp[0], s1], [pp[1], s2]],
+          "In a right triangle, " + SIDE[pp[0]].replace("the angle", "angle θ") + " is " + s1 + " and " + SIDE[pp[1]].replace("the angle", "θ") + " is " + s2 + ". Find θ.", "≈ " + (t / R).toFixed(1) + "°");
+      }
+      if (k === 2){
+        var tr = pick(r, [[3, 4, 5], [5, 12, 13], [8, 15, 17], [7, 24, 25]]), sw = chance(r, .5), giv = pick(r, ["sin", "cos"]), qd = ri(r, 1, 4);
+        var op = sw ? tr[1] : tr[0], ad = sw ? tr[0] : tr[1];
+        var sv = F((qd <= 2 ? 1 : -1) * op, tr[2]), cv = F((qd === 1 || qd === 4 ? 1 : -1) * ad, tr[2]), tv = F(sv.n * cv.d, sv.d * cv.n), gv = giv === "sin" ? sv : cv;
+        return Q([["mode", "identities"], ["task", "pyth"], ["f", giv], ["v", gv.n + "/" + gv.d], ["quad", qd]],
+          giv + " θ = " + fS(gv) + " and θ is in quadrant " + ROMAN[qd - 1] + ". Find " + (giv === "sin" ? "cos" : "sin") + " θ and tan θ exactly.",
+          (giv === "sin" ? "cos θ = " + fracDec(cv) : "sin θ = " + fracDec(sv)) + ", tan θ = " + fracDec(tv));
+      }
+      f = pick(r, ["sin", "cos"]);
+      var am = nz(r, -5, 5), bq = pick(r, [F(1, 1), F(2, 1), F(3, 1), F(4, 1), F(1, 2)]), hq = pick(r, [0, 0, 45, -45, 60, -60, 30, -30, 90]), kq = ri(r, -4, 4);
+      var bS = bq.d === 1 ? (bq.n === 1 ? "" : String(bq.n)) : "(1/2)", inner = hq ? (bS ? bS + "(x − " + radS(hq) + ")" : "x − " + radS(hq)) : bS + "x";
+      inner = inner.replace("− −", "+ ");
+      return Q([["mode", "graph"], ["task", "read"], ["f", f], ["amp", am], ["b", bq.d === 1 ? bq.n : "1/2"], ["h", hq ? radS(hq, true) : 0], ["k", kq], ["u", "rad"]],
+        "For y = " + (am === 1 ? "" : am === -1 ? "−" : M(am) + " ") + f + "(" + inner + ")" + (kq ? (kq < 0 ? " − " : " + ") + Math.abs(kq) : "") + ", find the amplitude, the period, the phase shift and the midline.",
+        "amplitude " + Math.abs(am) + ", period " + piS(F(2 * bq.d, bq.n)) + ", phase shift " + (hq ? radS(hq) + (hq > 0 ? " right" : " left") : "0") + ", midline y = " + M(kq));
+    }
+    k = ri(r, 0, 3);
+    if (k === 0){
+      // two sides and the angle between them (an angle with an irrational cosine, so c isn't a whole number)
+      var sa, sb, C;
+      do { sa = ri(r, 5, 15); sb = ri(r, 5, 15); C = ri(r, 25, 115); } while (sa === sb || C === 60 || C === 90);
+      var sc = Math.sqrt(sa * sa + sb * sb - 2 * sa * sb * Math.cos(C * R));
+      var small = Math.asin(Math.min(sa, sb) * Math.sin(C * R) / sc) / R, big = 180 - C - small;        // the smaller angle is acute
+      return Q([["mode", "laws"], ["a", sa], ["b", sb], ["C", C]], "In triangle ABC, a = " + sa + ", b = " + sb + " and C = " + C + "°. Find c and the other two angles.",
+        "A ≈ " + (sa < sb ? small : big).toFixed(1) + "°, B ≈ " + (sa < sb ? big : small).toFixed(1) + "°, c ≈ " + sc.toFixed(2));
+    }
+    if (k === 1){
+      var x, y, z, s16;
+      do { x = ri(r, 4, 14); y = ri(r, 4, 14); z = ri(r, 4, 14); s16 = (x + y + z) * (-x + y + z) * (x - y + z) * (x + y - z); }
+      while (s16 <= 0 || Math.pow(Math.round(Math.sqrt(s16)), 2) === s16);                     // a real triangle, and an area that isn't exact
+      return Q([["mode", "laws"], ["a", x], ["b", y], ["c", z], ["find", "area"]], "A triangle has sides " + x + ", " + y + " and " + z + ". Find its area.", "≈ " + (Math.sqrt(s16) / 4).toFixed(2));
+    }
+    if (k === 2){
+      var pr = pick(r, [[45, 30, "plus"], [30, 45, "plus"], [45, 30, "minus"], [60, 45, "minus"], [60, 45, "plus"], [45, 60, "plus"]]), tot = pr[2] === "plus" ? pr[0] + pr[1] : pr[0] - pr[1];
+      f = pick(r, ["sin", "cos", "tan"]);
+      return Q([["mode", "identities"], ["task", "sum"], ["f", f], ["x", pr[0]], ["y", pr[1]], ["op", pr[2]]],
+        "Find the exact value of " + f + " " + tot + "° by writing it as " + f + "(" + pr[0] + "° " + (pr[2] === "plus" ? "+" : "−") + " " + pr[1] + "°).", SUMS[f][tot]);
+    }
+    var ang2, len = pick(r, [10, 12, 14, 15, 16, 18, 20, 24, 25, 28, 30]), up = chance(r, .5);
+    do { ang2 = ri(r, 55, 80); } while (ang2 % 15 === 0);
+    return Q([["mode", "right"], ["story", "ladder"], ["find", up ? "opp" : "adj"], ["ang", ang2], ["hyp", len], ["unit", "ft"]],
+      "A " + len + " ft ladder leans against a wall, making a " + ang2 + "° angle with the ground. " + (up ? "How high up the wall does it reach?" : "How far is its foot from the wall?"),
+      "≈ " + (len * (up ? Math.sin(ang2 * R) : Math.cos(ang2 * R))).toFixed(2) + " ft");
+  }
+
+  /* ---- calculus (calculus.html: derivative f[, a] · limit f, a · tangent f, a · integral f[, a, b] · extrema f[, a, b] · rate task, …) ---- */
+  function cubicWith(r){          // a cubic whose f′ = 3s(x − r1)(x − r2), whole-number critical points r1 < r2
+    var r1, r2, s = chance(r, .7) ? 1 : -1;
+    do { r1 = ri(r, -5, 3); r2 = ri(r, r1 + 1, 5); } while ((r1 + r2) % 2);
+    return { cs:[s, -s * 3 * (r1 + r2) / 2, s * 3 * r1 * r2, ri(r, -5, 5)], r1:r1, r2:r2, s:s };
+  }
+  function calculus(r, L){
+    var cs, a, k, m, y0, cb;
+    if (L <= 1){
+      if (chance(r, .7)){
+        cs = chance(r, .35) ? [nz(r, -3, 3), 0, ri(r, -6, 6), ri(r, -9, 9), ri(r, -9, 9)] : [nz(r, -4, 5), ri(r, -8, 8), ri(r, -9, 9), ri(r, -9, 9)];
+        return Q([["mode", "derivative"], ["f", poly(cs, true)]], "Find f′(x) for f(x) = " + poly(cs) + ".", "f′(x) = " + poly(Dp(cs)));
+      }
+      cs = [1, ri(r, -6, 6), ri(r, -9, 9)]; a = ri(r, -4, 4);
+      return Q([["mode", "limit"], ["f", poly(cs, true)], ["a", a]], "Find the limit of " + poly(cs) + " as x → " + M(a) + ".", M(at(cs, a)));
+    }
+    if (L === 2){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        cs = [nz(r, -3, 3), ri(r, -6, 6), ri(r, -9, 9), ri(r, -9, 9)]; a = nz(r, -3, 3);
+        return Q([["mode", "derivative"], ["f", poly(cs, true)], ["a", a]], "Find f′(x) for f(x) = " + poly(cs) + ", and then f′(" + M(a) + ").",
+          "f′(x) = " + poly(Dp(cs)) + ", f′(" + M(a) + ") = " + M(at(Dp(cs), a)));
+      }
+      if (k === 1){
+        var p, q;
+        do { p = nz(r, -6, 6); q = nz(r, -6, 6); } while (p === q);
+        cs = [1, -(p + q), p * q];                                // (x − p)(x − q) over (x − p): p − q as x → p
+        return Q([["mode", "limit"], ["f", "(" + poly(cs, true) + ")/(" + xp(-p, true) + ")"], ["a", p]],
+          "Find the limit of (" + poly(cs) + ")/(" + xp(-p) + ") as x → " + M(p) + ".", M(p - q));
+      }
+      if (k === 2){
+        cs = [nz(r, -2, 3), ri(r, -6, 6), ri(r, -9, 9)]; a = ri(r, -3, 3);
+        m = at(Dp(cs), a); y0 = at(cs, a);
+        return Q([["mode", "tangent"], ["f", poly(cs, true)], ["a", a]], "Find the tangent line to f(x) = " + poly(cs) + " at x = " + M(a) + ".", "y = " + lin([[m, "x"], [y0 - m * a, ""]]));
+      }
+      cb = [nz(r, -3, 3), ri(r, -4, 4), ri(r, -9, 9)];          // the antiderivative's coefficients: whole numbers
+      return Q([["mode", "integral"], ["f", poly([3 * cb[0], 2 * cb[1], cb[2]], true)]], "Find ∫(" + poly([3 * cb[0], 2 * cb[1], cb[2]]) + ") dx.", poly(cb.concat([0])) + " + C");
+    }
+    if (L === 3){
+      k = ri(r, 0, 3);
+      if (k === 0){
+        cb = [ri(r, 0, 2), ri(r, -4, 4), ri(r, -6, 6), 0];
+        if (!cb[0] && !cb[1]) cb[1] = 1;
+        var lo = ri(r, -2, 2), hi = ri(r, lo + 1, 4), fc = [3 * cb[0], 2 * cb[1], cb[2]];
+        return Q([["mode", "integral"], ["f", poly(fc, true)], ["a", lo], ["b", hi]], "Evaluate the integral of " + poly(fc) + " from x = " + M(lo) + " to x = " + M(hi) + ".", M(at(cb, hi) - at(cb, lo)));
+      }
+      if (k === 1){
+        var c = cubicWith(r);
+        return Q([["mode", "extrema"], ["f", poly(c.cs, true)]], "Find where f(x) = " + poly(c.cs) + " has a local maximum and a local minimum.",
+          "local max at x = " + M(c.s > 0 ? c.r1 : c.r2) + ", local min at x = " + M(c.s > 0 ? c.r2 : c.r1));
+      }
+      if (k === 2){
+        var pa = ri(r, 1, 6), pd = ri(r, 1, 6), num = [pa, ri(r, -5, 5), ri(r, -9, 9)], den = [pd, ri(r, -4, 4), nz(r, -9, 9)];
+        return Q([["mode", "limit"], ["f", "(" + poly(num, true) + ")/(" + poly(den, true) + ")"], ["a", "inf"]],
+          "Find the limit of (" + poly(num) + ")/(" + poly(den) + ") as x → ∞.", fS(F(pa, pd)));
+      }
+      cs = [nz(r, -2, 2), ri(r, -5, 5), ri(r, -9, 9)];
+      var aa = ri(r, -3, 2), bb = aa + ri(r, 1, 4), cc = ri(r, aa, bb);
+      return Q([["mode", "rate"], ["task", "avg"], ["f", poly(cs, true)], ["a", aa], ["b", bb], ["c", cc]],
+        "For f(x) = " + poly(cs) + ", find the average rate of change on [" + M(aa) + ", " + M(bb) + "] and the instantaneous rate of change at x = " + M(cc) + ".",
+        "average rate " + M((at(cs, bb) - at(cs, aa)) / (bb - aa)) + "; instantaneous rate at x = " + M(cc) + ": " + M(at(Dp(cs), cc)));
+    }
+    k = ri(r, 0, 2);
+    if (k === 0){
+      var e = cubicWith(r), lo2 = e.r1 - ri(r, 0, 2), hi2 = e.r2 + ri(r, 0, 2);
+      var vs = [lo2, hi2, e.r1, e.r2].map(function(x){ return at(e.cs, x); });
+      return Q([["mode", "extrema"], ["f", poly(e.cs, true)], ["a", lo2], ["b", hi2]],
+        "Find the absolute maximum and minimum values of f(x) = " + poly(e.cs) + " on [" + M(lo2) + ", " + M(hi2) + "].",
+        "absolute max " + M(Math.max.apply(null, vs)) + ", absolute min " + M(Math.min.apply(null, vs)));
+    }
+    if (k === 1){
+      var al = pick(r, [1, 2]), p1, q1;                         // v(t) = 3α(t − p)(t − q): the particle stops at t = p and t = q
+      do { p1 = ri(r, 1, 4); q1 = ri(r, p1 + 1, 6); } while (al * (p1 + q1) % 2);
+      cs = [al, -3 * al * (p1 + q1) / 2, 3 * al * p1 * q1, 0];
+      var t0 = ri(r, 1, 6), v = Dp(cs);
+      return Q([["mode", "rate"], ["task", "motion"], ["f", poly(cs, true, "t")], ["t", t0]],
+        "A particle moves along a line with position s(t) = " + poly(cs, false, "t") + ". Find its velocity v(t), its acceleration a(t) and v(" + t0 + ").",
+        "v(t) = " + poly(v, false, "t") + ", a(t) = " + poly(Dp(v), false, "t") + ", v(" + t0 + ") = " + M(at(v, t0)));
+    }
+    cs = [nz(r, -2, 2), ri(r, -4, 4), ri(r, -6, 6), ri(r, -6, 6)]; a = nz(r, -2, 2);
+    m = at(Dp(cs), a); y0 = at(cs, a);
+    return Q([["mode", "tangent"], ["f", poly(cs, true)], ["a", a]], "Find the tangent line to f(x) = " + poly(cs) + " at x = " + M(a) + ".", "y = " + lin([[m, "x"], [y0 - m * a, ""]]));
   }
 
   function repeating(n, d){                   // n/d (0 < n < d) as a decimal with the repeating digits in brackets: 5/12 → 0.41(6)

@@ -1335,7 +1335,8 @@
     } else if (o.kind === "pop"){
       P.p0 = pos(o.p0, "how many there are at the start"); P.every = pos(o.every, "how often it doubles"); P.time = pos(o.time, "how long it grows");
       if (!isInt(P.p0)) throw new UserErr("Start with a whole number of them.");
-      P.unit = UNITS[o.unit] ? o.unit : "hour";
+      var unit = String(o.unit || "").replace(/s$/, "");                 // unit=hours or unit=hour
+      P.unit = UNITS[unit] ? unit : "hour";
       P.what = WHATS.indexOf(o.what) >= 0 ? o.what : "bacteria";
       var kk = dvd(P.time, P.every);
       if (!isInt(kk)) throw new UserErr(valT(P.time) + " " + UNITS[P.unit] + " isn’t a whole number of doublings (every " + valT(P.every) + " " + UNITS[P.unit] + "). This page works with whole doublings.");
