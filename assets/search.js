@@ -144,8 +144,10 @@
     // radicals and rational expressions: rationalize, √ with letters, √12 + √27, radical and rational equations, 8^(2/3)
     // (a plain √50 or cube root of 64 stays on the Power Tower, below)
     var nRad = (s.match(/√|∛|sqrt|cbrt|square\s+root|cube\s+root/gi) || []).length;
-    var ratTerms = (s.match(/\/\s*\(\s*[^()]*[a-z][^()]*\)|\/\s*[a-z]\b|\/\s*\d*[a-z]\s*(?:\^|²)/gi) || []).length;
-    if (!asksWord && (/\brationali[sz]e\b|\brational\s+(?:expressions?|equations?|exponents?)\b|\bradicals?\b|\bsurds?\b|\bextraneous\b/.test(low) ||
+    // a letter on the bottom of a fraction (2/(x+1), 3/x), but not a unit like km/h, m/s or ft/s
+    var ratTerms = (s.replace(/\b(?:mi|km|m|ft|in|cm|mm|gal|l|lb|kg|g|oz|\$)\s*\/\s*(?:h|hr|hour|s|sec|min|day|week|yr|year|gal|l|lb|kg|g|oz|ft|in|m|mi|km|unit|each)\b/gi, " ")
+                     .match(/\/\s*\(\s*[^()]*[a-z][^()]*\)|\/\s*[a-z]\b|\/\s*\d*[a-z]\s*(?:\^|²)/gi) || []).length;
+    if (!asksWord && !story && (/\brationali[sz]e\b|\brational\s+(?:expressions?|equations?|exponents?)\b|\bradicals?\b|\bsurds?\b|\bextraneous\b/.test(low) ||
         nRad >= 2 && /[+−\-×*·]|\)\s*\(/.test(s) ||
         nRad >= 1 && (/√\s*\(?[\d\s.]*[a-z](?![a-z])/.test(low.replace(/square\s+root\s+of|cube\s+root\s+of|sqrt|cbrt|square\s+root|cube\s+root|∛/g, "√")) ||
                       /\/\s*(?:√|sqrt)|(?:√|sqrt)[^\/]*\/|\/\s*\([^)]*(?:√|sqrt)/.test(low) || /\bsimplify\b/.test(low)) ||

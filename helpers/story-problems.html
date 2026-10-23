@@ -3659,6 +3659,13 @@
     return { form:"gen", a:L.a, b:L.b, c:Rr.a, d:Rr.b };
   }
   var ALGCUE = /\b(a|the|some|one) number\b|\bthink of a number\b|\bthinking of a number\b|\bconsecutive\b|\byears? (older|younger)\b|\btimes as old\b|\btwice as old\b|\bperimeter\b|\b(angles?) of a triangle\b|\btriangle\b.*\bangle\b|\b(cost|costs|charge|charges|pay|be|have|cost them) the same\b|\bsame (amount|cost|price|total)\b|\bhow many of each\b|\bopposite directions\b|\bcatch(es)? up\b|\bround trip\b|\b(original|regular) (price|amount|cost|salary|pay)\b|\bbefore the (raise|discount|sale|increase|cut)\b|\b(dimes|quarters|nickels|pennies)\b|\btwo numbers\b/;
+  // two movers going opposite ways: "opposite direction(s)", "away from each other", or "eastbound … westbound" (and the
+  // like) when the story asks how far apart — compass words alone could be a trip there and back
+  function oppositeWays(L){
+    return /\bopposite directions?\b|\bopposite ways?\b|\baway from each other\b|\bin (?:the )?other direction\b/.test(L) ||
+      /\bapart\b/.test(L) && (/\beast(?:bound|ward)?\b/.test(L) && /\bwest(?:bound|ward)?\b/.test(L) ||
+                              /\bnorth(?:bound|ward)?\b/.test(L) && /\bsouth(?:bound|ward)?\b/.test(L));
+  }
   var COINV = { pennies:1, penny:1, nickels:5, nickel:5, dimes:10, dime:10, quarters:25, quarter:25 };
   ASSIGN.algebra = function(A){
     var L = A.L, Q = A.Q, ns = A.use.filter(function(t){ return (t.k === "n" || t.k === "$") && !/^\s*(?:of the )?(numbers?|integers?)\b/.test(t.after); }), ms = A.use.filter(function(t){ return t.k === "$"; });
@@ -3758,9 +3765,13 @@
     }
     // distance, rate and time
     var sp = ns.filter(speed);
-    if (sp.length >= 2 && (/\bopposite directions\b/.test(L) || /\bcatch(es)? up\b/.test(L) || /\b(round trip|back|home|returns?)\b/.test(L))){
+    // going opposite ways: "opposite direction(s)", "eastbound … westbound", "one heads north and the other south", "away from each other"
+    var opposite = oppositeWays(L);
+    if (sp.length >= 2 && (opposite || /\bcatch(es)? up\b/.test(L) || /\b(round trip|back|home|returns?)\b/.test(L))){
       var su = /km|kilomet/.test(sp[0].after) ? { s:"km/h", u:"kilometers" } : { s:"mph", u:"miles" };
-      var nouns = (A.L.match(/\b(a|the)\s+(train|truck|car|bus|cyclist|runner|plane|boat|bike|van|jogger|walker)\b/g) || []).map(function(w){ return w.split(" ").pop(); });
+      // the vehicles, in the order the story names them ("the Autonomous Express Truck", "a courier motorcycle")
+      var nouns = (A.L.match(/\b(train|truck|car|bus|cyclist|runner|plane|jet|boat|ship|bike|bicycle|motorcycle|scooter|van|jogger|walker|hiker|swimmer|drone)s?\b/g) || [])
+        .map(function(w){ return w.replace(/s$/, ""); }).filter(function(w, i, all){ return all.indexOf(w) === i; });
       if (/\bcatch(es)? up\b/.test(L)){
         var head = A.use.filter(function(t){ return t.k === "dur" && /^\s*later\b/.test(t.after); })[0] || ns.filter(function(t){ return !speed(t) && /^\s*hours?\s+later\b/.test(t.after); })[0];
         if (!head) return null;
@@ -3768,11 +3779,11 @@
         mp.rw = { s:su.s, u:su.u, T1:nouns[0] || "first", T2:nouns[1] || nouns[0] || "second" };
         return mp;
       }
-      if (/\bopposite directions\b/.test(L)){
+      if (opposite){
         var apart = ns.filter(function(t){ return !speed(t) && /^\s*(?:miles?|km|kilometers?)?\s*apart\b/.test(t.after); })[0] || ns.filter(function(t){ return !speed(t); })[0];
         if (!apart) return null;
         var op2 = P("motion", "opposite", { a:sp[0].v, b:sp[1].v, c:apart.v });
-        op2.rw = { s:su.s, u:su.u, T1:nouns[0] || "train", T2:nouns[0] || "train" };
+        op2.rw = { s:su.s, u:su.u, T1:nouns[0] || "train", T2:nouns[1] || nouns[0] || "train" };
         return op2;
       }
       var tt2 = A.use.filter(function(t){ return t.k === "dur"; })[0] || ns.filter(function(t){ return !speed(t) && /^\s*hours?\b/.test(t.after); })[0];
@@ -3821,7 +3832,7 @@
   function classify(A){
     var u = A.use, cnt = function(k){ return u.filter(function(t){ return t.k === k; }).length; }, nums = u.filter(function(t){ return t.k === "n" || t.k === "$"; }).length;
     var Q = A.Q, L = A.L, tries = [];
-    if (ALGCUE.test(L)) tries.push("algebra");
+    if (ALGCUE.test(L) || oppositeWays(L)) tries.push("algebra");
     if (cnt("t") >= 1 && cnt("t") + cnt("dur") >= 2 && /\b(what time|when|how long|how many (minutes|hours)|how much time)\b/.test(Q)) tries.push("time");
     if (cnt("%")) tries.push("percent");
     if (u.some(function(t){ return t.k === "f" && t.fn && (/^\s*of\b/.test(t.after) || /\bof (?:the |all )?\d+\b[^.?!]*,?\s*$/.test(t.before)); })) tries.push("fraction");
