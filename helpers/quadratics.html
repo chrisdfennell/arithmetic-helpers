@@ -219,6 +219,8 @@
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
   .notice b{font-family:var(--f-mono)}
   .notice a{color:var(--key);font-weight:600}
+  .notice .tabgo{font:inherit;font-weight:600;color:var(--key);background:none;border:1px solid currentColor;border-radius:999px;
+    padding:2px 12px;margin-left:4px;cursor:pointer}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -2866,7 +2868,7 @@
       if (S.inputs[S.mode] === "\u0000link") throw new UserErr(LINKERR && LINKERR.mode === S.mode ? LINKERR.msg : EMPTY[S.mode]);
       P = readProblem(S.mode, S.inputs[S.mode], HOWS[S.mode] ? S.how[S.mode] : undefined);
     }
-    catch (e){ if (e && e.user) err = e.user; else throw e; }
+    catch (e){ if (e && e.user) err = e.user + otherTab(S.inputs[S.mode]); else throw e; }
     var sig = P ? paramsOf(P) : null;
     if (sig !== CK.sig) CK = freshCK(sig);
     CUR = P;
@@ -2943,6 +2945,21 @@
     });
     $("log").innerHTML = html;
   }
+  // typed (or pasted, or read from a photo) on the wrong tab, like an equation on Expand: offer the tab that reads it
+  function otherTab(text){
+    var k = null;
+    try { k = String(text || "").trim() && text !== "\u0000link" ? kindOf(text) : null; } catch (e){ if (!e || !e.user) throw e; }
+    if (!k || k === S.mode) return "";
+    try { readProblem(k, text, HOWS[k] ? S.how[k] : undefined); } catch (e2){ if (e2 && e2.user) return ""; throw e2; }
+    var b = document.querySelector('[data-mode="' + k + '"]');
+    return ' <button type="button" class="tabgo" data-go="' + k + '">Use the ' + esc(b ? b.textContent : k) + " tab</button>";
+  }
+  document.addEventListener("click", function(e){
+    var g = e.target && e.target.closest ? e.target.closest("button.tabgo") : null;
+    if (!g) return;
+    var k = g.getAttribute("data-go");
+    S.inputs[k] = S.inputs[S.mode]; setMode(k);
+  });
   function fail(msg){
     $("workHost").innerHTML = ""; $("log").innerHTML = "";
     $("closer").textContent = ""; $("stepper").hidden = true;
