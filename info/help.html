@@ -77,6 +77,14 @@
   @media print{ .sitenav,.theme-btn{display:none !important} body{background:#fff} .card{box-shadow:none} }
 </style>
 <style>
+  /* the title: "Show The Steps" in the logo's colors, one letter each (the same colors as the home page, light and dark) */
+  :root{ --l1:#0D7361; --l2:#A8412A; --l3:#544696; --l4:#A85A0C; --l5:#0B6E83; --l6:#8A6D00; --l7:#9B2F6B; --l8:#4F6A17; }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --l1:#4FCCB0; --l2:#F08A6E; --l3:#A99CF0; --l4:#F2A85C; --l5:#5FC9DE; --l6:#E3C04D; --l7:#F08CC0; --l8:#B5D06A; } }
+  :root[data-theme="dark"]{ --l1:#4FCCB0; --l2:#F08A6E; --l3:#A99CF0; --l4:#F2A85C; --l5:#5FC9DE; --l6:#E3C04D; --l7:#F08CC0; --l8:#B5D06A; }
+  h1 .line{display:block}
+  h1 .logo-word i{font-style:normal}
+  h1 .logo-word .sp{display:inline-block;width:.28em}
+
   .toc{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px;padding:0;list-style:none}
   .toc li{margin:0}
   .toc a{display:inline-block;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:6px 13px}
@@ -107,7 +115,7 @@
   <header class="masthead">
     <div>
       <div class="eyebrow">Help</div>
-      <h1>How to use <em>Show The Steps</em></h1>
+      <h1><span class="line">How to use</span><span class="line logo-word" aria-hidden="true"><i style="color:var(--l1)">S</i><i style="color:var(--l2)">h</i><i style="color:var(--l3)">o</i><i style="color:var(--l4)">w</i><i class="sp"></i><i style="color:var(--l5)">T</i><i style="color:var(--l6)">h</i><i style="color:var(--l7)">e</i><i class="sp"></i><i style="color:var(--l8)">S</i><i style="color:var(--l1)">t</i><i style="color:var(--l2)">e</i><i style="color:var(--l3)">p</i><i style="color:var(--l4)">s</i></span><span class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Show The Steps</span></h1>
       <p class="tagline">Typing a problem, getting the steps, checking your own answer, what each helper can read, and what the site can't do yet.</p>
     </div>
     <button class="theme-btn" id="themeBtn" type="button">Dark mode</button>
