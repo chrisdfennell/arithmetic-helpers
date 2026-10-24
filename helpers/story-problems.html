@@ -2914,12 +2914,13 @@
     if (sgn(ex) <= 0) throw new UserErr("The fixed amount is already the whole total — check the numbers in <b>What the story says</b>.");
     var n = ineq === "most" ? floorR(ex) : ineq === "least" ? (isInt(ex) ? ex : add(floorR(ex), ONE)) : ex;
     if (ineq && !sgn(n)) throw new UserErr("Not even one fits — check the numbers in <b>What the story says</b>.");
-    var lhs = (sgn(a) ? nt(a) + " + " : "") + coefT(b, v), wEq = lhs + " " + sym + " " + nt(c), tot = function(k){ return q(add(a, mul(b, k))); };
+    var mn = function(x){ return money && !isInt(x) ? fixed(x, 2) : nt(x); };      // money keeps its cents: 21.20, not 21.2
+    var lhs = (sgn(a) ? mn(a) + " + " : "") + coefT(b, v), wEq = lhs + " " + sym + " " + mn(c), tot = function(k){ return q(add(a, mul(b, k))); };
     M.known = [{ q:q(a), w:"once, however many " + unit }, { q:q(b), w:"for each " + u1 }, { q:q(c), w:ineq === "most" ? "the most it can be" : ineq === "least" ? "the least it has to reach" : "the total" }];
     M.ask = (ineq === "most" ? "the greatest number of " : ineq === "least" ? "the smallest number of " : "how many ") + unit;
     M.idea = algIdea("The total is the fixed " + q(a) + " plus " + q(b) + " for each " + u1 + ". Call the number of " + unit + " " + v + ": the total is " + lhs + (ineq === "most" ? ", and “at most” means it can’t go over " + q(c) + ": an inequality, ≤." : ineq === "least" ? ", and “at least” means it has to reach " + q(c) + " or more: an inequality, ≥." : ", and that equals " + q(c) + "."),
       ineq ? "Solve it like an equation, then think about whole " + unit + ": " + (ineq === "most" ? "round down — rounding up would go over." : "round up — rounding down would fall short.") : "Take away the fixed " + q(a) + " first: it’s paid once, not for every " + u1 + ".", ineq ? "letter → inequality → solve → whole number" : null);
-    M.eqn = eqnStep([[v, "the number of " + unit]], [["the fixed amount", nt(a)], ["plus " + q(b) + " for each " + u1, "+ " + coefT(b, v)], [(ineq === "most" ? "at most " : ineq === "least" ? "at least " : "is ") + q(c), sym + " " + nt(c)]], wEq, [v]);
+    M.eqn = eqnStep([[v, "the number of " + unit]], [["the fixed amount", mn(a)], ["plus " + q(b) + " for each " + u1, "+ " + coefT(b, v)], [(ineq === "most" ? "at most " : ineq === "least" ? "at least " : "is ") + q(c), sym + " " + mn(c)]], wEq, [v]);
     var sol = solveSteps(LX(b, a), LX(ZERO, c), v), rows = stepRows(sol.steps, [v]).map(function(r){ r.h = r.h.replace(" = ", " " + sym + " "); r.say = r.say.replace(/ = /g, " " + sym + " "); return r; });
     if (ineq) rows.push({ o:"≈", h:mvH(isInt(ex) ? "Already whole" : ineq === "most" ? "Round down" : "Round up") + vH(v + " = " + nt(n), [v]), say:(isInt(ex) ? "That’s a whole number: " : ineq === "most" ? "Only whole " + unit + " count, and going over isn’t allowed: round down, " : "Only whole " + unit + " count, and falling short isn’t enough: round up, ") + Be(v + " = " + nt(n)) + "." });
     rows[0].h += solveLink(wEq.replace(/[≤≥]/, "="));
@@ -4564,7 +4565,7 @@
       var ex = function(c){ if (c === cats[0]) return LX(ONE, ZERO); var r = rel[c]; return LX(r.k, r.c); };
       var exT = function(c){ return lxT(ex(c), v); };
       var L = cats.reduce(function(acc, c){ return lxAdd(acc, pr ? lxMul(ex(c), pr[c]) : ex(c)); }, LX(ZERO, ZERO));
-      var lhs = cats.map(function(c){ var e = exT(c), plain = e === v || /^[\d.\/]*[a-z]$/.test(e); return pr ? (plain ? coefT(mul(pr[c], ex(c).a), v) : nt(pr[c]) + "(" + e + ")") : (plain ? e : "(" + e + ")"); }).join(" + ");
+      var lhs = cats.map(function(c){ var e = exT(c), plain = e === v; return pr ? (plain ? coefT(pr[c], v) : nt(pr[c]) + "(" + e + ")") : (plain || /^[\d.\/]*[a-z]$/.test(e) ? e : "(" + e + ")"); }).join(" + ");
       var wEq = lhs + " = " + nt(T);
       return { v:v, let:"the number of " + nm(cats[0]),
         known:cats.slice(1).map(function(c){ var r = rel[c]; return eqR(r.k, ONE) ? kn(sgn(r.c) > 0 ? nt(r.c) + " more" : nt(absR(r.c)) + " fewer", nm(c) + " than " + nm(cats[0])) : kn(nt(r.k) + " times as many", nm(c) + " as " + nm(cats[0])); })
@@ -5275,9 +5276,17 @@
     // 6. solve, one operation per line
     c.add(M.calc.map(function(x){ return ["m", x.o || (x.h ? "=" : "="), calcSay(x)]; }), null,
       M.calc.map(function(x, i){ return [i === 0 ? "Solve" : "then", "m", calcRow(x), false, i < M.calc.length - 1]; }));
-    // 7. answer in a sentence, and check it makes sense
-    c.add([["a", "Answer", M.ans.say], ["a", "Check", M.sense]], null,
-      [["Answer", "a", '<div class="ansline">' + M.ans.say + "</div>"], ["Check", "a", wt(M.sense)]]);
+    // 7. answer in a sentence, and check it makes sense; when the problem also asks to write the equation (or the
+    // expressions), they're part of the answer too
+    var askEq = !!(P.text && M.eqn) && /\b(?:write|give|find|set up|show|create)\s+(?:an?|the)\s+(?:equation|inequality|system)s?\b|\bmodels?\s+(?:this|the)\s+(?:situation|problem|story)\b|\b(?:equation|inequality)\s+(?:that|to)\s+(?:represents?|models?|shows?)\b|\bwrite\s+and\s+solve\b|\bwrite\s+an?\s+equation\s+and\s+solve\b/i.test(P.text);
+    var askEx = !!(P.text && M.eqn) && /\b(?:write|give)\s+(?:an?\s+)?(?:expressions?|algebraic expressions?)\b/i.test(P.text);
+    var exprs = askEx ? M.eqn.pieces.filter(function(pc){ return !/[=<>≤≥]/.test(pc[1]) && /[a-z]/i.test(pc[1]); }) : [];
+    var exH = exprs.map(function(pc){ return esc(pc[0]) + ": " + vH(pc[1], M.eqn.vs); }).join("; ");
+    var ansLines = [], ansRows = [];
+    if (exprs.length){ ansLines.push(["a", "Expressions", "The expressions: " + exH + "."]); ansRows.push(["Expressions", "a", '<div class="ansline">' + exH + "</div>"]); }
+    if (askEq || askEx){ ansLines.push(["a", "Equation", "The equation: " + B(M.eqn.eqH) + "."]); ansRows.push(["Equation", "a", '<div class="eqbig">' + M.eqn.eqH + "</div>"]); }
+    c.add(ansLines.concat([["a", "Answer", M.ans.say], ["a", "Check", M.sense]]), null,
+      ansRows.concat([["Answer", "a", '<div class="ansline">' + M.ans.say + "</div>"], ["Check", "a", wt(M.sense)]]));
     c.steps.forEach(function(st){ st.lines.forEach(function(l){ l[2] = dotfix(l[2]); }); if (st.aside) st.aside = dotfix(st.aside); });
     c.rows.forEach(function(r){ r.html = dotfix(r.html); });
     M.ans.say = dotfix(M.ans.say); M.sense = dotfix(M.sense);
@@ -5290,7 +5299,8 @@
     var opWord = M.idea.tag === "Add" ? "add (+)" : M.idea.tag === "Subtract" ? "subtract (−)" : M.idea.tag === "Multiply" ? "multiply (×)" : M.idea.tag === "Divide" ? "divide (÷)" : esc(M.idea.tag) + " (" + esc(M.idea.sym) + ")";
     return {
       ctx:c, P:P, W:W, M:M,
-      band:{ pairs:[{ k:"Answer", v:ansHtml(A) }], facts:[M.ans.say, "The operation: " + B(opWord) + " — " + esc(plainOf(M.idea.eq.replace(/<[^>]+>/g, "")).replace(/\?/g, "?"))] },
+      band:{ pairs:[{ k:"Answer", v:ansHtml(A) }].concat(askEq || askEx ? [{ k:"Equation", v:M.eqn.eqH }] : [])        // the answer stays first: .answer .v is what gets checked
+               .concat(exprs.length ? [{ k:"Expressions", v:exprs.map(function(pc){ return esc(pc[0]) + ": " + vH(pc[1], M.eqn.vs); }).join("<br>") }] : []), facts:[M.ans.say, "The operation: " + B(opWord) + " — " + esc(plainOf(M.idea.eq.replace(/<[^>]+>/g, "")).replace(/\?/g, "?"))] },
       closer:"<b>Answer:</b> " + M.ans.say + ' <span class="ok">✓</span> ' + (M.eqn ? "The same steps as every story problem, with one more in the middle: read it, say what’s asked, list what you know, choose, <b>write an equation</b>, draw it, solve it like a balance, then answer in a sentence and check it in the story."
         : "The same seven steps work on every story problem: read it, say what’s asked, list what you know, pick the operation and say why, draw it, solve, then answer in a sentence and check."),
       fields:[field], hint:M.hint,
