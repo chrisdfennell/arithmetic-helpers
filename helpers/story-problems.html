@@ -632,6 +632,8 @@
                                               kind=comparetotal a=first b=how many more the second has (then altogether)
                                               kind=shareleft  a=start b=given away c=friends who share the rest
                                               kind=multi      a=packs b=in each c=extra d=given away
+                                              kind=groupsback a=people in each group b=what each group made c=made in all
+                                              (how many groups, then how many people)
          algebra     stories solved with an equation; kind=, form= and the numbers:
                        number       form=more|less|sum|diff (a=times, b=added/taken, c=result) · div (a=divided by, b=minus,
                                     c=result) · sides (a=times, b=more than the number) · gen (a·n + b = c·n + d)
@@ -654,6 +656,8 @@
                        linear       a=fixed amount, b=so much for each one, c=total (ctx=taxi|gymfee|plumber)
                        inequality   form=most|least (at most / at least), a=fixed, b=each, c=the limit (ctx=cards|elevator|carwash)
                        proportion   a/b = c/x: a, b=two amounts that go together, c=the new first amount (ctx=recipe|map)
+                       pricechange  form=up|down: a=how many at the old price, b=how many at the new price, d=how much the price
+                                    of one changed, c=paid in all, ask=old|new (ctx=petrol|apples|fabric)
          remainder   the leftover matters     a=total b=the size of one group; kind=up|down|left
                                               (up: vans needed · down: full boxes, whole bows · left: the leftover ·
                                                both: each share and the leftover, 6 R 1)
@@ -1924,12 +1928,13 @@
   TY.twostep = {
     label:"Two-step and multi-step", group:"twostep",
     kinds:[["addsub", "Add and take away"], ["timestotal", "Times as many, then altogether"], ["groupsplus", "Equal groups plus extra"], ["groupsless", "Equal groups, then some taken away"],
-           ["comparetotal", "More than, then altogether"], ["shareleft", "Take away, then share"], ["multi", "Three steps"]],
+           ["comparetotal", "More than, then altogether"], ["shareleft", "Take away, then share"], ["multi", "Three steps"], ["groupsback", "Equal groups, back to how many people"]],
     fields:function(P){
       return { addsub:[["a", "Start", "n"], ["b", "First change", "n"], ["c", "Second change", "n"]], timestotal:[["a", "Smaller amount", "n"], ["b", "How many times", "x"]],
         groupsplus:[["a", "Groups", "n"], ["b", "In each group", "n"], ["c", "Extra", "n"]], groupsless:[["a", "Groups", "n"], ["b", "In each group", "n"], ["c", "Taken away", "n"]], comparetotal:[["a", "First amount", "n"], ["b", "How many more", "n"]],
         shareleft:[["a", "Start", "n"], ["b", "Given away", "n"], ["c", "Friends sharing", "n"]],
-        multi:[["a", "Packs", "n"], ["b", "In each pack", "n"], ["c", "Extra", "n"], ["d", "Given away", "n"]] }[P.kind] || [];
+        multi:[["a", "Packs", "n"], ["b", "In each pack", "n"], ["c", "Extra", "n"], ["d", "Given away", "n"]],
+        groupsback:[["a", "People in each group", "n"], ["b", "Each group made", "n"], ["c", "Made in all", "n"]] }[P.kind] || [];
     },
     ctxs:[
       { id:"shells", it:"shells", Vp:"found", Vm:"gave away", g:"buckets" }, { id:"stickers", it:"stickers", Vp:"got", Vm:"used", g:"sheets" },
@@ -1945,6 +1950,7 @@
       if (k === "comparetotal") return ["{N} has {a:it}.", "{N2} has {b} more {it} than {N}.", "How many {it} do they have altogether?"];
       if (k === "shareleft") return ["{N} had {a:it}.", "{N} {Vm} {b} of them.", "Then {N} shared the rest equally among {c} friends.", "How many {it} did each friend get?"];
       if (k === "multi") return ["{N} has {a:g} of {it}, with {b} in each {g1}.", "{N} also has {c} loose {it}.", "Then {N} gives {d} {it} to a friend.", "How many {it} does {N} have now?"];
+      if (k === "groupsback") return ["A class worked in groups of {a}.", "Each group {Vp} {b:it}.", "Altogether the groups {Vp} {c:it}.", "How many students were in the class?"];
       var s1 = function(o, key){ return o === "+" ? "{N} {Vp} {" + key + "} more" : "{N} {Vm} {" + key + "} of them"; };
       return ["{N} had {a:it}.", "Then " + s1(ops.charAt(0), "b") + ".", "After that, " + s1(ops.charAt(1), "c") + ".", "How many {it} does {N} have now?"];
     },
@@ -2033,6 +2039,30 @@
         M.diag = [{ v:s1, msg:"That’s the " + esc(g) + " only. Add the " + esc(nt(c)) + " loose ones too." }, { v:add(add(a, b), c), msg:"You added all the numbers. The " + esc(g) + " are equal groups — multiply first." }, { v:mul(a, add(b, c)), msg:"The loose " + esc(it) + " aren’t in every " + esc(g1) + " — add them once, after multiplying." }];
         if (k === "multi") M.diag.unshift({ v:s2, msg:"Nearly — that’s before " + N + " gives " + esc(nt(d)) + " away. Do the last step." }, { v:sub(s1, d), msg:"You forgot the " + esc(nt(c)) + " loose ones." }, { v:add(s2, d), msg:"The ones given away come off — subtract." });
         M.hint = "Multiply for the " + esc(g) + ", add the loose ones" + (k === "multi" ? ", then take away what was given." : ".");
+        return M;
+      }
+      if (k === "groupsback"){
+        // groups of a people, each group made b things, c in all: c ÷ b groups, then × a people
+        var who = W.who || "students", gN = dvd(c, b);
+        if (!isInt(gN)) throw new UserErr(Be(nt(c)) + " " + esc(it) + " don’t share out into groups of " + Be(nt(b)) + " evenly — check the numbers in <b>What the story says</b>.");
+        var ppl = mul(gN, a), w1 = singular(who);
+        M.unit = who;
+        M.known = [KN(a, "n", who, "in each group"), KN(b, "n", it, "made by each group"), KN(c, "n", it, "made by all the groups together")];
+        M.ask = "how many " + who + " there were";
+        M.idea = { tag:"2 steps", sym:"÷ ×", h:"The story doesn’t say how many groups there were — that’s the <em>hidden question</em>. Each group made " + esc(nt(b)) + " " + esc(it) + ", so see how many " + esc(nt(b)) + "s fit into " + esc(nt(c)) + " → <strong>divide</strong>: that’s the number of groups. Each group has " + esc(nt(a)) + " " + esc(who) + " → <strong>multiply</strong>.",
+          eq:"(made in all ÷ made by each group) × " + esc(who) + " in a group = " + QM, trap:"Don’t stop at " + esc(nt(gN)) + ": that’s how many groups, not how many " + esc(who) + ". And the " + esc(nt(b)) + " " + esc(it) + " are for a whole group, not for each " + esc(w1) + "." };
+        var gn = Number(gN.n);
+        M.fig = { svg:barsSVG({ rows:[{ name:it, segs:gn <= 40 ? [sg(b, shortT(b), "k", null, gn)] : [sg(c, shortT(c), "k")] }], tops:[{ row:0, from:0, to:0, lab:nt(c) + " in all" }] }, "Bar model: one box for each group"),
+          lead:"One box for each group, holding the " + esc(nt(b)) + " " + esc(it) + " that group made" + (gn <= 40 ? ": " + gn + " boxes make " + esc(nt(c)) + "." : ".") + " Every box stands for " + esc(nt(a)) + " " + esc(who) + "." };
+        M.calc = [cl(c, "÷", b, gN), cl(gN, "×", a, ppl)];
+        M.ans = { v:ppl, k:"n", w:who, say:"There were " + Be(qty(ppl, who)) + "." };
+        M.sense = "Work backwards: " + Be(nt(ppl) + " ÷ " + nt(a) + " = " + nt(gN)) + " groups, and " + Be(nt(gN) + " × " + nt(b) + " = " + nt(c)) + " " + esc(it) + " ✓";
+        M.diag = [{ v:gN, msg:"That’s how many groups there were — the hidden first step. Each group has " + esc(nt(a)) + " " + esc(who) + ": multiply by " + esc(nt(a)) + "." },
+                  { v:dvd(c, mul(a, b)), msg:"You divided by both numbers. The " + esc(nt(c)) + " ÷ " + esc(nt(b)) + " gives the groups; then <i>multiply</i> by the " + esc(nt(a)) + " in each group." },
+                  { v:mul(c, a), msg:"First find how many groups: " + esc(nt(c)) + " ÷ " + esc(nt(b)) + ". Then multiply by " + esc(nt(a)) + "." },
+                  { v:mul(a, b), msg:"That’s one group’s " + esc(it) + " times its " + esc(who) + ". Use the " + esc(nt(c)) + " in all to find how many groups there were." }]
+          .filter(function(d){ return !eqR(d.v, ppl); });
+        M.hint = "First find how many groups: " + esc(nt(c)) + " ÷ " + esc(nt(b)) + ". Then multiply by the " + esc(nt(a)) + " " + esc(who) + " in each group.";
         return M;
       }
       if (k === "comparetotal"){
@@ -2289,7 +2319,7 @@
     label:"Algebra stories", group:"algebra",
     kinds:[["number", "Number puzzles"], ["consecutive", "Consecutive numbers"], ["age", "Ages"], ["perimeter", "Perimeter and angles"],
            ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (a system)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"],
-           ["work", "Working together"], ["mixture", "Mixtures"], ["interest", "Money at two interest rates"], ["linear", "A fixed amount plus so much each"], ["inequality", "At most, at least (inequalities)"], ["proportion", "Proportions"]],
+           ["work", "Working together"], ["mixture", "Mixtures"], ["interest", "Money at two interest rates"], ["linear", "A fixed amount plus so much each"], ["inequality", "At most, at least (inequalities)"], ["proportion", "Proportions"], ["pricechange", "A price that went up or down"]],
     forms:function(kind){
       return { number:[["more", "… more than … times a number"], ["less", "… less than … times a number"], ["sum", "The sum of a number and …"], ["diff", "The difference between … and …"],
                        ["div", "A number divided by …, minus …"], ["sides", "A number on both sides"], ["gen", "Any equation"]],
@@ -2302,7 +2332,8 @@
                percentback:[["off", "After a discount"], ["raise", "After an increase"]],
                work:[["together", "How long together"], ["alone", "How long one takes alone"]], mixture:[["percent", "Two solutions (percents)"], ["price", "Two prices a pound"]],
                interest:[["split", "Money split between two rates"]], linear:[["fee", "Fixed amount + so much each = total"]],
-               inequality:[["most", "At most: the greatest number"], ["least", "At least: the smallest number"]], proportion:[["prop", "a is to b as c is to ?"]] }[kind] || [];
+               inequality:[["most", "At most: the greatest number"], ["least", "At least: the smallest number"]], proportion:[["prop", "a is to b as c is to ?"]],
+               pricechange:[["up", "The price went up by …"], ["down", "The price went down by …"]] }[kind] || [];
     },
     fields:function(P){
       var f = P.form;
@@ -2321,6 +2352,7 @@
             : [["a", f === "price" ? "First price" : "First percent", pm[0]], ["b", f === "price" ? "Second price" : "Second percent", pm[1]], ["c", "How much mix", "n"], ["d", f === "price" ? "Price of the mix" : "Percent of the mix", pm[3]]];
         case "linear": case "inequality": return [["a", "Fixed amount (once)", "n"], ["b", "Amount for each one", "n"], ["c", P.kind === "linear" ? "Total" : f === "least" ? "At least" : "At most", "n"]];
         case "proportion": return [["a", "First amount", "n"], ["b", "Goes with", "n"], ["c", "New first amount", "n"]];
+        case "pricechange": return [["a", "How many at the old price", "n"], ["b", "How many at the new price", "n"], ["d", f === "down" ? "How much less one costs now" : "How much more one costs now", "$"], ["c", "Paid in all", "$"]];
         case "plans": return [["a", "Plan A: starts at", "$"], ["b", "Plan A: each time", "$"], ["c", "Plan B: starts at (0 if nothing)", "$"], ["d", "Plan B: each time", "$"]];
         case "twounknown": return f === "numbers" ? [["c", "Sum", "n"], ["d", "Difference", "n"]] : f === "coins" ? [["c", "How many coins", "n"], ["d", "What they’re worth", "$"]]
           : [["a", "First price", "$"], ["b", "Second price", "$"], ["c", "How many in all", "n"], ["d", "Total money", "$"]];
@@ -2354,7 +2386,8 @@
       { id:"elevator", iq:"most", unit:"boxes", per:"box", money:false, s:["An elevator can carry no more than {c} pounds.", "A worker who weighs {a} pounds is moving boxes that weigh {b} pounds each.", "What is the largest number of boxes the worker can take at one time?"] },
       { id:"carwash", iq:"least", unit:"cars", per:"car", s:["A club needs at least {c:$} for a trip.", "It already has {a:$} and earns {b:$} for each car it washes.", "What is the fewest number of cars it must wash?"] },
       { id:"recipe", pr:true, u1:"cups of flour", u2:"cookies", s:["A recipe uses {a} cups of flour to make {b} cookies.", "How many cookies can be made with {c} cups of flour?"] },
-      { id:"map", pr:true, u1:"inches", u2:"miles", s:["On a map, {a} inches stand for {b} miles.", "How many miles do {c} inches stand for?"] }
+      { id:"map", pr:true, u1:"inches", u2:"miles", s:["On a map, {a} inches stand for {b} miles.", "How many miles do {c} inches stand for?"] },
+      { id:"petrol", pc:true, it:"gas", u:"gallon", us:"gallons" }, { id:"apples", pc:true, it:"apples", u:"pound", us:"pounds" }, { id:"fabric", pc:true, it:"fabric", u:"yard", us:"yards" }
     ],
     typed:{},
     story:function(P, W){
@@ -2370,6 +2403,8 @@
         return ["{a} times a number plus {b} is {c} times the number plus {d}.", "What is the number?"];
       }
       if (k === "consecutive") return ["{a:w} consecutive " + (f === "even" ? "even " : f === "odd" ? "odd " : "") + "numbers add up to {c}.", "What are the numbers?"];
+      if (k === "pricechange") return ["The price of {it} " + (f === "down" ? "went down" : "went up") + " by {d:$} a {u}.", "Last week {N} bought {a} {us} at the old price.", "This week {N} bought {b} {us} at the new price.",
+        "Altogether {N} paid {c:$}.", P.ask === "new" ? "What is the new price of one {u}?" : "What was the old price of one {u}?"];
       if (W.s) return W.s;
       if (k === "work") return f === "alone" ? ["Working together, {N} and {N2} can {job} in {c:tu}.", "{N} alone takes {a:tu}.", "How long would it take {N2} alone?"]
         : ["{N} can {job} in {a:tu}.", "{N2} can do the same job in {b:tu}.", "How long will it take them working together?"];
@@ -2911,6 +2946,39 @@
     return M;
   };
 
+  /* ---- a price that changed between two buys: a at the old price p, b at the new price p ± d, c in all ---- */
+  ALG.pricechange = function(P, W){
+    var up = P.form !== "down", a = P.a, b = P.b, c = P.c, d = P.d, u = W.u || "one", us = W.us || plural(u), v = "p", M = { unit:"dollars" };
+    if (!a || !b || !c || !d) throw new UserErr("This story needs how many were bought at each price, how much the price changed, and the total paid.");
+    var sd = up ? "+" : "−", dd = up ? d : R(-1n * d.n, d.d), wantNew = P.ask === "new";
+    var L = LX(add(a, b), mul(b, dd)), sol = solveSteps(L, LX(ZERO, c), v), p = sol.val, np = add(p, dd);
+    if (sgn(p) <= 0 || sgn(np) <= 0) throw new UserErr("Those numbers give a price of zero or less — check them in <b>What the story says</b>.");
+    var newT = v + " " + sd + " " + nt(d), wEq = coefT(a, v) + " + " + nt(b) + "(" + newT + ") = " + nt(c);
+    var dist = coefT(a, v) + " + " + coefT(b, v) + " " + sd + " " + nt(mul(b, d)) + " = " + nt(c), lin = lxT(L, v) + " = " + nt(c);
+    M.known = [{ q:nt(a) + " " + us, w:"bought at the old price" }, { q:nt(b) + " " + us, w:"bought at the new price" }, { q:usd(d), w:"how much the price of one " + u + " went " + (up ? "up" : "down") }, { q:usd(c), w:"paid for all of them" }];
+    M.ask = (wantNew ? "the new price" : "the old price") + " of one " + u;
+    M.idea = algIdea("Both prices hang on the old one: the new price is the old price " + (up ? "plus " : "minus ") + usd(d) + ". So call the old price of one " + u + " " + v + ". The " + nt(a) + " " + us + " cost " + coefT(a, v) + ", the " + nt(b) + " " + us + " cost " + nt(b) + "(" + newT + "), and together that’s " + usd(c) + ".",
+      "Don’t just share " + usd(c) + " among all " + nt(add(a, b)) + " " + us + ": the " + nt(b) + " at the new price cost " + (up ? "more" : "less") + " each, so that gives a price somewhere between the old and the new one.");
+    M.eqn = eqnStep([[v, "the old price of one " + u + ", in dollars"]], [[nt(a) + " " + us + " at the old price", coefT(a, v)], ["the new price", newT], [nt(b) + " " + us + " at the new price", "+ " + nt(b) + "(" + newT + ")"], ["is " + usd(c) + " in all", "= " + nt(c)]], wEq, [v]);
+    var rows = [{ o:"=", h:mvH("Multiply out the brackets") + vH(dist, [v]), say:nt(b) + "(" + newT + ") is " + coefT(b, v) + " " + sd + " " + nt(mul(b, d)) + ": " + Be(dist) + "." },
+                { o:"=", h:mvH("Combine like terms") + vH(lin, [v]), say:"Collect the " + v + "’s: " + Be(lin) + "." }].concat(stepRows(sol.steps, [v]));
+    if (wantNew) rows.push({ o:sd, h:mvH("The new price") + esc(newT + " = " + usd(np)), say:"The new price is " + Be(newT + " = " + usd(np)) + "." });
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    M.fig = { svg:tableSVG(["", "how many", "price of one", "cost"], [["old price", nt(a), v, coefT(a, v)], ["new price", nt(b), newT, nt(b) + "(" + newT + ")"], ["in all", nt(add(a, b)), "", usd(c)]], 2, "Table of the two buys"),
+      lead:"A table: one row for each buy. The two costs add up to " + usd(c) + "." };
+    var ans = wantNew ? np : p;
+    M.ans = { v:ans, k:"$", w:"", say:"The " + (wantNew ? "new" : "old") + " price was " + Be(fmtK(ans, "$")) + " a " + u + (wantNew ? "" : ", and the new price " + Be(fmtK(np, "$"))) + "." };
+    M.sense = "Check in the story: " + Be(nt(a) + " × " + usd(p) + " = " + usd(mul(a, p))) + ", " + Be(nt(b) + " × " + usd(np) + " = " + usd(mul(b, np))) + ", and " + Be(usd(mul(a, p)) + " + " + usd(mul(b, np)) + " = " + usd(c)) + " ✓";
+    var avg = dvd(c, add(a, b));
+    M.diag = [{ v:avg, msg:"That shares " + usd(c) + " evenly among all " + nt(add(a, b)) + " " + us + ". But the " + nt(b) + " at the new price cost " + (up ? "more" : "less") + " — write " + v + " for the old price and " + newT + " for the new one." },
+              { v:wantNew ? p : np, msg:wantNew ? "That’s the old price. The new price is " + usd(d) + (up ? " more." : " less.") : "That’s the new price. The old price is " + usd(d) + (up ? " less." : " more.") },
+              { v:dvd(sub(c, d), add(a, b)), msg:"The " + usd(d) + " is added to every one of the " + nt(b) + " " + us + " at the new price: take away " + nt(b) + " × " + usd(d) + " = " + usd(mul(b, d)) + ", not just " + usd(d) + "." }]
+      .filter(function(x){ return !eqR(x.v, ans); });
+    M.hint = "Let " + v + " be the old price: " + wEq + ". Multiply out the brackets, collect the " + v + "’s, then solve.";
+    return M;
+  };
+
   /* ---- percent change backwards ---- */
   ALG.percentback = function(P, W){
     var f = P.form || "off", p = P.p, c = P.c, M = { unit:"dollars" }, wage = !!W.wage, v = wage ? "w" : "p";
@@ -2957,7 +3025,7 @@
     if (type === "remainder") return c.kind === kind;
     return true;
   }
-  var ALGCTX = { plans:function(c){ return c.plans; }, motion:function(c){ return c.mv; }, percentback:function(c){ return c.pb; }, work:function(c){ return c.wk; },
+  var ALGCTX = { plans:function(c){ return c.plans; }, motion:function(c){ return c.mv; }, percentback:function(c){ return c.pb; }, work:function(c){ return c.wk; }, pricechange:function(c){ return c.pc; },
                  mixture:function(c, P){ return c.mx && !!c.price === (P.form === "price"); }, interest:function(c){ return c.iv; }, linear:function(c){ return c.fe; },
                  inequality:function(c, P){ return c.iq === (P.form === "least" ? "least" : "most"); }, proportion:function(c){ return c.pr; } };
   function ctxOf(P){
@@ -3737,6 +3805,22 @@
     twostep:function(A){
       var ns = A.use.filter(function(t){ return t.k === "n"; });
       var it = itemOf(A, ns);
+      // groups of a people, each group made b things, c things in all — how many people? ("Teachers divided students into
+      // groups of 3. Each group of 3 wrote a report with 9 pictures. They used 585 pictures. How many students?")
+      var GOF = /\b(?:groups?|teams?|pairs|sets|tables|crews|squads|bands)\s+of\s*$/;
+      var szT = ns.filter(function(t){ return GOF.test(t.before) && !t.inQ; })[0];
+      if (szT){
+        var rest3 = ns.filter(function(t){ return t !== szT && !t.inQ && !(eqR(t.v, szT.v) && GOF.test(t.before)); });
+        var whoM = /\bhow many ([a-z]+)\b/.exec(A.Q), who = whoM && whoM[1];
+        if (rest3.length === 2 && who && !/^(groups?|teams?|pairs|sets|tables)$/.test(who) && /\b(?:each|every|per)\s+(?:group|team|pair|set|table|crew|squad|band)\b/.test(A.L)){
+          var r3 = sorted(rest3), eachG = r3[0], allG = r3[1], iw = function(t){ return singular((t.unit || "").split(" ").pop() || ""); };
+          if (iw(eachG) && iw(eachG) === iw(allG) && iw(eachG) !== singular(who) && isInt(dvd(allG.v, eachG.v))){
+            var PB = base("twostep", A, { kind:"groupsback", a:szT.v, b:eachG.v, c:allG.v });
+            PB.rw = { it:plural(iw(allG)), who:who };
+            return PB;
+          }
+        }
+      }
       if (ns.length === 3 && /\b(share[sd]?|split|divide[sd]?)\b/.test(A.L) && /\b(equally|evenly|among|between)\b/.test(A.L) && MINUSV.test(A.NQ.replace(/\bshare[sd]?\b|\bsplit\b/g, ""))){
         var fr = ns.filter(function(t){ return /\b(among|between|with)\s*(?:her|his|their|my)?\s*$/.test(t.before) || /^\s*(friends|people|kids|children|students|bags|groups|boxes|teams)\b/.test(t.after); })[0] || ns[2];
         var rest = ns.filter(function(t){ return t !== fr; });
@@ -4034,6 +4118,40 @@
     var kind = least ? "least" : most && (!isInt(n) || /\b(?:at most|no more than|not more than|maximum|greatest|largest|most|up to|afford|or less|or fewer|exceed|budget|limit|capacity)\b/.test(A.L)) ? "most" : null;
     return { a:a.v, b:r.v, c:c.v, unit:unit, money:money, ineq:kind, per:hit && em && em[1] && STOPW.indexOf(em[1]) < 0 ? em[1] : singular(unit) };
   }
+  // a price that changed between two buys: "The cost of petrol rises by 2 cents a liter. Last week he bought 20 liters at the
+  // old price, this week 10 liters at the new price. Altogether it costs $9.20. What was the old price for 1 liter?"
+  var PCHG = /\b(?:rises?|rose|risen|goes up|went up|gone up|increase[sd]?|raised|falls?|fell|fallen|drops?|dropped|goes down|went down|gone down|decrease[sd]?|lowered|cut|is cut)\s+(?:by\s+)?$/;
+  function priceChangeRead(A){
+    var ms = A.use.filter(function(t){ return t.k === "$"; }), ch = ms.filter(function(t){ return PCHG.test(t.before); })[0];
+    if (!ch || ms.length !== 2 || !/\b(?:price|cost)s?\b/.test(A.Q) || A.use.some(function(t){ return t.k === "%" || t.k === "t" || t.k === "f"; })) return null;
+    var tot = ms.filter(function(t){ return t !== ch; })[0], qs = A.use.filter(function(t){ return t.k === "n" && !t.inQ; });
+    if (qs.length !== 2 || tot.inQ) return null;
+    // the words that go with a number: from the number before it (or the sentence start) to the next number
+    var all = A.toks.slice().sort(function(x, y){ return x.i - y.i; });
+    // "at the old price" right after the number decides first, then "last week" / "this week" around it
+    var OLDP = /\b(?:old|original|usual|earlier|first)\s+(?:price|cost|rate)\b/, NEWP = /\b(?:new|higher|lower|raised|increased|reduced)\s+(?:price|cost|rate)\b/;
+    var OLDW = /\blast (?:week|month|year|time)\b|\byesterday\b|\bbefore\b|\bearlier\b/, NEWW = /\bthis (?:week|month|year|time)\b|\btoday\b|\bnow\b|\bafter(?:wards)?\b|\blater\b/;
+    var side = function(t){
+      var s = A.sents[t.s], k = all.indexOf(t), pv = k > 0 && all[k - 1].s === t.s ? all[k - 1].end : s.i, nx = k < all.length - 1 && all[k + 1].s === t.s ? all[k + 1].i : s.end;
+      var af = A.L.slice(t.end, nx), bf = A.L.slice(pv, t.i);
+      if (OLDP.test(af) !== NEWP.test(af)) return OLDP.test(af) ? "old" : "new";
+      if (OLDW.test(bf) !== NEWW.test(bf)) return OLDW.test(bf) ? "old" : "new";
+      if (OLDP.test(bf + af) !== NEWP.test(bf + af)) return OLDP.test(bf + af) ? "old" : "new";
+      return null;
+    };
+    var isOld = function(t){ return side(t) === "old"; }, isNew = function(t){ return side(t) === "new"; };
+    var oldT = qs.filter(isOld)[0] || null, newT = qs.filter(isNew)[0] || null;
+    if (oldT && newT && oldT === newT) return null;
+    if (!oldT && !newT) return null;
+    if (!oldT) oldT = qs.filter(function(t){ return t !== newT; })[0];
+    if (!newT) newT = qs.filter(function(t){ return t !== oldT; })[0];
+    var up = !/\b(?:falls?|fell|fallen|drops?|dropped|goes down|went down|gone down|decrease[sd]?|lowered|cut)\b/.exec(ch.before.slice(-24));
+    var uw = singular((oldT.unit || "").split(" ")[0] || ""), uw2 = singular((newT.unit || "").split(" ")[0] || "");
+    if (uw && uw2 && uw !== uw2) return null;
+    var it = (/\b(?:price|cost) of ([a-z]+)/.exec(A.L) || ["", ""])[1];
+    return { a:oldT.v, b:newT.v, c:tot.v, d:ch.v, form:up ? "up" : "down", ask:/\bnew\b|\bnow\b|\bthis week\b/.test(A.Q) && !/\bold|original|before|last\b/.test(A.Q) ? "new" : "old",
+             u:uw || "one", us:uw ? plural(uw) : "of them", it:it && STOPW.indexOf(it) < 0 ? it : "it" };
+  }
   // a proportion: two amounts that go together, and a new amount of one of them
   function propRead(A){
     if (A.use.some(function(t){ return t.k !== "n"; })) return null;
@@ -4066,7 +4184,7 @@
     var L = A.L;
     if (ticketCue(A) || motionCue(A)) return true;
     return ALGCUE.test(L) || ALGSTRONG.test(L) || oppositeWays(L) || catchingUp(L) || towardEach(L) || leadMiles(numify(L)) || SAMEQ.test(L) && /\b(?:per|a|an|each|every)\s+[a-z]+\b/.test(L)
-      || workCue(A) || mixCue(A) || interestCue(A) || !!feeRead(A) || !!propRead(A) || PERIMQ(L);
+      || workCue(A) || mixCue(A) || interestCue(A) || !!priceChangeRead(A) || !!feeRead(A) || !!propRead(A) || PERIMQ(L);
   }
   var COINV = { pennies:1, penny:1, nickels:5, nickel:5, dimes:10, dime:10, quarters:25, quarter:25 };
   ASSIGN.algebra = function(A){
@@ -4094,6 +4212,13 @@
       var srt$ = sorted(ms), totT = srt$[srt$.length - 1], incT = ms.filter(function(t){ return t !== totT; }).slice(-1)[0];
       if (!incT || pc.length !== 2) return null;
       return P("interest", "split", { a:pc[0].v, b:pc[1].v, c:totT.v, d:incT.v });
+    }
+    // a price that changed between two buys
+    var pcr = priceChangeRead(A);
+    if (pcr){
+      var pq = P("pricechange", pcr.form, { a:pcr.a, b:pcr.b, c:pcr.c, d:pcr.d });
+      pq.ask = pcr.ask; pq.rw = { u:pcr.u, us:pcr.us, it:pcr.it };
+      return pq;
     }
     // percent change backwards
     var pc0 = pc[0];
@@ -4674,7 +4799,7 @@
       return { type:"percent", kind:kind, a:RN(a), p:RN(p), ctx:ctxPick("percent", kind).id };
     },
     twostep:function(o, z){
-      var kind = mixOf(o.twostepKind, ["addsub", "timestotal", "groupsplus", "groupsless", "comparetotal", "shareleft", "multi"]), m = z.max, P = { type:"twostep", kind:kind, ctx:ctxPick("twostep").id };
+      var kind = mixOf(o.twostepKind, ["addsub", "timestotal", "groupsplus", "groupsless", "comparetotal", "shareleft", "multi", "groupsback"]), m = z.max, P = { type:"twostep", kind:kind, ctx:ctxPick("twostep").id };
       var lo = z.lo;
       if (kind === "addsub"){
         var ops = pickOf(["+-", "+-", "-+", "++", "--"]), a = rint(lo * 3, Math.max(lo * 3 + 2, Math.round(m * 0.6))), b = rint(lo, Math.max(lo, Math.round(m / 3))), r1 = ops.charAt(0) === "+" ? a + b : a - b;
@@ -4687,11 +4812,12 @@
         P.a = RN(rint(2, m <= 20 ? 4 : 9)); P.b = RN(rint(3, m <= 20 ? 5 : 12)); P.c = RN(rint(1, 9));
         if (kind === "multi") P.d = RN(rint(1, Number(P.a.n * P.b.n) + Number(P.c.n) - 1));
       } else if (kind === "comparetotal"){ P.a = RN(rint(lo, Math.max(lo + 2, Math.round(m * 0.4)))); P.b = RN(rint(2, Math.max(3, Math.round(m / 4)))); }
+      else if (kind === "groupsback"){ var gb = rint(2, m <= 20 ? 6 : 12), ge = rint(2, m <= 20 ? 6 : 12); P.a = RN(rint(2, 5)); P.b = RN(ge); P.c = RN(gb * ge); }
       else { var fr = rint(2, 6), each = rint(2, m <= 20 ? 4 : 10), gv = rint(2, m <= 20 ? 6 : 15); P.a = RN(fr * each + gv); P.b = RN(gv); P.c = RN(fr); }
       return P;
     },
     algebra:function(o, z){
-      var kind = mixOf(o.algebraKind, ["number", "consecutive", "age", "perimeter", "plans", "twounknown", "motion", "percentback", "work", "mixture", "interest", "linear", "inequality", "proportion"]);
+      var kind = mixOf(o.algebraKind, ["number", "consecutive", "age", "perimeter", "plans", "twounknown", "motion", "percentback", "work", "mixture", "interest", "linear", "inequality", "proportion", "pricechange"]);
       var forms = TY.algebra.forms(kind).map(function(f){ return f[0]; }).filter(function(f){ return f !== "gen"; });
       var form = o.algebraForm && forms.indexOf(o.algebraForm) >= 0 ? o.algebraForm : pickOf(forms), P = { type:"algebra", kind:kind, form:form }, big = z.max > 20, t, n, k, b;
       if (kind === "number"){
@@ -4743,6 +4869,9 @@
         var fa = rint(2, 30), fb = rint(2, 12), fn = rint(2, 15); P.a = RN(fa); P.b = RN(fb); P.c = RN(fa + fb * fn + (kind === "inequality" ? rint(1, fb - 1) : 0));
       } else if (kind === "proportion"){
         var pa1 = rint(2, 6), pk = rint(2, 6); P.a = RN(pa1); P.b = RN(pa1 * pk); P.c = RN(rint(2, 20));
+      } else if (kind === "pricechange"){
+        var dc = pickOf([2, 5, 10, 15, 20, 25, 50]), oc = 5 * rint(Math.max(2, Math.ceil((dc + 5) / 5)), big ? 80 : 40), na = rint(2, big ? 30 : 12), nb = rint(2, big ? 30 : 12), ncent = form === "down" ? oc - dc : oc + dc;
+        P.a = RN(na); P.b = RN(nb); P.d = R(dc, 100); P.c = R(na * oc + nb * ncent, 100); P.ask = pickOf(["old", "old", "new"]);
       } else {
         var pp = pickOf([10, 20, 25, 30, 40, 50, 15, 5]);
         if (form === "raise"){ var xw = rint(10, 40); P.p = RN(pp); P.c = R(xw * (100 + pp), 100); }
@@ -4751,7 +4880,7 @@
       if (!P.ctx){ var cx2 = ctxOf(P); if (cx2) P.ctx = (kind === "percentback" ? ctxPick("algebra", null, function(c){ return c.pb; }) : cx2) .id; }
       if (kind === "plans"){ P.ctx = ctxPick("algebra", null, function(c){ return c.plans; }).id; }
       if (kind === "motion"){ P.ctx = ctxPick("algebra", null, function(c){ return c.mv; }).id; }
-      if (/^(work|mixture|interest|linear|inequality|proportion)$/.test(kind)) P.ctx = ctxPick("algebra", null, function(c){ return ALGCTX[kind](c, P); }).id;
+      if (/^(work|mixture|interest|linear|inequality|proportion|pricechange)$/.test(kind)) P.ctx = ctxPick("algebra", null, function(c){ return ALGCTX[kind](c, P); }).id;
       if (kind === "perimeter" && form !== "tri"){ P.ctx = ctxPick("algebra", null, function(c){ return !!c.u && !c.mv && !c.mx; }).id; }
       if (kind === "twounknown" && form === "tickets"){ P.ctx = ctxPick("algebra", null, function(c){ return c.tk; }).id; }
       return P;
@@ -4840,13 +4969,13 @@
     { key:"fractionUnit", modes:["fraction"], label:"Only fractions with 1 on top (1/2, 1/3, 1/4 …)", type:"toggle", "default":false, values:TOG },
     { key:"percentKind", modes:["percent"], label:"What to find", type:"choice", "default":"mix", values:vl([["of", "A percent of an amount"], ["off", "The sale price after a discount"], ["save", "How much you save"], ["mix", "Any of them"]]) },
     { key:"twostepKind", modes:["twostep"], label:"What kind of steps", type:"choice", "default":"mix",
-      values:vl([["addsub", "Add, then take away"], ["timestotal", "Times as many, then altogether"], ["groupsplus", "Equal groups plus extra"], ["groupsless", "Equal groups, then some taken away"], ["comparetotal", "More than, then altogether"], ["shareleft", "Take away, then share"], ["multi", "Three steps"], ["mix", "Any of them"]]) },
+      values:vl([["addsub", "Add, then take away"], ["timestotal", "Times as many, then altogether"], ["groupsplus", "Equal groups plus extra"], ["groupsless", "Equal groups, then some taken away"], ["comparetotal", "More than, then altogether"], ["shareleft", "Take away, then share"], ["multi", "Three steps"], ["groupsback", "Equal groups, back to how many people"], ["mix", "Any of them"]]) },
     { key:"remainderKind", modes:["remainder"], label:"What to do with the leftover", type:"choice", "default":"mix",
       values:vl([["up", "Round up (vans needed)"], ["down", "Ignore it (full boxes)"], ["left", "It’s the answer (how many left over)"], ["both", "Each share and the leftover (6 R 1)"], ["mix", "Any of them"]]) },
     { key:"algebraKind", modes:["algebra"], label:"What kind of algebra story", type:"choice", "default":"mix",
       values:vl([["number", "Number puzzles (5 more than twice a number …)"], ["consecutive", "Consecutive numbers"], ["age", "Ages"], ["perimeter", "Perimeter and triangle angles"],
                  ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (tickets, coins, two numbers)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"],
-                 ["work", "Working together"], ["mixture", "Mixtures"], ["interest", "Money at two interest rates"], ["linear", "A fixed amount plus so much each"], ["inequality", "At most, at least (inequalities)"], ["proportion", "Proportions"], ["mix", "Any of them"]]) },
+                 ["work", "Working together"], ["mixture", "Mixtures"], ["interest", "Money at two interest rates"], ["linear", "A fixed amount plus so much each"], ["inequality", "At most, at least (inequalities)"], ["proportion", "Proportions"], ["pricechange", "A price that went up or down"], ["mix", "Any of them"]]) },
     { key:"extra", modes:["any", "addsub", "compare", "groups", "array", "times", "rate", "money", "time", "fraction", "percent", "twostep", "remainder"], label:"Add a number the story doesn’t need", type:"toggle", "default":false, values:TOG }
   ];
   function optOf(o, key){
