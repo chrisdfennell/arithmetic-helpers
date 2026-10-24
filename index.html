@@ -483,7 +483,16 @@
     var pick = rows[on >= 0 ? on : 0];
     if (pick) location.href = pick.url; else askIn.focus();
   });
-  ["47 + 38", "3/4 ÷ 1/2", "3x + 2 = 11", "x^2 - 5x + 6 = 0", "15% of 80", "round 3,456 to the nearest hundred", "log2 32", "d/dx x^3 sin x"].forEach(function(ex){
+  // a different handful of examples each visit: two early-grade, two middle-school, three high-school and one college,
+  // each from a different helper (every one checked to open its helper with an answer)
+  var TRY = {"k5": [["47 + 38", "addition.html"], ["502 − 178", "subtraction.html"], ["36 × 24", "multiplication.html"], ["847 ÷ 12", "division.html"], ["round 3,456 to the nearest hundred", "number-sense.html"], ["3/4 + 5/6", "addition.html"], ["5 ft 7 in to inches", "unit-conversions.html"], ["7 times table", "flashcards.html"], ["45 minutes after 1:30", "number-sense.html"], ["3 quarters 2 dimes", "number-sense.html"]], "m": [["15% of 80", "percents.html"], ["−7 + 12", "integers.html"], ["3 + 4 × 2", "pemdas.html"], ["simplify 18/24", "fractions.html"], ["GCF of 12 and 18", "factors.html"], ["share 60 in 2:3", "ratios.html"], ["3x + 2 = 11", "algebra.html"], ["mean of 4, 8, 6, 5, 7", "stats.html"], ["2^5", "exponents.html"], ["(1, 2) and (5, 10)", "lines.html"], ["area of a circle with radius 5", "geometry.html"], ["3/4 ÷ 1/2", "division.html"]], "hs": [["x^2 - 5x + 6 = 0", "quadratics.html"], ["log2 32", "logarithms.html"], ["sin 30°", "trigonometry.html"], ["3, 7, 11, 15, ...", "sequences.html"], ["simplify √72", "radicals.html"], ["(3 + 2i)(1 − 4i)", "complex-numbers.html"], ["2x + y = 7; x − y = 2", "algebra.html"], ["$5000 at 4% compounded monthly for 10 years", "money-math.html"], ["factor x^2 + 7x + 12", "quadratics.html"], ["y = x^2 - 4x + 3", "graphing.html"], ["98.6 F to C", "unit-conversions.html"]], "col": [["d/dx x^3 sin x", "calculus.html"], ["∫ 2x dx", "calculus.html"], ["det [[2,1],[3,4]]", "matrices-and-vectors.html"], ["P(X < 85) mean 70 sd 10", "college-statistics.html"], ["lim x->2 (x^2-4)/(x-2)", "calculus.html"], ["95% confidence interval xbar 120 s 4 n 100", "college-statistics.html"]]};
+  var tryPick = [], trySeen = {};
+  function tryDraw(list, n){
+    list = list.slice();
+    while (n > 0 && list.length){ var x = list.splice(Math.floor(Math.random() * list.length), 1)[0]; if (trySeen[x[1]]) continue; trySeen[x[1]] = 1; tryPick.push(x[0]); n--; }
+  }
+  tryDraw(TRY.k5, 2); tryDraw(TRY.m, 2); tryDraw(TRY.hs, 3); tryDraw(TRY.col, 1);
+  tryPick.forEach(function(ex){
     var b = document.createElement("button");
     b.type = "button"; b.textContent = ex;
     b.addEventListener("click", function(){ askIn.value = ex; on = -1; askIn.focus(); build(); });
