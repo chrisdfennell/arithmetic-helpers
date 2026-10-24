@@ -39,6 +39,302 @@
     { href: "matrices-and-vectors.html", sign: "[ ]", name: "Matrices", title: "The Matrix Grid: matrices and vectors", c: "mat" },
     { href: "wordproblems.html", sign: "✎", name: "Stories", title: "The Story Problem", c: "wrd" }
   ];
+  /* The bar's helper menus: one button for each section (the home page's groups), opening a panel of its helpers, each
+     with links straight to its tabs. FULL is the name a helper goes by in the panels. TABS is each helper's tabs as
+     [the query that opens it, its label], read off the helpers' own tab buttons (division picks its tab with ans=). */
+  var SECTIONS = [{
+    name: "Arithmetic",
+    sign: "+",
+    c: "add",
+    title: "Counting and the four operations",
+    pages: ["number-sense.html", "addition.html", "subtraction.html", "multiplication.html", "division.html", "scratch.html", "pemdas.html"]
+  }, {
+    name: "Fractions & money",
+    sign: "½",
+    c: "fra",
+    title: "Fractions, ratios, measurement and money",
+    pages: ["fractions.html", "percents.html", "factors.html", "unit-conversions.html", "money-math.html", "integers.html", "ratios.html", "exponents.html"]
+  }, {
+    name: "Algebra & graphs",
+    sign: "x",
+    c: "alg",
+    italic: true,
+    title: "Algebra and graphs",
+    pages: ["algebra.html", "lines.html", "graphing.html", "functions.html", "quadratics.html", "radicals.html", "complex-numbers.html", "logarithms.html", "sequences.html"]
+  }, {
+    name: "Shapes, data & chance",
+    sign: "△",
+    c: "geo",
+    title: "Shapes, data, chance and stories",
+    pages: ["geometry.html", "stats.html", "probability.html", "counting.html", "wordproblems.html"]
+  }, {
+    name: "Trig & college",
+    sign: "∫",
+    c: "cal",
+    title: "Trigonometry, calculus and college math",
+    pages: ["trigonometry.html", "calculus.html", "college-statistics.html", "matrices-and-vectors.html"]
+  }];
+  var FULL = {
+    "number-sense.html": "Place value",
+    "addition.html": "Addition",
+    "subtraction.html": "Subtraction",
+    "multiplication.html": "Multiplication",
+    "division.html": "Long division",
+    "scratch.html": "Do it by hand",
+    "pemdas.html": "Order of operations",
+    "fractions.html": "Fractions",
+    "percents.html": "Percents",
+    "factors.html": "Factors and primes",
+    "unit-conversions.html": "Unit conversions",
+    "money-math.html": "Money math",
+    "integers.html": "Negative numbers",
+    "ratios.html": "Ratios and rates",
+    "exponents.html": "Exponents and roots",
+    "algebra.html": "Equations",
+    "lines.html": "Lines and slope",
+    "graphing.html": "Graphing",
+    "functions.html": "Functions",
+    "quadratics.html": "Quadratics",
+    "radicals.html": "Radicals",
+    "complex-numbers.html": "Complex numbers",
+    "logarithms.html": "Logarithms",
+    "sequences.html": "Sequences and series",
+    "geometry.html": "Geometry",
+    "stats.html": "Statistics",
+    "probability.html": "Probability",
+    "counting.html": "Counting",
+    "wordproblems.html": "Story problems",
+    "trigonometry.html": "Trigonometry",
+    "calculus.html": "Calculus",
+    "college-statistics.html": "College statistics",
+    "matrices-and-vectors.html": "Matrices and vectors"
+  };
+  var TABS = {
+    "number-sense.html": [
+      ["mode=place", "Place value"],
+      ["mode=round", "Rounding"],
+      ["mode=estimate", "Estimating"],
+      ["mode=compare", "Compare & order"],
+      ["mode=skip", "Skip counting"],
+      ["mode=time", "Telling time"],
+      ["mode=money", "Money"]
+    ],
+    "addition.html": [
+      ["mode=dec", "Decimals"],
+      ["mode=frac", "Fractions"]
+    ],
+    "subtraction.html": [
+      ["mode=dec", "Decimals"],
+      ["mode=frac", "Fractions"]
+    ],
+    "multiplication.html": [
+      ["mode=dec", "Decimals"],
+      ["mode=frac", "Fractions"]
+    ],
+    "division.html": [
+      ["ans=remainder", "Quotient & remainder"],
+      ["ans=fraction", "Fraction"],
+      ["ans=decimal", "Decimal"]
+    ],
+    "fractions.html": [
+      ["mode=simplify", "Simplify"],
+      ["mode=convert", "Convert"],
+      ["mode=compare", "Compare & order"],
+      ["mode=equiv", "Equivalent"]
+    ],
+    "percents.html": [
+      ["mode=of", "Percent of"],
+      ["mode=what", "What percent"],
+      ["mode=whole", "Find the whole"],
+      ["mode=change", "Percent change"],
+      ["mode=money", "Money"]
+    ],
+    "factors.html": [
+      ["mode=factors", "Factors"],
+      ["mode=prime", "Prime factorization"],
+      ["mode=test", "Prime or composite?"],
+      ["mode=gcf", "GCF & LCM"],
+      ["mode=div", "Divisibility"]
+    ],
+    "unit-conversions.html": [
+      ["mode=length", "Length"],
+      ["mode=weight", "Weight & capacity"],
+      ["mode=metric", "Metric"],
+      ["mode=systems", "Between systems"],
+      ["mode=time", "Time"],
+      ["mode=temp", "Temperature"],
+      ["mode=rates", "Rates, area & volume"]
+    ],
+    "money-math.html": [
+      ["mode=compound", "Compound interest"],
+      ["mode=save", "Saving monthly"],
+      ["mode=loan", "Loans"],
+      ["mode=card", "Credit cards"],
+      ["mode=pay", "Paychecks"],
+      ["mode=budget", "Budgets"],
+      ["mode=shop", "Shopping"]
+    ],
+    "integers.html": [
+      ["mode=add", "Add"],
+      ["mode=sub", "Subtract"],
+      ["mode=muldiv", "Multiply & divide"],
+      ["mode=abs", "Absolute value & compare"],
+      ["mode=chain", "Several steps"]
+    ],
+    "ratios.html": [
+      ["mode=simplify", "Simplify & equivalent"],
+      ["mode=rate", "Unit rate"],
+      ["mode=prop", "Proportions"],
+      ["mode=share", "Share in a ratio"],
+      ["mode=scale", "Scale"]
+    ],
+    "exponents.html": [
+      ["mode=eval", "Powers"],
+      ["mode=laws", "Exponent laws"],
+      ["mode=sci", "Scientific notation"],
+      ["mode=scicalc", "Sci. notation math"],
+      ["mode=roots", "Roots"]
+    ],
+    "algebra.html": [
+      ["mode=simplify", "Simplify"],
+      ["mode=solve", "Solve"],
+      ["mode=ineq", "Inequality"],
+      ["mode=sys", "System"]
+    ],
+    "lines.html": [
+      ["mode=slope", "Slope"],
+      ["mode=equation", "Equation of a line"],
+      ["mode=convert", "Convert forms"],
+      ["mode=graph", "Graph it"],
+      ["mode=parallel", "Parallel & perpendicular"]
+    ],
+    "graphing.html": [
+      ["mode=points", "Points"],
+      ["mode=table", "Table of values"],
+      ["mode=functions", "Functions"],
+      ["mode=systems", "Systems"],
+      ["mode=inequalities", "Inequalities"],
+      ["mode=transform", "Transformations"],
+      ["mode=scatter", "Scatter plots"],
+      ["mode=free", "Free plot"]
+    ],
+    "functions.html": [
+      ["mode=eval", "Evaluate"],
+      ["mode=func", "Function?"],
+      ["mode=domain", "Domain & range"],
+      ["mode=combine", "Combine"],
+      ["mode=compose", "Compose"],
+      ["mode=inverse", "Inverse"],
+      ["mode=piece", "Piecewise"],
+      ["mode=parity", "Even or odd"]
+    ],
+    "quadratics.html": [
+      ["mode=expand", "Expand"],
+      ["mode=factor", "Factor"],
+      ["mode=solve", "Solve"],
+      ["mode=vertex", "Vertex"],
+      ["mode=divide", "Divide"],
+      ["mode=operate", "Add & subtract"]
+    ],
+    "radicals.html": [
+      ["mode=simplify", "Simplify roots"],
+      ["mode=operate", "Add & multiply roots"],
+      ["mode=rationalize", "Rationalize"],
+      ["mode=exponents", "Fraction exponents"],
+      ["mode=radeq", "Radical equations"],
+      ["mode=ratsimp", "Simplify fractions"],
+      ["mode=ratmul", "Multiply & divide"],
+      ["mode=ratadd", "Add & subtract"],
+      ["mode=rateq", "Rational equations"]
+    ],
+    "complex-numbers.html": [
+      ["mode=i", "What i is"],
+      ["mode=add", "Add & subtract"],
+      ["mode=mul", "Multiply"],
+      ["mode=div", "Divide"],
+      ["mode=plane", "The plane"],
+      ["mode=polar", "Polar form"],
+      ["mode=demoivre", "De Moivre"],
+      ["mode=solve", "Solve"]
+    ],
+    "logarithms.html": [
+      ["mode=meaning", "What a log is"],
+      ["mode=laws", "Log laws"],
+      ["mode=change", "Change of base"],
+      ["mode=expeq", "Exponential equations"],
+      ["mode=logeq", "Log equations"],
+      ["mode=growth", "Growth & interest"],
+      ["mode=graph", "Graphs"]
+    ],
+    "sequences.html": [
+      ["mode=pattern", "What comes next?"],
+      ["mode=arith", "Arithmetic"],
+      ["mode=geom", "Geometric"],
+      ["mode=sum", "Series & sums"],
+      ["mode=apply", "Word problems"]
+    ],
+    "geometry.html": [
+      ["mode=area", "Area & perimeter"],
+      ["mode=vol", "Volume & surface area"],
+      ["mode=right", "Right triangles"],
+      ["mode=angle", "Angles"]
+    ],
+    "stats.html": [
+      ["mode=center", "Mean, median, mode"],
+      ["mode=box", "Box plot"],
+      ["mode=freq", "Frequency"],
+      ["mode=spread", "Spread"],
+      ["mode=missing", "Missing value"]
+    ],
+    "probability.html": [
+      ["mode=simple", "One event"],
+      ["mode=complement", "Not happening"],
+      ["mode=compound", "Two events"],
+      ["mode=space", "All the outcomes"],
+      ["mode=expected", "Expected & experiments"]
+    ],
+    "counting.html": [
+      ["mode=principle", "Multiply the choices"],
+      ["mode=perm", "Order matters (nPr)"],
+      ["mode=comb", "Choosing groups (nCr)"],
+      ["mode=pairs", "Handshakes & diagonals"],
+      ["mode=fact", "Factorials & chance"]
+    ],
+    "trigonometry.html": [
+      ["mode=right", "Right triangles"],
+      ["mode=special", "Special angles"],
+      ["mode=circle", "Unit circle"],
+      ["mode=laws", "Sines & cosines laws"],
+      ["mode=graph", "Graphs"],
+      ["mode=identities", "Identities"]
+    ],
+    "calculus.html": [
+      ["mode=limit", "Limits"],
+      ["mode=derivative", "Derivatives"],
+      ["mode=tangent", "Tangent lines"],
+      ["mode=extrema", "Max & min"],
+      ["mode=integral", "Integrals"],
+      ["mode=rate", "Rates of change"]
+    ],
+    "college-statistics.html": [
+      ["mode=z", "z-scores"],
+      ["mode=normal", "Normal"],
+      ["mode=binom", "Binomial"],
+      ["mode=sampling", "Sampling (CLT)"],
+      ["mode=ci", "Confidence intervals"],
+      ["mode=test", "Hypothesis tests"],
+      ["mode=regress", "Regression"]
+    ],
+    "matrices-and-vectors.html": [
+      ["mode=arith", "Add & scale"],
+      ["mode=mult", "Multiply"],
+      ["mode=det", "Determinant"],
+      ["mode=inv", "Inverse"],
+      ["mode=sys", "Solve a system"],
+      ["mode=vec", "Vectors"],
+      ["mode=dot", "Dot & cross"]
+    ]
+  };
   var TOOLS = [
     { href: "worksheet.html", name: "Worksheets", title: "The Worksheet Maker" },
     { href: "practice.html", name: "Practice", title: "Practice sets" },
@@ -123,6 +419,16 @@
     ".sitenav .sn-wmenu a.sn-wh{font-weight:600;padding-top:8px}" +
     ".sitenav .sn-wmenu a.sn-wh b{font-family:var(--f-mono,\"IBM Plex Mono\",Consolas,monospace);color:var(--nv);margin-right:6px}" +
     ".sitenav .sn-wmenu ul a{padding-left:30px}" +
+    // a section's panel: its helpers side by side, each with its tabs under it; scrolls when taller than the screen
+    ".sitenav .sn-wmenu{max-height:calc(100vh - 120px);overflow:auto;overscroll-behavior:contain}" +
+    ".sitenav .sn-wmenu.sn-wide{width:740px;display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:2px 8px;padding:8px}" +
+    ".sitenav .sn-wmenu.sn-wide[hidden]{display:none}" +
+    ".sitenav .sn-wide .sn-wgrp + .sn-wgrp{border-top:0;margin-top:0;padding-top:0}" +
+    ".sitenav .sn-wide .sn-wgrp{padding-bottom:6px}" +
+    ".sitenav .sn-wide ul a{padding-top:4px;padding-bottom:4px;font-size:13px}" +
+    ".sitenav .sn-wmenu a[aria-current=\"page\"]{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--nv)}" +
+    ".sitenav .sn-wbtn b.it{font-style:italic;font-family:Georgia,\"Times New Roman\",serif;font-size:15px}" +
+    ".sitenav .sn-wmenu a b.it{font-style:italic;font-family:Georgia,\"Times New Roman\",serif}" +
     "@media (max-width:560px){.sitenav .sn-links a{padding:5px 9px;font-size:12.5px}.sitenav .sn-tools{margin-left:0}.sitenav .sn-wbtn{padding:5px 9px;font-size:12.5px}}" +
     // each helper's #statusLine is for screen readers only: the same message is already on screen
     "#statusLine{position:absolute !important;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}" +
@@ -218,11 +524,7 @@
     nav.className = "sitenav";
     nav.setAttribute("aria-label", "All the helpers");
     var html = '<a class="sn-home" href="' + U("index.html") + '"><span aria-hidden="true">←</span> All helpers</a><ul class="sn-links">';
-    PAGES.forEach(function(p) {
-      html += '<li><a href="' + U(p.href) + '" title="' + p.title + '" style="--nv:var(--nv-' + p.c + ')"' +
-        (p.href === here ? ' aria-current="page"' : "") + '><b' + (p.italic ? ' class="it"' : "") +
-        ' aria-hidden="true">' + p.sign + "</b>" + p.name + "</a></li>";
-    });
+    SECTIONS.forEach(function(s, i) { html += sectionItem(s, i, here); });
     html += workItem(here);
     html += '</ul><ul class="sn-tools" aria-label="Tools">';
     TOOLS.forEach(function(p) {
@@ -230,7 +532,37 @@
     });
     nav.innerHTML = html + "</ul>";
     page.insertBefore(nav, page.firstChild);
-    try { workMenu(nav); } catch (e) {}
+    try { menus(nav); } catch (e) {}
+  }
+
+  /* ---- a section of helpers: a button in the bar, a panel of its helpers and their tabs ---- */
+  // a page's address with a query, through site.js
+  function UQ(name, query) { return window.HelperSite ? window.HelperSite.url(name, query) : name + "?" + query; }
+
+  function sectionItem(s, i, here) {
+    var by = {};
+    PAGES.forEach(function(p) { by[p.href] = p; });
+    var on = s.pages.indexOf(here) >= 0,
+      id = "snSec" + i;
+    var h = '<li class="sn-work"><button type="button" class="sn-wbtn' + (on ? " on" : "") + '" aria-expanded="false" aria-controls="' + id + '"' +
+      ' title="' + s.title + '" style="--nv:var(--nv-' + s.c + ')"><b' + (s.italic ? ' class="it"' : "") + ' aria-hidden="true">' + s.sign + "</b>" +
+      s.name + '<span class="sn-caret" aria-hidden="true">▾</span></button>' +
+      '<div class="sn-wmenu sn-wide" id="' + id + '" hidden>';
+    s.pages.forEach(function(href) {
+      var p = by[href];
+      if (!p) return;
+      h += '<div class="sn-wgrp" style="--nv:var(--nv-' + p.c + ')"><a class="sn-wh" href="' + U(href) + '" title="' + p.title + '"' +
+        (href === here ? ' aria-current="page"' : "") + '><b' + (p.italic ? ' class="it"' : "") + ' aria-hidden="true">' + p.sign + "</b>" +
+        (FULL[href] || p.name) + "</a>";
+      var tabs = TABS[href] || [];
+      if (tabs.length) {
+        h += "<ul>";
+        tabs.forEach(function(t) { h += '<li><a href="' + UQ(href, t[0]) + '">' + t[1] + "</a></li>"; });
+        h += "</ul>";
+      }
+      h += "</div>";
+    });
+    return h + "</div></li>";
   }
 
   /* ---- Math at work: one button in the bar, a menu of pages and their tabs ---- */
@@ -268,11 +600,17 @@
     return h + "</div></li>";
   }
 
-  function workMenu(nav) {
-    var btn = nav.querySelector(".sn-wbtn"),
-      menu = nav.querySelector(".sn-wmenu"),
-      box = btn && btn.parentNode;
+  // every button in the bar with a menu (the sections, and Math at work); opening one closes the others
+  function menus(nav) {
+    var closers = [];
+    [].forEach.call(nav.querySelectorAll(".sn-work"), function(box) { menu1(box, closers); });
+  }
+
+  function menu1(box, closers) {
+    var btn = box.querySelector(".sn-wbtn"),
+      menu = box.querySelector(".sn-wmenu");
     if (!btn || !menu) return;
+    closers.push(function() { close(false); });
 
     function links() { return [].slice.call(menu.querySelectorAll("a")); }
 
@@ -284,9 +622,12 @@
       if (r.right > vw - 8) x = vw - 8 - r.right;
       if (r.left + x < 8) x = 8 - r.left;
       menu.style.left = x + "px";
+      // no taller than the screen below it (it scrolls inside)
+      menu.style.maxHeight = Math.max(240, window.innerHeight - Math.max(0, r.top) - 12) + "px";
     }
 
     function open(focus) {
+      closers.forEach(function(c) { c(); });
       menu.hidden = false;
       btn.setAttribute("aria-expanded", "true");
       place();

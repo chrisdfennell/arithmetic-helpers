@@ -3531,8 +3531,14 @@
         S.practice = pr;
         S.stepMode = pr === "step";
       }
+      // mode=dec|frac opens that tab (the bar's menus link to each tab); a problem in q= decides it otherwise
+      var md = String(sp.get("mode") || "").trim().toLowerCase(),
+        hint = md === "dec" || md === "decimals" ? "dec" : md === "frac" || md === "fractions" ? "frac" : null;
       var q = sp.get("q");
-      if (q === null) return;
+      if (q === null) {
+        if (hint) S.mode = hint;
+        return;
+      }
       var p = readQ(q);
       S.mode = p.mode;
       if (p.mode === "dec") {
