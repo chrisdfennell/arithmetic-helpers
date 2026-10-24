@@ -42,7 +42,7 @@
     practice:"practice/sets", worksheet:"practice/worksheets", flashcards:"practice/flash-cards", daily:"practice/problem-of-the-day",
     progress:"practice/progress", results:"practice/class-results",
     reference:"reference/sheets", glossary:"reference/definitions",
-    about:"info/about", privacy:"info/privacy",
+    about:"info/about", privacy:"info/privacy", help:"info/help",
     tests:"tests/self-test"
   };
   var FILES = { "404.html":"404.html", "sw.js":"sw.js" };

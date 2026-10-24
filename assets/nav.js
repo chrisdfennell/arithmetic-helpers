@@ -46,7 +46,8 @@
     { href:"progress.html",  name:"Progress",   title:"Your progress" },
     { href:"results.html",   name:"Results",    title:"Class results: a teacher's view of a practice set" },
     { href:"reference.html", name:"Reference",  title:"Reference sheets to print" },
-    { href:"glossary.html",  name:"Definitions", title:"The Word List: what the math words mean" }
+    { href:"glossary.html",  name:"Definitions", title:"The Word List: what the math words mean" },
+    { href:"help.html",      name:"Help",       title:"How to use the site, what each helper reads, and what's not done yet" }
   ];
 
   var LIGHT = "--nv-add:#0D7361;--nv-sub:#A8412A;--nv-mul:#544696;--nv-div:#A85A0C;--nv-ord:#1F5E8C;--nv-alg:#9B2F6B;--nv-geo:#4F6A17;"
