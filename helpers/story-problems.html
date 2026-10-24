@@ -3626,7 +3626,7 @@
         .replace(/\bmultiplied by (\S+)/, "multiply by $1").replace(/\bdivided by (\S+)/, "divide by $1").replace(/\bincreased by (\S+)/, "add $1").replace(/\bdecreased by (\S+)/, "subtract $1")
         .replace(/(\S+) is added/g, "add $1").replace(/(\S+) is subtracted/g, "subtract $1");
     }
-    var sents = t.split(/(?<=[.?!])\s+/), sq = null, i;
+    var sents = t.replace(/([.?!])\s+(?=\S)/g, "$1\u0001").split("\u0001"), sq = null, i;   // no lookbehind: Safari before 16.4 rejects it and the whole script stops
     for (i = 0; i < sents.length; i++){ var r0 = []; var sq0 = pzSequence(sents.slice(i).join(" "), v, r0); if (sq0){ sq = sq0; pcs = r0; break; } }
     if (sq) return { L:sq.L, R:sq.R, w:sq.w, pieces:pcs };
     for (i = 0; i < sents.length; i++){

@@ -47,6 +47,7 @@
     ".ht-search{display:flex;align-items:center;gap:6px;flex:1 1 240px;max-width:420px;min-width:0}" +
     ".ht-search input{flex:1;min-width:0;font-family:var(--f-mono,\"IBM Plex Mono\",Consolas,monospace);font-size:13px;" +
       "color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:6px 12px;outline:none}" +
+    "@supports (-webkit-touch-callout:none){.ht-search input{font-size:16px}}" +   // iPhone/iPad Safari zooms the page into a box under 16px
     ".ht-search input:focus{border-color:var(--ink-3)}" +
     ".ht-search input::placeholder{color:var(--ink-3)}" +
     ".ht-menu{position:absolute;z-index:60;min-width:240px;max-width:min(360px,92vw);background:var(--surface);color:var(--ink);" +
@@ -73,6 +74,7 @@
       "color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:8px 14px;cursor:pointer;" +
       "box-shadow:0 10px 24px -14px rgba(0,0,0,.6)}" +
     ".ht-byhand{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:12px 0 0;padding:12px 16px;border-radius:12px;" +
+      "background:rgba(180,83,9,.12);border:1.5px solid rgba(180,83,9,.45);" +   /* for browsers without color-mix (Safari before 16.2: iOS 15 iPads) */
       "background:color-mix(in srgb, #B45309 12%, var(--surface));border:1.5px solid color-mix(in srgb, #B45309 45%, var(--rule))}" +
     ".ht-byhand a{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-body,Arial,sans-serif);font-size:15.5px;font-weight:700;" +
       "text-decoration:none;color:#fff;background:#B45309;border-radius:10px;padding:9px 16px}" +
@@ -544,7 +546,8 @@
       padEl.className = "ht-pad"; padEl.setAttribute("role", "toolbar"); padEl.setAttribute("aria-label", "Math keys");
       document.body.appendChild(padEl);
       // keep the box focused (and the phone keyboard open) when a key is pressed
-      padEl.addEventListener("pointerdown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
+      // (not on a touch pointerdown: Safari then drops the tap's click, so the key does nothing; the mousedown below keeps the focus there)
+      padEl.addEventListener("pointerdown", function(e){ if (e.pointerType === "mouse" && e.target.closest("button")) e.preventDefault(); });
       padEl.addEventListener("mousedown", function(e){ if (e.target.closest("button")) e.preventDefault(); });
       padEl.addEventListener("click", function(e){ var b = e.target.closest("button"); if (b) padKey(b.getAttribute("data-k")); });
       if (window.visualViewport){ window.visualViewport.addEventListener("resize", placePad); window.visualViewport.addEventListener("scroll", placePad); }
