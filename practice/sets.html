@@ -21,205 +21,1082 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
-  :root{
-    --paper:#EDEFEC; --surface:#F8F9F7; --surface-2:#E2E6E2;
-    --ink:#18201C; --ink-2:#4A5550; --ink-3:#7B8681; --rule:#C8CFCA;
-    --key:#33463F; --key-bg:#DDE6E1; --key-line:#8BA398;
-    --warm:#9A5410; --warm-bg:#F6E5D2;
-    --focus:#33463F;
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --scr:#B45309; --gra:#0369A1; --exp:#BE185D; --pro:#A21CAF; --tri:#4D7C0F; --cal:#7C3AED; --num:#EA580C; --qua:#B91C1C; --log:#1D4ED8; --seq:#15803D; --fun:#0E7490; --rad:#92400E; --cpx:#4F46E5; --bel:#047857; --mat:#57534E; --uni:#BE123C; --mon:#A16207; --avi:#0B5CAD; --cnt:#6B5A2B; --fla:#C2410C;
-    --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
-    --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
-    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
-    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
-    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  :root {
+    --paper: #EDEFEC;
+    --surface: #F8F9F7;
+    --surface-2: #E2E6E2;
+    --ink: #18201C;
+    --ink-2: #4A5550;
+    --ink-3: #7B8681;
+    --rule: #C8CFCA;
+    --key: #33463F;
+    --key-bg: #DDE6E1;
+    --key-line: #8BA398;
+    --warm: #9A5410;
+    --warm-bg: #F6E5D2;
+    --focus: #33463F;
+    --add: #0D7361;
+    --sub: #A8412A;
+    --mul: #544696;
+    --div: #A85A0C;
+    --ord: #1F5E8C;
+    --alg: #9B2F6B;
+    --geo: #4F6A17;
+    --fra: #0B6E83;
+    --pct: #8A6D00;
+    --fac: #7B3FA0;
+    --int: #46596E;
+    --rat: #B0263E;
+    --lin: #1E7A3C;
+    --sta: #3346A8;
+    --wrd: #0F766E;
+    --scr: #B45309;
+    --gra: #0369A1;
+    --exp: #BE185D;
+    --pro: #A21CAF;
+    --tri: #4D7C0F;
+    --cal: #7C3AED;
+    --num: #EA580C;
+    --qua: #B91C1C;
+    --log: #1D4ED8;
+    --seq: #15803D;
+    --fun: #0E7490;
+    --rad: #92400E;
+    --cpx: #4F46E5;
+    --bel: #047857;
+    --mat: #57534E;
+    --uni: #BE123C;
+    --mon: #A16207;
+    --avi: #0B5CAD;
+    --cnt: #6B5A2B;
+    --fla: #C2410C;
+    --ok: #0D7361;
+    --ok-bg: #D4EAE7;
+    --later: #1F5E8C;
+    --later-bg: #DCE8F2;
+    --no: #A8412A;
+    --no-bg: #F4DDD5;
+    --shadow: 0 1px 0 rgba(24, 32, 28, .05), 0 14px 30px -20px rgba(24, 32, 28, .5);
+    --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --f-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
-      --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
-      --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
-      --warm:#E8A45C; --warm-bg:#37270F;
-      --focus:#B8C9C1;
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --fun:#67E8F9; --rad:#FBBF24; --cpx:#A5B4FC; --bel:#6EE7B7; --mat:#D6D3D1; --uni:#FDA4AF; --mon:#FDE047; --avi:#8CC4F5; --cnt:#EED9A0; --fla:#FB923C;
-      --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
-      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #121615;
+      --surface: #1A201E;
+      --surface-2: #262E2B;
+      --ink: #E5EAE7;
+      --ink-2: #A2ADA8;
+      --ink-3: #76817C;
+      --rule: #36403C;
+      --key: #B8C9C1;
+      --key-bg: #22302B;
+      --key-line: #4E6A5F;
+      --warm: #E8A45C;
+      --warm-bg: #37270F;
+      --focus: #B8C9C1;
+      --add: #4FCCB0;
+      --sub: #F08A6E;
+      --mul: #A99CF0;
+      --div: #F2A85C;
+      --ord: #7DB8E8;
+      --alg: #F08CC0;
+      --geo: #B5D06A;
+      --fra: #5FC9DE;
+      --pct: #E3C04D;
+      --fac: #C9A0EE;
+      --int: #A9BDD2;
+      --rat: #F27D8F;
+      --lin: #6FD38E;
+      --sta: #93A2F2;
+      --wrd: #5EEAD4;
+      --scr: #FCD34D;
+      --gra: #7DD3FC;
+      --exp: #FDA4AF;
+      --pro: #F0ABFC;
+      --tri: #BEF264;
+      --cal: #C4B5FD;
+      --num: #FDBA74;
+      --qua: #FCA5A5;
+      --log: #93C5FD;
+      --seq: #86EFAC;
+      --fun: #67E8F9;
+      --rad: #FBBF24;
+      --cpx: #A5B4FC;
+      --bel: #6EE7B7;
+      --mat: #D6D3D1;
+      --uni: #FDA4AF;
+      --mon: #FDE047;
+      --avi: #8CC4F5;
+      --cnt: #EED9A0;
+      --fla: #FB923C;
+      --ok: #4FCCB0;
+      --ok-bg: #0F2F2C;
+      --later: #7DB8E8;
+      --later-bg: #142838;
+      --no: #F08A6E;
+      --no-bg: #3A1E16;
+      --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
     }
   }
-  :root[data-theme="dark"]{
-    --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
-    --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
-    --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
-    --warm:#E8A45C; --warm-bg:#37270F;
-    --focus:#B8C9C1;
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --fun:#67E8F9; --rad:#FBBF24; --cpx:#A5B4FC; --bel:#6EE7B7; --mat:#D6D3D1; --uni:#FDA4AF; --mon:#FDE047; --avi:#8CC4F5; --cnt:#EED9A0; --fla:#FB923C;
-    --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
-    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  :root[data-theme="dark"] {
+    --paper: #121615;
+    --surface: #1A201E;
+    --surface-2: #262E2B;
+    --ink: #E5EAE7;
+    --ink-2: #A2ADA8;
+    --ink-3: #76817C;
+    --rule: #36403C;
+    --key: #B8C9C1;
+    --key-bg: #22302B;
+    --key-line: #4E6A5F;
+    --warm: #E8A45C;
+    --warm-bg: #37270F;
+    --focus: #B8C9C1;
+    --add: #4FCCB0;
+    --sub: #F08A6E;
+    --mul: #A99CF0;
+    --div: #F2A85C;
+    --ord: #7DB8E8;
+    --alg: #F08CC0;
+    --geo: #B5D06A;
+    --fra: #5FC9DE;
+    --pct: #E3C04D;
+    --fac: #C9A0EE;
+    --int: #A9BDD2;
+    --rat: #F27D8F;
+    --lin: #6FD38E;
+    --sta: #93A2F2;
+    --wrd: #5EEAD4;
+    --scr: #FCD34D;
+    --gra: #7DD3FC;
+    --exp: #FDA4AF;
+    --pro: #F0ABFC;
+    --tri: #BEF264;
+    --cal: #C4B5FD;
+    --num: #FDBA74;
+    --qua: #FCA5A5;
+    --log: #93C5FD;
+    --seq: #86EFAC;
+    --fun: #67E8F9;
+    --rad: #FBBF24;
+    --cpx: #A5B4FC;
+    --bel: #6EE7B7;
+    --mat: #D6D3D1;
+    --uni: #FDA4AF;
+    --mon: #FDE047;
+    --avi: #8CC4F5;
+    --cnt: #EED9A0;
+    --fla: #FB923C;
+    --ok: #4FCCB0;
+    --ok-bg: #0F2F2C;
+    --later: #7DB8E8;
+    --later-bg: #142838;
+    --no: #F08A6E;
+    --no-bg: #3A1E16;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
   }
 
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
-  [hidden]{display:none !important}
-  .page{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:22px}
-  @media (max-width:520px){.page{padding:22px 16px 56px;gap:18px}}
-  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
-  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
-  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(32px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0;
-    overflow-wrap:anywhere}
-  h1 em{font-style:normal;color:var(--key)}
-  .tagline{color:var(--ink-2);max-width:58ch;margin:.5em 0 0;font-size:15.5px}
-  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;background:var(--surface);color:var(--ink-2);
-    border:1px solid var(--rule);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
-  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
-  button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,textarea:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+  * {
+    box-sizing: border-box
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased
+  }
+  a {
+    color: inherit
+  }
+  [hidden] {
+    display: none !important
+  }
+  .page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 20px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px
+  }
+  @media (max-width:520px) {
+    .page {
+      padding: 22px 16px 56px;
+      gap: 18px
+    }
+  }
+  .masthead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap
+  }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: clamp(32px, 6.4vw, 54px);
+    line-height: .98;
+    letter-spacing: -.02em;
+    margin: .16em 0 0;
+    overflow-wrap: anywhere
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--key)
+  }
+  .tagline {
+    color: var(--ink-2);
+    max-width: 58ch;
+    margin: .5em 0 0;
+    font-size: 15.5px
+  }
+  .theme-btn {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    background: var(--surface);
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 8px 15px;
+    cursor: pointer;
+    white-space: nowrap
+  }
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3)
+  }
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  a:focus-visible,
+  textarea:focus-visible {
+    outline: 2.5px solid var(--focus);
+    outline-offset: 2px
+  }
 
-  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);min-width:0}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--rule)}
-  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;margin:0}
-  .panel-head span{font-size:13px;color:var(--ink-3)}
-  .blk{padding:14px 18px;border-bottom:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
-  .blk:last-child{border-bottom:0}
-  .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-  .row{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center}
-  .field{display:flex;flex-direction:column;gap:4px;min-width:0}
-  input[type=text], select, input[type=number], textarea{font-family:var(--f-body);font-size:14.5px;color:var(--ink);background:var(--paper);
-    border:1px solid var(--rule);border-radius:8px;padding:7px 10px;min-width:0}
-  input[type=number]{width:5.5em}
-  .title-in{width:100%;font-weight:600}
-  .tog{font-family:var(--f-body);font-size:13px;font-weight:500;background:var(--surface);border:1px solid var(--rule);color:var(--ink-2);
-    border-radius:999px;padding:5px 12px;cursor:pointer}
-  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
-  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);border:0;border-radius:9px;
-    padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-  .go:hover{filter:brightness(1.08)}
-  .go:disabled{opacity:.45;cursor:default;filter:none}
-  .ghost{font-family:var(--f-body);font-size:14px;font-weight:600;background:transparent;color:var(--ink);border:1px solid var(--rule);
-    border-radius:9px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-  .ghost:hover{border-color:var(--ink-3)}
-  .ghost:disabled{opacity:.45;cursor:default}
-  .msg{font-size:13px;color:var(--ink-3)}
-  .msg.err{color:var(--warm)}
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    min-width: 0
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--rule)
+  }
+  .panel-head h2 {
+    font-family: var(--f-display);
+    font-stretch: 112%;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0
+  }
+  .panel-head span {
+    font-size: 13px;
+    color: var(--ink-3)
+  }
+  .blk {
+    padding: 14px 18px;
+    border-bottom: 1px dashed var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+  }
+  .blk:last-child {
+    border-bottom: 0
+  }
+  .lbl {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  .row {
+    display: flex;
+    gap: 8px 12px;
+    flex-wrap: wrap;
+    align-items: center
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0
+  }
+  input[type=text],
+  select,
+  input[type=number],
+  textarea {
+    font-family: var(--f-body);
+    font-size: 14.5px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 7px 10px;
+    min-width: 0
+  }
+  input[type=number] {
+    width: 5.5em
+  }
+  .title-in {
+    width: 100%;
+    font-weight: 600
+  }
+  .tog {
+    font-family: var(--f-body);
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    border-radius: 999px;
+    padding: 5px 12px;
+    cursor: pointer
+  }
+  .tog[aria-pressed="true"] {
+    background: var(--key-bg);
+    border-color: var(--key);
+    color: var(--ink)
+  }
+  .go {
+    font-family: var(--f-body);
+    font-size: 14.5px;
+    font-weight: 600;
+    background: var(--key);
+    color: var(--surface);
+    border: 0;
+    border-radius: 9px;
+    padding: 9px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px
+  }
+  .go:hover {
+    filter: brightness(1.08)
+  }
+  .go:disabled {
+    opacity: .45;
+    cursor: default;
+    filter: none
+  }
+  .ghost {
+    font-family: var(--f-body);
+    font-size: 14px;
+    font-weight: 600;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 9px;
+    padding: 8px 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px
+  }
+  .ghost:hover {
+    border-color: var(--ink-3)
+  }
+  .ghost:disabled {
+    opacity: .45;
+    cursor: default
+  }
+  .msg {
+    font-size: 13px;
+    color: var(--ink-3)
+  }
+  .msg.err {
+    color: var(--warm)
+  }
 
   /* ---- builder ---- */
-  .layout{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;align-items:start}
-  @media (max-width:960px){.layout{grid-template-columns:minmax(0,1fr)}}
-  .sec{border:1px solid var(--rule);border-radius:12px;background:var(--paper);padding:12px 12px 12px 14px;
-    display:flex;flex-direction:column;gap:10px;border-left:4px solid var(--c,var(--key-line))}
-  .sec-head{display:flex;gap:8px;align-items:center}
-  .sec-head .letter{font-family:var(--f-mono);font-weight:600;font-size:12px;color:var(--ink-3);width:1.6ch}
-  .sec-head select{flex:1}
-  .icon-btn{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);color:var(--ink-2);
-    border-radius:8px;padding:5px 9px;cursor:pointer;line-height:1}
-  .icon-btn:hover{color:var(--ink);border-color:var(--ink-3)}
-  .icon-btn:disabled{opacity:.35;cursor:default}
-  .opts{display:flex;flex-wrap:wrap;gap:8px}
-  .opt{display:flex;flex-direction:column;gap:4px;flex:1 1 100%;min-width:0}
-  .opt.t{flex:0 0 auto}
-  .opt > span{font-size:12.5px;color:var(--ink-2)}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .plist{list-style:none;margin:0;padding:0;counter-reset:p}
-  .plist li{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;gap:2px 10px;align-items:center;padding:9px 18px;border-bottom:1px dashed var(--rule)}
-  .plist li:last-child{border-bottom:0}
-  .plist .n{font-family:var(--f-mono);font-weight:600;font-size:12.5px;color:var(--ink-3)}
-  .plist .q{font-family:var(--f-mono);font-weight:600;font-size:15px;overflow-wrap:anywhere;min-width:0}
-  .plist .q svg{max-width:100%;height:auto}
-  .plist .t{font-size:12px;color:var(--ink-3);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
-  .dot{width:9px;height:9px;border-radius:50%;background:var(--c);display:inline-block;flex:none}
-  .linkbox{display:flex;flex-direction:column;gap:10px}
-  .linkbox textarea{width:100%;font-family:var(--f-mono);font-size:12.5px;resize:vertical;min-height:4.2em;word-break:break-all}
-  .empty{padding:34px 20px;text-align:center;color:var(--ink-3)}
-  details.verify{border-top:1px dashed var(--rule)}
-  details.verify > summary{cursor:pointer;padding:12px 18px;font-weight:600;font-size:14px}
-  details.verify .blk{border-bottom:0;padding-top:0}
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start
+  }
+  @media (max-width:960px) {
+    .layout {
+      grid-template-columns: minmax(0, 1fr)
+    }
+  }
+  .sec {
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: var(--paper);
+    padding: 12px 12px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 4px solid var(--c, var(--key-line))
+  }
+  .sec-head {
+    display: flex;
+    gap: 8px;
+    align-items: center
+  }
+  .sec-head .letter {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--ink-3);
+    width: 1.6ch
+  }
+  .sec-head select {
+    flex: 1
+  }
+  .icon-btn {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    border-radius: 8px;
+    padding: 5px 9px;
+    cursor: pointer;
+    line-height: 1
+  }
+  .icon-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3)
+  }
+  .icon-btn:disabled {
+    opacity: .35;
+    cursor: default
+  }
+  .opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px
+  }
+  .opt {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1 1 100%;
+    min-width: 0
+  }
+  .opt.t {
+    flex: 0 0 auto
+  }
+  .opt>span {
+    font-size: 12.5px;
+    color: var(--ink-2)
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center
+  }
+  .plist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: p
+  }
+  .plist li {
+    display: grid;
+    grid-template-columns: 2.2em minmax(0, 1fr) auto;
+    gap: 2px 10px;
+    align-items: center;
+    padding: 9px 18px;
+    border-bottom: 1px dashed var(--rule)
+  }
+  .plist li:last-child {
+    border-bottom: 0
+  }
+  .plist .n {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--ink-3)
+  }
+  .plist .q {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+    min-width: 0
+  }
+  .plist .q svg {
+    max-width: 100%;
+    height: auto
+  }
+  .plist .t {
+    font-size: 12px;
+    color: var(--ink-3);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap
+  }
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--c);
+    display: inline-block;
+    flex: none
+  }
+  .linkbox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+  }
+  .linkbox textarea {
+    width: 100%;
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    resize: vertical;
+    min-height: 4.2em;
+    word-break: break-all
+  }
+  .empty {
+    padding: 34px 20px;
+    text-align: center;
+    color: var(--ink-3)
+  }
+  details.verify {
+    border-top: 1px dashed var(--rule)
+  }
+  details.verify>summary {
+    cursor: pointer;
+    padding: 12px 18px;
+    font-weight: 600;
+    font-size: 14px
+  }
+  details.verify .blk {
+    border-bottom: 0;
+    padding-top: 0
+  }
 
   /* ---- player ---- */
-  .bar-wrap{display:flex;flex-direction:column;gap:8px}
-  .bar-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px 16px;flex-wrap:wrap}
-  .count{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:17px}
-  .count small{font-family:var(--f-body);font-weight:400;font-size:13.5px;color:var(--ink-3);margin-left:6px}
-  .segs{display:flex;gap:3px}
-  .segs button{flex:1;min-width:0;height:12px;border-radius:4px;border:0;padding:0;background:var(--surface-2);cursor:pointer;position:relative}
-  .segs button.first{background:var(--ok)}
-  .segs button.right{background:var(--later)}
-  .segs button.hint,.segs button.shown{background:var(--warm)}
-  .segs button.skip{background:repeating-linear-gradient(135deg,var(--ink-3) 0 2px,transparent 2px 5px)}
-  .segs button.tried{background:var(--no)}
-  .segs button.cur{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
-  .stage{overflow:hidden}
-  .stage-head{display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--rule)}
-  .stage-head .tp{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
-  .stage-head a{font-size:13px;color:var(--ink-2)}
-  .frame{display:block;width:100%;border:0;height:420px;background:var(--paper)}
-  .frame-note{padding:16px 18px;color:var(--warm);font-size:14px}
-  .controls{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--rule);background:var(--surface)}
-  .verdict{font-size:14.5px;color:var(--ink-2);min-height:1.5em;flex:1 1 220px}
-  .verdict b{font-weight:600}
-  .verdict .ok{color:var(--ok)} .verdict .later{color:var(--later)} .verdict .warm{color:var(--warm)} .verdict .no{color:var(--no)}
-  .resume{display:flex;align-items:center;gap:8px 14px;flex-wrap:wrap;font-size:14px;color:var(--ink-2);background:var(--key-bg);
-    border-left:4px solid var(--key);border-radius:6px 12px 12px 6px;padding:10px 14px}
+  .bar-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+  }
+  .bar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 16px;
+    flex-wrap: wrap
+  }
+  .count {
+    font-family: var(--f-display);
+    font-stretch: 112%;
+    font-weight: 700;
+    font-size: 17px
+  }
+  .count small {
+    font-family: var(--f-body);
+    font-weight: 400;
+    font-size: 13.5px;
+    color: var(--ink-3);
+    margin-left: 6px
+  }
+  .segs {
+    display: flex;
+    gap: 3px
+  }
+  .segs button {
+    flex: 1;
+    min-width: 0;
+    height: 12px;
+    border-radius: 4px;
+    border: 0;
+    padding: 0;
+    background: var(--surface-2);
+    cursor: pointer;
+    position: relative
+  }
+  .segs button.first {
+    background: var(--ok)
+  }
+  .segs button.right {
+    background: var(--later)
+  }
+  .segs button.hint,
+  .segs button.shown {
+    background: var(--warm)
+  }
+  .segs button.skip {
+    background: repeating-linear-gradient(135deg, var(--ink-3) 0 2px, transparent 2px 5px)
+  }
+  .segs button.tried {
+    background: var(--no)
+  }
+  .segs button.cur {
+    box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--ink)
+  }
+  .stage {
+    overflow: hidden
+  }
+  .stage-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 14px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--rule)
+  }
+  .stage-head .tp {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 14px
+  }
+  .stage-head a {
+    font-size: 13px;
+    color: var(--ink-2)
+  }
+  .frame {
+    display: block;
+    width: 100%;
+    border: 0;
+    height: 420px;
+    background: var(--paper)
+  }
+  .frame-note {
+    padding: 16px 18px;
+    color: var(--warm);
+    font-size: 14px
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 14px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+    border-top: 1px solid var(--rule);
+    background: var(--surface)
+  }
+  .verdict {
+    font-size: 14.5px;
+    color: var(--ink-2);
+    min-height: 1.5em;
+    flex: 1 1 220px
+  }
+  .verdict b {
+    font-weight: 600
+  }
+  .verdict .ok {
+    color: var(--ok)
+  }
+  .verdict .later {
+    color: var(--later)
+  }
+  .verdict .warm {
+    color: var(--warm)
+  }
+  .verdict .no {
+    color: var(--no)
+  }
+  .resume {
+    display: flex;
+    align-items: center;
+    gap: 8px 14px;
+    flex-wrap: wrap;
+    font-size: 14px;
+    color: var(--ink-2);
+    background: var(--key-bg);
+    border-left: 4px solid var(--key);
+    border-radius: 6px 12px 12px 6px;
+    padding: 10px 14px
+  }
 
   /* ---- the end ---- */
-  .score{padding:24px 24px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:16px 30px}
-  .big{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(44px,9vw,72px);line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-  .big small{font-size:.42em;color:var(--ink-3);font-weight:700}
-  .score .what{font-size:16px;font-weight:600}
-  .score .what span{display:block;font-weight:400;color:var(--ink-2);font-size:14px;margin-top:4px}
-  .chips{display:flex;flex-wrap:wrap;gap:6px 8px;margin-top:10px}
-  .chips span{font-size:12.5px;border-radius:999px;padding:3px 10px;background:var(--surface-2);color:var(--ink-2)}
-  .rlist li{grid-template-columns:2em 28px minmax(0,1fr) auto}
-  .ic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-weight:600;font-size:14px;
-    background:var(--surface-2);color:var(--ink-2)}
-  .ic.first{background:var(--ok-bg);color:var(--ok)} .ic.right{background:var(--later-bg);color:var(--later)}
-  .ic.hint,.ic.shown{background:var(--warm-bg);color:var(--warm)} .ic.tried{background:var(--no-bg);color:var(--no)}
-  .rlist .st{grid-column:3;font-size:12.5px;color:var(--ink-3)}
-  .rlist .act{grid-column:4;grid-row:1 / span 2}
-  .rlist .q{grid-column:3}
-  .rlist .n,.rlist .ic{grid-row:1 / span 2}
-  .small-link{font-size:13.5px;font-weight:600;color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:8px;padding:5px 11px;white-space:nowrap}
-  .small-link:hover{border-color:var(--ink-3);background:var(--surface-2)}
-  .handin{display:flex;flex-direction:column;gap:8px}
-  .handin code{display:block;font-family:var(--f-mono);font-size:13.5px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;
-    overflow-wrap:anywhere;user-select:all}
-  .handin .name-in{width:100%;max-width:22em}
-  .teacher-note{font-size:13px;color:var(--ink-3)}
-  .teacher-note a{color:var(--ink-2);font-weight:600}
-  @media (max-width:520px){
-    .plist li{padding:9px 14px}
-    .stage-head,.controls{padding-left:14px;padding-right:14px}
-    .score{padding:20px 16px}
+  .score {
+    padding: 24px 24px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px 30px
+  }
+  .big {
+    font-family: var(--f-display);
+    font-stretch: 116%;
+    font-weight: 800;
+    font-size: clamp(44px, 9vw, 72px);
+    line-height: .9;
+    letter-spacing: -.02em;
+    font-variant-numeric: tabular-nums
+  }
+  .big small {
+    font-size: .42em;
+    color: var(--ink-3);
+    font-weight: 700
+  }
+  .score .what {
+    font-size: 16px;
+    font-weight: 600
+  }
+  .score .what span {
+    display: block;
+    font-weight: 400;
+    color: var(--ink-2);
+    font-size: 14px;
+    margin-top: 4px
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    margin-top: 10px
+  }
+  .chips span {
+    font-size: 12.5px;
+    border-radius: 999px;
+    padding: 3px 10px;
+    background: var(--surface-2);
+    color: var(--ink-2)
+  }
+  .rlist li {
+    grid-template-columns: 2em 28px minmax(0, 1fr) auto
+  }
+  .ic {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 14px;
+    background: var(--surface-2);
+    color: var(--ink-2)
+  }
+  .ic.first {
+    background: var(--ok-bg);
+    color: var(--ok)
+  }
+  .ic.right {
+    background: var(--later-bg);
+    color: var(--later)
+  }
+  .ic.hint,
+  .ic.shown {
+    background: var(--warm-bg);
+    color: var(--warm)
+  }
+  .ic.tried {
+    background: var(--no-bg);
+    color: var(--no)
+  }
+  .rlist .st {
+    grid-column: 3;
+    font-size: 12.5px;
+    color: var(--ink-3)
+  }
+  .rlist .act {
+    grid-column: 4;
+    grid-row: 1 / span 2
+  }
+  .rlist .q {
+    grid-column: 3
+  }
+  .rlist .n,
+  .rlist .ic {
+    grid-row: 1 / span 2
+  }
+  .small-link {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 5px 11px;
+    white-space: nowrap
+  }
+  .small-link:hover {
+    border-color: var(--ink-3);
+    background: var(--surface-2)
+  }
+  .handin {
+    display: flex;
+    flex-direction: column;
+    gap: 8px
+  }
+  .handin code {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 13.5px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 10px 12px;
+    overflow-wrap: anywhere;
+    user-select: all
+  }
+  .handin .name-in {
+    width: 100%;
+    max-width: 22em
+  }
+  .teacher-note {
+    font-size: 13px;
+    color: var(--ink-3)
+  }
+  .teacher-note a {
+    color: var(--ink-2);
+    font-weight: 600
+  }
+  @media (max-width:520px) {
+    .plist li {
+      padding: 9px 14px
+    }
+    .stage-head,
+    .controls {
+      padding-left: 14px;
+      padding-right: 14px
+    }
+    .score {
+      padding: 20px 16px
+    }
   }
   /* ---- assignments: the builder, the start, one try only ---- */
-  input[type=date]{font-family:var(--f-body);font-size:14.5px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:6px 10px;min-width:0;max-width:100%;color-scheme:light dark}
-  .instr-in{width:100%;resize:vertical;min-height:4.2em;line-height:1.45}
-  .alist{list-style:none;margin:0;padding:0}
-  .alist > li{display:grid;grid-template-columns:2.2em minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:10px 18px;border-bottom:1px dashed var(--rule)}
-  .alist > li:last-child{border-bottom:0}
-  .alist .n{font-family:var(--f-mono);font-weight:600;font-size:12.5px;color:var(--ink-3);align-self:start;padding-top:2px}
-  .alist .q{font-family:var(--f-mono);font-weight:600;font-size:14.5px;overflow-wrap:anywhere;min-width:0}
-  .alist .t{grid-column:2;font-size:12px;color:var(--ink-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  .alist .act{grid-column:3;grid-row:1 / span 2;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-  .alist .pv{grid-column:1 / -1}
-  .alist .pv iframe{display:block;width:100%;height:300px;border:1px solid var(--rule);border-radius:10px;background:var(--paper)}
-  .alist .empty{display:block;padding:28px 20px;text-align:center;color:var(--ink-3)}
-  @media (max-width:520px){.alist > li{grid-template-columns:2em minmax(0,1fr);padding:10px 14px}.alist .act{grid-column:2;grid-row:auto;justify-content:flex-start}}
-  .note{font-size:13px;color:var(--ink-2);background:var(--key-bg);border-left:4px solid var(--key);border-radius:6px 10px 10px 6px;padding:8px 12px}
-  .intro{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
-  .intro h2{font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:22px;margin:0;overflow-wrap:anywhere}
-  .intro .instr{white-space:pre-line;font-size:15px;color:var(--ink);margin:0;overflow-wrap:anywhere}
-  .facts{display:flex;flex-wrap:wrap;gap:6px 8px}
-  .facts span{font-size:13px;border-radius:999px;padding:3px 11px;background:var(--surface-2);color:var(--ink-2)}
-  .facts .due{background:var(--warm-bg);color:var(--warm);font-weight:600}
-  .asg-strip{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-size:13px;color:var(--ink-2)}
-  .asg-strip span{font-size:12.5px;border-radius:999px;padding:2px 10px;background:var(--surface-2);color:var(--ink-2)}
-  .asg-strip .due{background:var(--warm-bg);color:var(--warm);font-weight:600}
-  .frame-box{position:relative}
-  .frame-lock{position:absolute;inset:0;background:transparent;cursor:not-allowed}
-  .segs button.locked{background:var(--no)}
-  .linkbox textarea.copybox{width:100%;font-family:var(--f-body);font-size:13.5px;line-height:1.5;resize:vertical;min-height:12.5em;word-break:normal;overflow-wrap:anywhere}
-  @media (max-width:520px){.intro{padding:18px 16px}}
-  @media print{.theme-btn,.sitenav,.actions,.segs{display:none !important}.panel{box-shadow:none}}
-  @supports (-webkit-touch-callout:none){input[type=text], select, input[type=number], textarea{font-size:16px}}   /* iPhone Safari zooms into a box under 16px */
+  input[type=date] {
+    font-family: var(--f-body);
+    font-size: 14.5px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 6px 10px;
+    min-width: 0;
+    max-width: 100%;
+    color-scheme: light dark
+  }
+  .instr-in {
+    width: 100%;
+    resize: vertical;
+    min-height: 4.2em;
+    line-height: 1.45
+  }
+  .alist {
+    list-style: none;
+    margin: 0;
+    padding: 0
+  }
+  .alist>li {
+    display: grid;
+    grid-template-columns: 2.2em minmax(0, 1fr) auto;
+    gap: 4px 10px;
+    align-items: center;
+    padding: 10px 18px;
+    border-bottom: 1px dashed var(--rule)
+  }
+  .alist>li:last-child {
+    border-bottom: 0
+  }
+  .alist .n {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 12.5px;
+    color: var(--ink-3);
+    align-self: start;
+    padding-top: 2px
+  }
+  .alist .q {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 14.5px;
+    overflow-wrap: anywhere;
+    min-width: 0
+  }
+  .alist .t {
+    grid-column: 2;
+    font-size: 12px;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap
+  }
+  .alist .act {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: flex-end
+  }
+  .alist .pv {
+    grid-column: 1 / -1
+  }
+  .alist .pv iframe {
+    display: block;
+    width: 100%;
+    height: 300px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: var(--paper)
+  }
+  .alist .empty {
+    display: block;
+    padding: 28px 20px;
+    text-align: center;
+    color: var(--ink-3)
+  }
+  @media (max-width:520px) {
+    .alist>li {
+      grid-template-columns: 2em minmax(0, 1fr);
+      padding: 10px 14px
+    }
+    .alist .act {
+      grid-column: 2;
+      grid-row: auto;
+      justify-content: flex-start
+    }
+  }
+  .note {
+    font-size: 13px;
+    color: var(--ink-2);
+    background: var(--key-bg);
+    border-left: 4px solid var(--key);
+    border-radius: 6px 10px 10px 6px;
+    padding: 8px 12px
+  }
+  .intro {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px
+  }
+  .intro h2 {
+    font-family: var(--f-display);
+    font-stretch: 112%;
+    font-weight: 800;
+    font-size: 22px;
+    margin: 0;
+    overflow-wrap: anywhere
+  }
+  .intro .instr {
+    white-space: pre-line;
+    font-size: 15px;
+    color: var(--ink);
+    margin: 0;
+    overflow-wrap: anywhere
+  }
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px
+  }
+  .facts span {
+    font-size: 13px;
+    border-radius: 999px;
+    padding: 3px 11px;
+    background: var(--surface-2);
+    color: var(--ink-2)
+  }
+  .facts .due {
+    background: var(--warm-bg);
+    color: var(--warm);
+    font-weight: 600
+  }
+  .asg-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--ink-2)
+  }
+  .asg-strip span {
+    font-size: 12.5px;
+    border-radius: 999px;
+    padding: 2px 10px;
+    background: var(--surface-2);
+    color: var(--ink-2)
+  }
+  .asg-strip .due {
+    background: var(--warm-bg);
+    color: var(--warm);
+    font-weight: 600
+  }
+  .frame-box {
+    position: relative
+  }
+  .frame-lock {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    cursor: not-allowed
+  }
+  .segs button.locked {
+    background: var(--no)
+  }
+  .linkbox textarea.copybox {
+    width: 100%;
+    font-family: var(--f-body);
+    font-size: 13.5px;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 12.5em;
+    word-break: normal;
+    overflow-wrap: anywhere
+  }
+  @media (max-width:520px) {
+    .intro {
+      padding: 18px 16px
+    }
+  }
+  @media print {
+    .theme-btn,
+    .sitenav,
+    .actions,
+    .segs {
+      display: none !important
+    }
+    .panel {
+      box-shadow: none
+    }
+  }
+  @supports (-webkit-touch-callout:none) {
+    input[type=text],
+    select,
+    input[type=number],
+    textarea {
+      font-size: 16px
+    }
+  }
+  /* iPhone Safari zooms into a box under 16px */
 </style>
 
 <div class="page">
@@ -439,990 +1316,1489 @@
 </div>
 
 <script>
-/* sets.html — online practice sets.
-     sets.html?set=<code>   plays a set; with no set it's the builder.
-   The code is the set itself, so nothing is stored anywhere but in the link:
-     "z" + base64url(deflate-raw(JSON))   when the browser can compress it (shorter), or
-     "j" + base64url(JSON)                as it is (any browser)
-   JSON = { "v":1, "t":"title", "p":[ ["fractions", "mode=simplify&q=18%2F24"], … ] }   (page names without .html)
-   Each problem plays in a frame: <page>?<params>&practice=check&embed=1&theme=<light|dark>. The page reports each
-   check to this one with postMessage({type:"helper:checked", detail}); this page only keeps the score of the set.
-   The practice log (progress.js) is written by the helper page in the frame, so nothing is counted twice.
-   How far you got is kept in localStorage["practice-run:<hash of the code>"], so a refresh picks up where you were.
+  /* sets.html — online practice sets.
+       sets.html?set=<code>   plays a set; with no set it's the builder.
+     The code is the set itself, so nothing is stored anywhere but in the link:
+       "z" + base64url(deflate-raw(JSON))   when the browser can compress it (shorter), or
+       "j" + base64url(JSON)                as it is (any browser)
+     JSON = { "v":1, "t":"title", "p":[ ["fractions", "mode=simplify&q=18%2F24"], … ] }   (page names without .html)
+     Each problem plays in a frame: <page>?<params>&practice=check&embed=1&theme=<light|dark>. The page reports each
+     check to this one with postMessage({type:"helper:checked", detail}); this page only keeps the score of the set.
+     The practice log (progress.js) is written by the helper page in the frame, so nothing is counted twice.
+     How far you got is kept in localStorage["practice-run:<hash of the code>"], so a refresh picks up where you were.
 
-   Assignments are practice sets with one more field, so they play here and Class results reads them like any set:
-     JSON = { "v":1, "t":"title", "p":[…], "a":{ "i":"instructions", "d":"2026-10-30", "s":1, "r":1 } }
-   i: instructions (400 characters at most), d: the due date shown to students ("" for none), s: 0 hides the steps (the
-   worked solution, "Show me the work") in the problem's frame, r: 0 allows one Check per problem (a wrong one locks it).
-   An assignment starts with the student's name, and its hand-in line also says how many tries each problem took (v3).
-     sets.html?assignment   the assignment builder: the problems teachers put in with "Add to assignment" on the helpers
-                            (assets/assign.js; localStorage["assignment-draft"]), in order, with a title, instructions,
-                            a due date and the two options, and one link + QR code + text for Google Classroom or email. */
-(function(){
-  "use strict";
-  var $ = function(id){ return document.getElementById(id); };
-  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-  // a helper's full address from its name (site.js knows which folder each page is in)
-  function U(page, params){ return window.HelperSite ? window.HelperSite.url(page, params) : page + (params ? "?" + params : ""); }
+     Assignments are practice sets with one more field, so they play here and Class results reads them like any set:
+       JSON = { "v":1, "t":"title", "p":[…], "a":{ "i":"instructions", "d":"2026-10-30", "s":1, "r":1 } }
+     i: instructions (400 characters at most), d: the due date shown to students ("" for none), s: 0 hides the steps (the
+     worked solution, "Show me the work") in the problem's frame, r: 0 allows one Check per problem (a wrong one locks it).
+     An assignment starts with the student's name, and its hand-in line also says how many tries each problem took (v3).
+       sets.html?assignment   the assignment builder: the problems teachers put in with "Add to assignment" on the helpers
+                              (assets/assign.js; localStorage["assignment-draft"]), in order, with a title, instructions,
+                              a due date and the two options, and one link + QR code + text for Google Classroom or email. */
+  (function() {
+    "use strict";
+    var $ = function(id) { return document.getElementById(id); };
 
-  var TOPICS = [
-    ["addition.html","Addition","The Carry Column","add"], ["subtraction.html","Subtraction","The Borrow Bank","sub"],
-    ["multiplication.html","Multiplication","The Product Ladder","mul"], ["division.html","Division","The Division House","div"],
-    ["fractions.html","Fractions","The Fraction Bar","fra"], ["percents.html","Percents","The Hundred Grid","pct"],
-    ["factors.html","Factors & primes","The Factor Tree","fac"], ["integers.html","Integers","The Number Line","int"],
-    ["ratios.html","Ratios & rates","The Ratio Table","rat"], ["unit-conversions.html","Unit conversions","The Measuring Tape","uni"], ["money-math.html","Money math","The Money Jar","mon"], ["aviation.html","Aviation","The Flight Computer","avi"], ["pemdas.html","Order of operations","The Order Stack","ord"],
-    ["algebra.html","Algebra","The Balance Scale","alg"], ["lines.html","Lines & slope","The Slope Grid","lin"],
-    ["geometry.html","Geometry","The Shape Shop","geo"], ["stats.html","Statistics","The Dot Plot","sta"],
-    ["probability.html","Probability","The Chance Spinner","pro"], ["counting.html","Counting","The Counting Tree","cnt"], ["trigonometry.html","Trigonometry","The Unit Circle","tri"], ["calculus.html","Calculus","The Rate Machine","cal"], ["number-sense.html","Number sense","The Place Value Chart","num"], ["quadratics.html","Quadratics & polynomials","The Area Box","qua"], ["logarithms.html","Logarithms","The Log Ladder","log"], ["sequences.html","Sequences & series","The Number Staircase","seq"], ["functions.html","Functions","The Function Machine","fun"], ["radicals.html","Radicals & rational expressions","The Root Cellar","rad"], ["complex-numbers.html","Complex numbers","The Complex Plane","cpx"], ["college-statistics.html","College statistics","The Bell Curve","bel"], ["matrices-and-vectors.html","Matrices & vectors","The Matrix Grid","mat"], ["exponents.html","Exponents","The Power Tower","exp"], ["graphing.html","Graphing","The Graph Paper","gra"], ["scratch.html","By hand","The Scratch Paper","scr"], ["wordproblems.html","Story problems","The Story Problem","wrd"], ["flashcards.html","Flash cards","The Flash Cards","fla"]
-  ];
-  function topic(page){
-    if (!/\.html$/.test(page)) page += ".html";
-    for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i][0] === page) return TOPICS[i];
-    return null;
-  }
-  function cvar(t){ return t ? "var(--" + t[3] + ")" : "var(--ink-3)"; }
-  function cleanParams(p){
-    return String(p || "").replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
-  }
-  function textOf(page, params){             // a readable guess at the problem, from its link
-    var o = {}, t = topic(page);
-    cleanParams(params).split("&").forEach(function(kv){
-      var i = kv.indexOf("="), k = i < 0 ? kv : kv.slice(0, i), v = i < 0 ? "" : kv.slice(i + 1);
-      try { v = decodeURIComponent(v.replace(/\+/g, " ")); } catch (e){}
-      o[k] = v;
-    });
-    if (o.q) return o.q;
-    var rest = Object.keys(o).filter(function(k){ return k !== "mode"; }).map(function(k){ return k + " = " + o[k]; }).join(", ");
-    return (t ? t[1] : page) + (o.mode ? " (" + o.mode + ")" : "") + (rest ? ": " + rest : "");
-  }
+    function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    // a helper's full address from its name (site.js knows which folder each page is in)
+    function U(page, params) { return window.HelperSite ? window.HelperSite.url(page, params) : page + (params ? "?" + params : ""); }
 
-  /* ===================== the set, in a link ===================== */
-  function b64url(bytes){
-    var s = "", CH = 0x8000;
-    for (var i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, Array.prototype.slice.call(bytes, i, i + CH));
-    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  }
-  function unb64url(str){
-    str = String(str).replace(/-/g, "+").replace(/_/g, "/");
-    while (str.length % 4) str += "=";
-    var bin = atob(str), out = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-    return out;
-  }
-  function pipe(bytes, stream){
-    var w = stream.writable.getWriter();
-    w.write(bytes); w.close();
-    return new Response(stream.readable).arrayBuffer().then(function(b){ return new Uint8Array(b); });
-  }
-  function canZip(){ try { return typeof CompressionStream === "function" && !!new CompressionStream("deflate-raw"); } catch (e){ return false; } }
-  function canUnzip(){ try { return typeof DecompressionStream === "function" && !!new DecompressionStream("deflate-raw"); } catch (e){ return false; } }
-  function setJSON(title, probs, asg){
-    var o = { v:1, t:String(title || "").slice(0, 60), p:probs.map(function(p){ return [p[0].replace(/\.html$/, ""), cleanParams(p[1])]; }) };
-    if (asg) o.a = { i:String(asg.instr || "").slice(0, 400), d:/^\d{4}-\d\d-\d\d$/.test(asg.due || "") ? asg.due : "", s:asg.steps === false ? 0 : 1, r:asg.retries === false ? 0 : 1 };
-    return JSON.stringify(o);
-  }
-  // an assignment's own fields, from a set's JSON (null for a plain practice set)
-  function readAsg(a){
-    if (!a || typeof a !== "object") return null;
-    return { instr:String(a.i || "").slice(0, 400), due:/^\d{4}-\d\d-\d\d$/.test(String(a.d || "")) ? String(a.d) : "", steps:a.s !== 0, retries:a.r !== 0 };
-  }
-  function encodeSet(title, probs, asg){
-    var plain = "j" + b64url(new TextEncoder().encode(setJSON(title, probs, asg)));
-    if (!canZip()) return Promise.resolve(plain);
-    return pipe(new TextEncoder().encode(setJSON(title, probs, asg)), new CompressionStream("deflate-raw")).then(function(z){
-      var zz = "z" + b64url(z);
-      return zz.length < plain.length * .9 ? zz : plain;
-    }, function(){ return plain; });
-  }
-  function decodeSet(code){
-    return new Promise(function(ok, bad){
-      code = String(code || "");
-      var kind = code.charAt(0), bytes;
-      try { bytes = unb64url(code.slice(1)); } catch (e){ return bad(new Error("not base64")); }
-      if (kind === "j") return ok(bytes);
-      if (kind === "z"){
-        if (!canUnzip()) return bad(new Error("This browser can’t open compressed practice links. Try a newer browser."));
-        return pipe(bytes, new DecompressionStream("deflate-raw")).then(ok, function(){ bad(new Error("damaged")); });
+    var TOPICS = [
+      ["addition.html", "Addition", "The Carry Column", "add"],
+      ["subtraction.html", "Subtraction", "The Borrow Bank", "sub"],
+      ["multiplication.html", "Multiplication", "The Product Ladder", "mul"],
+      ["division.html", "Division", "The Division House", "div"],
+      ["fractions.html", "Fractions", "The Fraction Bar", "fra"],
+      ["percents.html", "Percents", "The Hundred Grid", "pct"],
+      ["factors.html", "Factors & primes", "The Factor Tree", "fac"],
+      ["integers.html", "Integers", "The Number Line", "int"],
+      ["ratios.html", "Ratios & rates", "The Ratio Table", "rat"],
+      ["unit-conversions.html", "Unit conversions", "The Measuring Tape", "uni"],
+      ["money-math.html", "Money math", "The Money Jar", "mon"],
+      ["aviation.html", "Aviation", "The Flight Computer", "avi"],
+      ["pemdas.html", "Order of operations", "The Order Stack", "ord"],
+      ["algebra.html", "Algebra", "The Balance Scale", "alg"],
+      ["lines.html", "Lines & slope", "The Slope Grid", "lin"],
+      ["geometry.html", "Geometry", "The Shape Shop", "geo"],
+      ["stats.html", "Statistics", "The Dot Plot", "sta"],
+      ["probability.html", "Probability", "The Chance Spinner", "pro"],
+      ["counting.html", "Counting", "The Counting Tree", "cnt"],
+      ["trigonometry.html", "Trigonometry", "The Unit Circle", "tri"],
+      ["calculus.html", "Calculus", "The Rate Machine", "cal"],
+      ["number-sense.html", "Number sense", "The Place Value Chart", "num"],
+      ["quadratics.html", "Quadratics & polynomials", "The Area Box", "qua"],
+      ["logarithms.html", "Logarithms", "The Log Ladder", "log"],
+      ["sequences.html", "Sequences & series", "The Number Staircase", "seq"],
+      ["functions.html", "Functions", "The Function Machine", "fun"],
+      ["radicals.html", "Radicals & rational expressions", "The Root Cellar", "rad"],
+      ["complex-numbers.html", "Complex numbers", "The Complex Plane", "cpx"],
+      ["college-statistics.html", "College statistics", "The Bell Curve", "bel"],
+      ["matrices-and-vectors.html", "Matrices & vectors", "The Matrix Grid", "mat"],
+      ["exponents.html", "Exponents", "The Power Tower", "exp"],
+      ["graphing.html", "Graphing", "The Graph Paper", "gra"],
+      ["scratch.html", "By hand", "The Scratch Paper", "scr"],
+      ["wordproblems.html", "Story problems", "The Story Problem", "wrd"],
+      ["flashcards.html", "Flash cards", "The Flash Cards", "fla"]
+    ];
+
+    function topic(page) {
+      if (!/\.html$/.test(page)) page += ".html";
+      for (var i = 0; i < TOPICS.length; i++)
+        if (TOPICS[i][0] === page) return TOPICS[i];
+      return null;
+    }
+
+    function cvar(t) { return t ? "var(--" + t[3] + ")" : "var(--ink-3)"; }
+
+    function cleanParams(p) {
+      return String(p || "").replace(/^\?/, "").split("&").filter(function(kv) { return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    }
+
+    function textOf(page, params) { // a readable guess at the problem, from its link
+      var o = {},
+        t = topic(page);
+      cleanParams(params).split("&").forEach(function(kv) {
+        var i = kv.indexOf("="),
+          k = i < 0 ? kv : kv.slice(0, i),
+          v = i < 0 ? "" : kv.slice(i + 1);
+        try { v = decodeURIComponent(v.replace(/\+/g, " ")); } catch (e) {}
+        o[k] = v;
+      });
+      if (o.q) return o.q;
+      var rest = Object.keys(o).filter(function(k) { return k !== "mode"; }).map(function(k) { return k + " = " + o[k]; }).join(", ");
+      return (t ? t[1] : page) + (o.mode ? " (" + o.mode + ")" : "") + (rest ? ": " + rest : "");
+    }
+
+    /* ===================== the set, in a link ===================== */
+    function b64url(bytes) {
+      var s = "",
+        CH = 0x8000;
+      for (var i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, Array.prototype.slice.call(bytes, i, i + CH));
+      return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function unb64url(str) {
+      str = String(str).replace(/-/g, "+").replace(/_/g, "/");
+      while (str.length % 4) str += "=";
+      var bin = atob(str),
+        out = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+
+    function pipe(bytes, stream) {
+      var w = stream.writable.getWriter();
+      w.write(bytes);
+      w.close();
+      return new Response(stream.readable).arrayBuffer().then(function(b) { return new Uint8Array(b); });
+    }
+
+    function canZip() { try { return typeof CompressionStream === "function" && !!new CompressionStream("deflate-raw"); } catch (e) { return false; } }
+
+    function canUnzip() { try { return typeof DecompressionStream === "function" && !!new DecompressionStream("deflate-raw"); } catch (e) { return false; } }
+
+    function setJSON(title, probs, asg) {
+      var o = { v: 1, t: String(title || "").slice(0, 60), p: probs.map(function(p) { return [p[0].replace(/\.html$/, ""), cleanParams(p[1])]; }) };
+      if (asg) o.a = { i: String(asg.instr || "").slice(0, 400), d: /^\d{4}-\d\d-\d\d$/.test(asg.due || "") ? asg.due : "", s: asg.steps === false ? 0 : 1, r: asg.retries === false ? 0 : 1 };
+      return JSON.stringify(o);
+    }
+    // an assignment's own fields, from a set's JSON (null for a plain practice set)
+    function readAsg(a) {
+      if (!a || typeof a !== "object") return null;
+      return { instr: String(a.i || "").slice(0, 400), due: /^\d{4}-\d\d-\d\d$/.test(String(a.d || "")) ? String(a.d) : "", steps: a.s !== 0, retries: a.r !== 0 };
+    }
+
+    function encodeSet(title, probs, asg) {
+      var plain = "j" + b64url(new TextEncoder().encode(setJSON(title, probs, asg)));
+      if (!canZip()) return Promise.resolve(plain);
+      return pipe(new TextEncoder().encode(setJSON(title, probs, asg)), new CompressionStream("deflate-raw")).then(function(z) {
+        var zz = "z" + b64url(z);
+        return zz.length < plain.length * .9 ? zz : plain;
+      }, function() { return plain; });
+    }
+
+    function decodeSet(code) {
+      return new Promise(function(ok, bad) {
+        code = String(code || "");
+        var kind = code.charAt(0),
+          bytes;
+        try { bytes = unb64url(code.slice(1)); } catch (e) { return bad(new Error("not base64")); }
+        if (kind === "j") return ok(bytes);
+        if (kind === "z") {
+          if (!canUnzip()) return bad(new Error("This browser can’t open compressed practice links. Try a newer browser."));
+          return pipe(bytes, new DecompressionStream("deflate-raw")).then(ok, function() { bad(new Error("damaged")); });
+        }
+        bad(new Error("unknown kind"));
+      }).then(function(bytes) {
+        var o = JSON.parse(new TextDecoder().decode(bytes));
+        if (!o || o.v !== 1 || !Array.isArray(o.p)) throw new Error("not a set");
+        var probs = o.p.filter(function(p) { return Array.isArray(p) && typeof p[0] === "string" && topic(p[0]); })
+          .slice(0, 100).map(function(p) { return { page: topic(p[0])[0], params: cleanParams(p[1]) }; });
+        if (!probs.length) throw new Error("no problems");
+        return { title: String(o.t || "Practice set").slice(0, 60) || "Practice set", probs: probs, asg: readAsg(o.a) };
+      });
+    }
+    // a small hash (cyrb53): names a set in storage, and makes the hand-in check code
+    function hash(str, seed) {
+      var h1 = 0xdeadbeef ^ (seed || 0),
+        h2 = 0x41c6ce57 ^ (seed || 0);
+      for (var i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
       }
-      bad(new Error("unknown kind"));
-    }).then(function(bytes){
-      var o = JSON.parse(new TextDecoder().decode(bytes));
-      if (!o || o.v !== 1 || !Array.isArray(o.p)) throw new Error("not a set");
-      var probs = o.p.filter(function(p){ return Array.isArray(p) && typeof p[0] === "string" && topic(p[0]); })
-                     .slice(0, 100).map(function(p){ return { page:topic(p[0])[0], params:cleanParams(p[1]) }; });
-      if (!probs.length) throw new Error("no problems");
-      return { title:String(o.t || "Practice set").slice(0, 60) || "Practice set", probs:probs, asg:readAsg(o.a) };
-    });
-  }
-  // a small hash (cyrb53): names a set in storage, and makes the hand-in check code
-  function hash(str, seed){
-    var h1 = 0xdeadbeef ^ (seed || 0), h2 = 0x41c6ce57 ^ (seed || 0);
-    for (var i = 0, ch; i < str.length; i++){ ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
-    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
-  }
-  function hid(str, n, seed){ var s = hash(str, seed).toString(36).toUpperCase(); while (s.length < n) s = "0" + s; return s.slice(-n); }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+    }
 
-  /* ===================== the hand-in line (class-results.html has the same reader) =====================
-     v2 (now):  [Name · ]Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 1✓ 2~ 3✗ 4– … ·
-                2026-10-21 11:17 · set DLMILC · check YG1AE4
-     v1 (old):  Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 2026-10-21 11:17 · set DLMILC · check YG1AE4
-     Marks, one per problem: ✓ right first time, ~ right after more tries or a hint, ✗ looked at the work or tried and
-     not right, – skipped without trying. "set" is hid(the set's code, 6). The check code is cyrb53 over every field,
-     the name and the marks too (marks hashed as letters y a x s, so ✓ typed as v or ✗ as x still checks out).
-     Neither the title nor the name can hold " · " (it becomes "-"), so the fields split cleanly.
-     v3 (assignments): v2 with the tries after the marks, how many times each problem was checked (0 for none, at most 99):
-                [Name · ]Title · … · 2 skipped · 1✓ 2~ 3✗ 4– · tries 1 3 1 0 · 2026-10-21 11:17 · set DLMILC · check YG1AE4
-                Its check code is checkV3: the tries (joined by ",") are hashed too. */
-  var MK = { y:"✓", a:"~", x:"✗", s:"–" };
-  var MK_IN = { "✓":"y", "✔":"y", "√":"y", "v":"y", "V":"y", "y":"y", "Y":"y", "+":"y",
-                "~":"a", "∼":"a", "～":"a", "≈":"a", "˜":"a",
-                "✗":"x", "✘":"x", "×":"x", "x":"x", "X":"x", "✕":"x", "✖":"x",
-                "–":"s", "-":"s", "—":"s", "−":"s", "_":"s", "‒":"s", "―":"s" };
-  function checkV1(title, first, total, solved, skipped, when, setId){
-    return hid(["v1", title, first, total, solved, skipped, when, setId].join("|"), 6, 7919);
-  }
-  function checkV2(name, title, first, total, solved, skipped, marks, when, setId){
-    return hid(["v2", name, title, first, total, solved, skipped, marks, when, setId].join("|"), 6, 7919);
-  }
-  function checkV3(name, title, first, total, solved, skipped, marks, tries, when, setId){
-    return hid(["v3", name, title, first, total, solved, skipped, marks, tries.join(","), when, setId].join("|"), 6, 7919);
-  }
-  function cleanField(s){ return String(s || "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/·/g, "-").replace(/\s+/g, " ").trim(); }
-  function lineFor(o){            // o: { name, title, first, n, solved, skipped, marks:"yaxs…", when, set[, tries:[1, 3, 0, …] (v3)] }
-    var name = cleanField(o.name).slice(0, 40), title = cleanField(o.title) || "Practice set";
-    var mk = o.marks.split("").map(function(c, k){ return (k + 1) + MK[c]; }).join(" ");
-    var tr = o.tries ? o.tries.map(function(t){ return Math.max(0, Math.min(99, t | 0)); }) : null;
-    return (name ? name + " · " : "") + title + " · " + o.first + " of " + o.n + " right first time · " + o.solved + " of " + o.n
-      + " right in the end · " + o.skipped + " skipped · " + mk + (tr ? " · tries " + tr.join(" ") : "") + " · " + o.when + " · set " + o.set
-      + " · check " + (tr ? checkV3(name, title, o.first, o.n, o.solved, o.skipped, o.marks, tr, o.when, o.set)
-                          : checkV2(name, title, o.first, o.n, o.solved, o.skipped, o.marks, o.when, o.set));
-  }
-  // "1 3 0 2" → [1, 3, 0, 2] when there are n of them, else null
-  function readTries(s, n){
-    var t = String(s).trim();
-    if (!/^\d{1,2}(?: \d{1,2})*$/.test(t)) return null;
-    var a = t.split(" ").map(Number);
-    return a.length === n ? a : null;
-  }
-  var CORE = /(\d+) of (\d+) right first time · (\d+) of (\d+) right in the end · (\d+) skipped · (?:(.*?) · )?(\d{4}-\d\d-\d\d \d\d:\d\d) · set ([0-9A-Za-z]{6}) · check ([0-9A-Za-z]{6})(?![0-9A-Za-z])/;
-  function readMarks(s, n){
-    var out = "", re = /(\d+)\s*([^\s\d])/g, m, k = 0;
-    if (/[^\s]/.test(s.replace(re, ""))) return null;
-    while ((m = re.exec(s))){ k++; if (Number(m[1]) !== k || !MK_IN[m[2]]) return null; out += MK_IN[m[2]]; }
-    return k === n ? out : null;
-  }
-  function wordTails(s){ var w = s.split(" "), out = []; for (var i = 0; i < w.length && i < 16; i++) out.push(w.slice(i).join(" ")); return out; }
-  function unBullet(s){ return s.replace(/^(?:[-*•◦‣▪–—>]+|\(?\d{1,3}[.)])\s+/, "").trim(); }
-  var CP1252 = { "€":0x80, "‚":0x82, "ƒ":0x83, "„":0x84, "…":0x85, "†":0x86, "‡":0x87, "ˆ":0x88, "‰":0x89, "Š":0x8A, "‹":0x8B, "Œ":0x8C, "Ž":0x8E,
-                 "‘":0x91, "’":0x92, "“":0x93, "”":0x94, "•":0x95, "–":0x96, "—":0x97, "˜":0x98, "™":0x99, "š":0x9A, "›":0x9B, "œ":0x9C, "ž":0x9E, "Ÿ":0x9F };
-  function unMojibake(s){         // UTF-8 read as Windows-1252 ("Â·", "âœ“") back to what it was
-    if (!/[ÂâÃ]/.test(s) || typeof TextDecoder !== "function") return s;
-    try {
-      var bytes = [];
-      for (var i = 0; i < s.length; i++){
-        var c = s.charAt(i), b = c.charCodeAt(0);
-        if (b < 256) bytes.push(b); else if (CP1252[c] !== undefined) bytes.push(CP1252[c]); else return s;
+    function hid(str, n, seed) { var s = hash(str, seed).toString(36).toUpperCase(); while (s.length < n) s = "0" + s; return s.slice(-n); }
+
+    /* ===================== the hand-in line (class-results.html has the same reader) =====================
+       v2 (now):  [Name · ]Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 1✓ 2~ 3✗ 4– … ·
+                  2026-10-21 11:17 · set DLMILC · check YG1AE4
+       v1 (old):  Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 2026-10-21 11:17 · set DLMILC · check YG1AE4
+       Marks, one per problem: ✓ right first time, ~ right after more tries or a hint, ✗ looked at the work or tried and
+       not right, – skipped without trying. "set" is hid(the set's code, 6). The check code is cyrb53 over every field,
+       the name and the marks too (marks hashed as letters y a x s, so ✓ typed as v or ✗ as x still checks out).
+       Neither the title nor the name can hold " · " (it becomes "-"), so the fields split cleanly.
+       v3 (assignments): v2 with the tries after the marks, how many times each problem was checked (0 for none, at most 99):
+                  [Name · ]Title · … · 2 skipped · 1✓ 2~ 3✗ 4– · tries 1 3 1 0 · 2026-10-21 11:17 · set DLMILC · check YG1AE4
+                  Its check code is checkV3: the tries (joined by ",") are hashed too. */
+    var MK = { y: "✓", a: "~", x: "✗", s: "–" };
+    var MK_IN = {
+      "✓": "y",
+      "✔": "y",
+      "√": "y",
+      "v": "y",
+      "V": "y",
+      "y": "y",
+      "Y": "y",
+      "+": "y",
+      "~": "a",
+      "∼": "a",
+      "～": "a",
+      "≈": "a",
+      "˜": "a",
+      "✗": "x",
+      "✘": "x",
+      "×": "x",
+      "x": "x",
+      "X": "x",
+      "✕": "x",
+      "✖": "x",
+      "–": "s",
+      "-": "s",
+      "—": "s",
+      "−": "s",
+      "_": "s",
+      "‒": "s",
+      "―": "s"
+    };
+
+    function checkV1(title, first, total, solved, skipped, when, setId) {
+      return hid(["v1", title, first, total, solved, skipped, when, setId].join("|"), 6, 7919);
+    }
+
+    function checkV2(name, title, first, total, solved, skipped, marks, when, setId) {
+      return hid(["v2", name, title, first, total, solved, skipped, marks, when, setId].join("|"), 6, 7919);
+    }
+
+    function checkV3(name, title, first, total, solved, skipped, marks, tries, when, setId) {
+      return hid(["v3", name, title, first, total, solved, skipped, marks, tries.join(","), when, setId].join("|"), 6, 7919);
+    }
+
+    function cleanField(s) { return String(s || "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/·/g, "-").replace(/\s+/g, " ").trim(); }
+
+    function lineFor(o) { // o: { name, title, first, n, solved, skipped, marks:"yaxs…", when, set[, tries:[1, 3, 0, …] (v3)] }
+      var name = cleanField(o.name).slice(0, 40),
+        title = cleanField(o.title) || "Practice set";
+      var mk = o.marks.split("").map(function(c, k) { return (k + 1) + MK[c]; }).join(" ");
+      var tr = o.tries ? o.tries.map(function(t) { return Math.max(0, Math.min(99, t | 0)); }) : null;
+      return (name ? name + " · " : "") + title + " · " + o.first + " of " + o.n + " right first time · " + o.solved + " of " + o.n +
+        " right in the end · " + o.skipped + " skipped · " + mk + (tr ? " · tries " + tr.join(" ") : "") + " · " + o.when + " · set " + o.set +
+        " · check " + (tr ? checkV3(name, title, o.first, o.n, o.solved, o.skipped, o.marks, tr, o.when, o.set) :
+          checkV2(name, title, o.first, o.n, o.solved, o.skipped, o.marks, o.when, o.set));
+    }
+    // "1 3 0 2" → [1, 3, 0, 2] when there are n of them, else null
+    function readTries(s, n) {
+      var t = String(s).trim();
+      if (!/^\d{1,2}(?: \d{1,2})*$/.test(t)) return null;
+      var a = t.split(" ").map(Number);
+      return a.length === n ? a : null;
+    }
+    var CORE = /(\d+) of (\d+) right first time · (\d+) of (\d+) right in the end · (\d+) skipped · (?:(.*?) · )?(\d{4}-\d\d-\d\d \d\d:\d\d) · set ([0-9A-Za-z]{6}) · check ([0-9A-Za-z]{6})(?![0-9A-Za-z])/;
+
+    function readMarks(s, n) {
+      var out = "",
+        re = /(\d+)\s*([^\s\d])/g,
+        m, k = 0;
+      if (/[^\s]/.test(s.replace(re, ""))) return null;
+      while ((m = re.exec(s))) {
+        k++;
+        if (Number(m[1]) !== k || !MK_IN[m[2]]) return null;
+        out += MK_IN[m[2]];
       }
-      return new TextDecoder("utf-8", { fatal:true }).decode(new Uint8Array(bytes));
-    } catch (e){ return s; }
-  }
-  function squash(s){ return String(s).replace(/[\s\u00a0\u2007\u202f]+/g, " ").trim(); }
-  function readTry(t){
-    var m = CORE.exec(t);
-    if (!m) return null;
-    var mid = m[6], ti = mid === undefined ? -1 : mid.lastIndexOf(" · tries ");
-    var r = { ver:mid === undefined ? 1 : ti >= 0 ? 3 : 2, name:"", title:"", first:+m[1], n:+m[2], solved:+m[3], skipped:+m[5], marks:null, tries:null,
-              when:m[7], set:m[8].toUpperCase(), check:m[9].toUpperCase(), status:"bad", why:"" };
-    if (+m[4] !== r.n || !r.n || r.first > r.n || r.solved > r.n || r.skipped > r.n){ r.status = "unk"; r.why = "the numbers don’t add up"; }
-    if (r.ver >= 2){
-      r.marks = readMarks(ti >= 0 ? mid.slice(0, ti) : mid, r.n);
-      if (r.marks === null){ r.status = "unk"; r.why = "the problem-by-problem marks can’t be read"; }
+      return k === n ? out : null;
     }
-    if (r.ver === 3){
-      r.tries = readTries(mid.slice(ti + 9), r.n);
-      if (r.tries === null){ r.status = "unk"; r.why = "the tries can’t be read"; }
-    }
-    var pre = t.slice(0, m.index).replace(/\s*·\s*$/, ""), f = pre ? pre.split(" · ") : [""], L = f.length;
-    var titleF = f[L - 1], nameF = L >= 2 ? f[L - 2] : null, cands = [];
-    if (r.ver >= 2 && nameF !== null) wordTails(nameF).forEach(function(nm){ cands.push([nm, titleF]); });
-    wordTails(titleF).forEach(function(tt){ cands.push(["", tt]); });
-    if (r.status !== "unk") for (var i = 0; i < cands.length; i++){
-      var c = r.ver === 3 ? checkV3(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.tries, r.when, r.set)
-            : r.ver === 2 ? checkV2(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.when, r.set)
-                          : checkV1(cands[i][1], r.first, r.n, r.solved, r.skipped, r.when, r.set);
-      if (c === r.check){ r.name = cands[i][0]; r.title = cands[i][1]; r.status = "ok"; return r; }
-    }
-    r.name = r.ver >= 2 && nameF !== null ? unBullet(nameF) : "";
-    r.title = unBullet(titleF);
-    return r;
-  }
-  // read one hand-in line: null if it isn't one; status "ok" (unchanged), "bad" (changed after it was made), "unk" (can't tell)
-  function readLine(s){
-    var a = squash(s), b = squash(unMojibake(a).replace(/\s*(?:·|•|∙|\|)\s*/g, " · ")), r = readTry(a);
-    if (r && r.status === "ok") return r;
-    var r2 = b !== a ? readTry(b) : null;
-    if (r2 && (r2.status === "ok" || !r)) return r2;
-    return r;
-  }
 
-  /* ===================== theme ===================== */
-  var themeBtn = $("themeBtn");
-  function isDark(){
-    var t = document.documentElement.getAttribute("data-theme");
-    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
-  try { var th = localStorage.getItem("practice-page-theme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e){}
-  var onTheme = null;
-  themeBtn.addEventListener("click", function(){
-    var next = isDark() ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    try { localStorage.setItem("practice-page-theme", next); } catch (e){}
+    function wordTails(s) {
+      var w = s.split(" "),
+        out = [];
+      for (var i = 0; i < w.length && i < 16; i++) out.push(w.slice(i).join(" "));
+      return out;
+    }
+
+    function unBullet(s) { return s.replace(/^(?:[-*•◦‣▪–—>]+|\(?\d{1,3}[.)])\s+/, "").trim(); }
+    var CP1252 = {
+      "€": 0x80,
+      "‚": 0x82,
+      "ƒ": 0x83,
+      "„": 0x84,
+      "…": 0x85,
+      "†": 0x86,
+      "‡": 0x87,
+      "ˆ": 0x88,
+      "‰": 0x89,
+      "Š": 0x8A,
+      "‹": 0x8B,
+      "Œ": 0x8C,
+      "Ž": 0x8E,
+      "‘": 0x91,
+      "’": 0x92,
+      "“": 0x93,
+      "”": 0x94,
+      "•": 0x95,
+      "–": 0x96,
+      "—": 0x97,
+      "˜": 0x98,
+      "™": 0x99,
+      "š": 0x9A,
+      "›": 0x9B,
+      "œ": 0x9C,
+      "ž": 0x9E,
+      "Ÿ": 0x9F
+    };
+
+    function unMojibake(s) { // UTF-8 read as Windows-1252 ("Â·", "âœ“") back to what it was
+      if (!/[ÂâÃ]/.test(s) || typeof TextDecoder !== "function") return s;
+      try {
+        var bytes = [];
+        for (var i = 0; i < s.length; i++) {
+          var c = s.charAt(i),
+            b = c.charCodeAt(0);
+          if (b < 256) bytes.push(b);
+          else if (CP1252[c] !== undefined) bytes.push(CP1252[c]);
+          else return s;
+        }
+        return new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array(bytes));
+      } catch (e) { return s; }
+    }
+
+    function squash(s) { return String(s).replace(/[\s\u00a0\u2007\u202f]+/g, " ").trim(); }
+
+    function readTry(t) {
+      var m = CORE.exec(t);
+      if (!m) return null;
+      var mid = m[6],
+        ti = mid === undefined ? -1 : mid.lastIndexOf(" · tries ");
+      var r = {
+        ver: mid === undefined ? 1 : ti >= 0 ? 3 : 2,
+        name: "",
+        title: "",
+        first: +m[1],
+        n: +m[2],
+        solved: +m[3],
+        skipped: +m[5],
+        marks: null,
+        tries: null,
+        when: m[7],
+        set: m[8].toUpperCase(),
+        check: m[9].toUpperCase(),
+        status: "bad",
+        why: ""
+      };
+      if (+m[4] !== r.n || !r.n || r.first > r.n || r.solved > r.n || r.skipped > r.n) {
+        r.status = "unk";
+        r.why = "the numbers don’t add up";
+      }
+      if (r.ver >= 2) {
+        r.marks = readMarks(ti >= 0 ? mid.slice(0, ti) : mid, r.n);
+        if (r.marks === null) {
+          r.status = "unk";
+          r.why = "the problem-by-problem marks can’t be read";
+        }
+      }
+      if (r.ver === 3) {
+        r.tries = readTries(mid.slice(ti + 9), r.n);
+        if (r.tries === null) {
+          r.status = "unk";
+          r.why = "the tries can’t be read";
+        }
+      }
+      var pre = t.slice(0, m.index).replace(/\s*·\s*$/, ""),
+        f = pre ? pre.split(" · ") : [""],
+        L = f.length;
+      var titleF = f[L - 1],
+        nameF = L >= 2 ? f[L - 2] : null,
+        cands = [];
+      if (r.ver >= 2 && nameF !== null) wordTails(nameF).forEach(function(nm) { cands.push([nm, titleF]); });
+      wordTails(titleF).forEach(function(tt) { cands.push(["", tt]); });
+      if (r.status !== "unk")
+        for (var i = 0; i < cands.length; i++) {
+          var c = r.ver === 3 ? checkV3(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.tries, r.when, r.set) :
+            r.ver === 2 ? checkV2(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.when, r.set) :
+            checkV1(cands[i][1], r.first, r.n, r.solved, r.skipped, r.when, r.set);
+          if (c === r.check) {
+            r.name = cands[i][0];
+            r.title = cands[i][1];
+            r.status = "ok";
+            return r;
+          }
+        }
+      r.name = r.ver >= 2 && nameF !== null ? unBullet(nameF) : "";
+      r.title = unBullet(titleF);
+      return r;
+    }
+    // read one hand-in line: null if it isn't one; status "ok" (unchanged), "bad" (changed after it was made), "unk" (can't tell)
+    function readLine(s) {
+      var a = squash(s),
+        b = squash(unMojibake(a).replace(/\s*(?:·|•|∙|\|)\s*/g, " · ")),
+        r = readTry(a);
+      if (r && r.status === "ok") return r;
+      var r2 = b !== a ? readTry(b) : null;
+      if (r2 && (r2.status === "ok" || !r)) return r2;
+      return r;
+    }
+
+    /* ===================== theme ===================== */
+    var themeBtn = $("themeBtn");
+
+    function isDark() {
+      var t = document.documentElement.getAttribute("data-theme");
+      return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    function paint() { themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+    try { var th = localStorage.getItem("practice-page-theme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {}
+    var onTheme = null;
+    themeBtn.addEventListener("click", function() {
+      var next = isDark() ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("practice-page-theme", next); } catch (e) {}
+      paint();
+      if (onTheme) onTheme();
+    });
     paint();
-    if (onTheme) onTheme();
-  });
-  paint();
 
-  function copyText(text, msgEl, okText){
-    function fallback(){
-      var ta = document.createElement("textarea"), ok = false;
-      ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.top = "-1000px"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.select();
-      try { ok = document.execCommand("copy"); } catch (e){ ok = false; }
-      document.body.removeChild(ta);
-      msgEl.textContent = ok ? okText : "Couldn’t copy — select it and copy it yourself.";
+    function copyText(text, msgEl, okText) {
+      function fallback() {
+        var ta = document.createElement("textarea"),
+          ok = false;
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        msgEl.textContent = ok ? okText : "Couldn’t copy — select it and copy it yourself.";
+      }
+      var settled = false;
+
+      function once(fn) {
+        return function() {
+          if (!settled) {
+            settled = true;
+            fn();
+          }
+        };
+      }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(once(function() { msgEl.textContent = okText; }), once(fallback));
+          setTimeout(once(fallback), 900);
+          return;
+        }
+      } catch (e) {}
+      fallback();
     }
-    var settled = false;
-    function once(fn){ return function(){ if (!settled){ settled = true; fn(); } }; }
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(text).then(once(function(){ msgEl.textContent = okText; }), once(fallback));
-        setTimeout(once(fallback), 900);
+
+    /* ======================================================================
+       THE PLAYER
+       ====================================================================== */
+    var SET = null,
+      CODE = "",
+      RUN = null,
+      RKEY = "",
+      frameEl = $("frame");
+    var ST = {
+      first: { ic: "✓", t: "Right first time", cls: "ok" },
+      right: { ic: "✓", t: "Right after more tries", cls: "later" },
+      hint: { ic: "?", t: "Right, with a hint", cls: "warm" },
+      shown: { ic: "◐", t: "Looked at the work", cls: "warm" },
+      skip: { ic: "–", t: "Skipped", cls: "" },
+      tried: { ic: "✗", t: "Tried, not right yet", cls: "no" },
+      "": { ic: "·", t: "Not tried", cls: "" },
+      locked: { ic: "✗", t: "Not right (one try only)", cls: "no" }
+    };
+    // "locked": an assignment with one try only, checked and not right
+    function final(st) { return st === "first" || st === "right" || st === "hint" || st === "shown" || st === "locked"; }
+
+    function ASG() { return SET && SET.asg; }
+
+    function oneTry() { return !!(ASG() && !ASG().retries); }
+
+    function noSteps() { return !!(ASG() && !ASG().steps); }
+    // how many times a problem was checked: the wrong tries, and the right one
+    function triesOf(r) { return r.tries + (r.st === "first" || r.st === "right" || r.st === "hint" ? 1 : 0); }
+
+    function dueText(d, long) {
+      var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(d || "");
+      if (!m) return "";
+      var dt = new Date(+m[1], +m[2] - 1, +m[3]);
+      try { return dt.toLocaleDateString("en-US", long ? { weekday: "long", month: "long", day: "numeric", year: "numeric" } : { weekday: "short", month: "short", day: "numeric" }); } catch (e) { return d; }
+    }
+
+    function pastDue(d, when) { // when: "2026-10-21 11:17" (or now)
+      if (!/^\d{4}-\d\d-\d\d$/.test(d || "")) return false;
+      return (when || stamp(Date.now())) > d + " 23:59";
+    }
+
+    function saveRun() {
+      RUN.u = Date.now();
+      try {
+        localStorage.setItem(RKEY, JSON.stringify(RUN));
+        // keep the 40 newest runs
+        var keys = [];
+        for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (/^practice-run:/.test(k)) keys.push(k); }
+        if (keys.length > 40) {
+          keys.map(function(k) { var u = 0; try { u = JSON.parse(localStorage.getItem(k)).u || 0; } catch (e) {} return [u, k]; })
+            .sort(function(a, b) { return a[0] - b[0]; }).slice(0, keys.length - 40).forEach(function(x) { localStorage.removeItem(x[1]); });
+        }
+      } catch (e) {}
+    }
+
+    function freshRun() {
+      return {
+        v: 1,
+        i: 0,
+        started: Date.now(),
+        finished: 0,
+        u: Date.now(),
+        r: SET.probs.map(function() { return { st: "", tries: 0, hint: false, text: "" }; })
+      };
+    }
+
+    function loadRun() {
+      try {
+        var v = JSON.parse(localStorage.getItem(RKEY) || "null");
+        if (v && v.v === 1 && Array.isArray(v.r) && v.r.length === SET.probs.length) return v;
+      } catch (e) {}
+      return null;
+    }
+
+    function startPlayer(set, code) {
+      SET = set;
+      CODE = code;
+      RKEY = "practice-run:" + hid(code, 10);
+      var A = ASG(),
+        n = SET.probs.length;
+      document.title = SET.title + (A ? " · Assignment" : " · Practice");
+      $("eyebrow").textContent = (A ? "Assignment · " : "Practice set · ") + n + " problem" + (n === 1 ? "" : "s");
+      $("h1").innerHTML = esc(SET.title);
+      var names = [];
+      SET.probs.forEach(function(p) { var t = topic(p.page)[1]; if (names.indexOf(t) < 0) names.push(t); });
+      $("tagline").textContent = names.join(" · ") + ". Work each one out on paper, type your answer and check it. " +
+        (!A ? "A hint or the worked steps are there if you get stuck." :
+          (A.steps ? "The worked steps show after you answer." : "Your teacher will go over the steps.") +
+          (A.retries ? "" : " One try for each problem: check carefully before you press Check."));
+      if (A) {
+        $("introHead").textContent = SET.title;
+        $("introFacts").innerHTML = asgFacts(A, n);
+        $("introInstr").hidden = !A.instr;
+        $("introInstr").textContent = A.instr;
+        $("asgStrip").innerHTML = asgFacts(A, n);
+        $("asgStrip").hidden = false;
+        if (!A.retries) $("restartBtn").hidden = true;
+      }
+      var old = loadRun();
+      if (A && (!old || !old.go)) { // an assignment starts with the student's name
+        if (!old) {
+          RUN = freshRun();
+          saveRun();
+        } else RUN = old;
+        $("introName").value = $("nameIn").value;
+        paintIntro();
+        $("intro").hidden = false;
+        try { $("introName").focus(); } catch (e) {}
         return;
       }
-    } catch (e){}
-    fallback();
-  }
-
-  /* ======================================================================
-     THE PLAYER
-     ====================================================================== */
-  var SET = null, CODE = "", RUN = null, RKEY = "", frameEl = $("frame");
-  var ST = {
-    first:{ ic:"✓", t:"Right first time", cls:"ok" }, right:{ ic:"✓", t:"Right after more tries", cls:"later" },
-    hint:{ ic:"?", t:"Right, with a hint", cls:"warm" }, shown:{ ic:"◐", t:"Looked at the work", cls:"warm" },
-    skip:{ ic:"–", t:"Skipped", cls:"" }, tried:{ ic:"✗", t:"Tried, not right yet", cls:"no" }, "":{ ic:"·", t:"Not tried", cls:"" },
-    locked:{ ic:"✗", t:"Not right (one try only)", cls:"no" }
-  };
-  // "locked": an assignment with one try only, checked and not right
-  function final(st){ return st === "first" || st === "right" || st === "hint" || st === "shown" || st === "locked"; }
-  function ASG(){ return SET && SET.asg; }
-  function oneTry(){ return !!(ASG() && !ASG().retries); }
-  function noSteps(){ return !!(ASG() && !ASG().steps); }
-  // how many times a problem was checked: the wrong tries, and the right one
-  function triesOf(r){ return r.tries + (r.st === "first" || r.st === "right" || r.st === "hint" ? 1 : 0); }
-  function dueText(d, long){
-    var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(d || "");
-    if (!m) return "";
-    var dt = new Date(+m[1], +m[2] - 1, +m[3]);
-    try { return dt.toLocaleDateString("en-US", long ? { weekday:"long", month:"long", day:"numeric", year:"numeric" } : { weekday:"short", month:"short", day:"numeric" }); }
-    catch (e){ return d; }
-  }
-  function pastDue(d, when){            // when: "2026-10-21 11:17" (or now)
-    if (!/^\d{4}-\d\d-\d\d$/.test(d || "")) return false;
-    return (when || stamp(Date.now())) > d + " 23:59";
-  }
-  function saveRun(){
-    RUN.u = Date.now();
-    try {
-      localStorage.setItem(RKEY, JSON.stringify(RUN));
-      // keep the 40 newest runs
-      var keys = [];
-      for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); if (/^practice-run:/.test(k)) keys.push(k); }
-      if (keys.length > 40){
-        keys.map(function(k){ var u = 0; try { u = JSON.parse(localStorage.getItem(k)).u || 0; } catch (e){} return [u, k]; })
-            .sort(function(a, b){ return a[0] - b[0]; }).slice(0, keys.length - 40).forEach(function(x){ localStorage.removeItem(x[1]); });
+      if (old) {
+        RUN = old;
+        if (RUN.finished) { showDone(); return; }
+        var doneN = RUN.r.filter(function(x) { return x.st; }).length;
+        if (doneN) {
+          $("resumeText").textContent = "Welcome back — you’ve done " + doneN + " of " + SET.probs.length + ". Picking up at problem " + (RUN.i + 1) + ".";
+          $("resume").hidden = false;
+        }
+      } else {
+        RUN = freshRun();
+        saveRun();
       }
-    } catch (e){}
-  }
-  function freshRun(){
-    return { v:1, i:0, started:Date.now(), finished:0, u:Date.now(),
-             r:SET.probs.map(function(){ return { st:"", tries:0, hint:false, text:"" }; }) };
-  }
-  function loadRun(){
-    try {
-      var v = JSON.parse(localStorage.getItem(RKEY) || "null");
-      if (v && v.v === 1 && Array.isArray(v.r) && v.r.length === SET.probs.length) return v;
-    } catch (e){}
-    return null;
-  }
-  function startPlayer(set, code){
-    SET = set; CODE = code; RKEY = "practice-run:" + hid(code, 10);
-    var A = ASG(), n = SET.probs.length;
-    document.title = SET.title + (A ? " · Assignment" : " · Practice");
-    $("eyebrow").textContent = (A ? "Assignment · " : "Practice set · ") + n + " problem" + (n === 1 ? "" : "s");
-    $("h1").innerHTML = esc(SET.title);
-    var names = [];
-    SET.probs.forEach(function(p){ var t = topic(p.page)[1]; if (names.indexOf(t) < 0) names.push(t); });
-    $("tagline").textContent = names.join(" · ") + ". Work each one out on paper, type your answer and check it. "
-      + (!A ? "A hint or the worked steps are there if you get stuck."
-            : (A.steps ? "The worked steps show after you answer." : "Your teacher will go over the steps.")
-              + (A.retries ? "" : " One try for each problem: check carefully before you press Check."));
-    if (A){
-      $("introHead").textContent = SET.title;
-      $("introFacts").innerHTML = asgFacts(A, n);
-      $("introInstr").hidden = !A.instr; $("introInstr").textContent = A.instr;
-      $("asgStrip").innerHTML = asgFacts(A, n);
-      $("asgStrip").hidden = false;
-      if (!A.retries) $("restartBtn").hidden = true;
+      $("player").hidden = false;
+      show(RUN.i);
     }
-    var old = loadRun();
-    if (A && (!old || !old.go)){       // an assignment starts with the student's name
-      if (!old){ RUN = freshRun(); saveRun(); } else RUN = old;
-      $("introName").value = $("nameIn").value;
+
+    function asgFacts(A, n) {
+      var f = ["<span>" + n + " problem" + (n === 1 ? "" : "s") + "</span>"];
+      if (A.due) f.unshift('<span class="due">Due ' + esc(dueText(A.due, true)) + (pastDue(A.due) ? " · past due" : "") + "</span>");
+      f.push("<span>" + (A.retries ? "More than one try allowed" : "One try per problem") + "</span>");
+      f.push("<span>" + (A.steps ? "Steps shown after you answer" : "No steps shown") + "</span>");
+      return f.join("");
+    }
+
+    function paintIntro() { $("introGo").disabled = !cleanField($("introName").value); }
+    $("introName").addEventListener("input", function() {
       paintIntro();
-      $("intro").hidden = false;
-      try { $("introName").focus(); } catch (e){}
-      return;
-    }
-    if (old){
-      RUN = old;
-      if (RUN.finished){ showDone(); return; }
-      var doneN = RUN.r.filter(function(x){ return x.st; }).length;
-      if (doneN){
-        $("resumeText").textContent = "Welcome back — you’ve done " + doneN + " of " + SET.probs.length + ". Picking up at problem " + (RUN.i + 1) + ".";
-        $("resume").hidden = false;
-      }
-    } else { RUN = freshRun(); saveRun(); }
-    $("player").hidden = false;
-    show(RUN.i);
-  }
-  function asgFacts(A, n){
-    var f = ["<span>" + n + " problem" + (n === 1 ? "" : "s") + "</span>"];
-    if (A.due) f.unshift('<span class="due">Due ' + esc(dueText(A.due, true)) + (pastDue(A.due) ? " · past due" : "") + "</span>");
-    f.push("<span>" + (A.retries ? "More than one try allowed" : "One try per problem") + "</span>");
-    f.push("<span>" + (A.steps ? "Steps shown after you answer" : "No steps shown") + "</span>");
-    return f.join("");
-  }
-  function paintIntro(){ $("introGo").disabled = !cleanField($("introName").value); }
-  $("introName").addEventListener("input", function(){
-    paintIntro();
-    $("nameIn").value = $("introName").value;
-    try { var v = cleanField($("introName").value).slice(0, 40); if (v) localStorage.setItem(NAME_KEY, v); } catch (e){}
-  });
-  $("introName").addEventListener("keydown", function(e){ if (e.key === "Enter" && !$("introGo").disabled) $("introGo").click(); });
-  $("introGo").addEventListener("click", function(){
-    if (!cleanField($("introName").value)) return;
-    RUN.go = Date.now(); saveRun();
-    $("intro").hidden = true;
-    if (RUN.finished){ showDone(); return; }
-    $("player").hidden = false;
-    show(RUN.i);
-    try { frameEl.focus(); } catch (e){}
-  });
-  function frameSrc(i){
-    var p = SET.probs[i];
-    return U(p.page, (p.params ? p.params + "&" : "") + "practice=check&embed=1&theme=" + (isDark() ? "dark" : "light"));
-  }
-  var gotHeight = false, loadTimer = 0;
-  function show(i){
-    RUN.i = Math.max(0, Math.min(SET.probs.length - 1, i));
-    saveRun();
-    var p = SET.probs[RUN.i], t = topic(p.page), r = RUN.r[RUN.i];
-    $("stageTopic").innerHTML = '<i class="dot" style="--c:' + cvar(t) + '"></i>' + esc(t[1]) + ' <span class="msg" style="font-weight:400">· ' + esc(t[2]) + "</span>";
-    $("openHere").href = U(p.page, (p.params ? p.params + "&" : "") + "practice=check");
-    frameEl.title = "Problem " + (RUN.i + 1) + " of " + SET.probs.length + ": " + (r.text || textOf(p.page, p.params));
-    frameEl.style.height = "360px";
-    $("frameNote").hidden = true;
-    gotHeight = false;
-    clearTimeout(loadTimer);
-    loadTimer = setTimeout(function(){
-      if (!gotHeight){ $("frameNote").hidden = false; $("frameNote").textContent = "This problem is taking a while to load. If it doesn’t show up, open it on its own page or skip it."; }
-    }, 9000);
-    frameEl.src = frameSrc(RUN.i);
-    $("openHere").hidden = noSteps();
-    paintLock();
-    paintBar(); paintVerdict();
-  }
-  // one try only: once a problem is checked (or with the work shown) its frame takes no more answers
-  function paintLock(){
-    var r = RUN.r[RUN.i], lock = oneTry() && (final(r.st) || r.tries > 0);
-    $("frameLock").hidden = !lock;
-    frameEl.tabIndex = lock ? -1 : 0;
-    if (lock){ frameEl.setAttribute("inert", ""); try { if (document.activeElement === frameEl) frameEl.blur(); } catch (e){} }
-    else frameEl.removeAttribute("inert");
-  }
-  // an assignment without steps: the worked solution stays hidden in the frame (same site, so its page can be styled)
-  var HIDE_STEPS = "#board,.board,.answer,#showBtn,#stepper,.ht-byhand,.log,.closer{display:none !important}";
-  frameEl.addEventListener("load", function(){
-    if (!noSteps()) return;
-    try {
-      var d = frameEl.contentDocument;
-      if (d && !d.getElementById("asgNoSteps")){
-        var st = d.createElement("style"); st.id = "asgNoSteps"; st.textContent = HIDE_STEPS;
-        (d.head || d.documentElement).appendChild(st);
-      }
-    } catch (e){}
-  });
-  onTheme = function(){ if (SET && !$("player").hidden) frameEl.src = frameSrc(RUN.i); };
-  function paintBar(){
-    var n = SET.probs.length, firsts = 0, done = 0;
-    RUN.r.forEach(function(x){ if (x.st === "first") firsts++; if (x.st) done++; });
-    $("count").innerHTML = "Problem " + (RUN.i + 1) + " of " + n + "<small>" + done + " done</small>";
-    $("tally").textContent = firsts + " right first time so far";
-    var segs = $("segs");
-    segs.setAttribute("role", "progressbar");
-    segs.setAttribute("aria-valuemin", "0"); segs.setAttribute("aria-valuemax", String(n)); segs.setAttribute("aria-valuenow", String(done));
-    segs.setAttribute("aria-label", done + " of " + n + " done");
-    segs.innerHTML = "";
-    RUN.r.forEach(function(x, k){
-      var b = document.createElement("button");
-      b.type = "button";
-      b.className = (x.st || "") + (k === RUN.i ? " cur" : "");
-      b.title = "Problem " + (k + 1) + ": " + ST[x.st || ""].t;
-      b.setAttribute("aria-label", "Go to problem " + (k + 1) + " — " + ST[x.st || ""].t);
-      if (k === RUN.i) b.setAttribute("aria-current", "step");
-      b.addEventListener("click", function(){ show(k); });
-      segs.appendChild(b);
+      $("nameIn").value = $("introName").value;
+      try { var v = cleanField($("introName").value).slice(0, 40); if (v) localStorage.setItem(NAME_KEY, v); } catch (e) {}
     });
-    var r = RUN.r[RUN.i], last = RUN.i === n - 1;
-    $("nextBtn").disabled = !final(r.st);
-    $("nextBtn").textContent = last ? "Finish →" : "Next →";
-    $("skipBtn").hidden = final(r.st);
-    $("skipBtn").textContent = last ? "Skip and finish" : "Skip";
-    $("prevBtn").disabled = RUN.i === 0;
-  }
-  function paintVerdict(){
-    var r = RUN.r[RUN.i], s = ST[r.st || ""], v = $("verdict");
-    if (r.st === "first") v.innerHTML = '<b class="ok">✓ Right first time.</b> Have a look at the work, then go on.';
-    else if (r.st === "right") v.innerHTML = '<b class="later">✓ Got it</b> after ' + r.tries + " tr" + (r.tries === 1 ? "y" : "ies") + ". Nice work sticking with it.";
-    else if (r.st === "hint") v.innerHTML = '<b class="warm">✓ Got it</b> with a hint.';
-    else if (r.st === "shown") v.innerHTML = '<b class="warm">You looked at the work.</b> Read it through, then go on.';
-    else if (r.st === "skip") v.innerHTML = "Skipped" + (r.tries ? " after " + r.tries + " tr" + (r.tries === 1 ? "y" : "ies") : "") + ". You can still answer it now.";
-    else if (r.tries) v.innerHTML = '<b class="no">Not yet</b> — ' + r.tries + " tr" + (r.tries === 1 ? "y" : "ies") + " so far. Try again, or use the hint.";
-    else v.innerHTML = "Work it out on paper, then type your answer and press <b>Check</b>.";
-    return s;
-  }
-  window.addEventListener("message", function(e){
-    var d = e.data;
-    if (!SET || !d || typeof d !== "object" || e.source !== frameEl.contentWindow) return;
-    if (d.type === "helper:height" && typeof d.h === "number"){
-      gotHeight = true; $("frameNote").hidden = true;
-      frameEl.style.height = Math.max(160, Math.min(6000, Math.ceil(d.h))) + "px";
-      return;
-    }
-    if (d.type !== "helper:checked" || !d.detail) return;
-    var x = d.detail, r = RUN.r[RUN.i];
-    if (x.text) r.text = String(x.text).slice(0, 140);
-    if (x.hinted) r.hint = true;
-    if (oneTry() && (final(r.st) || r.tries > 0)){ /* one try only, and it was used: nothing more counts */ }
-    else if (oneTry() && x.verdict !== "right" && x.verdict !== "shown"){ r.tries = 1; r.st = "locked"; }
-    else if (!final(r.st)){
-      if (x.verdict === "right") r.st = r.tries === 0 && x.firstTry && !r.hint ? "first" : r.hint ? "hint" : "right";
-      else if (x.verdict === "shown") r.st = "shown";
-      else { r.tries++; if (r.st !== "skip") r.st = r.st || ""; }
-      if (x.verdict === "wrong" || x.verdict === "simplify"){ /* counted above */ }
-    }
-    saveRun(); paintBar(); paintVerdict();
-    if (oneTry()) paintLock();
-  });
-  function advance(){
-    if (RUN.i >= SET.probs.length - 1){ finish(); return; }
-    // the next problem not done yet, or simply the next one
-    show(RUN.i + 1);
-    try { frameEl.focus(); } catch (e){}
-  }
-  $("nextBtn").addEventListener("click", advance);
-  $("skipBtn").addEventListener("click", function(){
-    var r = RUN.r[RUN.i];
-    if (!final(r.st)) r.st = "skip";
-    saveRun(); advance();
-  });
-  $("prevBtn").addEventListener("click", function(){ show(RUN.i - 1); });
-  $("restartBtn").addEventListener("click", function(){ var go = RUN.go; RUN = freshRun(); RUN.go = go; saveRun(); $("resume").hidden = true; show(0); });
-  function finish(){
-    RUN.r.forEach(function(r){ if (!r.st) r.st = "skip"; });
-    RUN.finished = Date.now();
-    saveRun();
-    showDone();
-  }
+    $("introName").addEventListener("keydown", function(e) { if (e.key === "Enter" && !$("introGo").disabled) $("introGo").click(); });
+    $("introGo").addEventListener("click", function() {
+      if (!cleanField($("introName").value)) return;
+      RUN.go = Date.now();
+      saveRun();
+      $("intro").hidden = true;
+      if (RUN.finished) { showDone(); return; }
+      $("player").hidden = false;
+      show(RUN.i);
+      try { frameEl.focus(); } catch (e) {}
+    });
 
-  /* ---- the end ---- */
-  function stamp(t){
-    var d = new Date(t);
-    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " "
-      + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-  }
-  var checkCode = checkV1;        // the old lines' check code, still read
-  // one letter per problem: y right first time, a right in the end (more tries or a hint), x looked at the work or tried and not right, s skipped
-  function markOf(r){
-    if (r.st === "first") return "y";
-    if (r.st === "right" || r.st === "hint") return "a";
-    if (r.st === "shown" || r.tries) return "x";
-    return "s";
-  }
-  function stName(r){ return (r.st === "skip" && r.tries) || r.st === "locked" ? "tried" : r.st; }
-  var NAME_KEY = "practice-name";
-  function myName(){ return cleanField($("nameIn").value).slice(0, 40); }
-  function resultLine(){
-    var marks = RUN.r.map(markOf).join("");
-    return lineFor({ name:myName(), title:SET.title, n:SET.probs.length, first:marks.split("y").length - 1,
-      solved:marks.replace(/[^ya]/g, "").length, skipped:marks.split("s").length - 1, marks:marks,
-      when:stamp(RUN.finished), set:hid(CODE, 6), tries:ASG() ? RUN.r.map(triesOf) : null });
-  }
-  try { $("nameIn").value = localStorage.getItem(NAME_KEY) || ""; } catch (e){}
-  $("nameIn").addEventListener("input", function(){
-    try { if (myName()) localStorage.setItem(NAME_KEY, myName()); else localStorage.removeItem(NAME_KEY); } catch (e){}
-    if (RUN && RUN.finished){ $("resultLine").textContent = resultLine(); $("copyResMsg").textContent = ""; }
-  });
-  function showDone(){
-    $("player").hidden = true; $("resume").hidden = true; $("done").hidden = false;
-    var n = SET.probs.length, c = { first:0, right:0, hint:0, shown:0, skip:0, tried:0 };
-    RUN.r.forEach(function(r){ var k = stName(r); c[k] = (c[k] || 0) + 1; });
-    $("big").innerHTML = c.first + "<small> / " + n + "</small>";
-    var pc = Math.round(100 * c.first / n);
-    $("scoreHead").innerHTML = "right first time<span>" + (pc === 100 ? "Every one, first time. Excellent!" : pc >= 80 ? "That’s strong work." : pc >= 50 ? "Good going — the ones below are worth another look."
-      : "Keep at it — try the ones you missed again.") + "</span>";
-    $("chips").innerHTML = [["first", "right first time"], ["right", "right after more tries"], ["hint", "right with a hint"], ["shown", "looked at the work"], ["tried", "tried, not right"], ["skip", "skipped"]]
-      .filter(function(k){ return c[k[0]]; }).map(function(k){ return "<span>" + c[k[0]] + " " + k[1] + "</span>"; }).join("");
-    $("resultLine").textContent = resultLine();
-    $("copyResMsg").textContent = "";
-    var A = ASG(), late = A && A.due && pastDue(A.due, stamp(RUN.finished));
-    $("doneNote").hidden = !A;
-    if (A) $("doneNote").innerHTML = "<b>Finished " + esc(stamp(RUN.finished)) + ".</b> "
-      + "Check your name below, copy the result line and send it to your teacher"
-      + (A.due ? " — this assignment was due " + esc(dueText(A.due, true)) + (late ? " (handed in late)" : "") : "") + ".";
-    $("againBtn").hidden = oneTry();
-    $("nameIn").parentNode.querySelector(".lbl").textContent = A ? "Your name" : "Your name (optional)";
-    $("rlist").innerHTML = SET.probs.map(function(p, k){
-      var r = RUN.r[k], s = ST[stName(r) || ""], t = topic(p.page);
-      return '<li><span class="n">' + (k + 1) + '.</span><span class="ic ' + (stName(r) || "") + '" aria-hidden="true">' + s.ic + "</span>"
-        + '<span class="q">' + esc(r.text || textOf(p.page, p.params)) + "</span>"
-        + '<span class="st"><i class="dot" style="--c:' + cvar(t) + ';width:8px;height:8px"></i> ' + esc(t[1]) + " · " + s.t
-        + (A ? " · " + triesOf(r) + " tr" + (triesOf(r) === 1 ? "y" : "ies")
-             : r.tries && r.st !== "first" ? " · " + r.tries + " wrong tr" + (r.tries === 1 ? "y" : "ies") : "") + "</span>"
-        + '<span class="act"><a class="small-link" href="' + esc(U(p.page, (p.params ? p.params + "&" : "") + "practice=check")) + '" target="_blank" rel="noopener">Retry ↗</a></span></li>';
-    }).join("");
-    var missed = SET.probs.filter(function(_, k){ return RUN.r[k].st !== "first"; });
-    $("missedLink").hidden = !missed.length;
-    if (missed.length){
-      $("missedLink").textContent = "Try the " + (missed.length === 1 ? "one" : missed.length) + " I missed again";
-      encodeSet(SET.title.replace(/ \(again\)$/, "") + " (again)", missed.map(function(p){ return [p.page, p.params]; })).then(function(code){
-        $("missedLink").href = "sets.html?set=" + code;
-      });
+    function frameSrc(i) {
+      var p = SET.probs[i];
+      return U(p.page, (p.params ? p.params + "&" : "") + "practice=check&embed=1&theme=" + (isDark() ? "dark" : "light"));
     }
-  }
-  $("copyResult").addEventListener("click", function(){ copyText($("resultLine").textContent, $("copyResMsg"), "Copied ✓"); });
-  $("againBtn").addEventListener("click", function(){
-    var go = RUN.go; RUN = freshRun(); RUN.go = go; saveRun();
-    $("done").hidden = true; $("player").hidden = false; show(0);
-  });
+    var gotHeight = false,
+      loadTimer = 0;
 
-  /* ======================================================================
-     THE BUILDER — it talks to the helpers the same way the worksheet maker does
-     ====================================================================== */
-  var B = { title:"Math practice", mix:false, secs:[ { page:"fractions.html", count:5, opts:{} }, { page:"pemdas.html", count:5, opts:{} } ] };
-  var PROBS = [], SCHEMA = {}, mixOrder = null, MADE = { title:"", n:0 };
-  var frames = {}, waiting = {}, seq = 0;
-  window.addEventListener("message", function(e){
-    var d = e.data;
-    if (!d || typeof d !== "object" || !d.id || !waiting[d.id]) return;
-    var w = waiting[d.id];
-    if (d.type !== w.want) return;
-    clearTimeout(w.timer); delete waiting[d.id]; w.ok(d);
-  });
-  function frame(page){
-    if (frames[page]) return frames[page];
-    frames[page] = new Promise(function(ok, bad){
-      var f = document.createElement("iframe");
-      f.src = U(page);
-      f.setAttribute("aria-hidden", "true"); f.tabIndex = -1;
-      f.style.cssText = "position:absolute;width:900px;height:700px;left:-10000px;top:0;border:0;visibility:hidden";
-      var t = setTimeout(function(){ bad(new Error("load")); }, 15000);
-      f.onload = function(){ clearTimeout(t); setTimeout(function(){ ok(f); }, 60); };
-      document.body.appendChild(f);
-    });
-    return frames[page];
-  }
-  function ask(page, msg, want){
-    return frame(page).then(function(f){
-      return new Promise(function(ok, bad){
-        var id = "p" + (++seq) + "-" + Date.now();
-        msg.id = id;
-        waiting[id] = { want:want, ok:ok, timer:setTimeout(function(){ delete waiting[id]; bad(new Error("timeout")); }, 10000) };
-        f.contentWindow.postMessage(msg, "*");
-      });
-    });
-  }
-  function schemaFor(page){
-    if (SCHEMA[page]) return Promise.resolve(SCHEMA[page]);
-    return ask(page, { type:"helper:options" }, "helper:optionsSchema").then(function(d){ SCHEMA[page] = d.options || []; return SCHEMA[page]; });
-  }
-  function make(i){
-    var sec = B.secs[i];
-    return ask(sec.page, { type:"helper:make", count:sec.count, options:sec.opts }, "helper:made").then(function(d){
-      PROBS[i] = (d.problems || []).slice(0, sec.count).filter(function(p){ return p && typeof p.params === "string"; });
-    });
-  }
-  function buildSecs(){
-    var host = $("secs"); host.innerHTML = "";
-    B.secs.forEach(function(sec, i){
-      var box = document.createElement("div"), t = topic(sec.page), L = String.fromCharCode(65 + i);
-      box.className = "sec"; box.style.setProperty("--c", cvar(t));
-      box.innerHTML = '<div class="sec-head"><span class="letter">' + L + '</span>'
-        + '<select aria-label="Topic ' + L + '">' + TOPICS.map(function(x){
-            return '<option value="' + x[0] + '"' + (x[0] === sec.page ? " selected" : "") + ">" + esc(x[1]) + " — " + esc(x[2]) + "</option>"; }).join("") + "</select>"
-        + '<button type="button" class="icon-btn" data-act="new" title="New numbers for this topic" aria-label="New numbers for topic ' + L + '">↻</button>'
-        + (B.secs.length > 1 ? '<button type="button" class="icon-btn" data-act="del" title="Remove this topic" aria-label="Remove topic ' + L + '">✕</button>' : "")
-        + '</div><div class="row"><label class="field"><span class="lbl">Problems</span>'
-        + '<input type="number" min="1" max="30" value="' + sec.count + '"></label></div>'
-        + '<div class="opts"><span class="msg">Loading options…</span></div>';
-      host.appendChild(box);
-      box.querySelector("select").addEventListener("change", function(e){ sec.page = e.target.value; sec.opts = {}; PROBS[i] = null; buildSecs(); regen(i); save(); });
-      box.querySelector("input[type=number]").addEventListener("change", function(e){
-        var n = Math.max(1, Math.min(30, parseInt(e.target.value, 10) || 1));
-        e.target.value = n; sec.count = n; regen(i); save();
-      });
-      box.querySelector('[data-act="new"]').addEventListener("click", function(){ regen(i); });
-      var del = box.querySelector('[data-act="del"]');
-      if (del) del.addEventListener("click", function(){ B.secs.splice(i, 1); PROBS.splice(i, 1); buildSecs(); draw(); save(); });
-      optionsUI(box.querySelector(".opts"), sec, i);
-    });
-  }
-  function optionsUI(host, sec, i){
-    schemaFor(sec.page).then(function(list){
-      host.innerHTML = "";
-      if (!list.length){ host.innerHTML = '<span class="msg">No extra options.</span>'; }
-      var modeOpt = list.filter(function(o){ return o.key === "mode"; })[0];
-      if (modeOpt && sec.opts.mode === undefined) sec.opts.mode = modeOpt["default"];
-      var mode = sec.opts.mode;
-      list.filter(function(o){
-        var only = o.modes || o.appliesTo || o.forMode;
-        if (!only || mode === undefined || o.key === "mode") return true;
-        return [].concat(only).map(String).indexOf(String(mode)) >= 0;
-      }).forEach(function(o){
-        if (sec.opts[o.key] === undefined)
-          sec.opts[o.key] = o.defaultByMode && o.defaultByMode[mode] !== undefined ? o.defaultByMode[mode] : o["default"];
-        var wrap = document.createElement("div");
-        wrap.className = "opt";
-        if (o.type === "toggle"){
-          wrap.className = "opt t";
-          var b = document.createElement("button");
-          b.type = "button"; b.className = "tog"; b.textContent = o.label;
-          var paintB = function(){ b.setAttribute("aria-pressed", String(!!sec.opts[o.key])); };
-          paintB();
-          b.addEventListener("click", function(){ sec.opts[o.key] = !sec.opts[o.key]; paintB(); regen(i); save(); });
-          wrap.appendChild(b);
-        } else {
-          var lab = document.createElement("label"); lab.className = "opt";
-          var sp = document.createElement("span"); sp.textContent = o.label; lab.appendChild(sp);
-          var sel = document.createElement("select");
-          (o.values || []).forEach(function(v){
-            var op = document.createElement("option");
-            op.value = String(v.v); op.textContent = v.label;
-            if (String(v.v) === String(sec.opts[o.key])) op.selected = true;
-            sel.appendChild(op);
-          });
-          sel.addEventListener("change", function(){
-            var pick = (o.values || []).filter(function(v){ return String(v.v) === sel.value; })[0];
-            sec.opts[o.key] = pick ? pick.v : sel.value;
-            if (o.key === "mode"){ sec.opts = { mode:sec.opts.mode }; optionsUI(host, sec, i); }
-            regen(i); save();
-          });
-          lab.appendChild(sel); wrap = lab;
+    function show(i) {
+      RUN.i = Math.max(0, Math.min(SET.probs.length - 1, i));
+      saveRun();
+      var p = SET.probs[RUN.i],
+        t = topic(p.page),
+        r = RUN.r[RUN.i];
+      $("stageTopic").innerHTML = '<i class="dot" style="--c:' + cvar(t) + '"></i>' + esc(t[1]) + ' <span class="msg" style="font-weight:400">· ' + esc(t[2]) + "</span>";
+      $("openHere").href = U(p.page, (p.params ? p.params + "&" : "") + "practice=check");
+      frameEl.title = "Problem " + (RUN.i + 1) + " of " + SET.probs.length + ": " + (r.text || textOf(p.page, p.params));
+      frameEl.style.height = "360px";
+      $("frameNote").hidden = true;
+      gotHeight = false;
+      clearTimeout(loadTimer);
+      loadTimer = setTimeout(function() {
+        if (!gotHeight) {
+          $("frameNote").hidden = false;
+          $("frameNote").textContent = "This problem is taking a while to load. If it doesn’t show up, open it on its own page or skip it.";
         }
-        host.appendChild(wrap);
-      });
-      if (!PROBS[i]) regen(i);
-    }, function(){
-      host.innerHTML = '<span class="msg err">Couldn’t reach ' + esc((topic(sec.page) || [0, sec.page, sec.page])[2])
-        + ". Open this page from the website (not as a saved file) and try again.</span>";
-    });
-  }
-  $("addSec").addEventListener("click", function(){
-    var used = B.secs.map(function(s){ return s.page; }), next = TOPICS.filter(function(t){ return used.indexOf(t[0]) < 0; })[0];
-    B.secs.push({ page:next ? next[0] : "addition.html", count:5, opts:{} });
-    buildSecs(); save();
-  });
-  $("mixT").addEventListener("click", function(){ B.mix = !B.mix; mixOrder = null; paintMix(); draw(); save(); });
-  function paintMix(){ $("mixT").setAttribute("aria-pressed", String(B.mix)); }
-  $("titleIn").addEventListener("input", function(){ B.title = $("titleIn").value; $("linkPanel").hidden = true; save(); });
-
-  var busy = 0;
-  function status(t, err){ $("status").textContent = t || ""; $("status").className = "msg" + (err ? " err" : ""); }
-  function regen(i){
-    busy++; status("Making problems…");
-    $("linkPanel").hidden = true;
-    return make(i).then(function(){ busy--; if (!busy) status(""); mixOrder = null; draw(); save(); },
-      function(){ busy--; PROBS[i] = null; status("Couldn’t make problems for topic " + String.fromCharCode(65 + i) + " — open this page from the website and try again.", true); draw(); });
-  }
-  $("newBtn").addEventListener("click", function(){ B.secs.forEach(function(_, i){ regen(i); }); });
-  function items(){
-    var all = [];
-    B.secs.forEach(function(sec, i){ (PROBS[i] || []).forEach(function(p){ all.push({ page:sec.page, p:p }); }); });
-    if (B.mix){
-      if (!mixOrder || mixOrder.length !== all.length){
-        mixOrder = all.map(function(_, k){ return k; });
-        for (var k = mixOrder.length - 1; k > 0; k--){ var j = Math.floor(Math.random() * (k + 1)), t = mixOrder[k]; mixOrder[k] = mixOrder[j]; mixOrder[j] = t; }
-      }
-      all = mixOrder.map(function(k){ return all[k]; });
+      }, 9000);
+      frameEl.src = frameSrc(RUN.i);
+      $("openHere").hidden = noSteps();
+      paintLock();
+      paintBar();
+      paintVerdict();
     }
-    return all;
-  }
-  function draw(){
-    var list = items();
-    $("prevInfo").textContent = list.length ? list.length + " problem" + (list.length === 1 ? "" : "s") + ", in this order" : "";
-    $("makeBtn").disabled = !list.length;
-    if (!list.length){ $("preview").innerHTML = '<li class="empty" style="display:block">' + (busy ? "Making problems…" : "Add a topic to get started.") + "</li>"; return; }
-    $("preview").innerHTML = list.map(function(it, k){
-      var t = topic(it.page);
-      return '<li><span class="n">' + (k + 1) + '.</span><span class="q">' + (it.p.html || esc(it.p.text || "")) + "</span>"
-        + '<span class="t"><i class="dot" style="--c:' + cvar(t) + '"></i>' + esc(t[1]) + "</span></li>";
-    }).join("");
-  }
-  $("makeBtn").addEventListener("click", function(){
-    var list = items();
-    if (!list.length) return;
-    encodeSet(B.title || "Math practice", list.map(function(it){ return [it.page, it.p.params]; })).then(function(code){
-      var url = U("practice.html", "set=" + code);
-      $("linkOut").value = url;
-      $("startLink").href = "sets.html?set=" + code;
-      $("linkInfo").textContent = list.length + " problems · " + url.length + " characters";
-      MADE = { title:B.title || "Math practice", n:list.length };
-      $("linkPanel").hidden = false; $("copyMsg").textContent = "";
-      rememberSet(code, B.title || "Math practice", list.length);
-      try { $("linkOut").focus(); $("linkOut").select(); } catch (e){}
-    }, function(){ status("Couldn’t make the link in this browser.", true); });
-  });
-  $("copyBtn").addEventListener("click", function(){ copyText($("linkOut").value, $("copyMsg"), "Link copied ✓"); });
-  // the set's link as a QR code, to put on the projector (qr.js; if it didn't load, the button stays hidden)
-  function qrReady(){ if (window.HelperQR) $("qrBtn").hidden = false; }
-  document.addEventListener("DOMContentLoaded", qrReady);
-  window.addEventListener("load", qrReady);
-  $("qrBtn").addEventListener("click", function(){
-    if (!window.HelperQR || !$("linkOut").value) return;
-    window.HelperQR.show($("linkOut").value, {
-      title:MADE.title || "Practice set", sub:MADE.n + " problem" + (MADE.n === 1 ? "" : "s") + " · scan to start the practice set",
-      filename:"practice-set-qr.svg", tooLongHint:"Make a set with fewer problems, or copy the link and send it instead."
+    // one try only: once a problem is checked (or with the work shown) its frame takes no more answers
+    function paintLock() {
+      var r = RUN.r[RUN.i],
+        lock = oneTry() && (final(r.st) || r.tries > 0);
+      $("frameLock").hidden = !lock;
+      frameEl.tabIndex = lock ? -1 : 0;
+      if (lock) { frameEl.setAttribute("inert", ""); try { if (document.activeElement === frameEl) frameEl.blur(); } catch (e) {} } else frameEl.removeAttribute("inert");
+    }
+    // an assignment without steps: the worked solution stays hidden in the frame (same site, so its page can be styled)
+    var HIDE_STEPS = "#board,.board,.answer,#showBtn,#stepper,.ht-byhand,.log,.closer{display:none !important}";
+    frameEl.addEventListener("load", function() {
+      if (!noSteps()) return;
+      try {
+        var d = frameEl.contentDocument;
+        if (d && !d.getElementById("asgNoSteps")) {
+          var st = d.createElement("style");
+          st.id = "asgNoSteps";
+          st.textContent = HIDE_STEPS;
+          (d.head || d.documentElement).appendChild(st);
+        }
+      } catch (e) {}
     });
-  });
-  /* the sets made here are kept on this device (newest first, 40 at most), so Class results (class-results.html) can show
-     each problem: localStorage["practice-sets"] = [{ c:code, t:title, n:problems, at:time made }] */
-  function rememberSet(code, title, n){
-    try {
-      var list = JSON.parse(localStorage.getItem("practice-sets") || "[]");
-      if (!Array.isArray(list)) list = [];
-      list = list.filter(function(x){ return x && x.c !== code; });
-      list.unshift({ c:code, t:String(title).slice(0, 60), n:n, at:Date.now() });
-      localStorage.setItem("practice-sets", JSON.stringify(list.slice(0, 40)));
-    } catch (e){}
-  }
-  $("verifyBtn").addEventListener("click", function(){
-    var out = $("verifyOut"), r = readLine($("verifyIn").value);
-    if (!r){ out.textContent = "That doesn’t look like a result line. Paste the whole line, from the title to the check code."; return; }
-    if (r.status === "unk"){ out.textContent = "? This looks like a result line, but " + r.why + ", so it can’t be checked."; return; }
-    if (r.status !== "ok"){ out.textContent = "✗ This line has been changed since it was made — the check code doesn’t match."; return; }
-    var missed = [];
-    if (r.marks) r.marks.split("").forEach(function(c, k){ if (c !== "y") missed.push((k + 1) + MK[c]); });
-    out.textContent = "✓ This line hasn’t been changed: " + (r.name ? r.name + ", " : "") + r.first + " of " + r.n + " right first time, finished " + r.when + "."
-      + (r.marks ? (missed.length ? " Not right first time: " + missed.join(" ") + "." : " Every problem right first time.") : "")
-      + (r.name ? "" : " There’s no name in the line" + (r.ver === 1 ? " (older lines never had one)." : "."));
-  });
+    onTheme = function() { if (SET && !$("player").hidden) frameEl.src = frameSrc(RUN.i); };
 
-  function save(){
-    try { localStorage.setItem("practice-builder", JSON.stringify({ b:B, probs:PROBS })); } catch (e){}
-  }
-  function load(){
-    try {
-      var v = JSON.parse(localStorage.getItem("practice-builder") || "null");
-      if (!v || !v.b) return;
-      var b = v.b;
-      if (typeof b.title === "string") B.title = b.title.slice(0, 60);
-      if (typeof b.mix === "boolean") B.mix = b.mix;
-      if (Array.isArray(b.secs) && b.secs.length){
-        var secs = b.secs.filter(function(x){ return x && topic(String(x.page)); }).map(function(x){
-          return { page:topic(x.page)[0], count:Math.max(1, Math.min(30, x.count | 0 || 5)), opts:x.opts && typeof x.opts === "object" ? x.opts : {} };
+    function paintBar() {
+      var n = SET.probs.length,
+        firsts = 0,
+        done = 0;
+      RUN.r.forEach(function(x) { if (x.st === "first") firsts++; if (x.st) done++; });
+      $("count").innerHTML = "Problem " + (RUN.i + 1) + " of " + n + "<small>" + done + " done</small>";
+      $("tally").textContent = firsts + " right first time so far";
+      var segs = $("segs");
+      segs.setAttribute("role", "progressbar");
+      segs.setAttribute("aria-valuemin", "0");
+      segs.setAttribute("aria-valuemax", String(n));
+      segs.setAttribute("aria-valuenow", String(done));
+      segs.setAttribute("aria-label", done + " of " + n + " done");
+      segs.innerHTML = "";
+      RUN.r.forEach(function(x, k) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = (x.st || "") + (k === RUN.i ? " cur" : "");
+        b.title = "Problem " + (k + 1) + ": " + ST[x.st || ""].t;
+        b.setAttribute("aria-label", "Go to problem " + (k + 1) + " — " + ST[x.st || ""].t);
+        if (k === RUN.i) b.setAttribute("aria-current", "step");
+        b.addEventListener("click", function() { show(k); });
+        segs.appendChild(b);
+      });
+      var r = RUN.r[RUN.i],
+        last = RUN.i === n - 1;
+      $("nextBtn").disabled = !final(r.st);
+      $("nextBtn").textContent = last ? "Finish →" : "Next →";
+      $("skipBtn").hidden = final(r.st);
+      $("skipBtn").textContent = last ? "Skip and finish" : "Skip";
+      $("prevBtn").disabled = RUN.i === 0;
+    }
+
+    function paintVerdict() {
+      var r = RUN.r[RUN.i],
+        s = ST[r.st || ""],
+        v = $("verdict");
+      if (r.st === "first") v.innerHTML = '<b class="ok">✓ Right first time.</b> Have a look at the work, then go on.';
+      else if (r.st === "right") v.innerHTML = '<b class="later">✓ Got it</b> after ' + r.tries + " tr" + (r.tries === 1 ? "y" : "ies") + ". Nice work sticking with it.";
+      else if (r.st === "hint") v.innerHTML = '<b class="warm">✓ Got it</b> with a hint.';
+      else if (r.st === "shown") v.innerHTML = '<b class="warm">You looked at the work.</b> Read it through, then go on.';
+      else if (r.st === "skip") v.innerHTML = "Skipped" + (r.tries ? " after " + r.tries + " tr" + (r.tries === 1 ? "y" : "ies") : "") + ". You can still answer it now.";
+      else if (r.tries) v.innerHTML = '<b class="no">Not yet</b> — ' + r.tries + " tr" + (r.tries === 1 ? "y" : "ies") + " so far. Try again, or use the hint.";
+      else v.innerHTML = "Work it out on paper, then type your answer and press <b>Check</b>.";
+      return s;
+    }
+    window.addEventListener("message", function(e) {
+      var d = e.data;
+      if (!SET || !d || typeof d !== "object" || e.source !== frameEl.contentWindow) return;
+      if (d.type === "helper:height" && typeof d.h === "number") {
+        gotHeight = true;
+        $("frameNote").hidden = true;
+        frameEl.style.height = Math.max(160, Math.min(6000, Math.ceil(d.h))) + "px";
+        return;
+      }
+      if (d.type !== "helper:checked" || !d.detail) return;
+      var x = d.detail,
+        r = RUN.r[RUN.i];
+      if (x.text) r.text = String(x.text).slice(0, 140);
+      if (x.hinted) r.hint = true;
+      if (oneTry() && (final(r.st) || r.tries > 0)) { /* one try only, and it was used: nothing more counts */ } else if (oneTry() && x.verdict !== "right" && x.verdict !== "shown") {
+        r.tries = 1;
+        r.st = "locked";
+      } else if (!final(r.st)) {
+        if (x.verdict === "right") r.st = r.tries === 0 && x.firstTry && !r.hint ? "first" : r.hint ? "hint" : "right";
+        else if (x.verdict === "shown") r.st = "shown";
+        else { r.tries++; if (r.st !== "skip") r.st = r.st || ""; }
+        if (x.verdict === "wrong" || x.verdict === "simplify") { /* counted above */ }
+      }
+      saveRun();
+      paintBar();
+      paintVerdict();
+      if (oneTry()) paintLock();
+    });
+
+    function advance() {
+      if (RUN.i >= SET.probs.length - 1) { finish(); return; }
+      // the next problem not done yet, or simply the next one
+      show(RUN.i + 1);
+      try { frameEl.focus(); } catch (e) {}
+    }
+    $("nextBtn").addEventListener("click", advance);
+    $("skipBtn").addEventListener("click", function() {
+      var r = RUN.r[RUN.i];
+      if (!final(r.st)) r.st = "skip";
+      saveRun();
+      advance();
+    });
+    $("prevBtn").addEventListener("click", function() { show(RUN.i - 1); });
+    $("restartBtn").addEventListener("click", function() {
+      var go = RUN.go;
+      RUN = freshRun();
+      RUN.go = go;
+      saveRun();
+      $("resume").hidden = true;
+      show(0);
+    });
+
+    function finish() {
+      RUN.r.forEach(function(r) { if (!r.st) r.st = "skip"; });
+      RUN.finished = Date.now();
+      saveRun();
+      showDone();
+    }
+
+    /* ---- the end ---- */
+    function stamp(t) {
+      var d = new Date(t);
+      return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + " " +
+        ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+    }
+    var checkCode = checkV1; // the old lines' check code, still read
+    // one letter per problem: y right first time, a right in the end (more tries or a hint), x looked at the work or tried and not right, s skipped
+    function markOf(r) {
+      if (r.st === "first") return "y";
+      if (r.st === "right" || r.st === "hint") return "a";
+      if (r.st === "shown" || r.tries) return "x";
+      return "s";
+    }
+
+    function stName(r) { return (r.st === "skip" && r.tries) || r.st === "locked" ? "tried" : r.st; }
+    var NAME_KEY = "practice-name";
+
+    function myName() { return cleanField($("nameIn").value).slice(0, 40); }
+
+    function resultLine() {
+      var marks = RUN.r.map(markOf).join("");
+      return lineFor({
+        name: myName(),
+        title: SET.title,
+        n: SET.probs.length,
+        first: marks.split("y").length - 1,
+        solved: marks.replace(/[^ya]/g, "").length,
+        skipped: marks.split("s").length - 1,
+        marks: marks,
+        when: stamp(RUN.finished),
+        set: hid(CODE, 6),
+        tries: ASG() ? RUN.r.map(triesOf) : null
+      });
+    }
+    try { $("nameIn").value = localStorage.getItem(NAME_KEY) || ""; } catch (e) {}
+    $("nameIn").addEventListener("input", function() {
+      try {
+        if (myName()) localStorage.setItem(NAME_KEY, myName());
+        else localStorage.removeItem(NAME_KEY);
+      } catch (e) {}
+      if (RUN && RUN.finished) {
+        $("resultLine").textContent = resultLine();
+        $("copyResMsg").textContent = "";
+      }
+    });
+
+    function showDone() {
+      $("player").hidden = true;
+      $("resume").hidden = true;
+      $("done").hidden = false;
+      var n = SET.probs.length,
+        c = { first: 0, right: 0, hint: 0, shown: 0, skip: 0, tried: 0 };
+      RUN.r.forEach(function(r) {
+        var k = stName(r);
+        c[k] = (c[k] || 0) + 1;
+      });
+      $("big").innerHTML = c.first + "<small> / " + n + "</small>";
+      var pc = Math.round(100 * c.first / n);
+      $("scoreHead").innerHTML = "right first time<span>" + (pc === 100 ? "Every one, first time. Excellent!" : pc >= 80 ? "That’s strong work." : pc >= 50 ? "Good going — the ones below are worth another look." :
+        "Keep at it — try the ones you missed again.") + "</span>";
+      $("chips").innerHTML = [
+          ["first", "right first time"],
+          ["right", "right after more tries"],
+          ["hint", "right with a hint"],
+          ["shown", "looked at the work"],
+          ["tried", "tried, not right"],
+          ["skip", "skipped"]
+        ]
+        .filter(function(k) { return c[k[0]]; }).map(function(k) { return "<span>" + c[k[0]] + " " + k[1] + "</span>"; }).join("");
+      $("resultLine").textContent = resultLine();
+      $("copyResMsg").textContent = "";
+      var A = ASG(),
+        late = A && A.due && pastDue(A.due, stamp(RUN.finished));
+      $("doneNote").hidden = !A;
+      if (A) $("doneNote").innerHTML = "<b>Finished " + esc(stamp(RUN.finished)) + ".</b> " +
+        "Check your name below, copy the result line and send it to your teacher" +
+        (A.due ? " — this assignment was due " + esc(dueText(A.due, true)) + (late ? " (handed in late)" : "") : "") + ".";
+      $("againBtn").hidden = oneTry();
+      $("nameIn").parentNode.querySelector(".lbl").textContent = A ? "Your name" : "Your name (optional)";
+      $("rlist").innerHTML = SET.probs.map(function(p, k) {
+        var r = RUN.r[k],
+          s = ST[stName(r) || ""],
+          t = topic(p.page);
+        return '<li><span class="n">' + (k + 1) + '.</span><span class="ic ' + (stName(r) || "") + '" aria-hidden="true">' + s.ic + "</span>" +
+          '<span class="q">' + esc(r.text || textOf(p.page, p.params)) + "</span>" +
+          '<span class="st"><i class="dot" style="--c:' + cvar(t) + ';width:8px;height:8px"></i> ' + esc(t[1]) + " · " + s.t +
+          (A ? " · " + triesOf(r) + " tr" + (triesOf(r) === 1 ? "y" : "ies") :
+            r.tries && r.st !== "first" ? " · " + r.tries + " wrong tr" + (r.tries === 1 ? "y" : "ies") : "") + "</span>" +
+          '<span class="act"><a class="small-link" href="' + esc(U(p.page, (p.params ? p.params + "&" : "") + "practice=check")) + '" target="_blank" rel="noopener">Retry ↗</a></span></li>';
+      }).join("");
+      var missed = SET.probs.filter(function(_, k) { return RUN.r[k].st !== "first"; });
+      $("missedLink").hidden = !missed.length;
+      if (missed.length) {
+        $("missedLink").textContent = "Try the " + (missed.length === 1 ? "one" : missed.length) + " I missed again";
+        encodeSet(SET.title.replace(/ \(again\)$/, "") + " (again)", missed.map(function(p) { return [p.page, p.params]; })).then(function(code) {
+          $("missedLink").href = "sets.html?set=" + code;
         });
-        if (secs.length){
-          B.secs = secs;
-          if (Array.isArray(v.probs) && v.probs.length === secs.length) PROBS = v.probs;
-        }
       }
-    } catch (e){}
-  }
-  function startBuilder(){
-    load();
-    $("builder").hidden = false;
-    $("titleIn").value = B.title;
-    paintMix(); buildSecs(); draw();
-  }
-
-  /* ======================================================================
-     THE ASSIGNMENT BUILDER (sets.html?assignment)
-     The problems come from "Add to assignment" on the helpers (assets/assign.js), kept on this device in
-     localStorage["assignment-draft"] = { v:1, items:[{ p:"fractions", q:"mode=simplify&q=18%2F24", t:label, at }],
-     title, instr, due, steps, retries }. Share makes an ordinary practice-set code with the assignment's fields in "a".
-     ====================================================================== */
-  var AKEY = "assignment-draft", AD = null, aPrev = {};
-  function aLoad(){
-    var d = null;
-    try { d = JSON.parse(localStorage.getItem(AKEY) || "null"); } catch (e){}
-    if (!d || typeof d !== "object" || !Array.isArray(d.items)) d = { v:1, items:[] };
-    d.items = d.items.filter(function(x){ return x && typeof x.p === "string" && typeof x.q === "string" && topic(x.p); }).slice(0, 100);
-    if (typeof d.title !== "string") d.title = "Assignment";
-    if (typeof d.instr !== "string") d.instr = "";
-    if (!/^\d{4}-\d\d-\d\d$/.test(d.due || "")) d.due = "";
-    d.steps = d.steps !== false; d.retries = d.retries !== false;
-    return d;
-  }
-  function aSave(){ try { localStorage.setItem(AKEY, JSON.stringify(AD)); } catch (e){} }
-  function aKey(x){ return x.p + "?" + x.q; }
-  function aStale(){ $("aLinkPanel").hidden = true; }
-  function aPaintFields(){
-    $("aTitle").value = AD.title; $("aInstr").value = AD.instr; $("aDue").value = AD.due;
-    $("aSteps").setAttribute("aria-pressed", String(AD.steps));
-    $("aRetries").setAttribute("aria-pressed", String(AD.retries));
-    $("aOptMsg").textContent = (AD.steps ? "After each answer, students see the worked steps." : "Students don’t see the steps or “Show me the work”.")
-      + " " + (AD.retries ? "They can check again until it’s right; the tries are counted." : "One Check per problem: a wrong answer stays wrong.");
-  }
-  function aDraw(){
-    var list = AD.items, n = list.length;
-    $("aListInfo").textContent = n ? n + " problem" + (n === 1 ? "" : "s") + ", in this order" : "";
-    $("aMake").disabled = !n;
-    if (!n){
-      $("aList").innerHTML = '<li class="empty">No problems yet. Open any helper, set up a problem, and press <b>Add to assignment</b> beside Copy link — '
-        + 'or paste a problem’s link below.</li>';
-      return;
     }
-    $("aList").innerHTML = list.map(function(x, k){
-      var t = topic(x.p), open = aPrev[aKey(x)];
-      return '<li><span class="n">' + (k + 1) + '.</span><span class="q">' + esc(x.t || textOf(x.p, x.q)) + "</span>"
-        + '<span class="t"><i class="dot" style="--c:' + cvar(t) + '"></i>' + esc(t[1]) + " · " + esc(t[2]) + "</span>"
-        + '<span class="act">'
-        + '<button type="button" class="icon-btn" data-act="up" data-k="' + k + '"' + (k === 0 ? " disabled" : "") + ' aria-label="Move problem ' + (k + 1) + ' up" title="Move up">↑</button>'
-        + '<button type="button" class="icon-btn" data-act="down" data-k="' + k + '"' + (k === n - 1 ? " disabled" : "") + ' aria-label="Move problem ' + (k + 1) + ' down" title="Move down">↓</button>'
-        + '<button type="button" class="icon-btn" data-act="pv" data-k="' + k + '" aria-expanded="' + !!open + '" aria-label="Preview problem ' + (k + 1) + '" title="See it as students will">' + (open ? "Hide" : "Preview") + "</button>"
-        + '<a class="icon-btn" style="text-decoration:none" href="' + esc(U(x.p, x.q)) + '" target="_blank" rel="noopener" aria-label="Open problem ' + (k + 1) + ' with its steps" title="Open it with its steps">↗</a>'
-        + '<button type="button" class="icon-btn" data-act="del" data-k="' + k + '" aria-label="Remove problem ' + (k + 1) + '" title="Remove it">✕</button>'
-        + "</span>"
-        + (open ? '<div class="pv"><iframe title="Problem ' + (k + 1) + ', as students see it" src="' + esc(U(x.p, (x.q ? x.q + "&" : "") + "practice=check&embed=1&theme=" + (isDark() ? "dark" : "light"))) + '"></iframe></div>' : "")
-        + "</li>";
-    }).join("");
-  }
-  $("aList").addEventListener("click", function(e){
-    var b = e.target.closest ? e.target.closest("button[data-act]") : null;
-    if (!b) return;
-    var k = Number(b.getAttribute("data-k")), act = b.getAttribute("data-act"), L = AD.items, x = L[k];
-    if (!x) return;
-    if (act === "pv"){ aPrev[aKey(x)] = !aPrev[aKey(x)]; aDraw(); }
-    else {
-      if (act === "up" && k > 0){ L.splice(k, 1); L.splice(k - 1, 0, x); }
-      else if (act === "down" && k < L.length - 1){ L.splice(k, 1); L.splice(k + 1, 0, x); }
-      else if (act === "del"){ L.splice(k, 1); delete aPrev[aKey(x)]; }
-      aSave(); aStale(); aDraw();
-      var nk = act === "up" ? k - 1 : act === "down" ? k + 1 : Math.min(k, L.length - 1);
-      var again = $("aList").querySelector('[data-act="' + (act === "del" ? "del" : act) + '"][data-k="' + nk + '"]') || $("aList").querySelector('[data-k="' + nk + '"]');
-      if (again && !again.disabled) again.focus();
-    }
-  });
-  // the previews are embedded helpers: they say how tall they are
-  window.addEventListener("message", function(e){
-    var d = e.data;
-    if (!AD || !d || d.type !== "helper:height" || typeof d.h !== "number") return;
-    [].forEach.call($("aList").querySelectorAll("iframe"), function(f){ if (f.contentWindow === e.source) f.style.height = Math.max(160, Math.min(3000, Math.ceil(d.h))) + "px"; });
-  });
-  $("aTitle").addEventListener("input", function(){ AD.title = $("aTitle").value.slice(0, 60); aSave(); aStale(); });
-  $("aInstr").addEventListener("input", function(){ AD.instr = $("aInstr").value.slice(0, 400); aSave(); aStale(); });
-  $("aDue").addEventListener("change", function(){ AD.due = /^\d{4}-\d\d-\d\d$/.test($("aDue").value) ? $("aDue").value : ""; aSave(); aStale(); });
-  $("aSteps").addEventListener("click", function(){ AD.steps = !AD.steps; aSave(); aStale(); aPaintFields(); });
-  $("aRetries").addEventListener("click", function(){ AD.retries = !AD.retries; aSave(); aStale(); aPaintFields(); });
-  // a problem by its link: any helper's address, as Copy link or the address bar gives it
-  $("aAddBtn").addEventListener("click", function(){
-    var v = $("aAddIn").value.trim(), msg = $("aAddMsg"), u = null;
-    if (!v){ msg.textContent = "Paste a helper’s link first."; return; }
-    try { u = new URL(v, location.href); } catch (e){}
-    var id = u && window.HelperSite ? window.HelperSite.id(u.href) : "", t = id ? topic(id) : null;
-    if (!t){ msg.textContent = "That isn’t a link to one of the helpers. Open the problem, press Copy link and paste it here."; return; }
-    var x = { p:t[0].replace(/\.html$/, ""), q:cleanParams(u.search), t:"", at:Date.now() };
-    if (AD.items.some(function(o){ return aKey(o) === aKey(x); })){ msg.textContent = "That problem is already in it."; return; }
-    if (AD.items.length >= 100){ msg.textContent = "An assignment holds 100 problems at most."; return; }
-    AD.items.push(x); aSave(); aStale(); aDraw();
-    $("aAddIn").value = ""; msg.textContent = "Added ✓ (" + t[1] + ")";
-  });
-  $("aAddIn").addEventListener("keydown", function(e){ if (e.key === "Enter"){ e.preventDefault(); $("aAddBtn").click(); } });
-  $("aClear").addEventListener("click", function(){
-    if (AD.items.length && !window.confirm("Start a new assignment? The " + AD.items.length + " problem" + (AD.items.length === 1 ? "" : "s")
-        + " in this one are cleared from this device. Links you already shared keep working.")) return;
-    AD = { v:1, items:[], title:"Assignment", instr:"", due:"", steps:AD.steps, retries:AD.retries };
-    aPrev = {}; aSave(); aStale(); aPaintFields(); aDraw();
-    $("aStatus").textContent = "A new, empty assignment. Add problems from the helpers.";
-  });
-  var AMADE = { title:"", n:0 };
-  function postText(url){
-    var n = AD.items.length, t = cleanField(AD.title) || "Assignment";
-    return t + "\n" + (AD.instr.trim() ? AD.instr.trim() + "\n" : "") + (AD.due ? "Due " + dueText(AD.due, true) + "\n" : "")
-      + "\nOpen this link, type your name, and work the " + n + " problem" + (n === 1 ? "" : "s") + " in order"
-      + (AD.retries ? "" : " (one try for each, so check carefully)") + ":\n" + url + "\n\n"
-      + "When you finish, copy the result line at the end and send it back to me (as a private comment or a reply).";
-  }
-  $("aMake").addEventListener("click", function(){
-    var list = AD.items;
-    if (!list.length) return;
-    var title = cleanField(AD.title) || "Assignment";
-    encodeSet(title, list.map(function(x){ return [x.p, x.q]; }), { instr:AD.instr.trim(), due:AD.due, steps:AD.steps, retries:AD.retries }).then(function(code){
-      var url = U("practice.html", "set=" + code);
-      $("aLinkOut").value = url;
-      $("aStart").href = "sets.html?set=" + code;
-      $("aLinkInfo").textContent = list.length + " problems · " + url.length + " characters";
-      $("aPost").value = postText(url);
-      AMADE = { title:title, n:list.length };
-      $("aLinkPanel").hidden = false; $("aCopyMsg").textContent = ""; $("aPostMsg").textContent = ""; $("aStatus").textContent = "";
-      rememberSet(code, title, list.length);
-      try { $("aLinkOut").focus(); $("aLinkOut").select(); } catch (e){}
-    }, function(){ $("aStatus").textContent = "Couldn’t make the link in this browser."; });
-  });
-  $("aCopy").addEventListener("click", function(){ copyText($("aLinkOut").value, $("aCopyMsg"), "Link copied ✓"); });
-  $("aCopyPost").addEventListener("click", function(){ copyText($("aPost").value, $("aPostMsg"), "Copied ✓ — paste it into Classroom or an email"); });
-  $("aQR").addEventListener("click", function(){
-    if (!window.HelperQR || !$("aLinkOut").value) return;
-    window.HelperQR.show($("aLinkOut").value, {
-      title:AMADE.title || "Assignment", sub:AMADE.n + " problem" + (AMADE.n === 1 ? "" : "s") + (AD.due ? " · due " + dueText(AD.due) : "") + " · scan to start",
-      filename:"assignment-qr.svg", tooLongHint:"Use fewer problems, or copy the link and send it instead."
+    $("copyResult").addEventListener("click", function() { copyText($("resultLine").textContent, $("copyResMsg"), "Copied ✓"); });
+    $("againBtn").addEventListener("click", function() {
+      var go = RUN.go;
+      RUN = freshRun();
+      RUN.go = go;
+      saveRun();
+      $("done").hidden = true;
+      $("player").hidden = false;
+      show(0);
     });
-  });
-  function aQrReady(){ if (window.HelperQR) $("aQR").hidden = false; }
-  document.addEventListener("DOMContentLoaded", aQrReady);
-  window.addEventListener("load", aQrReady);
-  function startAsgBuilder(){
-    AD = aLoad();
-    document.title = "Assignment builder · Practice";
-    $("eyebrow").textContent = "For teachers · no accounts";
-    $("h1").innerHTML = "Build an <em>assignment</em>";
-    $("tagline").textContent = "Press Add to assignment on any helper to collect the exact problems you want. Put them in order here, "
-      + "add a due date, and share one link. Students type their name, work them in order and send back a result line.";
-    $("asgBuilder").hidden = false;
-    aPaintFields(); aDraw();
-    // problems added in another tab show up here
-    window.addEventListener("storage", function(e){ if (e.key === AKEY || !e.key){ AD = aLoad(); aPaintFields(); aDraw(); aStale(); } });
-  }
-  onTheme = (function(prev){ return function(){ if (prev) prev(); if (AD && !$("asgBuilder").hidden) aDraw(); }; })(onTheme);
 
-  /* ===================== which one ===================== */
-  var m = /[?&]set=([^&#]+)/.exec(location.search);
-  if (m){
-    var code = decodeURIComponent(m[1]);
-    decodeSet(code).then(function(set){ startPlayer(set, code); }, function(err){
-      $("bad").hidden = false;
-      if (err && /browser/.test(err.message)) $("badWhy").textContent = err.message;
-      $("h1").innerHTML = "Practice <em>sets</em>";
+    /* ======================================================================
+       THE BUILDER — it talks to the helpers the same way the worksheet maker does
+       ====================================================================== */
+    var B = { title: "Math practice", mix: false, secs: [{ page: "fractions.html", count: 5, opts: {} }, { page: "pemdas.html", count: 5, opts: {} }] };
+    var PROBS = [],
+      SCHEMA = {},
+      mixOrder = null,
+      MADE = { title: "", n: 0 };
+    var frames = {},
+      waiting = {},
+      seq = 0;
+    window.addEventListener("message", function(e) {
+      var d = e.data;
+      if (!d || typeof d !== "object" || !d.id || !waiting[d.id]) return;
+      var w = waiting[d.id];
+      if (d.type !== w.want) return;
+      clearTimeout(w.timer);
+      delete waiting[d.id];
+      w.ok(d);
     });
-  } else if (/[?&]assignment(?:[=&]|$)/.test(location.search)) startAsgBuilder();
-  else startBuilder();
-  window.__practice = { encodeSet:encodeSet, decodeSet:decodeSet, checkCode:checkCode, checkV2:checkV2, checkV3:checkV3, lineFor:lineFor, readLine:readLine,
-    draft:function(){ return AD; },
-    resultLine:function(){ return RUN && RUN.finished ? resultLine() : ""; }, run:function(){ return RUN; }, set:function(){ return SET; } };
-})();
+
+    function frame(page) {
+      if (frames[page]) return frames[page];
+      frames[page] = new Promise(function(ok, bad) {
+        var f = document.createElement("iframe");
+        f.src = U(page);
+        f.setAttribute("aria-hidden", "true");
+        f.tabIndex = -1;
+        f.style.cssText = "position:absolute;width:900px;height:700px;left:-10000px;top:0;border:0;visibility:hidden";
+        var t = setTimeout(function() { bad(new Error("load")); }, 15000);
+        f.onload = function() {
+          clearTimeout(t);
+          setTimeout(function() { ok(f); }, 60);
+        };
+        document.body.appendChild(f);
+      });
+      return frames[page];
+    }
+
+    function ask(page, msg, want) {
+      return frame(page).then(function(f) {
+        return new Promise(function(ok, bad) {
+          var id = "p" + (++seq) + "-" + Date.now();
+          msg.id = id;
+          waiting[id] = {
+            want: want,
+            ok: ok,
+            timer: setTimeout(function() {
+              delete waiting[id];
+              bad(new Error("timeout"));
+            }, 10000)
+          };
+          f.contentWindow.postMessage(msg, "*");
+        });
+      });
+    }
+
+    function schemaFor(page) {
+      if (SCHEMA[page]) return Promise.resolve(SCHEMA[page]);
+      return ask(page, { type: "helper:options" }, "helper:optionsSchema").then(function(d) { SCHEMA[page] = d.options || []; return SCHEMA[page]; });
+    }
+
+    function make(i) {
+      var sec = B.secs[i];
+      return ask(sec.page, { type: "helper:make", count: sec.count, options: sec.opts }, "helper:made").then(function(d) {
+        PROBS[i] = (d.problems || []).slice(0, sec.count).filter(function(p) { return p && typeof p.params === "string"; });
+      });
+    }
+
+    function buildSecs() {
+      var host = $("secs");
+      host.innerHTML = "";
+      B.secs.forEach(function(sec, i) {
+        var box = document.createElement("div"),
+          t = topic(sec.page),
+          L = String.fromCharCode(65 + i);
+        box.className = "sec";
+        box.style.setProperty("--c", cvar(t));
+        box.innerHTML = '<div class="sec-head"><span class="letter">' + L + '</span>' +
+          '<select aria-label="Topic ' + L + '">' + TOPICS.map(function(x) {
+            return '<option value="' + x[0] + '"' + (x[0] === sec.page ? " selected" : "") + ">" + esc(x[1]) + " — " + esc(x[2]) + "</option>";
+          }).join("") + "</select>" +
+          '<button type="button" class="icon-btn" data-act="new" title="New numbers for this topic" aria-label="New numbers for topic ' + L + '">↻</button>' +
+          (B.secs.length > 1 ? '<button type="button" class="icon-btn" data-act="del" title="Remove this topic" aria-label="Remove topic ' + L + '">✕</button>' : "") +
+          '</div><div class="row"><label class="field"><span class="lbl">Problems</span>' +
+          '<input type="number" min="1" max="30" value="' + sec.count + '"></label></div>' +
+          '<div class="opts"><span class="msg">Loading options…</span></div>';
+        host.appendChild(box);
+        box.querySelector("select").addEventListener("change", function(e) {
+          sec.page = e.target.value;
+          sec.opts = {};
+          PROBS[i] = null;
+          buildSecs();
+          regen(i);
+          save();
+        });
+        box.querySelector("input[type=number]").addEventListener("change", function(e) {
+          var n = Math.max(1, Math.min(30, parseInt(e.target.value, 10) || 1));
+          e.target.value = n;
+          sec.count = n;
+          regen(i);
+          save();
+        });
+        box.querySelector('[data-act="new"]').addEventListener("click", function() { regen(i); });
+        var del = box.querySelector('[data-act="del"]');
+        if (del) del.addEventListener("click", function() {
+          B.secs.splice(i, 1);
+          PROBS.splice(i, 1);
+          buildSecs();
+          draw();
+          save();
+        });
+        optionsUI(box.querySelector(".opts"), sec, i);
+      });
+    }
+
+    function optionsUI(host, sec, i) {
+      schemaFor(sec.page).then(function(list) {
+        host.innerHTML = "";
+        if (!list.length) { host.innerHTML = '<span class="msg">No extra options.</span>'; }
+        var modeOpt = list.filter(function(o) { return o.key === "mode"; })[0];
+        if (modeOpt && sec.opts.mode === undefined) sec.opts.mode = modeOpt["default"];
+        var mode = sec.opts.mode;
+        list.filter(function(o) {
+          var only = o.modes || o.appliesTo || o.forMode;
+          if (!only || mode === undefined || o.key === "mode") return true;
+          return [].concat(only).map(String).indexOf(String(mode)) >= 0;
+        }).forEach(function(o) {
+          if (sec.opts[o.key] === undefined)
+            sec.opts[o.key] = o.defaultByMode && o.defaultByMode[mode] !== undefined ? o.defaultByMode[mode] : o["default"];
+          var wrap = document.createElement("div");
+          wrap.className = "opt";
+          if (o.type === "toggle") {
+            wrap.className = "opt t";
+            var b = document.createElement("button");
+            b.type = "button";
+            b.className = "tog";
+            b.textContent = o.label;
+            var paintB = function() { b.setAttribute("aria-pressed", String(!!sec.opts[o.key])); };
+            paintB();
+            b.addEventListener("click", function() {
+              sec.opts[o.key] = !sec.opts[o.key];
+              paintB();
+              regen(i);
+              save();
+            });
+            wrap.appendChild(b);
+          } else {
+            var lab = document.createElement("label");
+            lab.className = "opt";
+            var sp = document.createElement("span");
+            sp.textContent = o.label;
+            lab.appendChild(sp);
+            var sel = document.createElement("select");
+            (o.values || []).forEach(function(v) {
+              var op = document.createElement("option");
+              op.value = String(v.v);
+              op.textContent = v.label;
+              if (String(v.v) === String(sec.opts[o.key])) op.selected = true;
+              sel.appendChild(op);
+            });
+            sel.addEventListener("change", function() {
+              var pick = (o.values || []).filter(function(v) { return String(v.v) === sel.value; })[0];
+              sec.opts[o.key] = pick ? pick.v : sel.value;
+              if (o.key === "mode") {
+                sec.opts = { mode: sec.opts.mode };
+                optionsUI(host, sec, i);
+              }
+              regen(i);
+              save();
+            });
+            lab.appendChild(sel);
+            wrap = lab;
+          }
+          host.appendChild(wrap);
+        });
+        if (!PROBS[i]) regen(i);
+      }, function() {
+        host.innerHTML = '<span class="msg err">Couldn’t reach ' + esc((topic(sec.page) || [0, sec.page, sec.page])[2]) +
+          ". Open this page from the website (not as a saved file) and try again.</span>";
+      });
+    }
+    $("addSec").addEventListener("click", function() {
+      var used = B.secs.map(function(s) { return s.page; }),
+        next = TOPICS.filter(function(t) { return used.indexOf(t[0]) < 0; })[0];
+      B.secs.push({ page: next ? next[0] : "addition.html", count: 5, opts: {} });
+      buildSecs();
+      save();
+    });
+    $("mixT").addEventListener("click", function() {
+      B.mix = !B.mix;
+      mixOrder = null;
+      paintMix();
+      draw();
+      save();
+    });
+
+    function paintMix() { $("mixT").setAttribute("aria-pressed", String(B.mix)); }
+    $("titleIn").addEventListener("input", function() {
+      B.title = $("titleIn").value;
+      $("linkPanel").hidden = true;
+      save();
+    });
+
+    var busy = 0;
+
+    function status(t, err) {
+      $("status").textContent = t || "";
+      $("status").className = "msg" + (err ? " err" : "");
+    }
+
+    function regen(i) {
+      busy++;
+      status("Making problems…");
+      $("linkPanel").hidden = true;
+      return make(i).then(function() {
+          busy--;
+          if (!busy) status("");
+          mixOrder = null;
+          draw();
+          save();
+        },
+        function() {
+          busy--;
+          PROBS[i] = null;
+          status("Couldn’t make problems for topic " + String.fromCharCode(65 + i) + " — open this page from the website and try again.", true);
+          draw();
+        });
+    }
+    $("newBtn").addEventListener("click", function() { B.secs.forEach(function(_, i) { regen(i); }); });
+
+    function items() {
+      var all = [];
+      B.secs.forEach(function(sec, i) {
+        (PROBS[i] || []).forEach(function(p) { all.push({ page: sec.page, p: p }); });
+      });
+      if (B.mix) {
+        if (!mixOrder || mixOrder.length !== all.length) {
+          mixOrder = all.map(function(_, k) { return k; });
+          for (var k = mixOrder.length - 1; k > 0; k--) {
+            var j = Math.floor(Math.random() * (k + 1)),
+              t = mixOrder[k];
+            mixOrder[k] = mixOrder[j];
+            mixOrder[j] = t;
+          }
+        }
+        all = mixOrder.map(function(k) { return all[k]; });
+      }
+      return all;
+    }
+
+    function draw() {
+      var list = items();
+      $("prevInfo").textContent = list.length ? list.length + " problem" + (list.length === 1 ? "" : "s") + ", in this order" : "";
+      $("makeBtn").disabled = !list.length;
+      if (!list.length) { $("preview").innerHTML = '<li class="empty" style="display:block">' + (busy ? "Making problems…" : "Add a topic to get started.") + "</li>"; return; }
+      $("preview").innerHTML = list.map(function(it, k) {
+        var t = topic(it.page);
+        return '<li><span class="n">' + (k + 1) + '.</span><span class="q">' + (it.p.html || esc(it.p.text || "")) + "</span>" +
+          '<span class="t"><i class="dot" style="--c:' + cvar(t) + '"></i>' + esc(t[1]) + "</span></li>";
+      }).join("");
+    }
+    $("makeBtn").addEventListener("click", function() {
+      var list = items();
+      if (!list.length) return;
+      encodeSet(B.title || "Math practice", list.map(function(it) { return [it.page, it.p.params]; })).then(function(code) {
+        var url = U("practice.html", "set=" + code);
+        $("linkOut").value = url;
+        $("startLink").href = "sets.html?set=" + code;
+        $("linkInfo").textContent = list.length + " problems · " + url.length + " characters";
+        MADE = { title: B.title || "Math practice", n: list.length };
+        $("linkPanel").hidden = false;
+        $("copyMsg").textContent = "";
+        rememberSet(code, B.title || "Math practice", list.length);
+        try {
+          $("linkOut").focus();
+          $("linkOut").select();
+        } catch (e) {}
+      }, function() { status("Couldn’t make the link in this browser.", true); });
+    });
+    $("copyBtn").addEventListener("click", function() { copyText($("linkOut").value, $("copyMsg"), "Link copied ✓"); });
+    // the set's link as a QR code, to put on the projector (qr.js; if it didn't load, the button stays hidden)
+    function qrReady() { if (window.HelperQR) $("qrBtn").hidden = false; }
+    document.addEventListener("DOMContentLoaded", qrReady);
+    window.addEventListener("load", qrReady);
+    $("qrBtn").addEventListener("click", function() {
+      if (!window.HelperQR || !$("linkOut").value) return;
+      window.HelperQR.show($("linkOut").value, {
+        title: MADE.title || "Practice set",
+        sub: MADE.n + " problem" + (MADE.n === 1 ? "" : "s") + " · scan to start the practice set",
+        filename: "practice-set-qr.svg",
+        tooLongHint: "Make a set with fewer problems, or copy the link and send it instead."
+      });
+    });
+    /* the sets made here are kept on this device (newest first, 40 at most), so Class results (class-results.html) can show
+       each problem: localStorage["practice-sets"] = [{ c:code, t:title, n:problems, at:time made }] */
+    function rememberSet(code, title, n) {
+      try {
+        var list = JSON.parse(localStorage.getItem("practice-sets") || "[]");
+        if (!Array.isArray(list)) list = [];
+        list = list.filter(function(x) { return x && x.c !== code; });
+        list.unshift({ c: code, t: String(title).slice(0, 60), n: n, at: Date.now() });
+        localStorage.setItem("practice-sets", JSON.stringify(list.slice(0, 40)));
+      } catch (e) {}
+    }
+    $("verifyBtn").addEventListener("click", function() {
+      var out = $("verifyOut"),
+        r = readLine($("verifyIn").value);
+      if (!r) { out.textContent = "That doesn’t look like a result line. Paste the whole line, from the title to the check code."; return; }
+      if (r.status === "unk") { out.textContent = "? This looks like a result line, but " + r.why + ", so it can’t be checked."; return; }
+      if (r.status !== "ok") { out.textContent = "✗ This line has been changed since it was made — the check code doesn’t match."; return; }
+      var missed = [];
+      if (r.marks) r.marks.split("").forEach(function(c, k) { if (c !== "y") missed.push((k + 1) + MK[c]); });
+      out.textContent = "✓ This line hasn’t been changed: " + (r.name ? r.name + ", " : "") + r.first + " of " + r.n + " right first time, finished " + r.when + "." +
+        (r.marks ? (missed.length ? " Not right first time: " + missed.join(" ") + "." : " Every problem right first time.") : "") +
+        (r.name ? "" : " There’s no name in the line" + (r.ver === 1 ? " (older lines never had one)." : "."));
+    });
+
+    function save() {
+      try { localStorage.setItem("practice-builder", JSON.stringify({ b: B, probs: PROBS })); } catch (e) {}
+    }
+
+    function load() {
+      try {
+        var v = JSON.parse(localStorage.getItem("practice-builder") || "null");
+        if (!v || !v.b) return;
+        var b = v.b;
+        if (typeof b.title === "string") B.title = b.title.slice(0, 60);
+        if (typeof b.mix === "boolean") B.mix = b.mix;
+        if (Array.isArray(b.secs) && b.secs.length) {
+          var secs = b.secs.filter(function(x) { return x && topic(String(x.page)); }).map(function(x) {
+            return { page: topic(x.page)[0], count: Math.max(1, Math.min(30, x.count | 0 || 5)), opts: x.opts && typeof x.opts === "object" ? x.opts : {} };
+          });
+          if (secs.length) {
+            B.secs = secs;
+            if (Array.isArray(v.probs) && v.probs.length === secs.length) PROBS = v.probs;
+          }
+        }
+      } catch (e) {}
+    }
+
+    function startBuilder() {
+      load();
+      $("builder").hidden = false;
+      $("titleIn").value = B.title;
+      paintMix();
+      buildSecs();
+      draw();
+    }
+
+    /* ======================================================================
+       THE ASSIGNMENT BUILDER (sets.html?assignment)
+       The problems come from "Add to assignment" on the helpers (assets/assign.js), kept on this device in
+       localStorage["assignment-draft"] = { v:1, items:[{ p:"fractions", q:"mode=simplify&q=18%2F24", t:label, at }],
+       title, instr, due, steps, retries }. Share makes an ordinary practice-set code with the assignment's fields in "a".
+       ====================================================================== */
+    var AKEY = "assignment-draft",
+      AD = null,
+      aPrev = {};
+
+    function aLoad() {
+      var d = null;
+      try { d = JSON.parse(localStorage.getItem(AKEY) || "null"); } catch (e) {}
+      if (!d || typeof d !== "object" || !Array.isArray(d.items)) d = { v: 1, items: [] };
+      d.items = d.items.filter(function(x) { return x && typeof x.p === "string" && typeof x.q === "string" && topic(x.p); }).slice(0, 100);
+      if (typeof d.title !== "string") d.title = "Assignment";
+      if (typeof d.instr !== "string") d.instr = "";
+      if (!/^\d{4}-\d\d-\d\d$/.test(d.due || "")) d.due = "";
+      d.steps = d.steps !== false;
+      d.retries = d.retries !== false;
+      return d;
+    }
+
+    function aSave() { try { localStorage.setItem(AKEY, JSON.stringify(AD)); } catch (e) {} }
+
+    function aKey(x) { return x.p + "?" + x.q; }
+
+    function aStale() { $("aLinkPanel").hidden = true; }
+
+    function aPaintFields() {
+      $("aTitle").value = AD.title;
+      $("aInstr").value = AD.instr;
+      $("aDue").value = AD.due;
+      $("aSteps").setAttribute("aria-pressed", String(AD.steps));
+      $("aRetries").setAttribute("aria-pressed", String(AD.retries));
+      $("aOptMsg").textContent = (AD.steps ? "After each answer, students see the worked steps." : "Students don’t see the steps or “Show me the work”.") +
+        " " + (AD.retries ? "They can check again until it’s right; the tries are counted." : "One Check per problem: a wrong answer stays wrong.");
+    }
+
+    function aDraw() {
+      var list = AD.items,
+        n = list.length;
+      $("aListInfo").textContent = n ? n + " problem" + (n === 1 ? "" : "s") + ", in this order" : "";
+      $("aMake").disabled = !n;
+      if (!n) {
+        $("aList").innerHTML = '<li class="empty">No problems yet. Open any helper, set up a problem, and press <b>Add to assignment</b> beside Copy link — ' +
+          'or paste a problem’s link below.</li>';
+        return;
+      }
+      $("aList").innerHTML = list.map(function(x, k) {
+        var t = topic(x.p),
+          open = aPrev[aKey(x)];
+        return '<li><span class="n">' + (k + 1) + '.</span><span class="q">' + esc(x.t || textOf(x.p, x.q)) + "</span>" +
+          '<span class="t"><i class="dot" style="--c:' + cvar(t) + '"></i>' + esc(t[1]) + " · " + esc(t[2]) + "</span>" +
+          '<span class="act">' +
+          '<button type="button" class="icon-btn" data-act="up" data-k="' + k + '"' + (k === 0 ? " disabled" : "") + ' aria-label="Move problem ' + (k + 1) + ' up" title="Move up">↑</button>' +
+          '<button type="button" class="icon-btn" data-act="down" data-k="' + k + '"' + (k === n - 1 ? " disabled" : "") + ' aria-label="Move problem ' + (k + 1) + ' down" title="Move down">↓</button>' +
+          '<button type="button" class="icon-btn" data-act="pv" data-k="' + k + '" aria-expanded="' + !!open + '" aria-label="Preview problem ' + (k + 1) + '" title="See it as students will">' + (open ? "Hide" : "Preview") + "</button>" +
+          '<a class="icon-btn" style="text-decoration:none" href="' + esc(U(x.p, x.q)) + '" target="_blank" rel="noopener" aria-label="Open problem ' + (k + 1) + ' with its steps" title="Open it with its steps">↗</a>' +
+          '<button type="button" class="icon-btn" data-act="del" data-k="' + k + '" aria-label="Remove problem ' + (k + 1) + '" title="Remove it">✕</button>' +
+          "</span>" +
+          (open ? '<div class="pv"><iframe title="Problem ' + (k + 1) + ', as students see it" src="' + esc(U(x.p, (x.q ? x.q + "&" : "") + "practice=check&embed=1&theme=" + (isDark() ? "dark" : "light"))) + '"></iframe></div>' : "") +
+          "</li>";
+      }).join("");
+    }
+    $("aList").addEventListener("click", function(e) {
+      var b = e.target.closest ? e.target.closest("button[data-act]") : null;
+      if (!b) return;
+      var k = Number(b.getAttribute("data-k")),
+        act = b.getAttribute("data-act"),
+        L = AD.items,
+        x = L[k];
+      if (!x) return;
+      if (act === "pv") {
+        aPrev[aKey(x)] = !aPrev[aKey(x)];
+        aDraw();
+      } else {
+        if (act === "up" && k > 0) {
+          L.splice(k, 1);
+          L.splice(k - 1, 0, x);
+        } else if (act === "down" && k < L.length - 1) {
+          L.splice(k, 1);
+          L.splice(k + 1, 0, x);
+        } else if (act === "del") {
+          L.splice(k, 1);
+          delete aPrev[aKey(x)];
+        }
+        aSave();
+        aStale();
+        aDraw();
+        var nk = act === "up" ? k - 1 : act === "down" ? k + 1 : Math.min(k, L.length - 1);
+        var again = $("aList").querySelector('[data-act="' + (act === "del" ? "del" : act) + '"][data-k="' + nk + '"]') || $("aList").querySelector('[data-k="' + nk + '"]');
+        if (again && !again.disabled) again.focus();
+      }
+    });
+    // the previews are embedded helpers: they say how tall they are
+    window.addEventListener("message", function(e) {
+      var d = e.data;
+      if (!AD || !d || d.type !== "helper:height" || typeof d.h !== "number") return;
+      [].forEach.call($("aList").querySelectorAll("iframe"), function(f) { if (f.contentWindow === e.source) f.style.height = Math.max(160, Math.min(3000, Math.ceil(d.h))) + "px"; });
+    });
+    $("aTitle").addEventListener("input", function() {
+      AD.title = $("aTitle").value.slice(0, 60);
+      aSave();
+      aStale();
+    });
+    $("aInstr").addEventListener("input", function() {
+      AD.instr = $("aInstr").value.slice(0, 400);
+      aSave();
+      aStale();
+    });
+    $("aDue").addEventListener("change", function() {
+      AD.due = /^\d{4}-\d\d-\d\d$/.test($("aDue").value) ? $("aDue").value : "";
+      aSave();
+      aStale();
+    });
+    $("aSteps").addEventListener("click", function() {
+      AD.steps = !AD.steps;
+      aSave();
+      aStale();
+      aPaintFields();
+    });
+    $("aRetries").addEventListener("click", function() {
+      AD.retries = !AD.retries;
+      aSave();
+      aStale();
+      aPaintFields();
+    });
+    // a problem by its link: any helper's address, as Copy link or the address bar gives it
+    $("aAddBtn").addEventListener("click", function() {
+      var v = $("aAddIn").value.trim(),
+        msg = $("aAddMsg"),
+        u = null;
+      if (!v) { msg.textContent = "Paste a helper’s link first."; return; }
+      try { u = new URL(v, location.href); } catch (e) {}
+      var id = u && window.HelperSite ? window.HelperSite.id(u.href) : "",
+        t = id ? topic(id) : null;
+      if (!t) { msg.textContent = "That isn’t a link to one of the helpers. Open the problem, press Copy link and paste it here."; return; }
+      var x = { p: t[0].replace(/\.html$/, ""), q: cleanParams(u.search), t: "", at: Date.now() };
+      if (AD.items.some(function(o) { return aKey(o) === aKey(x); })) { msg.textContent = "That problem is already in it."; return; }
+      if (AD.items.length >= 100) { msg.textContent = "An assignment holds 100 problems at most."; return; }
+      AD.items.push(x);
+      aSave();
+      aStale();
+      aDraw();
+      $("aAddIn").value = "";
+      msg.textContent = "Added ✓ (" + t[1] + ")";
+    });
+    $("aAddIn").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        $("aAddBtn").click();
+      }
+    });
+    $("aClear").addEventListener("click", function() {
+      if (AD.items.length && !window.confirm("Start a new assignment? The " + AD.items.length + " problem" + (AD.items.length === 1 ? "" : "s") +
+          " in this one are cleared from this device. Links you already shared keep working.")) return;
+      AD = { v: 1, items: [], title: "Assignment", instr: "", due: "", steps: AD.steps, retries: AD.retries };
+      aPrev = {};
+      aSave();
+      aStale();
+      aPaintFields();
+      aDraw();
+      $("aStatus").textContent = "A new, empty assignment. Add problems from the helpers.";
+    });
+    var AMADE = { title: "", n: 0 };
+
+    function postText(url) {
+      var n = AD.items.length,
+        t = cleanField(AD.title) || "Assignment";
+      return t + "\n" + (AD.instr.trim() ? AD.instr.trim() + "\n" : "") + (AD.due ? "Due " + dueText(AD.due, true) + "\n" : "") +
+        "\nOpen this link, type your name, and work the " + n + " problem" + (n === 1 ? "" : "s") + " in order" +
+        (AD.retries ? "" : " (one try for each, so check carefully)") + ":\n" + url + "\n\n" +
+        "When you finish, copy the result line at the end and send it back to me (as a private comment or a reply).";
+    }
+    $("aMake").addEventListener("click", function() {
+      var list = AD.items;
+      if (!list.length) return;
+      var title = cleanField(AD.title) || "Assignment";
+      encodeSet(title, list.map(function(x) { return [x.p, x.q]; }), { instr: AD.instr.trim(), due: AD.due, steps: AD.steps, retries: AD.retries }).then(function(code) {
+        var url = U("practice.html", "set=" + code);
+        $("aLinkOut").value = url;
+        $("aStart").href = "sets.html?set=" + code;
+        $("aLinkInfo").textContent = list.length + " problems · " + url.length + " characters";
+        $("aPost").value = postText(url);
+        AMADE = { title: title, n: list.length };
+        $("aLinkPanel").hidden = false;
+        $("aCopyMsg").textContent = "";
+        $("aPostMsg").textContent = "";
+        $("aStatus").textContent = "";
+        rememberSet(code, title, list.length);
+        try {
+          $("aLinkOut").focus();
+          $("aLinkOut").select();
+        } catch (e) {}
+      }, function() { $("aStatus").textContent = "Couldn’t make the link in this browser."; });
+    });
+    $("aCopy").addEventListener("click", function() { copyText($("aLinkOut").value, $("aCopyMsg"), "Link copied ✓"); });
+    $("aCopyPost").addEventListener("click", function() { copyText($("aPost").value, $("aPostMsg"), "Copied ✓ — paste it into Classroom or an email"); });
+    $("aQR").addEventListener("click", function() {
+      if (!window.HelperQR || !$("aLinkOut").value) return;
+      window.HelperQR.show($("aLinkOut").value, {
+        title: AMADE.title || "Assignment",
+        sub: AMADE.n + " problem" + (AMADE.n === 1 ? "" : "s") + (AD.due ? " · due " + dueText(AD.due) : "") + " · scan to start",
+        filename: "assignment-qr.svg",
+        tooLongHint: "Use fewer problems, or copy the link and send it instead."
+      });
+    });
+
+    function aQrReady() { if (window.HelperQR) $("aQR").hidden = false; }
+    document.addEventListener("DOMContentLoaded", aQrReady);
+    window.addEventListener("load", aQrReady);
+
+    function startAsgBuilder() {
+      AD = aLoad();
+      document.title = "Assignment builder · Practice";
+      $("eyebrow").textContent = "For teachers · no accounts";
+      $("h1").innerHTML = "Build an <em>assignment</em>";
+      $("tagline").textContent = "Press Add to assignment on any helper to collect the exact problems you want. Put them in order here, " +
+        "add a due date, and share one link. Students type their name, work them in order and send back a result line.";
+      $("asgBuilder").hidden = false;
+      aPaintFields();
+      aDraw();
+      // problems added in another tab show up here
+      window.addEventListener("storage", function(e) {
+        if (e.key === AKEY || !e.key) {
+          AD = aLoad();
+          aPaintFields();
+          aDraw();
+          aStale();
+        }
+      });
+    }
+    onTheme = (function(prev) { return function() { if (prev) prev(); if (AD && !$("asgBuilder").hidden) aDraw(); }; })(onTheme);
+
+    /* ===================== which one ===================== */
+    var m = /[?&]set=([^&#]+)/.exec(location.search);
+    if (m) {
+      var code = decodeURIComponent(m[1]);
+      decodeSet(code).then(function(set) { startPlayer(set, code); }, function(err) {
+        $("bad").hidden = false;
+        if (err && /browser/.test(err.message)) $("badWhy").textContent = err.message;
+        $("h1").innerHTML = "Practice <em>sets</em>";
+      });
+    } else if (/[?&]assignment(?:[=&]|$)/.test(location.search)) startAsgBuilder();
+    else startBuilder();
+    window.__practice = {
+      encodeSet: encodeSet,
+      decodeSet: decodeSet,
+      checkCode: checkCode,
+      checkV2: checkV2,
+      checkV3: checkV3,
+      lineFor: lineFor,
+      readLine: readLine,
+      draft: function() { return AD; },
+      resultLine: function() { return RUN && RUN.finished ? resultLine() : ""; },
+      run: function() { return RUN; },
+      set: function() { return SET; }
+    };
+  })();
 </script>
 </html>

@@ -23,34 +23,50 @@
      url(code)           the address of the Standards page showing just that standard
 
    This is NOT an official alignment. The wording is the standards' own (shortened where it is very long). */
-(function(){
+(function() {
   "use strict";
   if (window.HelperStandards) return;
-  try { main(); } catch (e){ if (window.console) console.warn("standards.js:", e); }
+  try { main(); } catch (e) { if (window.console) console.warn("standards.js:", e); }
 
-  function main(){
-    var G = window, D = document;
+  function main() {
+    var G = window,
+      D = document;
 
     /* ---------- the domains ---------- */
     var DOM = {
-      "CC":"Counting and Cardinality", "OA":"Operations and Algebraic Thinking", "NBT":"Number and Operations in Base Ten",
-      "NF":"Number and Operations—Fractions", "MD":"Measurement and Data", "G":"Geometry",
-      "RP":"Ratios and Proportional Relationships", "NS":"The Number System", "EE":"Expressions and Equations",
-      "F":"Functions", "SP":"Statistics and Probability"
+      "CC": "Counting and Cardinality",
+      "OA": "Operations and Algebraic Thinking",
+      "NBT": "Number and Operations in Base Ten",
+      "NF": "Number and Operations—Fractions",
+      "MD": "Measurement and Data",
+      "G": "Geometry",
+      "RP": "Ratios and Proportional Relationships",
+      "NS": "The Number System",
+      "EE": "Expressions and Equations",
+      "F": "Functions",
+      "SP": "Statistics and Probability"
     };
-    var HSDOM = {   // domain code → [area, domain]
-      "N-RN":["Number and Quantity", "The Real Number System"], "N-Q":["Number and Quantity", "Quantities"],
-      "N-CN":["Number and Quantity", "The Complex Number System"], "N-VM":["Number and Quantity", "Vector and Matrix Quantities"],
-      "A-SSE":["Algebra", "Seeing Structure in Expressions"], "A-APR":["Algebra", "Arithmetic with Polynomials and Rational Expressions"],
-      "A-CED":["Algebra", "Creating Equations"], "A-REI":["Algebra", "Reasoning with Equations and Inequalities"],
-      "F-IF":["Functions", "Interpreting Functions"], "F-BF":["Functions", "Building Functions"],
-      "F-LE":["Functions", "Linear, Quadratic, and Exponential Models"], "F-TF":["Functions", "Trigonometric Functions"],
-      "G-CO":["Geometry", "Congruence"], "G-SRT":["Geometry", "Similarity, Right Triangles, and Trigonometry"],
-      "G-GPE":["Geometry", "Expressing Geometric Properties with Equations"], "G-GMD":["Geometry", "Geometric Measurement and Dimension"],
-      "S-ID":["Statistics and Probability", "Interpreting Categorical and Quantitative Data"],
-      "S-IC":["Statistics and Probability", "Making Inferences and Justifying Conclusions"],
-      "S-CP":["Statistics and Probability", "Conditional Probability and the Rules of Probability"],
-      "S-MD":["Statistics and Probability", "Using Probability to Make Decisions"]
+    var HSDOM = { // domain code → [area, domain]
+      "N-RN": ["Number and Quantity", "The Real Number System"],
+      "N-Q": ["Number and Quantity", "Quantities"],
+      "N-CN": ["Number and Quantity", "The Complex Number System"],
+      "N-VM": ["Number and Quantity", "Vector and Matrix Quantities"],
+      "A-SSE": ["Algebra", "Seeing Structure in Expressions"],
+      "A-APR": ["Algebra", "Arithmetic with Polynomials and Rational Expressions"],
+      "A-CED": ["Algebra", "Creating Equations"],
+      "A-REI": ["Algebra", "Reasoning with Equations and Inequalities"],
+      "F-IF": ["Functions", "Interpreting Functions"],
+      "F-BF": ["Functions", "Building Functions"],
+      "F-LE": ["Functions", "Linear, Quadratic, and Exponential Models"],
+      "F-TF": ["Functions", "Trigonometric Functions"],
+      "G-CO": ["Geometry", "Congruence"],
+      "G-SRT": ["Geometry", "Similarity, Right Triangles, and Trigonometry"],
+      "G-GPE": ["Geometry", "Expressing Geometric Properties with Equations"],
+      "G-GMD": ["Geometry", "Geometric Measurement and Dimension"],
+      "S-ID": ["Statistics and Probability", "Interpreting Categorical and Quantitative Data"],
+      "S-IC": ["Statistics and Probability", "Making Inferences and Justifying Conclusions"],
+      "S-CP": ["Statistics and Probability", "Conditional Probability and the Rules of Probability"],
+      "S-MD": ["Statistics and Probability", "Using Probability to Make Decisions"]
     };
 
     /* ---------- the standards used (code, wording) ---------- */
@@ -276,26 +292,43 @@
     ];
 
     /* ---------- build the list ---------- */
-    var BYCODE = {}, LIST = [];
-    RAW.forEach(function(r){
-      var code = r[0], text = r[1], plus = false, m, grade, area = "", domain = "";
-      if (text.indexOf("(+) ") === 0){ plus = true; text = text.slice(4); }
-      if ((m = /^(K|\d)\.([A-Z]+)\.[A-Z]\.\d+$/.exec(code))){ grade = m[1]; domain = DOM[m[2]]; }
-      else if ((m = /^HS([NAFGS])-([A-Z]+)\.[A-Z]\.\d+$/.exec(code))){
-        grade = "HS"; var hd = HSDOM[m[1] + "-" + m[2]]; area = hd[0]; domain = hd[1];
+    var BYCODE = {},
+      LIST = [];
+    RAW.forEach(function(r) {
+      var code = r[0],
+        text = r[1],
+        plus = false,
+        m, grade, area = "",
+        domain = "";
+      if (text.indexOf("(+) ") === 0) {
+        plus = true;
+        text = text.slice(4);
       }
-      if (!domain) return;                      // a mistyped code: leave it out rather than break
-      var s = { code:code, grade:grade, domain:domain, text:text };
+      if ((m = /^(K|\d)\.([A-Z]+)\.[A-Z]\.\d+$/.exec(code))) {
+        grade = m[1];
+        domain = DOM[m[2]];
+      } else if ((m = /^HS([NAFGS])-([A-Z]+)\.[A-Z]\.\d+$/.exec(code))) {
+        grade = "HS";
+        var hd = HSDOM[m[1] + "-" + m[2]];
+        area = hd[0];
+        domain = hd[1];
+      }
+      if (!domain) return; // a mistyped code: leave it out rather than break
+      var s = { code: code, grade: grade, domain: domain, text: text };
       if (area) s.area = area;
       if (plus) s.plus = true;
-      BYCODE[code] = s; LIST.push(s);
+      BYCODE[code] = s;
+      LIST.push(s);
     });
-    function gradeRank(g){ return g === "HS" ? 99 : g === "K" ? 0 : +g; }
-    LIST.sort(function(a, b){
+
+    function gradeRank(g) { return g === "HS" ? 99 : g === "K" ? 0 : +g; }
+    LIST.sort(function(a, b) {
       if (gradeRank(a.grade) !== gradeRank(b.grade)) return gradeRank(a.grade) - gradeRank(b.grade);
-      var ka = a.code.replace(/\.[A-Z]\.\d+$/, ""), kb = b.code.replace(/\.[A-Z]\.\d+$/, "");
+      var ka = a.code.replace(/\.[A-Z]\.\d+$/, ""),
+        kb = b.code.replace(/\.[A-Z]\.\d+$/, "");
       if (ka !== kb) return ka < kb ? -1 : 1;
-      var pa = a.code.match(/\.([A-Z])\.(\d+)$/), pb = b.code.match(/\.([A-Z])\.(\d+)$/);
+      var pa = a.code.match(/\.([A-Z])\.(\d+)$/),
+        pb = b.code.match(/\.([A-Z])\.(\d+)$/);
       if (pa[1] !== pb[1]) return pa[1] < pb[1] ? -1 : 1;
       return +pa[2] - +pb[2];
     });
@@ -305,74 +338,88 @@
        common: standards shown on every tab; key "" is a group that no single tab shows (it counts for the whole page).
        Codes are separated by spaces. */
     var PAGES = [];
-    function page(id, name, common, beyond, modes){
-      var p = { id:id, name:name, beyond:beyond || "", common:split(common), modes:[] };
-      modes.forEach(function(m){ p.modes.push({ key:m[0], name:m[1], codes:split(m[2]) }); });
+
+    function page(id, name, common, beyond, modes) {
+      var p = { id: id, name: name, beyond: beyond || "", common: split(common), modes: [] };
+      modes.forEach(function(m) { p.modes.push({ key: m[0], name: m[1], codes: split(m[2]) }); });
       PAGES.push(p);
     }
-    function split(s){ return s ? String(s).split(/\s+/).filter(Boolean) : []; }
+
+    function split(s) { return s ? String(s).split(/\s+/).filter(Boolean) : []; }
 
     page("addition", "Addition", "", "", [
       ["dec", "Decimals", "2.NBT.B.5 2.NBT.B.7 3.NBT.A.2 4.NBT.B.4 5.NBT.B.7 6.NS.B.3"],
-      ["frac", "Fractions", "4.NF.B.3 5.NF.A.1"]]);
+      ["frac", "Fractions", "4.NF.B.3 5.NF.A.1"]
+    ]);
     page("subtraction", "Subtraction", "", "", [
       ["dec", "Decimals", "2.NBT.B.5 2.NBT.B.7 3.NBT.A.2 4.NBT.B.4 5.NBT.B.7 6.NS.B.3"],
-      ["frac", "Fractions", "4.NF.B.3 5.NF.A.1"]]);
+      ["frac", "Fractions", "4.NF.B.3 5.NF.A.1"]
+    ]);
     page("multiplication", "Multiplication", "", "", [
       ["dec", "Decimals", "3.OA.C.7 4.NBT.B.5 5.NBT.B.5 5.NBT.B.7 6.NS.B.3"],
-      ["frac", "Fractions", "4.NF.B.4 5.NF.B.4 5.NF.B.6"]]);
+      ["frac", "Fractions", "4.NF.B.4 5.NF.B.4 5.NF.B.6"]
+    ]);
     page("division", "Division", "", "", [
       ["remainder", "Quotient and remainder", "3.OA.C.7 4.NBT.B.6 5.NBT.B.6 6.NS.B.2"],
       ["fraction", "Answer as a fraction", "5.NF.B.3"],
       ["decimal", "Answer as a decimal", "5.NBT.B.7 6.NS.B.3"],
-      ["", "Fractions as the numbers", "5.NF.B.7 6.NS.A.1"]]);
+      ["", "Fractions as the numbers", "5.NF.B.7 6.NS.A.1"]
+    ]);
     page("fractions", "Fractions", "", "", [
       ["simplify", "Simplify", "3.NF.A.3 4.NF.A.1"],
       ["convert", "Convert", "4.NF.B.3 4.NF.C.5 4.NF.C.6 5.NF.B.3 6.RP.A.3 7.NS.A.2 8.NS.A.1"],
       ["compare", "Compare and order", "3.NF.A.3 4.NF.A.2 5.NBT.A.3 6.NS.C.7"],
-      ["equiv", "Equivalent fractions", "3.NF.A.3 4.NF.A.1"]]);
+      ["equiv", "Equivalent fractions", "3.NF.A.3 4.NF.A.1"]
+    ]);
     page("percents", "Percents", "", "", [
       ["of", "Percent of a number", "6.RP.A.3"],
       ["what", "What percent", "6.RP.A.3"],
       ["whole", "Find the whole", "6.RP.A.3"],
       ["change", "Percent change", "7.RP.A.3 7.EE.B.3"],
-      ["money", "Discounts, tax, tips, interest", "7.RP.A.3 7.EE.B.3"]]);
+      ["money", "Discounts, tax, tips, interest", "7.RP.A.3 7.EE.B.3"]
+    ]);
     page("factors", "Factors and Primes", "", "", [
       ["factors", "Factors", "4.OA.B.4"],
       ["prime", "Prime factorization", "4.OA.B.4"],
       ["test", "Prime or composite?", "4.OA.B.4"],
       ["gcf", "GCF and LCM", "6.NS.B.4"],
-      ["div", "Divisibility", "4.OA.B.4"]]);
+      ["div", "Divisibility", "4.OA.B.4"]
+    ]);
     page("integers", "Negative Numbers", "", "", [
       ["add", "Add", "6.NS.C.5 7.NS.A.1"],
       ["sub", "Subtract", "6.NS.C.5 7.NS.A.1"],
       ["muldiv", "Multiply and divide", "7.NS.A.2"],
       ["abs", "Absolute value and compare", "6.NS.C.5 6.NS.C.6 6.NS.C.7"],
-      ["chain", "Several steps", "7.NS.A.1 7.NS.A.2 7.NS.A.3"]]);
+      ["chain", "Several steps", "7.NS.A.1 7.NS.A.2 7.NS.A.3"]
+    ]);
     page("ratios", "Ratios", "", "", [
       ["simplify", "Simplify and equivalent ratios", "6.RP.A.1 6.RP.A.3"],
       ["rate", "Unit rate", "6.RP.A.2 6.RP.A.3 7.RP.A.1"],
       ["prop", "Proportions", "6.RP.A.3 7.RP.A.2 7.RP.A.3"],
       ["share", "Share in a ratio", "6.RP.A.1 6.RP.A.3"],
-      ["scale", "Scale", "7.RP.A.2 7.G.A.1"]]);
+      ["scale", "Scale", "7.RP.A.2 7.G.A.1"]
+    ]);
     page("exponents", "Exponents", "", "", [
       ["eval", "Powers", "5.NBT.A.2 6.EE.A.1 8.EE.A.1"],
       ["laws", "Exponent laws", "8.EE.A.1 HSA-SSE.A.2"],
       ["sci", "Scientific notation", "5.NBT.A.2 8.EE.A.3 8.EE.A.4"],
       ["scicalc", "Scientific notation math", "8.EE.A.3 8.EE.A.4"],
-      ["roots", "Roots", "8.EE.A.2 8.NS.A.2"]]);
+      ["roots", "Roots", "8.EE.A.2 8.NS.A.2"]
+    ]);
     page("pemdas", "Order of Operations", "5.OA.A.1 6.EE.A.1 6.EE.A.2", "", []);
     page("algebra", "Algebra", "", "", [
       ["simplify", "Simplify expressions", "6.EE.A.3 6.EE.A.4 7.EE.A.1"],
       ["solve", "Solve equations", "6.EE.B.7 7.EE.B.4 8.EE.C.7 HSA-REI.A.1 HSA-REI.B.3"],
       ["ineq", "Inequalities", "6.EE.B.8 7.EE.B.4 HSA-REI.B.3"],
-      ["sys", "Systems of equations", "8.EE.C.8 HSA-REI.C.5 HSA-REI.C.6"]]);
+      ["sys", "Systems of equations", "8.EE.C.8 HSA-REI.C.5 HSA-REI.C.6"]
+    ]);
     page("lines", "Lines and Slope", "", "", [
       ["slope", "Slope", "8.EE.B.5 8.EE.B.6 8.F.B.4 HSF-IF.B.6"],
       ["equation", "Equation of a line", "8.EE.B.6 8.F.B.4 HSF-LE.A.2 HSA-CED.A.2"],
       ["convert", "Convert forms", "8.EE.B.6 8.F.A.3"],
       ["graph", "Graph it", "8.F.A.3 HSA-REI.D.10 HSF-IF.C.7"],
-      ["parallel", "Parallel and perpendicular", "HSG-GPE.B.5"]]);
+      ["parallel", "Parallel and perpendicular", "HSG-GPE.B.5"]
+    ]);
     page("graphing", "Graphing", "", "", [
       ["points", "Points", "5.G.A.1 5.G.A.2 6.NS.C.6"],
       ["table", "Table of values", "5.OA.B.3 6.EE.C.9 8.F.A.1"],
@@ -381,24 +428,28 @@
       ["inequalities", "Inequalities", "6.EE.B.8 HSA-REI.D.12"],
       ["transform", "Transformations", "8.G.A.1 8.G.A.2 8.G.A.3 8.G.A.4 HSG-SRT.A.1"],
       ["scatter", "Scatter plots", "8.SP.A.1 8.SP.A.2 8.SP.A.3 HSS-ID.B.6 HSS-ID.C.7 HSS-ID.C.8 HSS-ID.C.9"],
-      ["free", "Free plot", "HSF-IF.C.7"]]);
+      ["free", "Free plot", "HSF-IF.C.7"]
+    ]);
     page("geometry", "Geometry", "", "", [
       ["area", "Area and perimeter", "3.MD.C.7 3.MD.D.8 4.MD.A.3 6.G.A.1 7.G.B.4 7.G.B.6"],
       ["vol", "Volume and surface area", "5.MD.C.3 5.MD.C.5 6.G.A.2 6.G.A.4 7.G.B.6 8.G.C.9 HSG-GMD.A.3"],
       ["right", "Right triangles", "8.G.B.6 8.G.B.7"],
-      ["angle", "Angles", "4.MD.C.7 7.G.B.5 8.G.A.5 HSG-CO.C.10"]]);
+      ["angle", "Angles", "4.MD.C.7 7.G.B.5 8.G.A.5 HSG-CO.C.10"]
+    ]);
     page("stats", "Statistics", "", "", [
       ["center", "Mean, median, mode, range", "6.SP.A.2 6.SP.A.3 6.SP.B.5 HSS-ID.A.2"],
       ["box", "Box plot and quartiles", "6.SP.B.4 6.SP.B.5 HSS-ID.A.1 HSS-ID.A.3"],
       ["freq", "Frequency tables", "3.MD.B.3 6.SP.B.4 HSS-ID.A.1"],
       ["spread", "Spread", "6.SP.A.3 6.SP.B.5 HSS-ID.A.2"],
-      ["missing", "Missing value", "6.SP.A.3 6.SP.B.5"]]);
+      ["missing", "Missing value", "6.SP.A.3 6.SP.B.5"]
+    ]);
     page("probability", "Probability", "", "", [
       ["simple", "One event", "7.SP.C.5 7.SP.C.7"],
       ["complement", "Not happening", "7.SP.C.5 7.SP.C.7 HSS-CP.A.1"],
       ["compound", "Two events", "7.SP.C.8 HSS-CP.A.2 HSS-CP.A.3 HSS-CP.B.7"],
       ["space", "All the outcomes", "7.SP.C.7 7.SP.C.8"],
-      ["expected", "Expected and experiments", "7.SP.C.6 7.SP.C.7"]]);
+      ["expected", "Expected and experiments", "7.SP.C.6 7.SP.C.7"]
+    ]);
     page("wordproblems", "Story Problems", "1.OA.A.1 2.OA.A.1 3.OA.A.3 3.OA.D.8 4.OA.A.2 4.OA.A.3 6.RP.A.3", "", []);
     page("scratch", "Scratch Paper", "2.NBT.B.5 3.NBT.A.2 4.NBT.B.4 4.NBT.B.5 4.NBT.B.6 5.NBT.B.5 5.NBT.B.6 5.NBT.B.7 6.NS.B.2 6.NS.B.3", "", []);
     page("trigonometry", "Trigonometry", "", "", [
@@ -407,14 +458,16 @@
       ["circle", "Unit circle", "HSF-TF.A.1 HSF-TF.A.2 HSF-TF.A.3"],
       ["laws", "Sines and cosines laws", "HSG-SRT.D.9 HSG-SRT.D.10 HSG-SRT.D.11"],
       ["graph", "Graphs", "HSF-IF.C.7 HSF-TF.B.5 HSF-BF.B.3"],
-      ["identities", "Identities", "HSF-TF.C.8 HSF-TF.C.9"]]);
+      ["identities", "Identities", "HSF-TF.C.8 HSF-TF.C.9"]
+    ]);
     page("calculus", "Calculus", "", "Calculus is beyond Common Core. The nearest high school idea is rate of change.", [
       ["limit", "Limits", ""],
       ["derivative", "Derivatives", ""],
       ["tangent", "Tangent lines", ""],
       ["extrema", "Max and min", ""],
       ["integral", "Integrals", ""],
-      ["rate", "Rates of change", "HSF-IF.B.6"]]);
+      ["rate", "Rates of change", "HSF-IF.B.6"]
+    ]);
     page("number-sense", "Number Sense", "", "", [
       ["place", "Place value", "1.NBT.C.5 2.NBT.A.1 2.NBT.A.3 2.NBT.B.8 4.NBT.A.1 4.NBT.A.2 5.NBT.A.1 5.NBT.A.3"],
       ["round", "Rounding", "3.NBT.A.1 4.NBT.A.3 5.NBT.A.4"],
@@ -422,14 +475,16 @@
       ["compare", "Compare and order", "1.NBT.B.3 2.NBT.A.4 4.NBT.A.2 5.NBT.A.3 6.NS.C.7"],
       ["skip", "Skip counting", "2.NBT.A.2 2.OA.C.3 3.OA.D.9"],
       ["time", "Telling time", "1.MD.B.3 2.MD.C.7 3.MD.A.1"],
-      ["money", "Money", "2.MD.C.8 4.MD.A.2"]]);
+      ["money", "Money", "2.MD.C.8 4.MD.A.2"]
+    ]);
     page("quadratics", "Quadratics", "", "", [
       ["expand", "Expand", "HSA-APR.A.1 HSA-SSE.A.2"],
       ["factor", "Factor", "HSA-SSE.A.2 HSA-SSE.B.3 HSA-APR.B.3"],
       ["solve", "Solve", "8.EE.A.2 HSA-REI.B.4 HSA-SSE.B.3 HSN-CN.C.7"],
       ["vertex", "Vertex", "HSA-SSE.B.3 HSF-IF.C.7 HSF-IF.C.8 HSF-BF.B.3"],
       ["divide", "Divide polynomials", "HSA-APR.B.2 HSA-APR.D.6"],
-      ["operate", "Add and subtract", "HSA-APR.A.1"]]);
+      ["operate", "Add and subtract", "HSA-APR.A.1"]
+    ]);
     page("logarithms", "Logarithms", "", "", [
       ["meaning", "What a log is", "HSF-LE.A.4 HSF-BF.B.5"],
       ["laws", "Log laws", "HSF-BF.B.5"],
@@ -437,13 +492,15 @@
       ["expeq", "Exponential equations", "HSF-LE.A.4"],
       ["logeq", "Log equations", "HSF-LE.A.4 HSF-BF.B.5"],
       ["growth", "Growth and interest", "HSF-LE.A.1 HSF-LE.A.4 HSF-LE.B.5"],
-      ["graph", "Graphs", "HSF-IF.C.7 HSF-BF.B.3"]]);
+      ["graph", "Graphs", "HSF-IF.C.7 HSF-BF.B.3"]
+    ]);
     page("sequences", "Sequences", "", "", [
       ["pattern", "What comes next?", "3.OA.D.9 4.OA.C.5 5.OA.B.3"],
       ["arith", "Arithmetic sequences", "HSF-IF.A.3 HSF-BF.A.2 HSF-LE.A.2"],
       ["geom", "Geometric sequences", "HSF-IF.A.3 HSF-BF.A.2 HSF-LE.A.2"],
       ["sum", "Series and sums", "HSA-SSE.B.4"],
-      ["apply", "Word problems", "HSF-BF.A.1 HSF-BF.A.2 HSF-LE.B.5 HSA-SSE.B.4"]]);
+      ["apply", "Word problems", "HSF-BF.A.1 HSF-BF.A.2 HSF-LE.B.5 HSA-SSE.B.4"]
+    ]);
     page("unit-conversions", "Unit Conversions", "", "", [
       ["length", "Length", "4.MD.A.1 5.MD.A.1"],
       ["weight", "Weight and capacity", "4.MD.A.1 5.MD.A.1"],
@@ -451,7 +508,8 @@
       ["systems", "Between systems", "6.RP.A.3 HSN-Q.A.1"],
       ["time", "Time", "3.MD.A.1 4.MD.A.1 4.MD.A.2"],
       ["temp", "Temperature", "HSN-Q.A.1"],
-      ["rates", "Rates, area and volume", "6.RP.A.3 7.RP.A.1 HSN-Q.A.1"]]);
+      ["rates", "Rates, area and volume", "6.RP.A.3 7.RP.A.1 HSN-Q.A.1"]
+    ]);
     page("money-math", "Money Math", "", "", [
       ["compound", "Compound interest", "7.RP.A.3 HSF-LE.A.1 HSF-LE.A.2 HSF-LE.B.5"],
       ["save", "Saving monthly", "HSA-SSE.B.4 HSF-LE.B.5"],
@@ -459,7 +517,8 @@
       ["card", "Credit cards", "7.RP.A.3 HSF-LE.B.5"],
       ["pay", "Paychecks", "6.RP.A.3 7.RP.A.3"],
       ["budget", "Budgets", "6.RP.A.3 7.EE.B.3"],
-      ["shop", "Shopping", "6.RP.A.2 6.RP.A.3 7.RP.A.3"]]);
+      ["shop", "Shopping", "6.RP.A.2 6.RP.A.3 7.RP.A.3"]
+    ]);
     page("functions", "Functions", "", "", [
       ["eval", "Evaluate", "8.F.A.1 HSF-IF.A.1 HSF-IF.A.2"],
       ["func", "Is it a function?", "8.F.A.1 HSF-IF.A.1"],
@@ -468,7 +527,8 @@
       ["compose", "Compose", "HSF-BF.A.1"],
       ["inverse", "Inverse", "HSF-BF.B.4"],
       ["piece", "Piecewise", "HSF-IF.C.7"],
-      ["parity", "Even or odd", "HSF-BF.B.3"]]);
+      ["parity", "Even or odd", "HSF-BF.B.3"]
+    ]);
     page("radicals", "Radicals", "", "", [
       ["simplify", "Simplify roots", "8.EE.A.2 HSN-RN.A.2"],
       ["operate", "Add and multiply roots", "HSN-RN.A.2"],
@@ -478,7 +538,8 @@
       ["ratsimp", "Simplify rational expressions", "HSA-APR.D.6 HSA-APR.D.7"],
       ["ratmul", "Multiply and divide rational expressions", "HSA-APR.D.7"],
       ["ratadd", "Add and subtract rational expressions", "HSA-APR.D.7"],
-      ["rateq", "Rational equations", "HSA-REI.A.2"]]);
+      ["rateq", "Rational equations", "HSA-REI.A.2"]
+    ]);
     page("complex-numbers", "Complex Numbers", "", "", [
       ["i", "What i is", "HSN-CN.A.1"],
       ["add", "Add and subtract", "HSN-CN.A.2"],
@@ -487,7 +548,8 @@
       ["plane", "The plane", "HSN-CN.B.4 HSN-CN.B.5 HSN-CN.B.6"],
       ["polar", "Polar form", "HSN-CN.B.4"],
       ["demoivre", "De Moivre", "HSN-CN.B.4 HSN-CN.B.5"],
-      ["solve", "Solve", "HSN-CN.C.7 HSN-CN.C.9"]]);
+      ["solve", "Solve", "HSN-CN.C.7 HSN-CN.C.9"]
+    ]);
     page("college-statistics", "College Statistics", "", "Most of this helper goes past high school. The standards listed are the nearest ones.", [
       ["z", "z-scores", "HSS-ID.A.4"],
       ["normal", "Normal distribution", "HSS-ID.A.4"],
@@ -495,7 +557,8 @@
       ["sampling", "Sampling (CLT)", "HSS-IC.A.1 HSS-IC.B.4"],
       ["ci", "Confidence intervals", "HSS-IC.B.4"],
       ["test", "Hypothesis tests", "HSS-IC.A.2"],
-      ["regress", "Regression", "HSS-ID.B.6 HSS-ID.C.7 HSS-ID.C.8"]]);
+      ["regress", "Regression", "HSS-ID.B.6 HSS-ID.C.7 HSS-ID.C.8"]
+    ]);
     page("matrices-and-vectors", "Matrices and Vectors", "", "Dot and cross products go past Common Core.", [
       ["arith", "Add and scale", "HSN-VM.C.6 HSN-VM.C.7 HSN-VM.C.8"],
       ["mult", "Multiply", "HSN-VM.C.8 HSN-VM.C.9"],
@@ -503,79 +566,123 @@
       ["inv", "Inverse", "HSN-VM.C.10 HSA-REI.C.9"],
       ["sys", "Solve a system", "HSA-REI.C.6 HSA-REI.C.8 HSA-REI.C.9"],
       ["vec", "Vectors", "HSN-VM.A.1 HSN-VM.A.2 HSN-VM.A.3 HSN-VM.B.4 HSN-VM.B.5"],
-      ["dot", "Dot and cross products", ""]]);
+      ["dot", "Dot and cross products", ""]
+    ]);
 
     var PAGEBY = {};
-    PAGES.forEach(function(p){ PAGEBY[p.id] = p; });
+    PAGES.forEach(function(p) { PAGEBY[p.id] = p; });
 
     /* ---------- the API ---------- */
-    function objs(codes){
-      var seen = {}, out = [];
-      codes.forEach(function(c){ if (!seen[c] && BYCODE[c]){ seen[c] = 1; out.push(BYCODE[c]); } });
-      out.sort(function(a, b){ return LIST.indexOf(a) - LIST.indexOf(b); });
+    function objs(codes) {
+      var seen = {},
+        out = [];
+      codes.forEach(function(c) {
+        if (!seen[c] && BYCODE[c]) {
+          seen[c] = 1;
+          out.push(BYCODE[c]);
+        }
+      });
+      out.sort(function(a, b) { return LIST.indexOf(a) - LIST.indexOf(b); });
       return out;
     }
-    function shortOf(name){
+
+    function shortOf(name) {
       var n = String(name || "").split(/[?#]/)[0].replace(/^.*\//, "").replace(/\.html$/i, "").toLowerCase();
-      if (G.HelperSite && G.HelperSite.id){ var k = G.HelperSite.id(name); if (k) n = k.replace(/\.html$/, ""); }
+      if (G.HelperSite && G.HelperSite.id) { var k = G.HelperSite.id(name); if (k) n = k.replace(/\.html$/, ""); }
       return n;
     }
-    function forPage(name, mode){
+
+    function forPage(name, mode) {
       var p = PAGEBY[shortOf(name)];
       if (!p) return [];
-      var codes = p.common.slice(), found = false;
-      if (mode){
-        p.modes.forEach(function(m){ if (m.key && m.key === mode){ codes = codes.concat(m.codes); found = true; } });
+      var codes = p.common.slice(),
+        found = false;
+      if (mode) {
+        p.modes.forEach(function(m) {
+          if (m.key && m.key === mode) {
+            codes = codes.concat(m.codes);
+            found = true;
+          }
+        });
       }
-      if (!found){ codes = p.common.slice(); p.modes.forEach(function(m){ codes = codes.concat(m.codes); }); }
+      if (!found) {
+        codes = p.common.slice();
+        p.modes.forEach(function(m) { codes = codes.concat(m.codes); });
+      }
       return objs(codes);
     }
-    function beyond(name){ var p = PAGEBY[shortOf(name)]; return p ? p.beyond : ""; }
-    function pagesFor(code){
+
+    function beyond(name) { var p = PAGEBY[shortOf(name)]; return p ? p.beyond : ""; }
+
+    function pagesFor(code) {
       var out = [];
-      PAGES.forEach(function(p){
-        if (p.common.indexOf(code) >= 0) out.push({ page:p.id, name:p.name, mode:"", modeName:"" });
-        p.modes.forEach(function(m){
-          if (m.codes.indexOf(code) >= 0) out.push({ page:p.id, name:p.name, mode:m.key, modeName:m.name });
+      PAGES.forEach(function(p) {
+        if (p.common.indexOf(code) >= 0) out.push({ page: p.id, name: p.name, mode: "", modeName: "" });
+        p.modes.forEach(function(m) {
+          if (m.codes.indexOf(code) >= 0) out.push({ page: p.id, name: p.name, mode: m.key, modeName: m.name });
         });
       });
       return out;
     }
-    function gradeWords(s){
+
+    function gradeWords(s) {
       return s.grade === "HS" ? "high school hs" : s.grade === "K" ? "grade k kindergarten" : "grade " + s.grade + " grade" + s.grade + " " + s.grade + "th";
     }
-    function search(text){
-      var q = String(text || "").toLowerCase().replace(/\s+/g, " ").trim(), gr = "";
+
+    function search(text) {
+      var q = String(text || "").toLowerCase().replace(/\s+/g, " ").trim(),
+        gr = "";
       var gm = /\bgrade\s*(k|\d{1,2})\b/.exec(q);
-      if (gm){ gr = gm[1]; q = q.replace(gm[0], " ").trim(); }
-      if (/\b(high school|hs)\b/.test(q)){ gr = "hs"; q = q.replace(/\b(high school|hs)\b/, " ").trim(); }
+      if (gm) {
+        gr = gm[1];
+        q = q.replace(gm[0], " ").trim();
+      }
+      if (/\b(high school|hs)\b/.test(q)) {
+        gr = "hs";
+        q = q.replace(/\b(high school|hs)\b/, " ").trim();
+      }
       var toks = q ? q.split(" ").filter(Boolean) : [];
       var out = [];
-      LIST.forEach(function(s){
+      LIST.forEach(function(s) {
         if (gr && String(s.grade).toLowerCase() !== gr) return;
         var pg = pagesFor(s.code);
         var hay = (s.code + " " + gradeWords(s) + " " + s.domain + " " + (s.area || "") + " " + s.text + " " + (s.plus ? "plus advanced" : "") + " " +
-          pg.map(function(x){ return x.name + " " + x.modeName; }).join(" ")).toLowerCase();
-        for (var i = 0; i < toks.length; i++) if (hay.indexOf(toks[i]) < 0) return;
-        out.push({ standard:s, pages:pg });
+          pg.map(function(x) { return x.name + " " + x.modeName; }).join(" ")).toLowerCase();
+        for (var i = 0; i < toks.length; i++)
+          if (hay.indexOf(toks[i]) < 0) return;
+        out.push({ standard: s, pages: pg });
       });
       return out;
     }
-    function pageUrl(name, params){
+
+    function pageUrl(name, params) {
       return G.HelperSite ? G.HelperSite.url(name, params) : (name === "standards" ? "../reference/standards.html" : name) + (params ? "?" + params : "");
     }
-    function url(code){ return pageUrl("standards", code ? "q=" + encodeURIComponent(code) : ""); }
 
-    var API = { list:LIST, pages:PAGES, byCode:function(c){ return BYCODE[c] || null; }, forPage:forPage, beyond:beyond,
-                pagesFor:pagesFor, search:search, url:url, pageUrl:pageUrl };
+    function url(code) { return pageUrl("standards", code ? "q=" + encodeURIComponent(code) : ""); }
+
+    var API = {
+      list: LIST,
+      pages: PAGES,
+      byCode: function(c) { return BYCODE[c] || null; },
+      forPage: forPage,
+      beyond: beyond,
+      pagesFor: pagesFor,
+      search: search,
+      url: url,
+      pageUrl: pageUrl
+    };
     G.HelperStandards = API;
 
     /* ---------- the line under the heading of a helper page ---------- */
     if (!D || !D.documentElement) return;
     var here = (G.HelperSite && G.HelperSite.here) || (G.location.pathname.split("/").pop() || "");
     var id = shortOf(here);
-    if (!PAGEBY[id]) return;                    // the home page, the Standards page, practice pages: no line
-    var root = D.documentElement, line = null, shown = "", timer = 0;
+    if (!PAGEBY[id]) return; // the home page, the Standards page, practice pages: no line
+    var root = D.documentElement,
+      line = null,
+      shown = "",
+      timer = 0;
 
     var CSS = ".std-line{margin:.55em 0 0;font-size:12.5px;line-height:1.5;color:var(--ink-3,#7B8681);max-width:70ch}" +
       ".std-line b{font-family:var(--f-mono,Consolas,monospace);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-right:6px}" +
@@ -587,29 +694,34 @@
       "html.embed .std-line{display:none !important}" +
       "@media print{.std-line{display:none !important}}";
 
-    function embedded(){ return /[?&]embed=1(&|$)/.test(G.location.search) || root.classList.contains("embed"); }
-    function framed(){ try { return G.top !== G.self; } catch (e){ return true; } }
-    function esc(s){ return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    function embedded() { return /[?&]embed=1(&|$)/.test(G.location.search) || root.classList.contains("embed"); }
 
-    function currentMode(){
+    function framed() { try { return G.top !== G.self; } catch (e) { return true; } }
+
+    function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+    function currentMode() {
       var b = D.querySelector("[data-mode][aria-pressed=\"true\"]") || D.querySelector("[data-m][aria-pressed=\"true\"]");
       if (b) return b.getAttribute("data-mode") || b.getAttribute("data-m") || "";
       var m = /[?&]mode=([^&#]*)/.exec(G.location.search);
       return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : "";
     }
-    function paint(){
+
+    function paint() {
       if (!line) return;
-      var mode = currentMode(), key = id + "|" + mode;
+      var mode = currentMode(),
+        key = id + "|" + mode;
       if (key === shown) return;
       shown = key;
-      var list = forPage(id, mode), note = beyond(id);
+      var list = forPage(id, mode),
+        note = beyond(id);
       var html;
-      if (!list.length){
-        html = note ? "<b title=\"An unofficial alignment to the Common Core State Standards for Mathematics\">Common Core</b>This part goes beyond Common Core."
-                    : "";
+      if (!list.length) {
+        html = note ? "<b title=\"An unofficial alignment to the Common Core State Standards for Mathematics\">Common Core</b>This part goes beyond Common Core." :
+          "";
       } else {
         html = "<b title=\"An unofficial alignment to the Common Core State Standards for Mathematics\">Common Core</b>" +
-          list.map(function(s){
+          list.map(function(s) {
             return "<a href=\"" + esc(url(s.code)) + "\" title=\"" + esc(s.code + (s.plus ? " (+)" : "") + ": " + s.text) + "\">" + esc(s.code) + "</a>";
           }).join("<span class=\"sep\" aria-hidden=\"true\">·</span> ");
         if (note) html += "<span class=\"sep\" aria-hidden=\"true\">·</span> " + esc(note);
@@ -617,23 +729,34 @@
       line.innerHTML = html;
       line.hidden = !html;
     }
-    function later(){ clearTimeout(timer); timer = setTimeout(function(){ try { paint(); } catch (e){} }, 120); }
-    function start(){
+
+    function later() {
+      clearTimeout(timer);
+      timer = setTimeout(function() { try { paint(); } catch (e) {} }, 120);
+    }
+
+    function start() {
       try {
         if (framed() || embedded() || D.querySelector(".std-line")) return;
         var anchor = D.querySelector(".tagline") || D.querySelector("h1");
         var host = anchor ? anchor.parentNode : (D.querySelector("footer") || D.querySelector(".page"));
         if (!host) return;
-        var st = D.createElement("style"); st.textContent = CSS; D.head.appendChild(st);
-        line = D.createElement("p"); line.className = "std-line"; line.setAttribute("aria-label", "Common Core standards this page teaches (unofficial)");
-        if (anchor && anchor.nextSibling) host.insertBefore(line, anchor.nextSibling); else host.appendChild(line);
+        var st = D.createElement("style");
+        st.textContent = CSS;
+        D.head.appendChild(st);
+        line = D.createElement("p");
+        line.className = "std-line";
+        line.setAttribute("aria-label", "Common Core standards this page teaches (unofficial)");
+        if (anchor && anchor.nextSibling) host.insertBefore(line, anchor.nextSibling);
+        else host.appendChild(line);
         paint();
-        if (G.MutationObserver) new MutationObserver(later).observe(D.body, { attributes:true, subtree:true, attributeFilter:["aria-pressed"] });
+        if (G.MutationObserver) new MutationObserver(later).observe(D.body, { attributes: true, subtree: true, attributeFilter: ["aria-pressed"] });
         G.addEventListener("popstate", later);
         G.addEventListener("hashchange", later);
-        setTimeout(later, 600);                 // pages that open a tab from the address after they load
-      } catch (e){ if (G.console) console.warn("standards.js:", e); }
+        setTimeout(later, 600); // pages that open a tab from the address after they load
+      } catch (e) { if (G.console) console.warn("standards.js:", e); }
     }
-    if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", start); else start();
+    if (D.readyState === "loading") D.addEventListener("DOMContentLoaded", start);
+    else start();
   }
 })();

@@ -26,23 +26,50 @@
                  counting words already linked anywhere on the page as used. {all:true} links any text under root.
                  Returns how many links it made.
      scan(text)  the ids of every word found in a piece of text, in order (for testing). */
-(function(){
+(function() {
   "use strict";
-  if (window.HelperGlossary) return;          // loaded twice (the page and nav.js): the first copy does the work
-  try { main(); } catch (e){}                 // a bug in here must never break a helper page
+  if (window.HelperGlossary) return; // loaded twice (the page and nav.js): the first copy does the work
+  try { main(); } catch (e) {} // a bug in here must never break a helper page
 
-  function main(){
-    var A = "Arithmetic", F = "Fractions & decimals", P = "Percents & ratios", K = "Factors & primes",
-        I = "Integers", L = "Algebra", G = "Lines & graphs", M = "Geometry", S = "Statistics";
-    var FILE = { add:"addition.html", sub:"subtraction.html", mul:"multiplication.html", div:"division.html",
-                 fra:"fractions.html", pct:"percents.html", fac:"factors.html", "int":"integers.html",
-                 rat:"ratios.html", ord:"pemdas.html", alg:"algebra.html", lin:"lines.html",
-                 geo:"geometry.html", sta:"stats.html" };
+  function main() {
+    var A = "Arithmetic",
+      F = "Fractions & decimals",
+      P = "Percents & ratios",
+      K = "Factors & primes",
+      I = "Integers",
+      L = "Algebra",
+      G = "Lines & graphs",
+      M = "Geometry",
+      S = "Statistics";
+    var FILE = {
+      add: "addition.html",
+      sub: "subtraction.html",
+      mul: "multiplication.html",
+      div: "division.html",
+      fra: "fractions.html",
+      pct: "percents.html",
+      fac: "factors.html",
+      "int": "integers.html",
+      rat: "ratios.html",
+      ord: "pemdas.html",
+      alg: "algebra.html",
+      lin: "lines.html",
+      geo: "geometry.html",
+      sta: "stats.html"
+    };
 
     var TERMS = [];
-    function E(id, term, aliases, topic, short, example, pages, see, opts){
-      var t = { id:id, term:term, aliases:aliases || [], topic:topic, short:short, example:example,
-                pages:(pages || "").split(" ").filter(Boolean).map(function(p){ return FILE[p] || p; }) };
+
+    function E(id, term, aliases, topic, short, example, pages, see, opts) {
+      var t = {
+        id: id,
+        term: term,
+        aliases: aliases || [],
+        topic: topic,
+        short: short,
+        example: example,
+        pages: (pages || "").split(" ").filter(Boolean).map(function(p) { return FILE[p] || p; })
+      };
       if (see && see.length) t.see = see;
       if (opts === true || (opts && opts.strict)) t.strict = true;
       if (opts && opts.forms) t.forms = opts.forms;
@@ -117,7 +144,7 @@
     E("rounding", "Rounding", ["rounded"], A,
       "Swapping a number for a nearby simpler one, like the nearest ten or tenth. If the next digit is 5 or more, round up.",
       "47 rounded to the nearest ten is 50; 3.24 rounded to one decimal place is 3.2.",
-      "add mul div fra pct geo sta", ["estimate", "decimal-place"], { forms:["round to", "round it", "round up", "round down", "round off"] });
+      "add mul div fra pct geo sta", ["estimate", "decimal-place"], { forms: ["round to", "round it", "round up", "round down", "round off"] });
     E("order-of-operations", "Order of operations", [], A,
       "The agreed order for working out a calculation: parentheses, then exponents, then × and ÷ left to right, then + and − left to right.",
       "3 + 4 × 2 = 3 + 8 = 11, not 7 × 2 = 14.",
@@ -189,12 +216,14 @@
       "The reciprocal of 2/3 is 3/2, and 2/3 × 3/2 = 1.",
       "rat alg lin", ["fraction"]);
     E("cross-cancel", "Cross-cancel", ["cross-cancels", "cross-cancelled", "cross-canceled", "cross-cancelling",
-      "cross-canceling", "cross-cancellation", "cross cancel"], F,
+        "cross-canceling", "cross-cancellation", "cross cancel"
+      ], F,
       "Before multiplying fractions, divide a top number and the other fraction’s bottom number by the same factor. Smaller numbers, same answer.",
       "2/9 × 3/4: 2 and 4 share 2, 3 and 9 share 3, so it becomes 1/3 × 1/2 = 1/6.",
       "mul div", ["simplest-form", "gcf"]);
     E("common-denominator", "Common denominator (LCD)", ["common denominator", "common denominators", "like denominators",
-      "same denominator", "least common denominator", "least common denominators", "lowest common denominator", "LCD"], F,
+        "same denominator", "least common denominator", "least common denominators", "lowest common denominator", "LCD"
+      ], F,
       "A bottom number two or more fractions share. The least common denominator (LCD) is the smallest one: the LCM of the bottom numbers.",
       "½ + ⅓: the LCD is 6, so 3/6 + 2/6 = 5/6.",
       "add sub mul fra", ["denominator", "lcm"]);
@@ -229,8 +258,9 @@
       "80 to 92 is a change of 12, and 12 ÷ 80 = 0.15, so a 15% increase.",
       "pct", ["increase-decrease", "percent"]);
     E("increase-decrease", "Percent increase and decrease", ["percent increase", "percent decrease",
-      "percentage increase", "percentage decrease", "increase", "increases", "increased", "decrease", "decreases",
-      "decreased"], P,
+        "percentage increase", "percentage decrease", "increase", "increases", "increased", "decrease", "decreases",
+        "decreased"
+      ], P,
       "How much an amount went up (an increase) or down (a decrease), as a percent of the amount it started at.",
       "$40 to $50 is a 25% increase (10 ÷ 40); $50 to $40 is a 20% decrease (10 ÷ 50).",
       "pct", ["percent-change", "discount", "markup"], true);
@@ -281,13 +311,14 @@
     E("unit-rate", "Unit rate", ["unit rates"], P,
       "A rate for exactly one of something: how much per 1. The unit price is the cost of one item or unit.",
       "$6 for 3 pounds is $2 per pound.",
-      "rat", ["rate"], { forms:["unit price", "unit prices"] });
+      "rat", ["rate"], { forms: ["unit price", "unit prices"] });
     E("proportion", "Proportion", ["proportions", "proportional"], P,
       "An equation that says two ratios are equal.",
       "3/4 = 15/20 is a proportion: both are the same ratio.",
       "rat", ["cross-multiply", "ratio"]);
     E("cross-multiply", "Cross-multiply", ["cross-multiplies", "cross-multiplied", "cross-multiplying",
-      "cross-multiplication", "cross multiply", "cross multiplication", "cross products"], P,
+        "cross-multiplication", "cross multiply", "cross multiplication", "cross products"
+      ], P,
       "In a proportion, multiply each top number by the other fraction’s bottom number. The two answers are equal.",
       "3/4 = x/20, so 4 × x = 3 × 20 = 60, and x = 15.",
       "fra rat", ["proportion"]);
@@ -318,7 +349,8 @@
       "12 is composite: 1, 2, 3, 4, 6 and 12 all divide it.",
       "fac", ["prime"]);
     E("prime-factorization", "Prime factorization", ["prime factorizations", "prime factorisation", "prime factors",
-      "prime factor"], K,
+        "prime factor"
+      ], K,
       "A number written as a product of prime numbers only. Every whole number above 1 has exactly one.",
       "360 = 2 × 2 × 2 × 3 × 3 × 5 = 2³ × 3² × 5.",
       "fra fac", ["factor-tree", "prime"]);
@@ -327,19 +359,21 @@
       "12 splits into 3 × 4, and 4 into 2 × 2, so 12 = 2 × 2 × 3.",
       "fac", ["prime-factorization"]);
     E("gcf", "Greatest common factor (GCF)", ["greatest common factor", "greatest common factors", "GCF",
-      "greatest common divisor", "GCD", "highest common factor", "HCF"], K,
+        "greatest common divisor", "GCD", "highest common factor", "HCF"
+      ], K,
       "The biggest number that divides two or more numbers exactly. Also called the GCD or HCF.",
       "18: 1, 2, 3, 6, 9, 18. 24: 1, 2, 3, 4, 6, 8, 12, 24. The GCF is 6.",
       "fra fac rat", ["lcm", "simplest-form"]);
     E("lcm", "Least common multiple (LCM)", ["least common multiple", "least common multiples",
-      "lowest common multiple", "LCM"], K,
+        "lowest common multiple", "LCM"
+      ], K,
       "The smallest number that is a multiple of two or more numbers.",
       "Multiples of 4: 4, 8, 12 … of 6: 6, 12 … The LCM is 12.",
       "add sub fac", ["gcf", "common-denominator"]);
     E("divisible", "Divisible", ["divisible by"], K,
       "One number is divisible by another when it divides exactly, with no remainder. Divisibility rules are shortcuts for checking.",
       "15 is divisible by 5. 351 is divisible by 3, because its digits add up to 9, a multiple of 3.",
-      "div fac", ["factor", "remainder"], { forms:["divides evenly", "divide evenly", "divisibility", "divisibility rule", "divisibility rules", "divisibility test", "divisibility tests"] });
+      "div fac", ["factor", "remainder"], { forms: ["divides evenly", "divide evenly", "divisibility", "divisibility rule", "divisibility rules", "divisibility test", "divisibility tests"] });
 
     /* ============================== Integers ============================== */
     E("integer", "Integer", ["integers"], I,
@@ -405,7 +439,8 @@
       "3x and 5x are like terms: 3x + 5x = 8x. 3x and 3y are not.",
       "alg", ["term", "coefficient"]);
     E("distributive-property", "Distributive property", ["distribute", "distributes", "distributed", "distributing",
-      "distributive"], L,
+        "distributive"
+      ], L,
       "Multiplying a sum by a number is the same as multiplying each part and adding: a(b + c) = ab + ac.",
       "3(x + 2) = 3x + 6.",
       "alg", ["parentheses", "area-model"]);
@@ -420,7 +455,7 @@
     E("identity", "Identity", ["identities"], L,
       "An equation that is true for every value of the variable: both sides are always equal.",
       "3x + 6 = 3(x + 2) is an identity, so every x works.",
-      "alg", ["no-solution", "solution"], { strict:true, forms:["infinitely many solutions"] });
+      "alg", ["no-solution", "solution"], { strict: true, forms: ["infinitely many solutions"] });
     E("no-solution", "No solution", [], L,
       "An equation that is never true, whatever number you try. The variables cancel and leave something false.",
       "2(x + 1) = 2x + 5 becomes 2 = 5, which is false, so there is no solution.",
@@ -428,15 +463,15 @@
     E("system-of-equations", "System of equations", ["systems of equations"], L,
       "Two or more equations that share the same variables. Its solution makes every equation true at the same time.",
       "x + y = 7 and x − y = 1 are both true when x = 4 and y = 3.",
-      "alg", ["elimination", "substitution"], { strict:true, forms:["system of two equations", "systems of two equations", "system", "systems"] });
+      "alg", ["elimination", "substitution"], { strict: true, forms: ["system of two equations", "systems of two equations", "system", "systems"] });
     E("elimination", "Elimination", ["eliminate", "eliminates", "eliminating"], L,
       "Solving a system by adding or subtracting the equations so that one variable cancels out.",
       "Add x + y = 7 and x − y = 1 to get 2x = 8, so x = 4.",
-      "alg", ["system-of-equations", "substitution"], { strict:true, forms:["elimination method"] });
+      "alg", ["system-of-equations", "substitution"], { strict: true, forms: ["elimination method"] });
     E("substitution", "Substitution", ["substitute", "substitutes", "substituted", "substituting"], L,
       "Putting a number or expression in place of a variable. In a system, solve one equation for a variable and put it into the other.",
       "y = 2x and x + y = 9: x + 2x = 9, so x = 3 and y = 6.",
-      "alg", ["system-of-equations", "elimination"], { forms:["substitution method"] });
+      "alg", ["system-of-equations", "elimination"], { forms: ["substitution method"] });
 
     /* ============================== Lines & graphs ============================== */
     E("slope", "Slope", ["slopes", "gradient"], G,
@@ -474,11 +509,11 @@
     E("parallel", "Parallel", [], G,
       "Lines that go in the same direction and never meet. Parallel lines have the same slope.",
       "y = 2x + 1 and y = 2x − 4 are parallel.",
-      "lin geo", ["perpendicular", "transversal"], { forms:["parallel lines"] });
+      "lin geo", ["perpendicular", "transversal"], { forms: ["parallel lines"] });
     E("perpendicular", "Perpendicular", [], G,
       "Lines that cross at a right angle (90°). Their slopes multiply to −1, unless one line is level and the other straight up.",
       "Slopes 2 and −½ are perpendicular: 2 × (−½) = −1.",
-      "lin", ["parallel", "right-angle"], { forms:["perpendicular lines"] });
+      "lin", ["parallel", "right-angle"], { forms: ["perpendicular lines"] });
     E("coordinates", "Coordinates", ["coordinate", "ordered pair", "ordered pairs"], G,
       "A pair of numbers (x, y) giving a point’s position: x says how far across, y how far up or down.",
       "(3, −2) is 3 to the right of the origin and 2 down.",
@@ -554,7 +589,8 @@
       "In a 3-4-5 right triangle the legs are 3 and 4.",
       "geo", ["hypotenuse", "pythagorean-theorem"], true);
     E("pythagorean-theorem", "Pythagorean theorem", ["Pythagoras’ theorem", "Pythagoras's theorem",
-      "Pythagoras’s theorem", "Pythagoras theorem", "Pythagoras"], M,
+        "Pythagoras’s theorem", "Pythagoras theorem", "Pythagoras"
+      ], M,
       "In a right triangle, leg² + leg² = hypotenuse². Written a² + b² = c².",
       "3² + 4² = 9 + 16 = 25 = 5².",
       "geo", ["pythagorean-triple", "hypotenuse"]);
@@ -587,7 +623,8 @@
       "If one is 65°, the one across the Z is 65° too.",
       "geo", ["co-interior-angles", "corresponding-angles"]);
     E("co-interior-angles", "Co-interior angles", ["co-interior angle", "co-interior", "same-side interior angles",
-      "same-side interior angle", "same-side interior", "consecutive interior angles"], M,
+        "same-side interior angle", "same-side interior", "consecutive interior angles"
+      ], M,
       "Angles between the two lines, on the same side of the transversal. If the lines are parallel, they add to 180°: a C shape.",
       "If one is 65°, the other is 180° − 65° = 115°.",
       "geo", ["alternate-interior-angles", "supplementary"]);
@@ -624,7 +661,7 @@
     E("quartile", "Quartile", ["quartiles"], S,
       "The numbers that split ordered data into four equal parts. Q1 is the middle of the lower half; Q3 of the upper half.",
       "1, 3, 5, 7, 9, 11, 13, 15: Q1 = 4, the median is 8, Q3 = 12.",
-      "sta", ["iqr", "median", "box-plot"], { forms:["lower quartile", "upper quartile", "first quartile", "third quartile", "Q1", "Q3", "Q₁", "Q₃"] });
+      "sta", ["iqr", "median", "box-plot"], { forms: ["lower quartile", "upper quartile", "first quartile", "third quartile", "Q1", "Q3", "Q₁", "Q₃"] });
     E("iqr", "Interquartile range (IQR)", ["interquartile range", "interquartile ranges", "inter-quartile range", "IQR"], S,
       "The spread of the middle half of the data: the upper quartile minus the lower quartile (Q3 − Q1).",
       "Q1 = 4 and Q3 = 12, so the IQR is 12 − 4 = 8.",
@@ -638,7 +675,8 @@
       "1, 3, 5, 7, 9, 11, 13, 15: 1, 4, 8, 12, 15.",
       "sta", ["box-plot", "quartile"]);
     E("box-plot", "Box plot", ["box plots", "box-plot", "box-and-whisker plot", "box-and-whisker plots",
-      "box and whisker plot", "box-and-whisker"], S,
+        "box and whisker plot", "box-and-whisker"
+      ], S,
       "A drawing of the five-number summary: a box from Q1 to Q3 with a line at the median, and whiskers out to the ends.",
       "For 1, 3, 5, 7, 9, 11, 13, 15: whiskers from 1 to 15, box from 4 to 12, a line at 8.",
       "sta", ["five-number-summary", "quartile"]);
@@ -649,7 +687,7 @@
     E("frequency", "Frequency", ["frequencies"], S,
       "How many times a value, or a group of values, shows up in the data. A frequency table lists each value and its count.",
       "In 2, 5, 5, 8 the frequency of 5 is 2.",
-      "sta", ["histogram", "dot-plot"], { forms:["frequency table", "frequency tables", "tally chart", "tally charts"] });
+      "sta", ["histogram", "dot-plot"], { forms: ["frequency table", "frequency tables", "tally chart", "tally charts"] });
     E("histogram", "Histogram", ["histograms"], S,
       "A bar graph of grouped numbers. Each bar covers a range of values and its height is the frequency. The bars touch.",
       "Bars for 10–19, 20–29 and 30–39, with heights 4, 7 and 2.",
@@ -664,33 +702,39 @@
       "sta", ["mad", "mean"]);
 
     /* ============================== lookups ============================== */
-    var BY_ID = {}, KEYS = {}, ALTS = [];
-    function norm(s){
+    var BY_ID = {},
+      KEYS = {},
+      ALTS = [];
+
+    function norm(s) {
       return String(s).toLowerCase().replace(/[\u2010\u2011\u2012\u2013]/g, "-").replace(/[\u2018\u2019]/g, "'")
         .replace(/[\s\u00a0]+/g, " ").trim();
     }
-    function isCaps(s){ return /^[A-Z][A-Z0-9\u2081\u2083]+$/.test(s); }   // GCF, IQR, Q1\u2026: only matches in capitals
-    TERMS.forEach(function(t){
+
+    function isCaps(s) { return /^[A-Z][A-Z0-9\u2081\u2083]+$/.test(s); } // GCF, IQR, Q1\u2026: only matches in capitals
+    TERMS.forEach(function(t) {
       BY_ID[t.id] = t;
       var words = [t.term.replace(/\s*\([^)]*\)\s*$/, "")].concat(t.aliases, t.forms || []);
-      words.forEach(function(w){
+      words.forEach(function(w) {
         var k = norm(w);
         if (!k || KEYS[k]) return;
-        KEYS[k] = { id:t.id, caps:isCaps(w) };
+        KEYS[k] = { id: t.id, caps: isCaps(w) };
         ALTS.push(k);
       });
     });
-    ALTS.sort(function(a, b){ return b.length - a.length; });
-    function reEsc(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+    ALTS.sort(function(a, b) { return b.length - a.length; });
+
+    function reEsc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
     var RE = null;
     try {
-      RE = new RegExp("(^|[^A-Za-z0-9])(" + ALTS.map(function(k){
+      RE = new RegExp("(^|[^A-Za-z0-9])(" + ALTS.map(function(k) {
         return reEsc(k).replace(/ /g, "[\\s\\u00a0]+").replace(/-/g, "[-\\u2010\\u2011]").replace(/'/g, "['\\u2019]");
       }).join("|") + ")(?![A-Za-z0-9])", "gi");
-    } catch (e){ RE = null; }
+    } catch (e) { RE = null; }
 
-    function byId(id){ return BY_ID[id] || null; }
-    function find(word){
+    function byId(id) { return BY_ID[id] || null; }
+
+    function find(word) {
       var k = KEYS[norm(word || "")];
       if (!k) return null;
       if (k.caps && String(word).trim() !== String(word).trim().toUpperCase()) return null;
@@ -698,88 +742,105 @@
     }
 
     /* every match in a string: [{index, length, id}] (the longest phrase wins at each spot) */
-    function matches(text){
+    function matches(text) {
       var out = [];
       if (!RE || !text) return out;
       RE.lastIndex = 0;
       var m;
-      while ((m = RE.exec(text))){
-        var word = m[2], k = KEYS[norm(word)];
-        if (k && !(k.caps && word !== word.toUpperCase())) out.push({ index:m.index + m[1].length, length:word.length, id:k.id });
+      while ((m = RE.exec(text))) {
+        var word = m[2],
+          k = KEYS[norm(word)];
+        if (k && !(k.caps && word !== word.toUpperCase())) out.push({ index: m.index + m[1].length, length: word.length, id: k.id });
         if (m[0].length === 0) RE.lastIndex++;
       }
       return out;
     }
-    function scan(text){ return matches(String(text || "")).map(function(x){ return x.id; }); }
+
+    function scan(text) { return matches(String(text || "")).map(function(x) { return x.id; }); }
 
     /* ============================== linking ============================== */
     var ROOTS = ".log .txt, .log .aside, .aside, .tapecap, .cap, figcaption, .closer, .tagline, .answer .facts, .fact, " +
-                ".hint, .maker .lbl, .maker label";
+      ".hint, .maker .lbl, .maker label";
     var NEVER = "a, button, input, select, option, textarea, svg, code, pre, kbd, script, style, noscript, " +
-                "[contenteditable], .answer .v, .expr, .crow, .fr, .gl-pop, .sitenav, h1, h2, h3";
+      "[contenteditable], .answer .v, .expr, .crow, .fr, .gl-pop, .sitenav, h1, h2, h3";
 
     // the Word List's address (site.js knows its folder)
-  function wordList(hash){ return window.HelperSite ? window.HelperSite.url("glossary.html", hash) : "glossary.html" + hash; }
-  function here(){ return ((window.HelperSite && window.HelperSite.here) || location.pathname.split("/").pop() || "index.html").toLowerCase(); }
-    function isEmbed(){
+    function wordList(hash) { return window.HelperSite ? window.HelperSite.url("glossary.html", hash) : "glossary.html" + hash; }
+
+    function here() { return ((window.HelperSite && window.HelperSite.here) || location.pathname.split("/").pop() || "index.html").toLowerCase(); }
+
+    function isEmbed() {
       return document.documentElement.classList.contains("embed") || /[?&]embed=1(&|$)/.test(location.search);
     }
-    function blocked(el, root){
+
+    function blocked(el, root) {
       if (el.closest(NEVER)) return true;
       var lab = el.closest("label");
       return !!(lab && lab.querySelector("input, select, textarea"));
     }
 
-    function shown(el){
+    function shown(el) {
       if (!el.getClientRects().length) return false;
-      for (var d = el.closest("details"); d; d = d.parentElement && d.parentElement.closest("details")){
+      for (var d = el.closest("details"); d; d = d.parentElement && d.parentElement.closest("details")) {
         // a closed <details> hides everything but its <summary> (some browsers still report boxes for it)
-        if (!d.open){ var s = el.closest("summary"); if (!s || !d.contains(s)) return false; }
+        if (!d.open) { var s = el.closest("summary"); if (!s || !d.contains(s)) return false; }
       }
       return true;
     }
 
-    function linkIn(scope, all){
+    function linkIn(scope, all) {
       var made = 0;
       if (!RE || !scope || !scope.querySelectorAll) return 0;
-      var page = here(), embed = isEmbed(), seen = {};
-      Array.prototype.forEach.call(document.querySelectorAll("a.gl-term[data-gl]"), function(a){ seen[a.getAttribute("data-gl")] = 1; });
+      var page = here(),
+        embed = isEmbed(),
+        seen = {};
+      Array.prototype.forEach.call(document.querySelectorAll("a.gl-term[data-gl]"), function(a) { seen[a.getAttribute("data-gl")] = 1; });
 
       var roots;
       if (all || (scope.closest && scope.closest(ROOTS))) roots = [scope];
       else {
         roots = [];
-        Array.prototype.forEach.call(scope.querySelectorAll(ROOTS), function(r){
+        Array.prototype.forEach.call(scope.querySelectorAll(ROOTS), function(r) {
           // a root inside another root is walked with its parent, in page order
           if (r.parentElement && r.parentElement.closest(ROOTS)) return;
           roots.push(r);
         });
       }
 
-      roots.forEach(function(root){
+      roots.forEach(function(root) {
         // not on screen (a closed "make a problem" box, a hidden answer): leave it for when it shows
         if (!all && !shown(root)) return;
-        var nodes = [], w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false), n;
-        while ((n = w.nextNode())) if (/[A-Za-z\u03c0]/.test(n.nodeValue)) nodes.push(n);
-        nodes.forEach(function(node){
+        var nodes = [],
+          w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false),
+          n;
+        while ((n = w.nextNode()))
+          if (/[A-Za-z\u03c0]/.test(n.nodeValue)) nodes.push(n);
+        nodes.forEach(function(node) {
           var parent = node.parentElement;
           if (!parent || blocked(parent, root)) return;
-          var text = node.nodeValue, found = matches(text), pick = [];
-          found.forEach(function(f){
+          var text = node.nodeValue,
+            found = matches(text),
+            pick = [];
+          found.forEach(function(f) {
             var t = BY_ID[f.id];
             if (!t || seen[f.id]) return;
             if (t.strict && t.pages.indexOf(page) < 0) return;
-            seen[f.id] = 1; pick.push(f);
+            seen[f.id] = 1;
+            pick.push(f);
           });
           if (!pick.length) return;
-          var frag = document.createDocumentFragment(), at = 0;
-          pick.forEach(function(f){
+          var frag = document.createDocumentFragment(),
+            at = 0;
+          pick.forEach(function(f) {
             if (f.index > at) frag.appendChild(document.createTextNode(text.slice(at, f.index)));
             var a = document.createElement("a");
             a.className = "gl-term";
             a.href = wordList("#" + f.id);
             a.setAttribute("data-gl", f.id);
-            if (embed){ a.target = "_blank"; a.rel = "noopener"; }
+            if (embed) {
+              a.target = "_blank";
+              a.rel = "noopener";
+            }
             a.textContent = text.substr(f.index, f.length);
             frag.appendChild(a);
             at = f.index + f.length;
@@ -792,71 +853,93 @@
       return made;
     }
 
-    var observer = null, watched = null, timer = 0, AUTO = false;
-    function link(root, opts){
+    var observer = null,
+      watched = null,
+      timer = 0,
+      AUTO = false;
+
+    function link(root, opts) {
       try {
         if (observer) observer.disconnect();
         return linkIn(root || document.body, !!(opts && opts.all));
-      } catch (e){ return 0; }
-      finally {
+      } catch (e) { return 0; } finally {
         try {
-          if (observer && watched){
+          if (observer && watched) {
             observer.takeRecords();
             // new text, and things being shown or hidden (an opened <details>, a revealed answer)
-            observer.observe(watched, { childList:true, subtree:true, characterData:true, attributes:true,
-                                        attributeFilter:["hidden", "open", "class", "style"] });
+            observer.observe(watched, {
+              childList: true,
+              subtree: true,
+              characterData: true,
+              attributes: true,
+              attributeFilter: ["hidden", "open", "class", "style"]
+            });
           }
-        }
-        catch (e2){}
+        } catch (e2) {}
       }
     }
-    function relink(){
+
+    function relink() {
       timer = 0;
-      try { if (popFor && !document.body.contains(popFor)) hide(); } catch (e){}
+      try { if (popFor && !document.body.contains(popFor)) hide(); } catch (e) {}
       link(document.body);
     }
 
     /* ============================== the popup ============================== */
     var CSS =
       "a.gl-term{color:inherit;text-decoration:underline dotted;text-decoration-thickness:1px;text-underline-offset:.22em;" +
-        "text-decoration-color:var(--ink-3,currentColor);cursor:help;border-radius:2px}" +
+      "text-decoration-color:var(--ink-3,currentColor);cursor:help;border-radius:2px}" +
       "a.gl-term:hover,a.gl-term[aria-describedby]{text-decoration-color:currentColor}" +
       "a.gl-term:focus-visible{outline:2px solid var(--focus,currentColor);outline-offset:2px}" +
       ".gl-pop{position:absolute;left:0;top:0;z-index:2147483000;box-sizing:border-box;width:max-content;max-width:320px;" +
-        "padding:10px 13px 11px;background:var(--surface,#fff);color:var(--ink,#18201C);border:1px solid var(--rule,#C8CFCA);" +
-        "border-radius:10px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 10px 28px -10px rgba(0,0,0,.45);" +
-        "font-family:var(--f-body,\"IBM Plex Sans\",\"Segoe UI\",Helvetica,Arial,sans-serif);font-size:14px;line-height:1.45;" +
-        "font-weight:400;font-style:normal;letter-spacing:normal;text-transform:none;text-align:left;white-space:normal;" +
-        "overflow-wrap:break-word;pointer-events:auto}" +
+      "padding:10px 13px 11px;background:var(--surface,#fff);color:var(--ink,#18201C);border:1px solid var(--rule,#C8CFCA);" +
+      "border-radius:10px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 10px 28px -10px rgba(0,0,0,.45);" +
+      "font-family:var(--f-body,\"IBM Plex Sans\",\"Segoe UI\",Helvetica,Arial,sans-serif);font-size:14px;line-height:1.45;" +
+      "font-weight:400;font-style:normal;letter-spacing:normal;text-transform:none;text-align:left;white-space:normal;" +
+      "overflow-wrap:break-word;pointer-events:auto}" +
       ".gl-pop[hidden]{display:none !important}" +
       ".gl-pop .gl-t{display:block;font-weight:700;font-size:15px;margin:0 0 2px;color:var(--ink,#18201C)}" +
       ".gl-pop .gl-d{display:block;margin:0}" +
       ".gl-pop .gl-x{display:block;margin:6px 0 0;font-size:13px;color:var(--ink-2,#4A5550)}" +
       ".gl-pop .gl-more{display:inline-block;margin-top:7px;font-size:13px;font-weight:600;color:var(--key,var(--ink,#18201C));" +
-        "text-decoration:underline;text-underline-offset:.18em}" +
+      "text-decoration:underline;text-underline-offset:.18em}" +
       "@media print{a.gl-term{text-decoration:none !important;color:inherit !important;cursor:auto}" +
-        ".gl-pop{display:none !important}}";
+      ".gl-pop{display:none !important}}";
 
-    var pop = null, popFor = null, showT = 0, hideT = 0, last = { type:"", t:0, el:null };
-    function termOf(el){ return el && el.closest ? el.closest("a[data-gl]") : null; }
-    function now(){ return new Date().getTime(); }
+    var pop = null,
+      popFor = null,
+      showT = 0,
+      hideT = 0,
+      last = { type: "", t: 0, el: null };
 
-    function ensurePop(){
+    function termOf(el) { return el && el.closest ? el.closest("a[data-gl]") : null; }
+
+    function now() { return new Date().getTime(); }
+
+    function ensurePop() {
       if (pop && pop.parentNode) return pop;
       pop = document.createElement("div");
       pop.id = "gl-pop";
       pop.className = "gl-pop";
       pop.setAttribute("role", "tooltip");
       pop.hidden = true;
-      pop.addEventListener("mouseenter", function(){ clearTimeout(hideT); });
-      pop.addEventListener("mouseleave", function(){ if (last.type === "mouse") later(); });
+      pop.addEventListener("mouseenter", function() { clearTimeout(hideT); });
+      pop.addEventListener("mouseleave", function() { if (last.type === "mouse") later(); });
       document.body.appendChild(pop);
       return pop;
     }
-    function fill(t){
+
+    function fill(t) {
       var p = ensurePop();
       p.textContent = "";
-      function bit(tag, cls, text){ var e = document.createElement(tag); e.className = cls; e.textContent = text; p.appendChild(e); return e; }
+
+      function bit(tag, cls, text) {
+        var e = document.createElement(tag);
+        e.className = cls;
+        e.textContent = text;
+        p.appendChild(e);
+        return e;
+      }
       bit("b", "gl-t", t.term);
       bit("span", "gl-d", t.short);
       if (t.example) bit("span", "gl-x", t.example);
@@ -864,27 +947,42 @@
       more.href = wordList("#" + t.id);
       more.tabIndex = -1;
       more.setAttribute("aria-label", "More about " + t.term.replace(/\s*\([^)]*\)\s*$/, ""));
-      if (isEmbed()){ more.target = "_blank"; more.rel = "noopener"; }
+      if (isEmbed()) {
+        more.target = "_blank";
+        more.rel = "noopener";
+      }
     }
-    function place(el){
-      var p = pop, rs = el.getClientRects(), r = rs.length ? rs[0] : el.getBoundingClientRect();
-      var de = document.documentElement, vw = de.clientWidth || window.innerWidth, vh = window.innerHeight || de.clientHeight;
+
+    function place(el) {
+      var p = pop,
+        rs = el.getClientRects(),
+        r = rs.length ? rs[0] : el.getBoundingClientRect();
+      var de = document.documentElement,
+        vw = de.clientWidth || window.innerWidth,
+        vh = window.innerHeight || de.clientHeight;
       p.style.maxWidth = Math.max(160, Math.min(320, vw - 16)) + "px";
-      p.style.left = "0px"; p.style.top = "0px";
-      var pw = p.offsetWidth, ph = p.offsetHeight;
+      p.style.left = "0px";
+      p.style.top = "0px";
+      var pw = p.offsetWidth,
+        ph = p.offsetHeight;
       var left = r.left + r.width / 2 - pw / 2;
       left = Math.max(8, Math.min(left, vw - pw - 8));
-      var below = r.bottom + 8, above = r.top - 8 - ph, top;
+      var below = r.bottom + 8,
+        above = r.top - 8 - ph,
+        top;
       if (below + ph <= vh - 8) top = below;
       else if (above >= 8) top = above;
-      else top = (vh - r.bottom > r.top) ? below : above;     // neither fits: the roomier side
-      var sx = window.pageXOffset || de.scrollLeft || 0, sy = window.pageYOffset || de.scrollTop || 0;
+      else top = (vh - r.bottom > r.top) ? below : above; // neither fits: the roomier side
+      var sx = window.pageXOffset || de.scrollLeft || 0,
+        sy = window.pageYOffset || de.scrollTop || 0;
       p.style.left = Math.round(left + sx) + "px";
       p.style.top = Math.round(top + sy) + "px";
       p.setAttribute("data-side", top === below ? "below" : "above");
     }
-    function show(el){
-      clearTimeout(showT); clearTimeout(hideT);
+
+    function show(el) {
+      clearTimeout(showT);
+      clearTimeout(hideT);
       var t = byId(el.getAttribute("data-gl"));
       if (!t || !document.body.contains(el)) return;
       if (popFor && popFor !== el) popFor.removeAttribute("aria-describedby");
@@ -894,18 +992,25 @@
       popFor = el;
       el.setAttribute("aria-describedby", "gl-pop");
     }
-    function hide(){
-      clearTimeout(showT); clearTimeout(hideT);
+
+    function hide() {
+      clearTimeout(showT);
+      clearTimeout(hideT);
       if (pop) pop.hidden = true;
       if (popFor) popFor.removeAttribute("aria-describedby");
       popFor = null;
     }
-    function later(){ clearTimeout(hideT); hideT = setTimeout(hide, 220); }
-    function safe(fn){ return function(e){ try { fn(e); } catch (x){} }; }
 
-    function wire(){
+    function later() {
+      clearTimeout(hideT);
+      hideT = setTimeout(hide, 220);
+    }
+
+    function safe(fn) { return function(e) { try { fn(e); } catch (x) {} }; }
+
+    function wire() {
       var PE = !!window.PointerEvent;
-      document.addEventListener(PE ? "pointerover" : "mouseover", safe(function(e){
+      document.addEventListener(PE ? "pointerover" : "mouseover", safe(function(e) {
         if (PE && e.pointerType !== "mouse") return;
         var el = termOf(e.target);
         if (!el) return;
@@ -913,19 +1018,20 @@
         clearTimeout(hideT);
         if (popFor === el) return;
         clearTimeout(showT);
-        showT = setTimeout(function(){ try { show(el); } catch (x){} }, 120);
+        showT = setTimeout(function() { try { show(el); } catch (x) {} }, 120);
       }));
-      document.addEventListener(PE ? "pointerout" : "mouseout", safe(function(e){
+      document.addEventListener(PE ? "pointerout" : "mouseout", safe(function(e) {
         if (PE && e.pointerType !== "mouse") return;
         var el = termOf(e.target);
         if (!el || (e.relatedTarget && el.contains(e.relatedTarget))) return;
         clearTimeout(showT);
         if (popFor === el && !(pop && e.relatedTarget && pop.contains(e.relatedTarget))) later();
       }));
-      function down(e){
+
+      function down(e) {
         var type = e.pointerType || (e.type === "touchstart" ? "touch" : "mouse");
         var el = termOf(e.target);
-        last = { type:type, t:now(), el:el };
+        last = { type: type, t: now(), el: el };
         if (!popFor) return;
         if (el === popFor || (pop && pop.contains(e.target))) return;
         hide();
@@ -935,36 +1041,40 @@
         document.addEventListener("touchstart", safe(down), true);
         document.addEventListener("mousedown", safe(down), true);
       }
-      document.addEventListener("click", safe(function(e){
+      document.addEventListener("click", safe(function(e) {
         var el = termOf(e.target);
         if (!el) return;
         var touch = (last.type === "touch" || last.type === "pen") && now() - last.t < 1500;
-        if (!touch) return;                      // a mouse click or the Enter key goes straight to the entry
-        if (popFor !== el){ e.preventDefault(); show(el); }
+        if (!touch) return; // a mouse click or the Enter key goes straight to the entry
+        if (popFor !== el) {
+          e.preventDefault();
+          show(el);
+        }
       }), true);
-      document.addEventListener("focusin", safe(function(e){
+      document.addEventListener("focusin", safe(function(e) {
         var el = termOf(e.target);
         if (!el) return;
-        if (last.el === el && now() - last.t < 1000) return;   // focus from a tap or click: the pointer decides
+        if (last.el === el && now() - last.t < 1000) return; // focus from a tap or click: the pointer decides
         show(el);
       }));
-      document.addEventListener("focusout", safe(function(e){
+      document.addEventListener("focusout", safe(function(e) {
         if (!popFor) return;
         if (e.target !== popFor && !(pop && pop.contains(e.target))) return;
         var to = e.relatedTarget;
-        if (to && (to === popFor || (pop && pop.contains(to)))) return;   // e.g. a tap on "More"
-        if (last.type === "mouse") later(); else hide();
+        if (to && (to === popFor || (pop && pop.contains(to)))) return; // e.g. a tap on "More"
+        if (last.type === "mouse") later();
+        else hide();
       }));
-      document.addEventListener("keydown", safe(function(e){
-        if ((e.key === "Escape" || e.key === "Esc") && popFor){ hide(); }
+      document.addEventListener("keydown", safe(function(e) {
+        if ((e.key === "Escape" || e.key === "Esc") && popFor) { hide(); }
       }));
-      window.addEventListener("resize", safe(function(){ if (popFor) hide(); }));
+      window.addEventListener("resize", safe(function() { if (popFor) hide(); }));
     }
 
     /* ============================== start ============================== */
-    function start(){
+    function start() {
       try {
-        if (!document.getElementById("gl-style")){
+        if (!document.getElementById("gl-style")) {
           var st = document.createElement("style");
           st.id = "gl-style";
           st.textContent = CSS;
@@ -975,24 +1085,24 @@
         AUTO = page !== "glossary.html" && page !== "tests.html";
         if (!AUTO) return;
         watched = document.querySelector(".page") || document.body;
-        if (window.MutationObserver){
-          observer = new MutationObserver(function(recs){
+        if (window.MutationObserver) {
+          observer = new MutationObserver(function(recs) {
             try {
-              var real = recs.some(function(r){ return !(pop && (r.target === pop || pop.contains(r.target))); });
+              var real = recs.some(function(r) { return !(pop && (r.target === pop || pop.contains(r.target))); });
               if (!real) return;
               clearTimeout(timer);
               timer = setTimeout(relink, 150);
-            } catch (e){}
+            } catch (e) {}
           });
         }
         link(document.body);
-      } catch (e){}
+      } catch (e) {}
     }
 
-    window.HelperGlossary = { terms:TERMS, byId:byId, find:find, link:link, scan:scan, topics:[A, F, P, K, I, L, G, M, S] };
+    window.HelperGlossary = { terms: TERMS, byId: byId, find: find, link: link, scan: scan, topics: [A, F, P, K, I, L, G, M, S] };
     try {
       if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
       else start();
-    } catch (e){}
+    } catch (e) {}
   }
 })();

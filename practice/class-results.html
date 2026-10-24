@@ -20,200 +20,938 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
-  :root{
-    --paper:#EDEFEC; --surface:#F8F9F7; --surface-2:#E2E6E2;
-    --ink:#18201C; --ink-2:#4A5550; --ink-3:#7B8681; --rule:#C8CFCA;
-    --key:#33463F; --key-bg:#DDE6E1; --key-line:#8BA398;
-    --warm:#9A5410; --warm-bg:#F6E5D2;
-    --focus:#33463F;
-    --ok:#0D7361; --ok-bg:#D4EAE7; --later:#1F5E8C; --later-bg:#DCE8F2; --no:#A8412A; --no-bg:#F4DDD5;
-    --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
-    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
-    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
-    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  :root {
+    --paper: #EDEFEC;
+    --surface: #F8F9F7;
+    --surface-2: #E2E6E2;
+    --ink: #18201C;
+    --ink-2: #4A5550;
+    --ink-3: #7B8681;
+    --rule: #C8CFCA;
+    --key: #33463F;
+    --key-bg: #DDE6E1;
+    --key-line: #8BA398;
+    --warm: #9A5410;
+    --warm-bg: #F6E5D2;
+    --focus: #33463F;
+    --ok: #0D7361;
+    --ok-bg: #D4EAE7;
+    --later: #1F5E8C;
+    --later-bg: #DCE8F2;
+    --no: #A8412A;
+    --no-bg: #F4DDD5;
+    --shadow: 0 1px 0 rgba(24, 32, 28, .05), 0 14px 30px -20px rgba(24, 32, 28, .5);
+    --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --f-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
-      --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
-      --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
-      --warm:#E8A45C; --warm-bg:#37270F;
-      --focus:#B8C9C1;
-      --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
-      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #121615;
+      --surface: #1A201E;
+      --surface-2: #262E2B;
+      --ink: #E5EAE7;
+      --ink-2: #A2ADA8;
+      --ink-3: #76817C;
+      --rule: #36403C;
+      --key: #B8C9C1;
+      --key-bg: #22302B;
+      --key-line: #4E6A5F;
+      --warm: #E8A45C;
+      --warm-bg: #37270F;
+      --focus: #B8C9C1;
+      --ok: #4FCCB0;
+      --ok-bg: #0F2F2C;
+      --later: #7DB8E8;
+      --later-bg: #142838;
+      --no: #F08A6E;
+      --no-bg: #3A1E16;
+      --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
     }
   }
-  :root[data-theme="dark"]{
-    --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
-    --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
-    --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
-    --warm:#E8A45C; --warm-bg:#37270F;
-    --focus:#B8C9C1;
-    --ok:#4FCCB0; --ok-bg:#0F2F2C; --later:#7DB8E8; --later-bg:#142838; --no:#F08A6E; --no-bg:#3A1E16;
-    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  :root[data-theme="dark"] {
+    --paper: #121615;
+    --surface: #1A201E;
+    --surface-2: #262E2B;
+    --ink: #E5EAE7;
+    --ink-2: #A2ADA8;
+    --ink-3: #76817C;
+    --rule: #36403C;
+    --key: #B8C9C1;
+    --key-bg: #22302B;
+    --key-line: #4E6A5F;
+    --warm: #E8A45C;
+    --warm-bg: #37270F;
+    --focus: #B8C9C1;
+    --ok: #4FCCB0;
+    --ok-bg: #0F2F2C;
+    --later: #7DB8E8;
+    --later-bg: #142838;
+    --no: #F08A6E;
+    --no-bg: #3A1E16;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
   }
 
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
-  [hidden]{display:none !important}
-  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-  .page{max-width:1180px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:22px}
-  @media (max-width:520px){.page{padding:22px 16px 56px;gap:18px}}
-  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
-  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
-  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(34px,6.4vw,54px);line-height:.98;letter-spacing:-.02em;margin:.16em 0 0}
-  h1 em{font-style:normal;color:var(--key)}
-  .tagline{color:var(--ink-2);max-width:60ch;margin:.5em 0 0;font-size:15.5px}
-  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;background:var(--surface);color:var(--ink-2);
-    border:1px solid var(--rule);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
-  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
-  button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+  * {
+    box-sizing: border-box
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased
+  }
+  a {
+    color: inherit
+  }
+  [hidden] {
+    display: none !important
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap
+  }
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px
+  }
+  @media (max-width:520px) {
+    .page {
+      padding: 22px 16px 56px;
+      gap: 18px
+    }
+  }
+  .masthead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap
+  }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: clamp(34px, 6.4vw, 54px);
+    line-height: .98;
+    letter-spacing: -.02em;
+    margin: .16em 0 0
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--key)
+  }
+  .tagline {
+    color: var(--ink-2);
+    max-width: 60ch;
+    margin: .5em 0 0;
+    font-size: 15.5px
+  }
+  .theme-btn {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    background: var(--surface);
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 8px 15px;
+    cursor: pointer;
+    white-space: nowrap
+  }
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3)
+  }
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  a:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2.5px solid var(--focus);
+    outline-offset: 2px
+  }
 
-  .panel{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);min-width:0}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--rule)}
-  .panel-head h2{font-family:var(--f-display);font-stretch:112%;font-weight:700;font-size:15px;margin:0}
-  .panel-head > span{font-size:13px;color:var(--ink-3)}
-  .blk{padding:14px 18px;border-bottom:1px dashed var(--rule);display:flex;flex-direction:column;gap:10px}
-  .blk:last-child{border-bottom:0}
-  .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-  .row{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:flex-end}
-  .field{display:flex;flex-direction:column;gap:4px;min-width:0}
-  .field.grow{flex:1 1 320px}
-  input[type=text], select, textarea{font-family:var(--f-body);font-size:14.5px;color:var(--ink);background:var(--paper);
-    border:1px solid var(--rule);border-radius:8px;padding:7px 10px;min-width:0;max-width:100%}
-  #paste{width:100%;font-family:var(--f-mono);font-size:13px;line-height:1.5;resize:vertical;min-height:9em}
-  #linkIn{width:100%;font-family:var(--f-mono);font-size:12.5px}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .go{font-family:var(--f-body);font-size:14.5px;font-weight:600;background:var(--key);color:var(--surface);border:0;border-radius:9px;
-    padding:9px 16px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-  .go:hover{filter:brightness(1.08)}
-  .go:disabled{opacity:.45;cursor:default;filter:none}
-  .ghost{font-family:var(--f-body);font-size:14px;font-weight:600;background:transparent;color:var(--ink);border:1px solid var(--rule);
-    border-radius:9px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-  .ghost:hover{border-color:var(--ink-3)}
-  .ghost:disabled{opacity:.45;cursor:default}
-  .tog{font-family:var(--f-body);font-size:13px;font-weight:500;background:var(--surface);border:1px solid var(--rule);color:var(--ink-2);
-    border-radius:999px;padding:5px 12px;cursor:pointer}
-  .tog[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink)}
-  .msg{font-size:13px;color:var(--ink-3)}
-  .msg.err{color:var(--warm)}
-  .msg b{color:var(--ink-2);font-weight:600}
-  .private{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink-2);background:var(--key-bg);border-left:4px solid var(--key);
-    border-radius:6px 10px 10px 6px;padding:8px 12px}
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    min-width: 0
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 12px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--rule)
+  }
+  .panel-head h2 {
+    font-family: var(--f-display);
+    font-stretch: 112%;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0
+  }
+  .panel-head>span {
+    font-size: 13px;
+    color: var(--ink-3)
+  }
+  .blk {
+    padding: 14px 18px;
+    border-bottom: 1px dashed var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+  }
+  .blk:last-child {
+    border-bottom: 0
+  }
+  .lbl {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  .row {
+    display: flex;
+    gap: 10px 14px;
+    flex-wrap: wrap;
+    align-items: flex-end
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0
+  }
+  .field.grow {
+    flex: 1 1 320px
+  }
+  input[type=text],
+  select,
+  textarea {
+    font-family: var(--f-body);
+    font-size: 14.5px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 7px 10px;
+    min-width: 0;
+    max-width: 100%
+  }
+  #paste {
+    width: 100%;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 9em
+  }
+  #linkIn {
+    width: 100%;
+    font-family: var(--f-mono);
+    font-size: 12.5px
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center
+  }
+  .go {
+    font-family: var(--f-body);
+    font-size: 14.5px;
+    font-weight: 600;
+    background: var(--key);
+    color: var(--surface);
+    border: 0;
+    border-radius: 9px;
+    padding: 9px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px
+  }
+  .go:hover {
+    filter: brightness(1.08)
+  }
+  .go:disabled {
+    opacity: .45;
+    cursor: default;
+    filter: none
+  }
+  .ghost {
+    font-family: var(--f-body);
+    font-size: 14px;
+    font-weight: 600;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+    border-radius: 9px;
+    padding: 8px 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px
+  }
+  .ghost:hover {
+    border-color: var(--ink-3)
+  }
+  .ghost:disabled {
+    opacity: .45;
+    cursor: default
+  }
+  .tog {
+    font-family: var(--f-body);
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    border-radius: 999px;
+    padding: 5px 12px;
+    cursor: pointer
+  }
+  .tog[aria-pressed="true"] {
+    background: var(--key-bg);
+    border-color: var(--key);
+    color: var(--ink)
+  }
+  .msg {
+    font-size: 13px;
+    color: var(--ink-3)
+  }
+  .msg.err {
+    color: var(--warm)
+  }
+  .msg b {
+    color: var(--ink-2);
+    font-weight: 600
+  }
+  .private {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--ink-2);
+    background: var(--key-bg);
+    border-left: 4px solid var(--key);
+    border-radius: 6px 10px 10px 6px;
+    padding: 8px 12px
+  }
 
   /* ---- how it works ---- */
-  .how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:16px 18px}
-  @media (max-width:760px){.how{grid-template-columns:minmax(0,1fr)}}
-  .how div{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--ink-2)}
-  .how b{font-family:var(--f-mono);font-size:13px;color:var(--ink);background:var(--surface-2);border-radius:50%;width:26px;height:26px;flex:none;
-    display:inline-flex;align-items:center;justify-content:center}
-  .example code{display:block;font-family:var(--f-mono);font-size:12.5px;background:var(--paper);border:1px solid var(--rule);border-radius:8px;
-    padding:9px 11px;overflow-wrap:anywhere;color:var(--ink-2)}
+  .how {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding: 16px 18px
+  }
+  @media (max-width:760px) {
+    .how {
+      grid-template-columns: minmax(0, 1fr)
+    }
+  }
+  .how div {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14.5px;
+    color: var(--ink-2)
+  }
+  .how b {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--surface-2);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center
+  }
+  .example code {
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 9px 11px;
+    overflow-wrap: anywhere;
+    color: var(--ink-2)
+  }
 
   /* ---- the results ---- */
-  #out{display:flex;flex-direction:column;gap:22px}
-  .sets{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  .sets button{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:var(--surface);border:1px solid var(--rule);color:var(--ink-2);
-    border-radius:10px;padding:7px 12px;cursor:pointer;text-align:left}
-  .sets button small{display:block;font-weight:400;font-size:12px;color:var(--ink-3)}
-  .sets button[aria-pressed="true"]{border-color:var(--key);background:var(--key-bg);color:var(--ink)}
-  .sethead h2{font-family:var(--f-display);font-stretch:114%;font-weight:800;font-size:clamp(22px,3.6vw,30px);line-height:1.1;margin:0;overflow-wrap:anywhere}
-  .sethead p{margin:6px 0 0;font-size:14px;color:var(--ink-2)}
-  .sethead .set-id{font-family:var(--f-mono);font-size:12.5px}
-  .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-  @media (max-width:860px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  .tile{padding:14px 16px;display:flex;flex-direction:column;gap:4px}
-  .tile .v{font-family:var(--f-display);font-stretch:114%;font-weight:800;font-size:clamp(28px,4.6vw,40px);line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-  .tile .v small{font-size:.48em;color:var(--ink-3);font-weight:700}
-  .tile .s{font-size:13px;color:var(--ink-2)}
-  .tile .s.warn{color:var(--no)}
-  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table{border-collapse:collapse;width:100%;font-size:14px}
-  .cls th,.cls td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--rule);white-space:nowrap;vertical-align:middle}
-  .cls tbody tr:last-child td,.cls tbody tr:last-child th{border-bottom:0}
-  .cls thead th{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);padding-top:11px;padding-bottom:11px}
-  .cls thead th button{font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;background:none;border:0;padding:2px 0;cursor:pointer;display:inline-flex;gap:5px;align-items:center}
-  .cls thead th button:hover{color:var(--ink)}
-  .cls thead th[aria-sort] button{color:var(--ink)}
-  .cls .num{text-align:right;font-variant-numeric:tabular-nums}
-  .cls tbody th{font-weight:600}
-  .cls .who small{display:block;font-weight:400;font-size:12px;color:var(--ink-3)}
-  .noname{font-style:italic;color:var(--ink-2)}
-  .meter{display:inline-flex;align-items:center;gap:8px;justify-content:flex-end}
-  .meter i{display:inline-block;width:64px;height:7px;border-radius:4px;background:var(--surface-2);overflow:hidden;flex:none}
-  .meter i b{display:block;height:100%;background:var(--ok);border-radius:4px}
-  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
-  .badge.ok{background:var(--ok-bg);color:var(--ok)} .badge.bad{background:var(--no-bg);color:var(--no)} .badge.unk{background:var(--warm-bg);color:var(--warm)}
-  .old{font-size:12px;color:var(--ink-3);margin-left:6px}
+  #out {
+    display: flex;
+    flex-direction: column;
+    gap: 22px
+  }
+  .sets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center
+  }
+  .sets button {
+    font-family: var(--f-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    border-radius: 10px;
+    padding: 7px 12px;
+    cursor: pointer;
+    text-align: left
+  }
+  .sets button small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--ink-3)
+  }
+  .sets button[aria-pressed="true"] {
+    border-color: var(--key);
+    background: var(--key-bg);
+    color: var(--ink)
+  }
+  .sethead h2 {
+    font-family: var(--f-display);
+    font-stretch: 114%;
+    font-weight: 800;
+    font-size: clamp(22px, 3.6vw, 30px);
+    line-height: 1.1;
+    margin: 0;
+    overflow-wrap: anywhere
+  }
+  .sethead p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: var(--ink-2)
+  }
+  .sethead .set-id {
+    font-family: var(--f-mono);
+    font-size: 12.5px
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px
+  }
+  @media (max-width:860px) {
+    .tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+  }
+  .tile {
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px
+  }
+  .tile .v {
+    font-family: var(--f-display);
+    font-stretch: 114%;
+    font-weight: 800;
+    font-size: clamp(28px, 4.6vw, 40px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.01em
+  }
+  .tile .v small {
+    font-size: .48em;
+    color: var(--ink-3);
+    font-weight: 700
+  }
+  .tile .s {
+    font-size: 13px;
+    color: var(--ink-2)
+  }
+  .tile .s.warn {
+    color: var(--no)
+  }
+  .scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 14px
+  }
+  .cls th,
+  .cls td {
+    padding: 9px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+    vertical-align: middle
+  }
+  .cls tbody tr:last-child td,
+  .cls tbody tr:last-child th {
+    border-bottom: 0
+  }
+  .cls thead th {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding-top: 11px;
+    padding-bottom: 11px
+  }
+  .cls thead th button {
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 2px 0;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 5px;
+    align-items: center
+  }
+  .cls thead th button:hover {
+    color: var(--ink)
+  }
+  .cls thead th[aria-sort] button {
+    color: var(--ink)
+  }
+  .cls .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums
+  }
+  .cls tbody th {
+    font-weight: 600
+  }
+  .cls .who small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--ink-3)
+  }
+  .noname {
+    font-style: italic;
+    color: var(--ink-2)
+  }
+  .meter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end
+  }
+  .meter i {
+    display: inline-block;
+    width: 64px;
+    height: 7px;
+    border-radius: 4px;
+    background: var(--surface-2);
+    overflow: hidden;
+    flex: none
+  }
+  .meter i b {
+    display: block;
+    height: 100%;
+    background: var(--ok);
+    border-radius: 4px
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 9px;
+    white-space: nowrap
+  }
+  .badge.ok {
+    background: var(--ok-bg);
+    color: var(--ok)
+  }
+  .badge.bad {
+    background: var(--no-bg);
+    color: var(--no)
+  }
+  .badge.unk {
+    background: var(--warm-bg);
+    color: var(--warm)
+  }
+  .old {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-left: 6px
+  }
 
   /* the heat map */
-  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink-2);padding:12px 18px;border-bottom:1px dashed var(--rule)}
-  .legend span{display:inline-flex;align-items:center;gap:6px}
-  .heat{width:auto;border-collapse:separate;border-spacing:2px;font-size:13px;margin:8px 12px 12px}
-  .heat th,.heat td{padding:0;text-align:center}
-  .heat thead th{font-family:var(--f-mono);font-weight:600;font-size:11.5px;color:var(--ink-3);height:26px;min-width:30px}
-  .heat thead th a{text-decoration:none;display:block;padding:3px 0;border-radius:5px;color:var(--ink-2)}
-  .heat thead th a:hover{background:var(--surface-2);color:var(--ink)}
-  .heat .rh{position:sticky;left:0;z-index:1;background:var(--surface);text-align:left;padding:0 12px 0 6px;font-weight:600;white-space:nowrap;
-    max-width:13em;overflow:hidden;text-overflow:ellipsis;font-size:13.5px}
-  .heat thead .rh{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3)}
-  .c{width:30px;height:28px;border-radius:5px;font-family:var(--f-mono);font-weight:600;font-size:14px;line-height:28px}
-  .c.y{background:var(--ok-bg);color:var(--ok)}
-  .c.a{background:var(--later-bg);color:var(--later)}
-  .c.x{background:var(--no-bg);color:var(--no)}
-  .c.s{background:repeating-linear-gradient(135deg,var(--surface-2) 0 3px,transparent 3px 6px);color:var(--ink-3)}
-  .c.n{color:var(--ink-3);font-weight:400}
-  .c small{font-size:9.5px;font-weight:600;vertical-align:super;line-height:0;margin-left:1px;opacity:.85}
-  .badge.late{background:var(--warm-bg);color:var(--warm);margin-left:6px}
-  .heat tfoot th,.heat tfoot td{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);height:24px;font-variant-numeric:tabular-nums}
-  .heat tfoot tr:first-child > *{border-top:1px solid var(--rule);padding-top:4px}
-  .heat tfoot .rh{font-family:var(--f-body);font-size:12px;font-weight:500;color:var(--ink-3)}
-  .heat .hard{color:var(--no);font-weight:700}
-  .heat thead th.hard{box-shadow:inset 0 -3px 0 var(--no)}
-  .two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;align-items:start}
-  @media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
-  .list{list-style:none;margin:0;padding:0}
-  .list li{display:grid;grid-template-columns:2.6em minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:11px 18px;border-bottom:1px dashed var(--rule)}
-  .list li:last-child{border-bottom:0}
-  .list .k{font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--ink-3);grid-row:1 / span 3;align-self:start;padding-top:1px}
-  .list .q{font-family:var(--f-mono);font-weight:600;font-size:14.5px;overflow-wrap:anywhere;min-width:0}
-  .list .q.plain{font-family:var(--f-body)}
-  .list .d{grid-column:2;font-size:13px;color:var(--ink-2)}
-  .list .act{grid-column:3;grid-row:1 / span 3}
-  .list .empty{display:block;padding:18px;color:var(--ink-3);font-size:14px}
-  .stack{grid-column:2;display:flex;gap:2px;height:7px;max-width:260px;margin-top:3px}
-  .stack i{display:block;height:100%;border-radius:2px}
-  .stack .y{background:var(--ok)} .stack .a{background:var(--later)} .stack .x{background:var(--no)} .stack .s{background:var(--ink-3);opacity:.45}
-  .small-link{font-size:13px;font-weight:600;color:var(--ink);text-decoration:none;border:1px solid var(--rule);border-radius:8px;padding:5px 10px;white-space:nowrap}
-  .small-link:hover{border-color:var(--ink-3);background:var(--surface-2)}
-  .junk li{grid-template-columns:minmax(0,1fr)}
-  .junk code{font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere;color:var(--ink-2)}
-  .print-only{display:none}
-  @media (max-width:520px){
-    .panel-head,.blk,.legend{padding-left:14px;padding-right:14px}
-    .list li{padding:10px 14px}
-    .cls th,.cls td{padding:8px 10px}
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 13px;
+    color: var(--ink-2);
+    padding: 12px 18px;
+    border-bottom: 1px dashed var(--rule)
   }
-  @media print{
-    @page{margin:12mm}
-    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    body{background:#fff;font-size:12px}
-    .page{max-width:none;padding:0;gap:12px}
-    .no-print,.sitenav,.theme-btn,.masthead .tagline,.small-link{display:none !important}
-    .print-only{display:block}
-    .panel{box-shadow:none;break-inside:avoid}
-    .scroll{overflow:visible}
-    .heat .rh{position:static}
-    .cls th,.cls td{padding:6px 8px}
-    .meter i{width:40px}
-    .cls thead th button span,.sort-hint{display:none}
-    .c{width:20px;height:20px;line-height:20px;font-size:11px}
-    .heat thead th{min-width:20px}
-    h1{font-size:26px}
-    .tile .v{font-size:26px}
+  .legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px
   }
-  @supports (-webkit-touch-callout:none){#paste, #linkIn{font-size:16px}}   /* iPhone Safari zooms into a box under 16px */
+  .heat {
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 2px;
+    font-size: 13px;
+    margin: 8px 12px 12px
+  }
+  .heat th,
+  .heat td {
+    padding: 0;
+    text-align: center
+  }
+  .heat thead th {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 11.5px;
+    color: var(--ink-3);
+    height: 26px;
+    min-width: 30px
+  }
+  .heat thead th a {
+    text-decoration: none;
+    display: block;
+    padding: 3px 0;
+    border-radius: 5px;
+    color: var(--ink-2)
+  }
+  .heat thead th a:hover {
+    background: var(--surface-2);
+    color: var(--ink)
+  }
+  .heat .rh {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface);
+    text-align: left;
+    padding: 0 12px 0 6px;
+    font-weight: 600;
+    white-space: nowrap;
+    max-width: 13em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13.5px
+  }
+  .heat thead .rh {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  .c {
+    width: 30px;
+    height: 28px;
+    border-radius: 5px;
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 28px
+  }
+  .c.y {
+    background: var(--ok-bg);
+    color: var(--ok)
+  }
+  .c.a {
+    background: var(--later-bg);
+    color: var(--later)
+  }
+  .c.x {
+    background: var(--no-bg);
+    color: var(--no)
+  }
+  .c.s {
+    background: repeating-linear-gradient(135deg, var(--surface-2) 0 3px, transparent 3px 6px);
+    color: var(--ink-3)
+  }
+  .c.n {
+    color: var(--ink-3);
+    font-weight: 400
+  }
+  .c small {
+    font-size: 9.5px;
+    font-weight: 600;
+    vertical-align: super;
+    line-height: 0;
+    margin-left: 1px;
+    opacity: .85
+  }
+  .badge.late {
+    background: var(--warm-bg);
+    color: var(--warm);
+    margin-left: 6px
+  }
+  .heat tfoot th,
+  .heat tfoot td {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--ink-2);
+    height: 24px;
+    font-variant-numeric: tabular-nums
+  }
+  .heat tfoot tr:first-child>* {
+    border-top: 1px solid var(--rule);
+    padding-top: 4px
+  }
+  .heat tfoot .rh {
+    font-family: var(--f-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-3)
+  }
+  .heat .hard {
+    color: var(--no);
+    font-weight: 700
+  }
+  .heat thead th.hard {
+    box-shadow: inset 0 -3px 0 var(--no)
+  }
+  .two {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    align-items: start
+  }
+  @media (max-width:860px) {
+    .two {
+      grid-template-columns: minmax(0, 1fr)
+    }
+  }
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0
+  }
+  .list li {
+    display: grid;
+    grid-template-columns: 2.6em minmax(0, 1fr) auto;
+    gap: 2px 12px;
+    align-items: center;
+    padding: 11px 18px;
+    border-bottom: 1px dashed var(--rule)
+  }
+  .list li:last-child {
+    border-bottom: 0
+  }
+  .list .k {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink-3);
+    grid-row: 1 / span 3;
+    align-self: start;
+    padding-top: 1px
+  }
+  .list .q {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 14.5px;
+    overflow-wrap: anywhere;
+    min-width: 0
+  }
+  .list .q.plain {
+    font-family: var(--f-body)
+  }
+  .list .d {
+    grid-column: 2;
+    font-size: 13px;
+    color: var(--ink-2)
+  }
+  .list .act {
+    grid-column: 3;
+    grid-row: 1 / span 3
+  }
+  .list .empty {
+    display: block;
+    padding: 18px;
+    color: var(--ink-3);
+    font-size: 14px
+  }
+  .stack {
+    grid-column: 2;
+    display: flex;
+    gap: 2px;
+    height: 7px;
+    max-width: 260px;
+    margin-top: 3px
+  }
+  .stack i {
+    display: block;
+    height: 100%;
+    border-radius: 2px
+  }
+  .stack .y {
+    background: var(--ok)
+  }
+  .stack .a {
+    background: var(--later)
+  }
+  .stack .x {
+    background: var(--no)
+  }
+  .stack .s {
+    background: var(--ink-3);
+    opacity: .45
+  }
+  .small-link {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 5px 10px;
+    white-space: nowrap
+  }
+  .small-link:hover {
+    border-color: var(--ink-3);
+    background: var(--surface-2)
+  }
+  .junk li {
+    grid-template-columns: minmax(0, 1fr)
+  }
+  .junk code {
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    overflow-wrap: anywhere;
+    color: var(--ink-2)
+  }
+  .print-only {
+    display: none
+  }
+  @media (max-width:520px) {
+    .panel-head,
+    .blk,
+    .legend {
+      padding-left: 14px;
+      padding-right: 14px
+    }
+    .list li {
+      padding: 10px 14px
+    }
+    .cls th,
+    .cls td {
+      padding: 8px 10px
+    }
+  }
+  @media print {
+    @page {
+      margin: 12mm
+    }
+    * {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact
+    }
+    body {
+      background: #fff;
+      font-size: 12px
+    }
+    .page {
+      max-width: none;
+      padding: 0;
+      gap: 12px
+    }
+    .no-print,
+    .sitenav,
+    .theme-btn,
+    .masthead .tagline,
+    .small-link {
+      display: none !important
+    }
+    .print-only {
+      display: block
+    }
+    .panel {
+      box-shadow: none;
+      break-inside: avoid
+    }
+    .scroll {
+      overflow: visible
+    }
+    .heat .rh {
+      position: static
+    }
+    .cls th,
+    .cls td {
+      padding: 6px 8px
+    }
+    .meter i {
+      width: 40px
+    }
+    .cls thead th button span,
+    .sort-hint {
+      display: none
+    }
+    .c {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      font-size: 11px
+    }
+    .heat thead th {
+      min-width: 20px
+    }
+    h1 {
+      font-size: 26px
+    }
+    .tile .v {
+      font-size: 26px
+    }
+  }
+  @supports (-webkit-touch-callout:none) {
+    #paste,
+    #linkIn {
+      font-size: 16px
+    }
+  }
+  /* iPhone Safari zooms into a box under 16px */
 </style>
 
 <div class="page">
@@ -277,735 +1015,1077 @@
 </div>
 
 <script>
-/* class-results.html — Class results. A teacher pastes the lines students hand in at the end of a practice set
-   (sets.html), and gets the class table, a problem-by-problem heat map, the hardest problems and who needs help.
-   Each line is read and its check code worked out again, so a changed line shows as edited.
-   The set's own problems come from its link (pasted in either box) or from the sets sets.html made on this
-   device (localStorage["practice-sets"]); a line names its set by hid(code, 6).
-   Nothing leaves the browser. The last paste is kept in localStorage["results-paste"] unless the teacher turns that off. */
-(function(){
-  "use strict";
-  var $ = function(id){ return document.getElementById(id); };
-  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
-  // a helper's full address from its name (site.js knows which folder each page is in)
-  function U(page, params){ return window.HelperSite ? window.HelperSite.url(page, params) : page + (params ? "?" + params : ""); }
+  /* class-results.html — Class results. A teacher pastes the lines students hand in at the end of a practice set
+     (sets.html), and gets the class table, a problem-by-problem heat map, the hardest problems and who needs help.
+     Each line is read and its check code worked out again, so a changed line shows as edited.
+     The set's own problems come from its link (pasted in either box) or from the sets sets.html made on this
+     device (localStorage["practice-sets"]); a line names its set by hid(code, 6).
+     Nothing leaves the browser. The last paste is kept in localStorage["results-paste"] unless the teacher turns that off. */
+  (function() {
+    "use strict";
+    var $ = function(id) { return document.getElementById(id); };
 
-  /* ===================== the sets (the same format as sets.html) ===================== */
-  var TOPICS = [
-    ["addition.html","Addition"], ["subtraction.html","Subtraction"], ["multiplication.html","Multiplication"], ["division.html","Division"],
-    ["fractions.html","Fractions"], ["percents.html","Percents"], ["factors.html","Factors & primes"], ["integers.html","Integers"],
-    ["ratios.html","Ratios & rates"], ["unit-conversions.html","Unit conversions"], ["money-math.html","Money math"], ["aviation.html","Aviation"], ["pemdas.html","Order of operations"], ["algebra.html","Algebra"], ["lines.html","Lines & slope"],
-    ["geometry.html","Geometry"], ["stats.html","Statistics"], ["probability.html","Probability"], ["counting.html","Counting"], ["trigonometry.html","Trigonometry"], ["calculus.html","Calculus"], ["number-sense.html","Number sense"], ["quadratics.html","Quadratics & polynomials"], ["logarithms.html","Logarithms"], ["sequences.html","Sequences & series"], ["functions.html","Functions"], ["radicals.html","Radicals & rational expressions"], ["complex-numbers.html","Complex numbers"], ["college-statistics.html","College statistics"], ["matrices-and-vectors.html","Matrices & vectors"], ["exponents.html","Exponents"], ["graphing.html","Graphing"], ["scratch.html","By hand"], ["wordproblems.html","Story problems"], ["flashcards.html","Flash cards"]
-  ];
-  function topic(page){
-    if (!/\.html$/.test(page)) page += ".html";
-    for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i][0] === page) return TOPICS[i];
-    return null;
-  }
-  function cleanParams(p){
-    return String(p || "").replace(/^\?/, "").split("&").filter(function(kv){ return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
-  }
-  function textOf(page, params){
-    var o = {}, t = topic(page);
-    cleanParams(params).split("&").forEach(function(kv){
-      var i = kv.indexOf("="), k = i < 0 ? kv : kv.slice(0, i), v = i < 0 ? "" : kv.slice(i + 1);
-      try { v = decodeURIComponent(v.replace(/\+/g, " ")); } catch (e){}
-      o[k] = v;
-    });
-    if (o.q) return o.q;
-    var rest = Object.keys(o).filter(function(k){ return k !== "mode"; }).map(function(k){ return k + " = " + o[k]; }).join(", ");
-    return (t ? t[1] : page) + (o.mode ? " (" + o.mode + ")" : "") + (rest ? ": " + rest : "");
-  }
-  function b64url(bytes){
-    var s = "";
-    for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
-    return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  }
-  function unb64url(str){
-    str = String(str).replace(/-/g, "+").replace(/_/g, "/");
-    while (str.length % 4) str += "=";
-    var bin = atob(str), out = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
-    return out;
-  }
-  function pipe(bytes, stream){
-    var w = stream.writable.getWriter();
-    w.write(bytes); w.close();
-    return new Response(stream.readable).arrayBuffer().then(function(b){ return new Uint8Array(b); });
-  }
-  function canUnzip(){ try { return typeof DecompressionStream === "function" && !!new DecompressionStream("deflate-raw"); } catch (e){ return false; } }
-  function decodeSet(code){
-    return new Promise(function(ok, bad){
-      code = String(code || "");
-      var kind = code.charAt(0), bytes;
-      try { bytes = unb64url(code.slice(1)); } catch (e){ return bad(new Error("not base64")); }
-      if (kind === "j") return ok(bytes);
-      if (kind === "z"){
-        if (!canUnzip()) return bad(new Error("browser"));
-        return pipe(bytes, new DecompressionStream("deflate-raw")).then(ok, function(){ bad(new Error("damaged")); });
+    function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    // a helper's full address from its name (site.js knows which folder each page is in)
+    function U(page, params) { return window.HelperSite ? window.HelperSite.url(page, params) : page + (params ? "?" + params : ""); }
+
+    /* ===================== the sets (the same format as sets.html) ===================== */
+    var TOPICS = [
+      ["addition.html", "Addition"],
+      ["subtraction.html", "Subtraction"],
+      ["multiplication.html", "Multiplication"],
+      ["division.html", "Division"],
+      ["fractions.html", "Fractions"],
+      ["percents.html", "Percents"],
+      ["factors.html", "Factors & primes"],
+      ["integers.html", "Integers"],
+      ["ratios.html", "Ratios & rates"],
+      ["unit-conversions.html", "Unit conversions"],
+      ["money-math.html", "Money math"],
+      ["aviation.html", "Aviation"],
+      ["pemdas.html", "Order of operations"],
+      ["algebra.html", "Algebra"],
+      ["lines.html", "Lines & slope"],
+      ["geometry.html", "Geometry"],
+      ["stats.html", "Statistics"],
+      ["probability.html", "Probability"],
+      ["counting.html", "Counting"],
+      ["trigonometry.html", "Trigonometry"],
+      ["calculus.html", "Calculus"],
+      ["number-sense.html", "Number sense"],
+      ["quadratics.html", "Quadratics & polynomials"],
+      ["logarithms.html", "Logarithms"],
+      ["sequences.html", "Sequences & series"],
+      ["functions.html", "Functions"],
+      ["radicals.html", "Radicals & rational expressions"],
+      ["complex-numbers.html", "Complex numbers"],
+      ["college-statistics.html", "College statistics"],
+      ["matrices-and-vectors.html", "Matrices & vectors"],
+      ["exponents.html", "Exponents"],
+      ["graphing.html", "Graphing"],
+      ["scratch.html", "By hand"],
+      ["wordproblems.html", "Story problems"],
+      ["flashcards.html", "Flash cards"]
+    ];
+
+    function topic(page) {
+      if (!/\.html$/.test(page)) page += ".html";
+      for (var i = 0; i < TOPICS.length; i++)
+        if (TOPICS[i][0] === page) return TOPICS[i];
+      return null;
+    }
+
+    function cleanParams(p) {
+      return String(p || "").replace(/^\?/, "").split("&").filter(function(kv) { return kv && !/^(practice|embed|theme)=/.test(kv); }).join("&");
+    }
+
+    function textOf(page, params) {
+      var o = {},
+        t = topic(page);
+      cleanParams(params).split("&").forEach(function(kv) {
+        var i = kv.indexOf("="),
+          k = i < 0 ? kv : kv.slice(0, i),
+          v = i < 0 ? "" : kv.slice(i + 1);
+        try { v = decodeURIComponent(v.replace(/\+/g, " ")); } catch (e) {}
+        o[k] = v;
+      });
+      if (o.q) return o.q;
+      var rest = Object.keys(o).filter(function(k) { return k !== "mode"; }).map(function(k) { return k + " = " + o[k]; }).join(", ");
+      return (t ? t[1] : page) + (o.mode ? " (" + o.mode + ")" : "") + (rest ? ": " + rest : "");
+    }
+
+    function b64url(bytes) {
+      var s = "";
+      for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+      return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+    }
+
+    function unb64url(str) {
+      str = String(str).replace(/-/g, "+").replace(/_/g, "/");
+      while (str.length % 4) str += "=";
+      var bin = atob(str),
+        out = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+
+    function pipe(bytes, stream) {
+      var w = stream.writable.getWriter();
+      w.write(bytes);
+      w.close();
+      return new Response(stream.readable).arrayBuffer().then(function(b) { return new Uint8Array(b); });
+    }
+
+    function canUnzip() { try { return typeof DecompressionStream === "function" && !!new DecompressionStream("deflate-raw"); } catch (e) { return false; } }
+
+    function decodeSet(code) {
+      return new Promise(function(ok, bad) {
+        code = String(code || "");
+        var kind = code.charAt(0),
+          bytes;
+        try { bytes = unb64url(code.slice(1)); } catch (e) { return bad(new Error("not base64")); }
+        if (kind === "j") return ok(bytes);
+        if (kind === "z") {
+          if (!canUnzip()) return bad(new Error("browser"));
+          return pipe(bytes, new DecompressionStream("deflate-raw")).then(ok, function() { bad(new Error("damaged")); });
+        }
+        bad(new Error("unknown kind"));
+      }).then(function(bytes) {
+        var o = JSON.parse(new TextDecoder().decode(bytes));
+        if (!o || o.v !== 1 || !Array.isArray(o.p)) throw new Error("not a set");
+        var probs = o.p.filter(function(p) { return Array.isArray(p) && typeof p[0] === "string" && topic(p[0]); })
+          .slice(0, 100).map(function(p) { return { page: topic(p[0])[0], params: cleanParams(p[1]) }; });
+        if (!probs.length) throw new Error("no problems");
+        var a = o.a && typeof o.a === "object" ? o.a : null; // an assignment (sets.html?assignment): its due date, its options
+        return {
+          title: String(o.t || "Practice set").slice(0, 60) || "Practice set",
+          probs: probs,
+          asg: a ? { due: /^\d{4}-\d\d-\d\d$/.test(String(a.d || "")) ? String(a.d) : "", steps: a.s !== 0, retries: a.r !== 0 } : null
+        };
+      });
+    }
+
+    function probLink(p) { return U(p.page, (p.params ? p.params + "&" : "") + "practice=check"); }
+
+    function hash(str, seed) {
+      var h1 = 0xdeadbeef ^ (seed || 0),
+        h2 = 0x41c6ce57 ^ (seed || 0);
+      for (var i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
       }
-      bad(new Error("unknown kind"));
-    }).then(function(bytes){
-      var o = JSON.parse(new TextDecoder().decode(bytes));
-      if (!o || o.v !== 1 || !Array.isArray(o.p)) throw new Error("not a set");
-      var probs = o.p.filter(function(p){ return Array.isArray(p) && typeof p[0] === "string" && topic(p[0]); })
-                     .slice(0, 100).map(function(p){ return { page:topic(p[0])[0], params:cleanParams(p[1]) }; });
-      if (!probs.length) throw new Error("no problems");
-      var a = o.a && typeof o.a === "object" ? o.a : null;      // an assignment (sets.html?assignment): its due date, its options
-      return { title:String(o.t || "Practice set").slice(0, 60) || "Practice set", probs:probs,
-               asg:a ? { due:/^\d{4}-\d\d-\d\d$/.test(String(a.d || "")) ? String(a.d) : "", steps:a.s !== 0, retries:a.r !== 0 } : null };
-    });
-  }
-  function probLink(p){ return U(p.page, (p.params ? p.params + "&" : "") + "practice=check"); }
-  function hash(str, seed){
-    var h1 = 0xdeadbeef ^ (seed || 0), h2 = 0x41c6ce57 ^ (seed || 0);
-    for (var i = 0, ch; i < str.length; i++){ ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
-    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
-  }
-  function hid(str, n, seed){ var s = hash(str, seed).toString(36).toUpperCase(); while (s.length < n) s = "0" + s; return s.slice(-n); }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+    }
 
-  /* ===================== the hand-in line (class-results.html has the same reader) =====================
-     v2 (now):  [Name · ]Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 1✓ 2~ 3✗ 4– … ·
-                2026-10-21 11:17 · set DLMILC · check YG1AE4
-     v1 (old):  Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 2026-10-21 11:17 · set DLMILC · check YG1AE4
-     Marks, one per problem: ✓ right first time, ~ right after more tries or a hint, ✗ looked at the work or tried and
-     not right, – skipped without trying. "set" is hid(the set's code, 6). The check code is cyrb53 over every field,
-     the name and the marks too (marks hashed as letters y a x s, so ✓ typed as v or ✗ as x still checks out).
-     Neither the title nor the name can hold " · " (it becomes "-"), so the fields split cleanly.
-     v3 (assignments): v2 with the tries after the marks, how many times each problem was checked (0 for none, at most 99):
-                [Name · ]Title · … · 2 skipped · 1✓ 2~ 3✗ 4– · tries 1 3 1 0 · 2026-10-21 11:17 · set DLMILC · check YG1AE4
-                Its check code is checkV3: the tries (joined by ",") are hashed too. */
-  var MK = { y:"✓", a:"~", x:"✗", s:"–" };
-  var MK_IN = { "✓":"y", "✔":"y", "√":"y", "v":"y", "V":"y", "y":"y", "Y":"y", "+":"y",
-                "~":"a", "∼":"a", "～":"a", "≈":"a", "˜":"a",
-                "✗":"x", "✘":"x", "×":"x", "x":"x", "X":"x", "✕":"x", "✖":"x",
-                "–":"s", "-":"s", "—":"s", "−":"s", "_":"s", "‒":"s", "―":"s" };
-  function checkV1(title, first, total, solved, skipped, when, setId){
-    return hid(["v1", title, first, total, solved, skipped, when, setId].join("|"), 6, 7919);
-  }
-  function checkV2(name, title, first, total, solved, skipped, marks, when, setId){
-    return hid(["v2", name, title, first, total, solved, skipped, marks, when, setId].join("|"), 6, 7919);
-  }
-  function checkV3(name, title, first, total, solved, skipped, marks, tries, when, setId){
-    return hid(["v3", name, title, first, total, solved, skipped, marks, tries.join(","), when, setId].join("|"), 6, 7919);
-  }
-  function cleanField(s){ return String(s || "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/·/g, "-").replace(/\s+/g, " ").trim(); }
-  function lineFor(o){            // o: { name, title, first, n, solved, skipped, marks:"yaxs…", when, set[, tries:[1, 3, 0, …] (v3)] }
-    var name = cleanField(o.name).slice(0, 40), title = cleanField(o.title) || "Practice set";
-    var mk = o.marks.split("").map(function(c, k){ return (k + 1) + MK[c]; }).join(" ");
-    var tr = o.tries ? o.tries.map(function(t){ return Math.max(0, Math.min(99, t | 0)); }) : null;
-    return (name ? name + " · " : "") + title + " · " + o.first + " of " + o.n + " right first time · " + o.solved + " of " + o.n
-      + " right in the end · " + o.skipped + " skipped · " + mk + (tr ? " · tries " + tr.join(" ") : "") + " · " + o.when + " · set " + o.set
-      + " · check " + (tr ? checkV3(name, title, o.first, o.n, o.solved, o.skipped, o.marks, tr, o.when, o.set)
-                          : checkV2(name, title, o.first, o.n, o.solved, o.skipped, o.marks, o.when, o.set));
-  }
-  // "1 3 0 2" → [1, 3, 0, 2] when there are n of them, else null
-  function readTries(s, n){
-    var t = String(s).trim();
-    if (!/^\d{1,2}(?: \d{1,2})*$/.test(t)) return null;
-    var a = t.split(" ").map(Number);
-    return a.length === n ? a : null;
-  }
-  var CORE = /(\d+) of (\d+) right first time · (\d+) of (\d+) right in the end · (\d+) skipped · (?:(.*?) · )?(\d{4}-\d\d-\d\d \d\d:\d\d) · set ([0-9A-Za-z]{6}) · check ([0-9A-Za-z]{6})(?![0-9A-Za-z])/;
-  function readMarks(s, n){
-    var out = "", re = /(\d+)\s*([^\s\d])/g, m, k = 0;
-    if (/[^\s]/.test(s.replace(re, ""))) return null;
-    while ((m = re.exec(s))){ k++; if (Number(m[1]) !== k || !MK_IN[m[2]]) return null; out += MK_IN[m[2]]; }
-    return k === n ? out : null;
-  }
-  function wordTails(s){ var w = s.split(" "), out = []; for (var i = 0; i < w.length && i < 16; i++) out.push(w.slice(i).join(" ")); return out; }
-  function unBullet(s){ return s.replace(/^(?:[-*•◦‣▪–—>]+|\(?\d{1,3}[.)])\s+/, "").trim(); }
-  var CP1252 = { "€":0x80, "‚":0x82, "ƒ":0x83, "„":0x84, "…":0x85, "†":0x86, "‡":0x87, "ˆ":0x88, "‰":0x89, "Š":0x8A, "‹":0x8B, "Œ":0x8C, "Ž":0x8E,
-                 "‘":0x91, "’":0x92, "“":0x93, "”":0x94, "•":0x95, "–":0x96, "—":0x97, "˜":0x98, "™":0x99, "š":0x9A, "›":0x9B, "œ":0x9C, "ž":0x9E, "Ÿ":0x9F };
-  function unMojibake(s){         // UTF-8 read as Windows-1252 ("Â·", "âœ“") back to what it was
-    if (!/[ÂâÃ]/.test(s) || typeof TextDecoder !== "function") return s;
-    try {
-      var bytes = [];
-      for (var i = 0; i < s.length; i++){
-        var c = s.charAt(i), b = c.charCodeAt(0);
-        if (b < 256) bytes.push(b); else if (CP1252[c] !== undefined) bytes.push(CP1252[c]); else return s;
+    function hid(str, n, seed) { var s = hash(str, seed).toString(36).toUpperCase(); while (s.length < n) s = "0" + s; return s.slice(-n); }
+
+    /* ===================== the hand-in line (class-results.html has the same reader) =====================
+       v2 (now):  [Name · ]Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 1✓ 2~ 3✗ 4– … ·
+                  2026-10-21 11:17 · set DLMILC · check YG1AE4
+       v1 (old):  Title · 5 of 10 right first time · 7 of 10 right in the end · 2 skipped · 2026-10-21 11:17 · set DLMILC · check YG1AE4
+       Marks, one per problem: ✓ right first time, ~ right after more tries or a hint, ✗ looked at the work or tried and
+       not right, – skipped without trying. "set" is hid(the set's code, 6). The check code is cyrb53 over every field,
+       the name and the marks too (marks hashed as letters y a x s, so ✓ typed as v or ✗ as x still checks out).
+       Neither the title nor the name can hold " · " (it becomes "-"), so the fields split cleanly.
+       v3 (assignments): v2 with the tries after the marks, how many times each problem was checked (0 for none, at most 99):
+                  [Name · ]Title · … · 2 skipped · 1✓ 2~ 3✗ 4– · tries 1 3 1 0 · 2026-10-21 11:17 · set DLMILC · check YG1AE4
+                  Its check code is checkV3: the tries (joined by ",") are hashed too. */
+    var MK = { y: "✓", a: "~", x: "✗", s: "–" };
+    var MK_IN = {
+      "✓": "y",
+      "✔": "y",
+      "√": "y",
+      "v": "y",
+      "V": "y",
+      "y": "y",
+      "Y": "y",
+      "+": "y",
+      "~": "a",
+      "∼": "a",
+      "～": "a",
+      "≈": "a",
+      "˜": "a",
+      "✗": "x",
+      "✘": "x",
+      "×": "x",
+      "x": "x",
+      "X": "x",
+      "✕": "x",
+      "✖": "x",
+      "–": "s",
+      "-": "s",
+      "—": "s",
+      "−": "s",
+      "_": "s",
+      "‒": "s",
+      "―": "s"
+    };
+
+    function checkV1(title, first, total, solved, skipped, when, setId) {
+      return hid(["v1", title, first, total, solved, skipped, when, setId].join("|"), 6, 7919);
+    }
+
+    function checkV2(name, title, first, total, solved, skipped, marks, when, setId) {
+      return hid(["v2", name, title, first, total, solved, skipped, marks, when, setId].join("|"), 6, 7919);
+    }
+
+    function checkV3(name, title, first, total, solved, skipped, marks, tries, when, setId) {
+      return hid(["v3", name, title, first, total, solved, skipped, marks, tries.join(","), when, setId].join("|"), 6, 7919);
+    }
+
+    function cleanField(s) { return String(s || "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/·/g, "-").replace(/\s+/g, " ").trim(); }
+
+    function lineFor(o) { // o: { name, title, first, n, solved, skipped, marks:"yaxs…", when, set[, tries:[1, 3, 0, …] (v3)] }
+      var name = cleanField(o.name).slice(0, 40),
+        title = cleanField(o.title) || "Practice set";
+      var mk = o.marks.split("").map(function(c, k) { return (k + 1) + MK[c]; }).join(" ");
+      var tr = o.tries ? o.tries.map(function(t) { return Math.max(0, Math.min(99, t | 0)); }) : null;
+      return (name ? name + " · " : "") + title + " · " + o.first + " of " + o.n + " right first time · " + o.solved + " of " + o.n +
+        " right in the end · " + o.skipped + " skipped · " + mk + (tr ? " · tries " + tr.join(" ") : "") + " · " + o.when + " · set " + o.set +
+        " · check " + (tr ? checkV3(name, title, o.first, o.n, o.solved, o.skipped, o.marks, tr, o.when, o.set) :
+          checkV2(name, title, o.first, o.n, o.solved, o.skipped, o.marks, o.when, o.set));
+    }
+    // "1 3 0 2" → [1, 3, 0, 2] when there are n of them, else null
+    function readTries(s, n) {
+      var t = String(s).trim();
+      if (!/^\d{1,2}(?: \d{1,2})*$/.test(t)) return null;
+      var a = t.split(" ").map(Number);
+      return a.length === n ? a : null;
+    }
+    var CORE = /(\d+) of (\d+) right first time · (\d+) of (\d+) right in the end · (\d+) skipped · (?:(.*?) · )?(\d{4}-\d\d-\d\d \d\d:\d\d) · set ([0-9A-Za-z]{6}) · check ([0-9A-Za-z]{6})(?![0-9A-Za-z])/;
+
+    function readMarks(s, n) {
+      var out = "",
+        re = /(\d+)\s*([^\s\d])/g,
+        m, k = 0;
+      if (/[^\s]/.test(s.replace(re, ""))) return null;
+      while ((m = re.exec(s))) {
+        k++;
+        if (Number(m[1]) !== k || !MK_IN[m[2]]) return null;
+        out += MK_IN[m[2]];
       }
-      return new TextDecoder("utf-8", { fatal:true }).decode(new Uint8Array(bytes));
-    } catch (e){ return s; }
-  }
-  function squash(s){ return String(s).replace(/[\s\u00a0\u2007\u202f]+/g, " ").trim(); }
-  function readTry(t){
-    var m = CORE.exec(t);
-    if (!m) return null;
-    var mid = m[6], ti = mid === undefined ? -1 : mid.lastIndexOf(" · tries ");
-    var r = { ver:mid === undefined ? 1 : ti >= 0 ? 3 : 2, name:"", title:"", first:+m[1], n:+m[2], solved:+m[3], skipped:+m[5], marks:null, tries:null,
-              when:m[7], set:m[8].toUpperCase(), check:m[9].toUpperCase(), status:"bad", why:"" };
-    if (+m[4] !== r.n || !r.n || r.first > r.n || r.solved > r.n || r.skipped > r.n){ r.status = "unk"; r.why = "the numbers don’t add up"; }
-    if (r.ver >= 2){
-      r.marks = readMarks(ti >= 0 ? mid.slice(0, ti) : mid, r.n);
-      if (r.marks === null){ r.status = "unk"; r.why = "the problem-by-problem marks can’t be read"; }
+      return k === n ? out : null;
     }
-    if (r.ver === 3){
-      r.tries = readTries(mid.slice(ti + 9), r.n);
-      if (r.tries === null){ r.status = "unk"; r.why = "the tries can’t be read"; }
-    }
-    var pre = t.slice(0, m.index).replace(/\s*·\s*$/, ""), f = pre ? pre.split(" · ") : [""], L = f.length;
-    var titleF = f[L - 1], nameF = L >= 2 ? f[L - 2] : null, cands = [];
-    if (r.ver >= 2 && nameF !== null) wordTails(nameF).forEach(function(nm){ cands.push([nm, titleF]); });
-    wordTails(titleF).forEach(function(tt){ cands.push(["", tt]); });
-    if (r.status !== "unk") for (var i = 0; i < cands.length; i++){
-      var c = r.ver === 3 ? checkV3(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.tries, r.when, r.set)
-            : r.ver === 2 ? checkV2(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.when, r.set)
-                          : checkV1(cands[i][1], r.first, r.n, r.solved, r.skipped, r.when, r.set);
-      if (c === r.check){ r.name = cands[i][0]; r.title = cands[i][1]; r.status = "ok"; return r; }
-    }
-    r.name = r.ver >= 2 && nameF !== null ? unBullet(nameF) : "";
-    r.title = unBullet(titleF);
-    return r;
-  }
-  // read one hand-in line: null if it isn't one; status "ok" (unchanged), "bad" (changed after it was made), "unk" (can't tell)
-  function readLine(s){
-    var a = squash(s), b = squash(unMojibake(a).replace(/\s*(?:·|•|∙|\|)\s*/g, " · ")), r = readTry(a);
-    if (r && r.status === "ok") return r;
-    var r2 = b !== a ? readTry(b) : null;
-    if (r2 && (r2.status === "ok" || !r)) return r2;
-    return r;
-  }
 
-  /* ===================== theme ===================== */
-  var themeBtn = $("themeBtn");
-  function isDark(){
-    var t = document.documentElement.getAttribute("data-theme");
-    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
-  try { var th = localStorage.getItem("results-page-theme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e){}
-  themeBtn.addEventListener("click", function(){
-    var next = isDark() ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    try { localStorage.setItem("results-page-theme", next); } catch (e){}
+    function wordTails(s) {
+      var w = s.split(" "),
+        out = [];
+      for (var i = 0; i < w.length && i < 16; i++) out.push(w.slice(i).join(" "));
+      return out;
+    }
+
+    function unBullet(s) { return s.replace(/^(?:[-*•◦‣▪–—>]+|\(?\d{1,3}[.)])\s+/, "").trim(); }
+    var CP1252 = {
+      "€": 0x80,
+      "‚": 0x82,
+      "ƒ": 0x83,
+      "„": 0x84,
+      "…": 0x85,
+      "†": 0x86,
+      "‡": 0x87,
+      "ˆ": 0x88,
+      "‰": 0x89,
+      "Š": 0x8A,
+      "‹": 0x8B,
+      "Œ": 0x8C,
+      "Ž": 0x8E,
+      "‘": 0x91,
+      "’": 0x92,
+      "“": 0x93,
+      "”": 0x94,
+      "•": 0x95,
+      "–": 0x96,
+      "—": 0x97,
+      "˜": 0x98,
+      "™": 0x99,
+      "š": 0x9A,
+      "›": 0x9B,
+      "œ": 0x9C,
+      "ž": 0x9E,
+      "Ÿ": 0x9F
+    };
+
+    function unMojibake(s) { // UTF-8 read as Windows-1252 ("Â·", "âœ“") back to what it was
+      if (!/[ÂâÃ]/.test(s) || typeof TextDecoder !== "function") return s;
+      try {
+        var bytes = [];
+        for (var i = 0; i < s.length; i++) {
+          var c = s.charAt(i),
+            b = c.charCodeAt(0);
+          if (b < 256) bytes.push(b);
+          else if (CP1252[c] !== undefined) bytes.push(CP1252[c]);
+          else return s;
+        }
+        return new TextDecoder("utf-8", { fatal: true }).decode(new Uint8Array(bytes));
+      } catch (e) { return s; }
+    }
+
+    function squash(s) { return String(s).replace(/[\s\u00a0\u2007\u202f]+/g, " ").trim(); }
+
+    function readTry(t) {
+      var m = CORE.exec(t);
+      if (!m) return null;
+      var mid = m[6],
+        ti = mid === undefined ? -1 : mid.lastIndexOf(" · tries ");
+      var r = {
+        ver: mid === undefined ? 1 : ti >= 0 ? 3 : 2,
+        name: "",
+        title: "",
+        first: +m[1],
+        n: +m[2],
+        solved: +m[3],
+        skipped: +m[5],
+        marks: null,
+        tries: null,
+        when: m[7],
+        set: m[8].toUpperCase(),
+        check: m[9].toUpperCase(),
+        status: "bad",
+        why: ""
+      };
+      if (+m[4] !== r.n || !r.n || r.first > r.n || r.solved > r.n || r.skipped > r.n) {
+        r.status = "unk";
+        r.why = "the numbers don’t add up";
+      }
+      if (r.ver >= 2) {
+        r.marks = readMarks(ti >= 0 ? mid.slice(0, ti) : mid, r.n);
+        if (r.marks === null) {
+          r.status = "unk";
+          r.why = "the problem-by-problem marks can’t be read";
+        }
+      }
+      if (r.ver === 3) {
+        r.tries = readTries(mid.slice(ti + 9), r.n);
+        if (r.tries === null) {
+          r.status = "unk";
+          r.why = "the tries can’t be read";
+        }
+      }
+      var pre = t.slice(0, m.index).replace(/\s*·\s*$/, ""),
+        f = pre ? pre.split(" · ") : [""],
+        L = f.length;
+      var titleF = f[L - 1],
+        nameF = L >= 2 ? f[L - 2] : null,
+        cands = [];
+      if (r.ver >= 2 && nameF !== null) wordTails(nameF).forEach(function(nm) { cands.push([nm, titleF]); });
+      wordTails(titleF).forEach(function(tt) { cands.push(["", tt]); });
+      if (r.status !== "unk")
+        for (var i = 0; i < cands.length; i++) {
+          var c = r.ver === 3 ? checkV3(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.tries, r.when, r.set) :
+            r.ver === 2 ? checkV2(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.when, r.set) :
+            checkV1(cands[i][1], r.first, r.n, r.solved, r.skipped, r.when, r.set);
+          if (c === r.check) {
+            r.name = cands[i][0];
+            r.title = cands[i][1];
+            r.status = "ok";
+            return r;
+          }
+        }
+      r.name = r.ver >= 2 && nameF !== null ? unBullet(nameF) : "";
+      r.title = unBullet(titleF);
+      return r;
+    }
+    // read one hand-in line: null if it isn't one; status "ok" (unchanged), "bad" (changed after it was made), "unk" (can't tell)
+    function readLine(s) {
+      var a = squash(s),
+        b = squash(unMojibake(a).replace(/\s*(?:·|•|∙|\|)\s*/g, " · ")),
+        r = readTry(a);
+      if (r && r.status === "ok") return r;
+      var r2 = b !== a ? readTry(b) : null;
+      if (r2 && (r2.status === "ok" || !r)) return r2;
+      return r;
+    }
+
+    /* ===================== theme ===================== */
+    var themeBtn = $("themeBtn");
+
+    function isDark() {
+      var t = document.documentElement.getAttribute("data-theme");
+      return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    function paint() { themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+    try { var th = localStorage.getItem("results-page-theme"); if (th === "light" || th === "dark") document.documentElement.setAttribute("data-theme", th); } catch (e) {}
+    themeBtn.addEventListener("click", function() {
+      var next = isDark() ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("results-page-theme", next); } catch (e) {}
+      paint();
+    });
     paint();
-  });
-  paint();
 
-  /* ===================== reading the paste ===================== */
-  var END = /check\s+[0-9A-Za-z]{6}(?![0-9A-Za-z])/i;
-  function looksLike(s){ return /right first time|right in the end/i.test(s); }
-  // every result in the text; a result may run over several lines (an email broke it), and lines may carry extra text
-  function readPaste(text){
-    text = String(text || "").replace(/\r\n?/g, "\n")
-      .replace(/(check\s+[0-9A-Za-z]{6})(?![0-9A-Za-z])[ \t]+(?=\S)/gi, "$1\n");   // two results run together on one line
-    var lines = text.split("\n"), buf = [], recs = [], junk = [], seq = 0;
-    function drop(list, why){
-      list.forEach(function(l){ if (looksLike(l)) junk.push({ text:l.trim(), why:why }); });
-    }
-    lines.forEach(function(raw){
-      var line = raw.replace(/^(?:\s*>)+ ?/, "").replace(/\s+$/, "");            // email quoting
-      if (!line.trim()) return;
-      buf.push(line);
-      if (buf.length > 14) drop(buf.splice(0, buf.length - 14), "cut off");
-      if (!END.test(line)) return;
-      var best = null, bestK = 0;
-      for (var k = 1; k <= buf.length; k++){
-        var r = readLine(buf.slice(buf.length - k).join(" "));
-        if (!r) continue;
-        if (r.status === "ok"){ best = r; bestK = k; break; }
-        if (!best || (!best.title && r.title)){ best = r; bestK = k; }
+    /* ===================== reading the paste ===================== */
+    var END = /check\s+[0-9A-Za-z]{6}(?![0-9A-Za-z])/i;
+
+    function looksLike(s) { return /right first time|right in the end/i.test(s); }
+    // every result in the text; a result may run over several lines (an email broke it), and lines may carry extra text
+    function readPaste(text) {
+      text = String(text || "").replace(/\r\n?/g, "\n")
+        .replace(/(check\s+[0-9A-Za-z]{6})(?![0-9A-Za-z])[ \t]+(?=\S)/gi, "$1\n"); // two results run together on one line
+      var lines = text.split("\n"),
+        buf = [],
+        recs = [],
+        junk = [],
+        seq = 0;
+
+      function drop(list, why) {
+        list.forEach(function(l) { if (looksLike(l)) junk.push({ text: l.trim(), why: why }); });
       }
-      if (best){
-        drop(buf.slice(0, buf.length - bestK), "cut off");
-        best.seq = seq++;
-        best.raw = squash(buf.slice(buf.length - bestK).join(" "));
-        recs.push(best);
-      } else drop([buf.join(" ")], "unreadable");
-      buf = [];
-    });
-    drop(buf, "cut off");
-    return { recs:recs, junk:junk };
-  }
-
-  // set links in a text: sets.html?set=<code>; a link an email broke over lines goes on while the next line is only code
-  function findCodes(text){
-    var lines = String(text || "").replace(/\r\n?/g, "\n").split("\n").map(function(l){ return l.replace(/^(?:\s*>)+ ?/, "").trim(); });
-    var out = [];
-    lines.forEach(function(l, i){
-      var re = /[?&]set=([A-Za-z0-9_%-]+)/g, m;
-      while ((m = re.exec(l))){
-        var code = m[1], tries = [code];
-        if (re.lastIndex === l.length) for (var j = i + 1; j < lines.length && /^[A-Za-z0-9_-]+$/.test(lines[j]); j++){ code += lines[j]; tries.unshift(code); }
-        out.push(tries.map(function(c){ try { return decodeURIComponent(c); } catch (e){ return c; } }));
-      }
-    });
-    return out;          // a list of tries, longest first
-  }
-
-  /* ===================== the sets we know ===================== */
-  var DECODED = {};          // code -> Promise of the set, or the set, or false
-  var KNOWN = {};            // set id -> { code, set, from }
-  function savedSets(){
-    try { var v = JSON.parse(localStorage.getItem("practice-sets") || "[]"); return Array.isArray(v) ? v.filter(function(x){ return x && typeof x.c === "string"; }) : []; }
-    catch (e){ return []; }
-  }
-  function decodeOnce(code){
-    if (DECODED[code] !== undefined) return Promise.resolve(DECODED[code]);
-    return decodeSet(code).then(function(s){ DECODED[code] = s; return s; }, function(){ DECODED[code] = false; return false; });
-  }
-  // the first try that reads as a set
-  function firstSet(tries){
-    var i = 0;
-    function next(){
-      if (i >= tries.length) return Promise.resolve(null);
-      var c = tries[i++];
-      return decodeOnce(c).then(function(s){ return s ? { code:c, set:s } : next(); });
+      lines.forEach(function(raw) {
+        var line = raw.replace(/^(?:\s*>)+ ?/, "").replace(/\s+$/, ""); // email quoting
+        if (!line.trim()) return;
+        buf.push(line);
+        if (buf.length > 14) drop(buf.splice(0, buf.length - 14), "cut off");
+        if (!END.test(line)) return;
+        var best = null,
+          bestK = 0;
+        for (var k = 1; k <= buf.length; k++) {
+          var r = readLine(buf.slice(buf.length - k).join(" "));
+          if (!r) continue;
+          if (r.status === "ok") {
+            best = r;
+            bestK = k;
+            break;
+          }
+          if (!best || (!best.title && r.title)) {
+            best = r;
+            bestK = k;
+          }
+        }
+        if (best) {
+          drop(buf.slice(0, buf.length - bestK), "cut off");
+          best.seq = seq++;
+          best.raw = squash(buf.slice(buf.length - bestK).join(" "));
+          recs.push(best);
+        } else drop([buf.join(" ")], "unreadable");
+        buf = [];
+      });
+      drop(buf, "cut off");
+      return { recs: recs, junk: junk };
     }
-    return next();
-  }
 
-  /* ===================== state ===================== */
-  var STATE = { groups:[], junk:[], lines:0 }, ACTIVE = "", SORT = { key:"name", dir:1 }, LINKINFO = null;
-  var STORE = "results-paste", KEEP = true;
+    // set links in a text: sets.html?set=<code>; a link an email broke over lines goes on while the next line is only code
+    function findCodes(text) {
+      var lines = String(text || "").replace(/\r\n?/g, "\n").split("\n").map(function(l) { return l.replace(/^(?:\s*>)+ ?/, "").trim(); });
+      var out = [];
+      lines.forEach(function(l, i) {
+        var re = /[?&]set=([A-Za-z0-9_%-]+)/g,
+          m;
+        while ((m = re.exec(l))) {
+          var code = m[1],
+            tries = [code];
+          if (re.lastIndex === l.length)
+            for (var j = i + 1; j < lines.length && /^[A-Za-z0-9_-]+$/.test(lines[j]); j++) {
+              code += lines[j];
+              tries.unshift(code);
+            }
+          out.push(tries.map(function(c) { try { return decodeURIComponent(c); } catch (e) { return c; } }));
+        }
+      });
+      return out; // a list of tries, longest first
+    }
 
-  function group(recs){
-    var G = {}, order = [];
-    recs.forEach(function(r){
-      var g = G[r.set];
-      if (!g){ g = G[r.set] = { id:r.set, recs:[], titles:{}, ns:{} }; order.push(g); }
-      g.recs.push(r);
-      g.titles[r.title] = (g.titles[r.title] || 0) + 1;
-      g.ns[r.n] = (g.ns[r.n] || 0) + 1;
-    });
-    function most(o){ var best = null; Object.keys(o).forEach(function(k){ if (best === null || o[k] > o[best]) best = k; }); return best; }
-    order.forEach(function(g){
-      g.title = most(g.titles) || "Practice set";
-      g.n = Number(most(g.ns)) || 0;
-      g.students = students(g.recs);
-    });
-    order.sort(function(a, b){ return b.students.length - a.students.length; });
-    return order;
-  }
-  var RANK = { ok:2, unk:1, bad:0 };
-  // one row per student: the latest line they sent (a name sent twice keeps the newer one)
-  function students(recs){
-    var by = {}, list = [];
-    recs.forEach(function(r){
-      var key = r.name ? "n:" + r.name.toLowerCase() : "c:" + r.check + "|" + r.when, cur = by[key];
-      if (!cur){ cur = by[key] = { r:r, all:[r], copies:0 }; list.push(cur); return; }
-      if (cur.all.some(function(o){ return same(o, r); })){ cur.copies++; return; }
-      cur.all.push(r);
-      if (r.when > cur.r.when || (r.when === cur.r.when && RANK[r.status] >= RANK[cur.r.status])) cur.r = r;
-    });
-    var k = 0;
-    list.forEach(function(s){
-      s.name = s.r.name;
-      s.label = s.name || "No name " + (++k);
-      s.earlier = s.all.filter(function(o){ return o !== s.r; }).sort(function(a, b){ return a.when < b.when ? -1 : 1; });
-      s.editedToo = s.r.status !== "bad" && s.earlier.some(function(o){ return o.status === "bad"; });
-    });
-    return list;
-  }
-  // the very same line pasted twice (every field alike), not a second go
-  function same(a, b){
-    return ["name", "title", "first", "n", "solved", "skipped", "marks", "when", "set", "check"].every(function(k){ return a[k] === b[k]; })
-      && String(a.tries) === String(b.tries);
-  }
+    /* ===================== the sets we know ===================== */
+    var DECODED = {}; // code -> Promise of the set, or the set, or false
+    var KNOWN = {}; // set id -> { code, set, from }
+    function savedSets() {
+      try { var v = JSON.parse(localStorage.getItem("practice-sets") || "[]"); return Array.isArray(v) ? v.filter(function(x) { return x && typeof x.c === "string"; }) : []; } catch (e) { return []; }
+    }
 
-  function read(){
-    var text = $("paste").value, res = readPaste(text);
-    STATE = { groups:group(res.recs), junk:res.junk, lines:res.recs.length };
-    if (!STATE.groups.some(function(g){ return g.id === ACTIVE; })) ACTIVE = STATE.groups.length ? STATE.groups[0].id : "";
-    save();
-    linkUp().then(render);
-    render();
-  }
-  // which sets we can show the problems of: links in either box, and the sets made on this device
-  var linkSeq = 0;
-  function linkUp(){
-    var my = ++linkSeq, ids = {};
-    STATE.groups.forEach(function(g){ ids[g.id] = g; });
-    var fromBox = findCodes($("linkIn").value), fromPaste = findCodes($("paste").value), jobs = [];
-    LINKINFO = null;
-    fromBox.concat(fromPaste).forEach(function(tries, k){
-      jobs.push(firstSet(tries).then(function(hit){
-        if (k === 0 && fromBox.length) LINKINFO = hit ? { id:hid(hit.code, 6), set:hit.set } : { bad:true };
-        if (hit && !KNOWN[hid(hit.code, 6)]) KNOWN[hid(hit.code, 6)] = { code:hit.code, set:hit.set, from:"link" };
-      }));
-    });
-    savedSets().forEach(function(x){
-      var id = hid(x.c, 6);
-      if (ids[id] && !KNOWN[id]) jobs.push(decodeOnce(x.c).then(function(s){ if (s && !KNOWN[id]) KNOWN[id] = { code:x.c, set:s, from:"device" }; }));
-    });
-    if (!fromBox.length && /\S/.test($("linkIn").value)) LINKINFO = { bad:true };
-    return Promise.all(jobs).then(function(){ if (my !== linkSeq) throw new Error("stale"); }).then(null, function(e){ if (e && e.message === "stale") return new Promise(function(){}); });
-  }
-  function setOf(g){
-    var k = KNOWN[g.id];
-    return k && k.set && k.set.probs.length === g.n ? k : null;
-  }
+    function decodeOnce(code) {
+      if (DECODED[code] !== undefined) return Promise.resolve(DECODED[code]);
+      return decodeSet(code).then(function(s) { DECODED[code] = s; return s; }, function() { DECODED[code] = false; return false; });
+    }
+    // the first try that reads as a set
+    function firstSet(tries) {
+      var i = 0;
 
-  /* ===================== drawing ===================== */
-  function pctTxt(x){ return Math.round(100 * x) + "%"; }
-  function one(x){ return (Math.round(x * 10) / 10).toString(); }
-  function plural(n, w, ws){ return n + " " + (n === 1 ? w : (ws || w + "s")); }
-  function median(a){
-    if (!a.length) return 0;
-    var b = a.slice().sort(function(x, y){ return x - y; }), m = Math.floor(b.length / 2);
-    return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2;
-  }
-  var CHECK = { ok:["ok", "✓ Verified"], bad:["bad", "✗ Edited"], unk:["unk", "? Unknown"] };
-  var MEANS = { y:"right first time", a:"right after more tries or a hint", x:"not right, or looked at the work", s:"skipped" };
-  function sorted(list){
-    var k = SORT.key, d = SORT.dir;
-    function name(s){ return s.name ? s.name.toLowerCase() : "￿" + s.label; }
-    return list.slice().sort(function(a, b){
-      var x, y;
-      if (k === "name"){ x = name(a); y = name(b); }
-      else if (k === "first"){ x = a.r.first / a.r.n; y = b.r.first / b.r.n; }
-      else if (k === "solved"){ x = a.r.solved / a.r.n; y = b.r.solved / b.r.n; }
-      else if (k === "skipped"){ x = a.r.skipped; y = b.r.skipped; }
-      else if (k === "when"){ x = a.r.when; y = b.r.when; }
-      else if (k === "tries"){ x = totalTries(a.r); y = totalTries(b.r); }
-      else { x = RANK[a.r.status]; y = RANK[b.r.status]; }
-      if (x < y) return -d;
-      if (x > y) return d;
-      return name(a) < name(b) ? -1 : name(a) > name(b) ? 1 : 0;
-    });
-  }
+      function next() {
+        if (i >= tries.length) return Promise.resolve(null);
+        var c = tries[i++];
+        return decodeOnce(c).then(function(s) { return s ? { code: c, set: s } : next(); });
+      }
+      return next();
+    }
 
-  // v3 lines (assignments) say how many times each problem was checked
-  function totalTries(r){ return r.tries ? r.tries.reduce(function(a, b){ return a + b; }, 0) : -1; }
-  function lateOf(r, K){
-    var due = K && K.set.asg && K.set.asg.due;
-    return !!due && r.when > due + " 23:59";
-  }
-  function dueText(d){
-    var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(d || "");
-    if (!m) return "";
-    try { return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric", year:"numeric" }); } catch (e){ return d; }
-  }
-  function render(){
-    var out = $("out"), groups = STATE.groups;
-    $("csvBtn").disabled = $("printBtn").disabled = !groups.length;
-    paintLinkMsg();
-    paintSaved();
-    var nStu = groups.reduce(function(t, g){ return t + g.students.length; }, 0);
-    var msg = $("readMsg");
-    if (!/\S/.test($("paste").value)){ msg.textContent = ""; }
-    else if (!STATE.lines){ msg.innerHTML = "<b>No result lines found yet.</b> A result line ends with “set ABC123 · check XYZ789”."; }
-    else msg.innerHTML = "<b>Read " + plural(STATE.lines, "line") + "</b> from " + plural(nStu, "student")
-      + (groups.length > 1 ? " across " + groups.length + " different sets" : "")
-      + (STATE.lines > nStu ? " (" + plural(STATE.lines - nStu, "repeat") + " merged: the latest line counts)" : "")
-      + (STATE.junk.length ? " · " + plural(STATE.junk.length, "line") + " couldn’t be read — see the bottom" : "") + ".";
-    $("empty").hidden = !!groups.length || !!STATE.junk.length;
-    out.hidden = !groups.length && !STATE.junk.length;
-    if (out.hidden){ out.innerHTML = ""; return; }
-    var g = groups.filter(function(x){ return x.id === ACTIVE; })[0], html = "";
-    if (groups.length > 1){
-      html += '<div class="sets no-print" role="group" aria-label="Which practice set">'
-        + '<span class="msg">These lines are from ' + groups.length + " different sets:</span>"
-        + groups.map(function(x){
-            return '<button type="button" data-set="' + esc(x.id) + '" aria-pressed="' + (x.id === ACTIVE) + '">' + esc(x.title)
-              + "<small>" + plural(x.students.length, "student") + " · " + plural(x.n, "problem") + " · set " + esc(x.id) + "</small></button>";
+    /* ===================== state ===================== */
+    var STATE = { groups: [], junk: [], lines: 0 },
+      ACTIVE = "",
+      SORT = { key: "name", dir: 1 },
+      LINKINFO = null;
+    var STORE = "results-paste",
+      KEEP = true;
+
+    function group(recs) {
+      var G = {},
+        order = [];
+      recs.forEach(function(r) {
+        var g = G[r.set];
+        if (!g) {
+          g = G[r.set] = { id: r.set, recs: [], titles: {}, ns: {} };
+          order.push(g);
+        }
+        g.recs.push(r);
+        g.titles[r.title] = (g.titles[r.title] || 0) + 1;
+        g.ns[r.n] = (g.ns[r.n] || 0) + 1;
+      });
+
+      function most(o) {
+        var best = null;
+        Object.keys(o).forEach(function(k) { if (best === null || o[k] > o[best]) best = k; });
+        return best;
+      }
+      order.forEach(function(g) {
+        g.title = most(g.titles) || "Practice set";
+        g.n = Number(most(g.ns)) || 0;
+        g.students = students(g.recs);
+      });
+      order.sort(function(a, b) { return b.students.length - a.students.length; });
+      return order;
+    }
+    var RANK = { ok: 2, unk: 1, bad: 0 };
+    // one row per student: the latest line they sent (a name sent twice keeps the newer one)
+    function students(recs) {
+      var by = {},
+        list = [];
+      recs.forEach(function(r) {
+        var key = r.name ? "n:" + r.name.toLowerCase() : "c:" + r.check + "|" + r.when,
+          cur = by[key];
+        if (!cur) {
+          cur = by[key] = { r: r, all: [r], copies: 0 };
+          list.push(cur);
+          return;
+        }
+        if (cur.all.some(function(o) { return same(o, r); })) { cur.copies++; return; }
+        cur.all.push(r);
+        if (r.when > cur.r.when || (r.when === cur.r.when && RANK[r.status] >= RANK[cur.r.status])) cur.r = r;
+      });
+      var k = 0;
+      list.forEach(function(s) {
+        s.name = s.r.name;
+        s.label = s.name || "No name " + (++k);
+        s.earlier = s.all.filter(function(o) { return o !== s.r; }).sort(function(a, b) { return a.when < b.when ? -1 : 1; });
+        s.editedToo = s.r.status !== "bad" && s.earlier.some(function(o) { return o.status === "bad"; });
+      });
+      return list;
+    }
+    // the very same line pasted twice (every field alike), not a second go
+    function same(a, b) {
+      return ["name", "title", "first", "n", "solved", "skipped", "marks", "when", "set", "check"].every(function(k) { return a[k] === b[k]; }) &&
+        String(a.tries) === String(b.tries);
+    }
+
+    function read() {
+      var text = $("paste").value,
+        res = readPaste(text);
+      STATE = { groups: group(res.recs), junk: res.junk, lines: res.recs.length };
+      if (!STATE.groups.some(function(g) { return g.id === ACTIVE; })) ACTIVE = STATE.groups.length ? STATE.groups[0].id : "";
+      save();
+      linkUp().then(render);
+      render();
+    }
+    // which sets we can show the problems of: links in either box, and the sets made on this device
+    var linkSeq = 0;
+
+    function linkUp() {
+      var my = ++linkSeq,
+        ids = {};
+      STATE.groups.forEach(function(g) { ids[g.id] = g; });
+      var fromBox = findCodes($("linkIn").value),
+        fromPaste = findCodes($("paste").value),
+        jobs = [];
+      LINKINFO = null;
+      fromBox.concat(fromPaste).forEach(function(tries, k) {
+        jobs.push(firstSet(tries).then(function(hit) {
+          if (k === 0 && fromBox.length) LINKINFO = hit ? { id: hid(hit.code, 6), set: hit.set } : { bad: true };
+          if (hit && !KNOWN[hid(hit.code, 6)]) KNOWN[hid(hit.code, 6)] = { code: hit.code, set: hit.set, from: "link" };
+        }));
+      });
+      savedSets().forEach(function(x) {
+        var id = hid(x.c, 6);
+        if (ids[id] && !KNOWN[id]) jobs.push(decodeOnce(x.c).then(function(s) { if (s && !KNOWN[id]) KNOWN[id] = { code: x.c, set: s, from: "device" }; }));
+      });
+      if (!fromBox.length && /\S/.test($("linkIn").value)) LINKINFO = { bad: true };
+      return Promise.all(jobs).then(function() { if (my !== linkSeq) throw new Error("stale"); }).then(null, function(e) { if (e && e.message === "stale") return new Promise(function() {}); });
+    }
+
+    function setOf(g) {
+      var k = KNOWN[g.id];
+      return k && k.set && k.set.probs.length === g.n ? k : null;
+    }
+
+    /* ===================== drawing ===================== */
+    function pctTxt(x) { return Math.round(100 * x) + "%"; }
+
+    function one(x) { return (Math.round(x * 10) / 10).toString(); }
+
+    function plural(n, w, ws) { return n + " " + (n === 1 ? w : (ws || w + "s")); }
+
+    function median(a) {
+      if (!a.length) return 0;
+      var b = a.slice().sort(function(x, y) { return x - y; }),
+        m = Math.floor(b.length / 2);
+      return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2;
+    }
+    var CHECK = { ok: ["ok", "✓ Verified"], bad: ["bad", "✗ Edited"], unk: ["unk", "? Unknown"] };
+    var MEANS = { y: "right first time", a: "right after more tries or a hint", x: "not right, or looked at the work", s: "skipped" };
+
+    function sorted(list) {
+      var k = SORT.key,
+        d = SORT.dir;
+
+      function name(s) { return s.name ? s.name.toLowerCase() : "￿" + s.label; }
+      return list.slice().sort(function(a, b) {
+        var x, y;
+        if (k === "name") {
+          x = name(a);
+          y = name(b);
+        } else if (k === "first") {
+          x = a.r.first / a.r.n;
+          y = b.r.first / b.r.n;
+        } else if (k === "solved") {
+          x = a.r.solved / a.r.n;
+          y = b.r.solved / b.r.n;
+        } else if (k === "skipped") {
+          x = a.r.skipped;
+          y = b.r.skipped;
+        } else if (k === "when") {
+          x = a.r.when;
+          y = b.r.when;
+        } else if (k === "tries") {
+          x = totalTries(a.r);
+          y = totalTries(b.r);
+        } else {
+          x = RANK[a.r.status];
+          y = RANK[b.r.status];
+        }
+        if (x < y) return -d;
+        if (x > y) return d;
+        return name(a) < name(b) ? -1 : name(a) > name(b) ? 1 : 0;
+      });
+    }
+
+    // v3 lines (assignments) say how many times each problem was checked
+    function totalTries(r) { return r.tries ? r.tries.reduce(function(a, b) { return a + b; }, 0) : -1; }
+
+    function lateOf(r, K) {
+      var due = K && K.set.asg && K.set.asg.due;
+      return !!due && r.when > due + " 23:59";
+    }
+
+    function dueText(d) {
+      var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(d || "");
+      if (!m) return "";
+      try { return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }); } catch (e) { return d; }
+    }
+
+    function render() {
+      var out = $("out"),
+        groups = STATE.groups;
+      $("csvBtn").disabled = $("printBtn").disabled = !groups.length;
+      paintLinkMsg();
+      paintSaved();
+      var nStu = groups.reduce(function(t, g) { return t + g.students.length; }, 0);
+      var msg = $("readMsg");
+      if (!/\S/.test($("paste").value)) { msg.textContent = ""; } else if (!STATE.lines) { msg.innerHTML = "<b>No result lines found yet.</b> A result line ends with “set ABC123 · check XYZ789”."; } else msg.innerHTML = "<b>Read " + plural(STATE.lines, "line") + "</b> from " + plural(nStu, "student") +
+        (groups.length > 1 ? " across " + groups.length + " different sets" : "") +
+        (STATE.lines > nStu ? " (" + plural(STATE.lines - nStu, "repeat") + " merged: the latest line counts)" : "") +
+        (STATE.junk.length ? " · " + plural(STATE.junk.length, "line") + " couldn’t be read — see the bottom" : "") + ".";
+      $("empty").hidden = !!groups.length || !!STATE.junk.length;
+      out.hidden = !groups.length && !STATE.junk.length;
+      if (out.hidden) { out.innerHTML = ""; return; }
+      var g = groups.filter(function(x) { return x.id === ACTIVE; })[0],
+        html = "";
+      if (groups.length > 1) {
+        html += '<div class="sets no-print" role="group" aria-label="Which practice set">' +
+          '<span class="msg">These lines are from ' + groups.length + " different sets:</span>" +
+          groups.map(function(x) {
+            return '<button type="button" data-set="' + esc(x.id) + '" aria-pressed="' + (x.id === ACTIVE) + '">' + esc(x.title) +
+              "<small>" + plural(x.students.length, "student") + " · " + plural(x.n, "problem") + " · set " + esc(x.id) + "</small></button>";
           }).join("") + "</div>";
-    }
-    if (g) html += groupHTML(g);
-    if (STATE.junk.length){
-      html += '<section class="panel no-print" aria-labelledby="junkHead"><div class="panel-head"><h2 id="junkHead">Lines that couldn’t be read</h2>'
-        + "<span>ask for these again, or paste the whole line</span></div><ol class=\"list junk\">"
-        + STATE.junk.map(function(j){
-            return '<li><code>' + esc(j.text.length > 300 ? j.text.slice(0, 300) + "…" : j.text) + '</code><span class="d">'
-              + (j.why === "cut off" ? "This looks like part of a result line, but the rest of it isn’t there — it may have been cut off when it was copied."
-                                      : "This looks like a result line, but it couldn’t be read. Paste the whole line, from the name to the check code.")
-              + "</span></li>";
+      }
+      if (g) html += groupHTML(g);
+      if (STATE.junk.length) {
+        html += '<section class="panel no-print" aria-labelledby="junkHead"><div class="panel-head"><h2 id="junkHead">Lines that couldn’t be read</h2>' +
+          "<span>ask for these again, or paste the whole line</span></div><ol class=\"list junk\">" +
+          STATE.junk.map(function(j) {
+            return '<li><code>' + esc(j.text.length > 300 ? j.text.slice(0, 300) + "…" : j.text) + '</code><span class="d">' +
+              (j.why === "cut off" ? "This looks like part of a result line, but the rest of it isn’t there — it may have been cut off when it was copied." :
+                "This looks like a result line, but it couldn’t be read. Paste the whole line, from the name to the check code.") +
+              "</span></li>";
           }).join("") + "</ol></section>";
+      }
+      out.innerHTML = html;
     }
-    out.innerHTML = html;
-  }
 
-  function groupHTML(g){
-    var S = sorted(g.students), K = setOf(g), n = g.n, html = "";
-    var marked = S.filter(function(s){ return s.r.marks && s.r.marks.length === n; });
-    var firsts = S.map(function(s){ return s.r.first / s.r.n; }), solveds = S.map(function(s){ return s.r.solved / s.r.n; });
-    var avg = firsts.reduce(function(a, b){ return a + b; }, 0) / S.length, avgS = solveds.reduce(function(a, b){ return a + b; }, 0) / S.length;
-    var med = median(S.map(function(s){ return s.r.first; }));
-    var c = { ok:0, bad:0, unk:0 };
-    S.forEach(function(s){ c[s.r.status]++; });
-    var old = S.length - marked.length;
-    var withTries = S.filter(function(s){ return s.r.tries && s.r.tries.length === n; }), A = K && K.set.asg;
+    function groupHTML(g) {
+      var S = sorted(g.students),
+        K = setOf(g),
+        n = g.n,
+        html = "";
+      var marked = S.filter(function(s) { return s.r.marks && s.r.marks.length === n; });
+      var firsts = S.map(function(s) { return s.r.first / s.r.n; }),
+        solveds = S.map(function(s) { return s.r.solved / s.r.n; });
+      var avg = firsts.reduce(function(a, b) { return a + b; }, 0) / S.length,
+        avgS = solveds.reduce(function(a, b) { return a + b; }, 0) / S.length;
+      var med = median(S.map(function(s) { return s.r.first; }));
+      var c = { ok: 0, bad: 0, unk: 0 };
+      S.forEach(function(s) { c[s.r.status]++; });
+      var old = S.length - marked.length;
+      var withTries = S.filter(function(s) { return s.r.tries && s.r.tries.length === n; }),
+        A = K && K.set.asg;
 
-    html += '<header class="sethead"><div class="print-only eyebrow">Class results · printed ' + esc(new Date().toLocaleDateString()) + "</div>"
-      + "<h2>" + esc(g.title) + "</h2><p>" + (A || withTries.length ? "Assignment · " : "") + plural(n, "problem") + ' · <span class="set-id">set ' + esc(g.id) + "</span> · "
-      + (A && A.due ? "due " + esc(dueText(A.due)) + " · " : "")
-      + (K ? (K.from === "device" ? "the problems come from the set you made on this device" : "the problems come from the set link")
-           : '<span class="no-print">paste this set’s link above to see each problem’s text</span>')
-      + "</p></header>";
+      html += '<header class="sethead"><div class="print-only eyebrow">Class results · printed ' + esc(new Date().toLocaleDateString()) + "</div>" +
+        "<h2>" + esc(g.title) + "</h2><p>" + (A || withTries.length ? "Assignment · " : "") + plural(n, "problem") + ' · <span class="set-id">set ' + esc(g.id) + "</span> · " +
+        (A && A.due ? "due " + esc(dueText(A.due)) + " · " : "") +
+        (K ? (K.from === "device" ? "the problems come from the set you made on this device" : "the problems come from the set link") :
+          '<span class="no-print">paste this set’s link above to see each problem’s text</span>') +
+        "</p></header>";
 
-    html += '<div class="tiles">'
-      + tile("Students", String(S.length), STATE.groups.length > 1 ? "in this set" : (STATE.lines > S.length ? "from " + plural(g.recs.length, "line") + " (repeats merged)" : "one line each"))
-      + tile("Class average", pctTxt(avg), one(avg * n) + " of " + n + " right first time · " + pctTxt(avgS) + " in the end")
-      + tile("Median", fmtNum(med) + "<small> / " + n + "</small>", "right first time, for the student in the middle")
-      + tile("Verified", c.ok + "<small> / " + S.length + "</small>", c.bad || c.unk
-          ? [c.bad ? plural(c.bad, "line") + " edited" : "", c.unk ? c.unk + " can’t be checked" : ""].filter(Boolean).join(" · ")
-          : "every line checks out", !!c.bad)
-      + "</div>";
+      html += '<div class="tiles">' +
+        tile("Students", String(S.length), STATE.groups.length > 1 ? "in this set" : (STATE.lines > S.length ? "from " + plural(g.recs.length, "line") + " (repeats merged)" : "one line each")) +
+        tile("Class average", pctTxt(avg), one(avg * n) + " of " + n + " right first time · " + pctTxt(avgS) + " in the end") +
+        tile("Median", fmtNum(med) + "<small> / " + n + "</small>", "right first time, for the student in the middle") +
+        tile("Verified", c.ok + "<small> / " + S.length + "</small>", c.bad || c.unk ? [c.bad ? plural(c.bad, "line") + " edited" : "", c.unk ? c.unk + " can’t be checked" : ""].filter(Boolean).join(" · ") :
+          "every line checks out", !!c.bad) +
+        "</div>";
 
-    // the class table
-    var cols = [["name", "Student", ""], ["first", "Right first time", "num"], ["solved", "Right in the end", "num"], ["skipped", "Skipped", "num"]]
-      .concat(withTries.length ? [["tries", "Tries", "num"]] : []).concat([["when", "Finished", ""], ["check", "Check", ""]]);
-    html += '<section class="panel" aria-labelledby="clsHead"><div class="panel-head"><h2 id="clsHead">The class</h2><span class="sort-hint">sort by any column</span></div>'
-      + '<div class="scroll" tabindex="0" role="region" aria-label="The class, scrolls sideways"><table class="cls"><thead><tr>'
-      + cols.map(function(col){
+      // the class table
+      var cols = [
+          ["name", "Student", ""],
+          ["first", "Right first time", "num"],
+          ["solved", "Right in the end", "num"],
+          ["skipped", "Skipped", "num"]
+        ]
+        .concat(withTries.length ? [
+          ["tries", "Tries", "num"]
+        ] : []).concat([
+          ["when", "Finished", ""],
+          ["check", "Check", ""]
+        ]);
+      html += '<section class="panel" aria-labelledby="clsHead"><div class="panel-head"><h2 id="clsHead">The class</h2><span class="sort-hint">sort by any column</span></div>' +
+        '<div class="scroll" tabindex="0" role="region" aria-label="The class, scrolls sideways"><table class="cls"><thead><tr>' +
+        cols.map(function(col) {
           var on = SORT.key === col[0];
-          return '<th scope="col" class="' + col[2] + '"' + (on ? ' aria-sort="' + (SORT.dir > 0 ? "ascending" : "descending") + '"' : "") + '>'
-            + '<button type="button" data-sort="' + col[0] + '">' + col[1] + '<span aria-hidden="true">' + (on ? (SORT.dir > 0 ? "▲" : "▼") : "↕") + "</span></button></th>";
-        }).join("") + "</tr></thead><tbody>"
-      + S.map(function(s){
-          var r = s.r, ck = CHECK[r.status];
-          var note = s.earlier.length ? "sent " + (s.earlier.length + 1) + " times; earlier: " + s.earlier.map(function(e){ return e.first + "/" + e.n + (e.status === "bad" ? " (edited)" : ""); }).join(", ") : "";
+          return '<th scope="col" class="' + col[2] + '"' + (on ? ' aria-sort="' + (SORT.dir > 0 ? "ascending" : "descending") + '"' : "") + '>' +
+            '<button type="button" data-sort="' + col[0] + '">' + col[1] + '<span aria-hidden="true">' + (on ? (SORT.dir > 0 ? "▲" : "▼") : "↕") + "</span></button></th>";
+        }).join("") + "</tr></thead><tbody>" +
+        S.map(function(s) {
+          var r = s.r,
+            ck = CHECK[r.status];
+          var note = s.earlier.length ? "sent " + (s.earlier.length + 1) + " times; earlier: " + s.earlier.map(function(e) { return e.first + "/" + e.n + (e.status === "bad" ? " (edited)" : ""); }).join(", ") : "";
           if (s.editedToo) note += " · one of the lines sent was edited";
-          return '<tr><th scope="row" class="who"><span class="' + (s.name ? "" : "noname") + '">' + esc(s.label) + "</span>"
-            + (note ? "<small>" + esc(note) + "</small>" : "") + "</th>"
-            + '<td class="num"><span class="meter">' + r.first + " / " + r.n + '<i aria-hidden="true"><b style="width:' + Math.round(100 * r.first / r.n) + '%"></b></i></span></td>'
-            + '<td class="num">' + r.solved + " / " + r.n + "</td>"
-            + '<td class="num">' + r.skipped + "</td>"
-            + (withTries.length ? '<td class="num" title="' + esc(r.tries ? "Checks on each problem: " + r.tries.join(", ") : "This line doesn’t count tries") + '">' + (r.tries ? totalTries(r) : "–") + "</td>" : "")
-            + "<td>" + esc(r.when) + (lateOf(r, K) ? '<span class="badge late" title="Finished after the due date">late</span>' : "") + "</td>"
-            + '<td><span class="badge ' + ck[0] + '" title="' + esc(r.status === "unk" ? "Can’t be checked: " + r.why
-                : r.status === "bad" ? "The check code doesn’t match: the line was changed after it was made" : "The line is just as it was made") + '">' + ck[1] + "</span>"
-            + (r.ver === 1 ? '<span class="old" title="Made before practice sets recorded each problem">older line</span>' : "") + "</td></tr>";
+          return '<tr><th scope="row" class="who"><span class="' + (s.name ? "" : "noname") + '">' + esc(s.label) + "</span>" +
+            (note ? "<small>" + esc(note) + "</small>" : "") + "</th>" +
+            '<td class="num"><span class="meter">' + r.first + " / " + r.n + '<i aria-hidden="true"><b style="width:' + Math.round(100 * r.first / r.n) + '%"></b></i></span></td>' +
+            '<td class="num">' + r.solved + " / " + r.n + "</td>" +
+            '<td class="num">' + r.skipped + "</td>" +
+            (withTries.length ? '<td class="num" title="' + esc(r.tries ? "Checks on each problem: " + r.tries.join(", ") : "This line doesn’t count tries") + '">' + (r.tries ? totalTries(r) : "–") + "</td>" : "") +
+            "<td>" + esc(r.when) + (lateOf(r, K) ? '<span class="badge late" title="Finished after the due date">late</span>' : "") + "</td>" +
+            '<td><span class="badge ' + ck[0] + '" title="' + esc(r.status === "unk" ? "Can’t be checked: " + r.why :
+              r.status === "bad" ? "The check code doesn’t match: the line was changed after it was made" : "The line is just as it was made") + '">' + ck[1] + "</span>" +
+            (r.ver === 1 ? '<span class="old" title="Made before practice sets recorded each problem">older line</span>' : "") + "</td></tr>";
         }).join("") + "</tbody></table></div></section>";
 
-    // the heat map
-    html += '<section class="panel" aria-labelledby="heatHead"><div class="panel-head"><h2 id="heatHead">Problem by problem</h2>'
-      + "<span>" + (marked.length ? "the hardest problems are marked in red" : "") + "</span></div>";
-    if (!marked.length){
-      html += '<div class="blk"><span class="msg">These lines were made before practice sets recorded each problem, so there’s no problem-by-problem view. '
-        + "Lines from now on have it.</span></div></section>";
-    } else {
-      var col = [];
-      for (var k = 0; k < n; k++){
-        var t = { y:0, a:0, x:0, s:0, all:0 };
-        marked.forEach(function(s){ t[s.r.marks.charAt(k)]++; t.all++; });
-        t.k = k; t.rate = t.y / t.all;
-        t.tries = withTries.length ? withTries.reduce(function(a, s){ return a + s.r.tries[k]; }, 0) / withTries.length : 0;
-        col.push(t);
-      }
-      var hard = col.filter(function(t){ return t.rate < 1; }).sort(function(a, b){ return a.rate - b.rate || (b.x + b.s) - (a.x + a.s) || a.k - b.k; });
-      var worst = hard.slice(0, Math.min(3, hard.length)).map(function(t){ return t.k; });
-      html += '<div class="legend" aria-hidden="true">' + ["y", "a", "x", "s"].map(function(m){
-          return '<span><i class="c ' + m + '" style="display:inline-block;width:22px;height:20px;line-height:20px;font-size:12px">' + MK[m] + "</i>" + MEANS[m] + "</span>";
-        }).join("") + (old ? '<span><i class="c n" style="display:inline-block;width:22px;height:20px;line-height:20px">·</i>older line, no record</span>' : "") + "</div>"
-        + '<div class="scroll" tabindex="0" role="region" aria-label="Problem by problem, scrolls sideways"><table class="heat">'
-        + '<caption class="sr">Each student’s result on each problem: ✓ right first time, ~ right after more tries or a hint, ✗ not right or looked at the work, – skipped.</caption>'
-        + '<thead><tr><th scope="col" class="rh">Student</th>'
-        + col.map(function(t){
-            var p = K && K.set.probs[t.k], label = "Problem " + (t.k + 1) + (p ? ": " + textOf(p.page, p.params) : "");
+      // the heat map
+      html += '<section class="panel" aria-labelledby="heatHead"><div class="panel-head"><h2 id="heatHead">Problem by problem</h2>' +
+        "<span>" + (marked.length ? "the hardest problems are marked in red" : "") + "</span></div>";
+      if (!marked.length) {
+        html += '<div class="blk"><span class="msg">These lines were made before practice sets recorded each problem, so there’s no problem-by-problem view. ' +
+          "Lines from now on have it.</span></div></section>";
+      } else {
+        var col = [];
+        for (var k = 0; k < n; k++) {
+          var t = { y: 0, a: 0, x: 0, s: 0, all: 0 };
+          marked.forEach(function(s) {
+            t[s.r.marks.charAt(k)]++;
+            t.all++;
+          });
+          t.k = k;
+          t.rate = t.y / t.all;
+          t.tries = withTries.length ? withTries.reduce(function(a, s) { return a + s.r.tries[k]; }, 0) / withTries.length : 0;
+          col.push(t);
+        }
+        var hard = col.filter(function(t) { return t.rate < 1; }).sort(function(a, b) { return a.rate - b.rate || (b.x + b.s) - (a.x + a.s) || a.k - b.k; });
+        var worst = hard.slice(0, Math.min(3, hard.length)).map(function(t) { return t.k; });
+        html += '<div class="legend" aria-hidden="true">' + ["y", "a", "x", "s"].map(function(m) {
+            return '<span><i class="c ' + m + '" style="display:inline-block;width:22px;height:20px;line-height:20px;font-size:12px">' + MK[m] + "</i>" + MEANS[m] + "</span>";
+          }).join("") + (old ? '<span><i class="c n" style="display:inline-block;width:22px;height:20px;line-height:20px">·</i>older line, no record</span>' : "") + "</div>" +
+          '<div class="scroll" tabindex="0" role="region" aria-label="Problem by problem, scrolls sideways"><table class="heat">' +
+          '<caption class="sr">Each student’s result on each problem: ✓ right first time, ~ right after more tries or a hint, ✗ not right or looked at the work, – skipped.</caption>' +
+          '<thead><tr><th scope="col" class="rh">Student</th>' +
+          col.map(function(t) {
+            var p = K && K.set.probs[t.k],
+              label = "Problem " + (t.k + 1) + (p ? ": " + textOf(p.page, p.params) : "");
             var cls = worst.indexOf(t.k) >= 0 ? ' class="hard"' : "";
             return '<th scope="col"' + cls + ' title="' + esc(label) + '">' + (p ? '<a href="' + esc(probLink(p)) + '" target="_blank" rel="noopener" aria-label="' + esc(label + " (opens it)") + '">' + (t.k + 1) + "</a>" : (t.k + 1)) + "</th>";
-          }).join("") + "</tr></thead><tbody>"
-        + S.map(function(s){
-            var m = s.r.marks && s.r.marks.length === n ? s.r.marks : "", tr = s.r.tries && s.r.tries.length === n ? s.r.tries : null;
+          }).join("") + "</tr></thead><tbody>" +
+          S.map(function(s) {
+            var m = s.r.marks && s.r.marks.length === n ? s.r.marks : "",
+              tr = s.r.tries && s.r.tries.length === n ? s.r.tries : null;
             var cells = "";
-            for (var k = 0; k < n; k++){
-              var ch = m ? m.charAt(k) : "", tk = tr ? tr[k] : -1;
-              cells += ch ? '<td class="c ' + ch + '" title="' + esc(s.label + " · problem " + (k + 1) + ": " + MEANS[ch] + (tk >= 0 ? " · " + plural(tk, "try", "tries") : "")) + '">'
-                            + MK[ch] + (tk > 1 ? "<small>" + tk + "</small>" : "") + "</td>"
-                          : '<td class="c n" title="' + esc(s.label + ": no problem-by-problem record (older line)") + '">·</td>';
+            for (var k = 0; k < n; k++) {
+              var ch = m ? m.charAt(k) : "",
+                tk = tr ? tr[k] : -1;
+              cells += ch ? '<td class="c ' + ch + '" title="' + esc(s.label + " · problem " + (k + 1) + ": " + MEANS[ch] + (tk >= 0 ? " · " + plural(tk, "try", "tries") : "")) + '">' +
+                MK[ch] + (tk > 1 ? "<small>" + tk + "</small>" : "") + "</td>" :
+                '<td class="c n" title="' + esc(s.label + ": no problem-by-problem record (older line)") + '">·</td>';
             }
             return '<tr><th scope="row" class="rh" title="' + esc(s.label) + '">' + esc(s.label) + "</th>" + cells + "</tr>";
-          }).join("") + "</tbody><tfoot>"
-        + '<tr><th scope="row" class="rh">Right first time</th>' + col.map(function(t){
-            return "<td" + (worst.indexOf(t.k) >= 0 ? ' class="hard"' : "") + ' title="' + esc("Problem " + (t.k + 1) + ": " + t.y + " of " + t.all + " right first time") + '">' + t.y + "</td>"; }).join("") + "</tr>"
-        + '<tr><th scope="row" class="rh">Not right or skipped</th>' + col.map(function(t){
-            return '<td title="' + esc("Problem " + (t.k + 1) + ": " + t.x + " not right, " + t.s + " skipped") + '">' + (t.x + t.s) + "</td>"; }).join("") + "</tr>"
-        + (withTries.length ? '<tr><th scope="row" class="rh">Tries, on average</th>' + col.map(function(t){
-            return '<td title="' + esc("Problem " + (t.k + 1) + ": " + one(t.tries) + " checks on average, from " + plural(withTries.length, "line") + " that count them") + '">' + one(t.tries) + "</td>"; }).join("") + "</tr>" : "")
-        + "</tfoot></table></div>"
-        + (old ? '<div class="blk"><span class="msg">' + plural(old, "line is", "lines are") + " from before practice sets recorded each problem; "
-            + (old === 1 ? "it’s" : "they’re") + " left out of the counts below the map.</span></div>" : "")
-        + "</section>";
+          }).join("") + "</tbody><tfoot>" +
+          '<tr><th scope="row" class="rh">Right first time</th>' + col.map(function(t) {
+            return "<td" + (worst.indexOf(t.k) >= 0 ? ' class="hard"' : "") + ' title="' + esc("Problem " + (t.k + 1) + ": " + t.y + " of " + t.all + " right first time") + '">' + t.y + "</td>";
+          }).join("") + "</tr>" +
+          '<tr><th scope="row" class="rh">Not right or skipped</th>' + col.map(function(t) {
+            return '<td title="' + esc("Problem " + (t.k + 1) + ": " + t.x + " not right, " + t.s + " skipped") + '">' + (t.x + t.s) + "</td>";
+          }).join("") + "</tr>" +
+          (withTries.length ? '<tr><th scope="row" class="rh">Tries, on average</th>' + col.map(function(t) {
+            return '<td title="' + esc("Problem " + (t.k + 1) + ": " + one(t.tries) + " checks on average, from " + plural(withTries.length, "line") + " that count them") + '">' + one(t.tries) + "</td>";
+          }).join("") + "</tr>" : "") +
+          "</tfoot></table></div>" +
+          (old ? '<div class="blk"><span class="msg">' + plural(old, "line is", "lines are") + " from before practice sets recorded each problem; " +
+            (old === 1 ? "it’s" : "they’re") + " left out of the counts below the map.</span></div>" : "") +
+          "</section>";
 
-      // the hardest problems, and who needs help
-      html += '<div class="two"><section class="panel" aria-labelledby="hardHead"><div class="panel-head"><h2 id="hardHead">Hardest problems</h2>'
-        + "<span>fewest right first time</span></div><ol class=\"list\">"
-        + (hard.length ? hard.slice(0, 5).map(function(t){
+        // the hardest problems, and who needs help
+        html += '<div class="two"><section class="panel" aria-labelledby="hardHead"><div class="panel-head"><h2 id="hardHead">Hardest problems</h2>' +
+          "<span>fewest right first time</span></div><ol class=\"list\">" +
+          (hard.length ? hard.slice(0, 5).map(function(t) {
             var p = K && K.set.probs[t.k];
-            return '<li><span class="k">' + (t.k + 1) + ".</span>"
-              + '<span class="q' + (p ? "" : " plain") + '">' + esc(p ? textOf(p.page, p.params) : "Problem " + (t.k + 1)) + "</span>"
-              + '<span class="d">' + t.y + " of " + t.all + " right first time" + (t.a ? " · " + t.a + " ~" : "") + (t.x ? " · " + t.x + " ✗" : "") + (t.s ? " · " + t.s + " skipped" : "")
-              + (withTries.length ? " · " + one(t.tries) + (one(t.tries) === "1" ? " try" : " tries") + " on average" : "")
-              + (p ? " · " + esc(topic(p.page)[1]) : "") + "</span>"
-              + '<span class="stack" aria-hidden="true">' + ["y", "a", "x", "s"].map(function(m){ return t[m] ? '<i class="' + m + '" style="flex:' + t[m] + '"></i>' : ""; }).join("") + "</span>"
-              + (p ? '<span class="act"><a class="small-link" href="' + esc(probLink(p)) + '" target="_blank" rel="noopener">Open it ↗</a></span>' : "")
-              + "</li>";
-          }).join("") : '<li class="empty">Every problem was right first time for everyone.</li>')
-        + "</ol>" + (K ? "" : '<div class="blk no-print"><span class="msg">Paste the set’s link above to see each problem and open it.</span></div>') + "</section>";
+            return '<li><span class="k">' + (t.k + 1) + ".</span>" +
+              '<span class="q' + (p ? "" : " plain") + '">' + esc(p ? textOf(p.page, p.params) : "Problem " + (t.k + 1)) + "</span>" +
+              '<span class="d">' + t.y + " of " + t.all + " right first time" + (t.a ? " · " + t.a + " ~" : "") + (t.x ? " · " + t.x + " ✗" : "") + (t.s ? " · " + t.s + " skipped" : "") +
+              (withTries.length ? " · " + one(t.tries) + (one(t.tries) === "1" ? " try" : " tries") + " on average" : "") +
+              (p ? " · " + esc(topic(p.page)[1]) : "") + "</span>" +
+              '<span class="stack" aria-hidden="true">' + ["y", "a", "x", "s"].map(function(m) { return t[m] ? '<i class="' + m + '" style="flex:' + t[m] + '"></i>' : ""; }).join("") + "</span>" +
+              (p ? '<span class="act"><a class="small-link" href="' + esc(probLink(p)) + '" target="_blank" rel="noopener">Open it ↗</a></span>' : "") +
+              "</li>";
+          }).join("") : '<li class="empty">Every problem was right first time for everyone.</li>') +
+          "</ol>" + (K ? "" : '<div class="blk no-print"><span class="msg">Paste the set’s link above to see each problem and open it.</span></div>') + "</section>";
 
-      var low = S.slice().sort(function(a, b){ return a.r.first / a.r.n - b.r.first / b.r.n || a.r.solved / a.r.n - b.r.solved / b.r.n; });
-      var help = low.filter(function(s){ return s.r.first / s.r.n < 0.6; }).slice(0, 8), few = !help.length;
-      if (few) help = low.filter(function(s){ return s.r.first < s.r.n; }).slice(0, 3);
-      html += '<section class="panel" aria-labelledby="helpHead"><div class="panel-head"><h2 id="helpHead">Who needs help</h2>'
-        + "<span>" + (few ? "nobody is below 60% right first time" : "below 60% right first time") + "</span></div><ol class=\"list\">"
-        + (help.length ? help.map(function(s){
-            var r = s.r, by = { a:[], x:[], s:[] };
-            if (r.marks) r.marks.split("").forEach(function(m, k){ if (by[m]) by[m].push(k + 1); });
+        var low = S.slice().sort(function(a, b) { return a.r.first / a.r.n - b.r.first / b.r.n || a.r.solved / a.r.n - b.r.solved / b.r.n; });
+        var help = low.filter(function(s) { return s.r.first / s.r.n < 0.6; }).slice(0, 8),
+          few = !help.length;
+        if (few) help = low.filter(function(s) { return s.r.first < s.r.n; }).slice(0, 3);
+        html += '<section class="panel" aria-labelledby="helpHead"><div class="panel-head"><h2 id="helpHead">Who needs help</h2>' +
+          "<span>" + (few ? "nobody is below 60% right first time" : "below 60% right first time") + "</span></div><ol class=\"list\">" +
+          (help.length ? help.map(function(s) {
+            var r = s.r,
+              by = { a: [], x: [], s: [] };
+            if (r.marks) r.marks.split("").forEach(function(m, k) { if (by[m]) by[m].push(k + 1); });
             var bits = [];
             if (by.x.length) bits.push("not right: " + by.x.join(", "));
             if (by.s.length) bits.push("skipped: " + by.s.join(", "));
-            if (by.a.length) bits.push("needed more tries: " + by.a.map(function(k){ return r.tries ? k + " (" + r.tries[k - 1] + ")" : k; }).join(", "));
-            return '<li><span class="k">' + pctTxt(r.first / r.n) + "</span>"
-              + '<span class="q plain' + (s.name ? "" : " noname") + '">' + esc(s.label) + "</span>"
-              + '<span class="d">' + r.first + " of " + r.n + " right first time · " + r.solved + " in the end" + (r.status === "bad" ? " · <b>line edited</b>" : "") + "</span>"
-              + (bits.length ? '<span class="d">' + esc(bits.join(" · ")) + "</span>" : "") + "</li>";
-          }).join("") : '<li class="empty">Everyone got every problem right first time.</li>')
-        + "</ol></section></div>";
+            if (by.a.length) bits.push("needed more tries: " + by.a.map(function(k) { return r.tries ? k + " (" + r.tries[k - 1] + ")" : k; }).join(", "));
+            return '<li><span class="k">' + pctTxt(r.first / r.n) + "</span>" +
+              '<span class="q plain' + (s.name ? "" : " noname") + '">' + esc(s.label) + "</span>" +
+              '<span class="d">' + r.first + " of " + r.n + " right first time · " + r.solved + " in the end" + (r.status === "bad" ? " · <b>line edited</b>" : "") + "</span>" +
+              (bits.length ? '<span class="d">' + esc(bits.join(" · ")) + "</span>" : "") + "</li>";
+          }).join("") : '<li class="empty">Everyone got every problem right first time.</li>') +
+          "</ol></section></div>";
+      }
+      return html;
     }
-    return html;
-  }
-  function fmtNum(x){ return x % 1 ? one(x) : String(x); }
-  function tile(label, v, sub, warn){
-    return '<section class="panel tile"><span class="lbl">' + label + '</span><span class="v">' + v + '</span><span class="s' + (warn ? " warn" : "") + '">' + esc(sub) + "</span></section>";
-  }
 
-  function paintLinkMsg(){
-    var el = $("linkMsg"), v = $("linkIn").value;
-    el.className = "msg";
-    if (!/\S/.test(v) || !LINKINFO){
-      el.textContent = "With the set’s link, each problem’s own text shows below, with a link to try it. Sets made on this device are found by themselves.";
-      return;
+    function fmtNum(x) { return x % 1 ? one(x) : String(x); }
+
+    function tile(label, v, sub, warn) {
+      return '<section class="panel tile"><span class="lbl">' + label + '</span><span class="v">' + v + '</span><span class="s' + (warn ? " warn" : "") + '">' + esc(sub) + "</span></section>";
     }
-    if (LINKINFO.bad){ el.className = "msg err"; el.textContent = "That link can’t be read — it may have been cut off. Copy the whole link, from https:// to the end."; return; }
-    var g = STATE.groups.filter(function(x){ return x.id === LINKINFO.id; })[0];
-    if (g) el.textContent = "✓ “" + LINKINFO.set.title + "”, " + plural(LINKINFO.set.probs.length, "problem") + " — it matches " + plural(g.students.length, "student") + "’s lines.";
-    else { el.className = "msg err"; el.textContent = "“" + LINKINFO.set.title + "” (set " + LINKINFO.id + ") doesn’t match any of the pasted lines"
-      + (STATE.groups.length ? " — they’re from set " + STATE.groups.map(function(x){ return x.id; }).join(", ") + "." : "."); }
-  }
-  var savedDrawn = "";
-  function paintSaved(){
-    var list = savedSets(), sel = $("savedSel"), key = list.map(function(x){ return x.c.slice(0, 12) + x.at; }).join(",");
-    $("savedWrap").hidden = !list.length;
-    if (key === savedDrawn) return;
-    savedDrawn = key;
-    sel.innerHTML = '<option value="">Pick a set…</option>' + list.map(function(x, i){
-      var d = new Date(x.at || 0);
-      return '<option value="' + i + '">' + esc(x.t || "Practice set") + " · " + plural(x.n | 0, "problem") + (x.at ? " · " + esc(d.toLocaleDateString()) : "") + " · set " + hid(x.c, 6) + "</option>";
-    }).join("");
-  }
-  $("savedSel").addEventListener("change", function(){
-    var x = savedSets()[Number(this.value)];
-    if (!x) return;
-    $("linkIn").value = U("practice.html", "set=" + x.c);
-    this.value = "";
-    read();
-  });
 
-  /* ===================== the buttons ===================== */
-  $("out").addEventListener("click", function(e){
-    var b = e.target.closest ? e.target.closest("button") : null;
-    if (!b) return;
-    if (b.getAttribute("data-set")){ ACTIVE = b.getAttribute("data-set"); render(); focusSel('[data-set="' + ACTIVE + '"]'); }
-    else if (b.getAttribute("data-sort")){
-      var k = b.getAttribute("data-sort");
-      SORT = SORT.key === k ? { key:k, dir:-SORT.dir } : { key:k, dir:k === "name" || k === "when" ? 1 : -1 };
-      render(); focusSel('[data-sort="' + k + '"]');
+    function paintLinkMsg() {
+      var el = $("linkMsg"),
+        v = $("linkIn").value;
+      el.className = "msg";
+      if (!/\S/.test(v) || !LINKINFO) {
+        el.textContent = "With the set’s link, each problem’s own text shows below, with a link to try it. Sets made on this device are found by themselves.";
+        return;
+      }
+      if (LINKINFO.bad) {
+        el.className = "msg err";
+        el.textContent = "That link can’t be read — it may have been cut off. Copy the whole link, from https:// to the end.";
+        return;
+      }
+      var g = STATE.groups.filter(function(x) { return x.id === LINKINFO.id; })[0];
+      if (g) el.textContent = "✓ “" + LINKINFO.set.title + "”, " + plural(LINKINFO.set.probs.length, "problem") + " — it matches " + plural(g.students.length, "student") + "’s lines.";
+      else {
+        el.className = "msg err";
+        el.textContent = "“" + LINKINFO.set.title + "” (set " + LINKINFO.id + ") doesn’t match any of the pasted lines" +
+          (STATE.groups.length ? " — they’re from set " + STATE.groups.map(function(x) { return x.id; }).join(", ") + "." : ".");
+      }
     }
-  });
-  function focusSel(sel){ var el = $("out").querySelector(sel); if (el) el.focus(); }
+    var savedDrawn = "";
 
-  function csvCell(v){
-    var s = String(v === undefined || v === null ? "" : v);
-    if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;          // nothing a spreadsheet would run as a formula
-    return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
-  }
-  function csv(){
-    var most = 0;
-    STATE.groups.forEach(function(g){ most = Math.max(most, g.n); });
-    var head = ["set", "set title", "student", "right first time", "problems", "right in the end", "skipped", "finished", "check", "times sent"];
-    for (var k = 1; k <= most; k++) head.push("p" + k);
-    var anyTries = STATE.groups.some(function(g){ return g.recs.some(function(r){ return r.tries; }); });
-    if (anyTries){ head.push("tries"); for (var k2 = 1; k2 <= most; k2++) head.push("p" + k2 + " tries"); }
-    head.push("late");
-    var rows = [head];
-    STATE.groups.forEach(function(g){
-      sorted(g.students).forEach(function(s){
-        var r = s.r, row = [g.id, g.title, s.label, r.first, r.n, r.solved, r.skipped, r.when,
-          { ok:"verified", bad:"edited", unk:"unknown" }[r.status] + (r.ver === 1 ? " (older line)" : ""), s.earlier.length + 1];
-        for (var k = 0; k < most; k++) row.push(r.marks && k < r.marks.length ? MK[r.marks.charAt(k)] : "");
-        if (anyTries){ row.push(r.tries ? totalTries(r) : ""); for (var k2 = 0; k2 < most; k2++) row.push(r.tries && k2 < r.tries.length ? r.tries[k2] : ""); }
-        row.push(lateOf(r, setOf(g)) ? "late" : "");
-        rows.push(row);
-      });
-    });
-    return "﻿" + rows.map(function(r){ return r.map(csvCell).join(","); }).join("\r\n") + "\r\n";
-  }
-  $("csvBtn").addEventListener("click", function(){
-    var d = new Date(), name = "class-results-" + d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + ".csv";
-    var url = URL.createObjectURL(new Blob([csv()], { type:"text/csv;charset=utf-8" })), a = document.createElement("a");
-    a.href = url; a.download = name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-  });
-  $("printBtn").addEventListener("click", function(){ window.print(); });
-  $("clearBtn").addEventListener("click", function(){
-    $("paste").value = ""; $("linkIn").value = "";
-    try { localStorage.removeItem(STORE); } catch (e){}
-    read();
-    $("paste").focus();
-  });
-  function paintKeep(){
-    $("keepT").setAttribute("aria-pressed", String(KEEP));
-    $("keepMsg").innerHTML = KEEP
-      ? "Nothing is uploaded anywhere: the lines are read right here in this browser. The last paste is kept on this device so it’s here next time; <b>Clear</b> removes it."
-      : "Nothing is uploaded anywhere: the lines are read right here in this browser, and nothing is kept once you close the page.";
-  }
-  $("keepT").addEventListener("click", function(){
-    KEEP = !KEEP;
-    try { localStorage.setItem("results-keep", KEEP ? "1" : "0"); } catch (e){}
-    paintKeep(); save();
-  });
-  function save(){
-    try {
-      if (KEEP && (/\S/.test($("paste").value) || /\S/.test($("linkIn").value)))
-        localStorage.setItem(STORE, JSON.stringify({ text:$("paste").value, link:$("linkIn").value, at:Date.now() }));
-      else localStorage.removeItem(STORE);
-    } catch (e){}
-  }
-  var timer = 0;
-  function soon(){ clearTimeout(timer); timer = setTimeout(read, 220); }
-  $("paste").addEventListener("input", soon);
-  $("linkIn").addEventListener("input", soon);
-
-  /* ---- an example class, made on the spot (so its check codes are real) ---- */
-  var EX_SET = { v:1, t:"Fractions warm-up", p:[["fractions","mode=simplify&q=18%2F24"], ["fractions","mode=simplify&q=12%2F30"], ["fractions","mode=convert&q=7%2F4"],
-    ["fractions","mode=equiv&q=3%2F4%3D%3F%2F20"], ["fractions","mode=compare&q=3%2F4%2C5%2F8%2C2%2F3"], ["percents","q=15%25%20of%2080"],
-    ["pemdas","q=" + encodeURIComponent("20 − 12 ÷ 4 × 2 + 1")], ["fractions","mode=simplify&q=45%2F60"]] };
-  function exLines(){
-    var code = "j" + b64url(new TextEncoder().encode(JSON.stringify(EX_SET))), set = hid(code, 6);
-    var kids = [["Ana Lopez", "yyyyayyy"], ["Ben Carter", "yyxyxyay"], ["Chloe Kim", "yyyyyyyy"], ["Dev Patel", "yaxsxyxa"], ["Ella Brooks", "yyyyxyay"],
-                ["Finn O’Neil", "ysxsxyss"], ["Grace Hall", "yyayxyyy"], ["", "yyyaxyay"]];
-    var lines = kids.map(function(k, i){
-      var m = k[1];
-      return lineFor({ name:k[0], title:EX_SET.t, n:m.length, first:m.split("y").length - 1, solved:m.replace(/[^ya]/g, "").length,
-        skipped:m.split("s").length - 1, marks:m, when:"2026-10-21 " + (10 + (i >> 2)) + ":" + ("0" + (i * 7 % 60)).slice(-2), set:set });
-    });
-    return { code:code, lines:lines };
-  }
-  (function(){
-    var ex = exLines();
-    $("exLine").textContent = ex.lines[0];
-    $("exBtn").addEventListener("click", function(){
-      var l = ex.lines, cut = l[1].lastIndexOf(" ", 70);        // the way an email client breaks a long line
-      $("paste").value = "Hi! Here's my result:\n" + l[0] + "\n\n> " + l[1].slice(0, cut) + "\n> " + l[1].slice(cut + 1) + "\n- " + l[2] + "\n" + l[3] + "\n"
-        + l[4].replace(/ · 6 of 8 /, " · 8 of 8 ") + "\n" + l[5] + "\n" + l[6] + "\n" + l[7] + "\n" + l[0] + "\n";
-      $("linkIn").value = U("practice.html", "set=" + ex.code);
+    function paintSaved() {
+      var list = savedSets(),
+        sel = $("savedSel"),
+        key = list.map(function(x) { return x.c.slice(0, 12) + x.at; }).join(",");
+      $("savedWrap").hidden = !list.length;
+      if (key === savedDrawn) return;
+      savedDrawn = key;
+      sel.innerHTML = '<option value="">Pick a set…</option>' + list.map(function(x, i) {
+        var d = new Date(x.at || 0);
+        return '<option value="' + i + '">' + esc(x.t || "Practice set") + " · " + plural(x.n | 0, "problem") + (x.at ? " · " + esc(d.toLocaleDateString()) : "") + " · set " + hid(x.c, 6) + "</option>";
+      }).join("");
+    }
+    $("savedSel").addEventListener("change", function() {
+      var x = savedSets()[Number(this.value)];
+      if (!x) return;
+      $("linkIn").value = U("practice.html", "set=" + x.c);
+      this.value = "";
       read();
     });
-  })();
 
-  /* ---- start ---- */
-  try { KEEP = localStorage.getItem("results-keep") !== "0"; } catch (e){}
-  paintKeep();
-  try {
-    var kept = JSON.parse(localStorage.getItem(STORE) || "null");
-    if (kept && typeof kept.text === "string"){ $("paste").value = kept.text; $("linkIn").value = kept.link || ""; }
-  } catch (e){}
-  read();
-  window.__results = { readPaste:readPaste, readLine:readLine, csv:csv, state:function(){ return STATE; }, known:function(){ return KNOWN; }, read:read };
-})();
+    /* ===================== the buttons ===================== */
+    $("out").addEventListener("click", function(e) {
+      var b = e.target.closest ? e.target.closest("button") : null;
+      if (!b) return;
+      if (b.getAttribute("data-set")) {
+        ACTIVE = b.getAttribute("data-set");
+        render();
+        focusSel('[data-set="' + ACTIVE + '"]');
+      } else if (b.getAttribute("data-sort")) {
+        var k = b.getAttribute("data-sort");
+        SORT = SORT.key === k ? { key: k, dir: -SORT.dir } : { key: k, dir: k === "name" || k === "when" ? 1 : -1 };
+        render();
+        focusSel('[data-sort="' + k + '"]');
+      }
+    });
+
+    function focusSel(sel) { var el = $("out").querySelector(sel); if (el) el.focus(); }
+
+    function csvCell(v) {
+      var s = String(v === undefined || v === null ? "" : v);
+      if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; // nothing a spreadsheet would run as a formula
+      return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }
+
+    function csv() {
+      var most = 0;
+      STATE.groups.forEach(function(g) { most = Math.max(most, g.n); });
+      var head = ["set", "set title", "student", "right first time", "problems", "right in the end", "skipped", "finished", "check", "times sent"];
+      for (var k = 1; k <= most; k++) head.push("p" + k);
+      var anyTries = STATE.groups.some(function(g) { return g.recs.some(function(r) { return r.tries; }); });
+      if (anyTries) { head.push("tries"); for (var k2 = 1; k2 <= most; k2++) head.push("p" + k2 + " tries"); }
+      head.push("late");
+      var rows = [head];
+      STATE.groups.forEach(function(g) {
+        sorted(g.students).forEach(function(s) {
+          var r = s.r,
+            row = [g.id, g.title, s.label, r.first, r.n, r.solved, r.skipped, r.when,
+              { ok: "verified", bad: "edited", unk: "unknown" } [r.status] + (r.ver === 1 ? " (older line)" : ""), s.earlier.length + 1
+            ];
+          for (var k = 0; k < most; k++) row.push(r.marks && k < r.marks.length ? MK[r.marks.charAt(k)] : "");
+          if (anyTries) { row.push(r.tries ? totalTries(r) : ""); for (var k2 = 0; k2 < most; k2++) row.push(r.tries && k2 < r.tries.length ? r.tries[k2] : ""); }
+          row.push(lateOf(r, setOf(g)) ? "late" : "");
+          rows.push(row);
+        });
+      });
+      return "﻿" + rows.map(function(r) { return r.map(csvCell).join(","); }).join("\r\n") + "\r\n";
+    }
+    $("csvBtn").addEventListener("click", function() {
+      var d = new Date(),
+        name = "class-results-" + d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2) + ".csv";
+      var url = URL.createObjectURL(new Blob([csv()], { type: "text/csv;charset=utf-8" })),
+        a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 4000);
+    });
+    $("printBtn").addEventListener("click", function() { window.print(); });
+    $("clearBtn").addEventListener("click", function() {
+      $("paste").value = "";
+      $("linkIn").value = "";
+      try { localStorage.removeItem(STORE); } catch (e) {}
+      read();
+      $("paste").focus();
+    });
+
+    function paintKeep() {
+      $("keepT").setAttribute("aria-pressed", String(KEEP));
+      $("keepMsg").innerHTML = KEEP ?
+        "Nothing is uploaded anywhere: the lines are read right here in this browser. The last paste is kept on this device so it’s here next time; <b>Clear</b> removes it." :
+        "Nothing is uploaded anywhere: the lines are read right here in this browser, and nothing is kept once you close the page.";
+    }
+    $("keepT").addEventListener("click", function() {
+      KEEP = !KEEP;
+      try { localStorage.setItem("results-keep", KEEP ? "1" : "0"); } catch (e) {}
+      paintKeep();
+      save();
+    });
+
+    function save() {
+      try {
+        if (KEEP && (/\S/.test($("paste").value) || /\S/.test($("linkIn").value)))
+          localStorage.setItem(STORE, JSON.stringify({ text: $("paste").value, link: $("linkIn").value, at: Date.now() }));
+        else localStorage.removeItem(STORE);
+      } catch (e) {}
+    }
+    var timer = 0;
+
+    function soon() {
+      clearTimeout(timer);
+      timer = setTimeout(read, 220);
+    }
+    $("paste").addEventListener("input", soon);
+    $("linkIn").addEventListener("input", soon);
+
+    /* ---- an example class, made on the spot (so its check codes are real) ---- */
+    var EX_SET = {
+      v: 1,
+      t: "Fractions warm-up",
+      p: [
+        ["fractions", "mode=simplify&q=18%2F24"],
+        ["fractions", "mode=simplify&q=12%2F30"],
+        ["fractions", "mode=convert&q=7%2F4"],
+        ["fractions", "mode=equiv&q=3%2F4%3D%3F%2F20"],
+        ["fractions", "mode=compare&q=3%2F4%2C5%2F8%2C2%2F3"],
+        ["percents", "q=15%25%20of%2080"],
+        ["pemdas", "q=" + encodeURIComponent("20 − 12 ÷ 4 × 2 + 1")],
+        ["fractions", "mode=simplify&q=45%2F60"]
+      ]
+    };
+
+    function exLines() {
+      var code = "j" + b64url(new TextEncoder().encode(JSON.stringify(EX_SET))),
+        set = hid(code, 6);
+      var kids = [
+        ["Ana Lopez", "yyyyayyy"],
+        ["Ben Carter", "yyxyxyay"],
+        ["Chloe Kim", "yyyyyyyy"],
+        ["Dev Patel", "yaxsxyxa"],
+        ["Ella Brooks", "yyyyxyay"],
+        ["Finn O’Neil", "ysxsxyss"],
+        ["Grace Hall", "yyayxyyy"],
+        ["", "yyyaxyay"]
+      ];
+      var lines = kids.map(function(k, i) {
+        var m = k[1];
+        return lineFor({
+          name: k[0],
+          title: EX_SET.t,
+          n: m.length,
+          first: m.split("y").length - 1,
+          solved: m.replace(/[^ya]/g, "").length,
+          skipped: m.split("s").length - 1,
+          marks: m,
+          when: "2026-10-21 " + (10 + (i >> 2)) + ":" + ("0" + (i * 7 % 60)).slice(-2),
+          set: set
+        });
+      });
+      return { code: code, lines: lines };
+    }
+    (function() {
+      var ex = exLines();
+      $("exLine").textContent = ex.lines[0];
+      $("exBtn").addEventListener("click", function() {
+        var l = ex.lines,
+          cut = l[1].lastIndexOf(" ", 70); // the way an email client breaks a long line
+        $("paste").value = "Hi! Here's my result:\n" + l[0] + "\n\n> " + l[1].slice(0, cut) + "\n> " + l[1].slice(cut + 1) + "\n- " + l[2] + "\n" + l[3] + "\n" +
+          l[4].replace(/ · 6 of 8 /, " · 8 of 8 ") + "\n" + l[5] + "\n" + l[6] + "\n" + l[7] + "\n" + l[0] + "\n";
+        $("linkIn").value = U("practice.html", "set=" + ex.code);
+        read();
+      });
+    })();
+
+    /* ---- start ---- */
+    try { KEEP = localStorage.getItem("results-keep") !== "0"; } catch (e) {}
+    paintKeep();
+    try {
+      var kept = JSON.parse(localStorage.getItem(STORE) || "null");
+      if (kept && typeof kept.text === "string") {
+        $("paste").value = kept.text;
+        $("linkIn").value = kept.link || "";
+      }
+    } catch (e) {}
+    read();
+    window.__results = { readPaste: readPaste, readLine: readLine, csv: csv, state: function() { return STATE; }, known: function() { return KNOWN; }, read: read };
+  })();
 </script>
 </html>

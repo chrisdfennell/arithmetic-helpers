@@ -21,123 +21,494 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
-  :root{
-    --paper:#EDEFEC; --surface:#F8F9F7; --surface-2:#E2E6E2;
-    --ink:#18201C; --ink-2:#4A5550; --ink-3:#7B8681; --rule:#C8CFCA;
-    --key:#33463F; --key-bg:#DDE6E1; --key-line:#8BA398;
-    --flash:#F6E5D2;
-    --focus:#33463F;
-    --shadow:0 1px 0 rgba(24,32,28,.05), 0 14px 30px -20px rgba(24,32,28,.5);
-    --t-ari:#0D7361; --t-fra:#0B6E83; --t-pct:#8A6D00; --t-fac:#7B3FA0; --t-int:#46596E;
-    --t-alg:#9B2F6B; --t-lin:#1E7A3C; --t-geo:#4F6A17; --t-sta:#3346A8;
-    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
-    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
-    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  :root {
+    --paper: #EDEFEC;
+    --surface: #F8F9F7;
+    --surface-2: #E2E6E2;
+    --ink: #18201C;
+    --ink-2: #4A5550;
+    --ink-3: #7B8681;
+    --rule: #C8CFCA;
+    --key: #33463F;
+    --key-bg: #DDE6E1;
+    --key-line: #8BA398;
+    --flash: #F6E5D2;
+    --focus: #33463F;
+    --shadow: 0 1px 0 rgba(24, 32, 28, .05), 0 14px 30px -20px rgba(24, 32, 28, .5);
+    --t-ari: #0D7361;
+    --t-fra: #0B6E83;
+    --t-pct: #8A6D00;
+    --t-fac: #7B3FA0;
+    --t-int: #46596E;
+    --t-alg: #9B2F6B;
+    --t-lin: #1E7A3C;
+    --t-geo: #4F6A17;
+    --t-sta: #3346A8;
+    --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --f-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
-      --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
-      --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
-      --flash:#37270F;
-      --focus:#B8C9C1;
-      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
-      --t-ari:#4FCCB0; --t-fra:#5FC9DE; --t-pct:#E3C04D; --t-fac:#C9A0EE; --t-int:#A9BDD2;
-      --t-alg:#F08CC0; --t-lin:#6FD38E; --t-geo:#B5D06A; --t-sta:#93A2F2;
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #121615;
+      --surface: #1A201E;
+      --surface-2: #262E2B;
+      --ink: #E5EAE7;
+      --ink-2: #A2ADA8;
+      --ink-3: #76817C;
+      --rule: #36403C;
+      --key: #B8C9C1;
+      --key-bg: #22302B;
+      --key-line: #4E6A5F;
+      --flash: #37270F;
+      --focus: #B8C9C1;
+      --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
+      --t-ari: #4FCCB0;
+      --t-fra: #5FC9DE;
+      --t-pct: #E3C04D;
+      --t-fac: #C9A0EE;
+      --t-int: #A9BDD2;
+      --t-alg: #F08CC0;
+      --t-lin: #6FD38E;
+      --t-geo: #B5D06A;
+      --t-sta: #93A2F2;
     }
   }
-  :root[data-theme="dark"]{
-    --paper:#121615; --surface:#1A201E; --surface-2:#262E2B;
-    --ink:#E5EAE7; --ink-2:#A2ADA8; --ink-3:#76817C; --rule:#36403C;
-    --key:#B8C9C1; --key-bg:#22302B; --key-line:#4E6A5F;
-    --flash:#37270F;
-    --focus:#B8C9C1;
-    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
-    --t-ari:#4FCCB0; --t-fra:#5FC9DE; --t-pct:#E3C04D; --t-fac:#C9A0EE; --t-int:#A9BDD2;
-    --t-alg:#F08CC0; --t-lin:#6FD38E; --t-geo:#B5D06A; --t-sta:#93A2F2;
+  :root[data-theme="dark"] {
+    --paper: #121615;
+    --surface: #1A201E;
+    --surface-2: #262E2B;
+    --ink: #E5EAE7;
+    --ink-2: #A2ADA8;
+    --ink-3: #76817C;
+    --rule: #36403C;
+    --key: #B8C9C1;
+    --key-bg: #22302B;
+    --key-line: #4E6A5F;
+    --flash: #37270F;
+    --focus: #B8C9C1;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
+    --t-ari: #4FCCB0;
+    --t-fra: #5FC9DE;
+    --t-pct: #E3C04D;
+    --t-fac: #C9A0EE;
+    --t-int: #A9BDD2;
+    --t-alg: #F08CC0;
+    --t-lin: #6FD38E;
+    --t-geo: #B5D06A;
+    --t-sta: #93A2F2;
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
-    -webkit-font-smoothing:antialiased}
-  .page{max-width:1140px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:22px}
-  @media (max-width:560px){.page{padding:22px 16px 56px}}
-  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
-  .eyebrow{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
-  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(34px,6.4vw,54px);line-height:.98;
-    letter-spacing:-.02em;margin:.16em 0 0}
-  h1 em{font-style:normal;color:var(--key)}
-  .tagline{color:var(--ink-2);max-width:60ch;margin:.5em 0 0;font-size:15.5px}
-  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;background:var(--surface);color:var(--ink-2);
-    border:1px solid var(--rule);border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
-  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
-  button:focus-visible,input:focus-visible,a:focus-visible,summary:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+  * {
+    box-sizing: border-box
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased
+  }
+  .page {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 28px 20px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px
+  }
+  @media (max-width:560px) {
+    .page {
+      padding: 22px 16px 56px
+    }
+  }
+  .masthead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap
+  }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: clamp(34px, 6.4vw, 54px);
+    line-height: .98;
+    letter-spacing: -.02em;
+    margin: .16em 0 0
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--key)
+  }
+  .tagline {
+    color: var(--ink-2);
+    max-width: 60ch;
+    margin: .5em 0 0;
+    font-size: 15.5px
+  }
+  .theme-btn {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    background: var(--surface);
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 8px 15px;
+    cursor: pointer;
+    white-space: nowrap
+  }
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3)
+  }
+  button:focus-visible,
+  input:focus-visible,
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2.5px solid var(--focus);
+    outline-offset: 2px
+  }
 
   /* ---- finding a standard ---- */
-  .finder{background:var(--surface);border:1px solid var(--rule);border-radius:14px;box-shadow:var(--shadow);
-    padding:16px 18px;display:flex;flex-direction:column;gap:12px}
-  .lbl{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-  .search{display:flex;flex-direction:column;gap:6px}
-  .search input{font-family:var(--f-body);font-size:18px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);
-    border-radius:10px;padding:10px 14px;width:100%;min-width:0}
-  .search input::placeholder{color:var(--ink-3)}
-  .chips{display:flex;flex-wrap:wrap;gap:6px}
-  .chip{font-family:var(--f-body);font-size:13px;font-weight:500;background:var(--paper);border:1px solid var(--rule);color:var(--ink-2);
-    border-radius:999px;padding:5px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-  .chip small{font-family:var(--f-mono);font-size:11px;color:var(--ink-3)}
-  .chip:hover{border-color:var(--ink-3);color:var(--ink)}
-  .chip[aria-pressed="true"]{background:var(--key-bg);border-color:var(--key);color:var(--ink);font-weight:600}
-  .count{margin:0;font-size:13.5px;color:var(--ink-3)}
-  .note{margin:0;font-size:13.5px;color:var(--ink-2);background:var(--paper);border-radius:8px;padding:8px 12px}
+  .finder {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+  }
+  .lbl {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  .search {
+    display: flex;
+    flex-direction: column;
+    gap: 6px
+  }
+  .search input {
+    font-family: var(--f-body);
+    font-size: 18px;
+    color: var(--ink);
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 10px 14px;
+    width: 100%;
+    min-width: 0
+  }
+  .search input::placeholder {
+    color: var(--ink-3)
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px
+  }
+  .chip {
+    font-family: var(--f-body);
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    border-radius: 999px;
+    padding: 5px 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px
+  }
+  .chip small {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--ink-3)
+  }
+  .chip:hover {
+    border-color: var(--ink-3);
+    color: var(--ink)
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--key-bg);
+    border-color: var(--key);
+    color: var(--ink);
+    font-weight: 600
+  }
+  .count {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--ink-3)
+  }
+  .note {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 8px 12px
+  }
 
   /* ---- the list ---- */
-  .grade > h2{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:30px;line-height:1;margin:6px 0 12px;
-    display:flex;align-items:center;gap:12px;color:var(--ink)}
-  .grade > h2::after{content:"";flex:1;height:1px;background:var(--rule)}
-  .domain{margin:0 0 20px}
-  .domain > h3{font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px;align-items:start}
-  .std{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--key-line);border-radius:6px 12px 12px 6px;
-    padding:14px 16px 13px;display:flex;flex-direction:column;gap:8px;min-width:0;scroll-margin-top:16px;
-    transition:background-color .6s ease, box-shadow .6s ease}
-  .std.flash{background:var(--flash);box-shadow:0 0 0 3px var(--key)}
-  @media (prefers-reduced-motion:reduce){.std{transition:none}}
-  .std h4{font-family:var(--f-mono);font-size:15px;font-weight:600;margin:0;color:var(--ink);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
-  .std h4 span{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-  .txt{margin:0;font-size:15px}
-  .meta{margin:0;font-size:13px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:2px 0;align-items:baseline}
-  .meta > b{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-right:8px}
-  .meta a{color:var(--ink-2);text-underline-offset:.15em}
-  .meta a:hover{color:var(--ink)}
-  .meta .sep{margin:0 6px;color:var(--rule)}
-  .empty{background:var(--surface);border:1px dashed var(--rule);border-radius:12px;padding:28px 20px;text-align:center;color:var(--ink-2)}
-  .empty button{font:inherit;font-weight:600;color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:9px;
-    padding:6px 13px;margin-top:10px;cursor:pointer}
-  .footnote{font-size:13.5px;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:14px}
-  .footnote a{color:var(--ink-2)}
-  .noscript{color:var(--ink-2)}
+  .grade>h2 {
+    font-family: var(--f-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: 30px;
+    line-height: 1;
+    margin: 6px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink)
+  }
+  .grade>h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule)
+  }
+  .domain {
+    margin: 0 0 20px
+  }
+  .domain>h3 {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 10px
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr));
+    gap: 14px;
+    align-items: start
+  }
+  .std {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--key-line);
+    border-radius: 6px 12px 12px 6px;
+    padding: 14px 16px 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    scroll-margin-top: 16px;
+    transition: background-color .6s ease, box-shadow .6s ease
+  }
+  .std.flash {
+    background: var(--flash);
+    box-shadow: 0 0 0 3px var(--key)
+  }
+  @media (prefers-reduced-motion:reduce) {
+    .std {
+      transition: none
+    }
+  }
+  .std h4 {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--ink);
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    flex-wrap: wrap
+  }
+  .std h4 span {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  .txt {
+    margin: 0;
+    font-size: 15px
+  }
+  .meta {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 0;
+    align-items: baseline
+  }
+  .meta>b {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-right: 8px
+  }
+  .meta a {
+    color: var(--ink-2);
+    text-underline-offset: .15em
+  }
+  .meta a:hover {
+    color: var(--ink)
+  }
+  .meta .sep {
+    margin: 0 6px;
+    color: var(--rule)
+  }
+  .empty {
+    background: var(--surface);
+    border: 1px dashed var(--rule);
+    border-radius: 12px;
+    padding: 28px 20px;
+    text-align: center;
+    color: var(--ink-2)
+  }
+  .empty button {
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--rule);
+    border-radius: 9px;
+    padding: 6px 13px;
+    margin-top: 10px;
+    cursor: pointer
+  }
+  .footnote {
+    font-size: 13.5px;
+    color: var(--ink-3);
+    border-top: 1px solid var(--rule);
+    padding-top: 14px
+  }
+  .footnote a {
+    color: var(--ink-2)
+  }
+  .noscript {
+    color: var(--ink-2)
+  }
 
   /* ---- the helpers, as a second way in ---- */
-  .byhelper{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:4px 18px}
-  .byhelper summary{cursor:pointer;font-family:var(--f-mono);font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
-    color:var(--ink-2);padding:12px 0}
-  .byhelper ul{list-style:none;margin:0 0 12px;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:4px 18px}
-  .byhelper a{color:var(--ink-2);font-size:14.5px}
+  .byhelper {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    padding: 4px 18px
+  }
+  .byhelper summary {
+    cursor: pointer;
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    padding: 12px 0
+  }
+  .byhelper ul {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+    gap: 4px 18px
+  }
+  .byhelper a {
+    color: var(--ink-2);
+    font-size: 14.5px
+  }
 
-  @media print{
-    @page{margin:14mm 13mm}
-    body{background:#fff;color:#000;font-size:10pt;line-height:1.35}
-    .page{max-width:none;padding:0;gap:8px}
-    .sitenav,.theme-btn,.finder,.byhelper,.footnote,.tagline,.eyebrow{display:none !important}
-    h1{font-size:20pt;margin:0 0 4mm;color:#000}
-    h1 em{color:#000}
-    .grade > h2{font-size:14pt;margin:3mm 0 1.5mm;break-after:avoid;color:#000}
-    .grade > h2::after{background:#999}
-    .domain > h3{color:#444;break-after:avoid}
-    .grid{display:block}
-    .std{display:block;background:none;border:0;border-radius:0;box-shadow:none;padding:0 0 2mm;break-inside:avoid;color:#000}
-    .std h4{display:inline;font-size:10pt}
-    .txt{display:inline;font-size:9.5pt}
-    .meta{display:block;font-size:8.5pt;color:#444}
+  @media print {
+    @page {
+      margin: 14mm 13mm
+    }
+    body {
+      background: #fff;
+      color: #000;
+      font-size: 10pt;
+      line-height: 1.35
+    }
+    .page {
+      max-width: none;
+      padding: 0;
+      gap: 8px
+    }
+    .sitenav,
+    .theme-btn,
+    .finder,
+    .byhelper,
+    .footnote,
+    .tagline,
+    .eyebrow {
+      display: none !important
+    }
+    h1 {
+      font-size: 20pt;
+      margin: 0 0 4mm;
+      color: #000
+    }
+    h1 em {
+      color: #000
+    }
+    .grade>h2 {
+      font-size: 14pt;
+      margin: 3mm 0 1.5mm;
+      break-after: avoid;
+      color: #000
+    }
+    .grade>h2::after {
+      background: #999
+    }
+    .domain>h3 {
+      color: #444;
+      break-after: avoid
+    }
+    .grid {
+      display: block
+    }
+    .std {
+      display: block;
+      background: none;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0 0 2mm;
+      break-inside: avoid;
+      color: #000
+    }
+    .std h4 {
+      display: inline;
+      font-size: 10pt
+    }
+    .txt {
+      display: inline;
+      font-size: 9.5pt
+    }
+    .meta {
+      display: block;
+      font-size: 8.5pt;
+      color: #444
+    }
   }
 </style>
 
@@ -177,147 +548,191 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-  "use strict";
-  var $ = function(id){ return document.getElementById(id); };
-  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  document.addEventListener("DOMContentLoaded", function() {
+    "use strict";
+    var $ = function(id) { return document.getElementById(id); };
 
-  /* ---- theme (same switch as the other pages; remembered for this page) ---- */
-  var KEY = "helpers-glossary", themeBtn = $("themeBtn");
-  try { var saved = localStorage.getItem(KEY); if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved); } catch (e){}
-  function isDark(){
-    var t = document.documentElement.getAttribute("data-theme");
-    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
-  themeBtn.addEventListener("click", function(){
-    var next = isDark() ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next); paint();
-    try { localStorage.setItem(KEY, next); } catch (e){}
-  });
-  paint();
+    function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
 
-  var H = window.HelperStandards;
-  if (!H){ $("list").innerHTML = "<p class=\"noscript\">The standards list could not be loaded.</p>"; return; }
-  var S = { q:"", grade:"" };
+    /* ---- theme (same switch as the other pages; remembered for this page) ---- */
+    var KEY = "helpers-glossary",
+      themeBtn = $("themeBtn");
+    try { var saved = localStorage.getItem(KEY); if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved); } catch (e) {}
 
-  /* ---- the grade buttons ---- */
-  var GRADES = [];
-  H.list.forEach(function(s){ if (GRADES.indexOf(s.grade) < 0) GRADES.push(s.grade); });
-  function gname(g){ return g === "HS" ? "High School" : g === "K" ? "Kindergarten" : "Grade " + g; }
-  function gshort(g){ return g === "HS" ? "High School" : g === "K" ? "K" : "Grade " + g; }
-  function stripGrade(q){ return q.replace(/\bgrade\s*(k|\d{1,2})\b/ig, " ").replace(/\b(high school|hs)\b/ig, " "); }
-  function drawChips(){
-    var n = {};
-    H.search(stripGrade(S.q)).forEach(function(r){ n[r.standard.grade] = (n[r.standard.grade] || 0) + 1; });
-    var html = "<button type=\"button\" class=\"chip\" data-grade=\"\" aria-pressed=\"" + (S.grade === "") + "\">All</button>";
-    GRADES.forEach(function(g){
-      html += "<button type=\"button\" class=\"chip\" data-grade=\"" + g + "\" aria-pressed=\"" + (S.grade === g) + "\">" + esc(gshort(g)) +
-        " <small>" + (n[g] || 0) + "</small></button>";
-    });
-    $("chips").innerHTML = html;
-  }
-
-  /* ---- the list ---- */
-  function link(p, label){
-    return "<a href=\"" + esc(H.pageUrl(p.page, p.mode ? "mode=" + encodeURIComponent(p.mode) : "")) + "\">" + esc(label) + "</a>";
-  }
-  function card(r){
-    var s = r.standard;
-    // a helper's several tabs go on one line: Fractions: Simplify, Equivalent
-    var order = [], by = {};
-    r.pages.forEach(function(p){ if (!by[p.page]){ by[p.page] = []; order.push(p.page); } by[p.page].push(p); });
-    var links = order.map(function(id){
-      var ps = by[id];
-      if (ps.length === 1) return link(ps[0], ps[0].name + (ps[0].modeName ? ": " + ps[0].modeName : ""));
-      return esc(ps[0].name) + ": " + ps.map(function(p){ return link(p, p.modeName || "all of it"); }).join(", ");
-    }).join("<span class=\"sep\">|</span>");
-    return "<article class=\"std\" id=\"" + esc(s.code) + "\"><h4>" + esc(s.code) + (s.plus ? " <span>(+) advanced</span>" : "") + "</h4>" +
-      "<p class=\"txt\">" + esc(s.text) + "</p>" +
-      (links ? "<p class=\"meta\"><b>Practice it</b>" + links + "</p>" : "") + "</article>";
-  }
-  function render(){
-    var rows = H.search(S.q).filter(function(r){ return !S.grade || r.standard.grade === S.grade; });
-    drawChips();
-    $("count").textContent = rows.length + (rows.length === 1 ? " standard" : " standards") + (S.q || S.grade ? " found" : " in all");
-    if (!rows.length){
-      $("list").innerHTML = "<div class=\"empty\">No standard matches that.<br><button type=\"button\" id=\"clear\">Show everything</button></div>";
-      $("clear").addEventListener("click", function(){ S.q = ""; S.grade = ""; $("q").value = ""; render(); keepUrl(); });
-      return;
+    function isDark() {
+      var t = document.documentElement.getAttribute("data-theme");
+      return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
-    var html = "", g = null, d = null;
-    rows.forEach(function(r){
-      var s = r.standard, dkey = s.grade + "|" + s.domain;
-      if (s.grade !== g){
-        if (g !== null) html += "</div></div></section>";
-        html += "<section class=\"grade\" id=\"grade-" + esc(s.grade) + "\"><h2>" + esc(gname(s.grade)) + "</h2>";
-        g = s.grade; d = null;
-      }
-      if (dkey !== d){
-        if (d !== null) html += "</div></div>";
-        html += "<div class=\"domain\"><h3>" + esc(s.domain) + (s.area ? " &middot; " + esc(s.area) : "") + "</h3><div class=\"grid\">";
-        d = dkey;
-      }
-      html += card(r);
+
+    function paint() { themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+    themeBtn.addEventListener("click", function() {
+      var next = isDark() ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      paint();
+      try { localStorage.setItem(KEY, next); } catch (e) {}
     });
-    html += "</div></div></section>";
-    $("list").innerHTML = html;
-  }
-  function drawHelpers(){
-    $("helpers").innerHTML = H.pages.map(function(p){
-      return "<li><a href=\"" + esc(H.pageUrl(p.id)) + "\">" + esc(p.name) + "</a></li>";
-    }).join("");
-  }
+    paint();
 
-  /* ---- the address: ?q=fractions&grade=6 (a single code shows just that standard) ---- */
-  function keepUrl(){
-    try {
-      var p = [];
-      if (S.q) p.push("q=" + encodeURIComponent(S.q));
-      if (S.grade) p.push("grade=" + encodeURIComponent(S.grade));
-      history.replaceState(null, "", location.pathname + (p.length ? "?" + p.join("&") : "") + location.hash);
-    } catch (e){}
-  }
-  function fromUrl(){
-    var m = /[?&]q=([^&#]*)/.exec(location.search), g = /[?&]grade=([^&#]*)/.exec(location.search);
-    try { if (m) S.q = decodeURIComponent(m[1].replace(/\+/g, " ")); if (g) S.grade = decodeURIComponent(g[1]).toUpperCase(); } catch (e){}
-    if (GRADES.indexOf(S.grade) < 0) S.grade = "";
-    $("q").value = S.q;
-  }
+    var H = window.HelperStandards;
+    if (!H) { $("list").innerHTML = "<p class=\"noscript\">The standards list could not be loaded.</p>"; return; }
+    var S = { q: "", grade: "" };
 
-  var typing = 0;
-  $("q").addEventListener("input", function(){
-    S.q = this.value;
-    clearTimeout(typing);
-    typing = setTimeout(function(){ render(); keepUrl(); }, 90);
+    /* ---- the grade buttons ---- */
+    var GRADES = [];
+    H.list.forEach(function(s) { if (GRADES.indexOf(s.grade) < 0) GRADES.push(s.grade); });
+
+    function gname(g) { return g === "HS" ? "High School" : g === "K" ? "Kindergarten" : "Grade " + g; }
+
+    function gshort(g) { return g === "HS" ? "High School" : g === "K" ? "K" : "Grade " + g; }
+
+    function stripGrade(q) { return q.replace(/\bgrade\s*(k|\d{1,2})\b/ig, " ").replace(/\b(high school|hs)\b/ig, " "); }
+
+    function drawChips() {
+      var n = {};
+      H.search(stripGrade(S.q)).forEach(function(r) { n[r.standard.grade] = (n[r.standard.grade] || 0) + 1; });
+      var html = "<button type=\"button\" class=\"chip\" data-grade=\"\" aria-pressed=\"" + (S.grade === "") + "\">All</button>";
+      GRADES.forEach(function(g) {
+        html += "<button type=\"button\" class=\"chip\" data-grade=\"" + g + "\" aria-pressed=\"" + (S.grade === g) + "\">" + esc(gshort(g)) +
+          " <small>" + (n[g] || 0) + "</small></button>";
+      });
+      $("chips").innerHTML = html;
+    }
+
+    /* ---- the list ---- */
+    function link(p, label) {
+      return "<a href=\"" + esc(H.pageUrl(p.page, p.mode ? "mode=" + encodeURIComponent(p.mode) : "")) + "\">" + esc(label) + "</a>";
+    }
+
+    function card(r) {
+      var s = r.standard;
+      // a helper's several tabs go on one line: Fractions: Simplify, Equivalent
+      var order = [],
+        by = {};
+      r.pages.forEach(function(p) {
+        if (!by[p.page]) {
+          by[p.page] = [];
+          order.push(p.page);
+        }
+        by[p.page].push(p);
+      });
+      var links = order.map(function(id) {
+        var ps = by[id];
+        if (ps.length === 1) return link(ps[0], ps[0].name + (ps[0].modeName ? ": " + ps[0].modeName : ""));
+        return esc(ps[0].name) + ": " + ps.map(function(p) { return link(p, p.modeName || "all of it"); }).join(", ");
+      }).join("<span class=\"sep\">|</span>");
+      return "<article class=\"std\" id=\"" + esc(s.code) + "\"><h4>" + esc(s.code) + (s.plus ? " <span>(+) advanced</span>" : "") + "</h4>" +
+        "<p class=\"txt\">" + esc(s.text) + "</p>" +
+        (links ? "<p class=\"meta\"><b>Practice it</b>" + links + "</p>" : "") + "</article>";
+    }
+
+    function render() {
+      var rows = H.search(S.q).filter(function(r) { return !S.grade || r.standard.grade === S.grade; });
+      drawChips();
+      $("count").textContent = rows.length + (rows.length === 1 ? " standard" : " standards") + (S.q || S.grade ? " found" : " in all");
+      if (!rows.length) {
+        $("list").innerHTML = "<div class=\"empty\">No standard matches that.<br><button type=\"button\" id=\"clear\">Show everything</button></div>";
+        $("clear").addEventListener("click", function() {
+          S.q = "";
+          S.grade = "";
+          $("q").value = "";
+          render();
+          keepUrl();
+        });
+        return;
+      }
+      var html = "",
+        g = null,
+        d = null;
+      rows.forEach(function(r) {
+        var s = r.standard,
+          dkey = s.grade + "|" + s.domain;
+        if (s.grade !== g) {
+          if (g !== null) html += "</div></div></section>";
+          html += "<section class=\"grade\" id=\"grade-" + esc(s.grade) + "\"><h2>" + esc(gname(s.grade)) + "</h2>";
+          g = s.grade;
+          d = null;
+        }
+        if (dkey !== d) {
+          if (d !== null) html += "</div></div>";
+          html += "<div class=\"domain\"><h3>" + esc(s.domain) + (s.area ? " &middot; " + esc(s.area) : "") + "</h3><div class=\"grid\">";
+          d = dkey;
+        }
+        html += card(r);
+      });
+      html += "</div></div></section>";
+      $("list").innerHTML = html;
+    }
+
+    function drawHelpers() {
+      $("helpers").innerHTML = H.pages.map(function(p) {
+        return "<li><a href=\"" + esc(H.pageUrl(p.id)) + "\">" + esc(p.name) + "</a></li>";
+      }).join("");
+    }
+
+    /* ---- the address: ?q=fractions&grade=6 (a single code shows just that standard) ---- */
+    function keepUrl() {
+      try {
+        var p = [];
+        if (S.q) p.push("q=" + encodeURIComponent(S.q));
+        if (S.grade) p.push("grade=" + encodeURIComponent(S.grade));
+        history.replaceState(null, "", location.pathname + (p.length ? "?" + p.join("&") : "") + location.hash);
+      } catch (e) {}
+    }
+
+    function fromUrl() {
+      var m = /[?&]q=([^&#]*)/.exec(location.search),
+        g = /[?&]grade=([^&#]*)/.exec(location.search);
+      try { if (m) S.q = decodeURIComponent(m[1].replace(/\+/g, " ")); if (g) S.grade = decodeURIComponent(g[1]).toUpperCase(); } catch (e) {}
+      if (GRADES.indexOf(S.grade) < 0) S.grade = "";
+      $("q").value = S.q;
+    }
+
+    var typing = 0;
+    $("q").addEventListener("input", function() {
+      S.q = this.value;
+      clearTimeout(typing);
+      typing = setTimeout(function() {
+        render();
+        keepUrl();
+      }, 90);
+    });
+    $("chips").addEventListener("click", function(e) {
+      var b = e.target.closest ? e.target.closest(".chip") : null;
+      if (!b) return;
+      S.grade = b.getAttribute("data-grade") || "";
+      render();
+      keepUrl();
+      var again = document.querySelector('.chip[data-grade="' + S.grade + '"]');
+      if (again) again.focus();
+    });
+
+    /* ---- standards.html#4.NBT.B.4 scrolls to the standard and lights it up ---- */
+    var flashT = 0;
+
+    function jump() {
+      var id = "";
+      try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { id = location.hash.slice(1); }
+      if (!id) return;
+      var el = document.getElementById(id);
+      if (!el && H.byCode(id)) {
+        S.q = "";
+        S.grade = "";
+        $("q").value = "";
+        render();
+        keepUrl();
+        el = document.getElementById(id);
+      }
+      if (!el || !/\bstd\b/.test(el.className)) return;
+      el.scrollIntoView({ block: "start" });
+      el.classList.add("flash");
+      clearTimeout(flashT);
+      flashT = setTimeout(function() { el.classList.remove("flash"); }, 2200);
+    }
+    window.addEventListener("hashchange", jump);
+
+    drawHelpers();
+    fromUrl();
+    render();
+    if (location.hash) setTimeout(jump, 0);
   });
-  $("chips").addEventListener("click", function(e){
-    var b = e.target.closest ? e.target.closest(".chip") : null;
-    if (!b) return;
-    S.grade = b.getAttribute("data-grade") || "";
-    render(); keepUrl();
-    var again = document.querySelector('.chip[data-grade="' + S.grade + '"]'); if (again) again.focus();
-  });
-
-  /* ---- standards.html#4.NBT.B.4 scrolls to the standard and lights it up ---- */
-  var flashT = 0;
-  function jump(){
-    var id = "";
-    try { id = decodeURIComponent(location.hash.slice(1)); } catch (e){ id = location.hash.slice(1); }
-    if (!id) return;
-    var el = document.getElementById(id);
-    if (!el && H.byCode(id)){ S.q = ""; S.grade = ""; $("q").value = ""; render(); keepUrl(); el = document.getElementById(id); }
-    if (!el || !/\bstd\b/.test(el.className)) return;
-    el.scrollIntoView({ block:"start" });
-    el.classList.add("flash");
-    clearTimeout(flashT);
-    flashT = setTimeout(function(){ el.classList.remove("flash"); }, 2200);
-  }
-  window.addEventListener("hashchange", jump);
-
-  drawHelpers();
-  fromUrl();
-  render();
-  if (location.hash) setTimeout(jump, 0);
-});
 </script>

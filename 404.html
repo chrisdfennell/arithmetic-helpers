@@ -8,10 +8,10 @@
   /* GitHub Pages shows this page for any missing address, at any depth, so every link here is written from the site's
      folder, and a <base> points there: the first folder of the address on github.io (a project site) or on a copy
      served under /arithmetic-helpers/, and the top of the site anywhere else */
-  (function(){
+  (function() {
     // on the site's own domain (showthesteps.org) an old github.io address can arrive with /arithmetic-helpers/ in front:
     // the page is the same address without it
-    if (!/\.github\.io$|^(localhost|127\.[0-9.]+|\[::1\])$/.test(location.hostname) && /^\/arithmetic-helpers(\/|$)/i.test(location.pathname)){
+    if (!/\.github\.io$|^(localhost|127\.[0-9.]+|\[::1\])$/.test(location.hostname) && /^\/arithmetic-helpers(\/|$)/i.test(location.pathname)) {
       location.replace(location.pathname.replace(/^\/arithmetic-helpers/i, "") + location.search + location.hash);
       return;
     }
@@ -26,12 +26,14 @@
      a QR code on a printed worksheet: pemdas.html?q=…, practice.html?set=…, helpers/pemdas, icons/og.png): go straight
      to where that page or file lives now, with its problem (?q=…) and #part kept. HelperSite.moved knows them all.
      Anything else stays here and shows the page below. */
-  (function(){
+  (function() {
     var S = window.HelperSite;
-    if (!S || !document.querySelector("base")) return;                 // no <base>: already on its way (above)
-    var base = document.querySelector("base").href, here = location.href.split(/[?#]/)[0];
+    if (!S || !document.querySelector("base")) return; // no <base>: already on its way (above)
+    var base = document.querySelector("base").href,
+      here = location.href.split(/[?#]/)[0];
     if (here.indexOf(base) !== 0) return;
-    var rel; try { rel = decodeURIComponent(here.slice(base.length)); } catch (e){ rel = here.slice(base.length); }
+    var rel;
+    try { rel = decodeURIComponent(here.slice(base.length)); } catch (e) { rel = here.slice(base.length); }
     var to = S.moved(rel);
     if (!to) return;
     var next = to.page ? S.url(to.page) : S.root + to.file;
@@ -46,35 +48,136 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <script src="assets/search.js"></script>
 <style>
-  :root{
-    --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
-    --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
+  :root {
+    --paper: #EDEFE9;
+    --surface: #F8F9F5;
+    --surface-2: #E3E7DF;
+    --ink: #19211D;
+    --ink-2: #4B5651;
+    --ink-3: #7C8781;
+    --rule: #C9D0C6;
+    --shadow: 0 1px 0 rgba(25, 33, 29, .05), 0 14px 30px -20px rgba(25, 33, 29, .5);
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
-      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #131817;
+      --surface: #1B2220;
+      --surface-2: #252E2B;
+      --ink: #E7EBE4;
+      --ink-2: #A3AEA7;
+      --ink-3: #77837D;
+      --rule: #38423F;
+      --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
     }
   }
-  :root[data-theme="dark"]{
-    --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
-    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
+  :root[data-theme="dark"] {
+    --paper: #131817;
+    --surface: #1B2220;
+    --surface-2: #252E2B;
+    --ink: #E7EBE4;
+    --ink-2: #A3AEA7;
+    --ink-3: #77837D;
+    --rule: #38423F;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
   }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;line-height:1.55}
-  .wrap{max-width:760px;margin:0 auto;padding:64px 20px 80px}
-  .eyebrow{font-family:"IBM Plex Mono",Consolas,monospace;font-size:11.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
-  h1{font-family:"Archivo","Helvetica Neue",Arial,sans-serif;font-stretch:118%;font-weight:800;font-size:clamp(36px,7vw,60px);
-    line-height:.98;letter-spacing:-.02em;margin:.2em 0 .35em}
-  p{color:var(--ink-2);font-size:17px;margin:0 0 22px}
-  form{display:flex;gap:8px;background:var(--surface);border:1.5px solid var(--rule);border-radius:14px;padding:6px;box-shadow:var(--shadow);margin-bottom:26px}
-  input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-family:"IBM Plex Mono",Consolas,monospace;font-size:18px;font-weight:600;padding:8px 10px;outline:none}
-  button{font-family:inherit;font-weight:600;font-size:15px;background:var(--ink);color:var(--paper);border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
-  @media (max-width:520px){form{flex-direction:column}}
-  .links{display:flex;flex-wrap:wrap;gap:8px}
-  .links a{text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:7px 14px;font-size:14.5px}
-  .links a:hover{border-color:var(--ink-3)}
-  .home{display:inline-block;margin-top:28px;color:var(--ink-2);font-weight:600}
+  * {
+    box-sizing: border-box
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    line-height: 1.55
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 20px 80px
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", Consolas, monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+  h1 {
+    font-family: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: clamp(36px, 7vw, 60px);
+    line-height: .98;
+    letter-spacing: -.02em;
+    margin: .2em 0 .35em
+  }
+  p {
+    color: var(--ink-2);
+    font-size: 17px;
+    margin: 0 0 22px
+  }
+  form {
+    display: flex;
+    gap: 8px;
+    background: var(--surface);
+    border: 1.5px solid var(--rule);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: var(--shadow);
+    margin-bottom: 26px
+  }
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: "IBM Plex Mono", Consolas, monospace;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 8px 10px;
+    outline: none
+  }
+  button {
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 15px;
+    background: var(--ink);
+    color: var(--paper);
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer
+  }
+  @media (max-width:520px) {
+    form {
+      flex-direction: column
+    }
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px
+  }
+  .links a {
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 14.5px
+  }
+  .links a:hover {
+    border-color: var(--ink-3)
+  }
+  .home {
+    display: inline-block;
+    margin-top: 28px;
+    color: var(--ink-2);
+    font-weight: 600
+  }
 </style>
 
 <div class="wrap">
@@ -98,9 +201,9 @@
   <a class="home" href="index.html">← Back to the home page</a>
 </div>
 <script>
-  (function(){
-    try { var s = JSON.parse(localStorage.getItem("helpers-settings") || "{}"); if (s.theme) document.documentElement.setAttribute("data-theme", s.theme); } catch (e){}
-    document.getElementById("ask").addEventListener("submit", function(e){
+  (function() {
+    try { var s = JSON.parse(localStorage.getItem("helpers-settings") || "{}"); if (s.theme) document.documentElement.setAttribute("data-theme", s.theme); } catch (e) {}
+    document.getElementById("ask").addEventListener("submit", function(e) {
       e.preventDefault();
       var v = document.getElementById("askIn").value.trim();
       if (!v) return;

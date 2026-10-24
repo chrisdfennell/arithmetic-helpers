@@ -25,8 +25,8 @@
 <script src="assets/tools.js" defer></script>
 <script>
   /* counting visits with GoatCounter (no cookies, no personal data); not when testing on this computer */
-  if (/^https?:$/.test(location.protocol) && !/^(localhost|127\.[0-9.]+|\[::1\])$/.test(location.hostname) && window.top === window.self){
-    window.goatcounter = { path: function(){ return location.pathname; } };
+  if (/^https?:$/.test(location.protocol) && !/^(localhost|127\.[0-9.]+|\[::1\])$/.test(location.hostname) && window.top === window.self) {
+    window.goatcounter = { path: function() { return location.pathname; } };
     document.write('<script data-goatcounter="https://fennell.goatcounter.com/count" async src="https://gc.zgo.at/count.js"><\/script>');
   }
 </script>
@@ -35,187 +35,966 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 <style>
-  :root{
-    --paper:#EDEFE9; --surface:#F8F9F5; --surface-2:#E3E7DF; --ink:#19211D; --ink-2:#4B5651; --ink-3:#7C8781; --rule:#C9D0C6;
-    --grid:rgba(25,33,29,.06);
-    --add:#0D7361; --sub:#A8412A; --mul:#544696; --div:#A85A0C; --ord:#1F5E8C; --alg:#9B2F6B; --geo:#4F6A17; --fra:#0B6E83; --pct:#8A6D00; --fac:#7B3FA0; --int:#46596E; --rat:#B0263E; --lin:#1E7A3C; --sta:#3346A8; --wrd:#0F766E; --scr:#B45309; --gra:#0369A1; --exp:#BE185D; --pro:#A21CAF; --tri:#4D7C0F; --cal:#7C3AED; --num:#EA580C; --qua:#B91C1C; --log:#1D4ED8; --seq:#15803D; --fun:#0E7490; --rad:#92400E; --cpx:#4F46E5; --bel:#047857; --mat:#57534E; --uni:#BE123C; --mon:#A16207; --avi:#0B5CAD; --cnt:#6B5A2B; --fla:#C2410C; --day:#4338CA;
-    --shadow:0 1px 0 rgba(25,33,29,.05), 0 14px 30px -20px rgba(25,33,29,.5);
-    --shadow-up:0 1px 0 rgba(25,33,29,.05), 0 24px 40px -22px rgba(25,33,29,.55);
-    --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
-    --f-body:"IBM Plex Sans","Segoe UI",Helvetica,Arial,sans-serif;
-    --f-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  :root {
+    --paper: #EDEFE9;
+    --surface: #F8F9F5;
+    --surface-2: #E3E7DF;
+    --ink: #19211D;
+    --ink-2: #4B5651;
+    --ink-3: #7C8781;
+    --rule: #C9D0C6;
+    --grid: rgba(25, 33, 29, .06);
+    --add: #0D7361;
+    --sub: #A8412A;
+    --mul: #544696;
+    --div: #A85A0C;
+    --ord: #1F5E8C;
+    --alg: #9B2F6B;
+    --geo: #4F6A17;
+    --fra: #0B6E83;
+    --pct: #8A6D00;
+    --fac: #7B3FA0;
+    --int: #46596E;
+    --rat: #B0263E;
+    --lin: #1E7A3C;
+    --sta: #3346A8;
+    --wrd: #0F766E;
+    --scr: #B45309;
+    --gra: #0369A1;
+    --exp: #BE185D;
+    --pro: #A21CAF;
+    --tri: #4D7C0F;
+    --cal: #7C3AED;
+    --num: #EA580C;
+    --qua: #B91C1C;
+    --log: #1D4ED8;
+    --seq: #15803D;
+    --fun: #0E7490;
+    --rad: #92400E;
+    --cpx: #4F46E5;
+    --bel: #047857;
+    --mat: #57534E;
+    --uni: #BE123C;
+    --mon: #A16207;
+    --avi: #0B5CAD;
+    --cnt: #6B5A2B;
+    --fla: #C2410C;
+    --day: #4338CA;
+    --shadow: 0 1px 0 rgba(25, 33, 29, .05), 0 14px 30px -20px rgba(25, 33, 29, .5);
+    --shadow-up: 0 1px 0 rgba(25, 33, 29, .05), 0 24px 40px -22px rgba(25, 33, 29, .55);
+    --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "IBM Plex Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --f-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
-      --grid:rgba(231,235,228,.05);
-      --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --fun:#67E8F9; --rad:#FBBF24; --cpx:#A5B4FC; --bel:#6EE7B7; --mat:#D6D3D1; --uni:#FDA4AF; --mon:#FDE047; --avi:#8CC4F5; --cnt:#EED9A0; --fla:#FB923C; --day:#A5B4FC;
-      --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
-      --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #131817;
+      --surface: #1B2220;
+      --surface-2: #252E2B;
+      --ink: #E7EBE4;
+      --ink-2: #A3AEA7;
+      --ink-3: #77837D;
+      --rule: #38423F;
+      --grid: rgba(231, 235, 228, .05);
+      --add: #4FCCB0;
+      --sub: #F08A6E;
+      --mul: #A99CF0;
+      --div: #F2A85C;
+      --ord: #7DB8E8;
+      --alg: #F08CC0;
+      --geo: #B5D06A;
+      --fra: #5FC9DE;
+      --pct: #E3C04D;
+      --fac: #C9A0EE;
+      --int: #A9BDD2;
+      --rat: #F27D8F;
+      --lin: #6FD38E;
+      --sta: #93A2F2;
+      --wrd: #5EEAD4;
+      --scr: #FCD34D;
+      --gra: #7DD3FC;
+      --exp: #FDA4AF;
+      --pro: #F0ABFC;
+      --tri: #BEF264;
+      --cal: #C4B5FD;
+      --num: #FDBA74;
+      --qua: #FCA5A5;
+      --log: #93C5FD;
+      --seq: #86EFAC;
+      --fun: #67E8F9;
+      --rad: #FBBF24;
+      --cpx: #A5B4FC;
+      --bel: #6EE7B7;
+      --mat: #D6D3D1;
+      --uni: #FDA4AF;
+      --mon: #FDE047;
+      --avi: #8CC4F5;
+      --cnt: #EED9A0;
+      --fla: #FB923C;
+      --day: #A5B4FC;
+      --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
+      --shadow-up: 0 1px 0 rgba(0, 0, 0, .3), 0 24px 40px -20px rgba(0, 0, 0, .95);
     }
   }
-  :root[data-theme="dark"]{
-    --paper:#131817; --surface:#1B2220; --surface-2:#252E2B; --ink:#E7EBE4; --ink-2:#A3AEA7; --ink-3:#77837D; --rule:#38423F;
-    --grid:rgba(231,235,228,.05);
-    --add:#4FCCB0; --sub:#F08A6E; --mul:#A99CF0; --div:#F2A85C; --ord:#7DB8E8; --alg:#F08CC0; --geo:#B5D06A; --fra:#5FC9DE; --pct:#E3C04D; --fac:#C9A0EE; --int:#A9BDD2; --rat:#F27D8F; --lin:#6FD38E; --sta:#93A2F2; --wrd:#5EEAD4; --scr:#FCD34D; --gra:#7DD3FC; --exp:#FDA4AF; --pro:#F0ABFC; --tri:#BEF264; --cal:#C4B5FD; --num:#FDBA74; --qua:#FCA5A5; --log:#93C5FD; --seq:#86EFAC; --fun:#67E8F9; --rad:#FBBF24; --cpx:#A5B4FC; --bel:#6EE7B7; --mat:#D6D3D1; --uni:#FDA4AF; --mon:#FDE047; --avi:#8CC4F5; --cnt:#EED9A0; --fla:#FB923C; --day:#A5B4FC;
-    --shadow:0 1px 0 rgba(0,0,0,.3), 0 14px 30px -20px rgba(0,0,0,.9);
-    --shadow-up:0 1px 0 rgba(0,0,0,.3), 0 24px 40px -20px rgba(0,0,0,.95);
+  :root[data-theme="dark"] {
+    --paper: #131817;
+    --surface: #1B2220;
+    --surface-2: #252E2B;
+    --ink: #E7EBE4;
+    --ink-2: #A3AEA7;
+    --ink-3: #77837D;
+    --rule: #38423F;
+    --grid: rgba(231, 235, 228, .05);
+    --add: #4FCCB0;
+    --sub: #F08A6E;
+    --mul: #A99CF0;
+    --div: #F2A85C;
+    --ord: #7DB8E8;
+    --alg: #F08CC0;
+    --geo: #B5D06A;
+    --fra: #5FC9DE;
+    --pct: #E3C04D;
+    --fac: #C9A0EE;
+    --int: #A9BDD2;
+    --rat: #F27D8F;
+    --lin: #6FD38E;
+    --sta: #93A2F2;
+    --wrd: #5EEAD4;
+    --scr: #FCD34D;
+    --gra: #7DD3FC;
+    --exp: #FDA4AF;
+    --pro: #F0ABFC;
+    --tri: #BEF264;
+    --cal: #C4B5FD;
+    --num: #FDBA74;
+    --qua: #FCA5A5;
+    --log: #93C5FD;
+    --seq: #86EFAC;
+    --fun: #67E8F9;
+    --rad: #FBBF24;
+    --cpx: #A5B4FC;
+    --bel: #6EE7B7;
+    --mat: #D6D3D1;
+    --uni: #FDA4AF;
+    --mon: #FDE047;
+    --avi: #8CC4F5;
+    --cnt: #EED9A0;
+    --fla: #FB923C;
+    --day: #A5B4FC;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 14px 30px -20px rgba(0, 0, 0, .9);
+    --shadow-up: 0 1px 0 rgba(0, 0, 0, .3), 0 24px 40px -20px rgba(0, 0, 0, .95);
   }
 
-  *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;
-    line-height:1.55;-webkit-font-smoothing:antialiased}
-  a{color:inherit}
-  .wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-  @media (max-width:520px){.wrap{padding:0 16px}}
+  * {
+    box-sizing: border-box
+  }
+  html {
+    scroll-behavior: smooth
+  }
+  @media (prefers-reduced-motion:reduce) {
+    html {
+      scroll-behavior: auto
+    }
+  }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased
+  }
+  a {
+    color: inherit
+  }
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 20px
+  }
+  @media (max-width:520px) {
+    .wrap {
+      padding: 0 16px
+    }
+  }
 
   /* the seven page colors, the site's signature */
-  .stripe{display:flex;height:6px}
-  .stripe i{flex:1}
-  .c-add{--c:var(--add)} .c-sub{--c:var(--sub)} .c-mul{--c:var(--mul)} .c-div{--c:var(--div)}
-  .c-ord{--c:var(--ord)} .c-alg{--c:var(--alg)} .c-geo{--c:var(--geo)}
-  .c-fra{--c:var(--fra)} .c-pct{--c:var(--pct)} .c-fac{--c:var(--fac)} .c-int{--c:var(--int)} .c-ink{--c:var(--ink)}
-  .c-rat{--c:var(--rat)} .c-lin{--c:var(--lin)} .c-sta{--c:var(--sta)} .c-wrd{--c:var(--wrd)} .c-fla{--c:var(--fla)} .c-day{--c:var(--day)} .c-scr{--c:var(--scr)} .c-gra{--c:var(--gra)} .c-exp{--c:var(--exp)} .c-pro{--c:var(--pro)} .c-tri{--c:var(--tri)} .c-cal{--c:var(--cal)} .c-num{--c:var(--num)} .c-qua{--c:var(--qua)} .c-log{--c:var(--log)} .c-seq{--c:var(--seq)} .c-fun{--c:var(--fun)} .c-rad{--c:var(--rad)} .c-cpx{--c:var(--cpx)} .c-bel{--c:var(--bel)} .c-mat{--c:var(--mat)} .c-uni{--c:var(--uni)} .c-mon{--c:var(--mon)} .c-avi{--c:var(--avi)} .c-cnt{--c:var(--cnt)}
-  .stripe i{background:var(--c)}
+  .stripe {
+    display: flex;
+    height: 6px
+  }
+  .stripe i {
+    flex: 1
+  }
+  .c-add {
+    --c: var(--add)
+  }
+  .c-sub {
+    --c: var(--sub)
+  }
+  .c-mul {
+    --c: var(--mul)
+  }
+  .c-div {
+    --c: var(--div)
+  }
+  .c-ord {
+    --c: var(--ord)
+  }
+  .c-alg {
+    --c: var(--alg)
+  }
+  .c-geo {
+    --c: var(--geo)
+  }
+  .c-fra {
+    --c: var(--fra)
+  }
+  .c-pct {
+    --c: var(--pct)
+  }
+  .c-fac {
+    --c: var(--fac)
+  }
+  .c-int {
+    --c: var(--int)
+  }
+  .c-ink {
+    --c: var(--ink)
+  }
+  .c-rat {
+    --c: var(--rat)
+  }
+  .c-lin {
+    --c: var(--lin)
+  }
+  .c-sta {
+    --c: var(--sta)
+  }
+  .c-wrd {
+    --c: var(--wrd)
+  }
+  .c-fla {
+    --c: var(--fla)
+  }
+  .c-day {
+    --c: var(--day)
+  }
+  .c-scr {
+    --c: var(--scr)
+  }
+  .c-gra {
+    --c: var(--gra)
+  }
+  .c-exp {
+    --c: var(--exp)
+  }
+  .c-pro {
+    --c: var(--pro)
+  }
+  .c-tri {
+    --c: var(--tri)
+  }
+  .c-cal {
+    --c: var(--cal)
+  }
+  .c-num {
+    --c: var(--num)
+  }
+  .c-qua {
+    --c: var(--qua)
+  }
+  .c-log {
+    --c: var(--log)
+  }
+  .c-seq {
+    --c: var(--seq)
+  }
+  .c-fun {
+    --c: var(--fun)
+  }
+  .c-rad {
+    --c: var(--rad)
+  }
+  .c-cpx {
+    --c: var(--cpx)
+  }
+  .c-bel {
+    --c: var(--bel)
+  }
+  .c-mat {
+    --c: var(--mat)
+  }
+  .c-uni {
+    --c: var(--uni)
+  }
+  .c-mon {
+    --c: var(--mon)
+  }
+  .c-avi {
+    --c: var(--avi)
+  }
+  .c-cnt {
+    --c: var(--cnt)
+  }
+  .stripe i {
+    background: var(--c)
+  }
 
   /* ---- top bar ---- */
-  .top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0}
-  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-display);font-stretch:112%;
-    font-weight:800;font-size:17px;letter-spacing:-.01em}
-  .mark{display:grid;grid-template-columns:repeat(4,7px);grid-auto-rows:7px;gap:2px}
-  .mark i:nth-child(n+9){display:none}
-  .mark i{border-radius:2px;background:var(--c)}
-  .theme-btn{font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.06em;
-    background:var(--surface);color:var(--ink-2);border:1px solid var(--rule);
-    border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap}
-  .theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
-  :focus-visible{outline:2.5px solid var(--ord);outline-offset:3px}
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-family: var(--f-display);
+    font-stretch: 112%;
+    font-weight: 800;
+    font-size: 17px;
+    letter-spacing: -.01em
+  }
+  .mark {
+    display: grid;
+    grid-template-columns: repeat(4, 7px);
+    grid-auto-rows: 7px;
+    gap: 2px
+  }
+  .mark i:nth-child(n+9) {
+    display: none
+  }
+  .mark i {
+    border-radius: 2px;
+    background: var(--c)
+  }
+  .theme-btn {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    background: var(--surface);
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 8px 15px;
+    cursor: pointer;
+    white-space: nowrap
+  }
+  .theme-btn:hover {
+    color: var(--ink);
+    border-color: var(--ink-3)
+  }
+  :focus-visible {
+    outline: 2.5px solid var(--ord);
+    outline-offset: 3px
+  }
 
   /* ---- the first screen: one big box ---- */
-  .stage{min-height:calc(100vh - 84px);min-height:calc(100svh - 84px);display:flex;flex-direction:column;align-items:center;
-    justify-content:center;text-align:center;padding:28px 0 64px;position:relative}
-  .stage::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-    background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size:26px 26px;
-    -webkit-mask-image:radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 72%);
-            mask-image:radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 72%)}
-  .bigmark{display:grid;grid-template-columns:repeat(4,16px);grid-auto-rows:16px;gap:5px;margin:0 auto 18px}
-  .bigmark i{border-radius:4px;background:var(--c)}
-  h1{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:clamp(38px,6.4vw,68px);line-height:1;
-    letter-spacing:-.03em;margin:0}
-  .tagline{color:var(--ink-2);font-size:clamp(16px,2.2vw,19px);margin:14px 0 30px;max-width:34em}
-  .tagline .u{background:linear-gradient(90deg,var(--add),var(--sub),var(--mul),var(--div),var(--fra),var(--pct),var(--fac),var(--int),var(--rat),var(--ord),var(--alg),var(--lin),var(--geo),var(--sta),var(--wrd));
-    background-size:100% .14em;background-repeat:no-repeat;background-position:0 96%;padding-bottom:.08em;color:var(--ink);font-weight:600}
+  .stage {
+    min-height: calc(100vh - 84px);
+    min-height: calc(100svh - 84px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 28px 0 64px;
+    position: relative
+  }
+  .stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 72%);
+    mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 20%, transparent 72%)
+  }
+  .bigmark {
+    display: grid;
+    grid-template-columns: repeat(4, 16px);
+    grid-auto-rows: 16px;
+    gap: 5px;
+    margin: 0 auto 18px
+  }
+  .bigmark i {
+    border-radius: 4px;
+    background: var(--c)
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: clamp(38px, 6.4vw, 68px);
+    line-height: 1;
+    letter-spacing: -.03em;
+    margin: 0
+  }
+  .tagline {
+    color: var(--ink-2);
+    font-size: clamp(16px, 2.2vw, 19px);
+    margin: 14px 0 30px;
+    max-width: 34em
+  }
+  .tagline .u {
+    background: linear-gradient(90deg, var(--add), var(--sub), var(--mul), var(--div), var(--fra), var(--pct), var(--fac), var(--int), var(--rat), var(--ord), var(--alg), var(--lin), var(--geo), var(--sta), var(--wrd));
+    background-size: 100% .14em;
+    background-repeat: no-repeat;
+    background-position: 0 96%;
+    padding-bottom: .08em;
+    color: var(--ink);
+    font-weight: 600
+  }
 
-  .ask{position:relative;width:min(700px,100%);text-align:left}
-  .ask-row{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--rule);border-radius:18px;
-    padding:7px 7px 7px 18px;box-shadow:var(--shadow-up)}
-  .ask-row:focus-within{border-color:var(--ink-3)}
-  .ask.open .ask-row{border-radius:18px 18px 0 0;border-bottom-color:transparent}
-  .ask-row svg{flex:none;width:20px;height:20px;stroke:var(--ink-3);fill:none;stroke-width:2;stroke-linecap:round}
-  .ask-row input{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);font-family:var(--f-mono);
-    font-size:clamp(17px,2.6vw,21px);font-weight:600;padding:12px 4px;outline:none}
-  .ask-row input::placeholder{color:var(--ink-3);font-weight:400;font-family:var(--f-body)}
-  .go-btn{font-family:var(--f-body);font-weight:600;font-size:15px;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;
-    background:var(--ink);color:var(--paper);white-space:nowrap}
-  .go-btn:hover{filter:brightness(1.15)}
-  .sugg{position:absolute;left:0;right:0;top:100%;z-index:20;background:var(--surface);border:1.5px solid var(--ink-3);
-    border-top:1px solid var(--rule);border-radius:0 0 18px 18px;box-shadow:var(--shadow-up);padding:6px;max-height:min(420px,60vh);
-    overflow-y:auto}
-  .ask-row:has(+ .sugg:not([hidden])){border-color:var(--ink-3)}
-  .sugg[hidden]{display:none}
-  .opt{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:0 12px;align-items:center;padding:9px 10px;border-radius:12px;
-    text-decoration:none;color:inherit;cursor:pointer}
-  .opt.on, .opt:hover{background:color-mix(in srgb, var(--c, var(--ink)) 10%, var(--surface))}
-  .opt .sg{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);
-    font-weight:600;font-size:15px;line-height:1;color:var(--c, var(--ink));background:color-mix(in srgb, var(--c, var(--ink)) 14%, transparent)}
-  .opt b{display:block;font-weight:600;font-size:15.5px;line-height:1.3}
-  .opt b code{font-family:var(--f-mono);font-size:14.5px}
-  .opt small{display:block;font-size:13px;color:var(--ink-3);line-height:1.35;margin-top:1px}
-  .opt small em{font-style:normal;color:var(--c, var(--ink-2));font-weight:600}
-  .opt .kbd{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);border:1px solid var(--rule);border-radius:6px;padding:2px 6px;
-    visibility:hidden}
-  .opt.on .kbd{visibility:visible}
-  .sugg-head{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
-    padding:8px 10px 4px}
+  .ask {
+    position: relative;
+    width: min(700px, 100%);
+    text-align: left
+  }
+  .ask-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1.5px solid var(--rule);
+    border-radius: 18px;
+    padding: 7px 7px 7px 18px;
+    box-shadow: var(--shadow-up)
+  }
+  .ask-row:focus-within {
+    border-color: var(--ink-3)
+  }
+  .ask.open .ask-row {
+    border-radius: 18px 18px 0 0;
+    border-bottom-color: transparent
+  }
+  .ask-row svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    stroke: var(--ink-3);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round
+  }
+  .ask-row input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--f-mono);
+    font-size: clamp(17px, 2.6vw, 21px);
+    font-weight: 600;
+    padding: 12px 4px;
+    outline: none
+  }
+  .ask-row input::placeholder {
+    color: var(--ink-3);
+    font-weight: 400;
+    font-family: var(--f-body)
+  }
+  .go-btn {
+    font-family: var(--f-body);
+    font-weight: 600;
+    font-size: 15px;
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 18px;
+    cursor: pointer;
+    background: var(--ink);
+    color: var(--paper);
+    white-space: nowrap
+  }
+  .go-btn:hover {
+    filter: brightness(1.15)
+  }
+  .sugg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 20;
+    background: var(--surface);
+    border: 1.5px solid var(--ink-3);
+    border-top: 1px solid var(--rule);
+    border-radius: 0 0 18px 18px;
+    box-shadow: var(--shadow-up);
+    padding: 6px;
+    max-height: min(420px, 60vh);
+    overflow-y: auto
+  }
+  .ask-row:has(+ .sugg:not([hidden])) {
+    border-color: var(--ink-3)
+  }
+  .sugg[hidden] {
+    display: none
+  }
+  .opt {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) auto;
+    gap: 0 12px;
+    align-items: center;
+    padding: 9px 10px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer
+  }
+  .opt.on,
+  .opt:hover {
+    background: color-mix(in srgb, var(--c, var(--ink)) 10%, var(--surface))
+  }
+  .opt .sg {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1;
+    color: var(--c, var(--ink));
+    background: color-mix(in srgb, var(--c, var(--ink)) 14%, transparent)
+  }
+  .opt b {
+    display: block;
+    font-weight: 600;
+    font-size: 15.5px;
+    line-height: 1.3
+  }
+  .opt b code {
+    font-family: var(--f-mono);
+    font-size: 14.5px
+  }
+  .opt small {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.35;
+    margin-top: 1px
+  }
+  .opt small em {
+    font-style: normal;
+    color: var(--c, var(--ink-2));
+    font-weight: 600
+  }
+  .opt .kbd {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--ink-3);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 2px 6px;
+    visibility: hidden
+  }
+  .opt.on .kbd {
+    visibility: visible
+  }
+  .sugg-head {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    padding: 8px 10px 4px
+  }
 
-  .try{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;align-items:center;margin:18px 0 0;font-size:13px;color:var(--ink-3)}
-  .try button{font-family:var(--f-mono);font-size:13px;background:transparent;border:1px solid var(--rule);color:var(--ink-2);
-    border-radius:999px;padding:5px 11px;cursor:pointer}
-  .try button:hover{color:var(--ink);border-color:var(--ink-3);background:var(--surface)}
-  .quick{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px;margin:26px 0 0;font-size:14.5px}
-  .quick a, .quick button{color:var(--ink-2);font-weight:600;text-decoration:none;background:none;border:0;padding:4px 0;font:inherit;
-    font-weight:600;cursor:pointer}
-  .quick a:hover, .quick button:hover{color:var(--ink);text-decoration:underline}
-  .quick .browse{color:var(--ink)}
-  .quick .browse span{display:inline-block;transition:transform .15s ease}
-  .quick .browse[aria-expanded="true"] span{transform:rotate(180deg)}
-  .install{font-family:var(--f-body);font-size:13.5px;font-weight:600;background:transparent;color:var(--ink-2);
-    border:1px solid var(--rule);border-radius:999px;padding:4px 12px;cursor:pointer;margin-top:18px}
-  .install:hover{color:var(--ink);border-color:var(--ink-3)}
-  .ios-tip{font-size:13px;color:var(--ink-3);margin:14px 0 0}
-  @media (max-width:560px){
-    .stage{min-height:0;padding:34px 0 40px;justify-content:flex-start}
-    .bigmark{grid-template-columns:repeat(4,12px);grid-auto-rows:12px;gap:4px;margin-bottom:14px}
-    .ask-row{padding:5px 5px 5px 12px;border-radius:14px} .ask.open .ask-row{border-radius:14px 14px 0 0}
-    .sugg{border-radius:0 0 14px 14px}
-    .go-btn{padding:11px 13px} .go-btn .w{display:none}
-    .opt{grid-template-columns:32px minmax(0,1fr);padding:8px} .opt .sg{width:32px;height:32px;font-size:13.5px} .opt .kbd{display:none}
-    .try button:nth-of-type(n+5){display:none}
-    .quick{gap:2px 14px;font-size:14px}
+  .try {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    align-items: center;
+    margin: 18px 0 0;
+    font-size: 13px;
+    color: var(--ink-3)
+  }
+  .try button {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    border-radius: 999px;
+    padding: 5px 11px;
+    cursor: pointer
+  }
+  .try button:hover {
+    color: var(--ink);
+    border-color: var(--ink-3);
+    background: var(--surface)
+  }
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px 18px;
+    margin: 26px 0 0;
+    font-size: 14.5px
+  }
+  .quick a,
+  .quick button {
+    color: var(--ink-2);
+    font-weight: 600;
+    text-decoration: none;
+    background: none;
+    border: 0;
+    padding: 4px 0;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer
+  }
+  .quick a:hover,
+  .quick button:hover {
+    color: var(--ink);
+    text-decoration: underline
+  }
+  .quick .browse {
+    color: var(--ink)
+  }
+  .quick .browse span {
+    display: inline-block;
+    transition: transform .15s ease
+  }
+  .quick .browse[aria-expanded="true"] span {
+    transform: rotate(180deg)
+  }
+  .install {
+    font-family: var(--f-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    background: transparent;
+    color: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 4px 12px;
+    cursor: pointer;
+    margin-top: 18px
+  }
+  .install:hover {
+    color: var(--ink);
+    border-color: var(--ink-3)
+  }
+  .ios-tip {
+    font-size: 13px;
+    color: var(--ink-3);
+    margin: 14px 0 0
+  }
+  @media (max-width:560px) {
+    .stage {
+      min-height: 0;
+      padding: 34px 0 40px;
+      justify-content: flex-start
+    }
+    .bigmark {
+      grid-template-columns: repeat(4, 12px);
+      grid-auto-rows: 12px;
+      gap: 4px;
+      margin-bottom: 14px
+    }
+    .ask-row {
+      padding: 5px 5px 5px 12px;
+      border-radius: 14px
+    }
+    .ask.open .ask-row {
+      border-radius: 14px 14px 0 0
+    }
+    .sugg {
+      border-radius: 0 0 14px 14px
+    }
+    .go-btn {
+      padding: 11px 13px
+    }
+    .go-btn .w {
+      display: none
+    }
+    .opt {
+      grid-template-columns: 32px minmax(0, 1fr);
+      padding: 8px
+    }
+    .opt .sg {
+      width: 32px;
+      height: 32px;
+      font-size: 13.5px
+    }
+    .opt .kbd {
+      display: none
+    }
+    .try button:nth-of-type(n+5) {
+      display: none
+    }
+    .quick {
+      gap: 2px 14px;
+      font-size: 14px
+    }
   }
 
   /* ---- browse topics: every helper, in a compact list ---- */
-  .browse-panel{padding:6px 0 26px;scroll-margin-top:16px}
-  .browse-panel[hidden]{display:none}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:6px}
-  .panel-head h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;margin:0}
-  .grades{display:flex;flex-wrap:wrap;gap:3px;background:var(--surface-2);border-radius:999px;padding:4px}
-  .grades button{font-family:var(--f-body);font-size:13.5px;font-weight:600;border:0;background:transparent;color:var(--ink-2);
-    padding:6px 13px;border-radius:999px;cursor:pointer;white-space:nowrap}
-  .grades button:hover{color:var(--ink)}
-  .grades button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
-  .cols{columns:4 230px;column-gap:28px;margin-top:16px}
-  .col{break-inside:avoid;margin:0 0 20px}
-  .col h3{font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
-    margin:0 0 6px}
-  .col[hidden], .col a[hidden]{display:none}
-  .col a{display:grid;grid-template-columns:30px minmax(0,1fr);gap:0 10px;align-items:center;padding:6px 6px;margin:0 -6px;border-radius:9px;
-    text-decoration:none;color:inherit}
-  .col a:hover{background:color-mix(in srgb, var(--c) 10%, transparent)}
-  .col a:focus-visible{outline-color:var(--c)}
-  .col .sg{grid-row:1 / span 2;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-    font-family:var(--f-mono);font-weight:600;font-size:13px;line-height:1;color:var(--c);background:color-mix(in srgb, var(--c) 14%, transparent)}
-  .col b{font-weight:600;font-size:15px;line-height:1.25}
-  .col small{font-size:12.5px;color:var(--c);font-weight:600;line-height:1.3}
-  .shown{font-size:13.5px;color:var(--ink-3);margin:2px 0 0;min-height:1.4em}
-  .shown button{font:inherit;font-weight:600;color:var(--ink-2);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
-  section.group{padding:24px 0 6px}
-  .group-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
-  .group-head h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;margin:0}
-  .group-head p{margin:0;color:var(--ink-3);font-size:15px}
-  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .browse-panel {
+    padding: 6px 0 26px;
+    scroll-margin-top: 16px
+  }
+  .browse-panel[hidden] {
+    display: none
+  }
+  .panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 20px;
+    flex-wrap: wrap;
+    margin-bottom: 6px
+  }
+  .panel-head h2 {
+    font-family: var(--f-display);
+    font-stretch: 116%;
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 28px);
+    letter-spacing: -.015em;
+    margin: 0
+  }
+  .grades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    background: var(--surface-2);
+    border-radius: 999px;
+    padding: 4px
+  }
+  .grades button {
+    font-family: var(--f-body);
+    font-size: 13.5px;
+    font-weight: 600;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    padding: 6px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap
+  }
+  .grades button:hover {
+    color: var(--ink)
+  }
+  .grades button[aria-pressed="true"] {
+    background: var(--ink);
+    color: var(--paper)
+  }
+  .cols {
+    columns: 4 230px;
+    column-gap: 28px;
+    margin-top: 16px
+  }
+  .col {
+    break-inside: avoid;
+    margin: 0 0 20px
+  }
+  .col h3 {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0 0 6px
+  }
+  .col[hidden],
+  .col a[hidden] {
+    display: none
+  }
+  .col a {
+    display: grid;
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 0 10px;
+    align-items: center;
+    padding: 6px 6px;
+    margin: 0 -6px;
+    border-radius: 9px;
+    text-decoration: none;
+    color: inherit
+  }
+  .col a:hover {
+    background: color-mix(in srgb, var(--c) 10%, transparent)
+  }
+  .col a:focus-visible {
+    outline-color: var(--c)
+  }
+  .col .sg {
+    grid-row: 1 / span 2;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 14%, transparent)
+  }
+  .col b {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.25
+  }
+  .col small {
+    font-size: 12.5px;
+    color: var(--c);
+    font-weight: 600;
+    line-height: 1.3
+  }
+  .shown {
+    font-size: 13.5px;
+    color: var(--ink-3);
+    margin: 2px 0 0;
+    min-height: 1.4em
+  }
+  .shown button {
+    font: inherit;
+    font-weight: 600;
+    color: var(--ink-2);
+    background: none;
+    border: 0;
+    padding: 0;
+    text-decoration: underline;
+    cursor: pointer
+  }
+  section.group {
+    padding: 24px 0 6px
+  }
+  .group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px
+  }
+  .group-head h2 {
+    font-family: var(--f-display);
+    font-stretch: 116%;
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 28px);
+    letter-spacing: -.015em;
+    margin: 0
+  }
+  .group-head p {
+    margin: 0;
+    color: var(--ink-3);
+    font-size: 15px
+  }
+  .sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap
+  }
 
   /* ---- what every page does ---- */
-  .every{margin:34px 0 10px;background:var(--surface);border:1px solid var(--rule);border-radius:18px;box-shadow:var(--shadow);
-    padding:28px 28px 30px}
-  .every h2{font-family:var(--f-display);font-stretch:116%;font-weight:800;font-size:clamp(22px,3vw,28px);margin:0 0 4px}
-  .every > p{margin:0 0 22px;color:var(--ink-3)}
-  .feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 28px}
-  @media (max-width:860px){.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:540px){.feats{grid-template-columns:minmax(0,1fr)}.every{padding:22px 18px 24px}}
-  .feat{display:grid;grid-template-columns:38px minmax(0,1fr);gap:2px 12px}
-  .feat .ic{grid-row:1 / span 2;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-    font-family:var(--f-mono);font-weight:600;font-size:15px;color:var(--c);background:color-mix(in srgb, var(--c) 13%, transparent)}
-  .feat h3{margin:0;font-size:15.5px;font-weight:600}
-  .feat p{margin:0;font-size:14px;color:var(--ink-2)}
+  .every {
+    margin: 34px 0 10px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 28px 28px 30px
+  }
+  .every h2 {
+    font-family: var(--f-display);
+    font-stretch: 116%;
+    font-weight: 800;
+    font-size: clamp(22px, 3vw, 28px);
+    margin: 0 0 4px
+  }
+  .every>p {
+    margin: 0 0 22px;
+    color: var(--ink-3)
+  }
+  .feats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px 28px
+  }
+  @media (max-width:860px) {
+    .feats {
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+  }
+  @media (max-width:540px) {
+    .feats {
+      grid-template-columns: minmax(0, 1fr)
+    }
+    .every {
+      padding: 22px 18px 24px
+    }
+  }
+  .feat {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 2px 12px
+  }
+  .feat .ic {
+    grid-row: 1 / span 2;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--c);
+    background: color-mix(in srgb, var(--c) 13%, transparent)
+  }
+  .feat h3 {
+    margin: 0;
+    font-size: 15.5px;
+    font-weight: 600
+  }
+  .feat p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-2)
+  }
 
-  footer{padding:36px 0 46px;color:var(--ink-3);font-size:13.5px}
-  footer .row{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;align-items:center}
-  footer a{color:var(--ink-2)}
-  footer .stripe{height:4px;border-radius:2px;overflow:hidden;margin-bottom:22px}
+  footer {
+    padding: 36px 0 46px;
+    color: var(--ink-3);
+    font-size: 13.5px
+  }
+  footer .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px 24px;
+    flex-wrap: wrap;
+    align-items: center
+  }
+  footer a {
+    color: var(--ink-2)
+  }
+  footer .stripe {
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 22px
+  }
 </style>
 
 <div class="stripe" aria-hidden="true"><i class="c-add"></i><i class="c-sub"></i><i class="c-mul"></i><i class="c-div"></i><i class="c-fra"></i><i class="c-pct"></i><i class="c-fac"></i><i class="c-int"></i><i class="c-rat"></i><i class="c-ord"></i><i class="c-alg"></i><i class="c-lin"></i><i class="c-geo"></i><i class="c-sta"></i><i class="c-pro"></i><i class="c-tri"></i><i class="c-cal"></i><i class="c-num"></i><i class="c-qua"></i><i class="c-log"></i><i class="c-seq"></i><i class="c-wrd"></i></div>
@@ -381,217 +1160,353 @@
   </footer>
   <script>
     // the version number, written into tools.js when the site is published
-    window.addEventListener("load", function(){
-      var v = window.HelperTools && window.HelperTools.version, a = document.getElementById("siteVersion");
+    window.addEventListener("load", function() {
+      var v = window.HelperTools && window.HelperTools.version,
+        a = document.getElementById("siteVersion");
       if (a && v && v !== "dev") a.textContent = "Version " + v + " · what’s new";
     });
   </script>
 </div>
 
 <script>
-(function(){
-  "use strict";
-  var $ = function(id){ return document.getElementById(id); };
-  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c]; }); }
+  (function() {
+    "use strict";
+    var $ = function(id) { return document.getElementById(id); };
 
-  /* every helper and tool, for the suggestions (the same list as "Browse all topics") */
-  var TOPICS = [{"id":"number-sense.html","href":"helpers/number-sense.html","s":"#","n":"Place value","f":"The Place Value Chart","d":"Rounding, comparing, skip counting, time and money","c":"c-num","k":"digits number sense estimate clock coins"},{"id":"addition.html","href":"helpers/addition.html","s":"+","n":"Addition","f":"The Carry Column","d":"Carrying, decimals and fractions","c":"c-add","k":"add plus sum"},{"id":"subtraction.html","href":"helpers/subtraction.html","s":"−","n":"Subtraction","f":"The Borrow Bank","d":"Borrowing, decimals and fractions","c":"c-sub","k":"subtract minus take away difference regroup"},{"id":"multiplication.html","href":"helpers/multiplication.html","s":"×","n":"Multiplication","f":"The Product Ladder","d":"Partial products and decimals","c":"c-mul","k":"multiply times product"},{"id":"division.html","href":"helpers/division.html","s":"÷","n":"Long division","f":"The Division House","d":"Remainders, decimals and fractions","c":"c-div","k":"divide quotient"},{"id":"scratch.html","href":"helpers/scratch-paper.html","s":"✍","n":"Do it by hand","f":"The Scratch Paper","d":"Work + − × ÷ yourself, checked as you go","c":"c-scr","k":"scratch paper practice written method"},{"id":"pemdas.html","href":"helpers/order-of-operations.html","s":"( )","n":"Order of operations","f":"The Order Stack","d":"PEMDAS with brackets and powers","c":"c-ord","k":"pemdas bodmas bidmas parentheses"},{"id":"fractions.html","href":"helpers/fractions.html","s":"½","n":"Fractions","f":"The Fraction Bar","d":"Simplify, convert, compare and order","c":"c-fra","k":"fraction decimal equivalent mixed numbers"},{"id":"percents.html","href":"helpers/percents.html","s":"%","n":"Percents","f":"The Hundred Grid","d":"Percent of, discounts, tax, tips and interest","c":"c-pct","k":"percent percentage sale"},{"id":"factors.html","href":"helpers/factors-and-primes.html","s":"⋔","n":"Factors and primes","f":"The Factor Tree","d":"GCF, LCM and prime factorization","c":"c-fac","k":"factor prime gcd hcf lcm multiples divisibility"},{"id":"unit-conversions.html","href":"helpers/unit-conversions.html","s":"⇄","n":"Unit conversions","f":"The Measuring Tape","d":"Inches to feet, metric, time, °F to °C, rates","c":"c-uni","k":"units measurement convert inches feet yards miles meters liters grams cups gallons temperature"},{"id":"money-math.html","href":"helpers/money-math.html","s":"$","n":"Money math","f":"The Money Jar","d":"Compound interest, loans, paychecks, budgets","c":"c-mon","k":"money finance interest compound loan mortgage payment credit card paycheck salary budget inflation"},{"id":"integers.html","href":"helpers/negative-numbers.html","s":"±","n":"Negative numbers","f":"The Number Line","d":"Integers, signs and absolute value","c":"c-int","k":"integers negative"},{"id":"ratios.html","href":"helpers/ratios.html","s":"∶","n":"Ratios and rates","f":"The Ratio Table","d":"Unit rates, proportions and scale","c":"c-rat","k":"ratio rate proportion unit price"},{"id":"exponents.html","href":"helpers/exponents.html","s":"xⁿ","n":"Exponents and roots","f":"The Power Tower","d":"Exponent laws, square roots, scientific notation","c":"c-exp","k":"powers exponent root sqrt scientific notation"},{"id":"algebra.html","href":"helpers/algebra.html","s":"x","n":"Equations","f":"The Balance Scale","d":"Solve, simplify, inequalities and systems","c":"c-alg","k":"algebra solve equation inequality system simplify expression"},{"id":"lines.html","href":"helpers/lines-and-slope.html","s":"↗","n":"Lines and slope","f":"The Slope Grid","d":"Slope, y = mx + b, parallel and perpendicular","c":"c-lin","k":"line slope intercept linear"},{"id":"graphing.html","href":"helpers/graphing.html","s":"⌗","n":"Graphing","f":"The Graph Paper","d":"Points, functions, transformations, scatter plots","c":"c-gra","k":"graph coordinate plane plot function"},{"id":"functions.html","href":"helpers/functions.html","s":"f(x)","n":"Functions","f":"The Function Machine","d":"Domain and range, composition, inverses","c":"c-fun","k":"function domain range composition inverse piecewise f(x)"},{"id":"quadratics.html","href":"helpers/quadratics.html","s":"x²","n":"Quadratics and polynomials","f":"The Area Box","d":"Factor, the quadratic formula, the vertex","c":"c-qua","k":"quadratic polynomial factor foil parabola"},{"id":"radicals.html","href":"helpers/radicals.html","s":"√","n":"Radicals and rational expressions","f":"The Root Cellar","d":"Simplify √72, rationalize, rational equations","c":"c-rad","k":"radical root sqrt surd rationalize rational expression"},{"id":"complex-numbers.html","href":"helpers/complex-numbers.html","s":"i","n":"Complex numbers","f":"The Complex Plane","d":"i, + − × ÷, polar form, De Moivre","c":"c-cpx","k":"complex imaginary i conjugate polar de moivre"},{"id":"logarithms.html","href":"helpers/logarithms.html","s":"log","n":"Logarithms","f":"The Log Ladder","d":"Log laws, exponential equations, interest","c":"c-log","k":"log logs logarithm exponential ln growth decay"},{"id":"sequences.html","href":"helpers/sequences.html","s":"aₙ","n":"Sequences and series","f":"The Number Staircase","d":"The nth term, sums and sigma notation","c":"c-seq","k":"sequence series arithmetic geometric pattern sigma"},{"id":"geometry.html","href":"helpers/geometry.html","s":"△","n":"Geometry","f":"The Shape Shop","d":"Area, volume, Pythagoras and angles","c":"c-geo","k":"shape area perimeter volume pythagorean triangle circle angle"},{"id":"stats.html","href":"helpers/statistics.html","s":"⁘","n":"Statistics","f":"The Dot Plot","d":"Mean, median, mode and box plots","c":"c-sta","k":"stats statistics mean median mode range average"},{"id":"probability.html","href":"helpers/probability.html","s":"◔","n":"Probability","f":"The Chance Spinner","d":"Dice, coins, marbles and tree diagrams","c":"c-pro","k":"probability chance odds"},{"id":"counting.html","href":"helpers/counting.html","s":"n!","n":"Counting","f":"The Counting Tree","d":"Outfits and codes, arrangements (nPr), committees (nCr), handshakes and factorials","c":"c-cnt","k":"counting combinations permutations ncr npr factorial arrangements handshakes diagonals outfits license plates committee choose"},{"id":"wordproblems.html","href":"helpers/story-problems.html","s":"✎","n":"Story problems","f":"The Story Problem","d":"Word problems with a bar model","c":"c-wrd","k":"word problem story"},{"id":"trigonometry.html","href":"helpers/trigonometry.html","s":"∠","n":"Trigonometry","f":"The Unit Circle","d":"SOH-CAH-TOA, the unit circle, laws of sines","c":"c-tri","k":"trig sin cos tan sine cosine unit circle radians"},{"id":"calculus.html","href":"helpers/calculus.html","s":"∫","n":"Calculus","f":"The Rate Machine","d":"Limits, derivatives and integrals","c":"c-cal","k":"calculus derivative integral limit"},{"id":"college-statistics.html","href":"helpers/college-statistics.html","s":"σ","n":"College statistics","f":"The Bell Curve","d":"Normal curve, tests, intervals, regression","c":"c-bel","k":"statistics normal z-score hypothesis confidence interval regression binomial"},{"id":"matrices-and-vectors.html","href":"helpers/matrices-and-vectors.html","s":"[ ]","n":"Matrices and vectors","f":"The Matrix Grid","d":"Determinants, inverses, row reduction, dot product","c":"c-mat","k":"matrix matrices vector determinant inverse dot cross linear algebra"},{"id":"aviation.html","href":"helpers/aviation.html","s":"✈","n":"Aviation","f":"The Flight Computer","d":"Wind triangle, crosswind, fuel, density altitude, weight and balance","c":"c-avi","k":"aviation pilot flight e6b flight computer wind triangle wind correction heading ground speed crosswind headwind runway knots nautical miles fuel gph density altitude pressure altitude altimeter true airspeed tas variation deviation magnetic compass descent weight and balance cg center of gravity bank turn radius glide"},{"id":"worksheet.html","href":"practice/worksheets.html","s":"▤","n":"Worksheets","f":"The Worksheet Maker","d":"Printable, with an answer key","c":"c-ord","k":"worksheet print","tool":1},{"id":"practice.html","href":"practice/sets.html","s":"▶","n":"Practice sets","f":"Share as a link or QR code","d":"Students work through it and get a score","c":"c-rat","k":"practice set quiz","tool":1},{"id":"assignment.html","href":"practice/sets.html?assignment","s":"✉","n":"Assignments","f":"No accounts needed","d":"Pick exact problems, add a due date, share one link","c":"c-pct","k":"assignment homework assign teacher classroom due date google classroom","tool":1},{"id":"flashcards.html","href":"practice/flash-cards.html","s":"7×8","n":"Flash cards","f":"The Flash Cards","d":"Times tables to 20 × 20, and more","c":"c-fla","k":"flash cards times tables facts","tool":1},{"id":"daily.html","href":"practice/problem-of-the-day.html","s":"★","n":"Problem of the day","f":"A new one every day","d":"And the week's problems with a key","c":"c-day","k":"daily","tool":1},{"id":"progress.html","href":"practice/progress.html","s":"✓","n":"Your progress","f":"Kept on this device","d":"What you've practiced and what's next","c":"c-sta","k":"progress","tool":1},{"id":"reference.html","href":"reference/sheets.html","s":"▦","n":"Reference sheets","f":"Forty sheets to print","d":"Times tables, formulas, graph paper","c":"c-geo","k":"reference chart formula graph paper","tool":1},{"id":"glossary.html","href":"reference/definitions.html","s":"Aa","n":"Math words","f":"The Word List","d":"What each math word means","c":"c-alg","k":"definitions glossary vocabulary","tool":1},{"id":"learn.html","href":"learn/index.html","s":"☰","n":"Lessons","f":"How to do it, step by step","d":"46 short lessons, each with a worked example","c":"c-lin","k":"lesson lessons learn how to tutorial explain","tool":1},{"id":"standards.html","href":"reference/standards.html","s":"CC","n":"Standards","f":"Common Core, matched to the helpers","d":"Find the helper for a standard","c":"c-sta","k":"common core standards ccss alignment","tool":1},{"id":"results.html","href":"practice/class-results.html","s":"▥","n":"Class results","f":"A teacher's view","d":"Scores and the hardest problems","c":"c-ink","k":"results teacher class","tool":1}];
-  var BYID = {};
-  TOPICS.forEach(function(t){ BYID[t.id] = t; });
-  var U = function(t){ return window.HelperSite ? window.HelperSite.url(t.id) : t.href; };
+    function esc(s) { return String(s).replace(/[&<>"]/g, function(c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" } [c]; }); }
 
-  /* ---- "type any problem": search.js says which helper a problem belongs to; topic words match the list above ---- */
-  var route = window.HelperSearch.route, PAGE = window.HelperSearch.PAGE, href = window.HelperSearch.href;
-  var askIn = $("askIn"), sugg = $("sugg"), form = $("ask"), rows = [], on = -1;
-  function norm(s){ return String(s).toLowerCase().replace(/[−–]/g, "-").replace(/[^a-z0-9²ⁿ%+\-×÷½∠∫]+/g, " ").trim(); }
-  // topics for the words typed, best first: a match in the topic's name beats its fun name, its keywords, then its
-  // description; a whole word beats the start of a word, which beats a part of one ("frac" → Fractions first)
-  var FIELDS = [["n", 4], ["f", 3], ["k", 2], ["d", 1.5]];
-  function topicMatches(q){
-    var words = norm(q).split(" ").filter(Boolean);
-    if (!words.length) return [];
-    var scored = [];
-    TOPICS.forEach(function(t, i){
-      var total = 0, all = words.every(function(w){
-        var best = 0;
-        FIELDS.forEach(function(f){
-          var hay = " " + norm(t[f[0]]) + " ", how = hay.indexOf(" " + w + " ") >= 0 ? 1 : hay.indexOf(" " + w) >= 0 ? 0.6
-                    : w.length > 2 && hay.indexOf(w) >= 0 ? 0.3 : 0;
-          best = Math.max(best, how * f[1]);
-        });
-        total += best;
-        return best > 0;
+    /* every helper and tool, for the suggestions (the same list as "Browse all topics") */
+    var TOPICS = [{ "id": "number-sense.html", "href": "helpers/number-sense.html", "s": "#", "n": "Place value", "f": "The Place Value Chart", "d": "Rounding, comparing, skip counting, time and money", "c": "c-num", "k": "digits number sense estimate clock coins" }, { "id": "addition.html", "href": "helpers/addition.html", "s": "+", "n": "Addition", "f": "The Carry Column", "d": "Carrying, decimals and fractions", "c": "c-add", "k": "add plus sum" }, { "id": "subtraction.html", "href": "helpers/subtraction.html", "s": "−", "n": "Subtraction", "f": "The Borrow Bank", "d": "Borrowing, decimals and fractions", "c": "c-sub", "k": "subtract minus take away difference regroup" }, { "id": "multiplication.html", "href": "helpers/multiplication.html", "s": "×", "n": "Multiplication", "f": "The Product Ladder", "d": "Partial products and decimals", "c": "c-mul", "k": "multiply times product" }, { "id": "division.html", "href": "helpers/division.html", "s": "÷", "n": "Long division", "f": "The Division House", "d": "Remainders, decimals and fractions", "c": "c-div", "k": "divide quotient" }, { "id": "scratch.html", "href": "helpers/scratch-paper.html", "s": "✍", "n": "Do it by hand", "f": "The Scratch Paper", "d": "Work + − × ÷ yourself, checked as you go", "c": "c-scr", "k": "scratch paper practice written method" }, { "id": "pemdas.html", "href": "helpers/order-of-operations.html", "s": "( )", "n": "Order of operations", "f": "The Order Stack", "d": "PEMDAS with brackets and powers", "c": "c-ord", "k": "pemdas bodmas bidmas parentheses" }, { "id": "fractions.html", "href": "helpers/fractions.html", "s": "½", "n": "Fractions", "f": "The Fraction Bar", "d": "Simplify, convert, compare and order", "c": "c-fra", "k": "fraction decimal equivalent mixed numbers" }, { "id": "percents.html", "href": "helpers/percents.html", "s": "%", "n": "Percents", "f": "The Hundred Grid", "d": "Percent of, discounts, tax, tips and interest", "c": "c-pct", "k": "percent percentage sale" }, { "id": "factors.html", "href": "helpers/factors-and-primes.html", "s": "⋔", "n": "Factors and primes", "f": "The Factor Tree", "d": "GCF, LCM and prime factorization", "c": "c-fac", "k": "factor prime gcd hcf lcm multiples divisibility" }, { "id": "unit-conversions.html", "href": "helpers/unit-conversions.html", "s": "⇄", "n": "Unit conversions", "f": "The Measuring Tape", "d": "Inches to feet, metric, time, °F to °C, rates", "c": "c-uni", "k": "units measurement convert inches feet yards miles meters liters grams cups gallons temperature" }, { "id": "money-math.html", "href": "helpers/money-math.html", "s": "$", "n": "Money math", "f": "The Money Jar", "d": "Compound interest, loans, paychecks, budgets", "c": "c-mon", "k": "money finance interest compound loan mortgage payment credit card paycheck salary budget inflation" }, { "id": "integers.html", "href": "helpers/negative-numbers.html", "s": "±", "n": "Negative numbers", "f": "The Number Line", "d": "Integers, signs and absolute value", "c": "c-int", "k": "integers negative" }, { "id": "ratios.html", "href": "helpers/ratios.html", "s": "∶", "n": "Ratios and rates", "f": "The Ratio Table", "d": "Unit rates, proportions and scale", "c": "c-rat", "k": "ratio rate proportion unit price" }, { "id": "exponents.html", "href": "helpers/exponents.html", "s": "xⁿ", "n": "Exponents and roots", "f": "The Power Tower", "d": "Exponent laws, square roots, scientific notation", "c": "c-exp", "k": "powers exponent root sqrt scientific notation" }, { "id": "algebra.html", "href": "helpers/algebra.html", "s": "x", "n": "Equations", "f": "The Balance Scale", "d": "Solve, simplify, inequalities and systems", "c": "c-alg", "k": "algebra solve equation inequality system simplify expression" }, { "id": "lines.html", "href": "helpers/lines-and-slope.html", "s": "↗", "n": "Lines and slope", "f": "The Slope Grid", "d": "Slope, y = mx + b, parallel and perpendicular", "c": "c-lin", "k": "line slope intercept linear" }, { "id": "graphing.html", "href": "helpers/graphing.html", "s": "⌗", "n": "Graphing", "f": "The Graph Paper", "d": "Points, functions, transformations, scatter plots", "c": "c-gra", "k": "graph coordinate plane plot function" }, { "id": "functions.html", "href": "helpers/functions.html", "s": "f(x)", "n": "Functions", "f": "The Function Machine", "d": "Domain and range, composition, inverses", "c": "c-fun", "k": "function domain range composition inverse piecewise f(x)" }, { "id": "quadratics.html", "href": "helpers/quadratics.html", "s": "x²", "n": "Quadratics and polynomials", "f": "The Area Box", "d": "Factor, the quadratic formula, the vertex", "c": "c-qua", "k": "quadratic polynomial factor foil parabola" }, { "id": "radicals.html", "href": "helpers/radicals.html", "s": "√", "n": "Radicals and rational expressions", "f": "The Root Cellar", "d": "Simplify √72, rationalize, rational equations", "c": "c-rad", "k": "radical root sqrt surd rationalize rational expression" }, { "id": "complex-numbers.html", "href": "helpers/complex-numbers.html", "s": "i", "n": "Complex numbers", "f": "The Complex Plane", "d": "i, + − × ÷, polar form, De Moivre", "c": "c-cpx", "k": "complex imaginary i conjugate polar de moivre" }, { "id": "logarithms.html", "href": "helpers/logarithms.html", "s": "log", "n": "Logarithms", "f": "The Log Ladder", "d": "Log laws, exponential equations, interest", "c": "c-log", "k": "log logs logarithm exponential ln growth decay" }, { "id": "sequences.html", "href": "helpers/sequences.html", "s": "aₙ", "n": "Sequences and series", "f": "The Number Staircase", "d": "The nth term, sums and sigma notation", "c": "c-seq", "k": "sequence series arithmetic geometric pattern sigma" }, { "id": "geometry.html", "href": "helpers/geometry.html", "s": "△", "n": "Geometry", "f": "The Shape Shop", "d": "Area, volume, Pythagoras and angles", "c": "c-geo", "k": "shape area perimeter volume pythagorean triangle circle angle" }, { "id": "stats.html", "href": "helpers/statistics.html", "s": "⁘", "n": "Statistics", "f": "The Dot Plot", "d": "Mean, median, mode and box plots", "c": "c-sta", "k": "stats statistics mean median mode range average" }, { "id": "probability.html", "href": "helpers/probability.html", "s": "◔", "n": "Probability", "f": "The Chance Spinner", "d": "Dice, coins, marbles and tree diagrams", "c": "c-pro", "k": "probability chance odds" }, { "id": "counting.html", "href": "helpers/counting.html", "s": "n!", "n": "Counting", "f": "The Counting Tree", "d": "Outfits and codes, arrangements (nPr), committees (nCr), handshakes and factorials", "c": "c-cnt", "k": "counting combinations permutations ncr npr factorial arrangements handshakes diagonals outfits license plates committee choose" }, { "id": "wordproblems.html", "href": "helpers/story-problems.html", "s": "✎", "n": "Story problems", "f": "The Story Problem", "d": "Word problems with a bar model", "c": "c-wrd", "k": "word problem story" }, { "id": "trigonometry.html", "href": "helpers/trigonometry.html", "s": "∠", "n": "Trigonometry", "f": "The Unit Circle", "d": "SOH-CAH-TOA, the unit circle, laws of sines", "c": "c-tri", "k": "trig sin cos tan sine cosine unit circle radians" }, { "id": "calculus.html", "href": "helpers/calculus.html", "s": "∫", "n": "Calculus", "f": "The Rate Machine", "d": "Limits, derivatives and integrals", "c": "c-cal", "k": "calculus derivative integral limit" }, { "id": "college-statistics.html", "href": "helpers/college-statistics.html", "s": "σ", "n": "College statistics", "f": "The Bell Curve", "d": "Normal curve, tests, intervals, regression", "c": "c-bel", "k": "statistics normal z-score hypothesis confidence interval regression binomial" }, { "id": "matrices-and-vectors.html", "href": "helpers/matrices-and-vectors.html", "s": "[ ]", "n": "Matrices and vectors", "f": "The Matrix Grid", "d": "Determinants, inverses, row reduction, dot product", "c": "c-mat", "k": "matrix matrices vector determinant inverse dot cross linear algebra" }, { "id": "aviation.html", "href": "helpers/aviation.html", "s": "✈", "n": "Aviation", "f": "The Flight Computer", "d": "Wind triangle, crosswind, fuel, density altitude, weight and balance", "c": "c-avi", "k": "aviation pilot flight e6b flight computer wind triangle wind correction heading ground speed crosswind headwind runway knots nautical miles fuel gph density altitude pressure altitude altimeter true airspeed tas variation deviation magnetic compass descent weight and balance cg center of gravity bank turn radius glide" }, { "id": "worksheet.html", "href": "practice/worksheets.html", "s": "▤", "n": "Worksheets", "f": "The Worksheet Maker", "d": "Printable, with an answer key", "c": "c-ord", "k": "worksheet print", "tool": 1 }, { "id": "practice.html", "href": "practice/sets.html", "s": "▶", "n": "Practice sets", "f": "Share as a link or QR code", "d": "Students work through it and get a score", "c": "c-rat", "k": "practice set quiz", "tool": 1 }, { "id": "assignment.html", "href": "practice/sets.html?assignment", "s": "✉", "n": "Assignments", "f": "No accounts needed", "d": "Pick exact problems, add a due date, share one link", "c": "c-pct", "k": "assignment homework assign teacher classroom due date google classroom", "tool": 1 }, { "id": "flashcards.html", "href": "practice/flash-cards.html", "s": "7×8", "n": "Flash cards", "f": "The Flash Cards", "d": "Times tables to 20 × 20, and more", "c": "c-fla", "k": "flash cards times tables facts", "tool": 1 }, { "id": "daily.html", "href": "practice/problem-of-the-day.html", "s": "★", "n": "Problem of the day", "f": "A new one every day", "d": "And the week's problems with a key", "c": "c-day", "k": "daily", "tool": 1 }, { "id": "progress.html", "href": "practice/progress.html", "s": "✓", "n": "Your progress", "f": "Kept on this device", "d": "What you've practiced and what's next", "c": "c-sta", "k": "progress", "tool": 1 }, { "id": "reference.html", "href": "reference/sheets.html", "s": "▦", "n": "Reference sheets", "f": "Forty sheets to print", "d": "Times tables, formulas, graph paper", "c": "c-geo", "k": "reference chart formula graph paper", "tool": 1 }, { "id": "glossary.html", "href": "reference/definitions.html", "s": "Aa", "n": "Math words", "f": "The Word List", "d": "What each math word means", "c": "c-alg", "k": "definitions glossary vocabulary", "tool": 1 }, { "id": "learn.html", "href": "learn/index.html", "s": "☰", "n": "Lessons", "f": "How to do it, step by step", "d": "46 short lessons, each with a worked example", "c": "c-lin", "k": "lesson lessons learn how to tutorial explain", "tool": 1 }, { "id": "standards.html", "href": "reference/standards.html", "s": "CC", "n": "Standards", "f": "Common Core, matched to the helpers", "d": "Find the helper for a standard", "c": "c-sta", "k": "common core standards ccss alignment", "tool": 1 }, { "id": "results.html", "href": "practice/class-results.html", "s": "▥", "n": "Class results", "f": "A teacher's view", "d": "Scores and the hardest problems", "c": "c-ink", "k": "results teacher class", "tool": 1 }];
+    var BYID = {};
+    TOPICS.forEach(function(t) { BYID[t.id] = t; });
+    var U = function(t) { return window.HelperSite ? window.HelperSite.url(t.id) : t.href; };
+
+    /* ---- "type any problem": search.js says which helper a problem belongs to; topic words match the list above ---- */
+    var route = window.HelperSearch.route,
+      PAGE = window.HelperSearch.PAGE,
+      href = window.HelperSearch.href;
+    var askIn = $("askIn"),
+      sugg = $("sugg"),
+      form = $("ask"),
+      rows = [],
+      on = -1;
+
+    function norm(s) { return String(s).toLowerCase().replace(/[−–]/g, "-").replace(/[^a-z0-9²ⁿ%+\-×÷½∠∫]+/g, " ").trim(); }
+    // topics for the words typed, best first: a match in the topic's name beats its fun name, its keywords, then its
+    // description; a whole word beats the start of a word, which beats a part of one ("frac" → Fractions first)
+    var FIELDS = [
+      ["n", 4],
+      ["f", 3],
+      ["k", 2],
+      ["d", 1.5]
+    ];
+
+    function topicMatches(q) {
+      var words = norm(q).split(" ").filter(Boolean);
+      if (!words.length) return [];
+      var scored = [];
+      TOPICS.forEach(function(t, i) {
+        var total = 0,
+          all = words.every(function(w) {
+            var best = 0;
+            FIELDS.forEach(function(f) {
+              var hay = " " + norm(t[f[0]]) + " ",
+                how = hay.indexOf(" " + w + " ") >= 0 ? 1 : hay.indexOf(" " + w) >= 0 ? 0.6 :
+                w.length > 2 && hay.indexOf(w) >= 0 ? 0.3 : 0;
+              best = Math.max(best, how * f[1]);
+            });
+            total += best;
+            return best > 0;
+          });
+        if (all) scored.push({ t: t, s: total, i: i });
       });
-      if (all) scored.push({ t:t, s:total, i:i });
-    });
-    scored.sort(function(a, b){ return b.s - a.s || a.i - b.i; });
-    return scored.map(function(x){ return x.t; });
-  }
-  function optHtml(r, i){
-    var t = r.t;
-    return '<a class="opt ' + t.c + (i === on || (on < 0 && i === 0) ? " on" : "") + '" role="option" id="opt' + i + '" aria-selected="' + (i === on) + '" href="' + esc(r.url) + '">'
-      + '<span class="sg" aria-hidden="true">' + esc(t.s) + "</span><span>" + r.html + '</span><span class="kbd" aria-hidden="true">Enter ↵</span></a>';
-  }
-  function build(){
-    var q = askIn.value.trim(), out = [];
-    rows = [];
-    if (q){
-      var r = route(q), hasNum = /\d/.test(q), topics = topicMatches(q);
-      var problem = r && !r.none && BYID[r.page] && r.page !== "glossary.html" ? r : null;
-      if (problem && (hasNum || !topics.length)){
-        var t = BYID[r.page];
-        rows.push({ t:t, url:href(r), html:"<b>Show the steps for <code>" + esc(q) + "</code></b><small>on <em>" + esc(t.f) + "</em>"
-          + (r.what ? " · " + esc(r.what) : "") + "</small>" });
-        if (r.alt && BYID[r.alt.page]){
-          var a = BYID[r.alt.page];
-          rows.push({ t:a, url:href(r.alt), html:"<b>Or open it on " + esc(a.f) + "</b><small>" + esc(a.n) + "</small>" });
+      scored.sort(function(a, b) { return b.s - a.s || a.i - b.i; });
+      return scored.map(function(x) { return x.t; });
+    }
+
+    function optHtml(r, i) {
+      var t = r.t;
+      return '<a class="opt ' + t.c + (i === on || (on < 0 && i === 0) ? " on" : "") + '" role="option" id="opt' + i + '" aria-selected="' + (i === on) + '" href="' + esc(r.url) + '">' +
+        '<span class="sg" aria-hidden="true">' + esc(t.s) + "</span><span>" + r.html + '</span><span class="kbd" aria-hidden="true">Enter ↵</span></a>';
+    }
+
+    function build() {
+      var q = askIn.value.trim(),
+        out = [];
+      rows = [];
+      if (q) {
+        var r = route(q),
+          hasNum = /\d/.test(q),
+          topics = topicMatches(q);
+        var problem = r && !r.none && BYID[r.page] && r.page !== "glossary.html" ? r : null;
+        if (problem && (hasNum || !topics.length)) {
+          var t = BYID[r.page];
+          rows.push({
+            t: t,
+            url: href(r),
+            html: "<b>Show the steps for <code>" + esc(q) + "</code></b><small>on <em>" + esc(t.f) + "</em>" +
+              (r.what ? " · " + esc(r.what) : "") + "</small>"
+          });
+          if (r.alt && BYID[r.alt.page]) {
+            var a = BYID[r.alt.page];
+            rows.push({ t: a, url: href(r.alt), html: "<b>Or open it on " + esc(a.f) + "</b><small>" + esc(a.n) + "</small>" });
+          }
+        }
+        topics.slice(0, hasNum ? 2 : 6).forEach(function(t) {
+          if (rows.some(function(x) { return x.t === t; })) return;
+          rows.push({ t: t, url: U(t), html: "<b>" + esc(t.n) + "</b><small><em>" + esc(t.f) + "</em> · " + esc(t.d) + "</small>", topic: true });
+        });
+        // words with no numbers: what they mean, from the Word List (after the topics, or on its own)
+        if (r && !r.none && r.page === "glossary.html" && rows.length < 7) {
+          var g = BYID["glossary.html"],
+            term = (/“(.+)”/.exec(r.what || "") || [0, q])[1];
+          rows.push({ t: g, url: href(r), html: "<b>Look up “" + esc(term) + "”</b><small>in <em>the Word List</em>: what the math word means</small>", topic: rows.length > 0 });
         }
       }
-      topics.slice(0, hasNum ? 2 : 6).forEach(function(t){
-        if (rows.some(function(x){ return x.t === t; })) return;
-        rows.push({ t:t, url:U(t), html:"<b>" + esc(t.n) + "</b><small><em>" + esc(t.f) + "</em> · " + esc(t.d) + "</small>", topic:true });
-      });
-      // words with no numbers: what they mean, from the Word List (after the topics, or on its own)
-      if (r && !r.none && r.page === "glossary.html" && rows.length < 7){
-        var g = BYID["glossary.html"], term = (/“(.+)”/.exec(r.what || "") || [0, q])[1];
-        rows.push({ t:g, url:href(r), html:"<b>Look up “" + esc(term) + "”</b><small>in <em>the Word List</em>: what the math word means</small>", topic:rows.length > 0 });
+      if (on >= rows.length) on = rows.length - 1;
+      if (rows.length) {
+        var firstTopic = -1;
+        rows.forEach(function(x, i) { if (x.topic && firstTopic < 0) firstTopic = i; });
+        out = rows.map(function(x, i) {
+          return (i === firstTopic && i > 0 ? '<div class="sugg-head" role="presentation">Topics</div>' : "") + optHtml(x, i);
+        });
+        sugg.innerHTML = out.join("");
+      }
+      var open = rows.length > 0 && document.activeElement === askIn;
+      sugg.hidden = !open;
+      form.classList.toggle("open", open);
+      askIn.setAttribute("aria-expanded", String(open));
+      if (on >= 0 && open) askIn.setAttribute("aria-activedescendant", "opt" + on);
+      else askIn.removeAttribute("aria-activedescendant");
+    }
+
+    function move(d) {
+      if (!rows.length) return;
+      on = on + d;
+      if (on < -1) on = rows.length - 1;
+      if (on >= rows.length) on = -1;
+      build();
+      var el = on >= 0 && $("opt" + on);
+      if (el) el.scrollIntoView({ block: "nearest" });
+    }
+    askIn.addEventListener("input", function() {
+      on = -1;
+      build();
+    });
+    askIn.addEventListener("focus", build);
+    askIn.addEventListener("blur", function() {
+      setTimeout(function() {
+        if (document.activeElement !== askIn) {
+          sugg.hidden = true;
+          form.classList.remove("open");
+          askIn.setAttribute("aria-expanded", "false");
+        }
+      }, 150);
+    });
+    askIn.addEventListener("keydown", function(e) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        move(1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        move(-1);
+      } else if (e.key === "Escape") {
+        on = -1;
+        sugg.hidden = true;
+        form.classList.remove("open");
+        askIn.setAttribute("aria-expanded", "false");
+      }
+    });
+    sugg.addEventListener("mousedown", function(e) { if (e.target.closest(".opt")) e.preventDefault(); }); // keep the box focused until the click lands
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      build();
+      var pick = rows[on >= 0 ? on : 0];
+      if (pick) location.href = pick.url;
+      else askIn.focus();
+    });
+    // a different handful of examples each visit: two early-grade, two middle-school, three high-school and one college,
+    // each from a different helper (every one checked to open its helper with an answer)
+    var TRY = {
+      "k5": [
+        ["47 + 38", "addition.html"],
+        ["502 − 178", "subtraction.html"],
+        ["36 × 24", "multiplication.html"],
+        ["847 ÷ 12", "division.html"],
+        ["round 3,456 to the nearest hundred", "number-sense.html"],
+        ["3/4 + 5/6", "addition.html"],
+        ["5 ft 7 in to inches", "unit-conversions.html"],
+        ["7 times table", "flashcards.html"],
+        ["45 minutes after 1:30", "number-sense.html"],
+        ["3 quarters 2 dimes", "number-sense.html"]
+      ],
+      "m": [
+        ["15% of 80", "percents.html"],
+        ["−7 + 12", "integers.html"],
+        ["3 + 4 × 2", "pemdas.html"],
+        ["simplify 18/24", "fractions.html"],
+        ["GCF of 12 and 18", "factors.html"],
+        ["share 60 in 2:3", "ratios.html"],
+        ["3x + 2 = 11", "algebra.html"],
+        ["mean of 4, 8, 6, 5, 7", "stats.html"],
+        ["2^5", "exponents.html"],
+        ["(1, 2) and (5, 10)", "lines.html"],
+        ["area of a circle with radius 5", "geometry.html"],
+        ["3/4 ÷ 1/2", "division.html"]
+      ],
+      "hs": [
+        ["x^2 - 5x + 6 = 0", "quadratics.html"],
+        ["log2 32", "logarithms.html"],
+        ["sin 30°", "trigonometry.html"],
+        ["3, 7, 11, 15, ...", "sequences.html"],
+        ["simplify √72", "radicals.html"],
+        ["(3 + 2i)(1 − 4i)", "complex-numbers.html"],
+        ["2x + y = 7; x − y = 2", "algebra.html"],
+        ["$5000 at 4% compounded monthly for 10 years", "money-math.html"],
+        ["factor x^2 + 7x + 12", "quadratics.html"],
+        ["y = x^2 - 4x + 3", "graphing.html"],
+        ["98.6 F to C", "unit-conversions.html"]
+      ],
+      "col": [
+        ["d/dx x^3 sin x", "calculus.html"],
+        ["∫ 2x dx", "calculus.html"],
+        ["det [[2,1],[3,4]]", "matrices-and-vectors.html"],
+        ["P(X < 85) mean 70 sd 10", "college-statistics.html"],
+        ["lim x->2 (x^2-4)/(x-2)", "calculus.html"],
+        ["95% confidence interval xbar 120 s 4 n 100", "college-statistics.html"]
+      ]
+    };
+    var tryPick = [],
+      trySeen = {};
+
+    function tryDraw(list, n) {
+      list = list.slice();
+      while (n > 0 && list.length) {
+        var x = list.splice(Math.floor(Math.random() * list.length), 1)[0];
+        if (trySeen[x[1]]) continue;
+        trySeen[x[1]] = 1;
+        tryPick.push(x[0]);
+        n--;
       }
     }
-    if (on >= rows.length) on = rows.length - 1;
-    if (rows.length){
-      var firstTopic = -1;
-      rows.forEach(function(x, i){ if (x.topic && firstTopic < 0) firstTopic = i; });
-      out = rows.map(function(x, i){
-        return (i === firstTopic && i > 0 ? '<div class="sugg-head" role="presentation">Topics</div>' : "") + optHtml(x, i);
+    tryDraw(TRY.k5, 2);
+    tryDraw(TRY.m, 2);
+    tryDraw(TRY.hs, 3);
+    tryDraw(TRY.col, 1);
+    tryPick.forEach(function(ex) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = ex;
+      b.addEventListener("click", function() {
+        askIn.value = ex;
+        on = -1;
+        askIn.focus();
+        build();
       });
-      sugg.innerHTML = out.join("");
-    }
-    var open = rows.length > 0 && document.activeElement === askIn;
-    sugg.hidden = !open; form.classList.toggle("open", open);
-    askIn.setAttribute("aria-expanded", String(open));
-    if (on >= 0 && open) askIn.setAttribute("aria-activedescendant", "opt" + on); else askIn.removeAttribute("aria-activedescendant");
-  }
-  function move(d){
-    if (!rows.length) return;
-    on = on + d; if (on < -1) on = rows.length - 1; if (on >= rows.length) on = -1;
-    build();
-    var el = on >= 0 && $("opt" + on); if (el) el.scrollIntoView({ block:"nearest" });
-  }
-  askIn.addEventListener("input", function(){ on = -1; build(); });
-  askIn.addEventListener("focus", build);
-  askIn.addEventListener("blur", function(){ setTimeout(function(){ if (document.activeElement !== askIn){ sugg.hidden = true; form.classList.remove("open"); askIn.setAttribute("aria-expanded", "false"); } }, 150); });
-  askIn.addEventListener("keydown", function(e){
-    if (e.key === "ArrowDown"){ e.preventDefault(); move(1); }
-    else if (e.key === "ArrowUp"){ e.preventDefault(); move(-1); }
-    else if (e.key === "Escape"){ on = -1; sugg.hidden = true; form.classList.remove("open"); askIn.setAttribute("aria-expanded", "false"); }
-  });
-  sugg.addEventListener("mousedown", function(e){ if (e.target.closest(".opt")) e.preventDefault(); });   // keep the box focused until the click lands
-  form.addEventListener("submit", function(e){
-    e.preventDefault();
-    build();
-    var pick = rows[on >= 0 ? on : 0];
-    if (pick) location.href = pick.url; else askIn.focus();
-  });
-  // a different handful of examples each visit: two early-grade, two middle-school, three high-school and one college,
-  // each from a different helper (every one checked to open its helper with an answer)
-  var TRY = {"k5": [["47 + 38", "addition.html"], ["502 − 178", "subtraction.html"], ["36 × 24", "multiplication.html"], ["847 ÷ 12", "division.html"], ["round 3,456 to the nearest hundred", "number-sense.html"], ["3/4 + 5/6", "addition.html"], ["5 ft 7 in to inches", "unit-conversions.html"], ["7 times table", "flashcards.html"], ["45 minutes after 1:30", "number-sense.html"], ["3 quarters 2 dimes", "number-sense.html"]], "m": [["15% of 80", "percents.html"], ["−7 + 12", "integers.html"], ["3 + 4 × 2", "pemdas.html"], ["simplify 18/24", "fractions.html"], ["GCF of 12 and 18", "factors.html"], ["share 60 in 2:3", "ratios.html"], ["3x + 2 = 11", "algebra.html"], ["mean of 4, 8, 6, 5, 7", "stats.html"], ["2^5", "exponents.html"], ["(1, 2) and (5, 10)", "lines.html"], ["area of a circle with radius 5", "geometry.html"], ["3/4 ÷ 1/2", "division.html"]], "hs": [["x^2 - 5x + 6 = 0", "quadratics.html"], ["log2 32", "logarithms.html"], ["sin 30°", "trigonometry.html"], ["3, 7, 11, 15, ...", "sequences.html"], ["simplify √72", "radicals.html"], ["(3 + 2i)(1 − 4i)", "complex-numbers.html"], ["2x + y = 7; x − y = 2", "algebra.html"], ["$5000 at 4% compounded monthly for 10 years", "money-math.html"], ["factor x^2 + 7x + 12", "quadratics.html"], ["y = x^2 - 4x + 3", "graphing.html"], ["98.6 F to C", "unit-conversions.html"]], "col": [["d/dx x^3 sin x", "calculus.html"], ["∫ 2x dx", "calculus.html"], ["det [[2,1],[3,4]]", "matrices-and-vectors.html"], ["P(X < 85) mean 70 sd 10", "college-statistics.html"], ["lim x->2 (x^2-4)/(x-2)", "calculus.html"], ["95% confidence interval xbar 120 s 4 n 100", "college-statistics.html"]]};
-  var tryPick = [], trySeen = {};
-  function tryDraw(list, n){
-    list = list.slice();
-    while (n > 0 && list.length){ var x = list.splice(Math.floor(Math.random() * list.length), 1)[0]; if (trySeen[x[1]]) continue; trySeen[x[1]] = 1; tryPick.push(x[0]); n--; }
-  }
-  tryDraw(TRY.k5, 2); tryDraw(TRY.m, 2); tryDraw(TRY.hs, 3); tryDraw(TRY.col, 1);
-  tryPick.forEach(function(ex){
-    var b = document.createElement("button");
-    b.type = "button"; b.textContent = ex;
-    b.addEventListener("click", function(){ askIn.value = ex; on = -1; askIn.focus(); build(); });
-    $("askTry").appendChild(b);
-  });
-
-  /* ---- ?q=… (a search engine's site search, or a shared link): straight to the best match, as if typed and Entered ---- */
-  (function(){
-    var m = /[?&]q=([^&#]*)/.exec(location.search);
-    if (!m) return;
-    var q0 = m[1].replace(/\+/g, " ");
-    try { q0 = decodeURIComponent(q0); } catch (e){}
-    askIn.value = q0; on = -1; build();
-    if (rows[0]) location.replace(rows[0].url); else askIn.focus();
-  })();
-
-  /* ---- browse all topics, with the grade buttons ---- */
-  var GRADES = { all:"", k5:"grades K–5", m:"grades 6–8", hs:"grades 9–12", col:"college", work:"math at work" }, grade = "all";
-  var links = [].slice.call(document.querySelectorAll("#topics a[data-grades]"));
-  try { var g0 = localStorage.getItem("helpers-home-grade"); if (g0 && GRADES.hasOwnProperty(g0)) grade = g0; } catch (e){}
-  function filter(){
-    var n = 0;
-    links.forEach(function(a){
-      a.hidden = !(grade === "all" || (" " + a.getAttribute("data-grades") + " ").indexOf(" " + grade + " ") >= 0);
-      if (!a.hidden) n++;
+      $("askTry").appendChild(b);
     });
-    [].forEach.call(document.querySelectorAll("#topics .col"), function(c){ c.hidden = !c.querySelector("a:not([hidden])"); });
-    [].forEach.call(document.querySelectorAll("[data-grade]"), function(b){ b.setAttribute("aria-pressed", String(b.getAttribute("data-grade") === grade)); });
-    $("shown").innerHTML = grade === "all" ? "" : n + " topics for " + GRADES[grade] + '. <button type="button" data-all>Show all ' + links.length + "</button>";
-  }
-  [].forEach.call(document.querySelectorAll("[data-grade]"), function(b){
-    b.addEventListener("click", function(){ grade = b.getAttribute("data-grade"); try { localStorage.setItem("helpers-home-grade", grade); } catch (e){} filter(); });
-  });
-  $("shown").addEventListener("click", function(e){
-    if (!e.target.closest("[data-all]")) return;
-    grade = "all"; try { localStorage.setItem("helpers-home-grade", grade); } catch (e2){} filter();
-  });
-  function showTopics(open, scroll){
-    $("topics").hidden = !open;
-    $("browseBtn").setAttribute("aria-expanded", String(open));
-    try { sessionStorage.setItem("helpers-home-browse", open ? "1" : ""); } catch (e){}
-    if (open && scroll) $("topics").scrollIntoView({ behavior:"smooth", block:"start" });
-  }
-  $("browseBtn").addEventListener("click", function(){ showTopics($("topics").hidden, true); });
-  var startOpen = /^#(topics|helpers)$/.test(location.hash);
-  try { startOpen = startOpen || sessionStorage.getItem("helpers-home-browse") === "1"; } catch (e){}
-  showTopics(startOpen, /^#(topics|helpers)$/.test(location.hash));
-  filter();
 
-  /* ---- install as an app, and work offline ---- */
-  if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
-    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
-  }
-  var installEvt = null;
-  window.addEventListener("beforeinstallprompt", function(e){
-    e.preventDefault(); installEvt = e; $("installBtn").hidden = false;
-  });
-  $("installBtn").addEventListener("click", function(){
-    if (!installEvt) return;
-    installEvt.prompt();
-    installEvt.userChoice.then(function(){ installEvt = null; $("installBtn").hidden = true; });
-  });
-  window.addEventListener("appinstalled", function(){ $("installBtn").hidden = true; });
-  // iPhones and iPads have no install button; say how instead (only in Safari, and not once it's installed)
-  var standalone = window.navigator.standalone === true || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
-  if ((/iP(hone|ad|od)/.test(navigator.userAgent) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) && !standalone) $("iosTip").hidden = false;   // iPadOS Safari says it is a Mac
+    /* ---- ?q=… (a search engine's site search, or a shared link): straight to the best match, as if typed and Entered ---- */
+    (function() {
+      var m = /[?&]q=([^&#]*)/.exec(location.search);
+      if (!m) return;
+      var q0 = m[1].replace(/\+/g, " ");
+      try { q0 = decodeURIComponent(q0); } catch (e) {}
+      askIn.value = q0;
+      on = -1;
+      build();
+      if (rows[0]) location.replace(rows[0].url);
+      else askIn.focus();
+    })();
 
-  /* ---- "your practice" only shows once there's something to show ---- */
-  (function(){
-    var any = false;
-    try { var raw = localStorage.getItem("helper-progress"); any = !!raw && raw.length > 30; } catch (e){}
-    if (any) $("practiceSec").hidden = false;
-  })();
+    /* ---- browse all topics, with the grade buttons ---- */
+    var GRADES = { all: "", k5: "grades K–5", m: "grades 6–8", hs: "grades 9–12", col: "college", work: "math at work" },
+      grade = "all";
+    var links = [].slice.call(document.querySelectorAll("#topics a[data-grades]"));
+    try { var g0 = localStorage.getItem("helpers-home-grade"); if (g0 && GRADES.hasOwnProperty(g0)) grade = g0; } catch (e) {}
 
-  /* ---- theme ---- */
-  var themeBtn = $("themeBtn");
-  function isDark(){
-    var t = document.documentElement.getAttribute("data-theme");
-    return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  function paint(){ themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
-  try { var t = localStorage.getItem("helpers-home"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e){}
-  themeBtn.addEventListener("click", function(){
-    var next = isDark() ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    try { localStorage.setItem("helpers-home", next); } catch (e){}
+    function filter() {
+      var n = 0;
+      links.forEach(function(a) {
+        a.hidden = !(grade === "all" || (" " + a.getAttribute("data-grades") + " ").indexOf(" " + grade + " ") >= 0);
+        if (!a.hidden) n++;
+      });
+      [].forEach.call(document.querySelectorAll("#topics .col"), function(c) { c.hidden = !c.querySelector("a:not([hidden])"); });
+      [].forEach.call(document.querySelectorAll("[data-grade]"), function(b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-grade") === grade)); });
+      $("shown").innerHTML = grade === "all" ? "" : n + " topics for " + GRADES[grade] + '. <button type="button" data-all>Show all ' + links.length + "</button>";
+    }
+    [].forEach.call(document.querySelectorAll("[data-grade]"), function(b) {
+      b.addEventListener("click", function() { grade = b.getAttribute("data-grade"); try { localStorage.setItem("helpers-home-grade", grade); } catch (e) {} filter(); });
+    });
+    $("shown").addEventListener("click", function(e) {
+      if (!e.target.closest("[data-all]")) return;
+      grade = "all";
+      try { localStorage.setItem("helpers-home-grade", grade); } catch (e2) {} filter();
+    });
+
+    function showTopics(open, scroll) {
+      $("topics").hidden = !open;
+      $("browseBtn").setAttribute("aria-expanded", String(open));
+      try { sessionStorage.setItem("helpers-home-browse", open ? "1" : ""); } catch (e) {}
+      if (open && scroll) $("topics").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    $("browseBtn").addEventListener("click", function() { showTopics($("topics").hidden, true); });
+    var startOpen = /^#(topics|helpers)$/.test(location.hash);
+    try { startOpen = startOpen || sessionStorage.getItem("helpers-home-browse") === "1"; } catch (e) {}
+    showTopics(startOpen, /^#(topics|helpers)$/.test(location.hash));
+    filter();
+
+    /* ---- install as an app, and work offline ---- */
+    if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) {
+      window.addEventListener("load", function() { navigator.serviceWorker.register("sw.js").catch(function() {}); });
+    }
+    var installEvt = null;
+    window.addEventListener("beforeinstallprompt", function(e) {
+      e.preventDefault();
+      installEvt = e;
+      $("installBtn").hidden = false;
+    });
+    $("installBtn").addEventListener("click", function() {
+      if (!installEvt) return;
+      installEvt.prompt();
+      installEvt.userChoice.then(function() {
+        installEvt = null;
+        $("installBtn").hidden = true;
+      });
+    });
+    window.addEventListener("appinstalled", function() { $("installBtn").hidden = true; });
+    // iPhones and iPads have no install button; say how instead (only in Safari, and not once it's installed)
+    var standalone = window.navigator.standalone === true || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+    if ((/iP(hone|ad|od)/.test(navigator.userAgent) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) && !standalone) $("iosTip").hidden = false; // iPadOS Safari says it is a Mac
+
+    /* ---- "your practice" only shows once there's something to show ---- */
+    (function() {
+      var any = false;
+      try {
+        var raw = localStorage.getItem("helper-progress");
+        any = !!raw && raw.length > 30;
+      } catch (e) {}
+      if (any) $("practiceSec").hidden = false;
+    })();
+
+    /* ---- theme ---- */
+    var themeBtn = $("themeBtn");
+
+    function isDark() {
+      var t = document.documentElement.getAttribute("data-theme");
+      return t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    function paint() { themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+    try { var t = localStorage.getItem("helpers-home"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+    themeBtn.addEventListener("click", function() {
+      var next = isDark() ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      try { localStorage.setItem("helpers-home", next); } catch (e) {}
+      paint();
+    });
     paint();
-  });
-  paint();
-})();
+  })();
 </script>
 </html>
 

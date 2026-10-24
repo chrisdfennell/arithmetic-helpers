@@ -27,31 +27,31 @@ var PAGES = [
 ];
 
 // where each page lives (assets/site.js), so an old address opened offline still finds its page
-try { importScripts("assets/site.js"); } catch (e){}
+try { importScripts("assets/site.js"); } catch (e) {}
 
-self.addEventListener("install", function(e){
+self.addEventListener("install", function(e) {
   // save each file on its own, so one missing page doesn't stop the rest being saved
-  e.waitUntil(caches.open(CACHE).then(function(c){
-    return Promise.all(PAGES.map(function(u){ return c.add(u).catch(function(){}); }));
-  }).then(function(){ return self.skipWaiting(); }));
+  e.waitUntil(caches.open(CACHE).then(function(c) {
+    return Promise.all(PAGES.map(function(u) { return c.add(u).catch(function() {}); }));
+  }).then(function() { return self.skipWaiting(); }));
 });
 
-self.addEventListener("activate", function(e){
-  e.waitUntil(caches.keys().then(function(keys){
-    return Promise.all(keys.filter(function(k){ return k !== CACHE && k !== FONTS; }).map(function(k){ return caches.delete(k); }));
-  }).then(function(){ return self.clients.claim(); }));
+self.addEventListener("activate", function(e) {
+  e.waitUntil(caches.keys().then(function(keys) {
+    return Promise.all(keys.filter(function(k) { return k !== CACHE && k !== FONTS; }).map(function(k) { return caches.delete(k); }));
+  }).then(function() { return self.clients.claim(); }));
 });
 
-self.addEventListener("fetch", function(e){
+self.addEventListener("fetch", function(e) {
   var req = e.request;
   if (req.method !== "GET") return;
   var url = new URL(req.url);
 
   // fonts: use the saved copy if there is one, otherwise fetch it and save it
-  if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com"){
-    e.respondWith(caches.open(FONTS).then(function(c){
-      return c.match(req).then(function(hit){
-        return hit || fetch(req).then(function(res){ c.put(req, res.clone()); return res; });
+  if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {
+    e.respondWith(caches.open(FONTS).then(function(c) {
+      return c.match(req).then(function(hit) {
+        return hit || fetch(req).then(function(res) { c.put(req, res.clone()); return res; });
       });
     }));
     return;
@@ -59,37 +59,39 @@ self.addEventListener("fetch", function(e){
   if (url.origin !== self.location.origin) return;
 
   // the site's own files: fresh when online, saved copy when offline
-  e.respondWith(fetch(req).then(function(res){
-    if (res && res.ok){
+  e.respondWith(fetch(req).then(function(res) {
+    if (res && res.ok) {
       var copy = res.clone();
-      caches.open(CACHE).then(function(c){
+      caches.open(CACHE).then(function(c) {
         // a page opened with ?q=… is saved once, under its plain address
         var key = url.search ? new Request(url.origin + url.pathname) : req;
         c.put(key, copy);
       });
     }
     return res;
-  }).catch(function(){
-    return caches.match(req, { ignoreSearch:true }).then(function(hit){
+  }).catch(function() {
+    return caches.match(req, { ignoreSearch: true }).then(function(hit) {
       if (hit) return hit;
       // a readable address (…/helpers/order-of-operations) is saved under its file's name (….html)
       var last = url.pathname.split("/").pop();
-      if (last && last.indexOf(".") < 0){
-        return caches.match(url.origin + url.pathname + ".html", { ignoreSearch:true }).then(function(h2){ return h2 || missing(); });
+      if (last && last.indexOf(".") < 0) {
+        return caches.match(url.origin + url.pathname + ".html", { ignoreSearch: true }).then(function(h2) { return h2 || missing(); });
       }
       return missing();
     });
-    function missing(){
-      if (req.mode === "navigate"){
+
+    function missing() {
+      if (req.mode === "navigate") {
         // an address from before the pages were put in folders and renamed (pemdas.html?q=…): send it on
-        var scope = self.registration.scope, to = null;
-        if (self.HelperSite && url.href.indexOf(scope) === 0){
-          try { to = self.HelperSite.moved(decodeURIComponent(url.pathname.slice(new URL(scope).pathname.length))); } catch (x){}
+        var scope = self.registration.scope,
+          to = null;
+        if (self.HelperSite && url.href.indexOf(scope) === 0) {
+          try { to = self.HelperSite.moved(decodeURIComponent(url.pathname.slice(new URL(scope).pathname.length))); } catch (x) {}
         }
         if (to) return Response.redirect((to.page ? self.HelperSite.url(to.page) : scope + to.file) + url.search, 302);
         return caches.match("index.html");
       }
-      return new Response("", { status:504, statusText:"Offline" });
+      return new Response("", { status: 504, statusText: "Offline" });
     }
   }));
 });

@@ -22,6 +22,8 @@ Open <http://localhost:8000/tests/self-test.html> and press **Run**. It checks e
 
 - **One page, one file.** Each helper is a single self-contained HTML file in `helpers/`. Shared scripts are in `assets/`: `site.js` (where every page lives, and its readable address; every link between pages is made through it), `nav.js` (the bar), `tools.js` (settings, read aloud, math keys, QR button…), `search.js`, `progress.js`, `glossary.js`, `qr.js`.
 - **ES5 JavaScript** (`var`, `function`), no frameworks, no build tools, so it runs anywhere and is easy to read.
+- **Formatted code**: one statement per line, 2-space indent, CSS one property per line. After editing, run
+  `python scripts/format.py` (it needs `pip install jsbeautifier cssbeautifier`); `--check` lists files that aren't formatted.
 - **Exact math**: use the pages' BigInt fractions, not floating point, wherever an answer should be exact.
 - **Every helper follows the same contracts**, which the worksheet maker, practice sets, progress and the self-test rely on:
   - the problem is in the address (`?q=…`, `mode=…`, `practice=all|step|check`) and kept in step with `history.replaceState`

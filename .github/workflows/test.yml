@@ -40,8 +40,8 @@ jobs:
           echo "Using $chrome ($($chrome --version))"
           # A thorough run is split in two, because headless Chrome's time budget for one page runs out on the whole site.
           if [ "$DEPTH" = "thorough" ]; then
-            runs="depth=thorough&pages=number-sense,addition,subtraction,multiplication,division,scratch,fractions,percents,factors,integers,ratios,exponents,pemdas,algebra,lines,quadratics,functions,radicals,complex-numbers,unit-conversions,money-math
-          depth=thorough&pages=graphing,geometry,stats,wordproblems,probability,logarithms,sequences,trigonometry,calculus,college-statistics,matrices-and-vectors,flashcards,reference,results,daily,qr,keypad,tutor"
+            runs="depth=thorough&pages=number-sense,addition,subtraction,multiplication,division,scratch,fractions,percents,factors,integers,ratios,exponents,pemdas,algebra,lines,quadratics,functions,radicals,complex-numbers,unit-conversions,money-math,aviation
+          depth=thorough&pages=graphing,geometry,stats,wordproblems,probability,counting,logarithms,sequences,trigonometry,calculus,college-statistics,matrices-and-vectors,flashcards,reference,results,daily,qr,keypad,tutor"
           else
             runs="depth=quick"
           fi
