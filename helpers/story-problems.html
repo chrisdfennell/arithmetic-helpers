@@ -5638,7 +5638,9 @@
       var prices = ms.filter(function(t){ return t !== payT; });
       var itemBefore = function(t){ var m = /\b(?:an?|the|one)\s+((?:[a-z-]+\s){0,2}?[a-z-]+)\s+(?:for|that costs?|costing|at|which costs?)\s*$/.exec(t.before) || /\b(?:an?|one)\s+((?:[a-z-]+\s){0,2}?[a-z-]+)\s+(?:costs?|is)\s*$/.exec(t.before); return m ? m[1] : ""; };
       var P;
-      if (prices.length === 1 && ns.length && (/^\s*(each|apiece|a piece|per)\b/.test(prices[0].after) || /\beach\b/.test(A.L))){
+      // "A pen costs $3 … if I buy 4 pens": the price of one of the things counted is a price each too
+      var oneOf = function(t, n){ var it = itemBefore(t).split(" ").pop(); return !!it && !!n.unit && n.unit.split(" ")[0].indexOf(it) === 0; };
+      if (prices.length === 1 && ns.length && (/^\s*(each|apiece|a piece|per)\b/.test(prices[0].after) || /\beach\b/.test(A.L) || oneOf(prices[0], ns[0]))){
         P = base("money", A, { kind:"many", n:ns[0].v, a:prices[0].v, pay:payT.v });
         P.rw = { it:ns[0].unit || itemOf(A) || "items" };
       } else if (prices.length === 2) {
