@@ -606,6 +606,10 @@
              Words that pick a method: det "cofactor", "Sarrus", "row reduction" (and "along row 2"); inverse
              "formula", "row reduce"; systems "Gaussian elimination", "Gauss-Jordan"/"RREF", "Cramer’s rule",
              "inverse". A plain square matrix on its own means det; an augmented matrix (with |) means sys.
+             Also read: a label and polite words ("Q3)", "I need", "how do I find", "step by step"), |A| for A = …,
+             "evaluate |3 −2; 5 1|", rows typed one per line inside brackets, a lowercase name (a = [[…]]) for det and
+             inverse, "multiply A by −2", "3 times the matrix …", "add … and …", "subtract … from …", "multiply A = … by
+             B = …", equations joined by "and", u x v (cross). Transpose, eigenvalues, rank and the like get a notice.
    how       the method. det: auto | cofactor | sarrus | rows (auto: 2×2 by ad − bc, 3×3 by cofactors, bigger by
              rows). inv: auto | formula | rows (formula is for 2×2 only). sys: gauss | gj | cramer | inverse
              (gauss = Gaussian elimination and back-substitution, gj = Gauss-Jordan to reduced row-echelon form).
@@ -907,9 +911,22 @@
       .replace(/[⟨〈‹]/g, "<").replace(/[⟩〉›]/g, ">").replace(/÷/g, "/").replace(/‖/g, "||").replace(/[“”"]/g, "").replace(/[’‘]/g, "'")
       .replace(/⁻¹/g, "^-1").replace(/ᵀ/g, "^T").replace(/²/g, "^2").replace(/³/g, "^3").replace(/[{]/g, "[").replace(/[}]/g, "]")
       .replace(/([xyzwabc])\s*_\s*\{?\s*(\d)\s*\}?/g, "$1$2").replace(/[₀₁₂₃₄₅₆₇₈₉]/g, function(c){ return String(SUBS.indexOf(c)); });
-    if (vec) s = s.replace(/[·∙⋅•]/g, " dot ").replace(/[×✕]/g, " cross ");
+    if (vec) s = s.replace(/[·∙⋅•]/g, " dot ").replace(/[×✕]/g, " cross ").replace(/\b([a-hu-w])\s+x\s+([a-hu-w])\b/g, "$1 cross $2").replace(/([>)])\s*x\s*(?=[<(])/g, "$1 cross ");   // "u x v" is u × v
     else s = s.replace(/[×·∙⋅•✕]/g, "*");
     if (s.length > 2000) throw UE("That’s a lot to read — keep it under 2,000 characters, please.");
+    // a problem's label and the polite words around it ("Problem 4:", "Q3)", "can you please", "I need", "how do I find", "step by step")
+    s = s.replace(/^\s*(?:(?:problem|question|exercise|ex|q|no|number|#)\s*\.?\s*\d+[a-z]?\s*[:.)\-]|\d+\s*[.)]\s+(?=[a-z])|(?:hw|homework)\s*:)\s*/i, "")
+      .replace(/\b(?:can|could|would|will) (?:you|u) (?:please |pls |plz )?(?:help (?:me )?)?(?:to )?/gi, " ")
+      .replace(/\(\s*(?:show (?:all |your |the )?(?:work|working|steps)|step[- ]by[- ]step|please)\s*\)/gi, " ")
+      .replace(/\b(?:please|pls|plz|thanks|thank you|step[- ]by[- ]step|show (?:all |your |the |me the )?(?:work|working|steps))\b/gi, " ")
+      .replace(/^\s*(?:i (?:need|want|have) (?:to )?(?:find |know |solve |do |get )?|how (?:do|would|can) (?:i|you|we) (?:find |solve |do |get |work out )?|help me (?:find |with |solve )?|solve\s*:)\s*/i, "")
+      .replace(/[?!]+\s*$/, "").replace(/^[ \t:;,]+/, "").replace(/\n[ \t:;,]+/g, "\n");
+    // operations in words: "multiply A by −2", "3 times the matrix …", "add A and B", "subtract B from A"
+    s = s.replace(/\bmultiply\s+([\s\S]+?)\s+by\s+(-?\d+(?:\.\d+)?(?:\/\d+)?)\s*\.?\s*$/i, "$2 $1")
+      .replace(/(^|[\s,:(])(-?\d+(?:\.\d+)?(?:\/\d+)?)\s+times\s+(?:the\s+)?(?:matrix\s+|vector\s+)?(?=[\[(<A-Za-z])/g, "$1$2 ")
+      .replace(/\b(?:add|find the sum of|the sum of|sum of)\s+([\s\S]+?)\s+and\s+([\s\S]+)$/i, "$1 + $2")
+      .replace(/\bsubtract\s+([\s\S]+?)\s+from\s+([\s\S]+)$/i, "$2 - $1")
+      .replace(/\b(?:the\s+)?difference\s+(?:of|between)\s+([\s\S]+?)\s+and\s+([\s\S]+)$/i, "$1 - $2");
     return s;
   }
   function bracketEnd(s, i){                       // s[i] is [ or ( : the index of the bracket that closes it
@@ -970,7 +987,8 @@
   function readMats(text, maxR, maxC){
     var lines = [], buf = "";
     text.split("\n").forEach(function(l){                // a bracket left open carries on to the next line
-      buf = buf ? buf + " " + l : l;
+      // … as the next row when it's a row of numbers: "det(1 2 3⏎4 5 6⏎7 8 9)"
+      buf = buf ? buf + (/[\d.]\s*$/.test(buf) && /^\s*[-+]?\.?\d/.test(l) ? "; " : " ") + l : l;
       if (balanced(buf) <= 0){ lines.push(buf); buf = ""; }
     });
     if (buf) lines.push(buf);
@@ -1249,7 +1267,8 @@
     else if (/row\s*(?:-\s*)?(?:reduc|operation|echelon)|elimination|triangular/i.test(s)) how = "rows";
     if ((m = /\b(?:along|down|across|using|on)\s+(?:the\s+)?(?:row|r)\s*(\d)\b|\b(?:row|r)\s*(\d)\s+(?:expansion|cofactors?)/i.exec(s))){ row = +(m[1] || m[2]); s = s.replace(m[0], " "); if (!how) how = "cofactor"; }
     if ((m = /\b(?:along|down)\s+(?:the\s+)?(first|second|third|fourth|fifth)\s+row\b/i.exec(s))){ row = ORD.indexOf(m[1].toLowerCase()); s = s.replace(m[0], " "); if (!how) how = "cofactor"; }
-    s = s.replace(/\bdet(?:erminant)?s?\b|\bof\b/gi, " ").trim();
+    s = s.replace(/\bdet(?:erminant)?s?\b|\bof\b/gi, " ").replace(/\b(?:the|an?|matrix|given|following|square)\b(?!\s*=)/g, " ").replace(/\b([a-h])\s*=\s*(?=[\[(\d-])/g, function(m, c){ return c.toUpperCase() + " = "; })
+      .replace(/\b[a-z][a-z']+\b/g, " ").trim();         // any other words ("what's", "evaluate") aren't part of the matrix
     s = s.replace(/^\s*(?:find|compute|calculate|evaluate|work\s+out|what\s+is|the)\b[\s:]*/gi, "").replace(/^\s*(?:find|compute|calculate|evaluate|work\s+out|what\s+is|the)\b[\s:]*/gi, "").trim();
     var bars = /^\|([\s\S]*)\|\s*[.?]?\s*$/.exec(s);
     if (bars && !/\|/.test(bars[1])) s = bars[1];
@@ -1267,7 +1286,9 @@
     var s = normQ(text), how = null;
     if (/formula|swap|adjugate|adjoint/i.test(s)) how = "formula";
     else if (/row\s*(?:-\s*)?(?:reduc|operation)|gauss|elimination|\[\s*A\s*\|\s*I\s*\]|augment/i.test(s)) how = "rows";
-    s = s.replace(/\[\s*A\s*\|\s*I\s*\]/gi, " ").replace(/\binver(?:se|t|ting)\b|\bof\b|\bmatrix\b/gi, " ");
+    s = s.replace(/\[\s*A\s*\|\s*I\s*\]/gi, " ").replace(/\binver(?:se|t|ting)\b|\bof\b|\bmatrix\b/gi, " ")
+      .replace(/^\s*(?:(?:find|compute|calculate|evaluate|work\s+out|what\s+is|what's|give|determine)\s+)+/i, " ").replace(/\b(?:the|an?|given|following|square)\b(?!\s*=)/g, " ")
+      .replace(/\b([a-h])\s*=\s*(?=[\[(\d-])/g, function(m, c){ return c.toUpperCase() + " = "; }).replace(/\b[a-z][a-z']+\b/g, " ");
     var R0 = readMats(s, 5, 5), N = nameLits(R0), one = pickOne(R0, N, R0.expr, "inverse");
     if (!one) throw UE(EMPTY.inv);
     if (one.aug > 0) throw UE("That has a bar <b>|</b> in it. Type just the square matrix — the page writes [A | I] itself.");
@@ -1305,7 +1326,7 @@
     return null;
   }
   function readSys(text, how){
-    var s = normQ(text), mw = sysMethodWords(s), M, vars, m;
+    var s = normQ(text).replace(/\s+and\s+(?=[-+(]?\s*[\d.]*\s*[a-z]\d?\s*[-+=])/gi, "; "), mw = sysMethodWords(s), M, vars, m;   // "… = 5 and 4x + 3y = 11": two equations
     s = s.replace(/\bX\s*=\s*A\s*\^\s*-1\s*B\b/g, " ").replace(/\bA\s*\^\s*-1\s*B\b/g, " ");
     var body = s.replace(/gauss[\s-]*jordan/gi, " ").replace(/[A-Za-z']{2,}/g, " ").replace(/[?!:]/g, " ");
     if (/=/.test(body) && /[a-z]/.test(body.replace(/\b[A-Z]\s*=/g, ""))){
@@ -1498,6 +1519,8 @@
   function readProblem(mode, text, how){
     var s = String(text == null ? "" : text);
     if (!s.trim()) throw UE(EMPTY[mode]);
+    var un = /\b(transpose|eigen\w*|rank|trace|null\s*space|kernel|span|basis|diagonali[sz]\w*|lu\s+decomposition|row\s+space|column\s+space|orthonormal|gram[- ]schmidt)\b|\^\s*T\b/i.exec(s);
+    if (un) throw UE("<b>" + esc(un[1] ? un[1].toLowerCase().replace(/\s+/g, " ") : "A^T") + "</b> isn’t on this page. It adds, scales and multiplies matrices, finds determinants and inverses, solves systems, and works with vectors (magnitude, dot and cross products, angles, projections).");
     var P;
     if (mode === "arith") P = readArith(s);
     else if (mode === "mult") P = readMult(s);
@@ -1516,16 +1539,19 @@
     dot:"dot", cross:"dot", projection:"dot", angle:"dot", "dot-cross":"dot" };
   function kindOf(q){
     var raw = String(q || ""), s = normQ(raw, true).toLowerCase(), matLike = /\[\s*\[|\[[^\]<>]*;/.test(raw) && !/[<⟨〈]/.test(raw);
-    if (/\bdet(?:erminant)?\b/.test(s)) return "det";
+    if (/\bdet(?:erminant)?\b/.test(s) || /\|\s*[A-Z]\s*\|/.test(raw)) return "det";
     if (matLike) s = s.replace(/\bcross\b|\bdot\b/g, " * ");
-    if (/\binver(?:se|t)\b|\^\s*-1(?!\s*b)/.test(s) && !/[a-z]\s*=\s*-?\d/.test(s.replace(/\b[a-z]\s*=\s*[<\[(]/g, ""))) return "inv";
+    // "A^-1 for A = 2 -3; 5 6" names a matrix (a capital letter); "x = 2" would be an equation
+    if (/\binver(?:se|t)\b|\^\s*-1(?!\s*b)/.test(s) && !/(?:^|[^A-Za-z])[a-z]\s*=\s*-?\d/.test(normQ(raw, true).replace(/\b[a-z]\s*=\s*[<\[(]/g, ""))) return "inv";
     if (/\bcross\b|\bdot\b|\bproj|\bprojection\b|\bonto\b|\bangle\s+between\b|\bperpendicular\b|\borthogonal\b|\bparallel\b|\bparallelogram\b|\btriangle\b/.test(s)) return "dot";
     if (/\bunit\s+vector\b|\bmagnitude\b|\bdirection\b|\bvector\b|<|\bfrom\b.*\bto\b|\bpoints?\b/.test(s) || /(^|[^a-z])[+-]?\s*\d*\s*[ij](?![a-z])/.test(s)) return /\bcross\b|\bdot\b/.test(s) ? "dot" : "vec";
-    if (/^\s*\|[^|]*\|\s*$/.test(s)) return "det";
+    if (/^\s*(?:[a-z']+\s+)*\|[^|]*\|\s*\.?\s*$/.test(s)) return "det";      // "evaluate |3 −2; 5 1|"
     if (/\bcramer|\bgauss|\brref\b|\bsystem\b|\bequations?\b|\bsolve\b|\baugmented\b|\|/.test(s)) return "sys";
     var body = normQ(raw).replace(/[A-Za-z']{2,}/g, " ").replace(/\b[A-Za-z]\s*=\s*[\[(<]/g, " ");
     if (/=/.test(body) && /[a-z]/.test(body)) return "sys";
     if (/\bsarrus\b|\bcofactor/.test(s)) return "det";
+    // "multiply A = … by B = …", "the product of …": two matrices multiplied, even when they're the same size
+    if (/\bmultipl(?:y|ied|ying|ication)\b|\bproduct\b/.test(s) && !/\bscalar\b|\bdot\b|\bcross\b/.test(s)) return "mult";
     try {
       var R0 = readMats(normQ(raw), 6, 7), N = nameLits(R0), ex = matWords(R0.expr).replace(/[,;.=]+/g, " ").trim();
       if (!ex){

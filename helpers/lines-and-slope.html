@@ -217,6 +217,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
   .notice .fr{font-size:.86em;vertical-align:middle}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
@@ -2139,7 +2140,27 @@
   }
 
   /* ===================== reading the problem (forgiving) ===================== */
-  function cleanQ(q){ return String(q === null || q === undefined ? "" : q).replace(/[−–—]/g, "−").replace(/\s+/g, " ").trim(); }
+  /* typed words: "the slope is one half and the y intercept is negative three", "line through (2, 3) slope negative 2",
+     "graph y equals 2x minus 3", "convert 4x − 2y = 8 to y = mx + b": number and sign words become symbols and the
+     names of forms written as equations become their names ("y = mx + b" → slope-intercept form). */
+  var W_NUM = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+    thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20 };
+  var W_DEN = { half:2, halves:2, third:3, thirds:3, quarter:4, quarters:4, fourth:4, fourths:4, fifth:5, fifths:5, sixth:6, sixths:6,
+    eighth:8, eighths:8, tenth:10, tenths:10 };
+  function typedWords(s){
+    var nw = Object.keys(W_NUM).join("|");
+    s = s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all))?\s+(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx)\b/gi, " ")
+         .replace(/\b(?:to|in(?:to)?|as)\s+(?:the\s+)?(?:form\s+)?y\s*=\s*mx\s*\+\s*b(?:\s+form)?/gi, " in slope-intercept form ")
+         .replace(/\b(?:to|in(?:to)?|as)\s+(?:the\s+)?(?:form\s+)?ax\s*\+\s*by\s*=\s*c(?:\s+form)?/gi, " in standard form ")
+         .replace(/\b(?:to|in(?:to)?|as)\s+(?:the\s+)?(?:form\s+)?y\s*[-−]\s*y[₁1]\s*=\s*m\s*\(\s*x\s*[-−]\s*x[₁1]\s*\)(?:\s+form)?/gi, " in point-slope form ")
+         .replace(new RegExp("\\b(?:(a|an|" + nw + ")\\s+)(" + Object.keys(W_DEN).join("|") + ")\\b", "gi"), function(m, n, d){
+           return " " + (/^an?$/i.test(n) ? 1 : W_NUM[n.toLowerCase()]) + "/" + W_DEN[d.toLowerCase()] + " "; })
+         .replace(new RegExp("\\b(" + nw + ")\\b", "gi"), function(m){ return " " + W_NUM[m.toLowerCase()] + " "; })
+         .replace(/\b(?:negative|minus)\s+(?=[\d.(])/gi, " −").replace(/\b(?:is\s+)?equal\s+to\b|\bequals\b/gi, " = ")
+         .replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " − ").replace(/\b(?:times|multiplied\s+by)\b/gi, " * ");
+    return s;
+  }
+  function cleanQ(q){ return typedWords(String(q === null || q === undefined ? "" : q)).replace(/[−–—]/g, "−").replace(/\s+/g, " ").trim(); }
   function slopeNum(low){                      // → R, "undef" or undefined
     if (/(undefined|infinite|no)\s+slope|slope\s*(?:is|of|=|:)?\s*(?:undefined|infinite|none|∞)|\bvertical\b/.test(low)) return "undef";
     if (/\bhorizontal\b|\bzero\s+slope|slope\s*(?:is|of|=|:)?\s*zero\b/.test(low)) return ZERO;
@@ -2187,6 +2208,12 @@
     if (!src) throw new UserErr(EMPTY[mode]);
     if (src.length > 300) throw new UserErr("That’s a long problem! Keep it under 300 characters.");
     var g = grabPoints(src), low = g.rest.toLowerCase(), eqs = findEqs(g.rest);
+    // problems that belong on another page
+    if (/\b(?:distance|midpoint|mid-point|how\s+far)\b/.test(low) && g.pts.length === 2)
+      throw new UserErr("For the " + (/mid/.test(low) ? "midpoint" : "distance") + " between two points, try <a href=\"graphing.html?mode=points&amp;task=" + (/mid/.test(low) ? "midpoint" : "distance")
+        + "&amp;pts=" + esc(encodeURIComponent((numT(g.pts[0].x) + "," + numT(g.pts[0].y) + ";" + numT(g.pts[1].x) + "," + numT(g.pts[1].y)).replace(/−/g, "-"))) + "\">The Graph Paper</a>.");
+    if (/^\s*(?:solve|find\s+x)\b/.test(low) && eqs.length === 1 && !/y/i.test(eqs[0]))
+      throw new UserErr("That’s an equation to solve, not a line. Try <a href=\"algebra.html?q=" + esc(encodeURIComponent(src.replace(/−/g, "-"))) + "\">The Balance Scale</a>.");
     if (mode === "slope"){
       if (g.pts.length >= 2){
         if (g.pts.length > 2) throw new UserErr("I see " + g.pts.length + " points — a slope needs exactly two.");
@@ -2274,8 +2301,9 @@
     if (hasTo || /standard form|slope[- ]?intercept( form)?|point[- ]?slope|\bconvert|\brewrite|\bin [a-z -]*form/.test(low)) return n ? "convert" : "equation";
     var sm = slopeNum(gl);
     if (g.pts.length >= 2 && /slope|gradient|rate of change/.test(gl) && sm === undefined) return "slope";
+    if (g.pts.length === 2 && /\b(?:find|what\s+is|what's|calculate|compute|determine|give)\s+(?:the\s+)?m\b|\bm\s*=\s*\?/.test(gl)) return "slope";
     if (/(^|[^a-z])[mb]\s*(=|:)|y[- ]?int|intercept/.test(gl)) return "equation";
-    if (g.pts.length >= 1 && (sm !== undefined || /equation|line (through|passing|containing)|\bwrite\b|find the line/.test(gl))) return "equation";
+    if (g.pts.length >= 1 && (sm !== undefined || /equation|\bline\b[^@]*\b(?:through|passing|containing|goes|going|crosses|connecting|joining)\b|\bwhat\s+line\b|\bwrite\b|find the line/.test(gl))) return "equation";
     if (g.pts.length >= 2) return "slope";
     if (riseRun(gl)) return g.pts.length === 1 && /through|passing|line/.test(gl) ? "equation" : "slope";
     if (n === 1) return /slope|gradient/.test(gl) ? "slope" : "graph";

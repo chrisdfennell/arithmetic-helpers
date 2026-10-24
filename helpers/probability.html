@@ -579,6 +579,11 @@
                two dice sum of 7 · three coins exactly 2 heads · two dice doubles (+ "tree" / "table" / "list")
                                                                                                         -> space
                roll a die 60 times how many 3s · heads came up 27 times in 50 flips                    -> expected
+             Also read: "a dice" (one die), "4 coins" (up to 3 stages, else a notice), "12 socks: 4 are black and 8 are
+             white", other things picked at random ("12 boys and 18 girls"), "tails twice in a row", "rolling 2 sixes".
+             With nothing named, a die is used only when the words are just about a number ("P(4)", "probability of an
+             even number"); "sin 30" or "P(A) = 0.3" get a notice. "One red and one blue" (either order), "sum of 7 or 11",
+             an even sum or a product of two dice also get a notice.
              With mode given, the words are fitted to that tab when they can be ("P(rolling a 4)" on the
              complement tab asks for P(not 4)); when they can't, a notice offers the right tab.
    The same problem, structured (what the problem maker and the worksheet API write; links round-trip exactly):
@@ -1247,6 +1252,8 @@
   var TRIALS = "(?:flips|rolls|spins|tosses|tries|trials|draws|picks|throws|turns|goes|pulls|games|times)";
   function norm(t){
     var s = " " + String(t == null ? "" : t).toLowerCase() + " ";
+    // a problem's label ("Problem 4:", "Q3)", "1)") isn't part of it
+    s = s.replace(/^\s*(?:(?:problem|question|exercise|ex|q|no|number|#)\s*\.?\s*\d+[a-z]?\s*[:.)\-]|\d+\s*[.)]\s+(?=[a-z])|(?:hw|homework)\s*:)\s*/, " ");
     s = s.replace(/\(\s*jack,? queen,? (?:or|and) king\s*\)|\(\s*2 to 10\s*\)/g, " ");
     s = s.replace(/[−–—]/g, "-").replace(/[’'`]/g, "").replace(/°/g, " degrees ").replace(/\bdeg\b/g, "degrees");
     s = s.replace(/\bp\s*\(\s*/g, " probability of ").replace(/[()?!;“”"]/g, " ");
@@ -1293,8 +1300,8 @@
           T.n = +nm[1]; eatM(nm);
           var kt = new RegExp("\\b(\\d+) times\\b", "g"), mt;
           while (!T.how && (mt = kt.exec(s))) if (free(mt.index, mt.index + mt[0].length)){ T.k = +mt[1]; eat(mt.index, mt.index + mt[0].length); break; }
-          if (!T.how && T.k === null){
-            var km = new RegExp("\\b(?:got|get|gets|getting|landed on|lands on|landed|came up|comes up|come up|rolled|rolls|picked|picks|drew|draws|spun|happened|showed|shows|was)\\s+(?:a |an |the )?(?:(?!at\\b|exactly\\b|least\\b|most\\b|than\\b)[a-z]+ ){0,2}?(\\d+)(?: times)?\\b", "g"), mk;
+          if (!T.how && T.k === null && T.n > 3){          // "roll a die twice, a 6 both times" is two rolls, not an experiment
+            var km =new RegExp("\\b(?:got|get|gets|getting|landed on|lands on|landed|came up|comes up|come up|rolled|rolls|picked|picks|drew|draws|spun|happened|showed|shows|was)\\s+(?:a |an |the )?(?:(?!at\\b|exactly\\b|least\\b|most\\b|than\\b)[a-z]+ ){0,2}?(\\d+)(?: times)?\\b", "g"), mk;
             while ((mk = km.exec(s))){ var at = mk.index + mk[0].lastIndexOf(mk[1]); if (free(at, at + mk[1].length) && !/^(?:\d+)-sided/.test(s.slice(at))){ T.k = +mk[1]; eat(at, at + mk[1].length); break; } }
           }
         }
@@ -1305,16 +1312,17 @@
     var found = {}, ments = [];
     function seen(kind, i, count){ if (!found[kind]) found[kind] = { i:i, count:count || 1 }; else { found[kind].i = Math.min(found[kind].i, i); if (count) found[kind].count = Math.max(found[kind].count, count); } }
     function oneFree(re){ var mm, g = new RegExp(re.source, "g"); while ((mm = g.exec(s))){ if (free(mm.index, mm.index + mm[0].length)) return mm; if (mm[0] === "") g.lastIndex++; } return null; }
-    var ART = "(?:(a|an|another|one|1|2|3|the|this|that|each|both|first|second|third|other|same)\\s+)?(?:(?:fair|regular|normal|standard|ordinary|same|different|new|second|other|identical)\\s+)*";
+    var ART = "(?:(a|an|another|one|\\d{1,2}|the|this|that|each|both|first|second|third|other|same)\\s+)?(?:(?:fair|regular|normal|standard|ordinary|same|different|new|second|other|identical)\\s+)*";
     var BACKW = /^(?:the|this|that|each|both|first|second|third|same)$/;
     function mentions(kind, re){
       var x, g = new RegExp(re, "g");
       while ((x = g.exec(s))){
         if (!free(x.index, x.index + x[0].length)) continue;
-        var art = x[1] || "", noun = x[3], plural = /^(?:dice|coins|spinners)$/.test(noun), have = ments.some(function(q){ return q.kind === kind; });
+        var art = x[1] || "", noun = x[3], plural = /^(?:dice|coins|spinners)$/.test(noun) && !(noun === "dice" && /^(?:a|an|one|1|this|that|another)$/.test(art)), have = ments.some(function(q){ return q.kind === kind; });
         eat(x.index, x.index + x[0].length);
-        if (have && (BACKW.test(art) || (plural && !/^\d$/.test(art) && art !== "another"))) continue;
-        var count = plural ? (/^\d$/.test(art) ? +art : 2) : 1, sides = x[2] || x[4] || null;
+        if (have && (BACKW.test(art) || (plural && !/^\d+$/.test(art) && art !== "another"))) continue;
+        var count = plural ? (/^\d+$/.test(art) ? +art : 2) : 1, sides = x[2] || x[4] || null;
+        if (count > 3) throw new UserErr("Up to 3 " + (kind === "die" ? "dice" : kind === "coin" ? "coins" : "spinners") + " at once here — " + count + " makes " + (kind === "coin" ? Math.pow(2, count) : "too many") + " outcomes to list. Try it with 2 or 3.");
         ments.push({ kind:kind, i:x.index, count:count, sides:sides ? +sides : null });
       }
     }
@@ -1334,6 +1342,23 @@
     var freeM = function(x){ return free(x.index, x.index + x[1].length); };
     var pairs = all(new RegExp("\\b(\\d+) (" + COLRE + ")(?:s)?(?: (?:marbles?|balls?|cubes?|counters?|beads?|chips?|socks?|sweets?|candies|jelly ?beans?|tiles?|buttons?|pens?|crayons?|cards?|sections?|parts?|spaces?))?\\b", "g")).filter(freeM);
     var assigns = all(new RegExp("\\b(\\d+) (?:of them |of the (?:parts|sections) |parts |sections )?(?:are|is) (" + COLRE + ")\\b", "g")).filter(freeM);
+    // what's asked comes after "probability of …": "P(1 red and 1 blue)" names the event, not more marbles
+    var askAt = s.search(/\bprobability\b|\bchance\b|\bodds\b|\blikelihood\b|\bhow likely\b/);
+    if (askAt >= 0 && pairs.some(function(p){ return p.index < askAt; })) pairs = pairs.filter(function(p){ return p.index < askAt; });
+    // "12 socks: 4 are black and 8 are white" lists the colors with "are"
+    if (!found.spin && !pairs.length && assigns.length >= 2) pairs = assigns;
+    // other things picked at random: "12 boys and 18 girls … a student is picked" (each kind once, before the question)
+    if (!found.spin && !pairs.length && !found.die && !found.coin && !found.deck && N === null){
+      var kinds = all(/\b(\d+) ([a-z]{2,11}?)(?:e?s)\b/g).filter(function(p){ return freeM(p) && (askAt < 0 || p.index < askAt) && !/^(?:time|flip|roll|spin|tosse|trie|trial|draw|pick|throw|turn|go|pull|game|side|number|part|section|space|piece|slice|degree|percent|cent|dollar|ticket|minute|hour|day|week|month|year|point|inche|foot|feet|meter|mile|card|marble|ball)$/.test(p[2]); });
+      var kseen = {};
+      kinds = kinds.filter(function(p){ if (kseen[p[2]]) return false; kseen[p[2]] = 1; return true; });
+      if (kinds.length >= 2 && kinds.length <= 6 && /\b(?:pick(?:s|ed)?|chos(?:e|en)|choose|select(?:s|ed)?|draw(?:s|n)?|drew|random|grab(?:s|bed)?|take(?:s|n)?|took|pull(?:s|ed)?)\b/.test(s)
+          && kinds.some(function(p){ return new RegExp("\\b" + p[2] + "s?\\b").test(s.slice(askAt >= 0 ? askAt : p.index + p[0].length)); })){
+        pairs = kinds.map(function(p){ var q = [p[0], p[1], p[2]]; q.index = p.index; return q; });
+        if (!bagWordAt()) seen("bag", pairs[0].index, 0);
+      }
+    }
+    function bagWordAt(){ return /\b(?:bag|jar|box|marbles?|urn|sack|bowl|hat|drawer)\b/.test(s); }
     var bagWord = one(/\b(?:bag|jar|box|marbles?|urn|sack|bowl|hat|drawer)\b/);
     if (found.spin){ /* colors belong to the spinner */ }
     else if (pairs.length){ seen("bag", Math.min(pairs[0].index, bagWord ? bagWord.index : 1e9), 0); }
@@ -1366,10 +1391,15 @@
       T.n = null; T.how = false;
     }
     else if (T.stages.length === 1 && T.n === null && /\bagain\b/.test(s) && ["die", "coin", "spin"].indexOf(T.stages[0].kind) >= 0) T.stages.push(parseExp(T.stages[0].code));
+    // "rolling 2 sixes", "3 heads" from one die or coin: that many of them
+    else if (T.stages.length === 1 && T.n === null && T.k === null && ["die", "coin"].indexOf(T.stages[0].kind) >= 0 && ments.length === 1 && ments[0].count === 1
+             && (m = (T.stages[0].kind === "die" ? /\b([23]) (\d+)s\b/ : /\b([23]) (heads|tails)\b/).exec(T.rest()))){
+      for (var r3 = 1; r3 < +m[1]; r3++) T.stages.push(parseExp(T.stages[0].code));
+    }
     function bagSpec(){
       if (!pairs.length) throw new UserErr("Say what’s in the bag, like <b>3 red, 5 blue and 2 green</b>.");
       var cats = [], idx = {};
-      pairs.forEach(function(p){ eatM(p, p[1] + " " + p[2]); if (idx[p[2]] !== undefined) cats[idx[p[2]]].c += +p[1]; else { idx[p[2]] = cats.length; cats.push({ lab:p[2], c:+p[1] }); } });
+      pairs.forEach(function(p){ if (p[0].indexOf(p[1] + " " + p[2]) >= 0) eatM(p, p[1] + " " + p[2]); else eatM(p); if (idx[p[2]] !== undefined) cats[idx[p[2]]].c += +p[1]; else { idx[p[2]] = cats.length; cats.push({ lab:p[2], c:+p[1] }); } });
       return "bag(" + cats.map(function(c){ return c.lab + ":" + c.c; }).join(",") + ")";
     }
     function spinSpec(){
@@ -1487,7 +1517,13 @@
     var i = r.search(/\b(?:sum|total|add(?:s|ed)? (?:up )?to|adding up to)\b/);
     if (i < 0 || !Es.every(function(E){ return E.numeric; })) return null;
     var m = /^(?:sum|total|adds? (?:up )?to|added (?:up )?to|adding up to)\s*(?:of\s+)?(?:the\s+(?:\d+\s+)?\w+\s+)?(?:is\s+|=\s*|equals?\s+|equal to\s+|of\s+|will be\s+)?(?:an?\s+)?(?:(more|greater|bigger|higher|larger|over|above|less|smaller|fewer|lower|under|below)\s*(?:than\s*)?)?(?:(at least|at most)\s*)?(\d+)(?:\s*or\s*(more|higher|greater|above|bigger|less|lower|fewer|below|smaller))?/.exec(r.slice(i));
-    if (!m) return null;
+    if (!m){
+      if (/^(?:sum|total)\s+(?:of\s+(?:the\s+)?\w+\s+)?(?:is\s+|will be\s+)?(?:an?\s+)?(?:even|odd|prime|a multiple|a square)/.test(r.slice(i)))
+        throw new UserErr("This page finds a sum equal to, more than or less than a number — like <b>sum of 7</b> or <b>sum more than 9</b>. An even, odd or prime sum is a list of sums: work each one out and add the chances.");
+      return null;
+    }
+    if (/^\s*(?:,\s*)?(?:or|and)\s+(?:an?\s+)?\d/.test(r.slice(i + m[0].length)) && !m[4])
+      throw new UserErr("One sum at a time here — like <b>sum of 7</b>. For two sums (“7 or 11”), find each one and add them: they can’t both happen.");
     var v = +m[3];
     if (m[1]) return (/more|greater|bigger|higher|larger|over|above/.test(m[1]) ? "sumgt:" : "sumlt:") + v;
     if (m[2]) return m[2] === "at least" ? "sumgt:" + (v - 1) : "sumlt:" + (v + 1);
@@ -1518,9 +1554,19 @@
     if (!text) throw new UserErr(EMPTY[tab || "simple"]);
     var T = readWords(text), r = T.r, Es = T.stages, guess = null, P;
     if (!Es.length){
-      if (findAtoms(r, mkDie(6)).length) Es = T.stages = [mkDie(6)];
+      // nothing named: "P(4)" or "probability of an even number" means a die, but only when nothing else is in the words
+      // ("sin 30", "area of a circle with radius 5", "P(A) = 0.3" are not about a die)
+      var left = r.replace(/\b(?:probability|probabilities|chance|chances|odds|likelihood|of|the|a|an|what|whats|is|are|find|p|getting|get|rolling|roll|rolled|number|numbers|it|that|will|be|in|on|for|to|landing|land|lands|showing|show|shows|up|comes|come|an|and|or|not|even|odd|prime|primes|square|squares|perfect|greater|more|less|than|fewer|smaller|bigger|higher|lower|larger|at|least|most|multiple|multiples|factor|factors|over|under|above|below|calculate|compute|please|determine|answer|as|fraction|decimal|percent|simplest|form|write|give|your|its|with|s|can|you|solve|step|by|show|work|me|help|thanks|how|likely|so|do|i|we|whats|exactly|no)\b|[\d\s.,:=%\/-]+/g, "");
+      if (findAtoms(r, mkDie(6)).length && !left.trim()) Es = T.stages = [mkDie(6)];
       else throw new UserErr("What’s being used? Say <b>a die</b>, <b>a coin</b>, <b>a spinner</b>, <b>a bag of 3 red and 5 blue</b>, <b>a deck of cards</b> or <b>numbers 1 to 20</b>. " + EMPTY[tab || "simple"]);
     }
+    // "heads 3 times in a row", "a 6 both times": the same thing again and again, one event named for every stage
+    function sameAgain(per){
+      return per.filter(Boolean).length === 1 && Es.every(function(E){ return E.code === Es[0].code; })
+        && /\bin a row\b|\bboth times\b|\beach time\b|\bevery time\b|\b(?:2|3) times\b|\bconsecutive\b|\bstraight\b/.test(T.s);
+    }
+    if (Es.length >= 2 && Es.every(function(E){ return E.numeric; }) && /\b(?:product|difference|multipl(?:y|ied)|subtract(?:ed)?|times each other)\b/.test(r))
+      throw new UserErr("This page works with the <b>sum</b> of the numbers (like <b>sum of 7</b>), doubles, or what each one shows. For a product or a difference, list the outcomes with <b>two dice, table</b> and count them.");
     var sev = Es.length >= 2 ? (findSum(r, Es) || (/\bdoubles?\b|\bsame number\b|\b(?:both|all)\s+(?:\d+\s+)?(?:\w+\s+)?(?:the\s+)?same\b|\bthe same\b|\bmatch(?:ing|es)?\b/.test(r) ? "double" : null) || findCount(r, Es)) : null;
     if (T.k !== null) guess = "expected";
     else if (T.n !== null) guess = "expected";
@@ -1534,6 +1580,7 @@
       else guess = "simple";
     }
     var mode = tab || guess;
+    fromText.lastMode = mode;          // a link with no mode opens on this tab, even when the words don't make a problem yet
     function goTo(m, why){ throw new UserErr(why + " Try the <b>" + TABN[m] + "</b> tab.", m); }
     function oneAtom(E){
       var at = findAtoms(r, E);
@@ -1558,6 +1605,7 @@
       if (Es.length === 2){
         var per = stageAtoms(r, Es), bothA = sev && /^all:/.test(sev) ? sev.slice(4) : null;
         if (bothA){ per = Es.map(function(E){ return parseAtom(bothA, E, true); }); }
+        else if (sameAgain(per)){ var one1 = per[0] || per[1]; per = [one1, one1]; }
         if (sev && !bothA && !(per[0] && per[1])) goTo("space", "That event is about the whole outcome, not each part on its own.");
         if (!per[0] || !per[1]) throw new UserErr("Say what you want from each one, like " + exampleFor(Es[0]) + " and " + exampleFor(Es[1]) + ".");
         P = { mode:"compound", kind:"and", xs:Es, A:per[0], B:per[1] };
@@ -1569,6 +1617,8 @@
         else if (at.length >= 2 && at[1].join === "and" && ["bag", "deck", "nums"].indexOf(E.kind) >= 0) kind = "without";
         else if (at.length >= 2) kind = "or";
         else throw new UserErr("Two events, please — like <b>" + (E.kind === "bag" ? "red or blue" : E.kind === "deck" ? "a heart or a face card" : "even or more than 4") + "</b>" + (["bag", "deck", "nums"].indexOf(E.kind) >= 0 ? ", or pick twice: <b>both " + (E.kind === "deck" ? "aces" : E.kind === "bag" ? labsOf(E)[0] : "even") + ", without replacement</b>" : "") + ".");
+        if ((kind === "with" || kind === "without") && /\b1 [a-z]+ and 1 [a-z]+\b|\bone of each\b|\bin (?:any|either) order\b|\bdifferent colou?rs?\b/.test(T.s))
+          throw new UserErr("In either order? This page works out one order at a time — like <b>" + (E.kind === "bag" && E.cats.length >= 2 ? E.cats[0].lab + " then " + E.cats[1].lab : "a heart then a spade") + "</b>. Do both orders and add them.");
         if ((kind === "with" || kind === "without") && ["bag", "deck", "nums"].indexOf(E.kind) < 0) throw new UserErr("Putting it back only matters when you pick from a bag, a deck or a set of numbers. For a " + expShort(E) + ", say <b>two " + expShort(E) + "s</b>.");
         var A1, B1;
         if (!at.length && E.kind === "bag" && E.cats.length === 1) at = [{ a:parseAtom("is:" + E.cats[0].lab, E) }];
@@ -1587,7 +1637,8 @@
       if (!code){
         var pp = stageAtoms(r, Es);
         if (!pp.some(Boolean)) throw new UserErr("What are you looking for? Try <b>sum of 7</b>, <b>doubles</b>, <b>at least one 6</b>, <b>exactly 2 heads</b> or <b>heads and an even number</b>.");
-        code = "each:" + pp.map(function(a){ return a ? a.code : "any"; }).join("/");
+        if (sameAgain(pp)){ var one2 = pp.filter(Boolean)[0]; code = "all:" + one2.code; }
+        else code = "each:" + pp.map(function(a){ return a ? a.code : "any"; }).join("/");
       }
       P = { mode:"space", xs:Es, sev:parseSev(code, Es), viewReq:T.view || "auto" };
     } else if (mode === "expected"){
@@ -2752,7 +2803,7 @@
       try { var P0 = fromParams(S.specs[m], m); S.inputs[m] = record(P0).text; if (m === "space") S.view = P0.viewReq || "auto"; } catch (e){ S.inputs[m] = ""; }
     } else if (q !== null){
       var m2 = mode;
-      if (!m2){ try { m2 = fromText(q, null).mode; } catch (e){ m2 = "simple"; } }
+      if (!m2){ fromText.lastMode = null; try { m2 = fromText(q, null).mode; } catch (e){ m2 = (e && e.go) || fromText.lastMode || "simple"; } }
       S.mode = m2; S.inputs[m2] = q; S.specs[m2] = null; S.step = 1;
       if (m2 === "space") S.view = "auto";
     } else if (mode) S.mode = mode;

@@ -208,6 +208,7 @@
   .answer.masked .facts{filter:blur(5px);user-select:none}
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .notice a{color:var(--key);font-weight:600}
   .notice b{font-family:var(--f-mono)}
   .notice .fr{font-size:.86em;vertical-align:middle}
 
@@ -2001,9 +2002,20 @@
     if (bnd) bnd.classList.toggle("masked", stepMode && S.step < total);
     $("closer").style.opacity = (stepMode && S.step < total) ? ".2" : "1";
   }
+  var READ = null;                            // what understand() made of a problem typed in words (null: typed plainly)
   function render(){
-    var mode = S.mode, q = S.inputs[mode], total = 0, sol = null;
-    try { sol = solveAny(mode, q, { to:S.to, gcf:S.gcf }); }
+    var raw = S.inputs[S.mode], u = null;
+    try { u = understand(raw); } catch (e0){ u = null; }
+    READ = u && !u.other ? u : null;
+    if (READ && !READ.weak && READ.mode !== S.mode){ S.inputs[READ.mode] = raw; S.mode = READ.mode; S.step = 1; paintMode(); }
+    if (READ && READ.to && S.to !== READ.to){ S.to = READ.to; paintTo(); }
+    var mode = S.mode, q = READ ? READ.q : raw, total = 0, sol = null;
+    try {
+      if (u && u.other) throw new UserErr(otherMsg(u));
+      sol = solveAny(mode, q, { to:S.to, gcf:S.gcf });
+      if (READ && READ.q.replace(/\s+/g, "") !== clean(raw).replace(/\s+/g, ""))
+        sol.band.facts = ["Read as <b>" + esc(READ.q) + "</b>" + (mode === "convert" && S.to !== "all" ? " → " + esc(S.to === "mixed" ? "mixed number" : S.to === "improper" ? "improper fraction" : S.to) : "")].concat(sol.band.facts);
+    }
     catch (e){ if (e && e.user) fail(e.user === "zero" ? "Something in there divides by zero — that can’t be done." : e.user); else throw e; }
     var key = mode + "|" + clean(q) + "|" + (mode === "convert" ? S.to : "");
     CUR = sol;
@@ -2094,7 +2106,7 @@
   function syncURL(){
     try {
       var p = new URLSearchParams();
-      p.set("mode", S.mode); p.set("q", S.inputs[S.mode]);
+      p.set("mode", S.mode); p.set("q", READ ? READ.q : S.inputs[S.mode]);
       if (S.mode === "convert" && S.to !== "all") p.set("to", S.to);
       if (S.mode === "simplify" && S.gcf === "prime") p.set("gcf", "prime");
       if (S.practice !== "all") p.set("practice", S.practice);
@@ -2114,7 +2126,11 @@
     try { p = new URLSearchParams(location.search); } catch (e){ return; }
     var q = p.get("q"), mode = (p.get("mode") || "").toLowerCase().trim();
     mode = { equivalent:"equiv", equivalence:"equiv", order:"compare", compareorder:"compare", conversion:"convert", reduce:"simplify" }[mode] || mode;
-    if (MODES.indexOf(mode) < 0) mode = q !== null ? inferMode(q) : "";
+    if (MODES.indexOf(mode) < 0){
+      var u = null;
+      try { u = q !== null ? understand(q) : null; } catch (e0){}
+      mode = u && u.mode ? u.mode : q !== null ? inferMode(q) : "";
+    }
     if (mode) S.mode = mode;
     if (q !== null && mode){
       S.inputs[mode] = q;
@@ -2125,6 +2141,169 @@
     }
     var pr = (p.get("practice") || "").toLowerCase();
     if (PRACTICE.indexOf(pr) >= 0) S.practice = pr;
+  }
+
+  /* ===================== a problem typed in words =====================
+     People type "simplify 18/24", "what is 18 over 24 in lowest terms", "reduce eighteen twenty-fourths",
+     "3/4 as a decimal", "convert 0.375 to a fraction", "which is bigger, 3/4 or 5/8", "is 3/4 equal to 6/8",
+     "3/4 = x/20". understand(text) turns that into the plain problem and the tab it belongs on: { q, mode, to }.
+     A sum, difference, product or quotient (or a percent "of", a GCF, a ratio) is { other:page, q, what }: another page works it.
+     null: the text is already a plain problem, or can't be read with confidence (the solver then says what it needs). */
+  var NW = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+             thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19 };
+  var TW = { twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+  var OW = { first:1, second:2, half:2, third:3, fourth:4, quarter:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10,
+             eleventh:11, twelfth:12, thirteenth:13, fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18,
+             nineteenth:19, twentieth:20, thirtieth:30, fortieth:40, fiftieth:50, sixtieth:60, seventieth:70, eightieth:80,
+             ninetieth:90, hundredth:100, thousandth:1000 };
+  function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+  function cardAt(t, i){                      // a whole number in words at t[i]: { v, j } (j = the word after it), or null
+    var j = i;
+    function small(){
+      var w = t[j], v = null;
+      if (has(TW, w)){ v = TW[w]; j++; if (has(NW, t[j]) && NW[t[j]] > 0 && NW[t[j]] < 10){ v += NW[t[j]]; j++; } }
+      else if (has(NW, w)){ v = NW[w]; j++; }
+      return v;
+    }
+    var v = small();
+    if (v === null) return null;
+    if (t[j] === "hundred"){ j++; v *= 100; var k = j; if (t[j] === "and") j++; var b = small(); if (b === null) j = k; else v += b; }
+    if (t[j] === "thousand"){ j++; v *= 1000; var k2 = j, c = small(); if (c === null) j = k2; else {
+      if (t[j] === "hundred"){ j++; c *= 100; var d = small(); if (d !== null) c += d; } v += c; } }
+    return { v:v, j:j };
+  }
+  function ordOf(w){
+    if (!w) return 0;
+    if (w === "halves" || w === "halfs") return 2;
+    var b = w.replace(/s$/, "");
+    return has(OW, b) ? OW[b] : 0;
+  }
+  function ordAt(t, j){                       // "fourths", "twenty-fourths" (already split in two), "hundredths": { v, j }
+    if (has(TW, t[j])){ var u = ordOf(t[j + 1]); if (u > 0 && u < 10) return { v:TW[t[j]] + u, j:j + 2 }; }
+    var o = ordOf(t[j]);
+    if (o > 1 && !/^seconds?$/.test(t[j])) return { v:o, j:j + 1 };
+    return null;
+  }
+  function wordsToDigits(s, bare){            // "two and three fourths" → "2 3/4"; bare: plain number words too
+    var t = s.split(" "), out = [], i = 0, c, o, c2;
+    while (i < t.length){
+      var w = t[i];
+      if (/^\d+$/.test(w) && (o = ordAt(t, i + 1)) && t[i + 1] !== "second"){ out.push(w + "/" + o.v); i = o.j; continue; }   // 3 fourths
+      c = (w === "a" || w === "an") && ordAt(t, i + 1) ? { v:1, j:i + 1 } : cardAt(t, i);
+      if (c){
+        if ((o = ordAt(t, c.j))){ out.push(c.v + "/" + o.v); i = o.j; continue; }
+        if (t[c.j] === "and"){
+          c2 = (t[c.j + 1] === "a" || t[c.j + 1] === "an") ? { v:1, j:c.j + 2 } : cardAt(t, c.j + 1);
+          if (c2 && (o = ordAt(t, c2.j))){ out.push(c.v + " " + c2.v + "/" + o.v); i = o.j; continue; }
+        }
+        if (bare && w !== "a" && w !== "an"){ out.push(String(c.v)); i = c.j; continue; }
+      }
+      out.push(w); i++;
+    }
+    return out.join(" ");
+  }
+  var FILL = ("please pls plz can could would will you u help me i im how do does did to the a an of what whats is are be find "
+    + "calculate compute solve work out show steps step by write written number numbers fraction fractions this these those "
+    + "following it its in as form value answer give get tell need want with and or then explain hey hi thanks thank so now "
+    + "using use method simply express expressed change turn into convert converted make rewrite put for my homework question "
+    + "problem quick exactly simplify simplified simplifying simplest reduce reduced reducing lowest terms term completely "
+    + "fully decimal decimals percent percentage percents mixed improper compare comparing bigger larger greater smaller less "
+    + "least greatest largest smallest biggest highest order ordered ordering from than which one vs versus equal equals "
+    + "equivalent same missing numerator denominator top bottom blank true false check whether if not there here "
+    + "look like list arrange sort them first fill unknown").split(" ");
+  var FILLS = {}; FILL.forEach(function(w){ FILLS[w] = 1; });
+  var NUMRE = /(^|[^\d.\/])([-+]?(?:\d+ \d+ ?\/ ?\d+|\d+ ?\/ ?\d+|\d+ ?\/ ?\?|\? ?\/ ?\d+|\d*\.\d+(?: ?\(\d+\)|\.\.\.)?|\d+\.?)(?: ?%)?)(?![\d\/])/g;
+  function otherLink(page, q, what){
+    var p = "q=" + encodeURIComponent(q);
+    var href = window.HelperSite ? window.HelperSite.url(page, p) : page + "?" + p;
+    return { other:page, q:q, what:what, href:href };
+  }
+  function understand(raw){
+    var s = String(raw === null || raw === undefined ? "" : raw);
+    if (!/[a-z×*+÷:=<>]/i.test(s.replace(/\d\s*-\s*\d/g, "")) && !/\d\s*[-−–]\s*\d/.test(s.replace(/^\s*[-−–]/, ""))) return null;
+    s = s.toLowerCase().replace(/[’‘`´]/g, "'").replace(/[“”]/g, "\"").replace(/％/g, "%").replace(/[·⋅∙]/g, "*").replace(/×/g, "*");
+    s = s.replace(/[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/g, function(c){ return " " + VULGAR[c]; }).replace(/[−‒–—﹣－]/g, "-").replace(/[⁄∕]/g, "/");
+    s = s.replace(/(\d)\s*÷\s*(\d+\s*\/)/g, "$1 ÷ $2").replace(/(\/\s*\d+)\s*÷\s*(\d)/g, "$1 ÷ $2");
+    var divide = /(\d+\s*\/\s*\d+|\d)\s+÷\s+\d/.test(s) && /\d\s*\/\s*\d/.test(s);
+    if (!divide) s = s.replace(/÷/g, "/");
+    s = s.replace(/\bwhat'?s\b/g, "what is").replace(/\bi'?m\b/g, "i am").replace(/\bper ?cent\b|\bpct\b|\bpercentage\b/g, "percent")
+         .replace(/^[^:]{0,60}\b(asks?|asked|says?|wants to know|question|problem|task)\s*:/, " ").replace(/\([a-z][^)]*\)/g, " ")
+         .replace(/[_□▢■☐]+/g, " ? ").replace(/!/g, " ").replace(/([^\/\s]|^)\s*\?\s*$/, "$1 ").replace(/(\.\.\.|…)|[.;](?=\s|$)/g, function(m0, e){ return e || " "; }).replace(/:(?!\s*\d)/g, " ")
+         .replace(/([a-z])-(?=[a-z])/g, "$1 ").replace(/\b(which|this|that|each|every|any) one\b/g, "$1").replace(/,(?=\s*[a-z])/g, " ").replace(/\s+/g, " ").trim();
+    if (!/\d/.test(s)) s = wordsToDigits(s, true);
+    else s = wordsToDigits(s, false);
+    s = s.replace(/\b(?:what|how many|x|n)\s+(?=over\s+\d)/g, "? ").replace(/(\d)\s+over\s+(?:what|x|n)\b/g, "$1/?")
+         .replace(/(\d|\?)\s+(?:over|out of)\s+(?=\d)/g, "$1/").replace(/(^|[\s=(])[xn]\s*\/\s*(?=\d)/g, "$1?/").replace(/(\d)\s*\/\s*[xn]\b/g, "$1/?")
+         .replace(/(\d)\s+percent\b/g, "$1%").replace(/(\d) %/g, "$1%")
+         .replace(/(\d)\s+and\s+(\d+\s*\/\s*\d+)/g, "$1 $2").replace(/(\d+)\s*\/\s*(\d+)/g, "$1/$2").replace(/\s+/g, " ").trim();
+    // "3 divided by 4 as a decimal": a whole number over a whole number is a fraction to convert or simplify
+    if (/\b(decimals?|percent|fractions?|simplif\w*|reduc\w*|lowest|simplest|mixed|improper)\b|%/.test(s.replace(/\d%/g, "")))
+      s = s.replace(/(^|[^\d\/.])(\d+)\s*(?:divided by|÷)\s*(\d+)(?![\d\/.])/g, "$1$2/$3");
+    // another page's problem: two numbers with an operation between them
+    var N ="(?:\\d+ \\d+/\\d+|\\d+/\\d+|\\d*\\.\\d+|\\d+)%?";
+    var opm = new RegExp("(" + N + ")\\s*(\\+|plus\\b|added to\\b|\\*|times\\b|multiplied by\\b|x(?=\\s*\\d)|÷|divided by\\b|minus\\b|take away\\b|-(?=\\s*\\d))\\s*(" + N + ")").exec(s);
+    if (opm && !/=\s*\?|\?\s*\/|\/\s*\?/.test(s.replace(/=\s*\?\s*$/, ""))){
+      var op = opm[2], sym = /^\+|plus|added/.test(op) ? "+" : /^\*|times|multiplied|^x/.test(op) ? "×" : /÷|divided/.test(op) ? "÷" : "−";
+      var page = { "+":"addition.html", "−":"subtraction.html", "×":"multiplication.html", "÷":"division.html" }[sym];
+      var whatOp = { "+":"adding", "−":"subtracting", "×":"multiplying", "÷":"dividing" }[sym];
+      return otherLink(page, opm[1] + " " + sym + " " + opm[3], whatOp);
+    }
+    if (/\d%\s+of\s+\d/.test(s) || /\bpercent\b.*\bof\s+\d/.test(s)) return otherLink("percents.html", String(raw).trim(), "a percent of a number");
+    if (new RegExp("(" + N + ")\\s+of\\s+(" + N + ")").test(s) && /\d\/\d/.test(s)){
+      var om = new RegExp("(" + N + ")\\s+of\\s+(" + N + ")").exec(s);
+      return otherLink("multiplication.html", om[1] + " × " + om[2], "a fraction of a number (that’s multiplying)");
+    }
+    if (/\b(gcf|gcd|lcm|lcd|hcf|greatest common|least common|lowest common|highest common|prime|factors?|multiples?)\b/.test(s) && !/\d\/\d/.test(s))
+      return otherLink("factors.html", String(raw).trim(), "factors and multiples");
+    if (/\d\s*:\s*\d/.test(s) || /\bratio\b/.test(s)) return otherLink("ratios.html", String(raw).trim(), "a ratio");
+    // the numbers, in order, and the words left over
+    var nums = [], rest = s.replace(NUMRE, function(m0, pre, n){ nums.push(n.replace(/\s+/g, " ").replace(/ ?\/ ?/g, "/").replace(/ %$/, "%")); return pre + " "; });
+    var words = rest.replace(/[^a-z?%=<>]+/g, " ").trim().split(" ").filter(function(w){ return w && w !== "?" && w !== "%" && w !== "=" && w !== "<" && w !== ">"; });
+    var unknown = words.filter(function(w){ return !has(FILLS, w); });
+    if (!nums.length || unknown.length > 2) return null;
+    var R0 = /\b(simplif\w*|reduc\w*|lowest|simplest)\b/.test(rest);
+    var want = [];
+    if (/\bdecimals?\b/.test(rest)) want.push("decimal");
+    if (/%|\bpercent\b/.test(rest)) want.push("percent");
+    if (/\bmixed\b/.test(rest)) want.push("mixed");
+    if (/\bimproper\b/.test(rest)) want.push("improper");
+    var isFrac = function(n){ return /\//.test(n) && !/%$/.test(n); };
+    if (/\bfractions?\b/.test(rest.replace(/\bimproper fractions?\b/, "")) && !nums.every(isFrac) && !/\b(simplify|reduce|order|compare)\s+(the|these|this)?\s*fractions?\b/.test(rest)) want.push("fraction");
+    var hasQ = nums.some(function(n){ return /\?/.test(n); });
+    // equal fractions: "3/4 = ?/20", "is 3/4 equal to 6/8", "… with a denominator of 20"
+    if (nums.length === 2 && (hasQ || /=|\bequals?\b|\bequal to\b|\bequivalent\b|\bsame as\b/.test(rest))){
+      if (/\bdenominator\b|\bbottom\b/.test(rest) && isFrac(nums[0]) && /^\d+$/.test(nums[1])) return { q:nums[0] + " = ?/" + nums[1], mode:"equiv" };
+      if (/\bnumerator\b|\btop\b/.test(rest) && isFrac(nums[0]) && /^\d+$/.test(nums[1])) return { q:nums[0] + " = " + nums[1] + "/?", mode:"equiv" };
+      return { q:nums[0] + " = " + nums[1], mode:"equiv" };
+    }
+    if (hasQ) return null;
+    // which is bigger / put in order
+    if (nums.length >= 2){
+      if (/\b(compare|comparing|bigger|larger|greater|smaller|less|least|greatest|largest|smallest|biggest|highest|order|ordered|ordering|arrange|sort|vs|versus|which)\b|[<>]/.test(rest)
+          || (!want.length && !R0 && /^[\s,]*$/.test(rest.replace(/\b(and|or|then)\b/g, ""))))
+        return { q:nums.join(", "), mode:"compare" };
+      return null;
+    }
+    var n = nums[0], kind = isFrac(n) ? (/ /.test(n) ? "mixed" : "frac") : /%$/.test(n) ? "pct" : /\./.test(n) ? "dec" : "int";
+    if (want.length > 1 && want.indexOf("fraction") >= 0 && (kind === "frac" || kind === "mixed")) want.splice(want.indexOf("fraction"), 1);
+    if (want.length === 1 && want[0] === "percent" && kind === "pct" && /\bfractions?\b/.test(rest)) want = ["fraction"];
+    if (want.length === 1 && want[0] === "percent" && kind === "pct") want = [];
+    if (want.length){
+      var to = want.length === 1 ? want[0] : "all";
+      return { q:n, mode:"convert", to:to };
+    }
+    if (R0) return (kind === "frac" || kind === "mixed") ? { q:n, mode:"simplify" } : kind === "int" ? { q:n, mode:"simplify" } : { q:n, mode:"convert", to:"fraction" };
+    if (/\b(convert|converted|change|turn|express|rewrite)\b/.test(rest)) return { q:n, mode:"convert", to:"all" };
+    return { q:n, mode:inferMode(n), weak:true };   // no words that pick a tab: stay on this one
+  }
+  function otherMsg(u){
+    return "That’s " + u.what + " — this page simplifies, converts, compares and matches fractions. "
+      + '<a href="' + esc(u.href) + '">Work <b>' + esc(u.q) + "</b> on " + esc(otherName(u.other)) + " →</a>";
+  }
+  function otherName(page){
+    var P = window.HelperSearch && window.HelperSearch.PAGE && window.HelperSearch.PAGE[page];
+    return P ? P[0] : ({ "addition.html":"the addition page", "subtraction.html":"the subtraction page", "multiplication.html":"the multiplication page",
+      "division.html":"the division page", "percents.html":"the percents page", "factors.html":"the factors page", "ratios.html":"the ratios page" }[page] || "another page");
   }
 
   /* ===================== wiring ===================== */

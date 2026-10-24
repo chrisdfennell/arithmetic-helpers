@@ -178,6 +178,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -839,7 +840,9 @@
       }
       if (peek() && peek().k === "pow"){
         if (hasVar(node)) throw new UserErr("<b>" + astH(node) + "</b> with a power isn’t linear — this page works with plain <i>x</i>, not <i>x</i>², <i>x</i>³… "
-            + "(Those make curves, not straight lines.)");
+            + "(Those make curves, not straight lines."
+            + (tk[p].s === "²" || (tk[p].s === "^" && tk[p+1] && tk[p+1].s === "2" && !(tk[p+2] && tk[p+2].k === "pow"))
+               ? seeAlso("quadratics.html", "The Area Box") : seeAlso("exponents.html", "The Power Tower")) + ")");
         // a power of a plain number is fine: it gets worked out like on the Order Stack
         var pt = tk[p++], ex;
         if (pt.s === "²" || pt.s === "³") ex = { t:"num", v:R(pt.s === "²" ? 2 : 3), lit:true };
@@ -847,7 +850,12 @@
           if (!peek()) throw new UserErr("It ends with a power sign — what’s the power?");
           ex = unary();
         }
-        if (hasVar(ex)) throw new UserErr("A power with a letter in it isn’t linear — this page only works with letters to the first power.");
+        if (hasVar(ex)) throw new UserErr("A power with a letter in it isn’t linear — this page only works with letters to the first power."
+            + seeAlso("logarithms.html", "The Log Ladder"));
+        // 2^3x could be (2^3)x or 2^(3x): ask rather than guess
+        if (pt.s === "^" && peek() && (peek().k === "var" || peek().k === "("))
+          throw new UserErr("Is that <b>(" + astH(node) + "<sup>" + astH(ex) + "</sup>)" + esc(tokText(peek())) + "</b> or a power with "
+            + esc(tokText(peek())) + " in it? Add brackets to show which, like <b>(2^3)x</b> or <b>2^(3x)</b>.");
         node = { t:"bin", op:"^", a:node, b:ex };
       }
       return node;
@@ -876,9 +884,134 @@
   }
   function countTerms(n){ return n.t === "num" || n.t === "var" ? 1 : countTerms(n.a) + (n.b ? countTerms(n.b) : 0); }
 
+  /* ===================== reading typed words =====================
+     People type a problem the way they'd say it: "solve for x: 3x plus 5 equals 20", "what is x if 2x − 7 is 9",
+     "simplify 2(x + 3) − 4x please", "2x + y = 7 and x − y = 2", "$\frac{x}{3} + 2 = 5$". tidyTyped turns number
+     and operator words into symbols and drops the request around the problem ("solve", "for x", "step by step").
+     A letter on its own always stays a letter, and any other word is left in, so it still stops the problem with
+     the usual notice instead of being guessed at ("5 more than x", "evaluate … when x = 4"). */
+  var W_ONE = "zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen";
+  var W_TEN = "twenty|thirty|forty|fourty|fifty|sixty|seventy|eighty|ninety";
+  var W_VAL = (function(){ var o = {}, a = W_ONE.split("|"), t = W_TEN.split("|"), i;
+    for (i = 0; i < a.length; i++) o[a[i]] = i;
+    for (i = 0; i < t.length; i++) o[t[i]] = t[i] === "fourty" ? 40 : 20 + 10 * (i > 3 ? i - 1 : i);
+    return o; })();
+  var W_REQ = "(?:solve|simplify|evaluate|calculate|compute|work\\s+out|figure\\s+out|find|determine|expand|distribute|"
+    + "(?:combine|collect)(?:\\s+(?:the\\s+)?like\\s+terms(?:\\s+(?:in|of))?)?|reduce|rewrite|answer|do|graph|check)";
+  var W_IF = "(?:if|when|given(?:\\s+that)?|where|such\\s+that|so\\s+that)";
+  function tidyTyped(src){
+    var s = String(src), k, prev, rels;
+    // LaTeX and Markdown from copy-paste and AI tools
+    s = s.replace(/\\[dt]?frac\s*\{([^{}]*)\}\s*\{([^{}]*)\}/g, function(m, a, b){
+      a = a.trim(); b = b.trim();
+      return " " + (/^[\w.]+$/.test(a) ? a : "(" + a + ")") + "/" + (/^[\w.]+$/.test(b) ? b : "(" + b + ")") + " ";
+    });
+    s = s.replace(/\\(?:cdot|times|ast)\b/g, "*").replace(/\\div\b/g, "/").replace(/\\(?:leq?|leqslant)\b/g, "<=").replace(/\\(?:geq?|geqslant)\b/g, ">=")
+         .replace(/\\lt\b/g, "<").replace(/\\gt\b/g, ">").replace(/\\(?:neq?|ne)\b/g, "≠").replace(/\\text\s*\{([^{}]*)\}/g, " $1 ")
+         .replace(/\\(?:left|right)\b/g, "").replace(/\\[,;:!]|\\quad\b|\\qquad\b/g, " ").replace(/\\[()\[\]]/g, " ").replace(/\$/g, " ")
+         .replace(/\*\*([^*]*[A-Za-z]{2}[^*]*)\*\*/g, "$1");
+    s = s.replace(/[‘’]/g, "'").replace(/[   ]/g, " ").replace(/[ \t]+/g, " ");
+    // a list number in front: "1) …", "Q3. …", "Problem 2: …"
+    s = s.replace(/^\s*(?:(?:problem|question|exercise|ex|q|#)\s*\d+\s*[:.)]?|\(?\d{1,2}[.)]|\(?[a-h]\))\s+/i, "");
+    // the request around the problem
+    var lead = [
+      /^\s*(?:please|pls|plz|kindly|hi|hello|hey|ok(?:ay)?|so)\b[\s,!]*/i,
+      /^\s*(?:can|could|would|will)\s+(?:you|u|someone)(?:\s+please)?(?:\s+help(?:\s+me)?)?(?:\s+(?:to|with))?\b\s*/i,
+      /^\s*for\s+(?:the|an?)\s+(?:variable|unknown|letter)\b\s*[:,.]?\s*/i,
+      /^\s*(?:help\s+me(?:\s+(?:to|with))?|i\s+(?:need|have|want)(?:\s+help)?\s+(?:to|with)|i\s+need\s+help(?:\s+with)?|how\s+(?:do|would|can|should|to)(?:\s+(?:i|you|we|u))?|show\s+me\s+how\s+to|explain\s+how\s+to|teach\s+me(?:\s+how)?\s+to|let'?s|and|then|now)\b\s*/i,
+      new RegExp("^\\s*(?:" + W_REQ + "\\s+)?(?:what\\s+is|what's|whats|what\\s+does|find|determine|calculate)\\s+(?:the\\s+value\\s+of\\s+)?([A-Za-z])(?:\\s+equal)?\\s*(?:[:,]|\\.\\s|\\b(?:" + W_IF + "|in|for)\\b)\\s*", "i"),
+      new RegExp("^\\s*" + W_REQ + "\\s+for\\s+([A-Za-z])(?:\\s*(?:,|and|&)\\s*[A-Za-z])?\\b(?!\\s*[=<>≤≥^(*/+\\-])\\s*[:,.]?\\s*", "i"),
+      new RegExp("^\\s*" + W_REQ + "\\b\\s*[:,.]?\\s*", "i"),
+      new RegExp("^\\s*" + W_IF + "\\b\\s*", "i"),
+      /^\s*for\s+([A-Za-z])(?:\s*(?:,|and|&)\s*[A-Za-z])?\b(?!\s*[=<>≤≥^(*\/+\-])\s*[:,.]?\s*/i,
+      /^\s*(?:the|this|these|each|following|given|my|an?\s+(?=(?:linear|literal|equation|expression|inequality|system)))\b\s*/i,
+      /^\s*(?:(?:linear|literal|algebraic|one-step|two-step|multi-step)\s+)*(?:equations?|expressions?|inequalit(?:y|ies)|system(?:\s+of(?:\s+linear)?\s+equations)?|problem|question|variables?|unknowns?|solutions?(?:\s+(?:of|to|for))?)\b(?:\s+below)?\s*(?:for\s+([A-Za-z])\b(?!\s*[=<>≤≥^(*\/+\-]))?\s*[:,.]?\s*/i
+    ];
+    var tail = [
+      /[\s,;.]+(?:and\s+|then\s+)?(?:solve|find|determine|work\s+out|calculate)(?:\s+for)?(?:\s+the\s+value\s+of)?\s+([A-Za-z])\s*[?.!]*\s*$/i,
+      /[\s,;.]+(?:so\s+|then\s+)?(?:what\s+is|what's|whats|what\s+does|find)\s+(?:the\s+value\s+of\s+)?([A-Za-z])(?:\s+equal)?\s*[?.!]*\s*$/i,
+      /[\s,;.]+for\s+([A-Za-z])\s*[?.!]*\s*$/i,
+      new RegExp("[\\s,;.]+(?:and\\s+|then\\s+)?(?:please\\s+)?" + W_REQ + "(?:\\s+(?:it|this|that))?\\s*[?.!]*\\s*$", "i"),
+      /[\s,;.]+(?:please|pls|plz|thanks?(?:\s+you)?|thx|ty|for\s+me|and|then)\s*[?.!]*\s*$/i
+    ];
+    var any = [
+      /\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?(?:show|explain|give)(?:\s+me)?(?:\s+(?:the|your|all|all\s+the|my))?\s+(?:steps|work|working|answer|solution)|with\s+(?:the\s+|all\s+(?:the\s+)?)?(?:steps|work|working)|(?:and\s+)?(?:graph|check)\s+(?:it|the\s+answer|your\s+answer|my\s+answer)|(?:on|in)\s+(?:a|the)\s+number\s+line|algebraically|by\s+(?:elimination|substitution|graphing|hand)|using\s+(?:elimination|substitution))\b/gi,
+      /\b(?:please|pls|plz|thanks?(?:\s+you)?|thx)\b/gi,
+      /\(\s*(?:solve|find)(?:\s+for)?\s+[A-Za-z]\s*\)|\(\s*[A-Za-z]\s*=\s*\?+\s*\)/gi,
+      /(?:^|[\s,;])[A-Za-z]\s*=\s*\?+/g,
+      /\(\s*\)|\[\s*\]/g
+    ];
+    for (k = 0, prev = null; k < 8 && prev !== s; k++){
+      prev = s;
+      any.forEach(function(re){ s = s.replace(re, " "); });
+      lead.forEach(function(re){ s = s.replace(re, ""); });
+      tail.forEach(function(re){ s = s.replace(re, ""); });
+      s = s.replace(/^[\s:,;!?]+/, "").replace(/(?:[\s:,;!?]|\.(?!\d))+$/, "");
+    }
+    // number words: "twenty-five" → 25, "three x" → 3 x
+    s = s.replace(new RegExp("\\b(" + W_TEN + ")[\\s-]+(" + W_ONE.replace("zero|", "") + ")\\b", "gi"), function(m, a, b){ return " " + (W_VAL[a.toLowerCase()] + W_VAL[b.toLowerCase()]) + " "; })
+         .replace(new RegExp("\\b(" + W_ONE + "|" + W_TEN + ")\\b", "gi"), function(m){ return " " + W_VAL[m.toLowerCase()] + " "; })
+         .replace(/\b(\d+)\s+hundred(?:\s+and)?(?:\s+(\d{1,2})\b)?/gi, function(m, a, b){ return " " + (+a * 100 + (b ? +b : 0)) + " "; })
+         .replace(/\b(?:one|a)\s+half\b/gi, " 1/2 ");
+    // operator words; the longer phrases first
+    s = s.replace(/\b(?:is\s+)?(?:greater|more|bigger|larger)\s+than\s+or\s+equal\s+to\b|\bis\s+(?:at\s+least|no\s+less\s+than|not\s+less\s+than)\b/gi, " >= ")
+         .replace(/\b(?:is\s+)?(?:less|smaller|fewer)\s+than\s+or\s+equal\s+to\b|\bis\s+(?:at\s+most|no\s+more\s+than|not\s+more\s+than|no\s+greater\s+than)\b/gi, " <= ")
+         .replace(/\bis\s+(?:greater|more|bigger|larger)\s+than\b|\bgreater\s+than\b/gi, " > ")
+         .replace(/\bis\s+(?:less|smaller|fewer)\s+than\b/gi, " < ")
+         .replace(/\b(?:is\s+)?equal\s+to\b|\bequals\b|\bequal\b|\bis\s+the\s+same\s+as\b/gi, " = ")
+         .replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " - ").replace(/\b(?:negative|the\s+opposite\s+of)\b/gi, " - ")
+         .replace(/\b(?:times|multiplied\s+by)\b/gi, " * ").replace(/\b(?:divided\s+by|over)\b/gi, " / ")
+         .replace(/\bsquared\b/gi, "^2").replace(/\bcubed\b/gi, "^3")
+         .replace(/\b(?:raised\s+)?to\s+the\s+(\d+)(?:st|nd|rd|th)(?:\s+power)?\b/gi, "^$1").replace(/\b(?:raised\s+)?to\s+the\s+power\s+of\b|\braised\s+to\b/gi, "^");
+    if (!/[=<>≤≥⩽⩾]/.test(s)) s = s.replace(/\bis\b/i, " = ");
+    // two equations: "2x + y = 7 and x − y = 2", "…, …", one per line
+    s = s.replace(/[ \t]+/g, " ");
+    rels =s.match(/<=|>=|=<|=>|==|[=<>≤≥⩽⩾]/g);
+    if (rels && rels.length === 2 && s.indexOf(";") < 0){
+      var two = s.split(/\s*(?:[\r\n]+|&|\band\b|,(?!\d{3}(?!\d)))\s*/).filter(function(p){ return /\S/.test(p); });
+      if (two.length === 2 && two.every(function(p){ return /[=<>≤≥]/.test(p); })){
+        var lt = {}; two.join(" ").replace(/[A-Za-z]/g, function(c){ lt[c] = 1; });
+        if (Object.keys(lt).length === 2) s = two[0] + ";" + two[1];
+      }
+    }
+    return s.replace(/\s+/g, " ").trim();
+  }
+
   var RELW = { "=":"=", "<":"<", ">":">", "≤":"≤", "≥":"≥" };
+  var CURSRC = "";                             // the problem being read, for links to the page that does it
+  function seeAlso(page, name){
+    return ' Try <a href="' + page + "?q=" + esc(encodeURIComponent(CURSRC)) + '">' + name + "</a>.";
+  }
   // mode: "simplify" (no relation), "eq" (=), "ineq" (< > ≤ ≥)
   function parseInput(src, kind, name){
+    src = tidyTyped(src);
+    CURSRC = src;
+    if (/\b(?:when|if|for|at|where|given|with)\s+[A-Za-z]\s*=\s*[-−]?\s*[\d.,\/]+\s*$/i.test(src) && !/[=<>≤≥]/.test(src.replace(/\b(?:when|if|for|at|where|given|with)\s+[A-Za-z]\s*=[^=]*$/i, "")))
+      throw new UserErr("That plugs a number in for a letter — that’s evaluating, not solving." + seeAlso("functions.html", "The Function Machine"));
+    // a word left over (two letters side by side can never be linear here anyway): say so plainly, or point to its page
+    var wds = src.match(/[A-Za-z]{3,}|\b(?:is|of|by|to|in|on|if|an|at|or|so|it|me|my|do|as|be|we|ln)\b/gi);
+    if (wds){
+      var wd = [wds[0]], to = null;
+      wds.some(function(w0){ var w = w0.toLowerCase(); to = linkFor(w); if (to) wd = [w0]; return !!to; });
+      if (!to && (src.match(/[A-Za-z]{3,}/g) || []).length >= 3) to = ["story-problems.html", "The Story Problem"];
+      throw new UserErr("I don’t know the word <b>“" + esc(wd[0]) + "”</b> in a problem here. Type it with numbers, letters and signs, like <b>2x + 3 = 11</b>"
+        + " or <b>3(x + 2) − x</b>." + (to ? seeAlso(to[0], to[1]) : ""));
+    }
+    function linkFor(w){
+      var to = null;
+      if (/^(?:sqrt|squareroot|cbrt|root|radical)/.test(w)) to = ["radicals.html", "The Root Cellar"];
+      else if (/^(?:log|ln$)/.test(w)) to = ["logarithms.html", "The Log Ladder"];
+      else if (/^(?:sin|cos|tan|sec|csc|cot)$/.test(w)) to = ["trigonometry.html", "The Unit Circle"];
+      else if (/^(?:factor|roots?$|zeros?$|vertex|quadratic|parabola)/.test(w)) to = ["quadratics.html", "The Area Box"];
+      else if (/^(?:slope|lines?$|intercept|graph|point)/.test(w)) to = ["lines-and-slope.html", "The Slope Grid"];
+      else if (/^(?:domain|range|inverse|function)/.test(w)) to = ["functions.html", "The Function Machine"];
+      else if (/^(?:term|sequence|pattern|series)/.test(w)) to = ["sequences.html", "The Number Staircase"];
+      else if (/^(?:sum|more|less|twice|double|triple|half|number|total|product|difference|quotient|age|years?$|has|had|have|costs?$|how)/.test(w))
+        to = ["story-problems.html", "The Story Problem"];
+      return to;
+    }
+    if (src.indexOf(";") >= 0 && kind !== "sys")
+      throw new UserErr("That looks like two equations. Put them in the <b>System</b> tab, one in each box.");
     var tk = lex(src);
     if (!tk.length) throw new UserErr(kind === "simplify" ? "Type an expression, like <b>3(x + 2) − x</b>."
       : kind === "ineq" ? "Type an inequality, like <b>2x + 3 > 11</b>." : "Type " + (name ? name.toLowerCase() : "an equation") + ", like <b>2x + 3 = 11</b>.");
@@ -896,7 +1029,8 @@
       ? "An inequality needs a <b>&lt;</b>, <b>&gt;</b>, <b>≤</b> or <b>≥</b> sign, like <b>2x + 3 &gt; 11</b>."
       : (name || "An equation") + " needs an <b>=</b> sign, like <b>2x + 3 = 11</b>. (To just tidy up an expression, use the <b>Simplify</b> tab.)");
     if (rels.length > 1) throw new UserErr((name || "That") + " has more than one <b>" + esc(tk[rels[1]].s) + "</b>-type sign. "
-      + "Use just one: something on the left, something on the right.");
+      + "Use just one: something on the left, something on the right."
+      + (rels.length === 2 && !name ? " Two equations? Put <b>;</b> or <b>and</b> between them, or use the <b>System</b> tab." : ""));
     var rel = tk[rels[0]].s;
     if (kind === "eq" && rel !== "=") throw new UserErr("<b>" + esc(rel) + "</b> makes that an inequality. Use the <b>Inequality</b> tab, or change it to <b>=</b>.");
     if (kind === "ineq" && rel === "=") throw new UserErr("That’s an equation (<b>=</b>). Use the <b>Solve</b> tab, or change = to &lt;, &gt;, ≤ or ≥.");
@@ -944,7 +1078,8 @@
         var both = Object.keys(a.c).concat(Object.keys(b.c)), same = Object.keys(a.c).some(function(v){ return b.c[v]; });
         throw new UserErr("<b>" + astH(n) + "</b> multiplies a letter by a letter. That would make "
           + (same ? vH(Object.keys(a.c).filter(function(v){ return b.c[v]; })[0]) + "²" : vH(both[0]) + vH(both[1] || both[0]))
-          + ", and this page only does <b>linear</b> algebra — letters to the first power, no letter times letter.");
+          + ", and this page only does <b>linear</b> algebra — letters to the first power, no letter times letter."
+          + (same ? seeAlso("quadratics.html", "The Area Box") : ""));
       }
       return lConst(a) ? lScale(b, a.k) : lScale(a, b.k);
     }
@@ -2202,7 +2337,8 @@
     var vs = Object.keys(varsOf(P.R, varsOf(P.L))).sort();
     if (!vs.length) throw new UserErr("There’s no letter to solve for. Put one in, like <b>2x + 3 " + (ineq ? "&gt;" : "=") + " 11</b>.");
     if (vs.length > 1) throw new UserErr("I see " + vs.map(vH).join(" and ") + " — this tab solves for one letter. "
-      + "For two letters and two equations, use the <b>System</b> tab.");
+      + "For two letters and two equations, use the <b>System</b> tab."
+      + (vs.length === 2 && vs[1] === "y" && !ineq ? " (A line like <b>y = 2x + 1</b>?" + seeAlso("lines-and-slope.html", "The Slope Grid") + ")" : ""));
     var v = vs[0];
     evalLin(P.L); evalLin(P.R);
     var ctx = new Ctx(), arL = arithSteps(P.L), arR = arithSteps(P.R), pre = arL.steps.length + arR.steps.length > 0;
@@ -3397,7 +3533,7 @@
   function worksAs(m, q){
     var keep = HASDEC, seen = SEEN;
     try {
-      if (m === "sys"){ var two = splitSys(q); runSys(two[0], two[1], "elim"); }
+      if (m === "sys"){ var two = splitSys(q.indexOf(";") < 0 ? tidyTyped(q) : q); runSys(two[0], two[1], "elim"); }
       else if (m === "simplify") runSimplify(q);
       else runEq(q, m === "ineq");
       return true;
@@ -3415,9 +3551,10 @@
       q = q.slice(0, 1000);
       var lit = rawParam("q");
       // URLSearchParams reads a raw "+" as a space; if that breaks the problem, read it as a plus sign
-      if (lit && lit !== q && !worksAs(m || inferMode(q), q) && worksAs(m || inferMode(lit), lit)) q = lit;
-      if (!m) m = inferMode(q);
-      if (m === "sys"){ var two = splitSys(q); S.inputs.sys1 = two[0]; S.inputs.sys2 = two[1]; }
+      if (lit && lit !== q && !worksAs(m || inferMode(tidyTyped(q)), q) && worksAs(m || inferMode(tidyTyped(lit)), lit)) q = lit;
+      if (!m) m = inferMode(tidyTyped(q));
+      if (!method && /substitut/i.test(q)) S.method = "sub";
+      if (m === "sys"){ var two = splitSys(q.indexOf(";") < 0 ? tidyTyped(q) : q); S.inputs.sys1 = two[0]; S.inputs.sys2 = two[1]; }
       else S.inputs[m] = q.trim();
     }
     if (m) S.mode = m;

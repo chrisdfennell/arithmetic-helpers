@@ -727,11 +727,101 @@
   function ymS(n){ var y = Math.floor(n / 12), m = n % 12; return (y ? plural(y, "year") : "") + (y && m ? " " : "") + (m || !y ? plural(m, "month") : ""); }
 
   /* ===================== reading money words ===================== */
+  /* ===================== numbers typed as words =====================
+     WORDNUM.digits("find fifteen percent of eighty") → "find 15 percent of 80"; "two and a half" → "2 1/2" and
+     "three fourths" → "3/4" when fractions are on; "minus/negative seven" is left to the page. Lower-case text in. */
+  var WORDNUM = (function(){
+    var NW = { zero:0, oh:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+               thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19 };
+    var TW = { twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+    var OW = { first:1, second:2, half:2, third:3, fourth:4, quarter:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10,
+               eleventh:11, twelfth:12, thirteenth:13, fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18,
+               nineteenth:19, twentieth:20, thirtieth:30, fortieth:40, fiftieth:50, sixtieth:60, seventieth:70, eightieth:80,
+               ninetieth:90, hundredth:100, thousandth:1000 };
+    var BIG = { thousand:1e3, million:1e6, billion:1e9 };
+    function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+    function cardAt(t, i){
+      var j = i, total = 0, any = false;
+      function small(){
+        var w = t[j], v = null;
+        if (has(TW, w)){ v = TW[w]; j++; if (has(NW, t[j]) && NW[t[j]] > 0 && NW[t[j]] < 10){ v += NW[t[j]]; j++; } }
+        else if (has(NW, w) && w !== "oh"){ v = NW[w]; j++; }
+        return v;
+      }
+      function group(){                       // up to 999
+        var k = j, v = small();
+        if (v === null){ if (t[j] === "hundred" && any === false && t[j - 1] === "a"){ v = 1; } else { j = k; return null; } }
+        if (t[j] === "hundred"){ j++; v *= 100; var k2 = j; if (t[j] === "and") j++; var b = small(); if (b === null) j = k2; else v += b; }
+        return v;
+      }
+      while (true){
+        var g = group();
+        if (g === null) break;
+        any = true;
+        if (has(BIG, t[j])){ total += g * BIG[t[j]]; j++; var k3 = j; if (t[j] === "and") j++; if (!has(NW, t[j]) && !has(TW, t[j])){ j = k3; break; } continue; }
+        total += g; break;
+      }
+      return any ? { v:total, j:j } : null;
+    }
+    function ordOf(w){
+      if (!w) return 0;
+      if (w === "halves" || w === "halfs") return 2;
+      var b = w.replace(/s$/, "");
+      return has(OW, b) ? OW[b] : 0;
+    }
+    function ordAt(t, j){
+      if (has(TW, t[j])){ var u = ordOf(t[j + 1]); if (u > 0 && u < 10) return { v:TW[t[j]] + u, j:j + 2 }; }
+      var o = ordOf(t[j]);
+      if (o > 1 && !/^seconds?$/.test(t[j])) return { v:o, j:j + 1 };
+      return null;
+    }
+    // "point five" after a number: 2 point 5 → 2.5
+    function digits(s, o){
+      o = o || {};
+      // "twenty-four", "one-half", "twenty-fourths" split into words; "semi-annually", "take-home" stay as they are
+      s = String(s).replace(/\b([a-z]+)-([a-z]+)\b/g, function(m0, a, b){ return has(NW, a) || has(TW, a) || ordOf(b) ? a + " " + b : m0; })
+        .replace(/\b(which|this|that|each|every|any|no) one\b/g, "$1 ~one~");
+      var t = s.split(" "), out = [], i = 0, c, d, c2;
+      while (i < t.length){
+        var w = t[i];
+        if (o.fractions && /^\d+$/.test(w) && (d = ordAt(t, i + 1))){ out.push(w + "/" + d.v); i = d.j; continue; }
+        c = o.fractions && (w === "a" || w === "an") && ordAt(t, i + 1) ? { v:1, j:i + 1 } : cardAt(t, i);
+        if (c){
+          if (o.fractions && (d = ordAt(t, c.j))){ out.push(c.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "and" && (t[c.j + 1] === "a" || t[c.j + 1] === "an") && /^(half|quarter)$/.test(t[c.j + 2] || "")){
+            out.push(c.v + " " + (t[c.j + 2] === "half" ? "1/2" : "1/4")); i = c.j + 3; continue; }
+          if (o.fractions && t[c.j] === "and" && (c2 = cardAt(t, c.j + 1)) && (d = ordAt(t, c2.j))){ out.push(c.v + " " + c2.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "point" && has(NW, t[c.j + 1])){
+            var k = c.j + 1, fr = "";
+            while (has(NW, t[k]) && NW[t[k]] < 10){ fr += NW[t[k]]; k++; }
+            out.push(c.v + "." + fr); i = k; continue;
+          }
+          out.push(String(c.v)); i = c.j; continue;
+        }
+        if (/^\d+$/.test(w) && t[i + 1] === "and" && (t[i + 2] === "a" || t[i + 2] === "an") && /^(half|quarter)$/.test(t[i + 3] || "")){
+          out.push(w + " " + (t[i + 3] === "half" ? "1/2" : "1/4")); i += 4; continue; }
+        if (/^\d+$/.test(w) && has(BIG, t[i + 1])){ out.push(String(Number(w) * BIG[t[i + 1]])); i += 2; continue; }   // 2 million
+        out.push(w); i++;
+      }
+      return out.join(" ").replace(/~one~/g, "one");
+    }
+    return { digits:digits };
+  })();
   function normQ(s){
     s = String(s == null ? "" : s).replace(/[−–—]/g, "-").replace(/[’‘]/g, "'").replace(/ /g, " ").toLowerCase();
     s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1").replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    if (/[a-z]/.test(s)) s = WORDNUM.digits(s.replace(/\s+/g, " "))       // "five thousand dollars at four percent"
+      .replace(/\b2 weeks\b/g, "two weeks").replace(/\bfor 1 month\b/g, "for one month").replace(/\b1 month'?s interest\b/g, "one month's interest");
+    // I = Prt / A = P(1 + r/n)^nt written with letters: "P = $1200, r = 6%, n = 12, t = 3"
+    s = s.replace(/\bn\s*=\s*(1|2|4|12|52|365)\b/g, function(m0, n){ return " compounded " + { 1:"annually", 2:"semiannually", 4:"quarterly", 12:"monthly", 52:"weekly", 365:"daily" }[n] + " "; })
+         .replace(/\bt\s*=\s*(\d+(?:\.\d+)?)(?!\s*(?:years?|yrs?|months?|mos?|\d))/g, " for $1 years ").replace(/\b[pr]\s*=\s*/g, " ");
+    s = s.replace(/\bis how much (?:an? |per |each )?(?=(?:bi-?weekly|weekly|semi-?monthly|monthly|yearly|annually|hourly|an? (?:hour|week|month|year)|per (?:hour|week|month|year))\b)/g, " to ");
     s = s.replace(/\b40([13])\s*\(?\s*([kb])\s*\)?(?![a-z])/g, " retirement ");
+    s = s.replace(/\bannual percentage yield\b/g, "apy").replace(/\bannual percentage rate\b/g, "apr");
     s = s.replace(/\bper\s*cent\b|\bpercent(?:age)?\b|\bpct\b/g, "%").replace(/(\d)\s+%/g, "$1%");
+    s = s.replace(/(\d+(?:\.\d+)?)%\s+and\s+(?:then\s+)?(?:another\s+)?(\d+(?:\.\d+)?)%\s+(?:off|discounts?)\b/g, "$1% off then $2% off");   // two discounts
+    // "$52,000 salary: hourly rate" (no paycheck asked for): a pay change from a year to an hour
+    if (!/\bpay ?checks?\b/.test(s)) s = s.replace(/(\$\s?\d+(?:\.\d+)?|\d+(?:\.\d+)?\s*(?:dollars?|k))\s*(?:a year |per year |yearly |annual )?salary\s*:?\s*(?:what is |what's |whats )?(?:the |my |an? )?(?:hourly(?: rate| wage| pay)?|per hour|an hour)\b/g, "$1 a year to an hour");
     s = s.replace(/\$\s+(?=[\d.])/g, "$").replace(/\busd\s*(?=\d)/g, "$");
     s = s.replace(/(\$?)(\d+(?:\.\d+)?|\.\d+)\s*(k|thousand|million|mil)\b/g, function(m0, d, n, u){
       var v = parseDecStr(n), f = /^k|^t/.test(u) ? R(1000) : R(1000000);
@@ -1016,7 +1106,7 @@
     if (/\bhow long\b|\bhow many (?:years|months)\b|\buntil\b/.test(T.s)) throw new UserErr("This tab finds the balance after a time you give, or the deposit you need for a goal. Add a time, like <b>for 5 years</b>.");
     if (grab(T, /\b(?:at the )?(?:start|beginning) of (?:each|every|the) (?:month|period|week|quarter|year)\b|\bannuity due\b|\bin advance\b/)) P.due = true;
     grab(T, /\b(?:at the )?end of (?:each|every|the) (?:month|period|week|quarter|year)\b|\bordinary annuity\b/);
-    var goalW = /\bhow much\b|\bgoal\b|\bto (?:have|reach|get|end up with|save up|hit)\b|\bneed(?:s|ed)?\b/.test(T.s) && !/\bhow much (?:will|would|do|does) (?:i|you|we|they|it|he|she)\b.*\bhave\b/.test(T.s);
+    var goalW = /\bhow much\b|\bgoal\b|\bto (?:have|reach|get|end up with|save up|hit)\b|\bneed(?:s|ed)?\b/.test(T.s) && !/\bhow much (?:will|would|do|does) (?:i|you|we|they|it|he|she) (?:have|end up with|get|earn)\b/.test(T.s);
     var m = grab(T, re("\\b(?:start(?:ing|s)?|begin(?:ning|s)?|already (?:have|has|saved)|initial(?:ly)?|plus|opening|existing|on top of|with)\\b[^$\\d]{0,24}\\$N_(?![\\d.])(?:\\s*(?:already|saved|to start|up front|now)\\b)?(?!\\s*(?:a|per|each|every)\\s*(?:month|week|quarter|year))"));
     if (m) P.start = D(m[1]);
     var pm = grab(T, re("\\$N_(?![\\d.])\\s*(?:a|per|each|every)\\s*(month|week|quarter|year|two weeks|other week)\\b|\\$N_(?![\\d.])\\s*(monthly|weekly|quarterly|yearly|annually|biweekly|every two weeks|every other week)\\b"));
@@ -1890,10 +1980,28 @@
     pay:"Type hours and a rate, like <b>45 hours at $18 an hour</b>.",
     budget:"Type an income, like <b>50/30/20 budget on $4,000 a month</b>.",
     shop:"Type a deal, like <b>20% off then 15% off $80</b>." };
+  // problems another page works: said so, with a link, instead of being half-read as interest
+  function elsewhere(text){
+    var s = normQ(text), k = kindOf(text), page = null, what = "";
+    if (/\bsimple interest\b/.test(s)){ page = "percents"; what = "simple interest"; }
+    else if (!k){
+      if (/\d%\s+of\s+\$?\d/.test(s) || /\bwhat %|\bwhat is \d+(?:\.\d+)?% of\b/.test(s)){ page = "percents"; what = "a percent of a number"; }
+      else if (/\b(?:feet|foot|inch(?:es)?|yards?|miles?|meters?|metres?|centimeters?|kilometers?|ounces?|grams?|kilograms?|liters?|litres?|gallons?|quarts?|pints?|cups?)\b/.test(s) && /\b(?:to|in|into)\b/.test(s) && !/\$/.test(s)){ page = "unit-conversions"; what = "a unit conversion"; }
+      else if (/\bhow much (?:do|does|would|will) \d+/.test(s) && /\bcosts?\b/.test(s)){ page = "ratios"; what = "a proportion (a price for more or fewer things)"; }
+      else if (/\d\s*\/\s*\d+\s+of\b/.test(s)){ page = "multiplication"; what = "a fraction of an amount (that’s multiplying)"; }
+      else if (/\$?\d+(?:\.\d+)?\s*[+×*÷]\s*\$?\d|\$\d+(?:\.\d+)?\s+-\s+\$?\d/.test(s) && !/%/.test(s)){
+        page = /\+/.test(s) ? "addition" : /[×*]/.test(s) ? "multiplication" : /÷/.test(s) ? "division" : "subtraction"; what = "plain arithmetic"; }
+    }
+    if (!page) return null;
+    return "That looks like " + what + ", which another page works step by step: <a href=\"" + esc(siteUrl(page, "q=" + encodeURIComponent(String(text).trim()))) + "\">open it there</a>. "
+      + "This page does compound interest, saving, loans, credit cards, paychecks, budgets and shopping math.";
+  }
   function readProblem(mode, text){
     var s = String(text == null ? "" : text).trim();
     if (!s) throw new UserErr(EMPTY[mode]);
     if (s.length > 400) throw new UserErr("That’s a long problem — keep it under 400 characters.");
+    var away = elsewhere(s);
+    if (away) throw new UserErr(away);
     return BUILD[mode](READ[mode](s));
   }
   var MODE_ALIAS = { compound:"compound", interest:"compound", "compound-interest":"compound", apy:"compound", growth:"compound",
@@ -1903,19 +2011,23 @@
     pay:"pay", paycheck:"pay", paychecks:"pay", wages:"pay", wage:"pay", salary:"pay", hourly:"pay", overtime:"pay",
     budget:"budget", budgets:"budget", income:"budget", "50-30-20":"budget",
     shop:"shop", shopping:"shop", discounts:"shop", discount:"shop", tip:"shop", "unit-price":"shop", markup:"shop", inflation:"shop", sale:"shop" };
-  function kindOf(q){
+  function kindOf(q, strict){                  // strict: only words that name a tab, not the "$, % and years" guess
     var s = normQ(q);
     if (!s) return null;
     if (/\binflation\b|\bpurchasing power\b|\bbuying power\b/.test(s)) return "shop";
     if (/\bcredit cards?\b|\bcard\b|\bminimum payments?\b|\bpay(?:ing)? the minimum\b|\binterest for (?:one|a|the first) month\b|\bmonth'?s interest\b/.test(s)) return "card";
+    if (/\bpay(?:ing)? (?:it |this |that )?off\b|\bpayoff\b/.test(s) && /\bpaying \$|\$[\d.]+\s*(?:a|per|each|every) month\b/.test(s) && !/\bloans?\b|\bmortgage\b/.test(s)) return "card";
     if (/\bloans?\b|\bmortgage\b|\bborrow|\bfinanc|\bamortiz|\bdown payment\b|\bdown\b.*\b(?:years?|months?)\b/.test(s)) return "loan";
+    if (/\bmonthly payments?\b|\bpayments? (?:on|for)\b|\bwhat(?:'s| is) the payment\b/.test(s) && /\b(?:years?|months?)\b/.test(s)) return "loan";
+    if (/\b(?:car|truck|house|home|boat|motorcycle|condo)\b/.test(s) && /%/.test(s) && /\b(?:years?|months?)\b/.test(s) && !/\bcompound/.test(s)) return "loan";
+    if (/\b\d{1,2}\s*[\/-]\s*\d{1,2}\s*[\/-]\s*\d{1,2}\b/.test(s) && /\bbudget\b|\brule\b|\bincome\b|\btake[- ]?home\b|\$/.test(s)) return "budget";
     if (/\bapy\b|\bcompound|\bannual percentage yield\b|\bcontinuously\b/.test(s)) return "compound";
     if (/\bnet pay\b|\btake[- ]?home\b|\bgross\b|\bpay ?checks?\b|\bsalary\b|\bovertime\b|\bwages?\b|\bhourly\b|\bhours?\b|\/\s*hr\b|\bfica\b|\bwithholding\b|\b(?:bi|semi)-?(?:weekly|monthly)\b.*\bto\b/.test(s)) return "pay";
     if (/\$[\d.]+\s*(?:an?|per|each|every)?\s*(?:hour|week|month|year)\w*\s+(?:to|into|as)\s+(?:an?\s+)?(?:hour|week|bi-?week|semi-?month|month|year)/.test(s)) return "pay";
     if (/\bsave\b|\bsaving|\bdeposit|\bannuity\b|\bput away\b|\bset aside\b/.test(s)) return "save";
     if (/\bbudget\b|\b\d{1,2}\s*\/\s*\d{1,2}\s*\/\s*\d{1,2}\b|\bincome\b|\bneeds\b.*\bwants\b/.test(s)) return "budget";
     if (/%\s*off\b|\bdiscount|\btip\b|\btax\b|\bmark(?:ed|s)?\s*-?\s*(?:up|down)\b|\bmarkup\b|\bunit price\b|\bbetter buy\b|\bvs\.?\b|\bper (?:oz|ounce|lb|pound)\b|\b(?:oz|lbs?|ct)\b.*\bfor\b|\bsale\b|\bsold\b/.test(s)) return "shop";
-    if (/\$|\d/.test(s) && /%/.test(s) && /\b(?:years?|months?)\b/.test(s)) return "compound";
+    if (!strict && /\$|\d/.test(s) && /%/.test(s) && /\b(?:years?|months?)\b/.test(s)) return "compound";
     return null;
   }
 
@@ -2266,6 +2378,9 @@
   var lastTotal = 0;
   function render(){
     var total = 0, P = null, err = null;
+    // a problem typed in the box whose words name another tab ("car loan", "credit card", "50/30/20"): go to that tab
+    var kw = S.inputs[S.mode] !== "\u0000link" ? kindOf(S.inputs[S.mode], true) : null;
+    if (kw && kw !== S.mode && !EMBED){ S.inputs[kw] = S.inputs[S.mode]; S.mode = kw; S.step = 1; paintMode(); }
     try {
       if (S.inputs[S.mode] === "\u0000link") throw new UserErr(LINKERR && LINKERR.mode === S.mode ? LINKERR.msg : EMPTY[S.mode]);
       P = readProblem(S.mode, S.inputs[S.mode]);

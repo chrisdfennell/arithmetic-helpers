@@ -216,6 +216,7 @@
   .answer.checking .facts{filter:blur(6px);user-select:none}
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .notice a{color:var(--key);font-weight:600}
   .notice b{font-family:var(--f-mono)}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
@@ -408,6 +409,7 @@
     .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
     .closer{font-size:11px;padding:8px 10px}
   }
+  @supports (-webkit-touch-callout:none){.q-in{font-size:16px}}   /* iPhone Safari zooms into a box under 16px */
 </style>
 
 <div class="page">
@@ -1353,15 +1355,114 @@
     return svgWrap(Wd, y1 + 30, "Bar to scale: principal " + usd(P) + " plus interest " + usd(IR), out, "int-svg");
   }
 
+  /* ===================== numbers typed as words =====================
+     WORDNUM.digits("find fifteen percent of eighty") → "find 15 percent of 80"; "two and a half" → "2 1/2" and
+     "three fourths" → "3/4" when fractions are on; "minus/negative seven" is left to the page. Lower-case text in. */
+  var WORDNUM = (function(){
+    var NW = { zero:0, oh:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+               thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19 };
+    var TW = { twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+    var OW = { first:1, second:2, half:2, third:3, fourth:4, quarter:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10,
+               eleventh:11, twelfth:12, thirteenth:13, fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18,
+               nineteenth:19, twentieth:20, thirtieth:30, fortieth:40, fiftieth:50, sixtieth:60, seventieth:70, eightieth:80,
+               ninetieth:90, hundredth:100, thousandth:1000 };
+    var BIG = { thousand:1e3, million:1e6, billion:1e9 };
+    function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+    function cardAt(t, i){
+      var j = i, total = 0, any = false;
+      function small(){
+        var w = t[j], v = null;
+        if (has(TW, w)){ v = TW[w]; j++; if (has(NW, t[j]) && NW[t[j]] > 0 && NW[t[j]] < 10){ v += NW[t[j]]; j++; } }
+        else if (has(NW, w) && w !== "oh"){ v = NW[w]; j++; }
+        return v;
+      }
+      function group(){                       // up to 999
+        var k = j, v = small();
+        if (v === null){ if (t[j] === "hundred" && any === false && t[j - 1] === "a"){ v = 1; } else { j = k; return null; } }
+        if (t[j] === "hundred"){ j++; v *= 100; var k2 = j; if (t[j] === "and") j++; var b = small(); if (b === null) j = k2; else v += b; }
+        return v;
+      }
+      while (true){
+        var g = group();
+        if (g === null) break;
+        any = true;
+        if (has(BIG, t[j])){ total += g * BIG[t[j]]; j++; var k3 = j; if (t[j] === "and") j++; if (!has(NW, t[j]) && !has(TW, t[j])){ j = k3; break; } continue; }
+        total += g; break;
+      }
+      return any ? { v:total, j:j } : null;
+    }
+    function ordOf(w){
+      if (!w) return 0;
+      if (w === "halves" || w === "halfs") return 2;
+      var b = w.replace(/s$/, "");
+      return has(OW, b) ? OW[b] : 0;
+    }
+    function ordAt(t, j){
+      if (has(TW, t[j])){ var u = ordOf(t[j + 1]); if (u > 0 && u < 10) return { v:TW[t[j]] + u, j:j + 2 }; }
+      var o = ordOf(t[j]);
+      if (o > 1 && !/^seconds?$/.test(t[j])) return { v:o, j:j + 1 };
+      return null;
+    }
+    // "point five" after a number: 2 point 5 → 2.5
+    function digits(s, o){
+      o = o || {};
+      // "twenty-four", "one-half", "twenty-fourths" split into words; "semi-annually", "take-home" stay as they are
+      s = String(s).replace(/\b([a-z]+)-([a-z]+)\b/g, function(m0, a, b){ return has(NW, a) || has(TW, a) || ordOf(b) ? a + " " + b : m0; })
+        .replace(/\b(which|this|that|each|every|any|no) one\b/g, "$1 ~one~");
+      var t = s.split(" "), out = [], i = 0, c, d, c2;
+      while (i < t.length){
+        var w = t[i];
+        if (o.fractions && /^\d+$/.test(w) && (d = ordAt(t, i + 1))){ out.push(w + "/" + d.v); i = d.j; continue; }
+        c = o.fractions && (w === "a" || w === "an") && ordAt(t, i + 1) ? { v:1, j:i + 1 } : cardAt(t, i);
+        if (c){
+          if (o.fractions && (d = ordAt(t, c.j))){ out.push(c.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "and" && (t[c.j + 1] === "a" || t[c.j + 1] === "an") && /^(half|quarter)$/.test(t[c.j + 2] || "")){
+            out.push(c.v + " " + (t[c.j + 2] === "half" ? "1/2" : "1/4")); i = c.j + 3; continue; }
+          if (o.fractions && t[c.j] === "and" && (c2 = cardAt(t, c.j + 1)) && (d = ordAt(t, c2.j))){ out.push(c.v + " " + c2.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "point" && has(NW, t[c.j + 1])){
+            var k = c.j + 1, fr = "";
+            while (has(NW, t[k]) && NW[t[k]] < 10){ fr += NW[t[k]]; k++; }
+            out.push(c.v + "." + fr); i = k; continue;
+          }
+          out.push(String(c.v)); i = c.j; continue;
+        }
+        if (/^\d+$/.test(w) && t[i + 1] === "and" && (t[i + 2] === "a" || t[i + 2] === "an") && /^(half|quarter)$/.test(t[i + 3] || "")){
+          out.push(w + " " + (t[i + 3] === "half" ? "1/2" : "1/4")); i += 4; continue; }
+        if (/^\d+$/.test(w) && has(BIG, t[i + 1])){ out.push(String(Number(w) * BIG[t[i + 1]])); i += 2; continue; }   // 2 million
+        out.push(w); i++;
+      }
+      return out.join(" ").replace(/~one~/g, "one");
+    }
+    return { digits:digits };
+  })();
   /* ===================== reading a problem typed in words ===================== */
   var QN = "(\\d+ \\d+ ?\\/ ?\\d+|\\d+ ?\\/ ?\\d+|\\d*\\.\\d+|\\d+)";
+  var VULG = { "½":"1/2", "⅓":"1/3", "⅔":"2/3", "¼":"1/4", "¾":"3/4", "⅕":"1/5", "⅛":"1/8", "⅜":"3/8", "⅝":"5/8", "⅞":"7/8" };
   function normQ(s){
     s = String(s == null ? "" : s).toLowerCase();
-    s = s.replace(/[−–—]/g, "-").replace(/[×✕✖]/g, " x ").replace(/→|->|=>|⟶/g, " to ");
+    s = s.replace(/[−–—]/g, "-").replace(/[×✕✖]/g, " x ").replace(/→|->|=>|⟶/g, " to ").replace(/％/g, "%").replace(/[’‘`]/g, "'");
+    s = s.replace(/[½⅓⅔¼¾⅕⅛⅜⅝⅞]/g, function(c){ return " " + VULG[c]; }).replace(/(\d)\s+%/g, "$1%");
     s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
+    s = s.replace(/\s+/g, " ").trim();
+    if (/[a-z]/.test(s)) s = WORDNUM.digits(s);                       // "fifteen percent of eighty" → "15 percent of 80"
+    // "percent change", "percentage increase": the change itself, not a percent of something
+    s = s.replace(/(?:\bper\s*cent(?:ages?)?|\bpercent(?:ages?)?|\bpct|%)\s+(change|increase|decrease|of change|of increase|of decrease)\b/g, "$1");
     s = s.replace(/\bper\s*cent(?:ages?|s)?\b|\bpercent(?:ages?|s)?\b|\bpct\b/g, "%");
+    // the blank to fill in: "18 is ?% of 72", "33 is ___% of 44", "2.5% of ? = 3", "18/72 = ?%"
+    s = s.replace(/(?:\?|_+|\bx\b|\bn\b|\bblank\b)\s*%/g, "what %").replace(/\bof\s*(?:\?|_+|\bblank\b)/g, "of what");
+    s = s.replace(/\s*(?:=|\bequals?\b)\s*(?:\?|_+|\bx\b|\bn\b|\bwhat\b)?\s*$/, "").replace(/\s*=\s*/g, " is ");
     s = s.replace(/[?!¿]+/g, " ").replace(/[“”"']/g, "").replace(/\s+/g, " ").trim().replace(/[.:;,]+$/, "").trim();
-    s = s.replace(/^(?:what is|what's|whats|find|calculate|compute|work out|figure out|solve|what number is)\s+/, "").replace(/^the\s+/, "");
+    // "120% of the number 90": a number follows, so it's a percent OF it (not "of what")
+    s = s.replace(/% of (?:the |a |an )?(?:number |total |amount |sum |value )?(?=(?:-\s?)?\$? ?\d)/g, "% of ");
+    s = s.replace(/% commission (?:on|of)\b/g, "% of");
+    // words around the problem: "please", "can you", "step by step", "120% of 90 is what"
+    s = s.replace(/^[^:\d%]{0,60}\b(?:step by step|asks?|asked|says?|question|problem|task|help me|please)\s*:\s*/, "");
+    var t0;
+    do {
+      t0 = s;
+      s = s.replace(/^(?:please|pls|plz|hey|hi|ok|okay|so|can you|could you|would you|will you|help me|show me|tell me|i need to|i want to|how do i|how do you|how much is|how much|what does|what is|what's|whats|find|calculate|compute|work out|figure out|solve|determine|evaluate|take|get|what number is|the|me)\s+/, "");
+      s = s.replace(/\s+(?:please|pls|thanks|thank you|step by step|with steps|with work|show (?:your |the |all )?(?:work|steps)|for me|equal|equals|is what|is how much|is|=)$/, "").replace(/[.:;,]+$/, "");
+    } while (s !== t0);
     return s.trim();
   }
   function qNums(s){
@@ -1377,6 +1478,20 @@
     var s = normQ(raw);
     if (!s) return null;
     var N = qNums(s);
+    // compound interest, loan payments, credit cards: the money page works those
+    if (/compound|\bapr\b|\bapy\b|monthly payment|\bpayments?\b|\bpaying\b|\bper month\b|\ba month\b|\beach month\b|\bevery month\b|amortiz|mortgage|annuit|credit card|\bmonthly\b/.test(s))
+      return { other:"money-math.html", what:"compound interest, loan payments and credit cards" };
+    // I = Prt written with labels: "P = 2500, r = 4%, t = 3"
+    var lp = /\bp is \$? ?(\d*\.?\d+)/.exec(s), lr = /\br is (\d*\.?\d+)(%)?/.exec(s), lt = /\bt is (\d*\.?\d+) ?(years?|yrs?|months?|mos?)?/.exec(s);
+    if (lp && lr && lt){
+      if (!lr[2] && Number(lr[1]) < 1) return null;           // r = 0.04: a rate as a decimal; better to ask than guess
+      return { mode:"money", kind:"interest", f:{ principal:lp[1], p:lr[1], t:lt[1], unit:/^m/.test(lt[2] || "") ? "months" : "years" } };
+    }
+    // "$24, which is 80% of the original price": the original is the whole
+    if (N.length === 2 && N[0].pct !== N[1].pct && /% of (?:the |its |his |her |their |an? )?(?:original|regular|full|old|usual|list|starting|normal|first)\b/.test(s)){
+      var wo = N[0].pct ? 0 : 1;
+      return { mode:"whole", f:{ part:N[1 - wo].s, p:N[wo].s } };
+    }
     // simple interest: three numbers, one of them a time
     if (/interest|\binvest|\bdeposit|\bloan|\bborrow|\bsavings?\b/.test(s) || (N.length === 3 && /\b(years?|yrs?|months?|mos?)\b/.test(s))){
       if (N.length !== 3) return null;
@@ -1395,8 +1510,8 @@
       return { mode:"money", kind:"interest", f:{ principal:rest[1 - rI].s, p:rest[rI].s, t:N[tI].s, unit:unit } };
     }
     // discounts, markups, tax and tips: two numbers, one of them the percent
-    var kinds = [["markup", /\bmark ?-?ups?\b|\bmarked up\b|\bmark it up\b/], ["tax", /\b(?:sales )?tax(?:es)?\b/],
-                 ["tip", /\b(?:tips?|gratuity|tipping)\b/], ["discount", /\b(?:discount(?:ed)?|off|sale|reduced)\b/]];
+    var kinds = [["markup", /\bmark ?-?ups?\b|\bmarks? up\b|\bmarked up\b|\bmark it up\b/], ["tax", /\b(?:sales )?tax(?:es)?\b/],
+                 ["tip", /\b(?:tips?|gratuity|tipping)\b/], ["discount", /\b(?:discount(?:ed)?|off|sale|reduced|saves?)\b|\bless (?=\d*\.?\d+%)/]];
     for (var k = 0; k < kinds.length; k++){
       var km = kinds[k][1].exec(s);
       if (!km) continue;
@@ -1413,7 +1528,7 @@
       return { mode:"money", kind:kinds[k][0], f:{ p:N[pi].s, price:N[1 - pi].s } };
     }
     // 15 is 20% of what
-    if (/% of (?:what|which|a\b|an\b|the\b|some|\?|x\b|n\b|_+|blank|this)/.test(s) || /% of\s*$/.test(s)){
+    if (/% of (?:what|which|a\b|an\b|the\b|some|\?|x\b|n\b|_+|blank|this|it\b)/.test(s) || /% of\s*$/.test(s)){
       if (N.length !== 2 || (!N[0].pct && !N[1].pct)) return null;
       var wp = N[0].pct && N[1].pct ? (/^\s*of\b/.test(s.slice(N[1].end)) ? 1 : 0) : N[0].pct ? 0 : 1;
       return { mode:"whole", f:{ part:N[1 - wp].s, p:N[wp].s } };
@@ -1437,9 +1552,17 @@
     // 15% of 80
     if (N.length === 2 && N[0].pct !== N[1].pct){
       var a = N[0].pct ? 0 : 1, between = s.slice(N[0].end, N[1].i).trim(), before = s.slice(0, N[0].i).trim(), after = s.slice(N[1].end).trim();
-      if (!before && !after && /^(?:of|x|times|\*|·)?$/.test(between)) return { mode:"of", f:{ p:N[a].s, n:N[1 - a].s } };
+      // a word for what's counted may follow: "15% of 80 students"
+      var unit = /^[a-z]+$/.test(after) && !/^(?:more|less|bigger|smaller|larger|greater|increase|decrease|change|what|is|equals?)$/.test(after);
+      if (!before && (!after || unit) && /^(?:of|x|times|\*|·)?$/.test(between)) return { mode:"of", f:{ p:N[a].s, n:N[1 - a].s } };
     }
     return null;
+  }
+
+  function otherMsg(r, q){
+    var p = "q=" + encodeURIComponent(String(q).trim()), href = window.HelperSite ? window.HelperSite.url(r.other, p) : r.other + "?" + p;
+    return "That looks like " + esc(r.what) + ", which this page doesn’t do (it works percents, percent change, discounts, tax, tips and simple interest). "
+      + '<a href="' + esc(href) + '">Work <b>' + esc(String(q).trim()) + "</b> on the money math page →</a>";
   }
 
   /* ===================== the problem on screen ===================== */
@@ -1473,7 +1596,8 @@
     var q = u.get("q");
     if (q !== null && q.trim()){
       var r = parseQ(q);
-      if (r) applyProb(r);
+      if (r && r.other){ S.bad = otherMsg(r, q); S.badQ = q; }
+      else if (r) applyProb(r);
       else { S.bad = "I couldn’t read <b>“" + esc(q) + "”</b> as a percent problem. Try something like <b>15% of 80</b>, <b>18 is what % of 72</b>, "
         + "<b>15 is 20% of what</b>, <b>80 to 92</b>, <b>20% off $45</b> or <b>interest 500 at 4% for 3 years</b> — or fill in the blanks above."; S.badQ = q; }
       return;
@@ -1942,7 +2066,7 @@
     EX[S.mode].forEach(function(ex){
       var b = document.createElement("button");
       b.className = "chip"; b.type = "button"; b.textContent = ex;
-      b.addEventListener("click", function(){ var r = parseQ(ex); if (r){ applyProb(r); clearQ(); paintMode(); render(); save(); } });
+      b.addEventListener("click", function(){ var r = parseQ(ex); if (r && !r.other){ applyProb(r); clearQ(); paintMode(); render(); save(); } });
       host.appendChild(b);
     });
   }
@@ -1970,6 +2094,7 @@
     var v = $("qIn").value, msg = $("qMsg");
     if (!v.trim()){ msg.innerHTML = ""; return; }
     var r = parseQ(v);
+    if (r && r.other){ msg.innerHTML = otherMsg(r, v); return; }
     if (!r){ msg.innerHTML = "Hmm, I can’t read that yet. Try <b>15% of 80</b>, <b>18 out of 72</b>, <b>15 is 20% of what</b>, <b>80 to 92</b> or <b>20% off $45</b>."; return; }
     applyProb(r); paintMode();
     var said = "";

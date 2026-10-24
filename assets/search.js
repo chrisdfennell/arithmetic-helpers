@@ -23,11 +23,13 @@
 
   // a story problem: words around the numbers, and a question about them ("Ana has 12 shells. … How many …?")
   function isStory(s, low){
-    if (!/\d/.test(s)) return false;
+    // the numbers may be written as words ("Omar had thirty-three stickers …")
+    if (!/\d/.test(s) && !/\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|(?:thir|four|fif|six|seven|eigh|nine)teen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|dozen|twice)\b/.test(low)) return false;
     var words = low.match(/[a-z']{2,}/g) || [];
     if (words.length < 7) return false;
     var asks = /\b(how (many|much|far|long|old|fast|tall|heavy|big)|what (is|was|will|time|did|does)|who|when|which|find)\b/.test(low) || /\?\s*$/.test(s);
-    return asks && (/[.!?]\s+\S/.test(s) || words.length >= 12);
+    // one sentence can be a whole story too: "Find three consecutive even integers whose sum is 48.", "If 5 apples cost $45, how much do 13 cost?"
+    return asks && (/[.!?]\s+\S/.test(s) || words.length >= 12 || /^\s*(?:if|find|how|what)\b/.test(low) && !/[=^<>]|\d[a-z]\b/.test(low) && /\b(?:consecutive|numbers?|integers?|cost|costs|old|apart|each|per)\b/.test(low));
   }
 
   // numbers and operators, or null if it isn't plain arithmetic
@@ -42,12 +44,253 @@
       }
       var c = s[i];
       if ("+-−–×*x÷:^()²³|".indexOf(c) >= 0){ out.push({ t:"o", s:c }); i++; continue; }
+      if (c === "/" && out.length && out[out.length - 1].t !== "o"){ out.push({ t:"o", s:"÷" }); i++; continue; }   // "847 / 12"
       return null;
     }
     return out;
   }
+  /* ===================== a problem typed in words ===================== */
+  /* readTyped("what is forty-seven plus 38?") -> { q:"47 + 38", ans:null }; readTyped("subtract 5 from 12") -> { q:"12 - 5" }.
+     Reads homework phrasing (what is, solve, show me how to do, = ?, step by step, please), number words (forty-seven,
+     three fourths, two and a half, four point five), operator words (plus, take away, times, multiplied by, divided by,
+     squared, to the power of), phrases (subtract 5 from 12, 5 less than 12, the sum of 4, 5 and 6, the product of 3 and 4,
+     divide 12 by 3, how many times does 3 go into 12, 3 groups of 4), ½ ¼ ¾ …, $ and one shared unit (5 cm + 7 cm).
+     Every word has to be used up, or it returns null and the page reads the text the way it always did. A phrase has to
+     end the problem ("the sum of 2 and 3 times 4" could be read two ways, so it isn't read). ans: "remainder" | "decimal" |
+     "fraction" when the words ask for one ("as a decimal"). The same reader is on the + − × ÷ pages, the Scratch Paper
+     and the Order Stack; here search uses it to see which page a worded problem belongs on.
+     TYPED.plain(text): the same text with the homework words gone and the numbers in digits, for routing only
+     ("Problem 4: can you find the GCF of twelve and eighteen?" -> "gcf of 12 and 18"). */
+  var TYPED = (function(){
+    var ONE = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+      thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19,
+      twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+    var SCALE = { hundred:100, thousand:1000, million:1000000 };
+    var DEN = { half:2, halves:2, third:3, thirds:3, fourth:4, fourths:4, quarter:4, quarters:4, fifth:5, fifths:5, sixth:6, sixths:6,
+      seventh:7, sevenths:7, eighth:8, eighths:8, ninth:9, ninths:9, tenth:10, tenths:10, twelfth:12, twelfths:12,
+      hundredth:100, hundredths:100 };
+    var VULG = { "½":"1/2", "⅓":"1/3", "⅔":"2/3", "¼":"1/4", "¾":"3/4", "⅕":"1/5", "⅖":"2/5", "⅗":"3/5", "⅘":"4/5", "⅙":"1/6",
+      "⅚":"5/6", "⅐":"1/7", "⅛":"1/8", "⅜":"3/8", "⅝":"5/8", "⅞":"7/8", "⅑":"1/9", "⅒":"1/10" };
+    var FRW = "halves|half|thirds?|fourths?|quarters?|fifths?|sixths?|sevenths?|eighths?|ninths?|tenths?|twelfths?|hundredths?";
+    var W = "(?:" + Object.keys(ONE).concat(Object.keys(SCALE)).join("|") + ")";
+    var NUM = "-?(?:\\d+ \\d+/\\d+|\\d+/\\d+|\\d{1,3}(?:,\\d{3})+(?:\\.\\d+)?|\\d+(?:\\.\\d+)?|\\.\\d+)";
+    var LIST = NUM + "(?:\\s*,\\s*" + NUM + ")*\\s*,?\\s+and\\s+" + NUM;
+    var UNITS = "mm|cm|km|m|meters?|metres?|centimeters?|millimeters?|kilometers?|ft|feet|foot|inch(?:es)?|yd|yards?|mi|miles?|g|kg|mg|grams?|kilograms?|"
+      + "lbs?|pounds?|oz|ounces?|ml|l|liters?|litres?|milliliters?|gal|gallons?|cups?|quarts?|pints?|cents?|¢|minutes?|mins?|hours?|hrs?|"
+      + "seconds?|secs?|days?|weeks?|years?|degrees?|°|points?|pts|units?";
+    var SEP = "(?:\\s*[:,]\\s*|\\s+)";
+    var LEAD = new RegExp("^(?:please|pls|plz|hey|hi|hello|ok(?:ay)?|so|um+|hmm+|can (?:you|u|i|we)|could (?:you|u)|would (?:you|u)|will (?:you|u)|help(?: me)?(?: with)?|"
+      + "i need help(?: with)?|i need to|i want to|i have to|i'?m trying to|how (?:do|would|can|should) (?:i|you|we)|how to|show me how to|show (?:me )?(?:the |your |all (?:the )?)?(?:work|steps|working)(?: for| of| to| on| in)?|(?:the )?steps (?:for|to|of)|show me|show|teach me(?: how)? to|"
+      + "explain(?: how to)?|tell me|what(?:'s| is| are|s)?(?: the)? (?:answer|solution|result)(?: to| for| of)?|what(?:'s| is| are|s)|what does|what do (?:you|i) get(?: (?:when|if) (?:you|i))?|"
+      + "how much (?:is|are)|solve|calculate|compute|evaluate|figure out|work out|find out|find|simplify|do|answer|the value of|value of|the|exactly|just|"
+      + "quick(?:ly)?|question|problem|q|math|me|out|it|this|with|true or false|is|are|let me (?:do|try|work)(?: out)?|i'?ll do|"
+      + "(?:use|using) (?:the )?(?:order of operations|pemdas|bodmas|bidmas|bedmas|long division|the standard algorithm|column (?:addition|subtraction)|regrouping)(?: to(?: solve| evaluate| simplify| find| do| work out)?)?|"
+      + "order of operations|pemdas|bodmas|bidmas|bedmas|by hand|on paper|in columns)" + SEP);
+    var TRAIL = new RegExp("(?:\\s*(?:[?.!]+|=\\s*(?:\\?+|_+|□|blank|what)?)|(?:^|\\s+)(?:please|pls|thanks|thank you|thx|for me|for my homework|step[- ]by[- ]step|"
+      + "with (?:the |all (?:the )?)?(?:steps|work)|(?:and )?show(?:ing)? (?:me )?(?:the |your |my |all (?:the )?)?(?:work|steps)|by hand|on paper|in columns|vertically|myself|"
+      + "(?:using |with |by )(?:the )?(?:order of operations|pemdas|bodmas|bidmas|bedmas|long division|the standard algorithm|regrouping|carrying|borrowing)|"
+      + "long division|column (?:addition|subtraction|method)|(?:the )?standard algorithm|equals? what|is what|equals?|is equal to|equal to|come to|make|exactly|now|again|is|are|answer|real quick|quickly|asap))$");
+    var ANS = /(?:\s*,\s*|\s+)(?:with (?:a |the )?remainders?|(?:and )?(?:give |write |show )?(?:the answer |it |your answer )?(?:as|in) (?:an? )?(decimals?|fractions?|mixed numbers?|remainders?)(?: form)?)$/;
+
+    function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+    function wordsToNum(toks){                     // ["three","hundred","forty","two"] -> 342, or null
+      var total = 0, cur = 0, seen = false, last = "";
+      for (var i = 0; i < toks.length; i++){
+        var t = toks[i];
+        if (t === "and"){ if (!/^(?:hundred|thousand|million)$/.test(last)) return null; last = t; continue; }
+        if (t === "a" || t === "an"){ if (i + 1 < toks.length && has(SCALE, toks[i + 1])){ cur = 1; seen = true; last = t; continue; } return null; }
+        if (has(ONE, t)){
+          var v = ONE[t];
+          if (v < 10 && cur % 10 !== 0) return null;              // "five six"
+          if (v >= 10 && cur % 100 !== 0) return null;            // "forty twenty"
+          cur += v; seen = true;
+        } else if (t === "hundred"){ if (!cur || cur >= 100) return null; cur *= 100; }
+        else if (t === "thousand" || t === "million"){ if (!cur) return null; total += cur * SCALE[t]; cur = 0; }
+        else return null;
+        last = t;
+      }
+      return seen ? total + cur : null;
+    }
+    function numWords(s){
+      // "four point five" -> 4.5
+      s = s.replace(new RegExp("\\b(" + W + "(?:[\\s-]+(?:" + W + "|and|an?))*)\\s+point\\s+(" + W + "(?:[\\s-]+" + W + ")*)\\b", "g"), function(x, a, b){
+        var w = wordsToNum(a.split(/[\s-]+/)), ds = b.split(/[\s-]+/), f = "";
+        for (var i = 0; i < ds.length; i++){ var d = ONE[ds[i]]; if (d === undefined || d > 9) return x; f += d; }
+        return w === null ? x : w + "." + f;
+      });
+      var A = "(?:an?\\s+(?=(?:hundred|thousand|million)\\b))?";
+      return s.replace(new RegExp("\\b" + A + W + "(?:(?:[\\s-]+|\\s+and\\s+(?=" + W + "\\b|an?\\s+(?:hundred|thousand)\\b))" + A + W + ")*\\b", "g"), function(x){
+        var n = wordsToNum(x.split(/[\s-]+/));
+        if (n !== null) return String(n);
+        var parts = x.split(/\s+and\s+/), out = [];               // "forty-seven and thirty-eight": two numbers
+        if (parts.length < 2) return x;
+        for (var i = 0; i < parts.length; i++){ var v = wordsToNum(parts[i].split(/[\s-]+/)); if (v === null) return x; out.push(v); }
+        return out.join(" and ");
+      });
+    }
+    function val(t){                               // a number's value, to tell which is bigger
+      t = String(t).replace(/,/g, ""); var m;
+      if ((m = /^(-?)(\d+) (\d+)\/(\d+)$/.exec(t))) return (m[1] ? -1 : 1) * (Number(m[2]) + Number(m[3]) / Number(m[4]));
+      if ((m = /^(-?\d+)\/(\d+)$/.exec(t))) return Number(m[1]) / Number(m[2]);
+      return Number(t);
+    }
+    function grp(list, op){ return "⟨" + list.join(" " + op + " ") + "⟩"; }
+    function listOf(x){ return x.match(new RegExp(NUM, "g")); }
+    function tidy(s){
+      var prev;
+      do { prev = s; s = s.replace(LEAD, "").replace(TRAIL, "").replace(/^["']+|["']+$/g, "").trim(); } while (s !== prev && s);
+      return s;
+    }
+
+    function read(raw){
+      var s = String(raw == null ? "" : raw), ans = null, bad = false, m, prev;
+      s = s.replace(/[   ]/g, " ").replace(/[−–—‒﹣－]/g, "-").replace(/[×✕✖⋅·∙]/g, "×").replace(/＋/g, "+").replace(/[⁄∕]/g, "/")
+           .replace(/[’‘]/g, "'").replace(/[“”]/g, "\"")
+           .replace(/(\d)?\s?([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒])/g, function(x, d, v){ return (d ? d + " " : " ") + VULG[v]; })
+           .toLowerCase().replace(/\s+/g, " ").trim();
+      if (!s || s.length > 300) return null;
+      // a name tag like "(Lead Engineer)" says nothing about the math
+      s = s.replace(/\(\s*[a-z][a-z .,'&\/-]*[a-z]\s*\)/g, " ").replace(/\s+/g, " ").trim();
+      do {
+        prev = s;
+        s = tidy(s);
+        if ((m = ANS.exec(s))){
+          var k = m[1] || "remainder";
+          ans = /^dec/.test(k) ? "decimal" : /^(?:frac|mixed)/.test(k) ? "fraction" : "remainder";
+          s = s.slice(0, m.index).trim();
+        }
+        // "47 + 38 = 95?": the problem, not the claim
+        if (/\d\s*(?:[+×*÷\/:^-]|plus|minus|times|divided|over)\s*\.?\d/.test(s.replace(/=.*$/, "")) && /=\s*-?[\d.,\/ ]+$/.test(s)) s = s.replace(/\s*=\s*-?[\d.,\/ ]+$/, "");
+      } while (s !== prev && s);
+      if (!s) return null;
+      // number words: "two and three fourths" is a mixed number, "one and a half" too
+      s = s.replace(new RegExp("\\b(\\w+)\\s+and\\s+(?:a\\s+(half)|(\\w+\\s+(?:" + FRW + ")))\\b", "g"), function(x, w, h, f){ return w + " & " + (h ? "one half" : f); });
+      s = numWords(s).replace(/\b(\d+(?:\.\d+)?) (hundred|thousand|million)\b/g, function(x, n, k){ var v = Number(n) * SCALE[k]; return Math.floor(v) === v ? String(v) : x; });
+      s = s.replace(new RegExp("\\b(\\d+|an?)\\s+(" + FRW + ")\\b", "g"), function(x, n, d){
+        var nn = /^an?$/.test(n) ? 1 : Number(n);
+        if (nn > 1 && !/s$/.test(d)) return x;                     // "three fourth"
+        return nn + "/" + DEN[d];
+      });
+      s = s.replace(/(\d+) & (\d+\/\d+)\b/g, "$1 $2").replace(/ & /g, " and ");
+      if (new RegExp("\\b(?:" + FRW + ")\\b").test(s.replace(/\bhalf of\b/g, ""))) return null;
+      // money and units: "$" goes; a unit word goes when every number that has one has the same one
+      if (/\$/.test(s) && /¢|\bcents?\b/.test(s)) return null;
+      if (/\$|\d\s*(?:dollars?|bucks)\b/.test(s) && !ans) ans = "decimal";         // money divides into dollars and cents
+      s = s.replace(/\$\s*/g, "").replace(/(\d)\s*(?:dollars?|bucks)\b/g, "$1");
+      var ur = new RegExp("(" + NUM + ")\\s*(" + UNITS + ")(?![a-z])", "g"), seen = {}, nu = 0;
+      s.replace(ur, function(x, n, u){ seen[u.replace(/(?:es|s)$/, "").replace(/^(?:feet|foot)$/, "ft")] = 1; nu++; return x; });
+      if (nu && Object.keys(seen).length > 1) return null;
+      if (nu) s = s.replace(ur, "$1");
+      // phrases
+      s = s.replace(/\b(?:the\s+)?(?:sum|total)\s+of\s+/g, "Σ ").replace(/\b(?:the\s+)?product\s+of\s+/g, "Π ")
+           .replace(/\b(?:the\s+)?difference\s+(?:of|between)\s+/g, "Δ ").replace(/\b(?:the\s+)?quotient\s+of\s+/g, "Ø ");
+      s = s.replace(new RegExp("Σ (" + LIST + ")", "g"), function(x, l){ return grp(listOf(l), "+"); })
+           .replace(new RegExp("Π (" + LIST + ")", "g"), function(x, l){ return grp(listOf(l), "×"); })
+           .replace(new RegExp("Δ (" + NUM + ") and (" + NUM + ")", "g"), function(x, a, b){ if (val(a) < val(b)) bad = true; return grp([a, b], "-"); })
+           .replace(new RegExp("Ø (" + NUM + ") and (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "÷"); })
+           .replace(new RegExp("\\badd (?:up |together )?(" + LIST + ")(?: together)?", "g"), function(x, l){ return grp(listOf(l), "+"); })
+           .replace(new RegExp("\\badd (" + NUM + ") to (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "+"); })
+           .replace(new RegExp("\\b(" + NUM + ") added to (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "+"); })
+           .replace(new RegExp("\\bsubtract (" + NUM + ") from (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\b(" + NUM + ") subtracted from (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\btake (?:away )?(" + NUM + ") (?:away )?from (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\b(" + NUM + ") (?:less|fewer) than (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\b(" + NUM + ") more than (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "+"); })
+           .replace(new RegExp("\\bmultiply (" + NUM + ") (?:by|and|times|with) (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "×"); })
+           .replace(new RegExp("\\bmultiply (?:together )?(" + LIST + ")", "g"), function(x, l){ return grp(listOf(l), "×"); })
+           .replace(new RegExp("\\bdivide (" + NUM + ") by (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "÷"); })
+           .replace(new RegExp("\\bdivide (" + NUM + ") into (" + NUM + ") (?:equal )?(?:groups|parts|pieces|piles|teams|shares)", "g"), function(x, a, b){ return grp([a, b], "÷"); })
+           .replace(new RegExp("\\bhow many times (?:does|do|will|can|would) (" + NUM + ") (?:go|goes|fit) into (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "÷"); })
+           .replace(new RegExp("\\b(" + NUM + ") (?:goes|go|fits) into (" + NUM + ")(?: how many times)?", "g"), function(x, a, b){ return grp([b, a], "÷"); })
+           .replace(new RegExp("\\bhow many (\\d+)'?s (?:are )?(?:there )?in (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "÷"); })
+           .replace(new RegExp("\\b(" + NUM + ") (?:groups|sets|rows|lots) of (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "×"); })
+           .replace(new RegExp("\\b(?:twice|double) (" + NUM + ")", "g"), function(x, a){ return grp(["2", a], "×"); })
+           .replace(new RegExp("\\bhalf of (" + NUM + ")", "g"), function(x, a){ return grp(["1/2", a], "×"); })
+           .replace(new RegExp("(\\d+/\\d+) of (" + NUM + ")", "g"), function(x, a, b){ return a + " × " + b; })
+           .replace(new RegExp("\\b(?:the )?(square|cube) of (" + NUM + ")", "g"), function(x, k, a){ return a + "^" + (k === "square" ? 2 : 3); });
+      // "add 4 + 5", "multiply 4 × 5", "divide 12 ÷ 4": the word and the sign say the same thing
+      s = s.replace(new RegExp("\\badd (?=" + NUM + "\\s*\\+\\s*\\.?\\d)", "g"), "").replace(new RegExp("\\bmultiply (?=" + NUM + "\\s*[×*x]\\s*\\.?\\d)", "g"), "")
+           .replace(new RegExp("\\bdivide (?=" + NUM + "\\s*÷\\s*\\.?\\d)", "g"), "");
+      if (bad || /[ΣΠΔØ]/.test(s)) return null;
+      // the words for the signs
+      s = s.replace(/\bsquared\b/g, "^2").replace(/\bcubed\b/g, "^3")
+           .replace(/\b(?:to the|raised to(?: the)?)\s+(?:power of\s+)?(\d+)(?:st|nd|rd|th)?(?:\s+power)?\b/g, "^$1")
+           .replace(/\bplus\b|\badded to\b|\bincreased by\b/g, "+")
+           .replace(/\btake ?away\b|\bminus\b|\bdecreased by\b|\bless\b/g, "-")
+           .replace(/\bmultiplied (?:by|with)\b|\btimes\b/g, "×").replace(/\bdivided by\b/g, "÷")
+           .replace(/(\d)\s+over\s+(?=\d)/g, "$1/").replace(/\bnegative\s+(?=\d|\.)/g, "-")
+           .replace(/([\d)⟩])\s*x\s*(?=[\d.(⟨])/g, "$1 × ");
+      s = tidy(s.replace(/\s+/g, " ").trim());
+      if (!s || !/\d/.test(s) || !/^[\d\s.,+\-×*÷\/:^()\[\]{}²³⟨⟩]+$/.test(s)) return null;
+      // "the sum of 2 and 3 times 4": (2 + 3) × 4 or 2 + 3 × 4? A phrase has to end the problem
+      if (/⟩\s*\S/.test(s)) return null;
+      if (/^⟨[^⟨⟩]*⟩$/.test(s)) s = s.slice(1, -1);
+      s = s.replace(/⟨/g, "(").replace(/⟩/g, ")").replace(/\s+/g, " ").trim();
+      return { q:s, ans:ans };
+    }
+    function plain(raw){
+      var s = String(raw == null ? "" : raw), prev;
+      s = s.replace(/[−–—‒﹣－]/g, "-").replace(/[✕✖⋅·∙]/g, "×").replace(/[⁄∕]/g, "/").replace(/[’‘]/g, "'")
+           .replace(/(\d)?\s?([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒])/g, function(x, d, v){ return (d ? d + " " : " ") + VULG[v]; })
+           .toLowerCase().replace(/\s+/g, " ").trim();
+      if (!s || s.length > 300) return s;
+      // name tags and asides: "(Lead Engineer)", "(show your work)"
+      s = s.replace(/\(\s*[a-z][a-z.,'&\/-]*(?:\s+[a-z.,'&\/-]+)+\s*\)|\(\s*[a-z]{4,}\s*\)/g, " ").replace(/\s+/g, " ").trim();
+      // problem labels: "Problem 4:", "Q3)", "1)", "a)", "hw:", "4. Find …"; "Ms. Lee asks:"
+      s = s.replace(/^(?:(?:problem|question|exercise|example|ex|hw|homework|q|#)\s*\d*[a-z]?\s*[:.)-]|\d{1,2}[a-z]?\s*\)|[a-z]\)|\d{1,2}\.\s+(?=[a-z]))\s*/, "")
+           .replace(/^[a-z .']{1,40}\b(?:asks|says|wants to know)\s*:\s*/, "");
+      do { prev = s; s = tidy(s); } while (s !== prev && s);
+      s = s.replace(new RegExp("\\b(\\w+)\\s+and\\s+(?:a\\s+(half)|(\\w+\\s+(?:" + FRW + ")))\\b", "g"), function(x, w, h, f){ return w + " & " + (h ? "one half" : f); });
+      s = numWords(s).replace(/\b(\d+(?:\.\d+)?) (hundred|thousand|million)\b/g, function(x, n, k){ var v = Number(n) * SCALE[k]; return Math.floor(v) === v ? String(v) : x; });
+      s = s.replace(new RegExp("\\b(\\d+|an?)\\s+(" + FRW + ")\\b", "g"), function(x, n, d){
+        var nn = /^an?$/.test(n) ? 1 : Number(n);
+        return nn > 1 && !/s$/.test(d) ? x : nn + "/" + DEN[d];
+      }).replace(/(\d+) & (\d+\/\d+)\b/g, "$1 $2").replace(/ & /g, " and ");
+      // the words for the signs, between numbers only ("7 times table" stays as it is)
+      s = s.replace(/\bnegative\s+(?=\d|\.)/g, "-")
+           .replace(/([\d)]|\b[a-z](?:\^\d+)?)\s*\bplus\s+(?=[\d(.-]|[a-z]\b)/g, "$1 + ").replace(/([\d)]|\b[a-z](?:\^\d+)?)\s*\bminus\s+(?=[\d(.-]|[a-z]\b)/g, "$1 - ")
+           .replace(/([\d)])\s*\b(?:times|multiplied by)\s+(?=[\d(.-])/g, "$1 × ").replace(/([\d)])\s*\bdivided by\s+(?=[\d(.-])/g, "$1 ÷ ")
+           .replace(/(\d|\b[a-z])\s+over\s+(?=\d|[a-z]\b)/g, "$1/").replace(/\s+(?:equals|is equal to)\s+/g, " = ");
+      // powers in words: "10 to the sixth power", "3 to the power of -1", "i squared", "x to the 4th times x squared"; "f of x" is f(x)
+      var ORD = { second:2, third:3, fourth:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10, eleventh:11, twelfth:12 };
+      s = s.replace(/\s*\b(?:to\s+the\s+power\s+of|to\s+the\s+power|raised\s+to(?:\s+the)?(?:\s+power\s+of)?)\s+(-?\d+|[a-z]\b)(?:st|nd|rd|th)?(?:\s+power)?/g, "^$1")
+           .replace(/\s*\bto\s+the\s+(second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|-?\d+(?:st|nd|rd|th))(?:\s+power)?\b/g, function(x, o){ return "^" + (ORD[o] || parseInt(o, 10)); })
+           .replace(/([\d)]|\b[a-z])\s+squared\b/g, "$1^2").replace(/([\d)]|\b[a-z])\s+cubed\b/g, "$1^3")
+           .replace(/((?:\d|\)|\b[a-z])(?:\^-?\d+)?)\s+times\s+(?=\b[a-z]\b|[\d(])/g, "$1 × ")
+           .replace(/\b([fgh])\s+of\s+(-?\d+|[a-z])\b/g, "$1($2)");
+      return s.replace(/\s+/g, " ").trim();
+    }
+    return { read:read, plain:plain };
+  })();
+
+  // a problem with homework words around it ("please solve 47+38", "what does 1000 / 8 equal", "Problem 4: GCF of twelve and
+  // eighteen") goes where its plain form goes; the page gets the words as typed, since every page reads them now
+  var WEAK = { "algebra.html":1, "glossary.html":1, "pemdas.html":1, "exponents.html":1, "fractions.html":1, "ratios.html":1, "wordproblems.html":1, "percents.html":1, "factors.html":1 },
+      LAST = { "algebra.html":1, "glossary.html":1, "pemdas.html":1 };
   function route(raw){
-    var s = String(raw).replace(/\s+/g, " ").trim();
+    var r = route0(raw), s = String(raw).replace(/\s+/g, " ").trim(), r2;
+    if (!r || r.none) return r;
+    // a story with sentences is read as it is ("Ms." doesn't end one)
+    if (r.page === "wordproblems.html" && /[.!?]\s+\S/.test(s.replace(/\b(?:mr|mrs|ms|dr|st|vs)\.\s/gi, "x "))) return r;
+    if (!WEAK[r.page]) return r;
+    var t = TYPED.read(s), p = TYPED.plain(s);
+    if (r.page === "glossary.html" && !/\d/.test(p)) return r;                   // "what is likely": a word to look up
+    // "three thousand seven hundred forty-two": a number written in words
+    if (!/\d/.test(s) && /^-?\d[\d,]*(?:\.\d+)?$/.test(p)) return go("number-sense.html", qp(s), "number sense");
+    // "0.75 as a fraction", "7/4 as a decimal": one number in another form
+    if (t && t.ans && /^-?[\d.,]+(?: \d+\/\d+|\/\d+)?$/.test(t.q)) return go("fractions.html", qp(s), "a number in another form");
+    if (t && t.q !== s && (r2 = route0(t.q)) && r2.page !== r.page) return go(r2.page, qp(s), r2.what, r2.alt);
+    // (never from a page that has the problem's kind to one that only catches what's left)
+    if (p && p !== s.toLowerCase() && (r2 = route0(p)) && r2.page !== r.page && (!LAST[r2.page] || LAST[r.page])) return go(r2.page, qp(s), r2.what, r2.alt);
+    return r;
+  }
+  function route0(raw){
+    // rows or equations typed one per line keep their breaks as "; " (a 3 × 3 matrix, a system of equations)
+    var lines = String(raw).split(/\s*\n\s*/).filter(Boolean);
+    raw = lines.length > 1 && lines.filter(function(l){ return /\d/.test(l); }).length >= 2 ? lines.join("; ") : String(raw);
+    var s = raw.replace(/\s+/g, " ").replace(/∶/g, ":").replace(/⟨/g, "<").replace(/⟩/g, ">").replace(/％/g, "%")
+               .replace(/\bper\s+cent\b/gi, "percent").replace(/(\d)\s*pct\b/gi, "$1%")
+               .replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, function(x){ return /[⁻⁰¹⁴-⁹]/.test(x) || x.length > 1 ? "^" + x.replace(/[⁻⁰¹²³⁴⁵⁶⁷⁸⁹]/g, function(c){ return "-0123456789".charAt("⁻⁰¹²³⁴⁵⁶⁷⁸⁹".indexOf(c)); }) : x; }).trim();
     if (!s) return null;
     var low = s.toLowerCase();
 
@@ -85,7 +328,9 @@
     var hasX = /(?:^|[^a-z])[xt](?![a-z])/.test(low.replace(/\b(?:d\s*\/\s*d[xt]|d[xt])\b/g, " "));
     if (/\bd\s*\/\s*d[xt]\b|\bd²\s*\/\s*d[xt]²|\bderivatives?\b|\bdifferentiate\b|\b[fgy]\s*(?:'+|′+|″)\s*(?:\(|$|\s)/.test(low) ||
         /\blim(?:its?)?\b|\b[xt]\s*(?:→|->)\s*[−-]?\s*(?:\d|∞|inf|π|pi)|\b[xt]\s+approaches\b/.test(low) && hasX ||
-        /\bintegra(?:l|ls|te)\b|∫|\bantiderivatives?\b|\bint_/.test(low) ||
+        /\bintegra(?:l|ls|te)\b|∫|\bantiderivatives?\b|\bint_|\bint\b.*\bd[xt]\b|\bdy\s*\/\s*d[xt]\b|\bddx\b|\barea\s+under\b|\bincreasing\s+(?:and|or)\s+decreasing\b/.test(low) ||
+        /\b(?:velocity|acceleration)\b/.test(low) && /\b[sh]\s*\(\s*t\s*\)/.test(low) ||
+        /\baverage\s+rate\s+of\s+change\b/.test(low) && /\b(?:from|between)\s+[xt]\s*=/.test(low) ||
         /\btangent\s+(?:to|at)\b/.test(low) && hasX ||
         /\btangent\s+lines?\b|\bhorizontal\s+tangents?\b|\binstantaneous\s+rate\b|\bcritical\s+(?:points?|numbers?|values?)\b|\bextrem(?:a|um)\b|\binflection\b/.test(low) ||
         /\b(?:local|absolute|relative)?\s*(?:max(?:imum|ima)?|min(?:imum|ima)?)s?\b/.test(low) && (/x\s*(?:\^|\*\*|²|³)/.test(low) || /\[\s*[−-]?[\d.π]+\s*,\s*[−-]?[\d.π]+\s*\]/.test(s) && hasX) ||
@@ -101,16 +346,20 @@
     var story = isStory(s, low);
     // unit conversions: a measure to another unit ("5 ft 7 in to inches", "3.2 km to m", "60 mph to ft/s", "98.6 F to C",
     // "how many cups in a gallon"); "convert 7/4 to a decimal" stays with the fractions, below
-    var UNIT = "(?:in(?:ch(?:es)?)?|ft|feet|foot|yd|yards?|mi|miles?|mm|cm|km|m|meters?|metres?|millimeters?|centimeters?|kilometers?|mg|g|kg|grams?|milligrams?|kilograms?|oz|ounces?|lbs?|pounds?|tons?|tsp|tbsp|teaspoons?|tablespoons?|cups?|pt|pints?|qt|quarts?|gal|gallons?|ml|l|liters?|litres?|milliliters?|fl\\.?\\s*oz|sec(?:onds?)?|s|min(?:utes?)?|h|hr|hours?|days?|weeks?|years?|yr|°\\s*[fck]|[fck]|degrees?\\s+(?:fahrenheit|celsius)|fahrenheit|celsius|kelvin|mph|km\\/h|kph|ft\\/s|m\\/s|acres?|hectares?|ha|(?:square|sq\\.?|cubic|cu\\.?)\\s+(?:inch(?:es)?|feet|foot|yards?|miles?|meters?|centimeters?))";
-    var unitTo = new RegExp("\\d[\\d.,\\/ ]*\\s*" + UNIT + "\\b(?:[\\s\\d.,]*" + UNIT + "\\b)*\\s*(?:to|in|into|=|→|->)\\s*(?:how\\s+many\\s+)?" + UNIT + "(?![a-z])", "i");
-    var unitHowMany = new RegExp("\\bhow\\s+many\\s+" + UNIT + "\\s+(?:are\\s+)?(?:in|make)\\b", "i");
-    if (!asksWord && !story && (unitTo.test(low) || unitHowMany.test(low) || /\bconvert\b[^%$]*\d[\d.,]*\s*(?:°|degrees?)\s*[fc]\b/.test(low)))
+    var UNIT = "(?:in(?:ch(?:es)?)?|ft|feet|foot|yd|yards?|mi|miles?|mm|cm|km|m|meters?|metres?|millimeters?|centimeters?|kilometers?|millimetres?|centimetres?|kilometres?|kgs|kms|kilos?|dm|decimeters?|decimetres?|hrs|mins|deg(?:rees?)?\\s*[fck]\\b|fluid\\s+(?:ounces?|oz)|mg|g|kg|grams?|milligrams?|kilograms?|oz|ounces?|lbs?|pounds?|tons?|tsp|tbsp|teaspoons?|tablespoons?|cups?|pt|pints?|qt|quarts?|gal|gallons?|ml|l|liters?|litres?|milliliters?|fl\\.?\\s*oz|sec(?:onds?)?|s|min(?:utes?)?|h|hr|hours?|days?|weeks?|years?|yr|°\\s*[fck]|[fck]|degrees?\\s+(?:fahrenheit|celsius)|fahrenheit|celsius|kelvin|mph|km\\/h|kph|ft\\/s|m\\/s|acres?|hectares?|ha|(?:square|sq\\.?|cubic|cu\\.?)\\s+(?:inch(?:es)?|feet|foot|yards?|miles?|meters?|centimeters?|ft|in|yd|mi|m|cm|mm|km)|(?:ft|in|yd|mi|m|cm|mm|km)\\s*(?:\\^\\s*[23]|[²³])|(?:feet|foot|inch(?:es)?|yards?|miles?|meters?|metres?|centimeters?|cm|m|ft|in)\\s+(?:squared|cubed))";
+    var unitTo = new RegExp("(?:\\d[\\d.,\\/ ]*|\\b(?:half\\s+)?an?\\s+)\\s*" + UNIT + "(?![a-z])\\.?(?:[\\s\\d.,]*" + UNIT + "(?![a-z])\\.?)*\\s*(?:to|in|into|=\\s*(?:\\?+|_+)?|→|->|(?:is|are|equals?|makes?)\\s+how\\s+many)\\s*(?:how\\s+many\\s+|an?\\s+)?" + UNIT + "(?![a-z])", "i");
+    var unitHowMany = new RegExp("\\bhow\\s+many\\s+" + UNIT + "\\s+(?:are\\s+)?(?:in|make|makes|is|are|equals?)\\b", "i");
+    var unitMixed = /\d\s*(?:ft|feet|foot)\.?\s*\d+(?:\.\d+)?\s*(?:in\b|inch)|\d\s*(?:yd|yards?)\s*\d+\s*(?:ft|feet|foot)\b|\d\s*(?:lbs?|pounds?)\s*\d+\s*(?:oz|ounces?)\b|\d\s*(?:gal|gallons?)\s*\d+\s*(?:qt|quarts?)\b|\d\s*(?:pt|pints?)\s*\d+\s*cups?\b|\d+\s*['′]\s*\d+\s*(?:"|''|″|”)|\d\s*(?:h|hrs?|hours?)\s*\d+\s*(?:m|mins?|minutes?)\b(?![^.?!]*\b(?:after|before|from|until|till|later|past)\b)(?![^.?!]*\d:\d)/i;
+    var unitRate = /\bper\s+[a-z]+\s+(?:to|in|into)\s+(?:[a-z]+\s+)?[a-z]+\s+per\s+[a-z]+/i;
+    if (!asksWord && !story && (unitTo.test(low) || unitHowMany.test(low) || unitMixed.test(low) || unitRate.test(low) || /\bconvert\b[^%$]*\d[\d.,]*\s*(?:°|degrees?)\s*[fc]\b/.test(low)))
       return go("unit-conversions.html", qp(s), "unit conversions");
     // money math: compound interest, saving monthly, loans and payments, credit cards, paychecks, budgets, stacked discounts,
     // tax and tip, inflation; "how long until it doubles" stays with the Log Ladder and one plain percent with the Hundred Grid
     if (!asksWord && (/\bcompound(?:ed|ing)?\b/.test(low) && !/\bhow\s+(?:long|many\s+years)\b|\bdoubl|\btripl|\bhalf-?\s*life/.test(low) ||
-        /\bloans?\b|\bmortgage\b|\bmonthly\s+payments?\b|\bamortiz|\bapr\b|\bapy\b|\bcredit\s+cards?\b|\bpaychecks?\b|\bsalary\b|\bovertime\b|\btime\s+and\s+a\s+half\b|\bbudget\b|\b50\s*\/\s*30\s*\/\s*20\b|\binflation\b|\bpurchasing\s+power\b|\bgross\s+pay\b|\bnet\s+pay\b|\b401\s*\(?k\)?/.test(low) ||
-        /\d+\s*hours?\s+(?:at|@)\s+\$?\d/.test(low) ||
+        /\bloans?\b|\bmortgage\b|\bmonthly\s+payments?\b|\bamortiz|\bapr\b|\bapy\b|\bcredit\s+cards?\b|\bpaychecks?\b|\bsalary\b|\bovertime\b|\btime\s+and\s+a\s+half\b|\bbudget\b(?!\s+of\s+(?:at\s+most\s+)?\$)(?![^.?!]*\bline\b)|\b50\s*\/\s*30\s*\/\s*20\b|\binflation\b|\bpurchasing\s+power\b|\bgross\s+pay\b|\bnet\s+pay\b|\b401\s*\(?k\)?/.test(low) ||
+        /\d+\s*(?:hours?|hrs?)\s+(?:at|@)\s+\$?\d/.test(low) ||
+        /\bmonthly\s+deposits?\b|\bdeposits?\s+(?:needed|each|every|per)\b|\bsave\s+(?:each|every|per|a)\s+month\b|\bsave\s+for\s+an?\s+\$|\bborrow\w*\s+\$|\d\s*%\s+down\b|\bbi-?weekly\b|\btake-?\s*home\b|\bpay\s+(?:it\s+)?off\b|\b50\s*[-–]\s*30\s*[-–]\s*20\b/.test(low) ||
+        /\b(?:put|invest|deposit|save)\w*\s+\$?\d[\d,.]*\s+(?:a|per|each|every)\s+month\b/.test(low) || /\brent\b.*\bincome\b|\bincome\b.*\brent\b/.test(low) ||
         /\d\s*%\s*off\b.*\b(?:then|and\s+then|plus|another|extra)\b.*\d\s*%\s*off/.test(low) ||
         /\btax\b.*\btip\b|\btip\b.*\btax\b/.test(low) && /\d/.test(low) ||
         /\bmarkup\b.*\bmarkdown\b|\bmark(?:ed)?\s+up\b.*\bmark(?:ed)?\s+down\b/.test(low) ||
@@ -119,71 +368,101 @@
     // college statistics: the normal curve, z-scores, binomial, intervals, tests, regression ("P(X < 85) mean 70 sd 10")
     // ("line of best fit" and "scatter" stay on the Graph Paper, above)
     if (!asksWord && (/\bz[-\s]?(?:scores?|tests?)\b|\bnormal(?:ly)?\s+distribut|\bbell\s+curve\b|\bbinomial\b|\bconfidence\s+intervals?\b|\bmargin\s+of\s+error\b|\bhypothes[ie]s\b|\bnull\b|\bp-?values?\b|\bt-?tests?\b|\bregression\b|\bcorrelation\b|\bleast[-\s]squares\b|\bcentral\s+limit\b|\bsampling\s+distribution\b|\bstandard\s+error\b|\bempirical\s+rule\b|\b68\s*[-–]\s*95\s*[-–]\s*99/.test(low) ||
-        /\bp\s*\(\s*[x-z]?\s*[<>≤≥=]/.test(low) && /\b(?:mean|sd|standard\s+deviation|μ|σ|mu|sigma)\b|[μσ]/.test(low)))
+        /\bp\s*\(\s*[x-z]?\s*[<>≤≥=]/.test(low) && /\b(?:mean|sd|standard\s+deviation|μ|σ|mu|sigma)\b|[μσ]/.test(low) ||
+        /\bstandard\s+normal\b|\bstandardi[sz]e\b|\bstandard\s+deviations?\s+(?:above|below|from)\b|\bz\s+(?:for|of|when)\s+(?:x\s*=\s*)?[−-]?\d|\b(?:area|proportion|percent)\s+(?:to\s+the\s+(?:left|right)\s+of|between|above|below)\s+z\b|\bp\s*\(\s*[−-]?[\d.]+\s*<\s*[xz]\s*<|\bp\s*\(\s*z\s*[<>≤≥]/.test(low) ||
+        /\bn\s*=\s*\d+\b.*\bp\s*=\s*0?\.\d/.test(low) || /\bci\b|\d\s*%\s*(?:confidence|c\.i\.)/.test(low) ||
+        /\bt\s+tests?\b|\bproportion\s+tests?\b|\bh[0₀a]\s*:|\bha\s*:/.test(low) ||
+        /\b(?:mean|mu|average)\b|μ/.test(low) && /\b(?:sd|s\.d\.|sigma|standard\s+deviation)\b|σ|\bs\.d\./.test(low) &&
+          /\b(?:above|below|between|greater|less|more|fewer|top|bottom|percent|proportion|probability|percentile|within|at\s+(?:least|most)|standardi[sz]e|z)\b|\bp\s*\(/.test(low)))
       return go("college-statistics.html", qp(s), "statistics");
     // matrices and vectors: [[1,2],[3,4]], det, row reduce, <3, 4>, dot and cross products, three or more equations at once
     var eqList = s.split(/\s*(?:;|\band\b)\s*/i).filter(function(x){ return /=/.test(x); });
     if (!asksWord && (/\[\s*\[|\bmatri(?:x|ces)\b|\bdeterminants?\b|\bdet\s*[\[(]|\brref\b|\brow[-\s]?(?:reduc|echelon|operations?)|\baugmented\b|\bgauss(?:ian|-jordan)?\b|\bcramer|\bvectors?\b|\bdot\s+product\b|\bcross\s+product\b|\bunit\s+vector\b|\bprojection\s+of\b|\borthogonal\b/.test(low) ||
+        /\[\s*[−-]?\d[\d\s.,−-]*;/.test(s) || /\|\s*[−-]?\d[\d\s.−-]*;[^|]*\|/.test(s) || /\|\s*[a-z]\s*\|\s*(?:for|of|where|if|when)\b/i.test(s) ||
+        /\b(?![fgh]\b)[a-z]\s*(?:\^\s*\(?\s*[−-]\s*1\s*\)?|⁻¹)\s+(?:for|of|where|if|when)\b/i.test(s) ||
+        /\binverse\s+of\s+(?:the\s+matrix\s+)?(?:\[|[−-]?\d[\d\s.,−-]*;)/.test(low) || /\bdet(?:erminant)?\s*(?:of\s+)?[−-]?\d+\s+[−-]?\d/.test(low) ||
         /<\s*[−-]?\d+(?:\.\d+)?\s*,\s*[−-]?\d+(?:\.\d+)?(?:\s*,\s*[−-]?\d+(?:\.\d+)?)?\s*>/.test(s) || /\b\d*\s*i\s*[+−-]\s*\d*\s*j\b/.test(low) ||
         eqList.length >= 3 && eqList.every(function(x){ return /^[\s\d.a-z+\-−*×=\/()]+$/i.test(x) && !/[a-z]\s*\^/i.test(x); })))
       return go("matrices-and-vectors.html", qp(s), "matrices and vectors");
     // complex numbers: 3 + 2i, i^23, √−48, the conjugate, polar form, De Moivre
-    var iOnly = low.replace(/\b(?:simplify|divide|multiply|add|subtract|find|write|in|as|form|the|of|and|polar|rectangular|standard|trig(?:onometric)?|modulus|argument|conjugate|plot|by|cos|sin|cis|to|what|is|degrees?|radians?|pi|e|sqrt|cbrt|square|cube|root)\b/g, " ");
-    if (!asksWord && (/\bcomplex\b|\bimaginary\b|\bde\s*moivre\b|\bconjugate\b|\bcis\b|\bpolar\s+form\b|\bmodulus\b/.test(low) ||
+    var iOnly = low.replace(/\ba\s*\+\s*bi\b/g, " ").replace(/\b(?:from|plus|minus|times|squared|cubed|over|by|power|expand|evaluate|calculate|compute|solve|simplify|divide|multiply|add|subtract|find|write|in|as|form|the|of|and|polar|rectangular|standard|trig(?:onometric)?|modulus|argument|conjugate|plot|by|cos|sin|cis|to|what|is|degrees?|radians?|pi|e|sqrt|cbrt|square|cube|root)\b/g, " ");
+    if (!asksWord && (/\bcomplex\b|\bimaginary\b|\bde\s*moivre\b|\bconjugate\b|\bcis\b|\bpolar\s+form\b|\bmodulus\b|\ba\s*\+\s*bi\b/.test(low) ||
+        /\bsquare\s+root\s+of\s+[−-]\s*\d/.test(low) || /\b(?:absolute\s+value|magnitude|modulus)\s+of\b[^a-hj-z]*\d\s*i\b/.test(low) ||
+        /\b(?:square|cube|fourth|fifth|sixth|\d+(?:st|nd|rd|th))\s+roots\s+of\s+[−-]?\d/.test(low) || /\be\s*\^\s*\(?\s*\d*\s*i/.test(low) || /\d\s*\/\s*\(?\s*\d*i\s*\)?\s*$/.test(low) && !/[a-hj-z]/.test(iOnly) ||
         /(?:\d|\))\s*i(?![a-z])|[+−-]\s*i(?![a-z])|(?:^|[^a-z])i\s*(?:\^|\*\*)\s*[−-]?\d|(?:√|sqrt\s*\(?)\s*\(?\s*[−-]\s*\d/.test(low) && !/[a-hj-z]/.test(iOnly) ||
         /(?:^|[^a-z])i\s+sin\b/.test(low)))
       return go("complex-numbers.html", qp(s), "complex numbers");
     // functions: f(4) with the rule given, f(g(x)), domain and range of a formula, inverses, piecewise, even or odd
-    var hasRule = /\b[fgh]\s*\(\s*x\s*\)\s*=/.test(low);
-    if (!asksWord && !story && (/\bdomain\b|\bcompositions?\b|\bcompos(?:e|ite)\b|\bpiecewise\b|(?:\beven\s+or\s+odd\b|\bodd\s+or\s+even\b)(?=.*(?:x|[fgh]\s*\())|\bone[-\s]to[-\s]one\b|\bis\s+(?:it|this|that)\s+a\s+function\b|\bvertical\s+line\s+test\b|\bmapping\b/.test(low) ||
-        /\b[fgh]\s*\(\s*[fgh]\s*\(/.test(low) || /\(\s*[fgh]\s*[∘o]\s*[fgh]\s*\)/.test(low) || /\b[fgh]\s*(?:\^\s*\(?\s*[−-]\s*1\s*\)?|⁻¹)/.test(low) ||
+    var hasRule = /\b[fgh]\s*\(\s*x\s*\)\s*=/.test(low), anyRule = /\b[fgh]\s*\(\s*([a-z])\s*\)\s*=/.exec(low);
+    if (!asksWord && !story && (/\bdomain\b|\bcompositions?\b|\bcompos(?:e|ite)\b(?=.*(?:[fgh]\s*\(|(?:^|[^a-z])x(?![a-z])))|\bpiecewise\b|(?:\beven\s+or\s+odd\b|\bodd\s+or\s+even\b)(?=.*(?:x|[fgh]\s*\())|\bone[-\s]to[-\s]one\b|\bis\s+(?:it|this|that)\s+a\s+function\b|\bvertical\s+line\s+test\b|\bmapping\b/.test(low) ||
+        /\b[fgh]\s*\(\s*[fgh]\s*\(/.test(low) || /\(\s*[fgh]\s*[∘o]\s*[fgh]\s*\)/.test(low) || /\(\s*[fgh]\s*[+\-−*·\/]?\s*[fgh]\s*\)\s*\(/.test(low) ||
+        anyRule && (/\b(?:at|when|for|and|if|where)\s+[a-z]\s*=\s*[−-]?\d/.test(low) || /\bplug\b|\bsubstitute\b/.test(low) ||
+                    /\b[fgh]\s*\(\s*[−-]?\d/.test(low.replace(/\b[fgh]\s*\(\s*[a-z]\s*\)\s*=/g, " "))) || /\b[fgh]\s*(?:\^\s*\(?\s*[−-]\s*1\s*\)?|⁻¹)/.test(low) ||
         /\binverse\b/.test(low) && /x/.test(low) ||
         /\brange\b/.test(low) && /x/.test(low) ||
         hasRule && /\b[fgh]\s*\(\s*(?:[−-]?\d|[a-wyz]\b|[a-z]\s*[+−-])/.test(low.replace(/\b[fgh]\s*\(\s*x\s*\)\s*=/g, " "))))
       return go("functions.html", qp(s), "functions");
     // radicals and rational expressions: rationalize, √ with letters, √12 + √27, radical and rational equations, 8^(2/3)
     // (a plain √50 or cube root of 64 stays on the Power Tower, below)
-    var nRad = (s.match(/√|∛|sqrt|cbrt|square\s+root|cube\s+root/gi) || []).length;
+    var nRad = (s.match(/√|∛|sqrt|cbrt|square\s+root|cube\s+root|\broot\b(?=\s+(?:of\s+)?\d)/gi) || []).length;
     // a letter on the bottom of a fraction (2/(x+1), 3/x), but not a unit like km/h, m/s or ft/s
     var ratTerms = (s.replace(/\b(?:mi|km|m|ft|in|cm|mm|gal|l|lb|kg|g|oz|\$)\s*\/\s*(?:h|hr|hour|s|sec|min|day|week|yr|year|gal|l|lb|kg|g|oz|ft|in|m|mi|km|unit|each)\b/gi, " ")
                      .match(/\/\s*\(\s*[^()]*[a-z][^()]*\)|\/\s*[a-z]\b|\/\s*\d*[a-z]\s*(?:\^|²)/gi) || []).length;
     if (!asksWord && !story && (/\brationali[sz]e\b|\brational\s+(?:expressions?|equations?|exponents?)\b|\bradicals?\b|\bsurds?\b|\bextraneous\b/.test(low) ||
         nRad >= 2 && /[+−\-×*·]|\)\s*\(/.test(s) ||
         nRad >= 1 && (/√\s*\(?[\d\s.]*[a-z](?![a-z])/.test(low.replace(/square\s+root\s+of|cube\s+root\s+of|sqrt|cbrt|square\s+root|cube\s+root|∛/g, "√")) ||
-                      /\/\s*(?:√|sqrt)|(?:√|sqrt)[^\/]*\/|\/\s*\([^)]*(?:√|sqrt)/.test(low) || /\bsimplify\b/.test(low)) ||
+                      /\/\s*(?:√|sqrt)|(?:√|sqrt)[^\/]*\/|\/\s*\([^)]*(?:√|sqrt)/.test(low) || /\bsimplif\w*|\bsimplest\b|\breduce\b/.test(low)) ||
         /^\s*\(?[−-]?\d+\)?\s*(?:\^|\*\*)\s*\(\s*[−-]?\d+\s*\/\s*\d+\s*\)\s*$/.test(s) ||
         ratTerms >= 1 && (/\bsimplify\b/.test(low) || ratTerms >= 2 || /=/.test(s) && !/^\s*y\s*=/.test(low))))
       return go("radicals.html", qp(s), "radicals and rational expressions");
     // sequences and series: "3, 7, 11, 15, …", "nth term of 5, 8, 11", "a1=4 d=3 n=10", "sum of the first 50 terms of …", "Σ"
     if (!asksWord && (/\b(?:sequences?|series|n-?th\s+term|\d+(?:st|nd|rd|th)\s+term|next\s+(?:terms?|numbers?)|common\s+(?:difference|ratio)|sigma|(?:arithmetic|geometric)\s+progressions?|terms?\s+of|first\s+\d+\s+terms|infinite\s+(?:sum|series))\b/.test(low) || /[Σ∑]/.test(s) ||
-        /\d\s*,\s*(?:\.\.\.|…)/.test(s) ||                                                                            // is 100 in 3, 7, 11, …
+        /\d\s*,\s*(?:\.\.\.|…)/.test(s) ||
+        /\bwhat(?:'s|\s+is|s)?\s+(?:the\s+)?next\b|\bcontinue\s+the\s+(?:pattern|sequence|list)\b|\bnext\s+\d+\s+(?:terms?|numbers?)\b|\bterm\s+\d+\s+of\b|\ba_?\{?\d+\}?\s+of\b|\b(?:explicit|recursive)\s+(?:formula|rule|equation)\b/.test(low) && /\d\s*,\s*[−-]?\d/.test(s) ||                                                                            // is 100 in 3, 7, 11, …
         /\ba_?\{?1\}?\s*=\s*[−-]?\d/.test(low) && /\b[dr]\s*=\s*[−-]?\d/.test(low) || (low.match(/\ba_?\{?\d+\}?\s*=\s*[−-]?\d/g) || []).length >= 2 ||
         /^\s*[−-]?\d[\d.\/]*(?:\s*,\s*[−-]?\d[\d.\/]*){2,}\s*,?\s*(?:\.\.\.|…|_+|\?)\s*$/.test(s) ||                       // 3, 7, 11, ...
         /^\s*\d+\s*\+\s*\d+\s*\+\s*\d+\s*\+\s*(?:\.\.\.|…)/.test(s)))                                                         // 1 + 2 + 3 + ... + 100
       return go("sequences.html", qp(s), "a sequence");
     // logarithms, and equations with x in the exponent: "log2 32", "ln e^3", "3^(2x-1) = 27", "half-life", "compounded monthly"
-    if (!asksWord && (/(?:^|[^a-z])(?:log|ln)(?![a-z])|\blogarithm(?:s|ic)?\b|\bhalf-?\s*life\b|\bcompound(?:ed|ing)?\b|\bexponential\s+(?:growth|decay|equations?)\b|\bdoubling\s+time\b|\bph\s+of\b/.test(low) ||
+    if (!asksWord && (/(?:^|[^a-z])(?:log|ln)(?![a-z])(?!\s+than\b)|\blogarithm(?:s|ic)?\b|\bhalf-?\s*life\b|\bcompound(?:ed|ing)?\b|\bexponential\s+(?:growth|decay|equations?)\b|\bdoubling\s+time\b|\bph\s+of\b/.test(low) ||
         (s.match(/=/g) || []).length === 1 && !/(?:^|[^a-z])y(?![a-z])/.test(low) && /(?:[\d)]|(?:^|[^a-z])e)\s*(?:\^|\*\*)\s*\(?[−-]?[\d.]*x/.test(low)))
       return go("logarithms.html", qp(s), "logarithms");
     // quadratics and polynomials: "(x+3)(x-5)", "factor x^2+5x+6", "x^2-5x+6=0", "vertex of y=2x^2-8x+3", "(x^3-8)/(x-2)"
     var sq = low.replace(/²/g, "^2").replace(/³/g, "^3").replace(/\*\*/g, "^").replace(/\b[fgh]\s*\(\s*x\s*\)/g, "y");   // f(x) = … is y = …
-    var polyVars = sq.replace(/\b(?:factor\w*|solve|expand|simplify|multiply|divide|by|and|the|of|vertex|form|find|completely|fully|using|use|quadratics?|formula|completing|complete|square|synthetic|long|division|roots?|zeros?|polynomials?|trinomials?|binomials?|foil|discriminant|parabola|add|subtract|from|to|axis|symmetry|for|with|method|what|is|are|a|an)\b/g, " ")
+    var polyVars = sq.replace(/\bx-intercepts?\b/g, " ").replace(/\b(?:expression|out|please|how|do|can|you|step|equation|solutions?|if|are|the|i(?=\s+(?:factor|solve|expand|find|do)))\b/g, " ").replace(/\ba\b(?!\s*\^)/g, " ").replace(/\b(?:factor\w*|solve|expand|simplify|multiply|divide|by|and|the|of|vertex|form|find|completely|fully|using|use|quadratics?|formula|completing|complete|square|synthetic|long|division|roots?|zeros?|polynomials?|trinomials?|binomials?|foil|discriminant|parabola|add|subtract|from|to|axis|symmetry|for|with|method|what|is|are|an)\b/g, " ")
       .match(/[a-z]/g) || [];
     polyVars = polyVars.filter(function(c){ return c !== "y"; });                                         // y = … is the same one
     var oneVar = polyVars.length > 0 && polyVars.every(function(c){ return c === polyVars[0]; });
     var squared = /[a-z]\s*\^\s*[2-9]|\([^()]*[a-z][^()]*\)\s*\^\s*[2-9]/.test(sq), sciNote = /\d\s*[x×*]\s*10\s*\^/.test(sq);
     if (!asksWord && !sciNote && oneVar && (
         /\b(?:quadratics?|polynomials?|trinomials?|binomials?|foil|discriminant|complet(?:e|ing)\s+the\s+square|synthetic\s+division|quadratic\s+formula)\b/.test(low) ||
-        /\b(?:vertex|parabola|zeros|roots\s+of|axis\s+of\s+symmetry)\b/.test(low) && squared ||
+        /\b(?:vertex|parabola|zeros|roots\s+of|axis\s+of\s+symmetry|x-intercepts?|solutions?\s+of)\b/.test(low) && squared ||
+        /(?:^|[^a-z^])\d*[a-z]\s*(?:×|\*|times)?\s*\(\s*[^()]*[a-z][^()]*\)\s*$/.test(sq) ||
         /\bfactor(?:i[sz]e|ing)?\b/.test(low) ||                                                            // factor 6x^2+7x-3 (letters: not a number to factor)
         /\([^()]*[a-z][^()]*\)\s*\(\s*[^()]*[a-z]/.test(sq) || /\([^()]*[a-z][^()]*[+−-][^()]*\)\s*\^\s*[2-9]/.test(sq) ||   // (x+3)(x-5), (2x-1)^2
         /\([^()]*[a-z]\s*\^\s*\d[^()]*\)\s*(?:\/|÷|[+−-])\s*\(/.test(sq) || /\bdivide\b[^=]*[a-z]\s*\^\s*\d[^=]*\bby\b/.test(sq) ||   // (x^3-8)/(x-2), (3x^2+1) - (x^2-4)
         squared && !/[<>≤≥;,]/.test(s) && !/(?:^|[^a-z])y(?![a-z])/.test(sq) && /[a-z\d)]\s*[+−-]\s*[\d(a-z]|=/.test(sq)))   // x^2-5x+6=0, x^2 = 49, 3x^2 + 2x
       return go("quadratics.html", qp(s), "a quadratic");
+    // fractions to compare: "which is bigger 3/4 or 5/8", "3/4 vs 5/8", "put 3/4, 5/8 and 2/3 in order"
+    if (!asksWord && !story && /\d\s*\/\s*\d/.test(s) && !/[a-z]\s*[=<>+]|[=+×*÷^]/.test(low) &&
+        /\bwhich\s+(?:is|one\s+is|number\s+is)?\s*(?:greater|bigger|larger|smaller|less|more)\b|\bis\s+[\d\/.\s]+\s+(?:greater|bigger|larger|smaller|less|more)\s+than\b|\d\s+vs\.?\s+[\d.]|\bin\s+order\b|\bfrom\s+(?:least|greatest|smallest|largest)\s+to\b|^\s*(?:order|compare)\b/.test(low))
+      return go("fractions.html", qp(s), "fractions to compare");
+    // negative numbers: "absolute value of -15", "abs(-12)", "the opposite of 8", "which is greater, -8 or -3", "(-3)(4)", "-15 / (3)"
+    if (!asksWord && !story && !/\di\b|[+−-]\s*\d*\s*i\b/.test(low) && (/\babsolute\s+value\s+of\s+[−-]?\d|\babs\s*\(\s*[−-]?\d|^\s*(?:the\s+)?opposite\s+of\s+[−-]?\d+\s*\??\s*$/.test(low) ||
+        /\b(?:which\s+is\s+(?:greater|bigger|larger|smaller|less|more)|compare|order)\b/.test(low) && /(?:^|[\s,(])[−-]\d/.test(low) && !/[\/.]\d|[a-z]\s*[=<>]/.test(low) ||
+        /^\s*(?:is\s+)?[−-]?\d+\s*(?:[<>≤≥]|(?:greater|bigger|larger|smaller|less|more)\s+than)\s*[−-]?\d+\s*\??\s*$/.test(low) && /[−-]\d/.test(low) ||
+        /^\s*\(?[−-]\d+\)?\s*[x×*]\s*\(?[−-]?\d+\)?\s*$|^\s*\(?[−-]?\d+\)?\s*[x×*]\s*\(?[−-]\d+\)?\s*$/.test(low) ||
+        /^\s*\(?\s*[−-]?\d+\s*\)?\s*(?:[\/×*÷]|\)\s*\()\s*\(?\s*[−-]?\d+\s*\)?\s*$/.test(s) && /[−-]\d/.test(s) && /[()]/.test(s)))
+      return go("integers.html", qp(s), "negative numbers");
     // the early grades: place value, rounding, estimating, comparing, skip counting, telling time and money ("round 3,456 to the
     // nearest hundred", "45 minutes after 1:30", "3 quarters 2 dimes"); a story about them stays a story problem
     if (!asksWord && !story && /\d|\bo'?clock\b/.test(low) && !/%|\bpercent/.test(low) && (
-        /\bround(?:ed|ing)?\b(?!\s+trip)|\bestimat(?:e|ing|ion)\b|\breasonable\b/.test(low) && !/\bprobab/.test(low) ||
+        /\bround(?:ed|ing)?\b(?!\s+trip)|\bestimat(?:e|ing|ion)\b|\breasonable\b|\b(?:about|roughly|approximately)\s+(?:how\s+much|what)\b/.test(low) && !/\bprobab/.test(low) ||
+        !/\//.test(s) && (/\bwhich\s+(?:is|number\s+is)\s+(?:greater|bigger|larger|smaller|less|more|the\s+(?:greatest|biggest|largest|smallest|least))\b|^\s*is\s+[\d.,]+\s+(?:greater|bigger|larger|smaller|less|more)\s+than\s+[\d.,]+\s*\??\s*$|\d\s+vs\.?\s+\d|\d\s+_{2,}\s+\d|\bin\s+order\b|\bfrom\s+(?:least|greatest|smallest|largest)\s+to\b/.test(low)) ||
+        /^\s*is\s+[−-]?\d+\s+(?:an?\s+)?(?:even|odd)(?:\s+number)?\s*\??\s*$/.test(low) || /\b\d+\s+(?:thousands|hundreds|tens|ones)\b/.test(low) ||
+        /\b\d+\s+(?:minutes\s+)?(?:past|after|till)\s+\d{1,2}\b(?!\s*:)/.test(low) && !/\b(?:hours?|days?|years?)\b/.test(low) ||
+        /\bthe\s+\d\s+in\s+[\d,.]+\s+(?:worth|stand|mean|represent)|\bin\s+(?:word|written)\s+form\b|\bspell\b|\b(?:as\s+a\s+number|in\s+(?:numbers|digits|numerals))\b|^\s*what\s+number\s+is\b/.test(low) ||
+        /\bin\s+standard\s+form\b/.test(low) && !/\d\s*(?:x|×|\*)\s*10|\de[+−-]?\d|[a-z]\s*[=+]/.test(low.replace(/\b(?:in|standard|form|write|what|is|the|number)\b/g, "")) ||
         /\bplace\s+value\b|\bexpanded\s+form\b|\bin\s+words\b|\bvalue\s+of\s+(?:the\s+)?(?:digit\s+)?\d\s+in\b|\bwhich\s+digit\b|\b(?:ones|tens|hundreds|thousands|millions|tenths|hundredths|thousandths)\s+place\b|\b(?:1|10|100|1,?000)\s+(?:more|less)\s+than\b/.test(low) ||
         /\bskip\s*-?\s*count\w*|\bcount(?:ing)?\s+(?:back\s+)?by\b|\beven\s+or\s+odd\b|\bodd\s+or\s+even\b/.test(low) ||
         /\b\d{1,2}:\d{2}(?!\d)/.test(low) &&/\b(?:a\.?m\b\.?|p\.?m\b\.?|minutes?|hours?|time|clock|hands)|\d(?:am|pm)\b/.test(low) ||
@@ -203,34 +482,48 @@
         /\bradians?\b/.test(low) && /\d|π|\bpi\b/.test(low) ||
         /(?:\d|π|\bpi\b)\s*(?:°|degrees?|deg)?\s+(?:to|in|into)\s+(?:radians?|degrees?)\b/.test(low) && /π|\bpi\b|radians?/.test(low) ||
         abcSet >= 3 && abcSet === abcLetters && /\b[ABC]\s*=\s*\d/.test(s) && /\b[abc]\s*=\s*\d/.test(s) ||
+        abcSet >= 3 && /\b(?:triangle|angles?|sides?)\b/.test(low) || /\bincluded\s+angle\b/.test(low) ||
+        abcSet === 3 && abcLetters === 3 && /^[\sabc=\d.,;]+$/.test(low.replace(/\b(?:and|find|solve|the|angles?|with)\b/g, "")) && !/[−-]\s*\d/.test(s) ||
+        /\b(?:period|amplitude|midline|phase\s+shift)\b/.test(low) && /(?:^|[^a-z])(?:sin|cos|tan|sine|cosine)(?![a-z])/.test(low) ||
+        /\barc(?:sin|cos|tan)\b|(?:^|[^a-z])(?:sin|cos|tan)\s*(?:\^\s*\(?\s*[−-]\s*1\s*\)?|⁻¹)|\binverse\s+(?:sin|cos|tan|sine|cosine|tangent)\b/.test(low) ||
+        /^\s*(?:sin|cos|tan)\s*\(?\s*[xθ]\s*\)?\s*=\s*[−-]?[\d.\/√]+/.test(low) ||
+        /(?:\d|π|\bpi\b)\s*(?:\/\s*\d+\s*)?\brad\b/.test(low) ||
+        /\b\d+(?:\.\d+)?\s*(?:°|degrees?)\s*angle\b|\bangle\s+of\s+\d+(?:\.\d+)?\s*(?:°|degrees?)/.test(low) && /\b(?:ladder|kite|ramp|string|shadow|wire|rope|wall|ground|high|tall|height|elevation)\b/.test(low) ||
+        /\b(?:opposite|adjacent|hypotenuse)\s*=\s*\?/.test(low) ||
         noXY && /(?:^|[^a-z])(?:sin|cos|tan|csc|sec|cot|sine|cosine|tangent|secant|cosecant|cotangent)(?![a-z])\s*(?:of\s+|\(\s*)?[−-]?\s*(?:\d|π|\bpi\b|θ|theta)/.test(low) ||
         noXY && /\b(?:sin|cos|tan)\s*(?:,|and)\s*(?:cos|tan)\b.*\d/.test(low))
       return go("trigonometry.html", s.replace(/[^a-z]/gi, "") && !/\d/.test(s) ? "mode=" + (trigLaw ? "laws" : sohcah ? "right" : /unit\s+circle|reference|coterminal/.test(low) ? "circle" : /identit/.test(low) ? "identities" : "right") : qp(s), "trigonometry");
     // exponents: roots, scientific notation, one power on its own, and the exponent laws
-    if (/\b(?:sqrt|square\s+root|cube\s+root)\b|[√∛]\s*\d/.test(low))
+    if (/\b(?:sqrt|square\s+root|cube\s+root)\b|[√∛]\s*\(?\s*\d|\broot\s+(?:of\s+)?\d/.test(low))
       return go("exponents.html", qp(s), "a root");
     if (/scientific\s+notation|\d(?:\.\d+)?\s*(?:x|×|\*)\s*10\s*(?:\^|\*\*)|^\s*[−-]?\d+(?:\.\d+)?e[+−-]?\d+\s*$/.test(low) ||
         (/standard\s+form/.test(low) && !/[a-z]\s*[=+]|=/.test(low.replace(/standard\s+form|to|in|write|as/g, ""))))
       return go("exponents.html", qp(s), "scientific notation");
-    if (/^\s*(?:\(\s*[−-]?[\d.\/]+\s*\)|[−-]?[\d.]+)\s*(?:\^|\*\*)\s*\(?[−-]?\d+\)?\s*$/.test(s))
+    if (/^\s*(?:\(\s*[−-]?[\d.\/]+\s*\)|[−-]?[\d.]+)\s*(?:(?:\^|\*\*)\s*\(?[−-]?\d+\)?|[²³])\s*$/.test(s))
       return go("exponents.html", qp(s), "a power");
     var noNegExp = s.replace(/(\^|\*\*)\s*\(?[−-]/g, "$1");
-    if (/[a-z]\s*(?:\^|\*\*)|\)\s*(?:\^|\*\*)/i.test(s) && /[a-z]/i.test(s) && !/[+=<>]|[−-]/.test(noNegExp) && !/\b(?:simplify|solve)\b.*[+=]/i.test(s))
+    if (/[a-z]\s*(?:\^|\*\*|[²³])|\)\s*(?:\^|\*\*|[²³])/i.test(s) && /[a-z]/i.test(s) && !/[+=<>]|[−-]/.test(noNegExp) && !/\b(?:simplify|solve)\b.*[+=]/i.test(s))
       return go("exponents.html", qp(s.replace(/^\s*simplify\s*:?\s*/i, "")), "the exponent laws");
     // graphing: points on a grid, moving shapes, scatter plots, tables, curves, two lines to graph, shaded inequalities
     var PT = /\(\s*[−-]?\d+(?:\.\d+)?\s*,\s*[−-]?\d+(?:\.\d+)?\s*\)/;
     if (/\b(?:scatter|trend\s+line|line\s+of\s+best\s+fit)\b/.test(low) ||
-        (PT.test(s) && /\b(?:plot|distance|midpoint|area|perimeter|quadrant|reflect|reflection|rotate|rotation|translate|translation|dilate|dilation|transform)\b/.test(low)) ||
+        (PT.test(s) && /\b(?:plot|distance|midpoint|area|perimeter|quadrant|reflect|reflection|rotate|rotation|translate|translation|dilate|dilation|transform|linear|apart|slide|move|shift|flip)\b|\bgraph\s+the\s+points?\b|\bwhere\s+is\b|\bhow\s+far\b/.test(low)) ||
+        /\btable\b/.test(low) && /\by\s*=/.test(low) || /\by\s*=[^;]*\b(?:for|when)\s+x\s*=\s*[−-]?\d+\s*(?:,|\.\.|to\b)/.test(low) || /^\s*x\s*:\s*[−-]?\d[^;]*\by\s*:\s*[−-]?\d/.test(low) ||
         /^\s*table\b.*=/.test(low))
       return go("graphing.html", qp(s), "graphing");
     var eqCount = (s.match(/=/g) || []).length, ineqCount = (s.match(/[<>≤≥]/g) || []).length;
-    if ((/y/i.test(s) && /x/i.test(s) && ineqCount >= 1 && !/[;,]|\band\b/i.test(s)) ||                                  // y < 2x + 1: shade it
+    if ((/(?:^|[^a-z])y(?![a-z])/i.test(s) && /x/i.test(s) && ineqCount >= 1 && !/[;,]|\band\b/i.test(s)) ||                                  // y < 2x + 1: shade it
         ineqCount >= 2 && !/y/i.test(s) ||                                                                               // −2 < x ≤ 3: a number line
         (/^\s*y\s*=/.test(low) && eqCount === 1 && /x\s*(?:\^|\*\*|²|³)|\|[^|]*x[^|]*\||\bsqrt|√|\d\s*(?:\^|\*\*)\s*x|\/\s*\(?\s*x/.test(low)) ||   // curves
-        (/\bgraph\b/.test(low) && (eqCount >= 2 || /x\s*(?:\^|\*\*|²)/.test(low))))
+        (/\b(?:graph|sketch|draw)\b/.test(low) && (eqCount >= 2 || /x\s*(?:\^|\*\*|²)/.test(low))) ||
+        eqCount >= 2 && /\bintersect\w*|\bgraphically\b/.test(low) ||
+        ineqCount === 1 && /\b(?:graph|number\s+line|show)\b/.test(low) && /^[^a-wyz]*$/.test(low.replace(/\b(?:graph|show|on|a|the|number|line|please|it|and)\b/g, "")))
       return go("graphing.html", qp(s.replace(/^\s*graph\s*:?\s*/i, "")), "graphing");
     // probability: "P(rolling a 4)", "probability of red from 3 red 5 blue", "two coins both heads", "roll a die 60 times"
-    if (!(/^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s)) &&     // "what is likely": the Word List
+    var chanceThing = /\b(?:coins?|dice|die|cards?|deck|marbles?|spinner)\b/.test(low);
+    if (!asksWord && /\b(?:two|2|three|3|a|one)\s+dice\b|\bdice\b.*\b(?:sum|total|product|doubles)\b|\bheads\b.*\bflips?\b|\bflips?\b.*\bheads\b|\bcards?\b.*\b(?:hearts?|spades?|diamonds?|clubs?|face|kings?|queens?|jacks?|aces?)\b|\b(?:hearts?|spades?)\s+or\s+an?\s+face\s+card\b|\btwice\s+in\s+a\s+row\b|\b\d+\s+times\s+in\s+a\s+row\b/.test(low) && !story)
+      return go("probability.html", qp(s), "probability");
+    if ((!(/^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s)) || chanceThing) &&     // "what is likely": the Word List
         /\bprobability\b|\bchances?\b|\bodds\b|\bp\s*\(|\b(?:un)?likely\b|without replacement|\bspinner\b|\b(?:roll|rolls|rolling|toss|tosses|flip|flips|flipping)\b[^.?]*\b(?:die|dice|coins?)\b|\b(?:two|2|three|3)\s+coins\b|\bdeck\b|\b(?:pick|picks|draw|draws|drawn)\b[^.?]*\bmarbles?\b/.test(low))
       return go("probability.html", qp(s), "probability");
     // a story problem, unless it's about shapes (other than a rectangle's area), statistics, a ratio or a line
@@ -242,20 +535,30 @@
     if (/^[\d\s.,\/]+(\s*\b(times|plus|minus|divided by)\b\s*[\d\s.,\/]+)+$/.test(low))
       s = low = low.replace(/\s*\btimes\b\s*/g, " × ").replace(/\s*\bplus\b\s*/g, " + ").replace(/\s*\bminus\b\s*/g, " − ").replace(/\s*\bdivided by\b\s*/g, " ÷ ").trim();
 
-    if (/\b(area|perimeter|circumference|volume|surface|circle|rectangle|square|triangle|trapezoid|trapezium|parallelogram|cylinder|cone|sphere|cube|box(?!\s*-?\s*(?:plots?|and))|prism|pyramid|hypotenuse|legs?|angles?|supplement\w*|complement\w*|polygon|pentagon|hexagon|heptagon|octagon|nonagon|decagon|sided|radius|diameter|vertical)\b/.test(low))
+    if (/\brise\s+[−-]?\d+\s*(?:,|and)?\s*run\b|\b(?:up|down)\s+\d+\s*(?:,|and)?\s*(?:to\s+the\s+)?(?:right|left)\s+\d|\bm\s*=\s*[−-]?[\d.\/]+\s*,?\s*(?:and\s+)?(?:b\s*=|(?:the\s+|a\s+)?point|through|passing|\()|\b(?:horizontal|vertical)\s+line\s+(?:through|at|passing)\b|\by\s*=\s*mx\s*\+\s*b\b|\bax\s*\+\s*by\s*=\s*c\b|\bplot\s+[^=]*\bx\b[^=]*\by\s*=/.test(low))
+      return go("lines.html", qp(s), "a line");
+    if (/\bpythagor|πr|\bpi\s*r\b/.test(low) || /\bfind\s+[abc]\b/.test(low) && (low.match(/\b[abc]\s*=\s*\d/g) || []).length >= 2 ||
+        /\b(area|perimeter|circumference|volume|surface|circle|rectangle|square|triangle|trapezoid|trapezium|parallelogram|cylinder|cone|sphere|cube|box(?!\s*-?\s*(?:plots?|and))|prism|pyramid|hypotenuse|legs?|angles?|supplement\w*|complement\w*|polygon|pentagon|hexagon|heptagon|octagon|nonagon|decagon|sided|radius|diameter|vertical)\b/.test(low))
       return go("geometry.html", qp(s));
     // "what is a denominator", "define slope", "meaning of median": the Word List
     var defn = /^\s*(?:what\s+(?:is|are|does)\s+(?:an?\s+|the\s+)?|define\s+|definition\s+of\s+|meaning\s+of\s+|what\s+does\s+)(.+?)(?:\s+mean)?\s*\??\s*$/i.exec(s);
     if (defn && !/\d/.test(defn[1])) return go("glossary.html", qp(defn[1]), "what “" + defn[1] + "” means");
     // statistics words
-    if (/\b(mean|median|modes?|average|averages|range|box ?plots?|box-and-whisker|quartiles?|iqr|mad|deviation|frequency|outliers?)\b/.test(low))
+    if (/\b(mean|median|modes?|average|averages|range|box ?plots?|box-and-whisker|box\s+and\s+whiskers?|five[-\s]number\s+summary|q[13]|variance|quartiles?|iqr|mad|deviation|frequency|outliers?)\b|x̄/.test(low))
       return go("stats.html", qp(s), "statistics");
     // lines: slope words, or two points like (1, 2) and (5, 4)
     if (/\b(slope|intercepts?|parallel|perpendicular|graph|point-slope|slope-intercept|standard form)\b/.test(low) ||
-        /\(\s*[−-]?\d+(\.\d+)?\s*,\s*[−-]?\d+(\.\d+)?\s*\)[^()]*\(\s*[−-]?\d+(\.\d+)?\s*,\s*[−-]?\d+(\.\d+)?\s*\)/.test(s))
+        /\(\s*[−-]?\d+([.\/]\d+)?\s*,\s*[−-]?\d+([.\/]\d+)?\s*\)[^()]*\(\s*[−-]?\d+([.\/]\d+)?\s*,\s*[−-]?\d+([.\/]\d+)?\s*\)/.test(s))
       return go("lines.html", qp(s), "a line");
+    if (/\b(?:gcf|gcd|hcf|lcm|lcd|greatest\s+common\s+(?:factor|divisor)|least\s+common\s+(?:multiple|denominator)|factor\s+tree|prime\s+factori[sz]ation|prime\s+or\s+composite|composite|divisors?\s+of|divisibility)\b/.test(low) && /\d/.test(s))
+      return go("factors.html", qp(s), "factors");
     // ratios: a:b, rates, sharing, scale drawings (percent problems go to the Hundred Grid instead)
     if (!/%|percent/.test(low) && (/\d\s*:\s*\d/.test(s) || /\bfor\s+\$?\d/.test(low) ||
+        /\b\d[\d.]*\s+to\s+\d[\d.]*\b/.test(low) && /\b(?:lowest|simplest|simplif\w*|reduce|ratio)\b|=/.test(low) ||
+        /^\s*\d+\s+[a-z]+\s+to\s+\d+\s+[a-z]+\s*$/.test(low) || /^\s*[\d.]+\s+to\s+[\d.]+\s*$/.test(low) ||
+        /\b1\s*(?:cm|mm|m|in|inch|ft|foot)\b\.?\s*(?:=|:|represents|stands\s+for|is|(?:on\s+the\s+)?(?:map|drawing|blueprint|plan|model)\s+(?:is|=|represents))\s*\d/.test(low) ||
+        /\b\d[\d.,]*\s+[a-z]+\s+(?:in|on)\s+\d[\d.,]*\s+(?:hours?|minutes?|seconds?|days?|weeks?|gallons?|liters?|litres?)\b/.test(low) && !/\bto\b/.test(low) ||
+        /\b\d+(?:-\s*pack|\s+[a-z]+)\s+costs?\s+\$\s*\d/.test(low) ||
         /\b(ratios?|unit rate|rate|per|better buy|best buy|share|shared|split|scale|proportion|recipe|batch(es)?)\b/.test(low)))
       return go("ratios.html", qp(s), "ratios");
     // a proportion with one letter in it: 3/4 = x/20
@@ -265,16 +568,18 @@
     if ((s.match(/=/g) || []).length === 1 && /x/i.test(s) && /y/i.test(s) && !/[;,]|\band\b/i.test(s) && !/[a-wz]/i.test(s))
       return go("lines.html", qp(s), "a line");
     // a plain list of three or more numbers
-    var listParts = s.split(/\s*,\s*|\s+/).filter(Boolean);
+    var listParts = s.replace(/^\s*\{|\}\s*$/g, "").split(/\s*[,;]\s*|\s+/).filter(Boolean);
     if (!/[\/a-z%=<>+×*÷^()]/i.test(s) && listParts.length >= 3 && listParts.every(function(x){ return /^[−-]?\d*\.?\d+$/.test(x); })){
       var ints = listParts.every(function(x){ return /^[−-]?\d+$/.test(x); });
       return go("stats.html", qp(s), "a list of numbers",
         ints && listParts.length <= 8 ? { page:"integers.html", params:"mode=abs&" + qp(listParts.join(",")) } : null);
     }
+    if (/^\s*[a-z](?:\s*[+\-−×*]\s*[a-z])+\s*$/i.test(s)) return go("algebra.html", "mode=simplify&" + qp(s), "an expression to simplify");
     if (!/\d/.test(s)) return go("glossary.html", qp(s.replace(/\?+$/, "")), "what “" + s.replace(/\?+$/, "") + "” means");
     if (/\b(gcf|gcd|hcf|lcm|factors?|prime|primes|factori[sz]ation|factori[sz]e|divisib\w*|multiples?|composite)\b/.test(low))
       return go("factors.html", qp(s));
-    if (/%|\bpercent|\bdiscount|\boff\b|\btax\b|\btip\b|\bmarkup\b|\binterest\b|\bout of\b/.test(low))
+    if (/%|\bpercent|\bdiscount|\boff\b|\btax\b|\btip\b|\bmarkup\b|\binterest\b|\bout of\b/.test(low) ||
+        /\b(?:increased|decreased|rose|fell|dropped|grew)\s+(?:from\s+\$?\d[\d.,]*\s+)?to\s+\$?\d|\b(?:went|changed?|goes|going)\s+(?:up\s+|down\s+)?from\s+\$?\d[\d.,]*\s+to\s+\$?\d|^\s*(?:the\s+)?(?:change\s+)?from\s+\$?\d[\d.,]*\s+to\s+\$?\d[\d.,]*\s*\??\s*$/.test(low))
       return go("percents.html", qp(s));
 
     // letters left once "x" between two numbers is read as times → algebra
@@ -285,11 +590,23 @@
           && !/=/.test(s.replace(/\?/g, ""))) {
         // "simplify 18/24", "convert 7/4 to a decimal": fractions, not algebra
       } else {
+        if (/\d\s*\/\s*\d+\s*=\s*(?:_+|\?+|□|what)\s*\/\s*\d|\bequal\s+to\s+what\s+over\s+\d|\bequivalent\s+fractions?\b.*\bdenominator\s+of\s+\d/.test(low))
+          return go("fractions.html", qp(s), "equivalent fractions");
+        var pr = /(?:^|[^\w\/.])([\d.]+|[a-z])\s*\/\s*([\d.]+|[a-z])\s*=\s*([\d.]+|[a-z])\s*\/\s*([\d.]+|[a-z])(?![\w\/])/.exec(low.replace(/(\b[a-z]|\d)\s+over\s+(?=\d|[a-z]\b)/g, "$1/").replace(/\s+(?:equals|is\s+equal\s+to)\s+/g, " = "));
+        if (pr && pr.slice(1).filter(function(x){ return /[a-z]/.test(x); }).length === 1 || /\bis\s+to\b.*\bas\b.*\bis\s+to\b/.test(low))
+          return go("ratios.html", qp(s), "a proportion");
+        // one fraction, mixed number or decimal to simplify or write another way ("36/48 in simplest form", "write 7/4 as a mixed
+        // number", "0.6 as a fraction", "decimal form of 9/16"); percents stay with the Hundred Grid
+        var oneNum = low.replace(/[−-]?(?:\d+\s+)?\d+\s*\/\s*\d+|[−-]?\d*\.\d+(?:\.\.\.|…)?|[−-]?\d+/g, " # ");
+        if ((oneNum.match(/#/g) || []).length === 1 && !/[=%]|\bpercent/.test(low) && /\b(?:simplest|lowest|simplif\w*|reduc\w*|decimals?|fractions?|mixed|improper)\b/.test(oneNum) &&
+            !/[a-z]/.test(oneNum.replace(/\b(?:what(?:'s|s)?|is|write|put|change|turn|express|convert|reduce[ds]?|simplif(?:y|ied)|completely|fully|the|fraction|an?|as|to|into|in|its?|simplest|lowest|terms|form|of|decimals?|mixed|numbers?|improper|equivalent|please)\b/g, "")))
+          return go("fractions.html", qp(s), "a fraction");
         var eqs = s.replace(/^\s*(solve|simplify)\s*:?\s*/i, "");
         if ((eqs.match(/=/g) || []).length >= 2 && /[;,]|\band\b/i.test(eqs)){
           var parts = eqs.split(/\s*(?:;|,|\band\b)\s*/i).filter(function(x){ return /=/.test(x); });
           if (parts.length === 2) return go("algebra.html", "mode=sys&" + qp(parts.join(";")), "a system of two equations");
         }
+        eqs = eqs.replace(/\s*\(?\s*\b[a-z]\s*=\s*\?+\s*\)?\s*$/i, "").replace(/^\s*[a-z]\s*=\s*\?+\s*(?:if|when|for|given)\s+/i, "");
         if (/[<>≤≥]/.test(eqs)) return go("algebra.html", "mode=ineq&" + qp(eqs), "an inequality");
         if (/=/.test(eqs) && !/\?/.test(eqs)) return go("algebra.html", "mode=solve&" + qp(eqs), "an equation");
         if (!/=/.test(eqs)) return go("algebra.html", "mode=simplify&" + qp(eqs), "an expression to simplify");
@@ -305,7 +622,7 @@
     if (/,/.test(core) && core.split(",").every(function(x){ return /^\s*(\d+\s+)?\d+\/\d+\s*$|^\s*\d*\.\d+\s*$/.test(x); }))
       return go("fractions.html", "mode=compare&" + qp(core.replace(/\s*,\s*/g, ",")), "fractions to compare");
     if (/^\d*\.\d*\(\d+\)$/.test(core)) return go("fractions.html", "mode=convert&" + qp(core), "a repeating decimal");
-    if (fw && /^\s*(\d+\s+)?\d+\/\d+\s*$|^\s*\d*\.\d+\s*$/.test(core)) return go("fractions.html", "mode=" + fw + "&" + qp(core.trim()));
+    if (fw && /^\s*[−-]?(\d+\s+)?\d+\s*\/\s*\d+\s*$|^\s*\d*\.\d+\s*$/.test(core)) return go("fractions.html", "mode=" + fw + "&" + qp(core.trim().replace(/\s*\/\s*/, "/")));
 
     var tk = tokens(s);
     if (!tk) return go("pemdas.html", qp(s));

@@ -212,6 +212,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -1457,14 +1458,15 @@
   var NUMG = "(" + NUM + ")";
   function readSeqTask(kind, s){
     var low = s.toLowerCase(), refs = termRefs(low), o = {};
-    var a1 = null, d = grabNum(new RegExp("\\b(?:d|difference)\\s*(?:=|is)\\s*" + NUMG, "i"), low), r = grabNum(new RegExp("\\b(?:r|ratio)\\s*(?:=|is)\\s*" + NUMG, "i"), low);
+    var a1 = null, d = grabNum(new RegExp("\\b(?:d\\s*(?:=|is)|difference\\s*(?:=|is|of)?)\\s*" + NUMG, "i"), low), r = grabNum(new RegExp("\\b(?:r\\s*(?:=|is)|ratio\\s*(?:=|is|of)?)\\s*" + NUMG, "i"), low);
     refs.forEach(function(x){ if (eqR(x.i, ONE) && !a1) a1 = x.v; });
     if (!a1) a1 = grabNum(new RegExp("\\b(?:first\\s+term|a1|start(?:s|ing)?(?:\\s+(?:at|with))?)\\s*(?:=|is|of)?\\s*" + NUMG, "i"), low);
     var others = refs.filter(function(x){ return !eqR(x.i, ONE); });
     var nAsk = grabNum(/\bn\s*=\s*(\d+)/, low) || grabNum(/\bfind\s+(?:the\s+)?[at]\s*_?\s*[({]?\s*(\d+)/, low) || grabNum(/[at]\s*_?\s*[({]?\s*(\d+)\s*[)}]?\s*=\s*\?/, low)
-      || grabNum(/(\d+)\s*(?:st|nd|rd|th)\s+term/, low) || grabNum(/\bterm\s+(?:number\s+)?(\d+)/, low);
+      || grabNum(/(\d+)\s*(?:st|nd|rd|th)\s+term/, low) || grabNum(/\bterm\s+(?:number\s+)?(\d+)(?![\d.]*\s*[,;])/, low)
+      || grabNum(/\b[at]\s*_?\s*[({]?\s*(\d+)\s*[)}]?\s+(?:of|for|in)\b/, low);
     var which = grabNum(new RegExp("\\b(?:is|does)\\s+" + NUMG + "\\s+(?:in|a\\s+term|one\\s+of|part\\s+of|on|appear|show\\s+up|belong)", "i"), low)
-      || grabNum(new RegExp("\\bwhich\\s+term\\s+(?:is|equals)\\s+" + NUMG, "i"), low) || grabNum(new RegExp("\\bfind\\s+n\\s+(?:when|if|so\\s+that)\\s+[at]\\s*_?\\s*n\\s*=\\s*" + NUMG, "i"), low)
+      || grabNum(new RegExp("\\bwhich\\s+term\\b[^?]*?\\b(?:is|equals|=)\\s+" + NUMG + "(?![\\d.]*\\s*[,;])", "i"), low) || grabNum(new RegExp("\\bfind\\s+n\\s+(?:when|if|so\\s+that)\\s+[at]\\s*_?\\s*n\\s*=\\s*" + NUMG, "i"), low)
       || grabNum(new RegExp("\\b[at]\\s*_\\s*n\\s*=\\s*" + NUMG, "i"), low);
     var list = findList(s.replace(new RegExp("\\b(?:is|does)\\s+" + NUM + "\\s+(?:in|a\\s+term|one\\s+of|part\\s+of|on)", "i"), " ").replace(/\b[at]\s*_?\s*[({]?\s*\d+\s*[)}]?\s*=\s*[+-]?[\d./]+/gi, " "));
     if (!kind){
@@ -1621,7 +1623,9 @@
     if (/\bsav(?:e|es|ing|ings)\b|\bjar\b|\bbank\b|\bdeposit|\bputs?\s+in\b|\badds?\b/.test(low) && /\$|dollars?/.test(low)){
       o.kind = "save";
       o.start = /\bempty\b|nothing|no money/.test(low) ? ZERO : readMoney(/(?:has|starts?\s+with|already\s+has|with)\s+\$\s*([\d.]+)/, low);
-      o.add = readMoney(/(?:adds?|puts?\s+in|deposits?|saves?|puts?\s+away)\s+(?:another\s+)?\$\s*([\d.]+)/, low) || readMoney(/\$\s*([\d.]+)\s+(?:each|every|a|per)\s+(?:week|month)/, low);
+      if (/\bsaves?\s+\$\s*[\d.]+\s+(?:in\s+)?the\s+first\s+(?:week|month)\b/.test(low))
+        throw new UserErr("Is that first amount already in the jar before the first " + (/\bmonth/.test(low) ? "month" : "week") + "? Write it like <b>Maria has $10 and adds $5 every week. How much after 12 weeks?</b>");
+      o.add = readMoney(/(?:adds?|puts?\s+in|deposits?|puts?\s+away)\s+(?:another\s+)?\$\s*([\d.]+)/, low) || readMoney(/\bsaves?\s+(?:another\s+)?\$\s*([\d.]+)/, low) || readMoney(/\$\s*([\d.]+)\s+(?:each|every|a|per)\s+(?:week|month)/, low);
       o.unit = /\bmonth/.test(low) ? "month" : "week";
       o.goal = readMoney(/(?:at\s+least|reach|reaches|have|hold|holds)\s+(?:at\s+least\s+)?\$\s*([\d.]+)/, low.replace(/(?:has|with)\s+\$\s*[\d.]+\s+in/, ""));
       if (o.goal && !/how\s+many\s+(?:weeks|months)|when\s+will|after\s+how\s+many/.test(low)) o.goal = null;
@@ -1631,8 +1635,30 @@
     return null;
   }
   function isStory(low){ return /\badds?\s+\$|\$\s*[\d.]+\s+(?:each|every|a|per)\s+(?:week|month)|\bseats?\b|\brows?\s+of\b|\bbounc|\bball\b|\bsalary\b|\braise\b|\bdoubles?\b|\bbacteria\b|\bpopulation\b|\bsavings?\b|\bjar\b|\bdeposit/.test(low); }
+  /* typed words: "find the eighth term of 1, 3, 5", "the sum of the first twelve terms of 1, 4, 7", "bounces back to half
+     its height", "… please": spoken numbers and ordinals become digits (8th, 12) and politeness goes. */
+  var W_NUM = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12, thirteen:13, fourteen:14,
+    fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20, thirty:30, forty:40, fifty:50, sixty:60, hundred:100 };
+  var W_ORD = { first:1, second:2, third:3, fourth:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10, eleventh:11, twelfth:12, thirteenth:13,
+    fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18, nineteenth:19, twentieth:20, thirtieth:30, fortieth:40, fiftieth:50, hundredth:100 };
+  function typedWords(s){
+    s = String(s == null ? "" : s).replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all))?\s+(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx)\b/gi, " ");
+    // ordinals in front of "term" / "bounce" / "row" / "year"; "first" stays where it means the first terms or the first week
+    s = s.replace(new RegExp("\\b(?:(twenty|thirty|forty|fifty)[\\s-]+)?(" + Object.keys(W_ORD).join("|") + ")\\b(?=\\s+(?:term|bounce|row|year|week|month|time|number|one)s?\\b)", "gi"), function(m, t, o){
+      var n = W_ORD[o.toLowerCase()] + (t ? W_NUM[t.toLowerCase()] : 0);
+      return /^first$/i.test(o) && !t ? m : n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : n % 10 === 1 ? "st" : n % 10 === 2 ? "nd" : n % 10 === 3 ? "rd" : "th");
+    });
+    s = s.replace(new RegExp("\\b(" + Object.keys(W_NUM).join("|") + ")\\b(?=\\s+(?:terms?|rows?|years?|weeks?|months?|hours?|days?|minutes?|bounces?|times)\\b)", "gi"), function(m){ return W_NUM[m.toLowerCase()]; })
+         .replace(/\b(?:one\s+|a\s+)?half\s+(?:of\s+)?(?=(?:its|the)\b)/gi, "1/2 of ").replace(/\b(?:one|a)\s+third\s+(?:of\s+)?(?=(?:its|the)\b)/gi, "1/3 of ");
+    return s;
+  }
   function readProblem(mode, text){
+    text = typedWords(text);
     var s = norm(text), low = s.toLowerCase(), P;
+    if (/\d\s*i\b|\bi\s*\)/.test(low) && !/\b(?:in|is|if)\b/.test(low.replace(/\d\s*i\b/g, "")) && /[+\-]\s*\d*\s*i\b/.test(low))
+      throw new UserErr("That looks like complex numbers — try <a href=\"complex-numbers.html?q=" + esc(encodeURIComponent(String(text))) + "\">The Complex Plane</a>.");
+    if (/\b(?:slope|line\s+through|midpoint|distance\s+between)\b/.test(low))
+      throw new UserErr("That’s about points and lines — try <a href=\"lines-and-slope.html?q=" + esc(encodeURIComponent(String(text))) + "\">The Slope Grid</a>.");
     if (!s.trim()) throw new UserErr(EMPTY[mode]);
     if (s.length > 600) throw new UserErr("That’s too long for this page — try a shorter problem.");
     if (mode === "pattern"){
@@ -1655,15 +1681,16 @@
     return P;
   }
   function kindOf(q){
-    var s = norm(q), low = s.toLowerCase();
+    var s = norm(typedWords(q)), low = s.toLowerCase();
     if (isStory(low)) return "apply";
+    if (/\bnext\b|\bcomes\s+(?:after|next)\b|\bcontinue\b|,\s*(?:\?|_+)\s*$/.test(low) && !/\bsum\b|\bseries\b|\bnth\b|\d+\s*(?:st|nd|rd|th)\s+term/.test(low)) return "pattern";
     if (/\bsigma\b|\bsum(?:mation)?\s+(?:from\s+|for\s+)?\(?[a-z]\s*=/.test(low)) return "sum";
     if (/infinit|to\s+infinity|\bseries\b|\bsum\b|\btotal\b|\badd\b|\bs\s*_?\s*\{?\d+\b|\bs_n\b/.test(low)) return "sum";
     if (findSeries(s) && !findList(s)) return "sum";
     if (/\br\s*=|\bratio\b|geometric|\bfind\b[^.?]*\br\b/.test(low)) return "geom";
     if (/\bd\s*=|difference|arithmetic/.test(low)) return "arith";
     var refs = termRefs(low);
-    var task = refs.length >= 1 || /\bterm\b|\bnth\b|\bn\s*=|\bis\s+[+-]?[\d.\/]+\s+(?:in|a\s+term|one\s+of|part)|\bwhich\s+term\b|\bformula\b|\brule\b/.test(low);
+    var task = refs.length >= 1 || /\b[at]\s*_?\s*\{?\d+\b|\bterm\b|\bnth\b|\bn\s*=|\bis\s+[+-]?[\d.\/]+\s+(?:in|a\s+term|one\s+of|part)|\bwhich\s+term\b|\bformula\b|\brule\b/.test(low);
     if (!task) return "pattern";
     try { var P = readSeqTask(null, s); if (P && P !== "empty") return P.mode; if (P === null) return "pattern"; } catch (e){ if (!(e && e.user)) throw e; }
     if (/\bnth\b|\bformula\b|\brule\b|general\s+term/.test(low)) return "pattern";

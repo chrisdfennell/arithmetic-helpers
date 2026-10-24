@@ -585,6 +585,11 @@
      interior angles of a 7-sided polygon.
      A unit written after a number (8 cm by 5 cm) sets the units. Anything it can't read gets a friendly
      notice with examples; the other parameters (unit, pi, practice) still apply alongside q.
+     Also read: a label and polite words ("Problem 4:", "can you please", "show your work"), number words (radius six,
+     twelve sides), b1 = 2, b2 = 12 for a trapezoid, a = 8 and c = 17 find b, a ladder against a wall, the area of a right
+     triangle from its legs, the diagonal of a rectangle, "use 3.14 for π" (pi=314) and "round to …" (pi=calc). Shapes and
+     questions it doesn't work out (semicircles, sectors, rhombuses, "a circle with area 49π", mixed units, "3 times the
+     other") get the notice rather than an answer to some other problem.
    Bad values never crash the page: a number it can't use shows the usual notice under the problem.
 
    Worksheet API (postMessage, for a page that loads this one in a hidden iframe):
@@ -2719,7 +2724,7 @@
     var q = P.get("q");
     if (q != null && q.trim()){
       var r = parseQ(q.slice(0, 200));
-      if (r){ S.mode = r.mode; S.shape[r.mode] = r.id; S.vals[r.mode + ":" + r.id] = r.v; if (r.unit) S.unit = r.unit; }
+      if (r){ S.mode = r.mode; S.shape[r.mode] = r.id; S.vals[r.mode + ":" + r.id] = r.v; if (r.unit) S.unit = r.unit; if (r.pi) S.pi = r.pi; }
       else note = qNote(q);
     } else {
       var mode = get("mode"), shape = get("shape"), m = null;
@@ -2763,16 +2768,47 @@
     return null;
   }
   function qf(x){ var r = parseNum(x); return r.bad ? NaN : toF(r.v); }
+  // number words to digits: "six" → 6, "twenty-five" → 25, "seven and a half" → 7.5 ("one" stays a word before leg/side/angle…)
+  var QW = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12, thirteen:13,
+             fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19 };
+  var QT = { twenty:20, thirty:30, forty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+  function qWords(s){
+    var units = "zero|one|two|three|four|five|six|seven|eight|nine", tens = "twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety";
+    s = s.replace(new RegExp("\\b(" + tens + ")(?:[- ](" + units + "))?\\b", "g"), function(m, t, u){ return String(QT[t] + (u ? QW[u] : 0)); });
+    s = s.replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)\b(?!\s+(?:of (?:the|them|its)|legs?|angles?|bases?|other|is|another|end|sides? (?:of|are|measure|have|is))\b)/g,
+      function(m, w){ return String(QW[w]); });
+    return s.replace(/(\d+) and (?:a |one )?half\b/g, "$1.5").replace(/\b(\d+) hundred\b/g, function(m, n){ return String(+n * 100); });
+  }
   function parseQ(raw){
-    var s = " " + String(raw).toLowerCase()
+    var s = " " + qWords(String(raw).toLowerCase()
       .replace(/[−–—]/g, "-").replace(/°/g, " deg ")
-      .replace(/(\d),(\d{3})(?!\d)/g, "$1$2")
+      .replace(/(\d),(\d{3})(?!\d)/g, "$1$2"))
+      // a problem's label and the polite words around it: "Problem 4:", "Q3)", "#5", "1.", "can you please", "step by step", "show your work"
+      .replace(/^\s*(?:(?:problem|question|exercise|ex|q|no|number|#)\s*\.?\s*\d+[a-z]?\s*[:.)\-]?|\d+\s*[.)]\s|[a-z]\s*[.)]\s|hw\s*:|homework\s*:)\s*/, " ")
+      .replace(/\b(?:can|could|would|will) (?:you|u) (?:please |pls |plz )?(?:help (?:me )?)?(?:to )?/g, " ")
+      .replace(/\b(?:please|pls|plz|thanks|thank you|step[- ]by[- ]step|show (?:all |your |the |me the )?(?:work|working|steps)|explain(?: it)?)\b/g, " ")
       .replace(/(\d)\s*[x×*]\s*(?=\.?\d)/g, "$1 by ")
       .replace(/[=:,;()?!"“”‘’]/g, " ")
       .replace(/\s+/g, " ") + " ";
-    var unit = null, um = /\d\s*(millimet(?:er|re)s?|mm|centimet(?:er|re)s?|cm|met(?:er|re)s?|m|inch(?:es)?|in(?=\s*(?:by\b|and\b|\d|long|wide|high|tall|deep|$))|feet|foot|ft|yards?|yd)(?![a-z])/.exec(s)
-      || /\bin (millimet(?:er|re)s|mm|centimet(?:er|re)s|cm|met(?:er|re)s|m|inches|feet|ft|yards|yd)\b/.exec(s);
+    var unit = null, UNRE = /\d\s*(millimet(?:er|re)s?|mm|centimet(?:er|re)s?|cm|met(?:er|re)s?|m|inch(?:es)?|in(?=\s*(?:by\b|and\b|\d|long|wide|high|tall|deep|$))|feet|foot|ft|yards?|yd)(?![a-z])/g,
+        um = UNRE.exec(s) || /\bin (millimet(?:er|re)s|mm|centimet(?:er|re)s|cm|met(?:er|re)s|m|inches|feet|ft|yards|yd)\b/.exec(s), m2;
     if (um) unit = unitWord(um[1]);
+    // two different units ("5 m by 300 cm") need converting first: that's not something to guess at
+    UNRE.lastIndex = 0;
+    while ((m2 = UNRE.exec(s))) if (unit && unitWord(m2[1]) !== unit) return null;
+    // "use 3.14 for π" picks how π is shown, and the 3.14 isn't a measurement; "round to the nearest tenth" wants a decimal
+    var piOpt = null;
+    s = s.replace(/\b(?:use|using|with|let|take)?\s*(?:π|pi)?\s*(?:as|≈|~|is|equals?|to be)?\s*3\.14(?:159\d*)?\s*(?:for|as)?\s*(?:π|pi)?\b(?:\s*(?:≈|~)\s*3\.14)?/g, function(x){
+      if (!/π|pi|use|using/.test(x)) return x;
+      piOpt = "314"; return " ";
+    });
+    if (!piOpt && /\bround|nearest (?:tenth|hundredth|whole|thousandth)|decimal places?|to \d+ (?:dp|decimal)|\bcalculator\b/.test(s)) piOpt = "calc";
+    if (/in terms of (?:π|pi)|exact (?:answer|value)|leave (?:it |your answer )?(?:in|with) (?:π|pi)/.test(s)) piOpt = "exact";
+    // shapes and questions this page doesn't work out (it would only answer some other problem): say so instead
+    if (/semi-?circle|half (?:a |of a )?circle|quarter[- ]circle|hemispher|half (?:a |of a )?sphere|\bsectors?\b|\barc\b|\barc length|\bannulus|\bring\b|rhombus|\bkite\b|ellipse|\boval\b|frustum|torus/.test(s)) return null;
+    if (/\b(?:with|whose|has|having)\s+(?:an?\s+|the\s+|its\s+)?(?:area|circumference|perimeter|volume|surface area)\b|\b(?:area|circumference|perimeter|volume)\s+(?:of\s+(?:the|a|an|this|that|my)\s+[a-z]+\s+)?(?:is|was|equals?)\s+\d/.test(s)) return null;
+    if (/times (?:the|as (?:big|large) as)|\btwice\b|\bthrice\b|\d\s*x\s*[+\-]|[+\-]\s*\d*\s*x\b|\bmore than (?:the|twice|\d)|\bless than (?:the|twice|\d)/.test(s)) return null;
+    if (/\b(?:pentagon|hexagon|heptagon|septagon|octagon|nonagon|decagon|dodecagon|polygon|[\d]+-?gon)\b/.test(s) && /\barea\b|\bperimeter\b|\bapothem\b|\bdiagonals?\b/.test(s)) return null;
     function has(re){ return re.test(s); }
     function blank(m){ s = s.slice(0, m.index) + new Array(m[0].length + 1).join(" ") + s.slice(m.index + m[0].length); }
     // the number written after one of these words ("radius 5", "h=10", "base of 6"), taken out of the text
@@ -2791,7 +2827,7 @@
       if (any) d.f.forEach(function(fd){ res[fd.k] = v[fd.k] != null ? String(v[fd.k]) : ""; });
       if (d.d.rd != null) res.rd = v.rd || (any ? "r" : d.d.rd);
       if (d.d.pos != null) res.pos = v.pos || "1";
-      return { mode:mode, id:id, v:res, unit:unit };
+      return { mode:mode, id:id, v:res, unit:unit, pi:d.pi ? piOpt : null };
     }
     function radius(v){
       var x = take("diameter|diam|d");
@@ -2811,8 +2847,34 @@
     }
     /* right triangles */
     R = rest();
-    if (R.length >= 3 && !has(/\bangles?\b|\bdeg\b/) && ((has(/\bright\b/) && has(/^\s*(?:is|are|can|could|does|do|will|would)\b|\bis (?:it|this|that)\b|\bcheck\b|\bmake\b|\bform\b|\btest\b/)) || has(/\bcheck\b/)))
+    if (R.length >= 3 && !has(/\bangles?\b|\bdeg\b/) && ((has(/\bright\b/) && has(/\b(?:is|are|can|could|does|do|will|would)\b|\bcheck\b|\bmake\b|\bform\b|\btest\b|\bdetermine\b/)) || has(/\bcheck\b/)))
       return out("right", "check", fill(["a","b","c"], {}));
+    // the area of a right triangle from its legs: the legs are the base and the height
+    if (has(/\barea\b/) && has(/\blegs?\b/) && R.length === 2 && !has(/\bhyp/)){
+      var la = qf(R[0]), lb = qf(R[1]), lc = Math.sqrt(la * la + lb * lb);
+      return out("area", "tri", { b:R[0], h:R[1], s1:Math.abs(lc - Math.round(lc)) < 1e-9 ? R[1] : null, s2:Math.abs(lc - Math.round(lc)) < 1e-9 ? String(Math.round(lc)) : null });
+    }
+    // the diagonal of a rectangle (or square) is the hypotenuse of the right triangle its sides make
+    if (has(/\bdiagonal\b/) && has(/rectangle|\brect\b|\bsquare\b|\bscreen\b|\btv\b|\bfield\b|\bdoor\b/) && !has(/\bcube\b|\bbox\b|prism/)){
+      if (R.length === 1 && has(/\bsquare\b/)) return out("right", "hyp", { a:R[0], b:R[0] });
+      if (R.length === 2) return out("right", "hyp", { a:R[0], b:R[1] });
+      return null;
+    }
+    // a ladder against a wall: the ladder is the hypotenuse
+    if (has(/\bladder\b/) && has(/\bwall\b|\bbuilding\b|\bhouse\b|\bground\b/) && !has(/\bdeg\b|\bangles?\b/)){
+      if (R.length !== 2) return null;
+      var lr = R.slice(0).sort(function(x, y){ return qf(x) - qf(y); });
+      if (has(/how long (?:is|must|should|does) (?:the )?ladder|length of (?:the )?ladder|ladder'?s length|how long a ladder/)) return out("right", "hyp", { a:lr[0], b:lr[1] });
+      return out("right", "leg", { a:lr[0], c:lr[1] });
+    }
+    // sides named a, b and c (c the hypotenuse): "a = 8, c = 17, find b" · "find c if a = 6 and b = 8"
+    if (/[a-c]\s*=/.test(String(raw).toLowerCase()) && !has(/circle|rectangle|square|trapez|parallelogram|cylind|cone|sphere|cube|box|prism|pyramid|\bangles?\b|\bdeg\b/)){
+      var lv = {}, lm, lre = /\b([abc])\s+(\d+(?:\.\d+)?)/g;
+      while ((lm = lre.exec(s))) lv[lm[1]] = lm[2];
+      var lfind = /\b(?:find|what is|what's|solve for|missing)\s+(?:side\s+)?([abc])\b/.exec(s);
+      if (lv.c != null && (lv.a != null) !== (lv.b != null) && (!lfind || lfind[1] !== "c")) return out("right", "leg", { a:lv.a != null ? lv.a : lv.b, c:lv.c });
+      if (lv.a != null && lv.b != null && lv.c == null && (lfind ? lfind[1] === "c" : has(/\bright\b|pythag|\bhyp/))) return out("right", "hyp", { a:lv.a, b:lv.b });
+    }
     if (has(/\bleg\b/) && has(/\bhyp/)){ v.a = take("leg"); v.c = take("hypotenuse|hyp"); return out("right", "leg", fill(["a","c"], v)); }
     if (has(/(?:missing|other|unknown|find (?:the |a )?)\s*leg\b/) || (has(/\bleg\b/) && R.length === 2)){
       var lg = R.slice(0, 2).sort(function(x, y){ return qf(x) - qf(y); });
@@ -2821,7 +2883,7 @@
     if (has(/\bhyp|\blegs\b|pythag|right[- ]?(?:angled? )?triangle/)) return out("right", "hyp", fill(["a","b"], {}));
     /* angles */
     if (has(/complement/)) return out("angle", "comp", fill(["a"], {}));
-    if (has(/parallel(?!ogram)|transversal/)){
+    if (has(/parallel(?!ogram)|transversal/) && !has(/trapez/)){
       if ((m = /(?:angle|∠|position|pos|number|#)\s*([1-8])(?![\d.\/])/.exec(s))){ v.pos = m[1]; blank(m); }
       return out("angle", "par", fill(["a"], v));
     }
@@ -2841,11 +2903,16 @@
       return out("vol", "box", fill(["l","w","h"], v));
     }
     /* flat shapes */
-    if (has(/circle|circumference|\bdis[ck]\b|\bradius\b|\bdiameter\b/)){ radius(v); return out("area", "circle", fill(["r"], v)); }
+    if (has(/circle|circumference|\bdis[ck]\b|\bradius\b|\bdiameter\b|(?:π|\bpi)\s*r\b/)){ radius(v); return out("area", "circle", fill(["r"], v)); }
     if (has(/\bl[- ]?shaped?\b/)) return out("area", "lshape", fill(["W","H","w","h"], {}));
-    if (has(/trapez/)){ v.a = take("top|a"); v.b = take("bottom|b"); v.h = take("height|h"); return out("area", "trap", fill(["a","b","h","c","d"], v)); }
+    if (has(/trapez/)){
+      s = s.replace(/\b(?:b|base)\s*_?\s*(?:1|₁)(?![\d.\/])/g, " top ").replace(/\b(?:b|base)\s*_?\s*(?:2|₂)(?![\d.\/])/g, " bottom ");
+      v.a = take("top|a"); v.b = take("bottom|b"); v.h = take("height|h"); return out("area", "trap", fill(["a","b","h","c","d"], v)); }
     if (has(/parallelogram|rhomboid/)){ v.b = take("base|b"); v.h = take("height|h"); v.s = take("slant(?:ed)? side|side|s"); return out("area", "para", fill(["b","h","s"], v)); }
-    if (has(/triangle/)){ v.b = take("base|b"); v.h = take("height|h"); return out("area", "tri", fill(["b","h","s1","s2"], v)); }
+    if (has(/triangle/)){
+      // three sides and no height ("sides 5, 5 and 6"): the page needs the height, so it asks for it
+      if (has(/\bsides?\b/) && !has(/\bbase\b|\bheight\b|\bb\s+\d|\bh\s+\d/)){ R = rest(); if (R.length === 3) return out("area", "tri", { b:R[0], h:"", s1:R[1], s2:R[2] }); }
+      v.b = take("base|b"); v.h = take("height|h"); return out("area", "tri", fill(["b","h","s1","s2"], v)); }
     if (has(/\bsquare\b/)) return out("area", "square", fill(["s"], { s:take("side|s") }));
     if (has(/rectangle|\brect\b|oblong/)){ v.l = take("length|long|l"); v.w = take("width|wide|w"); return out("area", "rect", fill(["l","w"], v)); }
     if (has(/\barea\b|\bperimeter\b/)){

@@ -211,6 +211,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px;overflow-wrap:anywhere}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -3225,14 +3226,77 @@
   function bt0(BS){ return BS.e ? "e" : baseT(BS); }
 
   /* ===================== what a problem is, for links, worksheets and practice ===================== */
+  /* ===================== typed words =====================
+     "log base two of 4", "log of 1000", "log(243) base 3", "what power of 4 gives 256", "2 to the x equals 64",
+     "find x if 4^(x+1) = 1024", "evaluate log base 5 of 125 please", "log_3 1/9 = ?": number and power words become
+     symbols, the request around the problem goes, and the page's own words (as a log, expand, by change of base …)
+     stay. A word left over that would be read as letters stops the problem (letterCheck). */
+  var W_NUM = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+    thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20, thirty:30, forty:40,
+    fifty:50, sixty:60, seventy:70, eighty:80, ninety:90, hundred:100, thousand:1000 };
+  function typedWords(s){
+    s = String(s == null ? "" : s).replace(/[‘’]/g, "'");
+    var k, prev, ones = "one|two|three|four|five|six|seven|eight|nine";
+    for (k = 0, prev = null; k < 6 && prev !== s; k++){
+      prev = s;
+      s = s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all))?\s+(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx|for\s+me)\b/gi, " ")
+           .replace(/^\s*(?:hi|hey|hello|ok(?:ay)?|so|and|then|now)\b[\s,!]*/i, "")
+           .replace(/^\s*(?:(?:can|could|would|will)\s+(?:you|u|someone)(?:\s+help(?:\s+me)?)?(?:\s+(?:to|with))?|help\s+me(?:\s+(?:to|with))?|i\s+need\s+(?:help\s+with|to)|how\s+(?:do|would|can|should|to)(?:\s+(?:i|you|we|u))?|show\s+me\s+how\s+to|explain\s+how\s+to)\b\s*/i, "")
+           .replace(/^\s*(?:evaluate|compute|calculate|find|work\s+out|what\s+is|what's|whats|determine|give|estimate)\s+(?:the\s+(?:value\s+of\s+)?)?(?=(?:the\s+)?(?:log|ln|natural))/i, "")
+           .replace(/^\s*between\s+which\s+(?:two\s+)?(?:whole\s+numbers|integers|consecutive\s+integers)\s+(?:is|does)\s+(.+?)(?:\s+lie)?\s*\??$/i, "$1")
+           .replace(/^\s*the\s+(?=log|ln|natural)/i, "")
+           .replace(/^\s*(?:find|what\s+is|what's|solve\s+for)\s+x\s+(?:if|when|given|in)\b\s*/i, "solve ")
+           .replace(/^\s*solve\s+(?:the\s+)?(?:exponential\s+|log(?:arithmic)?\s+)?equation\b\s*:?\s*/i, "solve ")
+           .replace(/\s*[,;.]?\s*(?:then\s+)?(?:find|solve\s+for|what\s+is)\s+x\s*[?.!]*\s*$/i, "")
+           .replace(/^\s*use\s+(?:the\s+)?change[\s-]+of[\s-]+base(?:\s+formula)?\s+to\s+(?:find|evaluate|compute|calculate|work\s+out)\s+(.+)$/i, "$1 by change of base")
+           .replace(/\s*=\s*\?+\s*$/, "").replace(/^[\s:,!]+/, "").replace(/[\s,;!?]+$/, "");
+    }
+    // spoken numbers
+    s = s.replace(new RegExp("\\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\\s-]+(" + ones + ")\\b", "gi"), function(m, a, b){ return " " + (W_NUM[a.toLowerCase()] + W_NUM[b.toLowerCase()]) + " "; })
+         .replace(new RegExp("\\b(" + Object.keys(W_NUM).join("|") + ")\\b", "gi"), function(m, w, at, all){
+           return /^one$/i.test(m) && /^\s*log\b|^\s*single/i.test(all.slice(at + 3)) ? m : " " + W_NUM[m.toLowerCase()] + " "; });
+    // "log(243) base 3", "log of 1000", "what power of 4 gives 256", "2 to the x", "3 to the power of x"
+    s = s.replace(/\blog\s*\(\s*([^()]+)\s*\)\s*(?:to\s+)?(?:the\s+)?base\s+(\d+(?:\.\d+)?(?:\s*\/\s*\d+)?|e)\b/gi, "log base $2 of ($1)")
+         .replace(/\b(log(?:_?\s*\(?\d+\)?)?|ln)\s+of\s+/gi, "$1 ")
+         .replace(/^\s*(?:what|which)\s+power\s+(?:of|does)\s+(\d+(?:\.\d+)?|e)\s+(?:gives|makes|equals|is|=|need\s+to\s+be\s+raised\s+to\s+to\s+get|to\s+get)\s+(.+)$/i, "log base $1 of $2")
+         .replace(/^\s*(\d+(?:\.\d+)?|e)\s+to\s+what\s+power\s+(?:is|gives|makes|equals|=)\s+(.+)$/i, "log base $1 of $2")
+         .replace(/(\b(?:log|ln)(?:_?\s*\(?\d+\)?|\s+(?:to\s+(?:the\s+)?)?base\s+\S+\s+of)?)\s+(\d+\s*\/\s*\d+)(?![\d.^(])/gi, "$1 ($2)")
+         .replace(/\b(?:raised\s+)?to\s+the\s+(?:power\s+(?:of\s+)?)?(?=\(?\s*[a-z0-9(+\-−])(?!base\b)/gi, "^").replace(/\braised\s+to\b/gi, "^")
+         .replace(/\s*\bsquared\b/gi, "^2").replace(/\s*\bcubed\b/gi, "^3")
+         .replace(/\b(?:is\s+)?equal\s+to\b|\bequals\b/gi, " = ").replace(/\b(?:times|multiplied\s+by)\b/gi, " * ").replace(/\bdivided\s+by\b/gi, " / ")
+         .replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " - ").replace(/\bnegative\s+(?=\d)/gi, "-");
+    return s.replace(/\^\s+/g, "^").replace(/\s+/g, " ").trim();
+  }
+  // a letter in the problem that only came from an ordinary word ("log of 1000" → o·f) means a word wasn't understood
+  var VARL = /^[a-dk-npqrt-z]+$/i, KNOWNW = /^(?:log|ln|lg|sqrt|cbrt|exp|pi|e|base)$/i;
+  function letterCheck(P, text){
+    var seen = {}, depth = 0;
+    (function scan(o){
+      if (!o || typeof o !== "object" || depth > 40) return;
+      depth++;
+      if (o.t === "var" && typeof o.s === "string") seen[o.s] = 1;
+      for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k) && o[k] && typeof o[k] === "object") scan(o[k]);
+      depth--;
+    })(P);
+    var src = typedWords(text), words = (src.match(/[a-z]{2,}/gi) || []).filter(function(w){ return !KNOWNW.test(w) && !VARL.test(w); });
+    Object.keys(seen).forEach(function(v){
+      if (new RegExp("(^|[^a-z])" + v + "(?![a-z])|(^|[^a-z])[a-dk-npqrt-z]*" + v + "[a-dk-npqrt-z]*(?![a-z])", "i").test(src.replace(/\b(?:log|ln|sqrt|cbrt|exp)(?=[a-z])/gi, "$& "))) return;
+      var w = words.filter(function(t){ return t.toLowerCase().indexOf(v) >= 0; })[0];
+      if (w) throw new UserErr("I don’t know the word <b>“" + esc(w) + "”</b> in a problem here. Type it with numbers and signs, like <b>log_2 32</b>, <b>log base 9 of 27</b> or <b>2^x = 16</b>.");
+    });
+  }
   function readProblem(mode, text){
-    if (mode === "laws") return readLaws(text);
-    if (mode === "change") return readChange(text);
-    if (mode === "expeq") return readExpEq(text);
-    if (mode === "logeq") return readLogEq(text);
     if (mode === "growth") return readGrowth(text);
-    if (mode === "graph") return readGraph(text);
-    return readMeaning(text);
+    text = typedWords(text);
+    var P;
+    if (mode === "laws") P = readLaws(text);
+    else if (mode === "change") P = readChange(text);
+    else if (mode === "expeq") P = readExpEq(text);
+    else if (mode === "logeq") P = readLogEq(text);
+    else if (mode === "graph") P = readGraph(text);
+    else P = readMeaning(text);
+    letterCheck(P, text);
+    return P;
   }
   function enc(v){ return encodeURIComponent(v).replace(/%2F/gi, "/").replace(/%2C/gi, ",").replace(/%5E/gi, "^").replace(/%28/gi, "(").replace(/%29/gi, ")"); }
   function argP(A){ return IN(argTree(A)); }
@@ -3268,6 +3332,7 @@
     growth:"growth", apps:"growth", applications:"growth", interest:"growth", compound:"growth", decay:"growth", "half-life":"growth", halflife:"growth", ph:"growth",
     graph:"graph", graphs:"graph", inverse:"graph", inverses:"graph" };
   function kindOf(q){
+    if (!/\$|%|percent|interest|compound|invest|half[\s-]*life|decay|population|bacteria|\bph\b|decibel/i.test(q)) q = typedWords(q);
     var low = norm(String(q).replace(/\[\s*h\s*\+?\s*\]/gi, " hplus ")).toLowerCase();
     if (/\$|%|percent|interest|compound|invest|deposit|principal|half[\s-]*life|doubl(?:es|ing)\s+(?:every|in|time)|\bdecay|population|bacteria|\bph\b|hplus|decibel|\bdb\b|continuously|depreciat/.test(low)) return "growth";
     if (/^\s*(?:graph|sketch|plot|draw)\b|^\s*(?:y|f\s*\(\s*x\s*\))\s*=/.test(low)) return "graph";

@@ -2521,8 +2521,49 @@
     if (!hasVar(L) && !hasVar(Rt)) throw new UserErr("There’s no letter to solve for — type an equation in x, like <b>x² + 4x + 13 = 0</b>.");
     return mkSolve(L, Rt, mw.how || how || "auto");
   }
+  /* ===================== typed words =====================
+     "i to the power of 3", "i squared", "the square root of negative 16", "3 + 2i plus 1 − 4i",
+     "(4 + 5i) divided by (6 − 4i)", "find the complex roots of x^2 − 4x + 13 = 0", "evaluate i^59 please":
+     number and operator words become symbols (one word operator between two numbers brackets them) and the
+     request around the problem goes; the page's own words (polar form, roots of, conjugate …) stay. */
+  var W_NUM = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+    thirteen:13, fourteen:14, fifteen:15, sixteen:16, twenty:20, thirty:30, forty:40, fifty:50, sixty:60, ninety:90 };
+  function typedWords(s){
+    s = String(s == null ? "" : s).replace(/[‘’]/g, "'");
+    var k, prev, m;
+    for (k = 0, prev = null; k < 6 && prev !== s; k++){
+      prev = s;
+      s = s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all))?\s+(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx|for\s+me)\b/gi, " ")
+           .replace(/^\s*(?:hi|hey|hello|ok(?:ay)?|so|and|then|now)\b[\s,!]*/i, "")
+           .replace(/^\s*(?:(?:can|could|would|will)\s+(?:you|u|someone)(?:\s+help(?:\s+me)?)?(?:\s+(?:to|with))?|help\s+me(?:\s+(?:to|with))?|how\s+(?:do|would|can|should|to)(?:\s+(?:you|we|u))?|show\s+me\s+how\s+to|explain\s+how\s+to)\b\s*/i, "")
+           .replace(/^\s*(?:(?:find|what\s+are|what's|give|list|determine)\s+)?(?:all\s+)?(?:the\s+)?(?:complex\s+|imaginary\s+|non-?real\s+)?(?:roots?|solutions?|zeros?|zeroes)\s+(?:of|for|to)\s+(?=[^=]*=)/i, "solve ")
+           .replace(/^\s*solve\s+(?:for\s+[a-z]|the\s+(?:quadratic\s+)?equation)\b\s*:?\s*/i, "solve ")
+           .replace(/\s*[,;.]?\s*(?:then\s+)?(?:solve(?:\s+for\s+[a-z])?|find\s+[a-z]|simplify|evaluate)\s*[?.!]*\s*$/i, function(m){ return /solve|find/i.test(m) ? "" : ""; })
+           .replace(/\s*\b(?:to|in|into|as)\s+(?:the\s+)?(?:rectangular|standard|cartesian|a\s*\+\s*bi)\s+form\b\.?/i, "")
+           .replace(/^\s*(?:what\s+is|what's|whats|simplify|evaluate|calculate|compute|find|work\s+out)\s*:?\s*(?=[(\d√i+\-−])/i, "")
+           .replace(/^[\s:,!]+/, "").replace(/[\s,;!]+$/, "");
+    }
+    // spoken numbers and powers
+    s = s.replace(new RegExp("\\b(" + Object.keys(W_NUM).join("|") + ")\\b", "gi"), function(w){ return " " + W_NUM[w.toLowerCase()] + " "; })
+         .replace(/\b(?:raised\s+)?to\s+the\s+(second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth)(?:\s+power)?\b/gi, function(m, o){
+           return "^" + (["second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"].indexOf(o.toLowerCase()) + 2); })
+         .replace(/^\s*how\s+far\s+(?:is|away\s+is)\s+(.+?)\s+from\s+(?:0|zero|the\s+origin)\s*\??$/i, "modulus of $1")
+         .replace(/^\s*(?:(?:what\s+is|what's|find|give)\s+)?(?:the\s+)?complex\s+conjugate\s+of\b/i, "conjugate of")
+         .replace(/\bnegative\s+(?=[\di(√])/gi, "-").replace(/\s*\bsquared\b/gi, "^2").replace(/\s*\bcubed\b/gi, "^3")
+         .replace(/\b(?:raised\s+)?to\s+the\s+(?:power\s+(?:of\s+)?)?(-?\d+)(?:st|nd|rd|th)?(?:\s+power)?\b/gi, "^$1").replace(/\b(?:raised\s+)?to\s+the\s+power(?:\s+of)?\b/gi, "^")
+         .replace(/\b(?:is\s+)?equal\s+to\b|\bequals\b/gi, " = ");
+    // one word operator between two numbers: "3 + 2i plus 1 − 4i" → (3 + 2i) + (1 − 4i)
+    var ops = s.match(/\b(?:plus|minus|times|multiplied\s+by|divided\s+by|over)\b/gi);
+    if (ops && ops.length === 1 && (m = /^(.+?)\s+(plus|minus|times|multiplied\s+by|divided\s+by|over)\s+(.+)$/i.exec(s)) && !/\b(?:add|subtract|multiply|divide)\b/i.test(m[1])){
+      var o = m[2].toLowerCase(), sym = o === "plus" ? "+" : o === "minus" ? "−" : /times|multiplied/.test(o) ? "×" : "÷";
+      var wrap = function(t){ t = t.trim(); return /^\(.*\)$/.test(t) || !/[+\-−]/.test(t.replace(/^[+\-−]/, "")) ? t : "(" + t + ")"; };
+      s = wrap(m[1]) + " " + sym + " " + wrap(m[3]);
+    }
+    s = s.replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " − ").replace(/\b(?:times|multiplied\s+by)\b/gi, " × ").replace(/\bdivided\s+by\b/gi, " ÷ ");
+    return s.replace(/\^\s+/g, "^").replace(/\s+/g, " ").trim();
+  }
   function readProblem(mode, text, how){
-    var s = String(text == null ? "" : text);
+    var s = typedWords(text);
     if (!s.trim()) throw new UserErr(EMPTY[mode]);
     if (mode === "i") return readI(s);
     if (mode === "add") return readAdd(s);
@@ -2542,6 +2583,7 @@
     demoivre:"demoivre", "de-moivre":"demoivre", moivre:"demoivre", "powers-of-z":"demoivre", "nth-roots":"demoivre", roots:"demoivre",
     solve:"solve", quadratic:"solve", equation:"solve", equations:"solve" };
   function kindOf(q){
+    q = typedWords(q);
     var s = String(q || "").toLowerCase();
     if (/\broots?\s+of\b|de\s*moivre/.test(s)) return "demoivre";
     if (/=/.test(s)){

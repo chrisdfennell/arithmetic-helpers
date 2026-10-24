@@ -212,6 +212,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -812,7 +813,12 @@
     return out;
   }
   function parse(src){
-    var T = lex(norm(src)), p = 0, depth = 0;
+    var ns = norm(src);
+    // x^1/2 could be x^(1/2) or (x^1)/2: ask rather than guess (x^6/x^2 and 2^3/2^2 are fine)
+    if (/\^\s*[-+]?\d+\s*\/\s*\d+(?![\d.]|\s*[\^(a-zA-Z])/.test(ns))
+      throw new UserErr("Is that a fraction for the exponent, like <b>x^(1/2)</b>, or the power divided, like <b>(x^1)/2</b>? Add brackets to show which. "
+        + "(Fraction exponents are roots: try <a href=\"radicals.html\">The Root Cellar</a>.)");
+    var T = lex(ns), p = 0, depth = 0;
     if (!T.length) throw new UserErr("There’s nothing to work with yet.");
     if (T.length > 160) throw new UserErr("That’s too long for this page — try a shorter problem.");
     function pk(){ return T[p]; }
@@ -1238,11 +1244,69 @@
     sci:"Type a number, like <b>45,000,000</b> or <b>0.00032</b> — or one in scientific notation, like <b>3.2 × 10^−4</b>.",
     scicalc:"Type two numbers in scientific notation with ×, ÷, + or − between them, like <b>(3 × 10^4)(2 × 10^5)</b>.",
     roots:"Type a root, like <b>√64</b>, <b>sqrt 50</b> or <b>cube root of 27</b>." };
+  /* ===================== typed words =====================
+     "5 to the power of 3", "2 cubed", "x to the 4th times x squared", "four point five times ten to the seventh",
+     "can you simplify x^3 · x^4 step by step please": number and power words become symbols and the request
+     around the problem goes; what's left is read exactly as before. A word it doesn't know stays, and stops the
+     problem with a notice (wordCheck) rather than being read as letters. */
+  var W_NUM = { zero:0, oh:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+    thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20, thirty:30, forty:40,
+    fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+  var W_ORD = { zeroth:0, first:1, second:2, third:3, fourth:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10,
+    eleventh:11, twelfth:12, thirteenth:13, fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18,
+    nineteenth:19, twentieth:20 };
+  var W_ONES = "one|two|three|four|five|six|seven|eight|nine";
+  function typedWords(s){
+    s = String(s == null ? "" : s);
+    var keys = Object.keys(W_NUM).join("|"), ords = Object.keys(W_ORD).join("|"), k, prev;
+    // the request around the problem
+    for (k = 0, prev = null; k < 6 && prev !== s; k++){
+      prev = s;
+      s = s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all|all\s+the))?\s+(?:steps|work|working)|with\s+(?:the\s+|all\s+(?:the\s+)?)?(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx|for\s+me)\b/gi, " ")
+           .replace(/^\s*(?:hi|hey|hello|ok(?:ay)?|so|and|then|now)\b[\s,!]*/i, "")
+           .replace(/^\s*(?:(?:can|could|would|will)\s+(?:you|u|someone)(?:\s+help(?:\s+me)?)?(?:\s+(?:to|with))?|help\s+me(?:\s+(?:to|with))?|i\s+need\s+(?:help\s+with|to)|how\s+(?:do|would|can|should|to)(?:\s+(?:i|you|we|u))?|show\s+me\s+how\s+to|explain\s+how\s+to)\b\s*/i, "")
+           .replace(/^[\s:,!]+/, "");
+    }
+    // spoken numbers: "twenty-five", "four point five", "point zero three"
+    s = s.replace(new RegExp("\\bpoint((?:\\s+(?:zero|oh|" + W_ONES + "))+)\\b", "gi"), function(m, d){
+          return "." + d.trim().split(/\s+/).map(function(w){ return W_NUM[w.toLowerCase()]; }).join(""); })
+         .replace(new RegExp("\\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\\s-]+(" + W_ONES + ")\\b", "gi"), function(m, a, b){ return " " + (W_NUM[a.toLowerCase()] + W_NUM[b.toLowerCase()]) + " "; })
+         .replace(new RegExp("\\b(" + keys + ")\\b", "gi"), function(m){ return " " + W_NUM[m.toLowerCase()] + " "; })
+         .replace(/(\d)\s+(?=\.\d)/g, "$1")
+         .replace(/\b(\d+)\s+(hundred|thousand|million|billion)\b/gi, function(m, a, b){ return " " + a + { hundred:"00", thousand:"000", million:"000000", billion:"000000000" }[b.toLowerCase()] + " "; });
+    // powers
+    s = s.replace(new RegExp("\\b(?:raised\\s+)?to\\s+the\\s+(?:(negative|minus)\\s+)?(" + ords + ")(?:\\s+power)?\\b", "gi"), function(m, ng, o){ return "^" + (ng ? "-" : "") + W_ORD[o.toLowerCase()] + " "; })
+         .replace(/\b(?:raised\s+)?to\s+the\s+(?:(negative|minus)\s+)?(\d+)(?:st|nd|rd|th)?(?:\s+power)?\b/gi, function(m, ng, d){ return "^" + (ng ? "-" : "") + d + " "; })
+         .replace(/\b(?:raised\s+)?to\s+the\s+power(?:\s+of)?\b|\braised\s+to(?:\s+the)?\b|\bto\s+the\s+(?=[-−(]?\s*\d)/gi, "^")
+         .replace(/\s*\bsquared\b/gi, "^2 ").replace(/\s*\bcubed\b/gi, "^3 ");
+    // operators ("how many times bigger" keeps its "times")
+    s = s.replace(/(\bmany\s+)?\btimes\b/gi, function(m, many){ return many ? m : " * "; })
+         .replace(/\bmultiplied\s+by\b/gi, " * ").replace(/\b(?:divided\s+by|over)\b/gi, " / ")
+         .replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " - ").replace(/\bnegative\b/gi, " -");
+    return s.replace(/\^\s+/g, "^").replace(/\s+/g, " ").trim();
+  }
+  // a word left over in a problem read as math would turn into letters (x·y·…): stop with a notice instead
+  var W_STOP = /\b(?:is|of|by|to|in|on|an|at|it|as|or|be|do|if|me|my|so|up|we|and|the|for|are|can|you|how|its|was|all|get|use|put|out|then|than|that|this|what|find|give|show|with|from|into|each|both|just|form|step|work|help|answer|value|equals?|exponents?|powers?|rules?|laws?|base|expression|problem|using|write|express|leave|only|positive|negative|simplest|simplified|simplify|evaluate)\b/i;
+  function wordCheck(s){
+    var w = W_STOP.exec(s) || /[A-Za-z]{5,}/.exec(s);
+    if (!w) return;
+    var lw = w[0].toLowerCase(), more = "";
+    if (/=/.test(s) && /\^\s*\(?[a-z]/i.test(s)) more = ' To solve for an exponent, like <b>2^x = 16</b>, try <a href="logarithms.html?q=' + esc(encodeURIComponent(s)) + '">The Log Ladder</a>.';
+    else if (/=/.test(s)) more = ' To solve an equation, try <a href="algebra.html?q=' + esc(encodeURIComponent(s)) + '">The Balance Scale</a>.';
+    throw new UserErr("I don’t know the word <b>“" + esc(w[0]) + "”</b> in a problem here. Type it with numbers, letters and signs, like <b>2^5</b> or <b>x^3 · x^4</b>." + more);
+  }
   function cleanQ(s){
-    return String(s == null ? "" : s).trim()
-      .replace(/^\s*(?:please\s+)?(?:evaluate|work\s+out|find|what\s+is|what's|whats|calculate|compute|simplify|solve)\b\s*:?\s*/i, "")
-      .replace(/\s*,?\s*(?:with|using)\s+(?:only\s+)?positive\s+exponents?\.?\s*$/i, "")
-      .replace(/(?:\s*[=?!]+\s*)+$/, "").replace(/\.\s*$/, "").trim();
+    var t = String(s == null ? "" : s).trim(), prev = null, k;
+    for (k = 0; k < 4 && prev !== t; k++){
+      prev = t;
+      t = t.replace(/^\s*(?:please\s+)?(?:evaluate|work\s+out|find(?:\s+the\s+value\s+of)?|what\s+is(?:\s+the\s+value\s+of)?|what's|whats|calculate|compute|simplify|solve|rewrite|write|expand|reduce)\b\s*:?\s*/i, "")
+        .replace(/^\s*(?:the\s+)?(?:expression|problem)\b\s*:?\s*/i, "")
+        .replace(/\s*,?\s*(?:with|using)\s+(?:only\s+)?positive\s+exponents?\.?\s*$/i, "")
+        .replace(/\s*,?\s*(?:using|with|by)\s+(?:the\s+)?(?:exponent|power)\s+(?:rules|laws|properties)\.?\s*$/i, "")
+        .replace(/\s*,?\s*(?:and\s+)?(?:simplify|evaluate|simplified)\s*$/i, "")
+        .replace(/(?:\s*[=?!]+\s*)+$/, "").replace(/\.\s*$/, "").trim();
+    }
+    return t;
   }
   function isTen(x){ x = stripG(x); if (!x || x.t !== "pow") return false; var b = stripG(x.a); return b.t === "num" && !b.sci && eqR(b.v, TEN) && !hasVar(x.b); }
   function tenExp(x){ return expInt(stripG(x).b); }
@@ -1293,6 +1357,7 @@
   function readEval(text){
     var s = cleanQ(text);
     if (!s) throw new UserErr(EMPTY.eval);
+    wordCheck(s);
     var t = parse(s), n = stripG(t), neg = false;
     if (hasVar(t)) throw new UserErr("This tab works out powers of numbers. For letters like <b>x</b>, use the <b>Exponent laws</b> tab.");
     if (hasT(t, ["add", "sub", "fn"])) throw new UserErr("One power at a time here, like <b>2^5</b>. For a longer problem, use the <a href=\"order-of-operations.html\">order of operations</a> page.");
@@ -1319,6 +1384,7 @@
   function readLaws(text){
     var s = cleanQ(text);
     if (!s) throw new UserErr(EMPTY.laws);
+    wordCheck(s);
     var t = parse(s), vars = {}, nodes = 0;
     if (hasT(t, ["add", "sub"])) throw new UserErr("Only ×, ÷ and powers here. The exponent laws don’t join <b>+</b> or <b>−</b>: x² + x³ can’t be made into one power.");
     if (hasT(t, ["fn"])) throw new UserErr("Roots go on the <b>Roots</b> tab.");
@@ -1338,7 +1404,7 @@
     return { mode:"laws", ast:t, nm:nm, ex:rn(t, "ascii"), sol:sol };
   }
 
-  var SCIWORDS = /\b(?:please|write|writing|written|convert|change|put|express|rewrite|turn|show|give|make|it|this|number|numbers|numeral|in|into|to|as|a|an|the|scientific|science|sci|notation|standard|form|ordinary|decimal|expanded|normal|regular|out|full|e-notation)\b/gi;
+  var SCIWORDS = /\b(?:please|write|writing|written|convert|change|put|express|rewrite|turn|show|give|make|it|this|number|numbers|numeral|in|into|to|as|a|an|the|what|is|whats|what's|how|do|does|you|i|can|would|of|for|me|scientific|science|sci|notation|standard|form|ordinary|decimal|expanded|normal|regular|out|full|e-notation)\b/gi;
   function readSci(text){
     var s0 = String(text == null ? "" : text).trim();
     if (!s0) throw new UserErr(EMPTY.sci);
@@ -1441,7 +1507,10 @@
     var s0 = String(text == null ? "" : text).trim(), low = s0.toLowerCase();
     if (!s0) throw new UserErr(EMPTY.roots);
     var r = /cube|cubic|cbrt|∛|third/.test(low) ? 3 : 2;
-    var s = norm(s0).replace(/\b(?:sqrt|cbrt|square|cube|cubic|root|roots|of|the|find|what|is|estimate|between|which|two|whole|numbers?|third|principal|positive|please)\b/gi, " ")
+    if (/simplif|simplest|radical\s+form|rationali[sz]e/.test(low))
+      throw new UserErr("This tab finds whole-number roots and estimates the rest. To simplify a root, like <b>√72 = 6√2</b>, try <a href=\"radicals.html?q="
+        + esc(encodeURIComponent(s0)) + "\">The Root Cellar</a>.");
+    var s = norm(s0).replace(/\b(?:sqrt|cbrt|square|cube|cubic|root|roots|of|the|find|what(?:'s|s)?|is|estimate|calculate|evaluate|between|which|two|whole|numbers?|third|principal|positive|please)\b/gi, " ")
       .replace(/[()?=:]/g, " ").replace(/\.\s*$/, "").replace(/\s+/g, "");
     var m = /^([+-]?)(\d+(?:\.\d+)?)$/.exec(s);
     if (!m) throw new UserErr("Type one whole number under the root, like <b>√50</b> or <b>cube root of 64</b>.");
@@ -1466,6 +1535,7 @@
   }
 
   function readProblem(mode, text){
+    text = typedWords(text);
     if (mode === "laws") return readLaws(text);
     if (mode === "sci") return readSci(text);
     if (mode === "scicalc") return readSciCalc(text);
@@ -1506,10 +1576,11 @@
     scicalc:"scicalc", "sci-calc":"scicalc", scimath:"scicalc", "sci-math":"scicalc", operations:"scicalc", compare:"scicalc", calc:"scicalc",
     roots:"roots", root:"roots", sqrt:"roots", cbrt:"roots", "square-root":"roots", "cube-root":"roots", radical:"roots" };
   function kindOf(q){
+    q = typedWords(q);
     var low = String(q).toLowerCase();
     if (/√|∛|\bsqrt\b|\bcbrt\b|\broots?\b/.test(low)) return "roots";
     if (/how\s+many\s+times|\bcompare\b|\bbigger\b|\blarger\b|\bgreater\b|\bsmaller\b|\bwhich\b|\bvs\b|versus/.test(low)) return "scicalc";
-    if (/scientific|standard\s+(?:form|notation)|\bordinary\b|\bexpanded\b|\bnotation\b/.test(low)) return "sci";
+    if (/scientific|standard\s+(?:form|notation|number)|\bordinary\b|\bexpanded\b|\bnotation\b|\bdecimal\s+(?:form|notation|number)|\bsci\b/.test(low)) return "sci";
     try { var P = readSciCalc(q); if (!P.plainBoth) return "scicalc"; } catch (e){}
     try {
       var t = parse(cleanQ(q)), n = stripG(t);

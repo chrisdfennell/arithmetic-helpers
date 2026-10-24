@@ -240,6 +240,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
   .notice .fr{font-size:.86em;vertical-align:middle}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
@@ -1147,7 +1148,24 @@
     }
     return { pts:pts, rest:rest };
   }
-  function cleanQ(q){ return String(q === null || q === undefined ? "" : q).replace(/[−–—]/g, "−").replace(/\s+/g, " ").trim(); }
+  // typed words: "graph y equals x squared minus 4x plus 3", "find the intersection of … and …", "x is greater than 4",
+  // "dilate … by one half", "rotate … ninety degrees", "table of values y = x^2, x from −2 to 2" → symbols and the page's own words
+  var W_NUM = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, twelve:12, twenty:20, ninety:90, hundred:100 };
+  function typedWords(s){
+    var nw = Object.keys(W_NUM).join("|");
+    return s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all))?\s+(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx|graphically|by\s+graphing)\b/gi, " ")
+      .replace(/^\s*(?:(?:can|could|would)\s+(?:you|u)\s+|help\s+me\s+|how\s+(?:do|would|can|to)\s+(?:i\s+|you\s+)?)?(?:graph|plot|draw|sketch|show)(?:\s+the\s+graph\s+of|\s+the)?(?:\s+(?:function|line|equation|inequality|parabola|curve))?\b/i, "graph")
+      .replace(/^\s*(?:find|what\s+is|what's|where\s+is)\s+(?:the\s+)?(?:point\s+of\s+)?intersection\s+(?:point\s+)?(?:of|between)\b/i, "solve")
+      .replace(/\b(?:for\s+)?x\s*(?:from\b|=)\s*(−?-?\d+)\s+(?:to|through|thru)\s+(−?-?\d+)\b/gi, "for x = $1..$2").replace(/,\s*(?=for x =)/g, " ")
+      .replace(/^(?!\s*(?:make\s+a\s+|complete\s+the\s+|fill\s+in\s+the\s+)?table)(.+?)\s+(?:a\s+)?table(?:\s+of\s+values)?\b/i, "table $1").replace(/\band\s+also\b/gi, "and")
+      .replace(/\b(?:one|a)\s+half\b/gi, "1/2").replace(/\b(?:one|a)\s+third\b/gi, "1/3")
+      .replace(new RegExp("\\b(" + nw + ")\\b", "gi"), function(m){ return W_NUM[m.toLowerCase()]; })
+      .replace(/\b(?:is\s+)?(?:greater|more)\s+than\s+or\s+equal\s+to\b|\bis\s+at\s+least\b/gi, " ≥ ").replace(/\b(?:is\s+)?less\s+than\s+or\s+equal\s+to\b|\bis\s+at\s+most\b/gi, " ≤ ")
+      .replace(/\b(?:is\s+)?(?:greater|more)\s+than\b/gi, " > ").replace(/\b(?:is\s+)?less\s+than\b/gi, " < ").replace(/\b(?:is\s+)?equal\s+to\b|\bequals\b/gi, " = ")
+      .replace(/\s*\bsquared\b/gi, "^2").replace(/\s*\bcubed\b/gi, "^3").replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " − ")
+      .replace(/\b(?:negative)\s+(?=\d)/gi, "−").replace(/\btimes\b/gi, " * ");
+  }
+  function cleanQ(q){ return typedWords(String(q === null || q === undefined ? "" : q)).replace(/[−–—]/g, "−").replace(/\s+/g, " ").trim(); }
   // a list of numbers "1, 2, 3" / "1 2 3" / "-2..2"
   function numList(s){
     var t = String(s).replace(/[−–—]/g, "-").trim(), m, out = [];
@@ -4405,7 +4423,8 @@
       return { task:"plot", pts:g.pts };
     }
     if (mode === "table"){
-      var s2 = src.replace(/^\s*(?:make|fill in|fill|complete|draw)?\s*(?:a|the)?\s*(?:table of values|table|t-chart)\s*(?:for|of)?\s*:?\s*/i, "");
+      var s2 = src.replace(/^\s*(?:make|fill in|fill|complete|draw)?\s*(?:a|the)?\s*(?:table of values|table|t-chart)\s*(?:for|of)?\s*:?\s*/i, "")
+        .replace(/^\s*(?:is|are)\s+/i, "").replace(/\s*[,;.]?\s*(?:is\s+(?:it|this|the\s+(?:table|relation|pattern))\s+)?(?:a\s+)?(?:linear|proportional|nonlinear|function)(?:\s*,?\s*(?:or\s+)?(?:linear|proportional|neither|nonlinear|not))*\s*\??\s*$/i, "");
       var tm = /^\s*x\s*(?:values?)?\s*[:=]?\s*([−\-\d.,\/\s]+?)\s*[,;]?\s*(?:and\s+)?y\s*(?:values?)?\s*[:=]?\s*([−\-\d.,\/\s]+)$/i.exec(s2);
       if (tm){
         var xa = numList(tm[1].replace(/[,;]\s*$/, "")), ya = numList(tm[2]);
@@ -4556,9 +4575,10 @@
   function inferMode(q){
     var src = cleanQ(q), low = src.toLowerCase();
     if (/scatter|trend|best fit|predict|correlat|association/.test(low)) return "scatter";
-    if (/translat|reflect|rotat|dilat|\bslide\b|\bflip\b|\bturn\b|enlarge|\bimage\b/.test(low)) return "transform";
+    if (/translat|reflect|rotat|dilat|\bslide\b|\bflip\b|\bturn\b|enlarge|\bimage\b|\bmove\b|\bshift\b/.test(low)) return "transform";
     if (/[<>≤≥]/.test(low)) return "inequalities";
     if (/\btable\b|\bfor x\s*=|\bt-chart/.test(low) || /^\s*x\s*:\s*[−-]?\d/.test(low) || /^\s*x\s+[−-]?\d[\d\s,.\/−-]*\by\b/.test(low)) return "table";
+    if (/\blinear\b|\bproportional\b|\bis\s+(?:it|this)\s+a\s+function\b/.test(low) && /\(\s*[−-]?[\d.\/]+\s*,/.test(low)) return "table";
     var nEq = (low.match(/=/g) || []).length;
     if (/\bplans?\b|\bcosts?\b/.test(low)) return "systems";
     if (nEq >= 2){

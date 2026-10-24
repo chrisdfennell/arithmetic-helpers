@@ -549,7 +549,7 @@
   window.addEventListener("appinstalled", function(){ $("installBtn").hidden = true; });
   // iPhones and iPads have no install button; say how instead (only in Safari, and not once it's installed)
   var standalone = window.navigator.standalone === true || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
-  if (/iP(hone|ad|od)/.test(navigator.userAgent) && !standalone) $("iosTip").hidden = false;
+  if ((/iP(hone|ad|od)/.test(navigator.userAgent) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) && !standalone) $("iosTip").hidden = false;   // iPadOS Safari says it is a Mac
 
   /* ---- "your practice" only shows once there's something to show ---- */
   (function(){

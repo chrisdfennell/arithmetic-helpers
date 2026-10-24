@@ -39,6 +39,8 @@
 
   /* ===================== styles ===================== */
   var CSS =
+    "a.ht-report{text-decoration:none;display:inline-flex;align-items:center;color:inherit}" +
+    "@media print{a.ht-report{display:none !important}}" +
     ".ht-bar{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}" +
     ".ht-btn{font-family:var(--f-body,\"IBM Plex Sans\",Arial,sans-serif);font-size:12.5px;font-weight:600;line-height:1;" +
       "color:var(--ink-2);background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:6px 10px;cursor:pointer}" +
@@ -408,7 +410,8 @@
       "<tr><td><kbd>K</kbd></td><td>Show or hide the math keys (they come up by themselves on phones)</td></tr>" +
       "<tr><td><kbd>Esc</kbd></td><td>Close this, or leave big screen</td></tr>" +
       "<tr><td><kbd>?</kbd></td><td>Show this list</td></tr></table>" +
-      '<p class="ht-sm" style="margin:10px 8px 2px">Show The Steps ' + (SITE_VERSION === "dev" ? "(a copy that isn’t published yet)" : "version " + esc(SITE_VERSION)) + ' · <a href="https://github.com/chrisdfennell/arithmetic-helpers/releases" target="_blank" rel="noopener" style="display:inline;padding:0">what’s new</a></p></div>');
+      '<p class="ht-sm" style="margin:10px 8px 2px">Show The Steps ' + (SITE_VERSION === "dev" ? "(a copy that isn’t published yet)" : "version " + esc(SITE_VERSION)) + ' · <a href="https://github.com/chrisdfennell/arithmetic-helpers/releases" target="_blank" rel="noopener" style="display:inline;padding:0">what’s new</a>' +
+      (document.querySelector(".page") ? ' · <a href="' + esc(reportHref()) + '" target="_blank" rel="noopener" style="display:inline;padding:0">report a problem</a>' : "") + "</p></div>");
     if (!anchor && openMenu){ openMenu.style.position = "fixed"; openMenu.style.top = "70px"; openMenu.style.left = "50%"; openMenu.style.transform = "translateX(-50%)"; }
   }
   function problemBox(){
@@ -718,6 +721,46 @@
     live.textContent = t;
   }
 
+  /* ===================== Report a problem, and an anonymous count of "couldn't read" ===================== */
+  // the button opens the repo's "wrong answer" form with the page and the exact problem link filled in; a page showing
+  // its "couldn't read that" notice counts one GoatCounter event named after the page (never what was typed)
+  var ISSUE_FORM = "https://github.com/chrisdfennell/arithmetic-helpers/issues/new";
+  function visibleNotice(){
+    return [].filter.call(document.querySelectorAll(".notice"), function(n){ return n.offsetParent !== null && n.textContent.trim(); })[0] || null;
+  }
+  function reportHref(){
+    var h1 = document.querySelector("h1"), name = document.title;
+    if (h1){ h1 = h1.cloneNode(true); [].forEach.call(h1.querySelectorAll("sup, sub"), function(x){ x.parentNode.removeChild(x); }); name = h1.textContent; }  // "The Area Box", not "The Area Box²"
+    name = name.replace(/\s+/g, " ").trim();
+    return ISSUE_FORM + "?template=wrong-answer.yml&title=" + encodeURIComponent("Wrong or confusing: " + name) +
+      "&link=" + encodeURIComponent(location.href) + (visibleNotice() ? "&kind=" + encodeURIComponent("It wouldn't read my problem") : "");
+  }
+  function addReportButton(){
+    var copy = document.getElementById("copyBtn");
+    if (!copy || document.getElementById("htReport")) return;
+    var a = document.createElement("a");
+    a.id = "htReport"; a.className = copy.className + " ht-report"; a.target = "_blank"; a.rel = "noopener";
+    a.href = reportHref(); a.textContent = "Report a problem";
+    a.title = "Tell us about a wrong answer or a confusing step (opens a form on GitHub with this problem's link filled in)";
+    a.addEventListener("click", function(){ a.href = reportHref(); });        // the problem showing when it's pressed
+    copy.parentNode.insertBefore(a, copy.nextSibling);
+  }
+  var countedNotices = {};
+  function watchNotices(){
+    var t = null;
+    function check(){
+      var gc = window.goatcounter;
+      if (!visibleNotice() || !gc || typeof gc.count !== "function") return;
+      var key = location.search || "-";
+      if (countedNotices[key]) return;
+      countedNotices[key] = true;
+      gc.count({ path:"couldnt-read/" + page.replace(/\.html$/, ""), title:"Couldn't read a typed problem", event:true });
+    }
+    new MutationObserver(function(){ clearTimeout(t); t = setTimeout(safe(check), 500); })
+      .observe(document.body, { childList:true, subtree:true, attributes:true, attributeFilter:["hidden", "class", "style"] });
+    setTimeout(safe(check), 1500);
+  }
+
   /* ===================== start ===================== */
   var main = safe(function(){
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
@@ -732,6 +775,8 @@
     document.addEventListener("helper:checked", safe(onChecked));
     if (!document.querySelector(".page")) return;   // the home page: settings only
     addReadButton();
+    addReportButton();
+    watchNotices();
     watchAddress();
     watchByHand();
     // the bar is drawn by nav.js; wait for it briefly

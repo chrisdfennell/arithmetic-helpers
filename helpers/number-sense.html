@@ -1114,9 +1114,25 @@
     if (d.err === "big") throw new UserErr("Keep " + (what || "numbers") + " below a billion (at most 9 digits before the point).");
     return d;
   }
+  /* "what is 47 plus 38", "12 x 3", "15% of 80": arithmetic for another page, so say which one instead of guessing */
+  var ARITH = [["add", /\d\s*\+\s*\.?\d|\d\s+(?:plus|and|added to)\s+\d|\b(?:sum|total) of\b|\badd\b/],
+               ["sub", /\d\s*[-−]\s*\.?\d|\d\s+(?:minus|take away|less)\s+\d|\bdifference\b|\bsubtract\b|\btake away\b/],
+               ["mul", /\d\s*[x×*·]\s*\.?\d|\d\s+(?:times|multiplied by)\s+\d|\bproduct of\b|\bmultiply\b/],
+               ["div", /\d\s*[÷\/]\s*\.?\d|\d\s+divided by\s+\d|\bquotient of\b|\bdivide\b/]];
+  function elsewhere(s){
+    if (/%|\bpercent\b/.test(s)) return "Percents are on " + aTo(siteUrl("percents", "q=" + encodeURIComponent(s)), "The Hundred Grid") + ".";
+    if (/\b(?:primes?|composite|factors?|multiples?|gcf|gcd|lcm|divisible)\b/.test(s)) return "Primes, factors and multiples are on " + aTo(siteUrl("factors", "q=" + encodeURIComponent(s)), "The Factor Tree") + ".";
+    for (var i = 0; i < ARITH.length; i++) if (ARITH[i][1].test(s)){
+      var h = HELPER[ARITH[i][0]];
+      return "That looks like " + { add:"adding", sub:"subtracting", mul:"multiplying", div:"dividing" }[ARITH[i][0]] + ", which is on "
+        + aTo(siteUrl(h[0], "q=" + encodeURIComponent(s)), h[1]) + ". This page does place value, rounding, estimating, comparing, counting, time and money.";
+    }
+    return null;
+  }
   function oneNum(s, what){
     var t = numsIn(s);
     if (!t.length) throw new UserErr("I need a number in there, like <b>3,742</b>.");
+    if (t.length > 1){ var away = elsewhere(s); if (away) throw new UserErr(away); }
     if (t.length > 1) throw new UserErr("I found more than one number in <b>" + esc(s) + "</b>. Type just one.");
     return decArg(t[0], what);
   }
@@ -1188,11 +1204,12 @@
     if (!s) throw new UserErr(EMPTY.place);
     noMinus(s);
     s = s.replace(/^(?:please\s+)?/, "");
+    s = s.replace(/^(?:what number is|which number is|what's the number|what is the number)\s+/, "");
     if ((mt = /^(.*?)\b(more|less|fewer)\s+than\s+(.+)$/.exec(s))){
       var st = mt[1].replace(/^(?:what is|what's|whats|find|write|say|show|count)\s+/, "").replace(/\s+$/, "");
       var by = stepOf(st);
       if (by === null) throw new UserErr("Use 1, 10, 100 or 1,000 more or less, like <b>10 more than 3,742</b>.");
-      return mkPlace("more", oneNum(mt[3]).m, { by:mt[2] === "more" ? by : -by });
+      return mkPlace("more", oneNum(wordsAsDigits(mt[3])).m, { by:mt[2] === "more" ? by : -by });
     }
     if (/\+/.test(s)){
       var body = s.replace(/^(?:write|what is|what's|whats|show|make)\s+/, "").replace(/\s*(?:as one number|as a number|in standard form|in digits|as digits|=\s*\??)\s*$/, "");
@@ -1207,12 +1224,16 @@
       return mkPlace("standard", total);
     }
     if (!/\d/.test(s)){
-      var wb = s.replace(/^(?:write|what is|what's|whats|show|type)\s+/, "").replace(/\s*(?:as a number|as one number|in digits|with digits|in standard form|as digits|using digits)$/, "")
+      var wb = s.replace(/^(?:write|what is|what's|whats|show|type)\s+/, "").replace(/\s*(?:as a number|as one number|in digits|with digits|in standard form|as digits|using digits|in numbers|with numbers|as numbers|using numbers|in numerals|as a numeral|in number form)$/, "")
         .replace(/^["']+|["']+$/g, "").trim();
       var w = readWords(wb);
       if (!w) throw new UserErr("I can’t read those number words. Try one like <b>three thousand, seven hundred forty-two</b>.");
       return mkPlace("fromwords", w.m);
     }
+    // "4 thousands 0 hundreds 5 tens 2 ones": expanded form without the + signs
+    if (new RegExp("^(?:write\\s+)?(?:\\d+\\s+" + PLACERX + "[\\s,]*(?:and\\s+)?){2,}(?:as a number|in standard form|as one number)?$").test(s.replace(/\s+$/, "")))
+      return readPlace(s.replace(/^write\s+/, "").replace(/\s*(?:as a number|in standard form|as one number)$/, "").replace(/,?\s+and\s+|,\s*|\s+(?=\d)/g, " + ")
+        .split(" + ").filter(function(t){ return !/^0+\s/.test(t); }).join(" + "));
     var nums = numsIn(s);
     if (/\bvalue\b|\bworth\b|\bstand(?:s)? for\b|\bmeans?\b/.test(s)){
       // "value of the 7 in 3,742", "what is the 7 in the hundreds place of 37,742 worth", "value of the hundreds digit in 3,742"
@@ -1249,6 +1270,13 @@
     }
     if (/\bwords?\b|\bspell\b|\bsay\b|\bread\b/.test(s)) return mkPlace("words", oneNum(s).m);
     s = s.replace(/\b(?:in expanded form|expanded form(?: of)?|expanded|write|show|on a place value chart|place value(?: chart)?(?: of| for)?|with blocks|in blocks|blocks for|what is|the number)\b/g, " ");
+    // other words left over ("round 3,456 to the hundreds place", "is 47 prime") ask something else: don't answer with expanded form
+    var left = s.replace(new RegExp(NUMRX, "g"), " ").replace(/\b(?:please|pls|me|it|can|could|you|i|how|do|to|a|an|of|for|the|this|using|use|draw|make|build|model|base[- ]ten|in|as|form|chart|numbers?|digits?|blocks?|thanks?|step by step|help)\b|[^a-z]+/g, " ").trim();
+    if (left){
+      var away = elsewhere(s);
+      throw new UserErr(away || "I’m not sure what to do with <b>" + esc(left) + "</b> here. Try <b>3,742</b>, <b>value of 7 in 3,742</b>, <b>write 3,742 in words</b> "
+        + "or <b>round 3,456 to the nearest hundred</b>.");
+    }
     return mkPlace("expanded", oneNum(s).m);
   }
 
@@ -1273,7 +1301,8 @@
     var s = normQ(text), mt;
     if (!s) throw new UserErr(EMPTY.round);
     noMinus(s);
-    mt = /\bnearest\s+(ten thousand|hundred thousand|whole(?: numbers?)?|hundredths?|thousandths?|tenths?|tens?|hundreds?|thousands?|ones?|dollars?|cents?|penny|[\d,.]+)/.exec(s);
+    mt = /\bnearest\s+(ten thousand|hundred thousand|whole(?: numbers?)?|hundredths?|thousandths?|tenths?|tens?|hundreds?|thousands?|ones?|dollars?|cents?|penny|[\d,.]+)/.exec(s)
+      || /\bto\s+the\s+(ten thousands?|hundred thousands?|hundredths?|thousandths?|tenths?|tens?|hundreds?|thousands?|ones?)(?:\s+(?:place|digit|position))?\b/.exec(s);
     if (!mt){
       if (/\bround/.test(s)) throw new UserErr("Say what to round to: the nearest <b>ten</b>, <b>hundred</b>, <b>thousand</b>, <b>whole number</b>, <b>tenth</b> or <b>hundredth</b>.");
       throw new UserErr(EMPTY.round);
@@ -1328,7 +1357,16 @@
     } else if ((mt = /\b(sum|difference|product|quotient)\s+of\s+(\d[\d,]*)\s+and\s+(\d[\d,]*)/.exec(s))){
       op = { sum:"add", difference:"sub", product:"mul", quotient:"div" }[mt[1]]; a = mt[2]; b = mt[3];
     } else throw new UserErr("Write the problem with +, −, × or ÷, like <b>estimate 487 + 312</b>.");
-    return mkEst(op, wholeArg(a, 999999, "the numbers"), wholeArg(b, 999999, "the numbers"), how, claim);
+    var A = wholeArg(a, 999999, "the numbers"), B = wholeArg(b, 999999, "the numbers");
+    var said = /\bnearest\s+(ten thousand|ten|hundred|thousand)s?\b|\bto\s+the\s+(ten thousands|tens|hundreds|thousands)\s+place\b/.exec(s);
+    if (said && op !== "div" && how === "nearest"){
+      var sw = (said[1] || said[2]).replace(/s$/, ""), e = { ten:1, hundred:2, thousand:3, "ten thousand":4 }[sw];
+      if (topPlace(A * 1000) !== e || topPlace(B * 1000) !== e)
+        throw new UserErr("This page estimates by rounding each number to its <b>greatest place</b> (" + grp(A) + " to the nearest " + PL1[topPlace(A * 1000)]
+          + ", " + grp(B) + " to the nearest " + PL1[topPlace(B * 1000)] + "), not every number to the nearest " + sw + ". "
+          + "Type <b>estimate " + grp(A) + " " + OPSYM[op] + " " + grp(B) + "</b> to see it that way, or round each number on the Rounding tab.");
+    }
+    return mkEst(op, A, B, how, claim);
   }
 
   /* ---- comparing and ordering ---- */
@@ -1350,6 +1388,9 @@
     var s = normQ(text);
     if (!s) throw new UserErr(EMPTY.compare);
     noMinus(s);
+    if (/\d\s*\/\s*\d/.test(s))
+      throw new UserErr("Fractions are compared on " + aTo(siteUrl("fractions", "mode=compare&q=" + encodeURIComponent((s.match(/\d+\s*\/\s*\d+|\d*\.\d+|\d+/g) || []).join(","))), "The Fraction Bar")
+        + ". This page compares whole numbers and decimals, like <b>compare 0.5 and 0.45</b>.");
     var down = /\b(?:greatest|largest|biggest|most|highest)\s+to\s+(?:least|smallest|fewest|lowest)\b|\bdescending\b|\bdecreasing\b/.test(s);
     var ord = down || /\border\b|\bsort\b|\bleast\b|\bsmallest\b|\bascending\b|\bincreasing\b|\bgreatest\b|\blargest\b/.test(s) && !/\bwhich\b/.test(s);
     var toks = numsIn(s.replace(/,(?=\d{1,2}(?!\d))|,(?=\d{4})/g, ", "));
@@ -1372,8 +1413,16 @@
     if (dir === "down" && from - by * cnt < 0) throw new UserErr("Counting back that far goes below 0. Say fewer numbers, or start higher.");
     return { mode:"skip", kind:"count", by:by, from:from, n:cnt, dir:dir };
   }
+  /* number words in a sentence as digits: "count by 5s from fifteen to forty" -> "count by 5s from 15 to 40" */
+  function wordsAsDigits(s){
+    var W = "(?:" + Object.keys(WN).filter(function(w){ return !/^(?:oh|nought|naught)$/.test(w); }).join("|") + "|hundred|thousand|million)";
+    return s.replace(new RegExp("\\b" + W + "(?:[\\s-]+" + W + ")*\\b(?![\\s-]+(?:twos|threes|fours|fives|tens|twenties|fifties|hundreds)\\b)", "g"), function(x){
+      var v = wordsInt(wordToks(x));
+      return v === null ? x : String(v);
+    });
+  }
   function readSkip(text){
-    var s = normQ(text), mt;
+    var s = wordsAsDigits(normQ(text)), mt;
     if (!s) throw new UserErr(EMPTY.skip);
     noMinus(s);
     if (/\b(even|odd)\b/.test(s)) return mkSkip("evenodd", { n:wholeArg(oneNum(s.replace(/\b(even|odd)\b/g, " ")).m / 1000 + "", MAXW) });
@@ -1474,9 +1523,17 @@
       if (!t.ap) t.ap = apFromWords(body, t);
       return mkTime("ampm", { t:t });
     }
+    // "it's 3:45. what time will it be in 20 minutes" · "what time will it be in 20 minutes if it is 3:45" · "what time is it 30 minutes from now if it's 11:45"
+    var nowT = new RegExp("\\b(?:it(?:'s| is)|the time is|now it(?:'s| is)|starting at|starts at)\\s+(" + TIMERX + ")").exec(s);
+    if (/\bwhat time (?:will it be|is it)\b/.test(s) && nowT){
+      var dm = /\b(?:in|after)\s+((?:\d+|an?|one|two|three|half an?)\s+(?:hours?|minutes?|mins?|hrs?)(?:\s+(?:and\s+)?\d+\s+(?:minutes?|mins?))?)\b/.exec(s)
+            || /\b((?:\d+|an?)\s+(?:hours?|minutes?|mins?|hrs?)(?:\s+(?:and\s+)?\d+\s+(?:minutes?|mins?))?)\s+(?:from now|later)\b/.exec(s);
+      var dd = dm ? readDur(dm[1]) : null, nt = readTime(nowT[1]);
+      if (dd && nt && !nt.bad) return mkTime("after", { s:nt, d:dd.d });
+    }
     var hands = /\bhands?\b|\bdraw\b|\bon (?:a|the) clock\b|\bclock face\b|\bset the clock\b/.test(s);
     var core = s.replace(/^(?:what time (?:is it|does (?:the|this) clock show|is)|read(?: the clock)?|show(?: me)?|say|tell me|where do the hands (?:go|point)(?: for| at)?|where are the hands(?: for| at)?|draw|set the clock to|set the clock for)\s*/, "")
-      .replace(/\s*(?:on (?:a|the) clock(?: face)?|in words|on a clock face)$/, "").replace(/^(?:at|for)\s+/, "").trim();
+      .replace(/\s*(?:on (?:a|the) clock(?: face)?|in words|on a clock face)$/, "").replace(/^[?:.,!\s]+/, "").replace(/^(?:at|for)\s+/, "").trim();
     var t2 = readTime(core);
     if (!t2) throw new UserErr("I can’t read <b>" + esc(core || s) + "</b> as a time. Write it like <b>3:45</b>, <b>quarter to 4</b> or <b>from 2:45 to 4:10</b>.");
     if (t2.bad) throw new UserErr("<b>" + esc(core) + "</b> can’t be a time: an hour has only 60 minutes, so the minutes go from 00 to 59.");
@@ -1541,6 +1598,8 @@
       }
       return mkMoney("make", { c:am[0] });
     }
+    s = s.replace(/[.?!]?\s*(?:how much (?:money )?(?:do|does|did) (?:i|you|he|she|they|we|it) (?:have|has|make|get)(?: in all| altogether| in total)?|how much (?:money )?is (?:that|it)|what is the total|how much altogether|how much in all)\s*$/, "")
+      .replace(/^(?:i|you|he|she|they|we)\s+(?:have|has|had|found|got|saved)\s+/, "").replace(/^there (?:are|is)\s+/, "").trim();
     var body = s.replace(/^(?:how much (?:money )?is(?: this)?|count|what is|add up|how much do)\s*/, "").replace(/\s*(?:worth|altogether|in all|in total|make)$/, "").replace(/:/g, " ").trim();
     var cs = readCoins(body);
     if (cs) return mkMoney("count", { coins:countsList(cs.counts) });
@@ -1562,6 +1621,14 @@
   function kindOf(q){
     var s = normQ(q);
     if (!s) return null;
+    // estimating words first ("estimate 487 + 312 by rounding to the nearest hundred", "about how much is 487 + 312")
+    if ((/\bestimat|\breasonable\b|\bfront[- ]?end\b/.test(s) || /^(?:about|roughly|approximately|around)\s+(?:how much|what)\b|^(?:what is|what's)\s+(?:about|roughly|approximately)\b/.test(s))
+        && /\d\s*(?:[+×x*÷\/−-]|plus|minus|times|divided by)\s*\d|\b(?:sum|difference|product|quotient) of\b/.test(s)) return "estimate";
+    // rounding money ("round $4.67 to the nearest dollar") is still rounding
+    if (/\bround(?:ed|ing)?\b/.test(s) && /\bnearest\b|\bto the \w+(?: \w+)? place\b/.test(s)) return "round";
+    // "ten past three", "twenty to 4", "5 minutes to 4" — the whole problem, so "count by 2s from 20 to 10" stays counting
+    if (/^(?:what time is (?:it )?|it'?s |it is |at )?(?:a quarter|quarter|half|five|ten|twenty|twenty-five|\d{1,2} minutes?|[a-z]+(?:-[a-z]+)? minutes?)\s+(?:past|after|to|til|till)\s+(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|\d{1,2})(?:\s+o'?clock)?$/.test(s)) return "time";
+    if (/\d\s*(?:_{2,}|□|○|\?)\s*\.?\d/.test(s)) return "compare";
     if (/\bquarter\s+(?:to|past|after|of|til|till|before)\b|\bhalf\s+past\b|o['’]?clock|\b\d{1,2}:\d{2}\b|\b(?:a\.\s?m\.?|p\.\s?m\.?)|\d\s*(?:am|pm)\b|\b(?:am|pm)\s+or\b|\bminutes?\b|\bhours?\b|\bnoon\b|\bmidnight\b|\bclock\b|\bwhat time\b|\belapsed\b/.test(s)) return "time";
     if (/[$¢]|\bcents?\b|\bpenn(?:y|ies)\b|\bnickels?\b|\bdimes?\b|\bquarters?\b|\bdollars?\b|\bbills?\b|\bchange\b|\bcoins?\b/.test(s)) return "money";
     if (/\bcount(?:ing)?\b|\bskip\b|\beven\b|\bodd\b|\bby \d+s\b/.test(s)) return "skip";

@@ -225,6 +225,7 @@
   .answer.masked .facts{filter:blur(5px);user-select:none}
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
+  .notice a{color:var(--key);font-weight:600}
   .notice b{font-family:var(--f-mono)}
   .notice .ghost{margin-top:8px;display:inline-block;margin-right:8px}
 
@@ -2114,6 +2115,242 @@
     return "simplify";
   }
 
+  /* ===================== numbers typed as words =====================
+     WORDNUM.digits("find fifteen percent of eighty") → "find 15 percent of 80"; "two and a half" → "2 1/2" and
+     "three fourths" → "3/4" when fractions are on; "minus/negative seven" is left to the page. Lower-case text in. */
+  var WORDNUM = (function(){
+    var NW = { zero:0, oh:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+               thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19 };
+    var TW = { twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+    var OW = { first:1, second:2, half:2, third:3, fourth:4, quarter:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10,
+               eleventh:11, twelfth:12, thirteenth:13, fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18,
+               nineteenth:19, twentieth:20, thirtieth:30, fortieth:40, fiftieth:50, sixtieth:60, seventieth:70, eightieth:80,
+               ninetieth:90, hundredth:100, thousandth:1000 };
+    var BIG = { thousand:1e3, million:1e6, billion:1e9 };
+    function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+    function cardAt(t, i){
+      var j = i, total = 0, any = false;
+      function small(){
+        var w = t[j], v = null;
+        if (has(TW, w)){ v = TW[w]; j++; if (has(NW, t[j]) && NW[t[j]] > 0 && NW[t[j]] < 10){ v += NW[t[j]]; j++; } }
+        else if (has(NW, w) && w !== "oh"){ v = NW[w]; j++; }
+        return v;
+      }
+      function group(){                       // up to 999
+        var k = j, v = small();
+        if (v === null){ if (t[j] === "hundred" && any === false && t[j - 1] === "a"){ v = 1; } else { j = k; return null; } }
+        if (t[j] === "hundred"){ j++; v *= 100; var k2 = j; if (t[j] === "and") j++; var b = small(); if (b === null) j = k2; else v += b; }
+        return v;
+      }
+      while (true){
+        var g = group();
+        if (g === null) break;
+        any = true;
+        if (has(BIG, t[j])){ total += g * BIG[t[j]]; j++; var k3 = j; if (t[j] === "and") j++; if (!has(NW, t[j]) && !has(TW, t[j])){ j = k3; break; } continue; }
+        total += g; break;
+      }
+      return any ? { v:total, j:j } : null;
+    }
+    function ordOf(w){
+      if (!w) return 0;
+      if (w === "halves" || w === "halfs") return 2;
+      var b = w.replace(/s$/, "");
+      return has(OW, b) ? OW[b] : 0;
+    }
+    function ordAt(t, j){
+      if (has(TW, t[j])){ var u = ordOf(t[j + 1]); if (u > 0 && u < 10) return { v:TW[t[j]] + u, j:j + 2 }; }
+      var o = ordOf(t[j]);
+      if (o > 1 && !/^seconds?$/.test(t[j])) return { v:o, j:j + 1 };
+      return null;
+    }
+    // "point five" after a number: 2 point 5 → 2.5
+    function digits(s, o){
+      o = o || {};
+      // "twenty-four", "one-half", "twenty-fourths" split into words; "semi-annually", "take-home" stay as they are
+      s = String(s).replace(/\b([a-z]+)-([a-z]+)\b/g, function(m0, a, b){ return has(NW, a) || has(TW, a) || ordOf(b) ? a + " " + b : m0; })
+        .replace(/\b(which|this|that|each|every|any|no) one\b/g, "$1 ~one~");
+      var t = s.split(" "), out = [], i = 0, c, d, c2;
+      while (i < t.length){
+        var w = t[i];
+        if (o.fractions && /^\d+$/.test(w) && (d = ordAt(t, i + 1))){ out.push(w + "/" + d.v); i = d.j; continue; }
+        c = o.fractions && (w === "a" || w === "an") && ordAt(t, i + 1) ? { v:1, j:i + 1 } : cardAt(t, i);
+        if (c){
+          if (o.fractions && (d = ordAt(t, c.j))){ out.push(c.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "and" && (t[c.j + 1] === "a" || t[c.j + 1] === "an") && /^(half|quarter)$/.test(t[c.j + 2] || "")){
+            out.push(c.v + " " + (t[c.j + 2] === "half" ? "1/2" : "1/4")); i = c.j + 3; continue; }
+          if (o.fractions && t[c.j] === "and" && (c2 = cardAt(t, c.j + 1)) && (d = ordAt(t, c2.j))){ out.push(c.v + " " + c2.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "point" && has(NW, t[c.j + 1])){
+            var k = c.j + 1, fr = "";
+            while (has(NW, t[k]) && NW[t[k]] < 10){ fr += NW[t[k]]; k++; }
+            out.push(c.v + "." + fr); i = k; continue;
+          }
+          out.push(String(c.v)); i = c.j; continue;
+        }
+        if (/^\d+$/.test(w) && t[i + 1] === "and" && (t[i + 2] === "a" || t[i + 2] === "an") && /^(half|quarter)$/.test(t[i + 3] || "")){
+          out.push(w + " " + (t[i + 3] === "half" ? "1/2" : "1/4")); i += 4; continue; }
+        if (/^\d+$/.test(w) && has(BIG, t[i + 1])){ out.push(String(Number(w) * BIG[t[i + 1]])); i += 2; continue; }   // 2 million
+        out.push(w); i++;
+      }
+      return out.join(" ").replace(/~one~/g, "one");
+    }
+    return { digits:digits };
+  })();
+  /* ===================== a problem typed as a sentence =====================
+     understand(text) rewrites the ways people type ratio problems into the forms the tabs read, and picks the tab:
+       "write 24:36 in simplest form" → 24:36 · "is 4:6 equivalent to 6:9?" → 4:6=6:9 · "x over 4 equals 15 over 20" → x/4=15/20
+       "3 is to 4 as x is to 20" → 3:4=x:20 · "if 3 pencils cost $1.20, how much do 8 cost" → $1.20 for 3 pencils, how much for 8 pencils
+       "There are 14 boys and 21 girls. What is the ratio of girls to boys?" → 21:14 · "ratio of 2 hours to 30 minutes" → 120:30
+       "The ratio of boys to girls is 3:5. There are 40 students. How many girls?" → share 40 in 3:5
+     → { q, mode } — or { bad } when it can't be read safely — or null: nothing to rewrite (the text goes in as typed). */
+  var UNITS = {                                // to the smallest unit of each kind, so "2 hours to 30 minutes" compares like with like
+    time:{ second:1, sec:1, minute:60, min:60, hour:3600, hr:3600, day:86400, week:604800 },
+    len:{ millimeter:1, mm:1, centimeter:10, cm:10, meter:1000, m:1000, kilometer:1e6, km:1e6, inch:25.4, "in":25.4, foot:304.8, feet:304.8, ft:304.8, yard:914.4, yd:914.4, mile:1609344, mi:1609344 },
+    mass:{ gram:1, g:1, kilogram:1000, kg:1000, ounce:28.349523125, oz:28.349523125, pound:453.59237, lb:453.59237 },
+    money:{ cent:1, penny:1, pennies:1, dollar:100, quarter:25, dime:10, nickel:5 },
+    vol:{ milliliter:1, ml:1, liter:1000, l:1000, cup:236.5882365, pint:473.176473, quart:946.352946, gallon:3785.411784 }
+  };
+  function unitOf(w){
+    w = String(w || "").toLowerCase().replace(/\.$/, "");
+    var tries = [w, w.replace(/s$/, ""), w.replace(/es$/, ""), w === "inches" ? "inch" : w];
+    for (var i = 0; i < tries.length; i++)
+      for (var k in UNITS) if (Object.prototype.hasOwnProperty.call(UNITS[k], tries[i])) return { kind:k, f:UNITS[k][tries[i]] };
+    return null;
+  }
+  function sameNoun(a, b){                     // "girl" ~ "girls", "box" ~ "boxes", "puppy" ~ "puppies"
+    a = String(a).replace(/(?:ies)$/, "y").replace(/(?:es|s)$/, ""); b = String(b).replace(/(?:ies)$/, "y").replace(/(?:es|s)$/, "");
+    return a.length > 1 && a === b;
+  }
+  function understand(raw){
+    var s0 = normText(raw), s = " " + s0.toLowerCase().replace(/[’‘`]/g, "'") + " ", m;
+    if (!/[a-z]/.test(s.replace(/\b[xn]\b/g, "")) && !/\?\s*$/.test(s0)) return null;   // plain: 12:18, 3:4=x:20, 6 for $4.50 …
+    s = s.replace(/^\s*[^:\d$=]{0,60}\b(?:asks?|asked|says?|question|problem|task)\b[^:\d$]{0,20}:\s*/, " ").replace(/\([a-z][^)]*\)/g, " ");
+    s = s.replace(/([a-z])\s*:\s*(?=[a-z])/g, "$1 : ");                          // "twelve:eighteen"
+    var plain0 = s.replace(/\s+/g, " ").trim();
+    if (/[a-z]/.test(s)) s = WORDNUM.digits(s.replace(/\s+/g, " "));
+    var N = "(\\d*\\.?\\d+(?:/\\d+)?)", M = "(\\$\\s?\\d*\\.?\\d+|\\d*\\.?\\d+\\s?(?:dollars?|cents?|¢))", W = "([a-z]+(?: [a-z]+)?)";
+    s = s.replace(/(\d+) dollars? (?:and )?(\d{1,2}) (?:cents?)?/g, function(x, d, c){ return "$" + d + "." + (c.length < 2 ? "0" + c : c) + " "; })
+         .replace(/(\d*\.?\d+) dollars?\b/g, "$$$1").replace(/\$\s+(?=\d)/g, "$$");
+    s = s.replace(/\b(?:please|pls|can you|could you|help me(?: with)?|show (?:me )?(?:the |your |all )?(?:work|steps)|step by step|with steps|explain|thanks|thank you)\b/g, " ");
+    s = s.replace(/\bsolve for [a-z]\b\s*:?|\bfind (?:the value of )?[a-z] if\b|\bfind [a-z]\s*:|\bsolve\s*:/g, " ");
+    s = s.replace(/\s+/g, " ");
+    var ratioRe = /\d\s*:\s*\d|\d\s+to\s+\d/;
+    function done(q, mode){ return { q:q.replace(/\s+/g, " ").replace(/\s*([:=,])\s*/g, function(x, c){ return c === "," ? ", " : c; }).trim(), mode:mode }; }
+
+    // equivalent ratios: "is 4:6 equivalent to 6:9", "are 2:3 and 4:6 equivalent", "is 3:4 the same as 9:16"
+    var R2 = "(\\d*\\.?\\d+\\s*(?::|to|/)\\s*\\d*\\.?\\d+(?:\\s*:\\s*\\d*\\.?\\d+)*)";
+    if ((m = new RegExp("^\\s*(?:is|are)\\s+(?:the ratios? )?" + R2 + "\\s+(?:equivalent|equal|the same as|the same)\\s*(?:to|as|with)?\\s+" + R2 + "\\s*\\??\\s*$").exec(s))
+        || (m = new RegExp("^\\s*(?:are|is)\\s+(?:the ratios? )?" + R2 + "\\s+(?:and|&)\\s+" + R2 + "\\s+(?:equivalent|equal|the same|proportional)(?: ratios)?\\s*\\??\\s*$").exec(s))
+        || (m = new RegExp("^\\s*(?:do|does)\\s+" + R2 + "\\s+(?:and|&)\\s+" + R2 + "\\s+(?:form a proportion|make a proportion)\\s*\\??\\s*$").exec(s))){
+      var A = m[1].replace(/\s*to\s*/g, ":"), B = m[2].replace(/\s*to\s*/g, ":");
+      return /\//.test(A + B) ? done(A + "=" + B, "prop") : done(A + "=" + B, "simplify");
+    }
+    // "3 is to 4 as x is to 20"
+    if ((m = /^\s*(\d*\.?\d+|[a-z?_]+) is to (\d*\.?\d+|[a-z?_]+) as (\d*\.?\d+|[a-z?_]+) is to (\d*\.?\d+|[a-z?_]+)\s*\??\s*$/.exec(s)))
+      return done(m[1] + ":" + m[2] + "=" + m[3] + ":" + m[4], "prop");
+    // "x over 4 equals 15 over 20"
+    if (/\bover\b/.test(s) && /\b(?:equals?|is equal to|=|is the same as)\b|=/.test(s)){
+      var t = s.replace(/\b(?:is equal to|equals?|is the same as)\b/g, "=").replace(/\s*\bover\b\s*/g, "/").replace(/^\s*(?:what is|whats|what's)\s+/, "");
+      if (/^\s*(?:\d*\.?\d+|[a-z?_])\/(?:\d*\.?\d+|[a-z?_])\s*=\s*(?:\d*\.?\d+|[a-z?_])\/(?:\d*\.?\d+|[a-z?_])\s*\??\s*$/.test(t)) return done(t.replace(/\?\s*$/, ""), "prop");
+    }
+    // a proportion with filler around it: "3 / 4 = x / 20 please", "3/8 = 9/n solve for n"
+    if (/=/.test(s) && (m = /(?:^|\s)((?:\d*\.?\d+|[a-z?_])\s*[\/:]\s*(?:\d*\.?\d+|[a-z?_])(?:\s*:\s*(?:\d*\.?\d+|[a-z?_]))*\s*=\s*(?:\d*\.?\d+|[a-z?_])\s*[\/:]\s*(?:\d*\.?\d+|[a-z?_])(?:\s*:\s*(?:\d*\.?\d+|[a-z?_]))*)(?:\s|$|\?)/.exec(s))){
+      var rest = s.replace(m[1], " ").replace(/[^a-z]+/g, " ").trim();
+      if (!rest || /^(?:what is|whats|find|solve|the|missing|number|value|of|x|n|is|answer|for)( |$)/.test(rest)){
+        var pq = m[1].replace(/\s+/g, "");
+        return done(pq, /\//.test(pq) || /[a-z]/.test(pq.replace(/x/g, "")) ? "prop" : (/[a-z]/.test(pq) ? "prop" : "simplify"));
+      }
+    }
+    // price for some, how much for others: "if 3 pencils cost $1.20, how much do 8 cost?"
+    if ((m = new RegExp("(?:^|\\s)(?:if\\s+)?" + N + "\\s+" + W + "\\s+(?:cost|costs|are|is|sell for|sells for|go for|for|=)\\s+" + M + "\\s*[,.;]?\\s*(?:then\\s+)?(?:how much|what)\\s+(?:will|would|do|does|is|are|should|for)?\\s*(?:it cost for\\s+|cost for\\s+)?(" + "\\d*\\.?\\d+|one|a|an" + ")\\s*([a-z]+)?").exec(s))){
+      var cnt = m[4] === "one" || m[4] === "a" || m[4] === "an" ? "1" : m[4], item = m[2].replace(/\s+(?:of\s+\w+)$/, "");
+      if (item.split(" ").length > 1 && !/\b(?:of)\b/.test(item)) item = item.split(" ").pop();
+      return done(m[3].replace(/\s+/g, "") + " for " + m[1] + " " + item + ", how much for " + cnt + " " + item, "prop");
+    }
+    if ((m = new RegExp("(?:^|\\s)(?:at\\s+)?" + M + "\\s+(?:per|a|an|each|for one|for each|for 1)\\s+" + W + "\\s*[,.;]?\\s*(?:how much|what)\\s+(?:will|would|do|does|is|are|for)?\\s*(?:it cost for\\s+)?(\\d*\\.?\\d+)\\s*([a-z]+)").exec(s)))
+      return done(m[1].replace(/\s+/g, "") + " for 1 " + m[2].split(" ")[0] + ", " + m[3] + " " + m[4], "prop");
+    // "440 miles on 16 gallons": a rate
+    if ((m = new RegExp("^\\s*" + N + "\\s+([a-z]+)\\s+on\\s+" + N + "\\s+([a-z]+)\\s*\\??\\s*$").exec(s))) return done(m[1] + " " + m[2] + " for " + m[3] + " " + m[4], "rate");
+    // the better buy: "which is cheaper, 8 pens for $2 or 12 pens for $2.76?"
+    if (/\b(?:cheaper|better buy|best buy|better deal|best deal|better value|best value|cost less|costs less|lower unit price)\b/.test(s) && /\bfor\b|\bper\b/.test(s)){
+      var offers = s.replace(/\b(?:which|what|is|are|the|a|an|cheaper|better|best|buy|deal|value|cost|costs|less|lower|unit|price)\b/g, " ").replace(/\b(?:or|vs\.?|versus)\b/g, ",").replace(/\?/g, " ")
+        .replace(/^[\s,:]+|[\s,:]+$/g, "").replace(/\s*,\s*,?\s*/g, ", ");
+      if (offers.split(",").length >= 2) return done(offers, "rate");
+    }
+    // a ratio in other units: "2 hours to 30 minutes" → 120:30
+    if ((m = /(?:^|\s)(\d*\.?\d+)\s*([a-z]+)\s+(?:to|:)\s+(\d*\.?\d+)\s*([a-z]+)\b/.exec(s)) && (!/\b(?:share|split|divide|map|scale|model|recipe)\b/.test(s))
+        && (s.match(/\d*\.?\d+/g) || []).length === 2){
+      var ua = unitOf(m[2]), ub = unitOf(m[4]);
+      if (ua && ub && ua.kind === ub.kind && ua.f !== ub.f){
+        var lo = Math.min(ua.f, ub.f), fa = ua.f / lo, fb = ub.f / lo;
+        if (Math.abs(fa - Math.round(fa)) < 1e-9 && Math.abs(fb - Math.round(fb)) < 1e-9){
+          var A2 = Number(m[1]) * Math.round(fa), B2 = Number(m[3]) * Math.round(fb);
+          if (isFinite(A2) && isFinite(B2) && A2 < 1e9 && B2 < 1e9) return done(+A2.toFixed(6) + ":" + +B2.toFixed(6), "simplify");
+        }
+        return { bad:"<b>" + esc(m[1] + " " + m[2]) + "</b> and <b>" + esc(m[3] + " " + m[4]) + "</b> are in different units. Change one so both use the same unit, then compare them." };
+      }
+      if (ua && ub && ua.kind !== ub.kind && !/\b(?:per|for|in|each|every)\b/.test(s))
+        return { bad:"<b>" + esc(m[2]) + "</b> and <b>" + esc(m[4]) + "</b> measure different things, so that isn’t a ratio of like amounts. For a rate (like miles per hour), write it as <b>120 miles in 3 hours</b>." };
+    }
+    // counts and a question about their ratio: "There are 14 boys and 21 girls. What is the ratio of girls to boys?"
+    var named = /\bratio of (?:the )?(?:number of )?([a-z]+)(?: [a-z]+)? (?:to|and|:) (?:the )?(?:number of )?([a-z]+)\b/.exec(s) || /\b([a-z]+) to ([a-z]+) (?:ratio|is|are)\b/.exec(s);
+    var shareWords = /\b(?:share|shared|split|divide|divided|difference|total|altogether|in all|how many|how much|first part|second part)\b/.test(s);
+    var explicit = /\d\s*:\s*\d|\d\s+to\s+\d/.exec(s);
+    if (named && !explicit){
+      var counts = [], cre = /(\d*\.?\d+)\s+([a-z]+)(?: ([a-z]+))?/g, c;
+      while ((c = cre.exec(s))) counts.push({ v:c[1], w:[c[2], c[3] || ""] });
+      var find = function(noun){
+        var hit = counts.filter(function(x){ return sameNoun(x.w[0], noun) || sameNoun(x.w[1], noun); });
+        return hit.length === 1 ? hit[0].v : null;
+      };
+      var a3 = find(named[1]), b3 = find(named[2]);
+      if (a3 !== null && b3 !== null) return done(a3 + ":" + b3, "simplify");
+    }
+    // a ratio with one more number: a total, or one of the parts ("…is 3:5. There are 40 students. How many girls?")
+    // "2 cups of flour for every 3 cups of sugar. How much flour for 9 cups of sugar?" (same unit, two things): a part of a ratio
+    if ((m = /(\d*\.?\d+)\s+([a-z]+)\s+(?:of\s+)?([a-z]+)\s+(?:for every|for each|to every|to each|per)\s+(\d*\.?\d+)\s+([a-z]+)\s+(?:of\s+)?([a-z]+)\b(.*)$/.exec(s))
+        && sameNoun(m[2], m[5]) && !sameNoun(m[3], m[6]) && (s.match(/\d*\.?\d+/g) || []).length === 3){
+      var k3 = /(\d*\.?\d+)\s+(?:[a-z]+\s+)?(?:of\s+)?([a-z]+)/.exec(m[7]);
+      if (k3 && sameNoun(k3[2], m[6])) return done(m[1] + ":" + m[4] + ", the second part is " + k3[1], "share");
+      if (k3 && sameNoun(k3[2], m[3])) return done(m[1] + ":" + m[4] + ", the first part is " + k3[1], "share");
+    }
+    if (explicit && shareWords && !/=/.test(s) && !/\b(?:first|second|third|fourth) part\b|\bdifference\b|\bmore than\b|\bless than\b|\bfewer than\b/.test(s)){
+      var rm = /(\d*\.?\d+(?:\s*:\s*\d*\.?\d+)+|\d*\.?\d+\s+to\s+\d*\.?\d+)/.exec(s), rat = rm[1].replace(/\s*to\s*/g, ":").replace(/\s+/g, "");
+      var others = [], ore = /(\$?\d*\.?\d+)(?:\s+([a-z]+)(?: (?:of )?([a-z]+))?)?/g, o, before = s.slice(0, rm.index), after = s.slice(rm.index + rm[1].length);
+      [before, after].forEach(function(part){ ore.lastIndex = 0; while ((o = ore.exec(part))) others.push({ v:o[1], w:[o[2] || "", o[3] || ""] }); });
+      var nm = named || /\b([a-z]+) (?:to|and) ([a-z]+) (?:is|are|in|=)\b/.exec(s);
+      if (others.length === 1 && rat.split(":").length === 2 && !/\b(?:share|shared|split|divide|divided|difference)\b/.test(s)){
+        var ov = others[0];
+        if (nm && (sameNoun(ov.w[0], nm[1]) || sameNoun(ov.w[1], nm[1]))) return done(rat + ", the first part is " + ov.v, "share");
+        if (nm && (sameNoun(ov.w[0], nm[2]) || sameNoun(ov.w[1], nm[2]))) return done(rat + ", the second part is " + ov.v, "share");
+        if (/\b(?:total|altogether|in all|all together|there are|there were|has|have|is|are)\b/.test(s)) return done("share " + ov.v + " in " + rat, "share");
+      }
+    }
+    // "A recipe serves 4 and uses 2 cups of flour. How much flour to serve 6?"
+    if ((m = /\bserves? (\d+)\b/.exec(s)) && /(?:to serve|for|feed|make|serve) (\d+)(?: people| servings?| portions?)?\s*\??\s*$/.test(s)){
+      var to = /(?:to serve|for|feed|make|serve) (\d+)(?: people| servings?| portions?)?\s*\??\s*$/.exec(s)[1];
+      var ing = [], ire = /(\d*\.?\d+(?: \d+\/\d+)?|\d+\/\d+)\s+(cups?|tablespoons?|tbsp|teaspoons?|tsp|eggs?|grams?|g|ounces?|oz|pounds?|lbs?|ml|liters?|pinch(?:es)?)\s*(?:of\s+)?([a-z]+)?/g, ig;
+      while ((ig = ire.exec(s))) ing.push(ig[1] + " " + ig[2] + (ig[3] && !/^(?:and|to|for|how|serve|serves)$/.test(ig[3]) ? " " + ig[3] : ""));
+      if (ing.length) return done("recipe for " + m[1] + ", make " + to + ": " + ing.join(", "), "scale");
+    }
+    // "1 cm on the map is 2 km. The lake is 4.5 cm across."
+    if ((m = /(\d*\.?\d+)\s*([a-z]+)\s+(?:on (?:the|a) (?:map|drawing|plan|model|blueprint)\s+)?(?:is|represents|equals|stands for|=)\s+(\d*\.?\d+)\s*([a-z]+)\b(.*)$/.exec(s)) && unitOf(m[2]) && unitOf(m[4])){
+      var x3 = new RegExp("(\\d*\\.?\\d+)\\s*(" + m[2] + "|" + m[4] + ")\\b").exec(m[5]);
+      if (x3) return done(m[1] + " " + m[2] + " = " + m[3] + " " + m[4] + ", " + x3[1] + " " + x3[2], "scale");
+    }
+    // a lone ratio with words around it: "write 24:36 in simplest form", "The ratio of boys to girls is 14 to 21."
+    var lone = s.match(/\d*\.?\d+(?:\s*:\s*\d*\.?\d+)+|\d*\.?\d+\s+to\s+\d*\.?\d+(?:\s+to\s+\d*\.?\d+)*/g);
+    if (lone && lone.length === 1 && !/=/.test(s) && !/\$|\b(?:share|shared|split|divide|divided|difference|total|altogether|map|scale|model|recipe|serves?|per|for|in all)\b/.test(s)){
+      var digitsLeft = s.replace(lone[0], " ").match(/\d/g);
+      if (!digitsLeft) return done(lone[0].replace(/\s*to\s*/g, ":").replace(/\s+/g, ""), "simplify");
+    }
+    // a trailing question mark on a plain problem: "3:4 = 9:12?"
+    if (/\?\s*$/.test(s0) && !/[a-z]/.test(s.replace(/\b[xn]\b/g, ""))) return { q:s0.replace(/\?\s*$/, "").trim(), mode:null };
+    // numbers that were words ("divide sixty in the ratio two to three"): the same problem, in digits
+    var t2 = s.replace(/\s+/g, " ").trim();
+    if (t2 !== plain0 && /\d/.test(t2) && t2.replace(/[^\d$]/g, "") !== plain0.replace(/[^\d$]/g, "")) return { q:t2, mode:null };
+    return null;
+  }
+
   /* ===================== checking an answer ===================== */
   function readUserNum(raw){
     var s = normText(raw).toLowerCase().trim();
@@ -2543,9 +2780,34 @@
     if (bnd) bnd.classList.toggle("masked", stepMode && S.step < total);
     $("closer").style.opacity = (stepMode && S.step < total) ? ".2" : "1";
   }
+  var LINKMODE = false;                       // the address named the tab (mode=…): keep it until the problem is changed
+  var READ = null;                            // what understand() made of a problem typed as a sentence (null: typed plainly)
   function render(){
-    var mode = S.mode, q = S.inputs[mode], total = 0, sol = null;
-    try { sol = solveAny(mode, q); }
+    var raw = S.inputs[S.mode], u = null;
+    try { u = understand(raw); } catch (e0){ u = null; }
+    READ = u && !u.bad ? u : null;
+    if (READ && !READ.mode) READ.mode = inferMode(READ.q);
+    if (LINKMODE && READ && READ.mode !== S.mode){ READ = null; u = null; }       // the link named this tab: read it there, as written
+    // a sentence typed in the box: words like "share" or "map" pick their tab the way a link does
+    var im = !u && String(raw).trim() ? inferMode(raw) : null;
+    if (LINKMODE) im = null;
+    if ((im === "share" || im === "scale") && /[a-z]/i.test(String(raw))){ if (im !== S.mode){ S.inputs[im] = raw; S.mode = im; S.step = 1; paintMode(); } im = null; }
+    if (READ && READ.mode !== S.mode){ S.inputs[READ.mode] = raw; S.mode = READ.mode; S.step = 1; paintMode(); }
+    var mode = S.mode, q = READ ? READ.q : raw, total = 0, sol = null;
+    try {
+      if (u && u.bad) throw new UserErr(u.bad);
+      try { sol = solveAny(mode, q); }
+      catch (e1){
+        // this tab can't read it, but the tab its words point to can: go there
+        if (!(e1 && e1.user) || !im || im === mode) throw e1;
+        var sol2 = null;
+        try { sol2 = solveAny(im, raw); } catch (e2){}
+        if (!sol2) throw e1;
+        sol = sol2; S.inputs[im] = raw; S.mode = mode = im; S.step = 1; paintMode();
+      }
+      if (READ && sol && sol.band && normText(READ.q).toLowerCase().replace(/\s+/g, "") !== normText(raw).toLowerCase().replace(/\s+/g, ""))
+        sol.band.facts = ["Read as <b>" + esc(READ.q) + "</b>"].concat(sol.band.facts || []);
+    }
     catch (e){
       if (e && e.user) fail(e.user === "zero" ? "Something in there divides by zero — that can’t be done. Change the 0." : e.user, q);
       else { fail("Something went wrong working that one out — try different numbers.", q); if (window.console && console.error) console.error(e); }
@@ -2661,7 +2923,7 @@
     if (EMBED) return;
     try {
       var p = new URLSearchParams();
-      p.set("mode", S.mode); p.set("q", S.inputs[S.mode]);
+      p.set("mode", S.mode); p.set("q", READ ? READ.q : S.inputs[S.mode]);
       if (S.practice !== "all") p.set("practice", S.practice);
       var url = location.pathname + "?" + p.toString() + location.hash;
       if (url !== location.pathname + location.search + location.hash) history.replaceState(history.state, "", url);
@@ -2674,7 +2936,12 @@
     var p;
     try { p = new URLSearchParams(location.search); } catch (e){ return; }
     var q = p.get("q"), mode = MODE_ALIAS[(p.get("mode") || "").toLowerCase().trim()] || "";
-    if (!mode) mode = q !== null && q.trim() ? inferMode(q) : "";
+    LINKMODE = !!mode && q !== null;                    // a link that names its tab (made problems do) keeps it
+    if (!mode && q !== null && q.trim()){
+      var u = null;
+      try { u = understand(q); } catch (e0){}
+      mode = u && !u.bad ? (u.mode || inferMode(u.q)) : inferMode(q);
+    }
     if (mode) S.mode = mode;
     if (q !== null && q.trim() && mode) S.inputs[mode] = q;
     var pr = (p.get("practice") || "").toLowerCase();
@@ -2730,9 +2997,9 @@
     $("slots").hidden = S.mode !== "prop";
     buildChips(); buildMaker();
   }
-  function setMode(m){ S.mode = m; S.step = 1; paintMode(); render(); save(); }
+  function setMode(m){ LINKMODE = false; S.mode = m; S.step = 1; paintMode(); render(); save(); }
   Array.prototype.forEach.call(document.querySelectorAll("#modeTabs button"), function(b){ b.addEventListener("click", function(){ setMode(b.getAttribute("data-mode")); }); });
-  in1.addEventListener("input", function(){ S.inputs[S.mode] = in1.value; S.step = 1; render(); save(); });
+  in1.addEventListener("input", function(){ LINKMODE = false; S.inputs[S.mode] = in1.value; S.step = 1; render(); save(); });
   Array.prototype.forEach.call(document.querySelectorAll("#keys button"), function(b){
     b.addEventListener("mousedown", function(e){ e.preventDefault(); });
     b.addEventListener("click", function(){

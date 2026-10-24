@@ -561,6 +561,10 @@
                average rate of change of x^2 on [1, 3] and at x = 2 · s(t) = t^3 - 6t^2 + 9t at t = 2   -> rate
              Accepted: d/dx, d/dt, ', ″, d²/dx², lim, lim_{x→a}, →, ->, approaches, ∫, int, integral, from … to …,
              dx, infinity, ∞, ⁺ ⁻ (or + -) after the point, from the left / right.
+             Also read: a label and polite words ("Problem 4:", "can you please", "step by step"), dy/dx, ddx, 2nd,
+             anti-derivative, ∫₀², "between x = 1 and x = 3", number and operation words (six x squared plus 2x, times,
+             e to the x), a story before the function ("a ball's height is h(t) = …. Find …"). A plain expression with no x
+             and no calculus words ("sin 30") gets a notice.
    The structured form. This is what the page writes in the address bar and what made problems carry, so a
    problem opens exactly as it was made. With these, q is not needed. f is the function in plain ASCII
    (f=x^3*sin(x), f=(x^2-9)/(x-3), f=sqrt(x^2+1), f=e^(2x), f=ln(x)); points may be fractions or use pi
@@ -3337,7 +3341,33 @@
     integral:"Type something to integrate, like <b>∫ 3x² + 2x dx</b> or <b>∫ from 0 to 2 of x² dx</b>.",
     rate:"Type a function and an interval, like <b>average rate of change of x² on [1, 3]</b>, or a position like <b>s(t) = t³ − 6t² + 9t at t = 2</b>."
   };
-  function fixTxt(s){ return String(s).replace(/[−–—]/g, "-").replace(/→/g, "->").replace(/∞/g, " inf ").replace(/\binfinity\b/gi, "inf").replace(/[′’]/g, "'").replace(/″/g, "''").replace(/\s+/g, " ").trim(); }
+  var CNW = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12 };
+  var SUBDIG = "₀₁₂₃₄₅₆₇₈₉", SUPDIG = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+  function fixTxt(s){
+    s = String(s).replace(/[−–—]/g, "-").replace(/→/g, "->").replace(/∞/g, " inf ").replace(/\binfinity\b/gi, "inf").replace(/[′’]/g, "'").replace(/″/g, "''").replace(/\s+/g, " ").trim();
+    if (s.indexOf("\u0000") >= 0) return s;
+    // a problem's label and the polite words around it ("Problem 4:", "Q3)", "can you please", "step by step", "show your work")
+    s = s.replace(/^\s*(?:(?:problem|question|exercise|ex|q|no|number|#)\s*\.?\s*\d+[a-z]?\s*[:.)\-]|\d+\s*[.)]\s+(?=[a-z])|(?:hw|homework)\s*:)\s*/i, "")
+      .replace(/\b(?:can|could|would|will) (?:you|u) (?:please |pls |plz )?(?:help (?:me )?)?(?:to )?/gi, " ")
+      .replace(/\(\s*(?:show (?:all |your |the )?(?:work|working|steps)|step[- ]by[- ]step|please)\s*\)/gi, " ")
+      .replace(/\b(?:please|pls|plz|thanks|thank you|step[- ]by[- ]step|show (?:all |your |the |me the )?(?:work|working|steps)|explain(?: it)?)\b/gi, " ")
+      .replace(/^\s*(?:i (?:need|want|have) (?:to )?(?:find |know |solve |do |get )?(?:the )?|how (?:do|would|can) (?:i|you|we) (?:find |solve |do |get |work out |take )?(?:the )?|help me (?:find |with |solve )?(?:the )?|solve\s*:|what(?:'s| is) (?=(?:find|evaluate|compute|calculate|determine|integrate|differentiate)\b))\s*/i, "")
+      .replace(/^\s*(?:calculate|compute|determine)\s+(?=(?:find|evaluate|the|d\/d|lim|∫|int|integra|deriv|differentiat|antideriv)\b|d\s*\/|d²|d\s*\^\s*2|∫)/i, "")
+      .replace(/\b2nd\b/gi, "second");
+    // dy/dx, ddx, anti-derivative
+    s = s.replace(/\bd\s*[yfs]\s*\/\s*d\s*([xt])\b/gi, "d/d$1").replace(/\bdd([xt])\b/gi, "d/d$1").replace(/\banti[- ]derivative/gi, "antiderivative");
+    // ∫₀² written with small digits: ∫_0^2
+    s = s.replace(/∫\s*([₀₁₂₃₄₅₆₇₈₉]+)\s*([⁰¹²³⁴⁵⁶⁷⁸⁹]+)/g, function(m, lo, hi){
+      return "∫_" + lo.split("").map(function(c){ return SUBDIG.indexOf(c); }).join("") + "^" + hi.split("").map(function(c){ return SUPDIG.indexOf(c); }).join("") + " ";
+    });
+    // words for numbers and operations: "x squared", "six x cubed plus 2x", "e to the x"
+    s = s.replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\b(?![- ]sided)/gi, function(m, w){ return String(CNW[w.toLowerCase()]); })
+      .replace(/\s*\bsquared\b/gi, "^2").replace(/\s*\bcubed\b/gi, "^3")
+      .replace(/\s*\b(?:to the|raised to the)\s+(\d+)(?:st|nd|rd|th)?\s+power\b/gi, "^$1").replace(/\s*\b(?:to the power of|raised to(?: the power of)?)\s+(-?\d+)\b/gi, "^$1")
+      .replace(/\be to the (?:power of )?\(?\s*(-?\d*\s*[xt])\s*\)?/gi, "e^($1)")
+      .replace(/\bsquare root of\s*/gi, "√").replace(/\bplus\b/gi, "+").replace(/\bminus\b/gi, "-").replace(/\btimes\b/gi, "*").replace(/\bdivided by\b/gi, "/");
+    return s.replace(/\s+/g, " ").replace(/[\s?!]+$/, "").replace(/\.$/, "").trim();
+  }
   function kindOf(q){
     var s = fixTxt(q).toLowerCase();
     if (/∫|\bint\b|\bint_|integra|antideriv|area under/.test(s)) return "integral";
@@ -3355,6 +3385,13 @@
   }
   function stripFdef(s){ return s.replace(/^\s*(?:[fgysh]|f'|f''|s|v|y')\s*(?:\(\s*[xt]\s*\))?\s*=\s*/i, ""); }
   function readExprIn(s){
+    s = s.trim();
+    // words before a definition ("a ball’s height is h(t) = …", "given y = …") are the story, not the function
+    var dm = /^([a-z'’\s,]*?)\b(?:[a-z]|f'|y')\s*(?:\(\s*[xt]\s*\))?\s*=\s*(.+)$/i.exec(s);
+    if (dm && /[a-z]{2,}/i.test(dm[1]) && !/[=]/.test(dm[2])) s = dm[2];
+    // a sentence after the function ("s(t) = t^2 − 4t + 3. Find its …") isn't part of it
+    s = s.replace(/\.\s+[a-z]{2,}[\s\S]*$/i, "");
+    s = s.replace(/^(?:is|equals|=)\s+/i, "");
     s = stripFdef(s.trim());
     if (!s) throw new UserErr("Type the function as well.");
     var p = parseE(s);
@@ -3416,7 +3453,7 @@
       m = /(?:\bat\b|\bwhere\b|\bwhen\b|,)\s*(?:the\s+point\s+)?(?:[xt]\s*=\s*)?([^,;]+?)\s*[.?]?\s*$/i.exec(s);
       if (m && !flat){ a = readPt(m[1], false, "the point"); s = s.slice(0, m.index); }
     }
-    s = cleanExpr(s, ["find", "the", "equation of", "equation", "tangent lines?", "tangents?", "lines?", "to", "of", "for", "where", "is", "are", "horizontal", "flat", "curve", "graph", "has", "have", "does", "a", "at", "slope is (?:0|zero)", "slope (?:0|zero)", "points?"]);
+    s = cleanExpr(s, ["find", "what is", "write", "the", "equation of", "equation", "slope is (?:0|zero)", "slope (?:0|zero)", "slope of", "slope", "tangent lines?", "tangents?", "lines?", "to", "of", "for", "where", "is", "are", "horizontal", "flat", "curve", "graph", "has", "have", "does", "a", "an", "at", "when", "points?"]);
     var p = readExprIn(s);
     if (flat) return mkProb({ mode:"tangent", f:p.e, vn:p.vn, ask:"flat" });
     if (!a) throw new UserErr("Say where, like <b>tangent to x² at x = 3</b> — or ask for <b>horizontal tangents of x³ − 3x</b>.");
@@ -3435,7 +3472,7 @@
   }
   function readIntegral(text){
     var s = fixTxt(text), lo = null, hi = null, m;
-    m = /\bfrom\s+(\S+(?:\s*\/\s*\d+)?)\s+to\s+(\S+(?:\s*\/\s*\d+)?)/i.exec(s);
+    m = /\b(?:from|between)\s+(?:[xt]\s*=\s*)?(\S+(?:\s*\/\s*\d+)?)\s+(?:to|and)\s+(?:[xt]\s*=\s*)?(\S+(?:\s*\/\s*\d+)?)/i.exec(s);
     if (m){ lo = readPt(m[1], false, "the bottom limit"); hi = readPt(m[2], false, "the top limit"); s = s.slice(0, m.index) + " " + s.slice(m.index + m[0].length); }
     if (!lo){
       m = /(?:∫|\bint(?:egral)?)\s*_\s*\{?\s*([^\s\^}]+)\s*\}?\s*\^\s*\{?\s*([^\s}]+)\s*\}?/i.exec(s);
@@ -3446,7 +3483,7 @@
       if (m){ lo = readPt(m[1], false, "the bottom limit"); hi = readPt(m[2], false, "the top limit"); s = s.slice(0, m.index) + " " + s.slice(m.index + m[0].length); }
     }
     s = s.replace(/∫/g, " ").replace(/\s*\bd[xt]\b\s*/g, " ");
-    s = cleanExpr(s, ["find", "evaluate", "compute", "the", "definite", "indefinite", "integral of", "integral", "integrate", "antiderivative of", "an antiderivative of", "antiderivative", "int", "of", "with respect to [xt]", "area under"]);
+    s = cleanExpr(s, ["find", "evaluate", "compute", "the", "definite", "indefinite", "integral of", "integral", "integrate", "antiderivative of", "an antiderivative of", "antiderivative", "int", "of", "with respect to [xt]", "area under", "what is", "curve", "the graph of", "graph"]);
     var p = readExprIn(s);
     return mkProb({ mode:"integral", f:p.e, vn:p.vn, lo:lo, hi:hi });
   }
@@ -3456,7 +3493,7 @@
       var t0 = null;
       m = /(?:\bat\b|\bwhen\b|,)\s*t\s*=\s*([^,;]+?)\s*[.?]?\s*$/i.exec(s);
       if (m){ t0 = readPt(m[1], false, "the time"); s = s.slice(0, m.index); }
-      s = cleanExpr(s, ["find", "the", "position", "velocity", "acceleration", "and", "of", "is", "a", "an", "particle", "object", "moves", "with", "where", "at rest", "when", "given"]);
+      s = cleanExpr(s, ["find", "what is", "the", "its", "position", "velocity", "acceleration", "speed", "and", "of", "is", "a", "an", "particle", "object", "moves", "with", "where", "at rest", "when", "given", "time"]);
       var p = readExprIn(s);
       return mkProb({ mode:"rate", task:"motion", f:p.e, vn:p.vn, t:t0 || Ni(1) });
     }
@@ -3468,7 +3505,7 @@
     if (m && a){ c = readPt(m[1], false, "the point"); s = s.slice(0, m.index); }
     if (!a) throw new UserErr("Give an interval, like <b>average rate of change of x² on [1, 3]</b>.");
     if (evalF(a, 0) >= evalF(b, 0)) throw new UserErr("The interval should go from the smaller number to the bigger one.");
-    s = cleanExpr(s, ["find", "compare", "the", "average", "instantaneous", "rates? of change", "rate", "of", "on", "over", "and", "with", "f\\([xt]\\)\\s*=", "for", "between"]);
+    s = cleanExpr(s, ["find", "compare", "what is", "the", "average", "instantaneous", "rates? of change", "rate", "of", "on", "over", "and", "with", "f\\([xt]\\)\\s*=", "for", "between", "the interval", "interval", "function"]);
     var p2 = readExprIn(s);
     return mkProb({ mode:"rate", task:"avg", f:p2.e, vn:p2.vn, a:a, b:b, c:c });
   }
@@ -3501,6 +3538,9 @@
       if (!(mode === "tangent" && k === "derivative") && !(mode === "rate" && k === "derivative") && !(mode === "extrema" && k === "derivative"))
         throw new UserErr("That looks like a problem for the <b>" + names[k] + "</b> tab.");
     }
+    // a plain expression with no calculus words and no x ("sin 30", "15 + 4") isn't a calculus problem
+    if (!k && mode === "derivative" && !/[xt]/i.test(fixTxt(s).replace(/\b(?:exp|sqrt|ln|sin|cos|tan|sec|csc|cot|pi|e)\b/gi, "")))
+      throw new UserErr("There’s no x in that, so there’s nothing to differentiate. Type a function of x, like <b>x^3 sin x</b>, or say what to do: <b>derivative of …</b>, <b>integral of …</b>, <b>lim x→3 …</b>.");
     switch (mode){
       case "limit": return readLimit(s);
       case "derivative": return readDeriv(s);

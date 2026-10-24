@@ -170,6 +170,10 @@
     .theme-btn,.actions,.sitenav,.retry{display:none !important}
     .panel,.tile{box-shadow:none}
   }
+  @supports not (background:color-mix(in srgb, red 50%, blue)){   /* Safari before 16.2 (iOS 15) */
+    .cell.l1{background:var(--heat);opacity:.4} .cell.l2{background:var(--heat);opacity:.65} .cell.l3{background:var(--heat);opacity:.85}
+    .ic.ok, .ic.later, .ic.no{background:var(--surface-2)}
+  }
 </style>
 
 <div class="page">

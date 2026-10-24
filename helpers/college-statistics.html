@@ -580,6 +580,11 @@
                proportion test p0=0.5 60 of 100 Ha: p > 0.5                                       -> test
                x: 1, 2, 3, 4, 5; y: 2, 4, 5, 4, 5; predict x = 6 · (1, 2) (2, 4) (3, 5) (4, 4) (5, 5) -> regress
              A mean test with s (the sample's SD) is a t test, with sigma a z test; a CI the same.
+             Also read: a label and polite words, "95 percent", "how many standard deviations above the mean is 85",
+             "scored 85 on a test" (an exam, not a hypothesis test), "the area to the left of z = −0.5", "10 trials" /
+             "flipped 20 times" / "a box of 20", a fair coin (p = 0.5), "makes 70% of free throws", "sample size 16"
+             (given, not asked for), "120 successes out of 400", "61 heads in 100 flips … is the coin fair", N(70, 10²),
+             "z score 1.5 percentile". N(70, 10) gets a notice: books mean the SD or the variance by it.
    The structured form. This is what the page writes in the address bar and what made problems carry, so a
    problem opens exactly as it was made. With these, q is not needed (numbers are plain decimals):
      z         find=z&x=85&mu=70&sd=10 · find=x&z=1.5&mu=70&sd=10
@@ -887,6 +892,12 @@
   var NUMS = "(-?(?:\\d+(?:\\.\\d+)?|\\.\\d+))";
   function normQ(text, keepCommas){
     var s = String(text == null ? "" : text);
+    // a problem's label and the polite words around it ("Problem 4:", "Q3)", "can you please", "step by step", "show your work")
+    s = s.replace(/^\s*(?:(?:problem|question|exercise|ex|q|no|number|#)\s*\.?\s*\d+[a-z]?\s*[:.)\-]|\d+\s*[.)]\s+(?=[a-z])|(?:hw|homework)\s*:)\s*/i, " ")
+      .replace(/\b(?:can|could|would|will) (?:you|u) (?:please |pls |plz )?(?:help (?:me )?)?(?:to )?/gi, " ")
+      .replace(/\(\s*(?:show (?:all |your |the )?(?:work|working|steps)|step[- ]by[- ]step|please)\s*\)/gi, " ")
+      .replace(/\b(?:please|pls|plz|thanks|thank you|step[- ]by[- ]step|show (?:all |your |the |me the )?(?:work|working|steps))\b/gi, " ")
+      .replace(/(\d)\s*percent\b/gi, "$1%");
     s = s.replace(/[−–—]/g, "-").replace(/x̄|x̄|x‾/g, " xbar ").replace(/p̂|p̂/g, " phat ")
       .replace(/μ/g, " mu ").replace(/σ/g, " sigma ").replace(/α/g, " alpha ").replace(/ŷ/g, " yhat ")
       .replace(/≤|=<|<=/g, " <= ").replace(/≥|=>|>=/g, " >= ").replace(/≠|!=|<>|=\/=/g, " != ")
@@ -959,7 +970,10 @@
     if ((m = reO.exec(s))){ take(m); return { op:{ "<":"lt", "<=":"le", ">":"gt", ">=":"ge", "=":"eq" }[m[1]], a:Number(m[2]), as:m[2] }; }
     if ((m = reR.exec(s))){ take(m); return { op:{ "<":"gt", "<=":"ge", ">":"lt", ">=":"le", "=":"eq" }[m[2]], a:Number(m[1]), as:m[1] }; }
     var reBare = new RegExp("(?:^|[^a-z])" + V0 + "\\s*(<=|<|>=|>|=)\\s*" + NUMS);
-    var wordsB = new RegExp("between\\s+" + NUMS + "\\s*(?:and|to|-)\\s*" + NUMS + "(\\s*inclusive)?");
+    var wordsB = new RegExp("between\\s+(?:[xz]\\s*=\\s*)?" + NUMS + "\\s*(?:and|to|-)\\s*(?:[xz]\\s*=\\s*)?" + NUMS + "(\\s*inclusive)?");
+    // "the area to the left of z = −0.5", "to the right of 85"
+    var side = new RegExp("(?:to the )?(left|right) of\\s+(?:a\\s+|the\\s+)?(?:[xz](?:[- ]?score)?\\s*(?:=|of)?\\s*)?" + NUMS);
+    if ((m = side.exec(s))){ take(m); return { op:m[1] === "left" ? "lt" : "gt", a:Number(m[2]), as:m[2], words:true }; }
     if ((m = wordsB.exec(s))){ take(m); return { op:"between", a:Number(m[1]), b:Number(m[2]), inA:true, inB:true, as:m[1], bs:m[2], words:true }; }
     var W = [["(?:at most|no more than|or fewer|or less|not more than)", "le"], ["(?:at least|no fewer than|no less than|or more|not less than)", "ge"],
              ["(?:fewer than|less than|below|under|shorter than|lower than|smaller than|before)", "lt"],
@@ -983,7 +997,8 @@
 
   /* ---- tab 1: z-scores ---- */
   function readZ(text){
-    var q = new Q(text), s = q.s;
+    // "how many SDs above the mean is 85": that "mean" names no number
+    var q = new Q(String(text).replace(/\b(?:above|below|from|than|away from) (?:the )?(?:mean|average)\b/gi, " ")), s = q.s;
     var means = q.all(MEANN), sds = q.all(SDN);
     if (/compar|\bvs\.?\b|versus|relativ|better|which/.test(s) || means.length >= 2){
       if (means.length < 2 || sds.length < 2) throw new UserErr("To compare two values, give each its own mean and SD, like <b>compare 85 mean 70 sd 10 with 32 mean 25 sd 4</b>.");
@@ -1027,11 +1042,19 @@
   function readNormal(text){
     var q = new Q(text), s = q.s, mu = q.get(MEANN), sd = q.get(SDN), rule = /empirical|\brule\b/.test(s);
     var stdZ = /p\s*\(\s*z\b|standard normal|\bz\s*[<>]|\bz\s*(?:<=|>=)/.test(s) || (/(?:^|[^a-z])z(?:[^a-z]|$)/.test(s) && mu === null && sd === null);
+    var nn = mu === null && sd === null ? new RegExp("(?:^|[^a-z])n\\s*\\(\\s*" + NUMS + "\\s*,\\s*" + NUMS + "(\\s*\\^\\s*2|²)?\\s*\\)").exec(s) : null;
+    if (nn && nn[3]){ mu = { v:Number(nn[1]), s:nn[1] }; sd = { v:Number(nn[2]), s:nn[2] }; q.used.push([nn.index, nn.index + nn[0].length]); }   // N(70, 10²): the SD is 10
+    else if (nn) throw new UserErr("Books write N(" + esc(minus(nn[1])) + ", " + esc(minus(nn[2])) + ") two ways: the second number is the SD in some and the variance in others. Say which: <b>mean " + esc(minus(nn[1])) + ", sd " + esc(minus(nn[2])) + "</b>, or, when " + esc(minus(nn[2])) + " is the variance, <b>sd " + esc(plainN(rnd(Math.sqrt(Math.abs(Number(nn[2]))), 4))) + "</b> (its square root).");
     if (mu === null && sd === null && stdZ){ mu = { v:0, s:"0" }; sd = { v:1, s:"1" }; }
     if (mu === null) throw new UserErr("What are the mean and SD? Add them, like <b>P(X &lt; 85), mean 70, sd 10</b> (or use Z for the standard normal: <b>P(Z &lt; 1.23)</b>).");
     chkNum(mu, "the mean"); chkNum(sd, "the SD"); needSD(V(sd));
     var P = { mode:"normal", mu:mu.v, sd:sd.v, rule:false }, m;
     var pc = function(v, what){ if (!(v > 0 && v < 100)) throw new UserErr(what + " is a percent between 0 and 100 — not <b>" + esc(minus(plainN(v))) + "</b>."); return v; };
+    // "the percentile of z = 1.5", "z score 1.5 percentile": the area below that z, not the 1.5th percentile
+    var zp = /\bz(?:[- ]?scores?)?\s*(?:of|=|is|:)?\s*(-?\d*\.?\d+)/.exec(s);
+    if (zp && /percentile|percent (?:below|less)|proportion below|area (?:below|to the left)/.test(s) && P.mu === 0 && P.sd === 1 && !/(?:\d+(?:\.\d+)?)\s*(?:st|nd|rd|th)\s*percentile/.test(s)){
+      P.type = "lt"; P.a = Number(zp[1]); P.b = null; chkNum(P.a, "z"); return P;
+    }
     if ((m = /(?:^|[^a-z0-9.])(\d+(?:\.\d+)?)\s*(?:st|nd|rd|th)?\s*percentile/.exec(s)) || (m = /percentile\s*(?:=|:|of)?\s*(\d+(?:\.\d+)?)/.exec(s))){
       P.type = "pct"; P.p = pc(Number(m[1]), "A percentile"); return P;
     }
@@ -1084,6 +1107,17 @@
   function readBinom(text){
     var q = new Q(text), s = q.s;
     var n = q.get("n|trials|number of trials|sample size"), p = q.get("p|prob|probability of success|probability|success probability|chance|rate");
+    // "10 trials", "flipped 20 times", "a box of 20": the number of trials, written before the word
+    if (n === null){
+      var nm = /(?:^|[^a-z0-9.])(\d+)\s+(?:[a-z]+\s+)?(?:trials|times|flips|tosses|rolls|questions|people|items|bulbs|shots|attempts|patients|students|births|games|parts|coins|customers|adults|seeds|eggs)\b/.exec(s)
+            || /\b(?:box|sample|group|batch|set|bag|class|carton|lot)\s+of\s+(\d+)\b/.exec(s);
+      if (nm){ n = { v:Number(nm[1]), s:nm[1] }; var at = nm.index + nm[0].indexOf(nm[1]); q.used.push([at, at + nm[1].length]); }
+    }
+    if (p === null && /\bfair coin\b|\bcoin\b/.test(s) && !/\bbiased\b|\bunfair\b|\bloaded\b/.test(s)) p = { v:0.5, s:"0.5" };
+    // "the probability a bulb is defective is 0.05"
+    if (p === null){ var pm = /\b(?:probability|chance)\b[^.;]*?\b(?:is|of)\s+(0?\.\d+|\d+(?:\.\d+)?\s*%)/.exec(s); if (pm) p = { v:/%/.test(pm[1]) ? parseFloat(pm[1]) / 100 : Number(pm[1]), s:pm[1] }; }
+    // "makes 70% of free throws": one percent in the problem is the chance of success
+    if (p === null){ var pp2 = s.match(/(\d+(?:\.\d+)?)\s*%/g); if (pp2 && pp2.length === 1) p = { v:parseFloat(pp2[0]) / 100, s:pp2[0].replace(/\s*%/, "") }; }
     if (p && p.pct) p.v = p.v / 100;
     chkNum(n, "n"); chkNum(p, "p");
     if (n === null) throw new UserErr("How many trials? Add it, like <b>binomial n = 10, p = 0.3, P(X = 4)</b>.");
@@ -1212,9 +1246,17 @@
     if (!(v >= 50 && v < 100)) throw new UserErr("A confidence level is a percent like <b>90%</b>, <b>95%</b> or <b>99%</b> — not <b>" + esc(minus(plainN(v))) + "%</b>.");
     return v;
   }
+  // "120 successes out of 400", "60 successes in 100 trials", "120 of the 400 people": x of n
+  function propCounts(text){
+    return String(text).replace(/(\d+)\s+(?:[a-z]+\s+){0,3}?(?:out of|of the|of)\s+(?:the\s+)?(\d+)/gi, "$1 of $2")
+      .replace(/(\d+)\s+(?:successes|yes(?:es)?|heads|people|voters|students|customers|adults|of them)\s+(?:said yes\s+)?in\s+(?:a\s+sample\s+of\s+)?(\d+)/gi, "$1 of $2");
+  }
   function readCI(text){
-    var q = new Q(text), s = q.s, conf = readConf(q), m;
-    if (/sample size|how (?:many|large|big)|minimum n|\bneed(?:ed)?\b.*\bsample\b|\bsample\b.*\bneed/.test(s)){
+    var q = new Q(propCounts(text)), s = q.s, conf = readConf(q), m;
+    // "sample size 25" gives n; finding the sample size is "how large a sample", "sample size needed", "sample size for …"
+    var findN = /how (?:many|large|big)|minimum n|\bneed(?:ed)?\b.*\bsample\b|\bsample\b.*\bneed|\b(?:find|determine|calculate|compute|what) (?:the )?(?:minimum |required )?sample size|sample size (?:for|needed|required|to)|required sample|minimum sample/.test(s)
+             || (/sample size/.test(s) && !/sample size\s*(?:=|:|is|of)?\s*\d|\bn\s*=?\s*\d/.test(s));
+    if (findN){
       var me = q.get("margin of error|margin|me|moe|e|within|error|width");
       var isP = /proportion|percent|phat|p\*|\bp\s*=|planning|guess/.test(s) && !/\bsigma\b|\bsd\b|standard deviation/.test(s);
       if (me && me.pct){ me.v /= 100; isP = true; }
@@ -1293,12 +1335,12 @@
     return "ne";
   }
   function readTest(text){
-    var q = new Q(text), s = q.s, m;
+    var q = new Q(propCounts(text)), s = q.s, m;
     var alt = readAlt(q), al = q.get("alpha|significance level|level of significance|significance|level");
     var alpha = al ? (al.pct || al.v >= 1 ? al.v / 100 : al.v) : 0.05;
     if (!(alpha > 0 && alpha < 0.5)) throw new UserErr("α, the significance level, is small: like <b>0.05</b> or <b>0.01</b> — not <b>" + esc(minus(plainN(alpha))) + "</b>.");
     alpha = rnd(alpha, 6);
-    var isProp = /proportion|\bp0\b|\bp_0\b|phat|h0\s*:?\s*p\b|\bout of\b|\bof\s+\d|percent/.test(s);
+    var isProp = /proportion|\bp0\b|\bp_0\b|phat|h0\s*:?\s*p\b|\bout of\b|\bof\s+\d|percent|\bcoin\b|\bheads\b|\btails\b/.test(s) && !/\bxbar\b|sample mean|\bmu\b|\bmu0\b/.test(s);
     var h0 = /h0\s*:?\s*(?:mu|p)?\s*=\s*(-?\d*\.?\d+)/.exec(s), h0v = null;
     if (h0){ h0v = Number(h0[1]); q.used.push([h0.index, h0.index + h0[0].length]); }
     var ham = /ha\s*:?\s*(?:mu|p)?\s*(?:<=|<|>=|>|!=|=)\s*(-?\d*\.?\d+)/.exec(s);
@@ -1307,8 +1349,14 @@
       var p0 = h0v !== null ? { v:h0v, s:String(h0v) } : q.get("p0|p_0|p 0|null proportion|claimed proportion|claim|p");
       if (p0 && p0.pct) p0.v /= 100;
       if (p0 === null && ham) p0 = { v:Number(ham[1]), s:ham[1] };
+      if (p0 === null && /\bfair\b/.test(s)) p0 = { v:0.5, s:"0.5" };        // "is the coin fair?"
       var x = null, n = null;
       if ((m = /(\d+)\s*(?:of|out of)\s*(\d+)/.exec(s))){ x = Number(m[1]); n = Number(m[2]); q.used.push([m.index, m.index + m[0].length]); }
+      // "flipped 100 times and lands heads 61 times": the two counts, the bigger one the number of tries
+      if (x === null && n === null){
+        var cs = (s.match(/(?:^|[^\d.])\d+(?=\s+(?:times|flips|tosses|trials|people|voters|students|customers|adults|heads|tails|successes|said|were|of them)\b)/g) || []).map(function(z){ return Number(z.replace(/^\D/, "")); });
+        if (cs.length === 2 && cs[0] !== cs[1]){ n = Math.max(cs[0], cs[1]); x = Math.min(cs[0], cs[1]); }
+      }
       var ph = q.get("phat|sample proportion");
       if (n === null){ var nn = q.get("n|sample size|sample of|size"); n = V(nn); }
       if (x === null){ var xx = q.get("x|successes|count|yes"); x = V(xx); }
@@ -2822,12 +2870,20 @@
     regress:"regress", regression:"regress", correlation:"regress", scatter:"regress", "least-squares":"regress", lsrl:"regress" };
   function kindOf(q){
     var s = normQ(q, true);
-    if (/regress|correlation|least.?squares|scatter|best.?fit|lsrl|\bx\s*:[^;]*;?\s*y\s*:|\bx\s*[:=]\s*-?\d[\d.,\s-]*\by\s*[:=]|(?:\(\s*-?\d*\.?\d+\s*,\s*-?\d*\.?\d+\s*\)\s*,?\s*){3,}/.test(s)) return "regress";
-    if (/\btests?\b|\bh0\b|\bha\b|null hypothesis|alternative|p-?value|significan|\balpha\b|\bmu0\b|\bp0\b|claim/.test(s)) return "test";
-    if (/\bci\b|confidence|\binterval\b|margin|sample size|how (?:many|large|big)/.test(s)) return "ci";
+    if (/regress|correlation|least.?squares|scatter|best.?fit|lsrl|\bx\s*:[^;]*;?\s*y\s*:|\bx\s*[:=]\s*-?\d[\d.,\s-]*(?:and\s+|;\s*)?\by\s*[:=]|(?:\(\s*-?\d*\.?\d+\s*,\s*-?\d*\.?\d+\s*\)\s*,?\s*){3,}/.test(s)) return "regress";
+    // "how many standard deviations above the mean is 85" is a z-score
+    if (/how many (?:standard deviations|sds?|sigmas?)\b|standard deviations? (?:above|below|from|away)/.test(s) && !/\btests?\b.*\bh0\b|confidence|sample size/.test(s)) return "z";
+    // "a test" can be an exam ("scored 85 on a test"): a hypothesis test is named as one, or comes with H0, a p-value or α
+    var testW = /\b(?:t|z|hypothesis|significance|proportion|mean|one[- ]sample|one[- ]proportion|one[- ]mean|two[- ]sided|one[- ]sided|left[- ]tailed|right[- ]tailed|two[- ]tailed|upper[- ]tailed|lower[- ]tailed)[- ]tests?\b|\b(?:to )?test (?:the claim|the hypothesis|whether|if|that|h0|at (?:the )?(?:\d|alpha|a ))|\bh0\b|\bha\b|null hypothesis|alternative hypothesis|p-?value|significan|\balpha\b|\bmu0\b|\bp0\b|\bclaims?\b/;
+    if (testW.test(s) || (/\btest\b/.test(s) && /\bevidence\b|\breject\b|\bfair\b|\blevel\b|\bhypothes|\bconclu/.test(s))) return "test";
+    if (/\bci\b|confidence|\binterval\b|margin|sample size|how (?:large|big) (?:a |of a |should |must |does |is )?(?:the )?sample|how many (?:people|subjects|students|voters|observations|units|items|customers|patients|adults|households|participants)\s+(?:should|must|need|are needed|would|do)/.test(s)) return "ci";
     if (/sample mean|sampling|\bxbar\b|\bphat\b|sample proportion|\bclt\b|central limit|standard error/.test(s)) return "sampling";
     if (/binom|\bbins\b|at least one|\btrials?\b|successes|\bn\s*=\s*\d+\s*,?\s*p\s*=/.test(s)) return "binom";
-    if (/percentile|\btop\s*\d|\bbottom\s*\d|\bmiddle\s*\d|cutoff|p\s*\(|empirical|\bnormal\b|proportion (?:below|above|between)/.test(s)) return "normal";
+    // a count out of a number of tries: "flipped 20 times … exactly 14 heads", "a box of 20 … exactly 2 are defective"
+    if (/\b(?:exactly|at least|at most|no more than|fewer than|more than)\s+\d+\b(?!\s*(?:%|\.\d))/.test(s)
+        && /\b\d+\s+(?:[a-z]+\s+)?(?:times|flips|tosses|trials|questions|people|items|bulbs|shots|attempts|patients|students|births|games|parts|coins)\b|\b(?:box|sample|group|batch|set|bag|class) of \d+/.test(s)
+        && /\bp\s*=|\bprobability\b[^.]*?\b(?:is|of)\s+0?\.\d|\d+(?:\.\d+)?\s*%|\bfair coin\b|\bcoin\b/.test(s)) return "binom";
+    if (/percentile|\btop\s*\d|\bbottom\s*\d|\bmiddle\s*\d|cutoff|p\s*\(|empirical|\bnormal\b|proportion (?:below|above|between)|\barea (?:to the (?:left|right)|between|under|above|below)|\b(?:left|right) of z\b|\bbetween z\b/.test(s)) return "normal";
     if (/z-?scores?|\bz\b|standardi|compar|relatively/.test(s)) return "z";
     return null;
   }

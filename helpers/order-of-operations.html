@@ -595,6 +595,185 @@
     return (p.neg || (base && p.frac)) ? "(" + p.html + ")" : p.html;
   }
 
+  /* ===================== a problem typed in words ===================== */
+  /* readTyped("what is forty-seven plus 38?") -> { q:"47 + 38", ans:null }; readTyped("subtract 5 from 12") -> { q:"12 - 5" }.
+     Reads homework phrasing (what is, solve, show me how to do, = ?, step by step, please), number words (forty-seven,
+     three fourths, two and a half, four point five), operator words (plus, take away, times, multiplied by, divided by,
+     squared, to the power of), phrases (subtract 5 from 12, 5 less than 12, the sum of 4, 5 and 6, the product of 3 and 4,
+     divide 12 by 3, how many times does 3 go into 12, 3 groups of 4), ½ ¼ ¾ …, $ and one shared unit (5 cm + 7 cm).
+     Every word has to be used up, or it returns null and the page reads the text the way it always did. A phrase has to
+     end the problem ("the sum of 2 and 3 times 4" could be read two ways, so it isn't read). ans: "remainder" | "decimal" |
+     "fraction" when the words ask for one ("as a decimal"). The same reader is on the + − × ÷ pages, the Scratch Paper
+     and the Order Stack. */
+  var readTyped = (function(){
+    var ONE = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+      thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19,
+      twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+    var SCALE = { hundred:100, thousand:1000, million:1000000 };
+    var DEN = { half:2, halves:2, third:3, thirds:3, fourth:4, fourths:4, quarter:4, quarters:4, fifth:5, fifths:5, sixth:6, sixths:6,
+      seventh:7, sevenths:7, eighth:8, eighths:8, ninth:9, ninths:9, tenth:10, tenths:10, twelfth:12, twelfths:12,
+      hundredth:100, hundredths:100 };
+    var VULG = { "½":"1/2", "⅓":"1/3", "⅔":"2/3", "¼":"1/4", "¾":"3/4", "⅕":"1/5", "⅖":"2/5", "⅗":"3/5", "⅘":"4/5", "⅙":"1/6",
+      "⅚":"5/6", "⅐":"1/7", "⅛":"1/8", "⅜":"3/8", "⅝":"5/8", "⅞":"7/8", "⅑":"1/9", "⅒":"1/10" };
+    var FRW = "halves|half|thirds?|fourths?|quarters?|fifths?|sixths?|sevenths?|eighths?|ninths?|tenths?|twelfths?|hundredths?";
+    var W = "(?:" + Object.keys(ONE).concat(Object.keys(SCALE)).join("|") + ")";
+    var NUM = "-?(?:\\d+ \\d+/\\d+|\\d+/\\d+|\\d{1,3}(?:,\\d{3})+(?:\\.\\d+)?|\\d+(?:\\.\\d+)?|\\.\\d+)";
+    var LIST = NUM + "(?:\\s*,\\s*" + NUM + ")*\\s*,?\\s+and\\s+" + NUM;
+    var UNITS = "mm|cm|km|m|meters?|metres?|centimeters?|millimeters?|kilometers?|ft|feet|foot|inch(?:es)?|yd|yards?|mi|miles?|g|kg|mg|grams?|kilograms?|"
+      + "lbs?|pounds?|oz|ounces?|ml|l|liters?|litres?|milliliters?|gal|gallons?|cups?|quarts?|pints?|cents?|¢|minutes?|mins?|hours?|hrs?|"
+      + "seconds?|secs?|days?|weeks?|years?|degrees?|°|points?|pts|units?";
+    var SEP = "(?:\\s*[:,]\\s*|\\s+)";
+    var LEAD = new RegExp("^(?:please|pls|plz|hey|hi|hello|ok(?:ay)?|so|um+|hmm+|can (?:you|u|i|we)|could (?:you|u)|would (?:you|u)|will (?:you|u)|help(?: me)?(?: with)?|"
+      + "i need help(?: with)?|i need to|i want to|i have to|i'?m trying to|how (?:do|would|can|should) (?:i|you|we)|how to|show me how to|show (?:me )?(?:the |your |all (?:the )?)?(?:work|steps|working)(?: for| of| to| on| in)?|(?:the )?steps (?:for|to|of)|show me|show|teach me(?: how)? to|"
+      + "explain(?: how to)?|tell me|what(?:'s| is| are|s)?(?: the)? (?:answer|solution|result)(?: to| for| of)?|what(?:'s| is| are|s)|what does|what do (?:you|i) get(?: (?:when|if) (?:you|i))?|"
+      + "how much (?:is|are)|solve|calculate|compute|evaluate|figure out|work out|find out|find|simplify|do|answer|the value of|value of|the|exactly|just|"
+      + "quick(?:ly)?|question|problem|q|math|me|out|it|this|with|true or false|is|are|let me (?:do|try|work)(?: out)?|i'?ll do|"
+      + "(?:use|using) (?:the )?(?:order of operations|pemdas|bodmas|bidmas|bedmas|long division|the standard algorithm|column (?:addition|subtraction)|regrouping)(?: to(?: solve| evaluate| simplify| find| do| work out)?)?|"
+      + "order of operations|pemdas|bodmas|bidmas|bedmas|by hand|on paper|in columns)" + SEP);
+    var TRAIL = new RegExp("(?:\\s*(?:[?.!]+|=\\s*(?:\\?+|_+|□|blank|what)?)|(?:^|\\s+)(?:please|pls|thanks|thank you|thx|for me|for my homework|step[- ]by[- ]step|"
+      + "with (?:the |all (?:the )?)?(?:steps|work)|(?:and )?show(?:ing)? (?:me )?(?:the |your |my |all (?:the )?)?(?:work|steps)|by hand|on paper|in columns|vertically|myself|"
+      + "(?:using |with |by )(?:the )?(?:order of operations|pemdas|bodmas|bidmas|bedmas|long division|the standard algorithm|regrouping|carrying|borrowing)|"
+      + "long division|column (?:addition|subtraction|method)|(?:the )?standard algorithm|equals? what|is what|equals?|is equal to|equal to|come to|make|exactly|now|again|is|are|answer|real quick|quickly|asap))$");
+    var ANS = /(?:\s*,\s*|\s+)(?:with (?:a |the )?remainders?|(?:and )?(?:give |write |show )?(?:the answer |it |your answer )?(?:as|in) (?:an? )?(decimals?|fractions?|mixed numbers?|remainders?)(?: form)?)$/;
+
+    function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+    function wordsToNum(toks){                     // ["three","hundred","forty","two"] -> 342, or null
+      var total = 0, cur = 0, seen = false, last = "";
+      for (var i = 0; i < toks.length; i++){
+        var t = toks[i];
+        if (t === "and"){ if (!/^(?:hundred|thousand|million)$/.test(last)) return null; last = t; continue; }
+        if (t === "a" || t === "an"){ if (i + 1 < toks.length && has(SCALE, toks[i + 1])){ cur = 1; seen = true; last = t; continue; } return null; }
+        if (has(ONE, t)){
+          var v = ONE[t];
+          if (v < 10 && cur % 10 !== 0) return null;              // "five six"
+          if (v >= 10 && cur % 100 !== 0) return null;            // "forty twenty"
+          cur += v; seen = true;
+        } else if (t === "hundred"){ if (!cur || cur >= 100) return null; cur *= 100; }
+        else if (t === "thousand" || t === "million"){ if (!cur) return null; total += cur * SCALE[t]; cur = 0; }
+        else return null;
+        last = t;
+      }
+      return seen ? total + cur : null;
+    }
+    function numWords(s){
+      // "four point five" -> 4.5
+      s = s.replace(new RegExp("\\b(" + W + "(?:[\\s-]+(?:" + W + "|and|an?))*)\\s+point\\s+(" + W + "(?:[\\s-]+" + W + ")*)\\b", "g"), function(x, a, b){
+        var w = wordsToNum(a.split(/[\s-]+/)), ds = b.split(/[\s-]+/), f = "";
+        for (var i = 0; i < ds.length; i++){ var d = ONE[ds[i]]; if (d === undefined || d > 9) return x; f += d; }
+        return w === null ? x : w + "." + f;
+      });
+      var A = "(?:an?\\s+(?=(?:hundred|thousand|million)\\b))?";
+      return s.replace(new RegExp("\\b" + A + W + "(?:(?:[\\s-]+|\\s+and\\s+(?=" + W + "\\b|an?\\s+(?:hundred|thousand)\\b))" + A + W + ")*\\b", "g"), function(x){
+        var n = wordsToNum(x.split(/[\s-]+/));
+        if (n !== null) return String(n);
+        var parts = x.split(/\s+and\s+/), out = [];               // "forty-seven and thirty-eight": two numbers
+        if (parts.length < 2) return x;
+        for (var i = 0; i < parts.length; i++){ var v = wordsToNum(parts[i].split(/[\s-]+/)); if (v === null) return x; out.push(v); }
+        return out.join(" and ");
+      });
+    }
+    function val(t){                               // a number's value, to tell which is bigger
+      t = String(t).replace(/,/g, ""); var m;
+      if ((m = /^(-?)(\d+) (\d+)\/(\d+)$/.exec(t))) return (m[1] ? -1 : 1) * (Number(m[2]) + Number(m[3]) / Number(m[4]));
+      if ((m = /^(-?\d+)\/(\d+)$/.exec(t))) return Number(m[1]) / Number(m[2]);
+      return Number(t);
+    }
+    function grp(list, op){ return "⟨" + list.join(" " + op + " ") + "⟩"; }
+    function listOf(x){ return x.match(new RegExp(NUM, "g")); }
+    function tidy(s){
+      var prev;
+      do { prev = s; s = s.replace(LEAD, "").replace(TRAIL, "").replace(/^["']+|["']+$/g, "").trim(); } while (s !== prev && s);
+      return s;
+    }
+
+    return function(raw){
+      var s = String(raw == null ? "" : raw), ans = null, bad = false, m, prev;
+      s = s.replace(/[   ]/g, " ").replace(/[−–—‒﹣－]/g, "-").replace(/[×✕✖⋅·∙]/g, "×").replace(/＋/g, "+").replace(/[⁄∕]/g, "/")
+           .replace(/[’‘]/g, "'").replace(/[“”]/g, "\"")
+           .replace(/(\d)?\s?([½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒])/g, function(x, d, v){ return (d ? d + " " : " ") + VULG[v]; })
+           .toLowerCase().replace(/\s+/g, " ").trim();
+      if (!s || s.length > 300) return null;
+      // a name tag like "(Lead Engineer)" says nothing about the math
+      s = s.replace(/\(\s*[a-z][a-z .,'&\/-]*[a-z]\s*\)/g, " ").replace(/\s+/g, " ").trim();
+      do {
+        prev = s;
+        s = tidy(s);
+        if ((m = ANS.exec(s))){
+          var k = m[1] || "remainder";
+          ans = /^dec/.test(k) ? "decimal" : /^(?:frac|mixed)/.test(k) ? "fraction" : "remainder";
+          s = s.slice(0, m.index).trim();
+        }
+        // "47 + 38 = 95?": the problem, not the claim
+        if (/\d\s*(?:[+×*÷\/:^-]|plus|minus|times|divided|over)\s*\.?\d/.test(s.replace(/=.*$/, "")) && /=\s*-?[\d.,\/ ]+$/.test(s)) s = s.replace(/\s*=\s*-?[\d.,\/ ]+$/, "");
+      } while (s !== prev && s);
+      if (!s) return null;
+      // number words: "two and three fourths" is a mixed number, "one and a half" too
+      s = s.replace(new RegExp("\\b(\\w+)\\s+and\\s+(?:a\\s+(half)|(\\w+\\s+(?:" + FRW + ")))\\b", "g"), function(x, w, h, f){ return w + " & " + (h ? "one half" : f); });
+      s = numWords(s).replace(/\b(\d+(?:\.\d+)?) (hundred|thousand|million)\b/g, function(x, n, k){ var v = Number(n) * SCALE[k]; return Math.floor(v) === v ? String(v) : x; });
+      s = s.replace(new RegExp("\\b(\\d+|an?)\\s+(" + FRW + ")\\b", "g"), function(x, n, d){
+        var nn = /^an?$/.test(n) ? 1 : Number(n);
+        if (nn > 1 && !/s$/.test(d)) return x;                     // "three fourth"
+        return nn + "/" + DEN[d];
+      });
+      s = s.replace(/(\d+) & (\d+\/\d+)\b/g, "$1 $2").replace(/ & /g, " and ");
+      if (new RegExp("\\b(?:" + FRW + ")\\b").test(s.replace(/\bhalf of\b/g, ""))) return null;
+      // money and units: "$" goes; a unit word goes when every number that has one has the same one
+      if (/\$/.test(s) && /¢|\bcents?\b/.test(s)) return null;
+      if (/\$|\d\s*(?:dollars?|bucks)\b/.test(s) && !ans) ans = "decimal";         // money divides into dollars and cents
+      s = s.replace(/\$\s*/g, "").replace(/(\d)\s*(?:dollars?|bucks)\b/g, "$1");
+      var ur = new RegExp("(" + NUM + ")\\s*(" + UNITS + ")(?![a-z])", "g"), seen = {}, nu = 0;
+      s.replace(ur, function(x, n, u){ seen[u.replace(/(?:es|s)$/, "").replace(/^(?:feet|foot)$/, "ft")] = 1; nu++; return x; });
+      if (nu && Object.keys(seen).length > 1) return null;
+      if (nu) s = s.replace(ur, "$1");
+      // phrases
+      s = s.replace(/\b(?:the\s+)?(?:sum|total)\s+of\s+/g, "Σ ").replace(/\b(?:the\s+)?product\s+of\s+/g, "Π ")
+           .replace(/\b(?:the\s+)?difference\s+(?:of|between)\s+/g, "Δ ").replace(/\b(?:the\s+)?quotient\s+of\s+/g, "Ø ");
+      s = s.replace(new RegExp("Σ (" + LIST + ")", "g"), function(x, l){ return grp(listOf(l), "+"); })
+           .replace(new RegExp("Π (" + LIST + ")", "g"), function(x, l){ return grp(listOf(l), "×"); })
+           .replace(new RegExp("Δ (" + NUM + ") and (" + NUM + ")", "g"), function(x, a, b){ if (val(a) < val(b)) bad = true; return grp([a, b], "-"); })
+           .replace(new RegExp("Ø (" + NUM + ") and (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "÷"); })
+           .replace(new RegExp("\\badd (?:up |together )?(" + LIST + ")(?: together)?", "g"), function(x, l){ return grp(listOf(l), "+"); })
+           .replace(new RegExp("\\badd (" + NUM + ") to (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "+"); })
+           .replace(new RegExp("\\b(" + NUM + ") added to (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "+"); })
+           .replace(new RegExp("\\bsubtract (" + NUM + ") from (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\b(" + NUM + ") subtracted from (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\btake (?:away )?(" + NUM + ") (?:away )?from (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\b(" + NUM + ") (?:less|fewer) than (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "-"); })
+           .replace(new RegExp("\\b(" + NUM + ") more than (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "+"); })
+           .replace(new RegExp("\\bmultiply (" + NUM + ") (?:by|and|times|with) (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "×"); })
+           .replace(new RegExp("\\bmultiply (?:together )?(" + LIST + ")", "g"), function(x, l){ return grp(listOf(l), "×"); })
+           .replace(new RegExp("\\bdivide (" + NUM + ") by (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "÷"); })
+           .replace(new RegExp("\\bdivide (" + NUM + ") into (" + NUM + ") (?:equal )?(?:groups|parts|pieces|piles|teams|shares)", "g"), function(x, a, b){ return grp([a, b], "÷"); })
+           .replace(new RegExp("\\bhow many times (?:does|do|will|can|would) (" + NUM + ") (?:go|goes|fit) into (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "÷"); })
+           .replace(new RegExp("\\b(" + NUM + ") (?:goes|go|fits) into (" + NUM + ")(?: how many times)?", "g"), function(x, a, b){ return grp([b, a], "÷"); })
+           .replace(new RegExp("\\bhow many (\\d+)'?s (?:are )?(?:there )?in (" + NUM + ")", "g"), function(x, a, b){ return grp([b, a], "÷"); })
+           .replace(new RegExp("\\b(" + NUM + ") (?:groups|sets|rows|lots) of (" + NUM + ")", "g"), function(x, a, b){ return grp([a, b], "×"); })
+           .replace(new RegExp("\\b(?:twice|double) (" + NUM + ")", "g"), function(x, a){ return grp(["2", a], "×"); })
+           .replace(new RegExp("\\bhalf of (" + NUM + ")", "g"), function(x, a){ return grp(["1/2", a], "×"); })
+           .replace(new RegExp("(\\d+/\\d+) of (" + NUM + ")", "g"), function(x, a, b){ return a + " × " + b; })
+           .replace(new RegExp("\\b(?:the )?(square|cube) of (" + NUM + ")", "g"), function(x, k, a){ return a + "^" + (k === "square" ? 2 : 3); });
+      // "add 4 + 5", "multiply 4 × 5", "divide 12 ÷ 4": the word and the sign say the same thing
+      s = s.replace(new RegExp("\\badd (?=" + NUM + "\\s*\\+\\s*\\.?\\d)", "g"), "").replace(new RegExp("\\bmultiply (?=" + NUM + "\\s*[×*x]\\s*\\.?\\d)", "g"), "")
+           .replace(new RegExp("\\bdivide (?=" + NUM + "\\s*÷\\s*\\.?\\d)", "g"), "");
+      if (bad || /[ΣΠΔØ]/.test(s)) return null;
+      // the words for the signs
+      s = s.replace(/\bsquared\b/g, "^2").replace(/\bcubed\b/g, "^3")
+           .replace(/\b(?:to the|raised to(?: the)?)\s+(?:power of\s+)?(\d+)(?:st|nd|rd|th)?(?:\s+power)?\b/g, "^$1")
+           .replace(/\bplus\b|\badded to\b|\bincreased by\b/g, "+")
+           .replace(/\btake ?away\b|\bminus\b|\bdecreased by\b|\bless\b/g, "-")
+           .replace(/\bmultiplied (?:by|with)\b|\btimes\b/g, "×").replace(/\bdivided by\b/g, "÷")
+           .replace(/(\d)\s+over\s+(?=\d)/g, "$1/").replace(/\bnegative\s+(?=\d|\.)/g, "-")
+           .replace(/([\d)⟩])\s*x\s*(?=[\d.(⟨])/g, "$1 × ");
+      s = tidy(s.replace(/\s+/g, " ").trim());
+      if (!s || !/\d/.test(s) || !/^[\d\s.,+\-×*÷\/:^()\[\]{}²³⟨⟩]+$/.test(s)) return null;
+      // "the sum of 2 and 3 times 4": (2 + 3) × 4 or 2 + 3 × 4? A phrase has to end the problem
+      if (/⟩\s*\S/.test(s)) return null;
+      if (/^⟨[^⟨⟩]*⟩$/.test(s)) s = s.slice(1, -1);
+      s = s.replace(/⟨/g, "(").replace(/⟩/g, ")").replace(/\s+/g, " ").trim();
+      return { q:s, ans:ans };
+    };
+  })();
+
   /* ===================== reading the problem ===================== */
   var SUP = {"⁰":"0","¹":"1","²":"2","³":"3","⁴":"4","⁵":"5","⁶":"6","⁷":"7","⁸":"8","⁹":"9"};
   var OPS = {"+":"+","-":"−","−":"−","–":"−","—":"−","*":"×","×":"×","x":"×","X":"×","·":"×","∙":"×","⋅":"×",
@@ -613,17 +792,43 @@
         out.push({ k:"op", s:"^" }); out.push({ k:"num", s:d }); continue;
       }
       if (rest.slice(0,2) === "**"){ out.push({ k:"op", s:"^" }); i += 2; continue; }
+      if ((c === "x" || c === "X") && !timesX(s, i, out))
+        throw new UserErr("<b>" + esc(c) + "</b> here looks like a letter, not a times sign. Problems with letters, like <b>2x + 3</b>, "
+          + "are on the Balance Scale. For times, put <b>x</b> or <b>×</b> between two numbers, like <b>4 × 2</b>.");
       if (OPS[c]){ out.push({ k:"op", s:OPS[c] }); i++; continue; }
       if ("([{".indexOf(c) >= 0){ out.push({ k:"(" }); i++; continue; }
       if (")]}".indexOf(c) >= 0){ out.push({ k:")" }); i++; continue; }
+      if (/[a-z]/i.test(c) && /[a-z]{2}/i.test(s))
+        throw new UserErr("I couldn’t read all of those words. Type the problem with numbers and signs, like <b>3 + 4 × 2</b> "
+          + "(words like <b>plus</b>, <b>times</b>, <b>divided by</b> and <b>squared</b> work too)."
+          + (/\b(?:sum|difference|product|quotient|subtract|from|than|then)\b/i.test(s) ? " If it could be read two ways, add parentheses, like <b>(2 + 3) × 4</b>." : ""));
       throw new UserErr("I don’t know the symbol <b>" + esc(c) + "</b>. Use digits, + − × ÷, ^ for powers, and parentheses.");
     }
     return out;
   }
   function tokText(t){ return t.k === "num" ? t.s : t.k === "op" ? t.s : t.k; }
+  /* an x is a times sign only between a number (or ")") and a number (or "("): 4x2, (3)x(5), 2 x -3 — not 2x + 3 */
+  function timesX(s, i, out){
+    var last = out[out.length - 1], rest = s.slice(i + 1);
+    return !!last && (last.k === "num" || last.k === ")") && /^\s*(?:[\d.(\[{]|[-−–]\d)/.test(rest);
+  }
+  /* the problem as typed, or as readTyped reads its words ("three plus four times two", "2 squared + 1"); null if neither works */
+  var READ = { src:null, out:null };
+  function readable(src){
+    if (READ.src === src) return READ.out;
+    var out = null;
+    if (works(src)) out = src;
+    else { var T = readTyped(src); if (T && works(T.q)) out = T.q; }
+    READ = { src:src, out:out };
+    return out;
+  }
+  function exprOf(){ return readable(S.expr) || S.expr; }
 
   /* flat = treat × ÷ + − as one level, straight left to right (the classic mistake) */
   function parse(src, flat){
+    if (/^\s*\d{1,2}:[0-5]\d\s*$/.test(src))
+      throw new UserErr("<b>" + esc(String(src).trim()) + "</b> looks like a time. To divide, write it with ÷, like <b>"
+        + esc(String(src).trim().replace(":", " ÷ ")) + "</b>. Telling time is on the Place Value Chart.");
     var tk = lex(src), p = 0, uid = 0, dec = false;
     if (!tk.length) throw new UserErr("Type a problem, like <b>3 + 4 × 2</b>.");
     function peek(){ return tk[p]; }
@@ -919,7 +1124,7 @@
     var parsed, sol;
     CUR = null;
     try {
-      parsed = parse(S.expr);
+      parsed = parse(exprOf());
       HASDEC = parsed.dec;
       sol = solve(parsed.tree);
     } catch (e){
@@ -1019,7 +1224,7 @@
 
     /* --- why order matters --- */
     var ltr = null;
-    try { ltr = evalTree(parse(S.expr, true).tree); } catch (e){ ltr = null; }
+    try { ltr = evalTree(parse(exprOf(), true).tree); } catch (e){ ltr = null; }
     var mixed = by.m > 0 && by.a > 0;
     var closer;
     if (ltr && (ltr.n !== sol.value.n || ltr.d !== sol.value.d)){
@@ -1229,11 +1434,11 @@
     var v = CUR.value, out = [];
     function add(val, html){ if (val && !(val.n === v.n && val.d === v.d)) out.push({ v:val, html:html }); }
     var ns = negSqText(CUR.tree);
-    if (ns) add(misEval(S.expr, "negSq"), "Careful: <b>" + ns.a + "</b> means <b>" + ns.b + "</b> — the power goes first, "
+    if (ns) add(misEval(exprOf(), "negSq"), "Careful: <b>" + ns.a + "</b> means <b>" + ns.b + "</b> — the power goes first, "
       + "then the minus. Only <b>" + ns.c + "</b> raises the negative number to the power.");
     add(CUR.ltr, "That’s what you get going straight left to right. × and ÷ come before + and −, wherever they are in the line.");
-    add(misEval(S.expr, "addFirst"), "It looks like a + or − was done before a × or ÷. × and ÷ go first; + and − wait until the end.");
-    add(misEval(S.expr, "mulFirst"), "It looks like the × was done before the ÷. They’re partners: whichever comes first, "
+    add(misEval(exprOf(), "addFirst"), "It looks like a + or − was done before a × or ÷. × and ÷ go first; + and − wait until the end.");
+    add(misEval(exprOf(), "mulFirst"), "It looks like the × was done before the ÷. They’re partners: whichever comes first, "
       + "reading left to right, goes first — the M before the D in PEMDAS is just spelling.");
     if (v.n !== 0n) add(R(-v.n, v.d), "The size is right but the sign isn’t — check how the minus signs work out.");
     return out;
@@ -1553,7 +1758,7 @@
     if (q !== null && q.trim()){
       q = q.slice(0, 1000);
       var lit = rawParam("q");
-      if (!works(q) && lit && lit !== q && works(lit)) q = lit;
+      if (!readable(q) && lit && lit !== q && readable(lit)) q = lit;
       S.expr = q;
     }
     var as = P.get("as");

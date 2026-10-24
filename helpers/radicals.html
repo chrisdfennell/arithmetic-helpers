@@ -222,6 +222,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px;overflow-wrap:anywhere}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -2866,6 +2867,53 @@
     ratmul:"Type two fractions with × or ÷ between them, like <b>(x² − 9)/(2x) · (4x)/(x + 3)</b>.",
     ratadd:"Type two fractions with + or − between them, like <b>2/(x + 1) + 3/(x − 2)</b>.",
     rateq:"Type an equation with x on a bottom, like <b>3/(x − 2) = 5/(x + 1)</b>." };
+  /* ===================== typed words =====================
+     "what's the square root of 72 simplified", "sqrt 2 times sqrt 8", "2 over root 3", "125 to the 2/3 power",
+     "simplify √75 + √12 please": number and operator words become symbols and the request around the problem
+     goes, so what's left reads as before. A word it doesn't know stops the problem (wordCheck) instead of being
+     read as letters (6by√2). */
+  var W_NUM = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+    thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20, thirty:30, forty:40,
+    fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+  function typedWords(s){
+    s = String(s == null ? "" : s).replace(/[‘’]/g, "'");
+    var k, prev, ones = "one|two|three|four|five|six|seven|eight|nine";
+    for (k = 0, prev = null; k < 6 && prev !== s; k++){
+      prev = s;
+      s = s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all|all\s+the))?\s+(?:steps|work|working)|with\s+(?:the\s+|all\s+(?:the\s+)?)?(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx|for\s+me)\b/gi, " ")
+           .replace(/^\s*(?:hi|hey|hello|ok(?:ay)?|so|and|then|now)\b[\s,!]*/i, "")
+           .replace(/^\s*(?:(?:can|could|would|will)\s+(?:you|u|someone)(?:\s+help(?:\s+me)?)?(?:\s+(?:to|with))?|help\s+me(?:\s+(?:to|with))?|i\s+need\s+(?:help\s+with|to)|how\s+(?:do|would|can|should|to)(?:\s+(?:i|you|we|u))?|show\s+me\s+how\s+to|explain\s+how\s+to)\b\s*/i, "")
+           .replace(/^\s*(?:what\s+is|what's|whats)\s+(?:the\s+)?(?:simplest\s+(?:radical\s+)?form\s+of\s+)?/i, "")
+           .replace(/^\s*(?:the\s+)?simplest\s+(?:radical\s+)?form\s+of\b\s*/i, "")
+           .replace(/\s*,?\s*(?:in\s+(?:the\s+)?simplest\s+(?:radical\s+)?form|in\s+radical\s+form|simplified|completely|fully)\s*[?.!]*\s*$/i, "")
+           .replace(/^\s*(?:solve|simplify)\s+(?:the\s+)?(?:radical\s+|rational\s+)?(?:equation|expression|proportion)s?\b\s*:?\s*/i, "simplify ")
+           .replace(/^[\s:,!]+/, "");
+    }
+    s = s.replace(/^simplify\s+(?=.*=)/i, "solve ");
+    // spoken numbers
+    s = s.replace(new RegExp("\\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\\s-]+(" + ones + ")\\b", "gi"), function(m, a, b){ return " " + (W_NUM[a.toLowerCase()] + W_NUM[b.toLowerCase()]) + " "; })
+         .replace(new RegExp("\\b(" + Object.keys(W_NUM).join("|") + ")\\b", "gi"), function(m){ return " " + W_NUM[m.toLowerCase()] + " "; })
+         .replace(/\b(\d+)\s+hundred\b/gi, function(m, a){ return a + "00"; });
+    // roots and powers (an odd root of a negative: ∛-54 is ∛(−54))
+    s = s.replace(/\b(sqrt|cbrt|root\d*)\s+of\b/gi, "$1").replace(/(∛|\bcbrt|\broot(?:3|5|7|9|11)\b)\s*[-−]\s*(\d+(?:\.\d+)?)/gi, "$1(-$2)").replace(/\bradical\s+(?=[\d(])/gi, "sqrt ")
+         .replace(/\b(?:raised\s+)?to\s+the\s+(?:power\s+(?:of\s+)?)?(-?\s*\d+\s*\/\s*\d+)(?:\s+power)?\b/gi, "^($1)")
+         .replace(/\b(?:raised\s+)?to\s+the\s+power(?:\s+of)?\b|\braised\s+to\b/gi, "^")
+         .replace(/\s*\bsquared\b/gi, "^2 ").replace(/\s*\bcubed\b/gi, "^3 ");
+    // operators, and "multiply A by B", "add A and B", "subtract A from B", "divide A by B"
+    s = s.replace(/^\s*multiply\s+(.+?)\s+(?:by|and|with)\s+(.+)$/i, "$1 × $2").replace(/^\s*divide\s+(.+?)\s+by\s+(.+)$/i, "$1 ÷ $2")
+         .replace(/^\s*add\s+(.+?)\s+(?:and|to)\s+(.+)$/i, "$1 + $2").replace(/^\s*subtract\s+(.+?)\s+from\s+(.+)$/i, "$2 − ($1)")
+         .replace(/\b(?:times|multiplied\s+by)\b/gi, " × ").replace(/\bdivided\s+by\b/gi, " ÷ ").replace(/\bover\b/gi, " / ")
+         .replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " − ").replace(/\bnegative\b/gi, " −");
+    return s.replace(/\s+/g, " ").trim();
+  }
+  // a word left over would be read as letters multiplied together: stop with a notice instead
+  function wordCheck(s, allow){
+    var t = norm(s).replace(/\b(?:sqrt|cbrt|root\d*)/gi, " ");
+    if (allow) t = t.replace(allow, " ");
+    var w = /\b(?:is|of|by|to|in|on|an|at|it|as|or|be|do|if|me|my|so|up|we|and|the|for|are|can|you|how|its|was|all|get|use|put|out|then|than|that|this|what|find|give|show|with|from|into|each|form|step|work|help|answer|value)\b/i.exec(t)
+      || /[A-Za-z]{4,}/.exec(t);
+    if (w) throw new UserErr("I don’t know the word <b>“" + esc(w[0]) + "”</b> in a problem here. Type it with numbers, letters and signs, like <b>√72</b>, <b>5/√3</b> or <b>√(2x + 3) = x</b>.");
+  }
   function cleanQ(s, mode){
     s = String(s == null ? "" : s).trim().replace(/\s+/g, " ");
     var verbs = /^\s*(?:please\s+)?(?:simplify(?:\s+completely)?|evaluate|reduce|rationali[sz]e(?:\s+the\s+denominator(?:\s+of)?)?|solve(?:\s+for\s+[a-z])?|find(?:\s+the\s+value\s+of)?|work\s+out|calculate|compute|multiply|divide|add|subtract|combine|expand|state\s+the\s+excluded\s+values\s+(?:of|for)|what\s+is)\b\s*:?\s*/i;
@@ -2878,17 +2926,20 @@
   }
   function readProblem(mode, text, how){
     VSEEN = null; VV = "x"; LETS = null;
-    var s = cleanQ(text, mode), P, m;
+    var s = cleanQ(typedWords(text), mode), P, m;
     if (!s) throw new UserErr(EMPTY[mode]);
+    if (mode !== "simplify" && mode !== "exponents") wordCheck(s);
     if (mode === "simplify"){
       var hw = /\b(?:by|using|with)\s+(?:prime\s+factor(?:s|ization|isation)?|prime\s+pairs|pairs|a\s+factor\s+tree)\b/i.test(s) ? "primes" : /\b(?:by|using)\s+(?:the\s+)?(?:largest|biggest)\s+(?:perfect\s+)?(?:square|cube)s?(?:\s+factor)?\b/i.test(s) ? "square" : null;
       s = s.replace(/\s*,?\s*\b(?:by|using|with)\s+(?:prime\s+factor(?:s|ization|isation)?|prime\s+pairs|pairs|a\s+factor\s+tree|(?:the\s+)?(?:largest|biggest)\s+(?:perfect\s+)?(?:square|cube)s?(?:\s+factor)?)\b/i, "").trim();
+      wordCheck(s);
       P = readSimplify(s, hw || how || "square");
     }
     else if (mode === "operate") P = readOperate(s);
     else if (mode === "rationalize") P = readRationalize(s);
     else if (mode === "exponents"){
       if ((m = /\s*,?\s*\b(?:using\s+)?(?:the\s+)?(?:exponent|power)\s+(?:laws|rules)\b/i.exec(s))){ s = s.replace(m[0], " ").trim(); how = "laws"; }
+      wordCheck(s, /\b(?:evaluate|simplify|write|express|rewrite|convert|change|put|as|an?|in|into|with|using|the|radical|root|exponents?|exponential|powers?|fraction(?:al)?|rational|form|notation|one|single)\b/gi);
       P = readExponents(s, how);
     }
     else if (mode === "radeq") P = readRadeq(s);
@@ -2953,6 +3004,7 @@
     ratadd:"ratadd", add:"ratadd", subtract:"ratadd", "add-subtract":"ratadd", lcd:"ratadd",
     rateq:"rateq", "rational-equation":"rateq", "rational-equations":"rateq", proportion:"rateq" };
   function kindOf(q){
+    q = typedWords(q);
     var s = String(q || "").toLowerCase();
     if (/\brationali[sz]e\b/.test(s)) return "rationalize";
     if (/\bexcluded\s+values?\b|\brestricted\s+values?\b/.test(s) && !/=/.test(s)) { /* a rational expression */ }
@@ -2974,7 +3026,8 @@
       var ast = parse(sx.replace(/÷/g, "/"));
       var fracPow = false;
       (function walk(n){ if (!n || typeof n !== "object") return; if (n.t === "pow" && !isIntExp(n.b)) fracPow = true; walk(n.a); walk(n.b); })(ast);
-      if (fracPow || /\^\s*\(?\s*-?\d+\s*\/\s*\d+/.test(sx)) return "exponents";
+      // ^(2/3) is a fraction power; a bare ^2/3 is one too, unless the letters sit on a bottom ((x/3) ÷ (x^2/6) is x²/6)
+      if (fracPow || /\^\s*\(\s*-?\d+\s*\/\s*\d+/.test(sx) || (/\^\s*-?\d+\s*\/\s*\d+/.test(sx) && !varDen(ast) && !/÷/.test(sx))) return "exponents";
       if (varDen(ast) && !hasFn(ast)){
         if (topLevelOps(sx).length === 1) return "ratmul";
         var top = stripG(ast);

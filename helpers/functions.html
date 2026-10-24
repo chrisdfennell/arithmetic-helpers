@@ -221,6 +221,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px;overflow-wrap:anywhere}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -2401,8 +2402,36 @@
   function defH(fo){ return callH(fo.name, vI(), fo.name === "g") + " = " + fnRuleH(fo); }
   function defT(fo){ return fo.name + "(x) = " + fnRuleT(fo); }
 
+  /* typed words: "f(x) = x squared plus 1, find f(4)", "plug 2 into f(x) = 3x − 1", "f of x equals 2x plus 3, find f of 4",
+     "f(x) = x^2 − 3x + 2, f(−3) = ?", "can you find the domain of 1/(x − 2) please": number and operator words become
+     symbols and the request around the problem goes; the words this page reads (domain, inverse, even, if …) stay. */
+  var W_NUM = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+    thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20, thirty:30, forty:40,
+    fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+  function typedWords(s){
+    var k, prev, ones = "one|two|three|four|five|six|seven|eight|nine";
+    for (k = 0, prev = null; k < 6 && prev !== s; k++){
+      prev = s;
+      s = s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all|all\s+the))?\s+(?:steps|work|working)|with\s+(?:the\s+|all\s+(?:the\s+)?)?(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx|for\s+me)\b/gi, " ")
+           .replace(/^\s*(?:hi|hey|hello|ok(?:ay)?|so|and|then|now)\b[\s,!]*/i, "")
+           .replace(/^\s*(?:(?:can|could|would|will)\s+(?:you|u|someone)(?:\s+help(?:\s+me)?)?(?:\s+(?:to|with))?|help\s+me(?:\s+(?:to|with))?|i\s+need\s+(?:help\s+with|to)|how\s+(?:do|would|can|should|to)(?:\s+(?:i|you|we|u))?|show\s+me\s+how\s+to|explain\s+how\s+to)\b\s*/i, "")
+           .replace(/^[\s:,!]+/, "").replace(/[\s,;!]+$/, "");
+    }
+    // "plug 2 into f(x) = …", "substitute x = 2 in …", "f of 4", "f(−3) = ?", "… and x = 3"
+    s = s.replace(/^\s*(?:plug|substitute|sub|put|input)\s+(?:in\s+)?(?:x\s*=\s*)?(-?[\d./]+)\s+(?:in(?:to)?|for\s+x\s+in(?:to)?)\s+(.+)$/i, "$2, at x = $1")
+         .replace(/\b([fgh])\s+of\s+(x|-?[\d./]+)\b/gi, "$1($2)")
+         .replace(/\)\s*=\s*\?+/g, ")").replace(/\s+and\s+(?=x\s*=\s*-?[\d./]+\s*$)/i, ", at ");
+    // spoken numbers ("one-to-one" stays) and operators
+    s = s.replace(new RegExp("\\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\\s-]+(" + ones + ")\\b", "gi"), function(m, a, b){ return " " + (W_NUM[a.toLowerCase()] + W_NUM[b.toLowerCase()]) + " "; })
+         .replace(new RegExp("\\b(" + Object.keys(W_NUM).join("|") + ")\\b", "gi"), function(m, w, at, all){
+           return /one/i.test(m) && (/^[\s-]*to[\s-]*one/i.test(all.slice(at + m.length)) || /to[\s-]*$/i.test(all.slice(0, at))) ? m : " " + W_NUM[m.toLowerCase()] + " "; })
+         .replace(/\s*\bsquared\b/gi, "^2 ").replace(/\s*\bcubed\b/gi, "^3 ").replace(/\b(?:raised\s+)?to\s+the\s+power(?:\s+of)?\b/gi, "^")
+         .replace(/\b(?:is\s+)?equal\s+to\b|\bequals\b/gi, " = ").replace(/\b(?:times|multiplied\s+by)\b/gi, " * ").replace(/\b(?:divided\s+by|over)\b/gi, " / ")
+         .replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " - ");
+    return s;
+  }
   function prepQ(s){
-    return String(s == null ? "" : s).replace(/[   ]/g, " ").replace(/[−–—‐‑]/g, "-").replace(/\r?\n/g, "; ")
+    return String(s == null ? "" : s).replace(/[   ]/g, " ").replace(/[−–—‐‑]/g, "-").replace(/[‘’]/g, "'").replace(/\r?\n/g, "; ").replace(/^[\s\S]*$/, typedWords)
       .replace(/\bf\s*(?:⁻¹|\^\s*\(\s*-\s*1\s*\)|\^\s*-\s*1|-1)(?=\s*\()/g, "finv")
       .replace(/\bfinverse\b/gi, "finv")
       .replace(/\s+/g, " ").trim();
@@ -2729,6 +2758,19 @@
     var raw = String(text == null ? "" : text).trim();
     if (!raw) throw new UserErr(EMPTY[mode]);
     if (raw.length > 400) throw new UserErr("That’s too long for this page — try a shorter problem.");
+    // problems that belong on another page, and a lone g(x) or h(x) (read as the function)
+    var pq = prepQ(raw), lowq = pq.toLowerCase(), lets = {};
+    pq.replace(/\b(?:log|ln|sqrt|cbrt|abs|pi|base|of|find|evaluate|what|is|the|value|compute|calculate|simplify|work|out)\b/gi, " ").replace(/[a-z]/gi, function(c){ lets[c.toLowerCase()] = 1; });
+    if (/\bslope\b|\bline\s+(?:through|between|passing)\b|\bmidpoint\b|\bdistance\s+between\b/.test(lowq))
+      throw new UserErr("That’s about a line through points — try <a href=\"" + esc(siteUrl("lines-and-slope", "q=" + enc(raw))) + "\">the Slope Grid</a>.");
+    if (!keys(lets).length && !/\(\s*-?[\d./]+\s*,\s*-?[\d./]+\s*\)|->|→|↦/.test(pq))
+      throw new UserErr("There’s no function of " + vI() + " in that — just a number to work out. Try " + (/\blog|\bln\b/.test(lowq) ? "<a href=\"" + esc(siteUrl("logarithms", "q=" + enc(raw))) + "\">the Log Ladder</a>" : "<a href=\"" + esc(siteUrl("order-of-operations", "q=" + enc(raw))) + "\">the Order Stack</a>") + ".");
+    if (keys(lets).join("") === "i" && /\di\b|\bi\s*\)|[+-]\s*\d*\s*i\b/.test(lowq))
+      throw new UserErr("Is <i>i</i> the imaginary unit here? Try <a href=\"" + esc(siteUrl("complex-numbers", "q=" + enc(raw))) + "\">the Complex Plane</a>. (For a function, use " + vI() + ".)");
+    if (/^(?:eval|domain|inverse|parity|piece)$/.test(mode) && !/\bf\s*\(/.test(pq)){
+      var one = /\b([gh])\s*\(\s*[a-z]\s*\)\s*=/.exec(pq);
+      if (one && !new RegExp("\\b" + (one[1] === "g" ? "h" : "g") + "\\s*\\(").test(pq)) raw = pq.replace(new RegExp("\\b" + one[1] + "(?=\\s*\\()", "g"), "f");
+    }
     var sp = splitProblem(raw);
     if (mode === "piece" && sp.defs.f === undefined && sp.y === null && !/\bif\b|\botherwise\b/i.test(raw)) throw new UserErr(EMPTY.piece);
     return READ[mode](sp, raw);
@@ -2758,7 +2800,7 @@
     if (/\bg\s*\(\s*x\s*\)\s*=/.test(s) && /\bf\s*\(\s*x\s*\)\s*=/.test(s)) return "combine";
     if (defs || /\bdifference\s+quotient\b/.test(low)) return "eval";
     if (/^\s*y\s*=/.test(s)) return "domain";
-    try { parse(s); return "domain"; } catch (e){ if (!e || !e.user) throw e; }
+    try { if (keys(varsOf(parse(s))).length) return "domain"; } catch (e){ if (!e || !e.user) throw e; }
     return null;
   }
 

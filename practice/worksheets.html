@@ -142,7 +142,7 @@
   .prob{display:grid;grid-template-columns:2.2em minmax(0,1fr);align-items:start;padding:8px 0;break-inside:avoid;
     border-bottom:1px dashed #ddd}
   .prob .n{font-family:var(--f-mono);font-weight:600;font-size:13px;color:#555;padding-top:2px}
-  .prob .q{font-family:var(--f-mono);font-size:16px;font-weight:600;color:#111;line-height:1.45;overflow-wrap:anywhere}
+  .prob .q{font-family:var(--f-mono);font-size:16px;font-weight:600;color:#111;line-height:1.45;overflow-wrap:break-word}
   .prob .q svg{max-width:100%;height:auto}
   .prob .space{grid-column:2}
   .key .prob{padding:5px 0}
@@ -175,6 +175,7 @@
     .sh-block{break-inside:auto}
     .sh-block .probs{break-before:avoid}
   }
+  @supports (-webkit-touch-callout:none){input[type=text], select, input[type=number]{font-size:16px}}   /* iPhone Safari zooms into a box under 16px */
 </style>
 
 <div class="page">

@@ -589,6 +589,11 @@
                y = 3 sin(2x) + 1 · y = −2cos(x/2 − π/4) · write the equation: sine,
                amplitude 3, period π, midline y = 1                                       -> graph
                sin θ = 3/5 quadrant II · sin 75° · cos(45° − 30°) · tan 15                -> identities
+             Also read: a label and polite words ("Q3)", "can you please", "step by step"), number words (thirty degrees),
+             sin30, QII, "find the missing side: …, opposite = ?", "the side opposite angle θ is 7", an inverse of a value
+             from 0 to 1 (arcsin(0.5), tan⁻¹(3/4), inverse tan of 1 -> right, the angle of a right triangle), "sides 7 and
+             10 and an included angle of 40°" and "law of cosines: sides 5, 7, 9" -> laws, "find the period of y = …".
+             Words around a bare number that aren't about an angle ("area of a circle with radius 5") get a notice.
    The structured form. This is what the page writes in the address bar and what made problems carry, so a
    problem opens exactly as it was made. With these, q is not needed. Angles: degrees as a number (a=135,
    a=-30, a=37.5); radians as a fraction of pi (a=5pi/6, a=-pi/4, a=2pi) or a plain number (a=2.5).
@@ -1217,7 +1222,7 @@
   function angleOnly(t){ return String(t).replace(/[a-zA-Z]+/g, function(w){ return MATHW.test(w) ? " " + w + " " : " "; }).replace(/[,;:?!]/g, " ").trim(); }
   function readFnAngle(text, defU){
     var t = cleanLead(text), f, rest;
-    var all = /^(?:sin(?:e)?\s*,?\s*cos(?:ine)?\s*,?\s*(?:and|&)?\s*tan(?:gent)?|all\s+(?:three\s+|3\s+)?(?:trig(?:onometric)?\s*)?(?:functions|ratios|values)?|(?:three\s+|3\s+)?trig(?:onometric)?\s+(?:functions|ratios|values))\s*(?:of|for|at)?\s*/i.exec(t);
+    var all = /^(?:sin(?:e)?\s*,?\s*cos(?:ine)?\s*,?\s*(?:and|&)?\s*tan(?:gent)?|all\s+(?:three\s+|3\s+|six\s+|6\s+)?(?:trig(?:onometric)?\s*)?(?:functions|ratios|values)?|(?:three\s+|3\s+|six\s+|6\s+)?trig(?:onometric)?\s+(?:functions|ratios|values))\s*(?:of|for|at)?\s*/i.exec(t);
     if (all){ f = "all"; rest = t.slice(all[0].length); }
     else {
       var m = FWORD.exec(t);
@@ -1404,7 +1409,7 @@
     if (FWORD.test(t)){ var r = readFnAngle(t, "deg"); if (r.f === "all") return mkCircle("point", null, r.A); return mkCircle("value", r.f, r.A); }
     if (/^(?:sin|cos|tan).*(?:and|,)/i.test(t) || /\ball\b|trig/i.test(t)){ var r2 = readFnAngle(t, "deg"); return mkCircle("point", null, r2.A); }
     var a = angleOnly(t);
-    if (!a) throw new UserErr("Type an angle, like <b>cos 135°</b>, <b>210°</b> or <b>150° to radians</b>.");
+    if (!a || !bareAngle(t)) throw new UserErr("Type an angle, like <b>cos 135°</b>, <b>210°</b> or <b>150° to radians</b>.");
     return mkCircle("point", null, readAngle(a, "deg"));
   }
   function drawCircle(P){
@@ -1573,12 +1578,20 @@
     else if (/\bramp\b/.test(low)) story = "ramp";
     else if (/lighthouse|cliff|depression/.test(low)) story = "cliff";
     if (story) return readStory(story, t);
+    // "the side opposite angle θ is 7": that names a side, not an angle of 7
+    t = t.replace(/\b(opposite|adjacent)(?:\s+to)?\s+(?:the\s+)?(?:angle\s*)?(?:θ|theta|x|a|b)?(?=\s*(?:is|=|:|measures|of)\b|\s*\d)/gi, "$1 ").replace(/\bacross from\s+(?:the\s+)?(?:angle\s*)?(?:θ|theta|x)?/gi, "opposite ");
     var g = {}, find = null, m;
     if ((m = /(?:\bangle|\bang|θ|\btheta)\s*(?:=|:|is|of)?\s*(\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?)?/i.exec(t)) || (m = /(\d+(?:\.\d+)?)\s*(?:°|deg(?:rees?)?)/i.exec(t))) g.ang = rd(m[1]);
-    var rest = t.replace(/\bfind\b.*$/i, "");
+    // what's asked ("find the opposite", "opposite = ?") isn't a given; everything else is, wherever "find" is
+    var FT = "(angle|θ|theta|opposite|opp|adjacent|adj|hypotenuse|hyp|x|side)";
+    var qa = new RegExp("\\b" + FT + "\\s*(?:side\\s*)?(?:=|is)\\s*\\?", "i").exec(t)
+          || new RegExp("\\b(?:find|what\\s+is|solve\\s+for|work\\s+out|how\\s+long\\s+is)\\s+(?:the\\s+)?(?:missing\\s+|unknown\\s+|length\\s+of\\s+the\\s+)?()" + FT + "?(?:\\s+side)?(?:\\s+(?:x|θ))?", "i").exec(t);
+    var rest = qa ? t.slice(0, qa.index) + " " + t.slice(qa.index + qa[0].length) : t;
+    if (!qa) rest = t.replace(/\bfind\b.*$/i, "");
     for (var k in SIDE_RE){ if ((m = SIDE_RE[k].exec(rest))) g[k] = rd(m[1]); }
-    var fm = /\b(?:find|what\s+is|solve\s+for|missing|work\s+out|unknown)\b\s*(?:the\s+)?(angle|θ|theta|opposite|opp|adjacent|adj|hypotenuse|hyp|x|side)?/i.exec(t);
-    if (fm && fm[1]){ var w = fm[1].toLowerCase(); find = /^(angle|θ|theta)$/.test(w) ? "angle" : /^opp/.test(w) ? "opp" : /^adj/.test(w) ? "adj" : /^hyp/.test(w) ? "hyp" : null; }
+    var fm = /\b(?:find|what\s+is|solve\s+for|missing|work\s+out|unknown)\b\s*(?:the\s+)?(?:missing\s+|unknown\s+)?(angle|θ|theta|opposite|opp|adjacent|adj|hypotenuse|hyp|x|side)?/i.exec(t);
+    var fw = qa && (qa[1] || qa[2]) ? (qa[1] || qa[2]) : fm && fm[1] ? fm[1] : null;
+    if (fw){ var w = fw.toLowerCase(); find = /^(angle|θ|theta)$/.test(w) ? "angle" : /^opp/.test(w) ? "opp" : /^adj/.test(w) ? "adj" : /^hyp/.test(w) ? "hyp" : null; }
     if (!g.ang && !g.opp && !g.adj && !g.hyp) throw new UserErr("Name the sides you know, like <b>opposite 5 hypotenuse 13 find angle</b> or <b>angle 35 hypotenuse 10 find opposite</b>.");
     return mkRight(find, g, null, "");
   }
@@ -1588,11 +1601,11 @@
     var um = re(NUM + UN).exec(t); if (um) unit = /^f/i.test(um[2]) ? "ft" : "m";
     if ((m = re(NUM + "\\s*(?:°|deg(?:rees?)?)").exec(t))) g.ang = rd(m[1]);
     var L = {
-      ladder:[["hyp", NUM + UN + "\\s+(?:long\\s+)?ladder"], ["hyp", "ladder\\s+(?:is\\s+)?" + NUM + UN + "(?:\\s+long)?"], ["opp", "reach(?:es)?\\s+" + NUM + UN + "\\s+up"], ["opp", NUM + UN + "\\s+up\\s+the\\s+wall"],
+      ladder:[["hyp", NUM + UN + "\\s+(?:long\\s+)?ladder"], ["hyp", "ladder\\s+(?:is\\s+)?" + NUM + UN + "(?:\\s+long)?"], ["hyp", "\\b(?:is|measures)\\s+" + NUM + UN + "\\s+long"], ["opp", "reach(?:es)?\\s+" + NUM + UN + "\\s+up"], ["opp", NUM + UN + "\\s+up\\s+the\\s+wall"],
               ["adj", "foot\\s+(?:is\\s+)?" + NUM + UN + "\\s+(?:away\\s+)?from"], ["adj", NUM + UN + "\\s+from\\s+the\\s+wall"]],
       kite:[["hyp", "string\\s+(?:is\\s+)?" + NUM + UN], ["hyp", NUM + UN + "\\s+(?:long\\s+)?string"], ["opp", "flies\\s+" + NUM + UN], ["opp", NUM + UN + "\\s+high"], ["adj", NUM + UN + "\\s+away"]],
       shadow:[["opp", NUM + UN + "\\s+(?:tall|high)"], ["adj", "shadow\\s+(?:is\\s+)?" + NUM + UN], ["adj", NUM + UN + "\\s+(?:long\\s+)?shadow"]],
-      ramp:[["hyp", "ramp\\s+(?:is\\s+)?" + NUM + UN], ["hyp", NUM + UN + "\\s+(?:long\\s+)?ramp"], ["opp", "rises\\s+" + NUM + UN], ["opp", "rise\\s+(?:of\\s+)?" + NUM + UN], ["adj", "run\\s+(?:of\\s+)?" + NUM + UN]],
+      ramp:[["hyp", "ramp\\s+(?:is\\s+)?" + NUM + UN], ["hyp", NUM + UN + "\\s+(?:long\\s+)?ramp"], ["hyp", "\\b(?:is|measures)\\s+" + NUM + UN + "\\s+long"], ["opp", "rises\\s+" + NUM + UN], ["opp", "rise\\s+(?:of\\s+)?" + NUM + UN], ["adj", "run\\s+(?:of\\s+)?" + NUM + UN]],
       cliff:[["opp", NUM + UN + "\\s+(?:tall\\s+|high\\s+)?(?:lighthouse|cliff|tower)"], ["opp", "(?:lighthouse|cliff|tower)\\s+(?:is\\s+)?" + NUM + UN], ["adj", "boat\\s+" + NUM + UN], ["adj", NUM + UN + "\\s+(?:away|from\\s+(?:its|the)\\s+(?:base|bottom|foot))"], ["hyp", NUM + UN + "\\s+in\\s+a\\s+straight\\s+line"]]
     }[story];
     L.forEach(function(p){ if (!g[p[0]] && (m = re(p[1]).exec(t))) g[p[0]] = rd(m[1]); });
@@ -2090,6 +2103,8 @@
       return mkGraph("write", f, a, b, h, k, u);
     }
     var src = t.replace(/\(?\s*(?:in\s+)?degrees\s*\)?\s*$/i, "").replace(/^\s*(?:graph|sketch|plot|draw)\s*:?\s*/i, "").replace(/^\s*(?:y|f\s*\(\s*x\s*\))\s*=\s*/i, "");
+    // "find the amplitude and period of y = …": the wave is what comes after "y ="
+    if (/=/.test(src) && /^[^=]*?[a-z][^=]*?\b(?:y|f\s*\(\s*x\s*\))\s*=/i.test(src)) src = src.replace(/^[^=]*?\b(?:y|f\s*\(\s*x\s*\))\s*=\s*/i, "");
     if (/=/.test(src)) throw new UserErr("Type the wave as <b>y = …</b>, like <b>y = 3 sin(2x) + 1</b>.");
     var tree = parseX(src, { x:true, fn:true }), fns = [];
     walkX(tree, function(n){ if (n.t === "fn") fns.push(n); });
@@ -2256,8 +2271,9 @@
   function readIdent(text){
     var t = String(text).replace(/[−–]/g, "-").trim(), m;
     // Pythagorean: sin θ = 3/5 in quadrant II
-    if ((m = /\b(sin|cos|tan)(?:e|ine|gent)?\s*(?:\(\s*)?(?:θ|theta|x|a|t)?(?:\s*\))?\s*=\s*([^,;]+?)\s*(?:[,;]|\band\b|\bwith\b|\bin\b|\bθ\b|\btheta\b|\bwhere\b|\bquadrant\b|\bq[1-4]\b|$)/i.exec(t)) && /quadrant|\bq[1-4]\b/i.test(t)){
-      var qm = /quadrant\s*(iv|iii|ii|i|[1-4]|one|two|three|four)\b|\b(first|second|third|fourth)\s+quadrant|\b(q[1-4])\b/i.exec(t);
+    if ((m = /\b(sin|cos|tan)(?:e|ine|gent)?\s*(?:\(\s*)?(?:θ|theta|x|a|t)?(?:\s*\))?\s*=\s*([^,;]+?)\s*(?:[,;]|\band\b|\bwith\b|\bin\b|\bθ\b|\btheta\b|\bwhere\b|\bquadrant\b|\bq(?:[1-4]|i{1,3}|iv)\b|$)/i.exec(t)) && /quadrant|\bq(?:[1-4]|i{1,3}|iv)\b/i.test(t)){
+      var qm = /quadrant\s*(iv|iii|ii|i|[1-4]|one|two|three|four)\b|\b(first|second|third|fourth)\s+quadrant|\b(q[1-4])\b|\bq(iv|iii|ii|i)\b/i.exec(t);
+      if (qm && qm[4]) qm[1] = qm[4];
       if (!qm) throw new UserErr("Say which quadrant θ is in: <b>quadrant II</b>.");
       var q = QWORD[String(qm[1] || qm[2] || qm[3]).toLowerCase()];
       var tree = parseX(m[2]), v = qEval(tree);
@@ -2831,7 +2847,14 @@
     identities:"Type <b>sin θ = 3/5, θ in quadrant II</b>, or <b>sin 75°</b>."
   };
   function readProblem(mode, text){
+    text = tidyT(text);
     if (!String(text || "").trim()) throw new UserErr(EMPTY[mode]);
+    var inv = invForm(text);
+    if (inv && inv.bad) throw new UserErr(invMsg(inv));
+    if (inv && mode === "right") return mkRight("angle", inv.f === "sin" ? { opp:rd(inv.num), hyp:rd(inv.den) } : inv.f === "cos" ? { adj:rd(inv.num), hyp:rd(inv.den) } : { opp:rd(inv.num), adj:rd(inv.den) }, null, "");
+    if (inv) throw new UserErr("That’s an inverse function — it gives an angle. Try the <b>Right triangles</b> tab.");
+    var lw = lawsWords(text);
+    if (lw && mode === "laws") text = lw;
     if (mode === "right") return readRight(text);
     if (mode === "special") return readSpecial(text);
     if (mode === "circle") return readCircle(text);
@@ -2876,9 +2899,64 @@
     laws:"laws", law:"laws", sines:"laws", cosines:"laws", oblique:"laws", "law-of-sines":"laws", "law-of-cosines":"laws",
     graph:"graph", graphs:"graph", wave:"graph", waves:"graph", sinusoid:"graph",
     identities:"identities", identity:"identities", pythagorean:"identities", sum:"identities", formulas:"identities" };
+  /* what someone typed, tidied before it's read: a problem's label ("Problem 4:", "Q3)"), polite words ("can you please",
+     "step by step", "show your work", "thanks"), a doubled lead-in ("what is evaluate …"), and number words ("thirty degrees") */
+  var TNW = { two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12, fifteen:15, eighteen:18 };
+  var TNT = { twenty:20, thirty:30, forty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+  function tidyT(raw){
+    var s = String(raw == null ? "" : raw);
+    if (s.indexOf("\u0000") >= 0) return s;
+    s = s.replace(/^\s*(?:(?:problem|question|exercise|ex|q|no|number|#)\s*\.?\s*\d+[a-z]?\s*[:.)\-]|\d+\s*[.)]\s+(?=[a-z])|(?:hw|homework)\s*:)\s*/i, "")
+      .replace(/\b(?:can|could|would|will) (?:you|u) (?:please |pls |plz )?(?:help (?:me )?)?(?:to )?/gi, " ")
+      .replace(/\(\s*(?:show (?:all |your |the )?(?:work|working|steps)|step[- ]by[- ]step|please)\s*\)/gi, " ")
+      .replace(/\b(?:please|pls|plz|thanks|thank you|step[- ]by[- ]step|show (?:all |your |the |me the )?(?:work|working|steps)|explain(?: it)?)\b/gi, " ")
+      .replace(/^\s*(?:i (?:need|want|have) (?:to )?(?:find |know |solve |do )?|how (?:do|would|can) (?:i|you|we) (?:find |solve |do |get |work out )?|help me (?:find |with |solve )?|solve\s*:)\s*/i, "")
+      .replace(/^\s*(?:what\s+is|what['’]s|whats|calculate|compute|determine|evaluate)\s+(?=(?:find|evaluate|convert|change|solve|graph|sketch|plot|use|write|give|work out)\b)/i, "")
+      .replace(/^\s*(?:use|using)\s+(?:an?\s+|the\s+)?(?:sum|difference|angle[- ]addition|addition|sum (?:and|or) difference)?\s*(?:formulas?|identit(?:y|ies))\s+(?:to\s+)?/i, "")
+      .replace(/\b(sin|cos|tan|sec|csc|cot)(?=\d)/gi, "$1 ");
+    for (var lead = 0; lead < 3; lead++)
+      s = s.replace(/^\s*(?:what\s+is|what['’]s|whats|find|evaluate|calculate|compute|determine|work\s+out|give)\s+(?=(?:find|evaluate|what|determine|calculate|compute|the\s+(?:exact\s+)?values?|exact|sin|cos|tan|sec|csc|cot|sine|cosine|tangent|secant|cosecant|cotangent)\b)/i, "");
+    s = s.replace(/\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?:[- ](one|two|three|four|five|six|seven|eight|nine))?\b/gi, function(m, t, u){ return String(TNT[t.toLowerCase()] + (u ? ({ one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9 })[u.toLowerCase()] : 0)); })
+      .replace(/\b(two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|eighteen)\b(?=\s*(?:°|deg|degrees?|rad|radians?|pi|π|units?|cm|m|ft|feet|in|inches|meters?|$|[,.;)]))/gi, function(m, w){ return String(TNW[w.toLowerCase()]); });
+    return s.replace(/\s+/g, " ").replace(/^\s*[,:;]\s*/, "").replace(/[\s?!.]+$/, "").trim();
+  }
+  // an inverse function of a value from 0 to 1 is an angle of a right triangle: arcsin(0.5) is the angle with opposite 0.5, hypotenuse 1
+  function invForm(t){
+    var m = /(?:\barc\s*(sin|cos|tan)(?:e|ine|gent)?|\binverse\s+(sin|cos|tan)(?:e|ine|gent)?(?:\s+of)?|\b(sin|cos|tan)(?:e|ine|gent)?\s*(?:\^\s*\(?\s*-\s*1\s*\)?|⁻¹|-1(?=\s*\())|\ba(sin|cos|tan)\b)\s*\(?\s*(-?\d*\.?\d+(?:\s*\/\s*\d+)?|√\s*\d+\s*\/\s*\d+)\s*\)?/i.exec(String(t).replace(/[−–]/g, "-"));
+    if (!m) return /\barc\s*(?:sin|cos|tan)|\binverse\s+(?:sin|cos|tan)|(?:sin|cos|tan)\s*(?:\^\s*\(?\s*-\s*1|⁻¹)/i.test(t) ? { bad:true } : null;
+    var f = (m[1] || m[2] || m[3] || m[4]).toLowerCase(), v = m[5].replace(/\s+/g, ""), p = v.split("/");
+    if (/√/.test(v)) return { bad:true, f:f };
+    var num = p[0], den = p[1] || "1", x = Number(num) / Number(den);
+    if (!(x > 0) || (f !== "tan" && !(x < 1))) return { bad:true, f:f };
+    return { f:f, num:num, den:den };
+  }
+  function invMsg(I){
+    return "An inverse " + (I.f || "trig") + " gives an angle, and this page reads one when it’s a value from 0 to 1 (any positive value for tan), like <b>arcsin(0.5)</b> or <b>tan⁻¹(3/4)</b>. "
+      + "For a negative value or a square root, find the angle on the <b>Unit circle</b> tab: try <b>cos 135°</b>.";
+  }
+  // "a triangle with sides 7 and 10 and an included angle of 40°" is a = 7, b = 10, C = 40
+  function lawsWords(t){
+    var IA = "(?:included\\s+angle|angle\\s+between\\s+(?:them|the\\s+(?:two\\s+)?sides)?)\\s*(?:c\\s*)?(?:of|=|is|:|measures?)?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:°|deg(?:rees?)?)?";
+    var SS = "sides?\\s*(?:of\\s*)?(\\d+(?:\\.\\d+)?)\\s*(?:cm|m|ft|in|units?)?\\s*(?:,|and|&)\\s*(\\d+(?:\\.\\d+)?)\\s*(?:cm|m|ft|in|units?)?";
+    var m = new RegExp("\\b" + SS + "\\s*,?\\s*(?:and\\s+|with\\s+)?(?:an?\\s+|the\\s+)?" + IA, "i").exec(t), a;
+    if (m) a = [m[1], m[2], m[3]];
+    else if ((m = new RegExp("\\b" + IA + "\\s*(?:,|and|with)?\\s*(?:the\\s+)?(?:two\\s+)?" + SS, "i").exec(t))) a = [m[2], m[3], m[1]];
+    // three sides and no angle, named as a triangle: "law of cosines: sides 5, 7, 9", "solve the triangle with sides 3, 4 and 6"
+    else if (/law of (?:co)?sines|solve (?:the |this )?triangle|\btriangle\b/i.test(t) && !/°|\bdeg|\bangle\s*[A-C]?\s*(?:=|is|of)\s*\d|\bright\b|\bhyp/i.test(t)
+             && (m = /\bsides?\s*(?:of\s*|are\s*|measuring\s*)?(\d+(?:\.\d+)?)\s*(?:,|and)\s*(\d+(?:\.\d+)?)\s*,?\s*(?:and\s*)?(\d+(?:\.\d+)?)(?![\d.])/i.exec(t)))
+      return "a = " + m[1] + ", b = " + m[2] + ", c = " + m[3] + (/\barea\b/i.test(t) ? ", area" : "");
+    else return null;
+    return "a = " + a[0] + ", b = " + a[1] + ", C = " + a[2] + "°" + (/\barea\b/i.test(t) ? ", area" : "");
+  }
+  // words that can sit around a bare angle ("the point at 210°"); anything else means it isn't a bare angle
+  var ANGW = /^(?:the|a|an|angle|angles|point|points|at|of|for|on|where|is|terminal|side|unit|circle|find|what|whats|show|draw|sketch|plot|locate|in|standard|position|pi|deg|degs|degree|degrees|rad|rads|radian|radians|theta)$/i;
+  function bareAngle(t){ return String(t).replace(/[a-zA-Zθ']+/g, function(w){ return ANGW.test(w) ? " " : "\u0001"; }).indexOf("\u0001") < 0; }
   function kindOf(q){
+    q = tidyT(q);
+    if (invForm(q)) return "right";
+    if (lawsWords(q)) return "laws";
     var t = String(q), low = t.toLowerCase();
-    if (/quadrant|\bq[1-4]\b/.test(low) && /=/.test(low) && /\b(?:sin|cos|tan)/.test(low)) return "identities";
+    if (/quadrant|\bq(?:[1-4]|i{1,3}|iv)\b/.test(low) && /=/.test(low) && /\b(?:sin|cos|tan)/.test(low)) return "identities";
     if (/\by\s*=|f\s*\(\s*x\s*\)\s*=/.test(low) && /sin|cos/.test(low)) return "graph";
     if (/amplitude|\bperiod\b|midline|phase\s+shift/.test(low)) return "graph";
     if (/(?:\bto|\binto|\bin|\bas)\s+(?:radians?|rads?|degrees?|degs?)\s*$/.test(low)) return "circle";
@@ -2895,7 +2973,7 @@
       } catch (e){ if (e && e.user && /Identities/.test(e.user)) return "identities"; }
       return "circle";
     }
-    try { readAngle(angleOnly(t), "deg"); return "circle"; } catch (e2){}
+    if (bareAngle(t)) try { readAngle(angleOnly(t), "deg"); return "circle"; } catch (e2){}
     return null;
   }
   function spR(sp, k){ var v = sp.get(k); if (v === null || v === "") return null; var r = parseRatStr(v); if (!r) throw new UserErr("The link’s <b>" + esc(k) + "=" + esc(v) + "</b> isn’t a number."); return r; }

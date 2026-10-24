@@ -628,11 +628,130 @@
   }
   function htmlToText(h){ var d = document.createElement("div"); d.innerHTML = h; return d.textContent; }
 
+  /* ===================== numbers typed as words =====================
+     WORDNUM.digits("find fifteen percent of eighty") → "find 15 percent of 80"; "two and a half" → "2 1/2" and
+     "three fourths" → "3/4" when fractions are on; "minus/negative seven" is left to the page. Lower-case text in. */
+  var WORDNUM = (function(){
+    var NW = { zero:0, oh:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+               thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19 };
+    var TW = { twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+    var OW = { first:1, second:2, half:2, third:3, fourth:4, quarter:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10,
+               eleventh:11, twelfth:12, thirteenth:13, fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18,
+               nineteenth:19, twentieth:20, thirtieth:30, fortieth:40, fiftieth:50, sixtieth:60, seventieth:70, eightieth:80,
+               ninetieth:90, hundredth:100, thousandth:1000 };
+    var BIG = { thousand:1e3, million:1e6, billion:1e9 };
+    function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+    function cardAt(t, i){
+      var j = i, total = 0, any = false;
+      function small(){
+        var w = t[j], v = null;
+        if (has(TW, w)){ v = TW[w]; j++; if (has(NW, t[j]) && NW[t[j]] > 0 && NW[t[j]] < 10){ v += NW[t[j]]; j++; } }
+        else if (has(NW, w) && w !== "oh"){ v = NW[w]; j++; }
+        return v;
+      }
+      function group(){                       // up to 999
+        var k = j, v = small();
+        if (v === null){ if (t[j] === "hundred" && any === false && t[j - 1] === "a"){ v = 1; } else { j = k; return null; } }
+        if (t[j] === "hundred"){ j++; v *= 100; var k2 = j; if (t[j] === "and") j++; var b = small(); if (b === null) j = k2; else v += b; }
+        return v;
+      }
+      while (true){
+        var g = group();
+        if (g === null) break;
+        any = true;
+        if (has(BIG, t[j])){ total += g * BIG[t[j]]; j++; var k3 = j; if (t[j] === "and") j++; if (!has(NW, t[j]) && !has(TW, t[j])){ j = k3; break; } continue; }
+        total += g; break;
+      }
+      return any ? { v:total, j:j } : null;
+    }
+    function ordOf(w){
+      if (!w) return 0;
+      if (w === "halves" || w === "halfs") return 2;
+      var b = w.replace(/s$/, "");
+      return has(OW, b) ? OW[b] : 0;
+    }
+    function ordAt(t, j){
+      if (has(TW, t[j])){ var u = ordOf(t[j + 1]); if (u > 0 && u < 10) return { v:TW[t[j]] + u, j:j + 2 }; }
+      var o = ordOf(t[j]);
+      if (o > 1 && !/^seconds?$/.test(t[j])) return { v:o, j:j + 1 };
+      return null;
+    }
+    // "point five" after a number: 2 point 5 → 2.5
+    function digits(s, o){
+      o = o || {};
+      // "twenty-four", "one-half", "twenty-fourths" split into words; "semi-annually", "take-home" stay as they are
+      s = String(s).replace(/\b([a-z]+)-([a-z]+)\b/g, function(m0, a, b){ return has(NW, a) || has(TW, a) || ordOf(b) ? a + " " + b : m0; })
+        .replace(/\b(which|this|that|each|every|any|no) one\b/g, "$1 ~one~");
+      var t = s.split(" "), out = [], i = 0, c, d, c2;
+      while (i < t.length){
+        var w = t[i];
+        if (o.fractions && /^\d+$/.test(w) && (d = ordAt(t, i + 1))){ out.push(w + "/" + d.v); i = d.j; continue; }
+        c = o.fractions && (w === "a" || w === "an") && ordAt(t, i + 1) ? { v:1, j:i + 1 } : cardAt(t, i);
+        if (c){
+          if (o.fractions && (d = ordAt(t, c.j))){ out.push(c.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "and" && (t[c.j + 1] === "a" || t[c.j + 1] === "an") && /^(half|quarter)$/.test(t[c.j + 2] || "")){
+            out.push(c.v + " " + (t[c.j + 2] === "half" ? "1/2" : "1/4")); i = c.j + 3; continue; }
+          if (o.fractions && t[c.j] === "and" && (c2 = cardAt(t, c.j + 1)) && (d = ordAt(t, c2.j))){ out.push(c.v + " " + c2.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "point" && has(NW, t[c.j + 1])){
+            var k = c.j + 1, fr = "";
+            while (has(NW, t[k]) && NW[t[k]] < 10){ fr += NW[t[k]]; k++; }
+            out.push(c.v + "." + fr); i = k; continue;
+          }
+          out.push(String(c.v)); i = c.j; continue;
+        }
+        if (/^\d+$/.test(w) && t[i + 1] === "and" && (t[i + 2] === "a" || t[i + 2] === "an") && /^(half|quarter)$/.test(t[i + 3] || "")){
+          out.push(w + " " + (t[i + 3] === "half" ? "1/2" : "1/4")); i += 4; continue; }
+        if (/^\d+$/.test(w) && has(BIG, t[i + 1])){ out.push(String(Number(w) * BIG[t[i + 1]])); i += 2; continue; }   // 2 million
+        out.push(w); i++;
+      }
+      return out.join(" ").replace(/~one~/g, "one");
+    }
+    return { digits:digits };
+  })();
   /* ===================== reading the problem ===================== */
   var MINUS_RE = /[−–—‐‑‒﹣－]/g;
   var OPN = { "+":"+", "-":"−", "*":"×", "/":"÷" };
+  // sentences people type: "negative seven minus negative two", "subtract 5 from -3", "the product of -3 and 4",
+  // "which is greater, -8 or -3", "3 less than -5", "can you help me with -7 - (-2) please" → the problem in symbols
+  function phrases(src){
+    var s = " " + String(src).toLowerCase().replace(MINUS_RE, "-").replace(/[’‘`]/g, "'").replace(/\s+/g, " ") + " ";
+    s = s.replace(/\(\s*[a-z][a-z .,'&-]*\)/g, " ");                                // "Ana (Science Teacher)"
+    s = s.replace(/^\s*[^:\d|(\[{-]{0,60}:\s*/, " ");                              // "Solve: …", "Ms. Lee asks: …"
+    s = s.replace(/(\d)\.(?=\s*$)|(^|[^\d])\.(?!\d)/g, "$1$2 ");                     // a full stop, not a decimal point
+    if (!/,\s/.test(s) && /\d\s*[-+*\/×x÷]\s*[-(]?\s*\d/.test(s)) s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1");   // -1,000 + 250
+    if (/[a-z]/.test(s)) s = WORDNUM.digits(s);
+    s = s.replace(/\b(?:please|pls|can you|could you|would you|help me(?: with)?|i need help with|show (?:me )?(?:the |your |all )?(?:work|steps)|step by step|with steps|explain|how do (?:i|you)(?: do| solve| work out| find)?|for me|thanks|thank you|hey|hi)\b/g, " ");
+    var N = "(-?\\s*\\(?\\s*-?\\s*\\d+\\s*\\)?)";
+    function R(re, f){ s = s.replace(new RegExp(re, "g"), f); }
+    function n(x){ var v = x.replace(/[\s()]/g, "").replace(/^--/, ""); return /^-/.test(v) ? "(" + v + ")" : v; }
+    R("\\bsubtract " + N + " from " + N, function(m, a, b){ return " " + n(b) + " - " + n(a) + " "; });
+    R("\\btake " + N + " (?:away )?from " + N, function(m, a, b){ return " " + n(b) + " - " + n(a) + " "; });
+    R("\\b(?:the )?sum of " + N + " and " + N, function(m, a, b){ return " " + n(a) + " + " + n(b) + " "; });
+    R("\\b(?:the )?difference (?:of|between) " + N + " and " + N, function(m, a, b){ return " " + n(a) + " - " + n(b) + " "; });
+    R("\\b(?:the )?product of " + N + " and " + N, function(m, a, b){ return " " + n(a) + " * " + n(b) + " "; });
+    R("\\b(?:the )?quotient of " + N + " and " + N, function(m, a, b){ return " " + n(a) + " / " + n(b) + " "; });
+    R("\\badd " + N + " (?:and|plus) " + N, function(m, a, b){ return " " + n(a) + " + " + n(b) + " "; });
+    R("\\badd " + N + " to " + N, function(m, a, b){ return " " + n(b) + " + " + n(a) + " "; });
+    R("\\bmultiply " + N + " (?:by|and|times) " + N, function(m, a, b){ return " " + n(a) + " * " + n(b) + " "; });
+    R("\\bdivide " + N + " by " + N, function(m, a, b){ return " " + n(a) + " / " + n(b) + " "; });
+    R(N + " increased by " + N, function(m, a, b){ return " " + n(a) + " + " + n(b) + " "; });
+    R(N + " decreased by " + N, function(m, a, b){ return " " + n(a) + " - " + n(b) + " "; });
+    // comparing: "is -8 less than -3", "which is greater, -8 or -3"
+    var cmp = new RegExp("^\\s*(?:is|are) " + N + " (?:less|smaller|lower|more|greater|bigger|larger|higher) than " + N + "\\s*\\??\\s*$").exec(s);
+    if (cmp) return " " + n(cmp[1]) + " , " + n(cmp[2]) + " ";
+    R("\\bwhich (?:number )?is (?:the )?(?:greater|greatest|bigger|biggest|larger|largest|smaller|smallest|less|least|more|higher|lower|colder|warmer)\\b[,:]?", function(){ return " compare "; });
+    R("\\bput\\b|\\bin order\\b|\\bfrom (?:greatest|biggest|largest|highest) to (?:least|smallest|lowest)\\b|\\b(?:greatest|biggest|largest|highest) to (?:least|smallest|lowest)\\b", function(){ return " "; });
+    R("\\bor\\b", function(){ return " , "; });
+    // "3 less than -5" is -5 − 3; "5 more than -2" is -2 + 5
+    R(N + " (?:less|fewer) than " + N, function(m, a, b){ return " " + n(b) + " - " + n(a) + " "; });
+    R(N + " more than " + N, function(m, a, b){ return " " + n(b) + " + " + n(a) + " "; });
+    // the opposite of a number: 0 minus it, so the work shows (and it isn't read as an absolute value)
+    R("\\b(?:the )?opposite of " + N, function(m, a){ return " 0 - " + n(a) + " "; });
+    R("^\\s*(?:what is|what's|whats|is)\\s+", function(){ return " "; });
+    return s;
+  }
   function normalize(src){
-    var s = " " + String(src).toLowerCase() + " ";
+    var s = phrases(src);
     s = s.replace(MINUS_RE, "-").replace(/＋/g, "+").replace(/[×·∙⋅✕✖]/g, "*").replace(/[÷∶]/g, "/");
     var eq = s.indexOf("=");
     if (eq >= 0 && !/[<>]/.test(s.slice(eq - 1, eq))) s = s.slice(0, eq) + " ";

@@ -1015,8 +1015,107 @@
     s = s.replace(/(\d),(?=\d{3}(?!\d))/g, "$1").replace(/(\d),(?=\d{3}(?!\d))/g, "$1");
     s = s.replace(/[½¼¾⅓⅔⅛⅜⅝⅞]/g, function(c){ return " " + { "½":"1/2", "¼":"1/4", "¾":"3/4", "⅓":"1/3", "⅔":"2/3", "⅛":"1/8", "⅜":"3/8", "⅝":"5/8", "⅞":"7/8" }[c]; });
     s = s.replace(/(\d)\s+(\d+\/\d+)/g, "$1 $2");
-    return s.toLowerCase().replace(/\s+/g, " ").trim();
+    s = s.toLowerCase().replace(/\s+/g, " ").trim();
+    return /[a-z]/.test(s) ? wordsU(s) : s;
   }
+  // amounts and units written out: "half a mile", "an hour and a half", "seven and a half feet", "a dozen inches",
+  // "negative 10 C", "3 feet squared", "16 fluid oz", "5 kgs", "5 ft = ___ in" → what the reader below knows
+  function wordsU(s){
+    s = " " + s + " ";
+    s = s.replace(/\b(?:a|an|one) (hour|minute|day|week|year|mile|foot|yard|inch|gallon|quart|pint|cup|pound|ton|meter|metre|liter|litre|kilometer|kilogram) and a half\b/g, "1 1/2 $1")
+         .replace(/\bhalf (?:of )?(?:a|an) /g, "1/2 ").replace(/\b(?:a|one) quarter (?:of )?(?:a|an) /g, "1/4 ").replace(/\bthree quarters (?:of )?(?:a|an) /g, "3/4 ")
+         .replace(/\b(?:a|one) third (?:of )?(?:a|an) /g, "1/3 ").replace(/\b(?:a|one) tenth (?:of )?(?:a|an) /g, "1/10 ")
+         .replace(/\b(?:a|one) dozen\b/g, "12").replace(/\b(\d+) dozen\b/g, function(m0, n){ return String(Number(n) * 12); });
+    s = WORDNUM.digits(s.replace(/\s+/g, " "), { fractions:true });
+    s = s.replace(/\bnegative\s+(?=\d)/g, "-").replace(/(^\s*|\b(?:convert|change|is|at|of|from|what is|whats)\s+)minus\s+(?=\d)/g, "$1-")
+         .replace(/\bfluid (?:ounces?|oz)\b/g, "fl oz").replace(/\b(kg|km|cm|mm|mg|ml|lb|oz|yd|hr|min|sec)s\b/g, "$1")
+         .replace(/\b(feet|foot|ft|inch(?:es)?|in|yards?|yd|miles?|mi|meters?|metres?|m|centimeters?|cm|kilometers?|km|millimeters?|mm)\s+squared\b/g, "square $1")
+         .replace(/\b(feet|foot|ft|inch(?:es)?|in|yards?|yd|meters?|metres?|m|centimeters?|cm|millimeters?|mm)\s+cubed\b/g, "cubic $1")
+         .replace(/\s*=\s*(?:_+|\?+|\bx\b|\bn\b|\bhow many\b|\bwhat\b)\s*(?=[a-z])/g, " to ")
+         .replace(/\b(?:please|pls|can you|could you|help me(?: with)?|show (?:me )?(?:the |your |all )?(?:work|steps)|step by step|with steps|explain|thanks|thank you)\b/g, " ")
+         .replace(/\([a-z][^)]*\)/g, " ");
+    return s.replace(/\s+/g, " ").trim();
+  }
+  /* ===================== numbers typed as words =====================
+     WORDNUM.digits("find fifteen percent of eighty") → "find 15 percent of 80"; "two and a half" → "2 1/2" and
+     "three fourths" → "3/4" when fractions are on; "minus/negative seven" is left to the page. Lower-case text in. */
+  var WORDNUM = (function(){
+    var NW = { zero:0, oh:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+               thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19 };
+    var TW = { twenty:20, thirty:30, forty:40, fourty:40, fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+    var OW = { first:1, second:2, half:2, third:3, fourth:4, quarter:4, fifth:5, sixth:6, seventh:7, eighth:8, ninth:9, tenth:10,
+               eleventh:11, twelfth:12, thirteenth:13, fourteenth:14, fifteenth:15, sixteenth:16, seventeenth:17, eighteenth:18,
+               nineteenth:19, twentieth:20, thirtieth:30, fortieth:40, fiftieth:50, sixtieth:60, seventieth:70, eightieth:80,
+               ninetieth:90, hundredth:100, thousandth:1000 };
+    var BIG = { thousand:1e3, million:1e6, billion:1e9 };
+    function has(o, k){ return Object.prototype.hasOwnProperty.call(o, k); }
+    function cardAt(t, i){
+      var j = i, total = 0, any = false;
+      function small(){
+        var w = t[j], v = null;
+        if (has(TW, w)){ v = TW[w]; j++; if (has(NW, t[j]) && NW[t[j]] > 0 && NW[t[j]] < 10){ v += NW[t[j]]; j++; } }
+        else if (has(NW, w) && w !== "oh"){ v = NW[w]; j++; }
+        return v;
+      }
+      function group(){                       // up to 999
+        var k = j, v = small();
+        if (v === null){ if (t[j] === "hundred" && any === false && t[j - 1] === "a"){ v = 1; } else { j = k; return null; } }
+        if (t[j] === "hundred"){ j++; v *= 100; var k2 = j; if (t[j] === "and") j++; var b = small(); if (b === null) j = k2; else v += b; }
+        return v;
+      }
+      while (true){
+        var g = group();
+        if (g === null) break;
+        any = true;
+        if (has(BIG, t[j])){ total += g * BIG[t[j]]; j++; var k3 = j; if (t[j] === "and") j++; if (!has(NW, t[j]) && !has(TW, t[j])){ j = k3; break; } continue; }
+        total += g; break;
+      }
+      return any ? { v:total, j:j } : null;
+    }
+    function ordOf(w){
+      if (!w) return 0;
+      if (w === "halves" || w === "halfs") return 2;
+      var b = w.replace(/s$/, "");
+      return has(OW, b) ? OW[b] : 0;
+    }
+    function ordAt(t, j){
+      if (has(TW, t[j])){ var u = ordOf(t[j + 1]); if (u > 0 && u < 10) return { v:TW[t[j]] + u, j:j + 2 }; }
+      var o = ordOf(t[j]);
+      if (o > 1 && !/^seconds?$/.test(t[j])) return { v:o, j:j + 1 };
+      return null;
+    }
+    // "point five" after a number: 2 point 5 → 2.5
+    function digits(s, o){
+      o = o || {};
+      // "twenty-four", "one-half", "twenty-fourths" split into words; "semi-annually", "take-home" stay as they are
+      s = String(s).replace(/\b([a-z]+)-([a-z]+)\b/g, function(m0, a, b){ return has(NW, a) || has(TW, a) || ordOf(b) ? a + " " + b : m0; })
+        .replace(/\b(which|this|that|each|every|any|no) one\b/g, "$1 ~one~");
+      var t = s.split(" "), out = [], i = 0, c, d, c2;
+      while (i < t.length){
+        var w = t[i];
+        if (o.fractions && /^\d+$/.test(w) && (d = ordAt(t, i + 1))){ out.push(w + "/" + d.v); i = d.j; continue; }
+        c = o.fractions && (w === "a" || w === "an") && ordAt(t, i + 1) ? { v:1, j:i + 1 } : cardAt(t, i);
+        if (c){
+          if (o.fractions && (d = ordAt(t, c.j))){ out.push(c.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "and" && (t[c.j + 1] === "a" || t[c.j + 1] === "an") && /^(half|quarter)$/.test(t[c.j + 2] || "")){
+            out.push(c.v + " " + (t[c.j + 2] === "half" ? "1/2" : "1/4")); i = c.j + 3; continue; }
+          if (o.fractions && t[c.j] === "and" && (c2 = cardAt(t, c.j + 1)) && (d = ordAt(t, c2.j))){ out.push(c.v + " " + c2.v + "/" + d.v); i = d.j; continue; }
+          if (t[c.j] === "point" && has(NW, t[c.j + 1])){
+            var k = c.j + 1, fr = "";
+            while (has(NW, t[k]) && NW[t[k]] < 10){ fr += NW[t[k]]; k++; }
+            out.push(c.v + "." + fr); i = k; continue;
+          }
+          out.push(String(c.v)); i = c.j; continue;
+        }
+        if (/^\d+$/.test(w) && t[i + 1] === "and" && (t[i + 2] === "a" || t[i + 2] === "an") && /^(half|quarter)$/.test(t[i + 3] || "")){
+          out.push(w + " " + (t[i + 3] === "half" ? "1/2" : "1/4")); i += 4; continue; }
+        if (/^\d+$/.test(w) && has(BIG, t[i + 1])){ out.push(String(Number(w) * BIG[t[i + 1]])); i += 2; continue; }   // 2 million
+        out.push(w); i++;
+      }
+      return out.join(" ").replace(/~one~/g, "one");
+    }
+    return { digits:digits };
+  })();
   function tempContext(s, mode){
     if (mode === "temp") return true;
     if (/°|\bdeg(?:ree)?s?\b|fahrenheit|celsius|centigrade|kelvin/.test(s)) return true;
@@ -1196,6 +1295,11 @@
     var s0 = normU(text);
     s0 = s0.replace(/^(?:please\s+)?(?:can you\s+)?/, "");
     if (!s0) throw new UserErr(EMPTY[mode]);
+    // things this page doesn't do, said plainly instead of half-read: a measure times a number, "how many 8 oz cups fit"
+    if (/(?:[a-z.]|\d)\s*(?:\*|\bx\b|\btimes\b|\bmultiplied by\b)\s*\d/.test(s0) && !/\b(?:per|square|sq|cubic|cu)\b|\^/.test(s0))
+      throw new UserErr("This page changes units, and adds or subtracts measures — it doesn’t multiply them. To multiply, change the measure to one unit first (like <b>4 ft 3 in to inches</b>), then multiply that number.");
+    if (/\bhow many \d[\d.\/ ]*\s*-?\s*(?:fl oz|oz|ounces?|cups?|ml|l|liters?|litres?|gallons?|quarts?|pints?|grams?|g|pounds?|lbs?|inch(?:es)?|in|feet|foot|ft|yards?|cm|m|meters?)\s+(?:[a-z]+\s+)?(?:cups?|bottles?|glasses?|bags?|boxes?|jars?|cans?|pieces?|servings?|scoops?|containers?|bowls?|lengths?|strips?|boards?|packs?|packets?)\b/.test(s0))
+      throw new UserErr("That asks how many containers fit — change the big amount to the small unit first (like <b>1 gal to fl oz</b>), then divide by the size of one container.");
     var rd = takeRounding(s0), s = rd.s;
     var T = lexU(s, mode);
     if (!T.length) throw new UserErr(EMPTY[mode]);

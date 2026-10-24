@@ -218,6 +218,7 @@
   .notice{border-left:5px solid var(--warm);background:var(--warm-bg);color:var(--ink);
     border-radius:6px 12px 12px 6px;padding:14px 18px;font-size:15px}
   .notice b{font-family:var(--f-mono)}
+  .notice a{color:var(--key);font-weight:600}
 
   .board{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:22px;align-items:start}
   @media (max-width:880px){.board{grid-template-columns:minmax(0,1fr)}}
@@ -2221,6 +2222,62 @@
     divide:"Type one polynomial divided by another, like <b>(x³ − 2x² + 4) ÷ (x − 3)</b>.",
     operate:"Type two polynomials in brackets with + or − between them, like <b>(3x² − 2x + 5) − (x² + 4x − 1)</b>." };
   var HOWBY = { factor:"factoring", roots:"taking square roots", square:"completing the square", formula:"the quadratic formula" };
+  /* ===================== typed words =====================
+     "factorise x squared plus 5x plus 6", "find the roots of x^2 − 5x + 6", "x^2 − 4x = 0 solve for x",
+     "can you expand (x + 1)(x − 6) please", "f(x) = 3x^2 − 12x + 7, find the vertex": number and operator words
+     become symbols and the request around the problem goes, so what's left reads as before. A word it doesn't
+     know stops the problem (wordCheck) instead of being read as letters. */
+  var W_NUM = { zero:0, one:1, two:2, three:3, four:4, five:5, six:6, seven:7, eight:8, nine:9, ten:10, eleven:11, twelve:12,
+    thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19, twenty:20, thirty:30, forty:40,
+    fifty:50, sixty:60, seventy:70, eighty:80, ninety:90 };
+  function typedWords(s){
+    s = String(s == null ? "" : s).replace(/[‘’]/g, "'");
+    var k, prev, ones = "one|two|three|four|five|six|seven|eight|nine", solve = false, vtx = false;
+    for (k = 0, prev = null; k < 6 && prev !== s; k++){
+      prev = s;
+      s = s.replace(/\b(?:step[\s-]*by[\s-]*step|(?:and\s+)?show(?:\s+me)?(?:\s+(?:the|your|all|all\s+the))?\s+(?:steps|work|working)|with\s+(?:the\s+|all\s+(?:the\s+)?)?(?:steps|work|working)|please|pls|plz|thanks?(?:\s+you)?|thx|for\s+me)\b/gi, " ")
+           .replace(/^\s*(?:hi|hey|hello|ok(?:ay)?|so|and|then|now)\b[\s,!]*/i, "")
+           .replace(/^\s*(?:(?:can|could|would|will)\s+(?:you|u|someone)(?:\s+help(?:\s+me)?)?(?:\s+(?:to|with))?|help\s+me(?:\s+(?:to|with))?|i\s+need\s+(?:help\s+with|to)|how\s+(?:do|would|can|should|to)(?:\s+(?:i|you|we|u))?|show\s+me\s+how\s+to|explain\s+how\s+to)\b\s*/i, "")
+           .replace(/^\s*(?:find|what\s+are|what\s+is|what's|whats|list|give|determine|get)\s+(?:all\s+)?(?:the\s+)?factors?\s+(?:of|for)\b/i, "factor")
+           .replace(/^\s*(?:(?:find|what\s+are|what\s+is|what's|whats|list|give|determine|get|solve\s+for)\s+)?(?:all\s+)?(?:the\s+)?(?:real\s+)?(?:roots?|zeros?|zeroes|solutions?|x[\s-]*intercepts?)\s+(?:of|for|to)\b\s*/i, function(){ solve = true; return ""; })
+           .replace(/^\s*(?:(?:find|what\s+is|what's|whats|give|determine|get)\s+)?(?:the\s+)?(?:axis\s+of\s+symmetry|max(?:imum)?(?:\s+(?:value|point))?|min(?:imum)?(?:\s+(?:value|point))?|vertex\s+form|vertex|turning\s+point)\s+(?:of|for)\b\s*/i, function(){ vtx = true; return ""; })
+           .replace(/\s*[,.;]?\s*(?:then\s+|and\s+)?(?:find|what\s+is|what's|give|determine)\s+(?:the\s+|its\s+)?(?:axis\s+of\s+symmetry|max(?:imum)?|min(?:imum)?|vertex(?:\s+form)?|turning\s+point)\s*[?.!]*\s*$/i, function(){ vtx = true; return ""; })
+           .replace(/^\s*(?:the\s+)?(?:parabola|graph|function|equation|polynomial|quadratic|expression)(?:\s+(?:equation|function))?\b\s*:?\s*/i, "")
+           .replace(/\s*[,.;]?\s*(?:then\s+|and\s+)?(?:solve|find)(?:\s+for)?\s+(?:the\s+value\s+of\s+)?[a-z]\s*[?.!]*\s*$/i, function(){ solve = true; return ""; })
+           .replace(/^\s*(?:what\s+is|find)\s+[a-z]\s+(?:if|when|given)\b\s*/i, function(){ solve = true; return ""; })
+           .replace(/^\s*use\s+(synthetic|long)\s+division\s+to\s+divide\s+(.+)$/i, "divide $2 using $1 division")
+           .replace(/^\s*(factor(?:ise|ize)?|expand|simplify|solve|multiply|divide)\s+(?:fully|completely)\b/i, "$1")
+           .replace(/^\s*(factor(?:ise|ize)?)\s+out\s+(?:the\s+)?(?:gcf|greatest\s+common\s+factor)(?:\s+(?:of|from|in))?\b/i, "$1")
+           .replace(/^\s*(factor(?:ise|ize)?|expand|simplify|solve|multiply|divide)\s+(?:the\s+|this\s+)?(?:following\s+)?(?:parabola|equation|expression|polynomial|quadratic|trinomial|binomial|product)s?\b\s*:?/i, "$1 ")
+           .replace(/^[\s:,!]+/, "");
+      // "x^2 + 5x + 6 factor": the verb goes in front
+      var tv = /\s*[,.;]?\s*\b(factor(?:ise|ize)?|expand|simplify|solve)\s*[?.!]*\s*$/i.exec(s);
+      if (tv && tv.index > 0 && !/^\s*(?:factor|expand|simplify|solve)\b/i.test(s)) s = tv[1] + " " + s.slice(0, tv.index);
+    }
+    // spoken numbers and operators
+    s = s.replace(new RegExp("\\b(twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\\s-]+(" + ones + ")\\b", "gi"), function(m, a, b){ return " " + (W_NUM[a.toLowerCase()] + W_NUM[b.toLowerCase()]) + " "; })
+         .replace(new RegExp("\\b(" + Object.keys(W_NUM).join("|") + ")\\b", "gi"), function(m){ return " " + W_NUM[m.toLowerCase()] + " "; })
+         .replace(/\s*\bsquared\b/gi, "^2 ").replace(/\s*\bcubed\b/gi, "^3 ")
+         .replace(/\b(?:raised\s+)?to\s+the\s+(\d+)(?:st|nd|rd|th)(?:\s+power)?\b/gi, "^$1").replace(/\b(?:raised\s+)?to\s+the\s+power(?:\s+of)?\b/gi, "^")
+         .replace(/\b(?:is\s+)?equal\s+to\b|\bequals\b/gi, " = ").replace(/\b(?:times|multiplied\s+by)\b/gi, " * ").replace(/\bover\b/gi, " / ")
+         .replace(/\bplus\s*(?:or|\/)\s*minus\b/gi, " ± ").replace(/\bplus\b/gi, " + ").replace(/\bminus\b/gi, " - ").replace(/\bnegative\b/gi, " -");
+    s = s.replace(/\s+/g, " ").trim();
+    if (solve){
+      s = s.replace(/^\s*(?:y|f\s*\(\s*[a-z]\s*\))\s*=\s*/i, "");
+      if (!/=/.test(s)) s += " = 0";
+      s = "solve " + s;
+    }
+    if (vtx) s = "vertex of " + s;
+    return s;
+  }
+  // a word left over would be read as letters multiplied together: stop with a notice instead
+  function wordCheck(s, allow){
+    var t = norm(s).replace(/\bsqrt\b/gi, " ");
+    if (allow) t = t.replace(allow, " ");
+    var w = /\b(?:is|of|by|to|in|on|an|at|it|as|or|be|do|if|me|my|so|up|we|and|the|for|are|can|you|how|its|was|all|get|use|put|out|then|than|that|this|what|find|give|show|with|from|into|each|form|step|work|help|answer|value)\b/i.exec(t)
+      || /[A-Za-z]{3,}/.exec(t);
+    if (w) throw new UserErr("I don’t know the word <b>“" + esc(w[0]) + "”</b> in a problem here. Type it with numbers, letters and signs, like <b>x^2 + 5x + 6</b> or <b>x^2 − 5x + 6 = 0</b>.");
+  }
   function cleanQ(s, mode){
     s = String(s == null ? "" : s).trim().replace(/\s+/g, " ");
     var verbs = mode === "divide" ? /^\s*(?:please\s+)?(?:find|work\s+out|calculate|compute|simplify|use\s+(?:long|synthetic)\s+division\s+(?:on|for|to\s+divide)?)\b\s*:?\s*/i
@@ -2242,14 +2299,16 @@
   }
   function readProblem(mode, text, how){
     VSEEN = null; VV = "x";
-    var s = cleanQ(text, mode), P, mw;
+    var s = cleanQ(typedWords(text), mode), P, mw;
     if (!s) throw new UserErr(EMPTY[mode]);
-    if (mode === "expand") P = readExpand(s);
-    else if (mode === "factor") P = readFactor(s);
-    else if (mode === "solve"){ mw = methodWords(s); P = readSolve(mw.text, mw.how || how || "auto"); }
-    else if (mode === "vertex"){ mw = methodWords(s); var cs = mw.how === "square" && !/=/.test(mw.text); P = readVertex(mw.text, cs); }
-    else if (mode === "divide"){ var syn = /\bsynthetic(?:\s+division)?\b/i.test(s) ? "synth" : /\blong\s+division\b/i.test(s) ? "long" : null; s = s.replace(/\s*,?\s*\b(?:by|using|with)\s+(?:synthetic|long)\s+division\b|\b(?:synthetic|long)\s+division\b\s*:?/gi, " ").trim(); P = readDivide(s, syn || how || "long"); }
-    else P = readOperate(s);
+    if (mode === "expand"){ wordCheck(s); P = readExpand(s); }
+    else if (mode === "factor"){ wordCheck(s); P = readFactor(s); }
+    else if (mode === "solve"){ mw = methodWords(s); wordCheck(mw.text); P = readSolve(mw.text, mw.how || how || "auto"); }
+    else if (mode === "vertex"){ mw = methodWords(s); wordCheck(mw.text); var cs = mw.how === "square" && !/=/.test(mw.text); P = readVertex(mw.text, cs); }
+    else if (mode === "divide"){ var syn = /\bsynthetic(?:\s+division)?\b/i.test(s) ? "synth" : /\blong\s+division\b/i.test(s) ? "long" : null; s = s.replace(/\s*,?\s*\b(?:by|using|with)\s+(?:synthetic|long)\s+division\b|\b(?:synthetic|long)\s+division\b\s*:?/gi, " ").trim(); wordCheck(s, /\b(?:divided|divide|by|into)\b/gi); P = readDivide(s, syn || how || "long"); }
+    else { wordCheck(s, /\b(?:add|subtract|take|away|and|from|to|sum|difference|of|the)\b/gi); P = readOperate(s); }
+    if (VV === "i") throw new UserErr("Is <i>i</i> the imaginary unit here? For complex numbers like <b>(3 + 2i)(1 − 4i)</b>, try "
+      + '<a href="complex-numbers.html?q=' + esc(encodeURIComponent(String(text))) + '">The Complex Plane</a>. (For a polynomial, use a letter like <i>x</i>.)');
     P.v = VV;
     return P;
   }
@@ -2260,10 +2319,11 @@
     divide:"divide", division:"divide", long:"divide", synthetic:"divide", dividing:"divide",
     operate:"operate", add:"operate", subtract:"operate", "add-subtract":"operate", addsub:"operate", combine:"operate", sum:"operate" };
   function kindOf(q){
+    q = typedWords(q);
     var s = String(q || "").toLowerCase();
     if (/\bcomplet(?:e|ing)\s+the\s+square\b/.test(s)) return /=/.test(s) && !/^\s*(?:y|f\s*\(\s*[a-z]\s*\))\s*=/.test(s.replace(/^.*square\s*/, "")) ? "solve" : "vertex";
     if (/\bvertex\b|\baxis\s+of\s+symmetry\b|\bparabola\b|\bmax(?:imum)?\b|\bmin(?:imum)?\b/.test(s)) return "vertex";
-    if (/\bfactor/.test(s)) return "factor";
+    if (/\bfactor/.test(s) && !/=/.test(s)) return "factor";
     if (/÷|\bdivided\s+by\b|\bdivide\b|\bsynthetic\b|\blong\s+division\b|\bremainder\b/.test(s)) return "divide";
     if (/\bsolve\b|\bquadratic\s+formula\b|\bsquare\s+roots?\b|\bzeros?\s+of\b|\broots?\s+of\b/.test(s)) return "solve";
     if (/\bexpand\b|\bmultiply\b|\bfoil\b/.test(s)) return "expand";

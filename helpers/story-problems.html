@@ -484,6 +484,7 @@
     .log .aside{font-size:10.5px;padding:6px 9px;margin-top:5px}
     .closer{font-size:11px;padding:8px 10px}
   }
+  @supports (-webkit-touch-callout:none){.rd-f select, .rd-f input{font-size:16px}}   /* iPhone Safari zooms into a box under 16px */
 </style>
 
 <div class="page" id="page">
@@ -636,15 +637,23 @@
                                     c=result) · sides (a=times, b=more than the number) · gen (a·n + b = c·n + d)
                        consecutive  form=all|even|odd, a=how many numbers, c=their sum
                        age          form=sum (a=years older, c=ages together, ask=both|older|younger)
-                                    · times (a=times as old now, b=years from now, c=times as old then)
-                       perimeter    form=more|times (a=length vs width, c=perimeter, ask=length|width|both)
+                                    · times|ago (a=times as old now, b=years from now|years ago, c=times as old then)
+                       perimeter    form=more|times (a=length vs width, c=perimeter, ask=length|width|both) · timesmore|timesless
+                                    (length = a × width ± b)
                                     · tri (a=second angle ÷ first, b=third angle − first; the angles make 180°)
                        plans        a, b = plan A's start and amount each time; c, d = plan B's (ctx=gym|savings|bikes)
                        twounknown   form=tickets (a, b prices, c=how many, d=total) · coins (c=how many, d=total, ctx=dq|nd)
                                     · numbers (c=sum, d=difference)
-                       motion       form=opposite (a, b speeds, c=distance apart) · catchup (a slower, b faster, c=head start
-                                    in hours) · roundtrip (a speed there, b speed back, c=total hours)
+                       motion       form=opposite|toward (a, b speeds, c=distance apart, or between them) · catchup (a slower, b faster,
+                                    c=head start in hours) · lead (a ahead, b faster behind, c=head start in miles) · roundtrip (a speed
+                                    there, b speed back, c=total hours)
                        percentback  form=off|raise, p=the percent, c=the amount after the change
+                       work         form=together (a, b=each one's time alone) · alone (a=one's time alone, c=time together)
+                       mixture      form=percent|price (a, b=the two percents or prices, c=how much mix, d=its percent or price)
+                       interest     a, b=the two rates (%), c=total invested, d=interest in one year
+                       linear       a=fixed amount, b=so much for each one, c=total (ctx=taxi|gymfee|plumber)
+                       inequality   form=most|least (at most / at least), a=fixed, b=each, c=the limit (ctx=cards|elevator|carwash)
+                       proportion   a/b = c/x: a, b=two amounts that go together, c=the new first amount (ctx=recipe|map)
          remainder   the leftover matters     a=total b=the size of one group; kind=up|down|left
                                               (up: vans needed · down: full boxes, whole bows · left: the leftover ·
                                                both: each share and the leftover, 6 R 1)
@@ -2226,8 +2235,22 @@
     out += svgT(66, 160, labs[0], "bm-v q", "start") + svgT(300, 160, labs[1], "bm-v q", "end") + svgT(122, 62, labs[2], "bm-v q");
     return svgWrap(360, 182, label, out);
   }
-  function motionSVG(kind, labA, labB, labT, label){
+  function motionSVG(kind, labA, labB, labT, label, gap){
     var out = "", W = 470;
+    if (kind === "toward"){
+      out += line(40, 50, 430, 50, "tl-axis") + '<circle class="ar-dot" cx="40" cy="50" r="6"/><circle class="ar-dot" cx="430" cy="50" r="6"/>' + line(235, 30, 235, 70, "nl-guide") + svgT(235, 84, "they meet", "bm-s");
+      out += '<path class="tl-arc" d="M44 36 L227 36"/>' + arrowTip(227, 36, 0) + svgT(135, 28, labA, "tl-j");
+      out += '<path class="tl-arc" d="M426 36 L243 36"/>' + arrowTip(243, 36, Math.PI) + svgT(335, 28, labB, "tl-j");
+      out += brace(40, 430, 98, false, "k") + svgT(235, 122, labT, "brk-t k");
+      return svgWrap(W, 130, label, out);
+    }
+    if (kind === "lead"){
+      out += line(30, 40, 440, 40, "tl-axis") + line(30, 90, 440, 90, "tl-axis");
+      out += '<path class="tl-arc" d="M110 26 L380 26"/>' + arrowTip(380, 26, 0) + svgT(245, 18, labA, "tl-j") + brace(30, 110, 50, false, "k") + svgT(70, 72, gap || "", "bm-s");
+      out += '<path class="tl-arc" d="M30 76 L380 76"/>' + arrowTip(380, 76, 0) + svgT(205, 68, labB, "tl-j");
+      out += line(380, 30, 380, 96, "nl-guide") + svgT(380, 112, labT, "brk-t k");
+      return svgWrap(W, 120, label, out);
+    }
     if (kind === "opposite"){
       out += line(40, 50, 430, 50, "tl-axis") + '<circle class="ar-dot" cx="215" cy="50" r="6"/>' + svgT(215, 78, "start", "bm-s");
       out += '<path class="tl-arc" d="M215 36 L48 36"/>' + arrowTip(48, 36, Math.PI) + svgT(130, 28, labA, "tl-j");
@@ -2265,17 +2288,21 @@
   TY.algebra = {
     label:"Algebra stories", group:"algebra",
     kinds:[["number", "Number puzzles"], ["consecutive", "Consecutive numbers"], ["age", "Ages"], ["perimeter", "Perimeter and angles"],
-           ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (a system)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"]],
+           ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (a system)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"],
+           ["work", "Working together"], ["mixture", "Mixtures"], ["interest", "Money at two interest rates"], ["linear", "A fixed amount plus so much each"], ["inequality", "At most, at least (inequalities)"], ["proportion", "Proportions"]],
     forms:function(kind){
       return { number:[["more", "… more than … times a number"], ["less", "… less than … times a number"], ["sum", "The sum of a number and …"], ["diff", "The difference between … and …"],
                        ["div", "A number divided by …, minus …"], ["sides", "A number on both sides"], ["gen", "Any equation"]],
                consecutive:[["all", "Consecutive numbers"], ["even", "Consecutive even numbers"], ["odd", "Consecutive odd numbers"]],
-               age:[["sum", "Older by …, ages add up to …"], ["times", "Times as old, in … years"]],
-               perimeter:[["more", "Length is … more than the width"], ["times", "Length is … times the width"], ["tri", "Triangle angles"]],
+               age:[["sum", "Older by …, ages add up to …"], ["times", "Times as old, in … years"], ["ago", "Times as old, … years ago"]],
+               perimeter:[["more", "Length is … more than the width"], ["times", "Length is … times the width"], ["timesmore", "Length is … more than … times the width"], ["timesless", "Length is … less than … times the width"], ["tri", "Triangle angles"]],
                plans:[["plans", "Two plans"]],
                twounknown:[["tickets", "Two prices, a count and a total"], ["coins", "Coins"], ["numbers", "Two numbers: sum and difference"]],
-               motion:[["opposite", "Opposite directions"], ["catchup", "Catching up"], ["roundtrip", "There and back"]],
-               percentback:[["off", "After a discount"], ["raise", "After an increase"]] }[kind] || [];
+               motion:[["opposite", "Opposite directions"], ["toward", "Toward each other"], ["catchup", "Catching up"], ["lead", "Catching up from … miles behind"], ["roundtrip", "There and back"]],
+               percentback:[["off", "After a discount"], ["raise", "After an increase"]],
+               work:[["together", "How long together"], ["alone", "How long one takes alone"]], mixture:[["percent", "Two solutions (percents)"], ["price", "Two prices a pound"]],
+               interest:[["split", "Money split between two rates"]], linear:[["fee", "Fixed amount + so much each = total"]],
+               inequality:[["most", "At most: the greatest number"], ["least", "At least: the smallest number"]], proportion:[["prop", "a is to b as c is to ?"]] }[kind] || [];
     },
     fields:function(P){
       var f = P.form;
@@ -2284,14 +2311,23 @@
           : f === "div" ? [["a", "Divided by", "n"], ["b", "Minus", "n"], ["c", "Result", "n"]] : f === "sum" ? [["a", "Times the number (1 if just “a number”)", "n"], ["b", "Plus", "n"], ["c", "Result", "n"]]
           : [["a", "Times the number", "n"], ["b", f === "more" ? "More than" : f === "less" ? "Less than" : "Minus", "n"], ["c", "Result", "n"]];
         case "consecutive": return [["a", "How many numbers", "n"], ["c", "Their sum", "n"]];
-        case "age": return f === "times" ? [["a", "Times as old now", "x"], ["b", "Years from now", "n"], ["c", "Times as old then", "x"]] : [["a", "Years older", "n"], ["c", "Ages add up to", "n"]];
+        case "age": return f === "times" || f === "ago" ? [["a", "Times as old now", "x"], ["b", f === "ago" ? "Years ago" : "Years from now", "n"], ["c", "Times as old then", "x"]] : [["a", "Years older", "n"], ["c", "Ages add up to", "n"]];
         case "perimeter": return f === "tri" ? [["a", "Second angle: times the first", "x"], ["b", "Third angle: degrees more than the first", "n"]]
+          : f === "timesmore" || f === "timesless" ? [["a", "Length: times the width", "x"], ["b", f === "timesmore" ? "… plus" : "… minus", "n"], ["c", "Perimeter", "n"]]
           : [["a", f === "times" ? "Length: times the width" : "Length: more than the width", f === "times" ? "x" : "n"], ["c", "Perimeter", "n"]];
+        case "work": return f === "alone" ? [["a", "One: time alone", "n"], ["c", "Time together", "n"]] : [["a", "First: time alone", "n"], ["b", "Second: time alone", "n"]];
+        case "mixture": case "interest": var pm = P.kind === "interest" ? ["%", "%", "$", "$"] : f === "price" ? ["$", "$", "n", "$"] : ["%", "%", "n", "%"];
+          return P.kind === "interest" ? [["a", "First rate", "%"], ["b", "Second rate", "%"], ["c", "Total invested", "$"], ["d", "Interest in one year", "$"]]
+            : [["a", f === "price" ? "First price" : "First percent", pm[0]], ["b", f === "price" ? "Second price" : "Second percent", pm[1]], ["c", "How much mix", "n"], ["d", f === "price" ? "Price of the mix" : "Percent of the mix", pm[3]]];
+        case "linear": case "inequality": return [["a", "Fixed amount (once)", "n"], ["b", "Amount for each one", "n"], ["c", P.kind === "linear" ? "Total" : f === "least" ? "At least" : "At most", "n"]];
+        case "proportion": return [["a", "First amount", "n"], ["b", "Goes with", "n"], ["c", "New first amount", "n"]];
         case "plans": return [["a", "Plan A: starts at", "$"], ["b", "Plan A: each time", "$"], ["c", "Plan B: starts at (0 if nothing)", "$"], ["d", "Plan B: each time", "$"]];
         case "twounknown": return f === "numbers" ? [["c", "Sum", "n"], ["d", "Difference", "n"]] : f === "coins" ? [["c", "How many coins", "n"], ["d", "What they’re worth", "$"]]
           : [["a", "First price", "$"], ["b", "Second price", "$"], ["c", "How many in all", "n"], ["d", "Total money", "$"]];
         case "motion": return f === "roundtrip" ? [["a", "Speed there", "n"], ["b", "Speed back", "n"], ["c", "Total hours", "n"]]
-          : f === "catchup" ? [["a", "First speed", "n"], ["b", "Second (faster) speed", "n"], ["c", "Hours’ head start", "n"]] : [["a", "First speed", "n"], ["b", "Second speed", "n"], ["c", "Distance apart", "n"]];
+          : f === "catchup" ? [["a", "First speed", "n"], ["b", "Second (faster) speed", "n"], ["c", "Hours’ head start", "n"]]
+          : f === "lead" ? [["a", "Speed of the one ahead", "n"], ["b", "Speed of the one behind (faster)", "n"], ["c", "How far ahead", "n"]]
+          : [["a", "First speed", "n"], ["b", "Second speed", "n"], ["c", f === "toward" ? "Distance between them" : "Distance apart", "n"]];
         case "percentback": return [["p", f === "raise" ? "Percent increase" : "Percent off", "%"], ["c", f === "raise" ? "Amount after the increase" : "Price after the discount", "$"]];
       }
       return [];
@@ -2307,7 +2343,18 @@
       { id:"trains", mv:true, T1:"train", T2:"train", u:"miles", s:"mph", place:"station" }, { id:"cars", mv:true, T1:"truck", T2:"car", u:"miles", s:"mph", place:"town" },
       { id:"bikes2", mv:true, T1:"cyclist", T2:"cyclist", u:"kilometers", s:"km/h", place:"park" },
       { id:"jacket", pb:true, i1:"jacket" }, { id:"bike", pb:true, i1:"bike" }, { id:"game", pb:true, i1:"video game" }, { id:"wage", pb:true, wage:true },
-      { id:"rect", u:"cm" }, { id:"garden", u:"m" }, { id:"yard", u:"ft" }
+      { id:"rect", u:"cm" }, { id:"garden", u:"m" }, { id:"yard", u:"ft" },
+      { id:"paint", wk:true, job:"paint the fence", tu:"hours" }, { id:"lawn", wk:true, job:"mow the lawn", tu:"hours" }, { id:"boxes", wk:true, job:"pack the boxes", tu:"minutes" },
+      { id:"acid", mx:true, it:"acid solution", u:"liters" }, { id:"juice", mx:true, it:"juice drink", u:"gallons" },
+      { id:"candy", mx:true, price:true, it:"candy", u:"pounds" }, { id:"coffee", mx:true, price:true, it:"coffee", u:"pounds" }, { id:"bank", iv:true },
+      { id:"taxi", fe:true, unit:"miles", per:"mile", s:["A taxi charges {a:$} plus {b:$} per mile.", "A ride costs {c:$}.", "How many miles long is the ride?"] },
+      { id:"gymfee", fe:true, unit:"months", per:"month", s:["A gym charges a {a:$} sign-up fee and {b:$} per month.", "{N} paid {c:$} in all.", "For how many months did {N} pay?"] },
+      { id:"plumber", fe:true, unit:"hours", per:"hour", s:["A plumber charges a {a:$} service fee plus {b:$} per hour.", "The bill came to {c:$}.", "How many hours did the plumber work?"] },
+      { id:"cards", iq:"most", unit:"packs", per:"pack", s:["{N} has {c:$}.", "{N} wants to buy a {a:$} game and some packs of cards that cost {b:$} each.", "What is the greatest number of packs {N} can buy?"] },
+      { id:"elevator", iq:"most", unit:"boxes", per:"box", money:false, s:["An elevator can carry no more than {c} pounds.", "A worker who weighs {a} pounds is moving boxes that weigh {b} pounds each.", "What is the largest number of boxes the worker can take at one time?"] },
+      { id:"carwash", iq:"least", unit:"cars", per:"car", s:["A club needs at least {c:$} for a trip.", "It already has {a:$} and earns {b:$} for each car it washes.", "What is the fewest number of cars it must wash?"] },
+      { id:"recipe", pr:true, u1:"cups of flour", u2:"cookies", s:["A recipe uses {a} cups of flour to make {b} cookies.", "How many cookies can be made with {c} cups of flour?"] },
+      { id:"map", pr:true, u1:"inches", u2:"miles", s:["On a map, {a} inches stand for {b} miles.", "How many miles do {c} inches stand for?"] }
     ],
     typed:{},
     story:function(P, W){
@@ -2323,15 +2370,22 @@
         return ["{a} times a number plus {b} is {c} times the number plus {d}.", "What is the number?"];
       }
       if (k === "consecutive") return ["{a:w} consecutive " + (f === "even" ? "even " : f === "odd" ? "odd " : "") + "numbers add up to {c}.", "What are the numbers?"];
+      if (W.s) return W.s;
+      if (k === "work") return f === "alone" ? ["Working together, {N} and {N2} can {job} in {c:tu}.", "{N} alone takes {a:tu}.", "How long would it take {N2} alone?"]
+        : ["{N} can {job} in {a:tu}.", "{N2} can do the same job in {b:tu}.", "How long will it take them working together?"];
+      if (k === "mixture") return f === "price" ? ["A shop mixes {it} that costs {a:$} a pound with {it} that costs {b:$} a pound.", "It makes {c} pounds of a mix that costs {d:$} a pound.", "How many pounds of each does it use?"]
+        : ["{N} mixes a {a:%} {it} with a {b:%} {it} to make {c} {u} of a {d:%} {it}.", "How many {u} of each does {N} use?"];
+      if (k === "interest") return ["{N} invests {c:$}, part at {a:%} and the rest at {b:%} simple interest.", "After one year, {N} earns {d:$} in interest.", "How much is invested at each rate?"];
       if (k === "age"){
         if (f === "times") return ["{N2} is {a:x} as old as {N}.", "In {b:years}, {N2} will be {c:x} as old as {N}.", "How old is {N} now?"];
+        if (f === "ago") return ["{N2} is {a:x} as old as {N}.", "{b} years ago, {N2} was {c:x} as old as {N}.", "How old is {N} now?"];
         var q = P.ask === "older" ? "How old is {N2}?" : P.ask === "younger" ? "How old is {N}?" : "How old is each of them?";
         return ["{N2} is {a} years older than {N}.", "Together their ages add up to {c}.", q];
       }
       if (k === "perimeter"){
         if (f === "tri") return ["In a triangle, the second angle is {a:x} the first angle.", "The third angle is {b} degrees more than the first angle.", "Find the three angles."];
         var q2 = P.ask === "width" ? "How wide is the rectangle?" : P.ask === "both" ? "Find the length and the width." : "How long is the rectangle?";
-        return [f === "times" ? "The length of a rectangle is {a:x} its width." : "The length of a rectangle is {a} {u} more than its width.", "The perimeter is {c} {u}.", q2];
+        return [f === "times" ? "The length of a rectangle is {a:x} its width." : f === "timesmore" || f === "timesless" ? "The length of a rectangle is {b} {u} " + (f === "timesmore" ? "more" : "less") + " than {a:x} its width." : "The length of a rectangle is {a} {u} more than its width.", "The perimeter is {c} {u}.", q2];
       }
       if (k === "plans"){
         if (W.saving) return ["{N} has {a:$} and saves {b:$} a week.", P.c && sgn(P.c) ? "{N2} has {c:$} and saves {d:$} a week." : "{N2} has nothing saved yet and saves {d:$} a week.", W.Q];
@@ -2345,6 +2399,8 @@
       if (k === "motion"){
         if (f === "catchup") return ["A {T1} leaves a {place} going {a} {s}.", "{c} hours later, a {T2} leaves the same {place} on the same road going {b} {s}.", "How many hours after it leaves will the {T2} catch up with the {T1}?"];
         if (f === "roundtrip") return ["{N} rides to a lake at {a} {s} and rides home on the same road at {b} {s}.", "The round trip takes {c} hours.", "How far away is the lake?"];
+        if (f === "toward") return ["Two {T2}s are {c} {u} apart and travel toward each other.", "One goes {a} {s} and the other goes {b} {s}.", "In how many hours will they meet?"];
+        if (f === "lead") return ["A {T1} is {c} {u} ahead of a {T2} on the same road.", "The {T1} goes {a} {s} and the {T2} goes {b} {s}.", "How many hours will it take the {T2} to catch up?"];
         return ["Two {T2}s leave the same {place} at the same time and travel in opposite directions.", "One goes {a} {s} and the other goes {b} {s}.", "After how many hours will they be {c} {u} apart?"];
       }
       if (W.wage) return f === "raise" ? ["After a {p:%} raise, {N} earns {c:$} an hour.", "How much did {N} earn an hour before the raise?"]
@@ -2446,26 +2502,27 @@
   /* ---- ages ---- */
   ALG.age = function(P, W){
     var N = W.N, N2 = W.N2, M = { unit:"years" }, f = P.form || "sum";
-    if (f === "times"){
-      var a = P.a, b = P.b, c = P.c, v = "k";
-      if (!a || !b || !c) throw new UserErr("This story needs: how many times as old now, how many years from now, and how many times as old then.");
-      var L = LX(a, b), Rr = LX(c, mul(c, b)), sol = solveSteps(L, Rr, v), k = sol.val;
-      if (sgn(k) <= 0) throw new UserErr("Those numbers don’t give a sensible age. Check them in <b>What the story says</b>.");
-      var wEq = coefT(a, v) + " + " + nt(b) + " = " + nt(c) + "(" + v + " + " + nt(b) + ")";
-      M.known = [{ q:nt(a) + " times", w:N2 + "’s age now, compared with " + N + "’s" }, { q:nt(b) + " years", w:"how far ahead we look" }, { q:nt(c) + " times", w:N2 + "’s age then, compared with " + N + "’s" }];
+    if (f === "times" || f === "ago"){
+      var a = P.a, b = P.b, c = P.c, v = "k", ago = f === "ago", pm = ago ? " − " : " + ", bb = ago ? R(-b.n, b.d) : b, when = ago ? nt(b) + " years ago" : "in " + nt(b) + " years";
+      if (!a || !b || !c) throw new UserErr("This story needs: how many times as old now, how many years " + (ago ? "ago" : "from now") + ", and how many times as old then.");
+      var L = LX(a, bb), Rr = LX(c, mul(c, bb)), sol = solveSteps(L, Rr, v), k = sol.val;
+      if (sgn(k) <= 0 || sgn(add(k, bb)) <= 0) throw new UserErr("Those numbers don’t give a sensible age. Check them in <b>What the story says</b>.");
+      var wEq = coefT(a, v) + pm + nt(b) + " = " + nt(c) + "(" + v + pm + nt(b) + ")";
+      M.known = [{ q:nt(a) + " times", w:N2 + "’s age now, compared with " + N + "’s" }, { q:nt(b) + " years", w:ago ? "how far back we look" : "how far ahead we look" }, { q:nt(c) + " times", w:N2 + "’s age then, compared with " + N + "’s" }];
       M.ask = "how old " + N + " is now";
-      M.idea = algIdea("Both ages depend on " + N + "’s age now. Call it " + v + ": then " + N2 + " is " + coefT(a, v) + ". In " + nt(b) + " years, <em>both</em> get " + nt(b) + " years older — and that future fact gives the equation.",
-        "Add the " + nt(b) + " years to both people: " + coefT(a, v) + " + " + nt(b) + " and " + v + " + " + nt(b) + ". The “" + nt(c) + " times” multiplies " + N + "’s whole future age, so it needs brackets: " + nt(c) + "(" + v + " + " + nt(b) + ").");
-      M.eqn = eqnStep([[v, N + "’s age now, in years"]], [[N + "’s age now", v], [N2 + "’s age now: " + nt(a) + " times as old", coefT(a, v)], [N + " in " + nt(b) + " years", v + " + " + nt(b)], [N2 + " in " + nt(b) + " years", coefT(a, v) + " + " + nt(b)], ["will be " + nt(c) + " times as old", "= " + nt(c) + "(" + v + " + " + nt(b) + ")"]], wEq, [v]);
-      M.fig = { svg:tableSVG(["", "now", "in " + nt(b) + " years"], [[N, v, v + " + " + nt(b)], [N2, coefT(a, v), coefT(a, v) + " + " + nt(b)]], -1, "Ages now and in " + nt(b) + " years"),
-        lead:"A table keeps the two times apart: everyone’s age goes up by the same " + nt(b) + " years." };
+      M.idea = algIdea("Both ages depend on " + N + "’s age now. Call it " + v + ": then " + N2 + " is " + coefT(a, v) + ". " + cap1(when) + ", <em>both</em> were " + (ago ? nt(b) + " years younger" : "get " + nt(b) + " years older") + " — and that fact gives the equation.",
+        (ago ? "Take" : "Add") + " the " + nt(b) + " years " + (ago ? "from" : "to") + " both people: " + coefT(a, v) + pm + nt(b) + " and " + v + pm + nt(b) + ". The “" + nt(c) + " times” multiplies " + N + "’s whole age then, so it needs brackets: " + nt(c) + "(" + v + pm + nt(b) + ").");
+      M.eqn = eqnStep([[v, N + "’s age now, in years"]], [[N + "’s age now", v], [N2 + "’s age now: " + nt(a) + " times as old", coefT(a, v)], [N + " " + when, v + pm + nt(b)], [N2 + " " + when, coefT(a, v) + pm + nt(b)], [(ago ? "was " : "will be ") + nt(c) + " times as old", "= " + nt(c) + "(" + v + pm + nt(b) + ")"]], wEq, [v]);
+      M.fig = { svg:tableSVG(["", "now", when], [[N, v, v + pm + nt(b)], [N2, coefT(a, v), coefT(a, v) + pm + nt(b)]], -1, "Ages now and " + when),
+        lead:"A table keeps the two times apart: everyone’s age " + (ago ? "was" : "goes up by") + " the same " + nt(b) + " years " + (ago ? "less." : ".") };
       var lin = lxT(L, v) + " = " + lxT(Rr, v), rows = [{ o:"=", h:mvH("Multiply out") + vH(lin, [v]), say:"Multiply out the brackets: " + Be(lin) + "." }].concat(stepRows(sol.steps, [v]));
       rows[0].h += solveLink(wEq);
       M.calc = rows;
-      M.ans = { v:k, k:isInt(k) ? "n" : "q", w:"years", say:cap1(N) + " is " + Be(vT(k, "n", "years")) + " old now." };
-      M.sense = "Check in the story: " + N + " is " + Be(chkV(k)) + " and " + N2 + " is " + nt(a) + " × " + chkV(k) + " = " + Be(chkV(mul(a, k))) + ". In " + nt(b) + " years they’ll be " + Be(chkV(add(k, b))) + " and " + Be(chkV(add(mul(a, k), b))) + ", and " + chkV(add(mul(a, k), b)) + " = " + nt(c) + " × " + chkV(add(k, b)) + " ✓";
-      M.diag = [{ v:mul(a, k), msg:"That’s " + N2 + "’s age. The question asks about " + N + "." }, { v:dvd(sub(mul(c, b), b), sub(a, ONE)), msg:"Did you forget to add the " + nt(b) + " years to " + N + " too? Both people get older." }, { v:dvd(sub(b, mul(c, b)), sub(c, a)), msg:"Check the brackets: " + nt(c) + " times as old means " + nt(c) + "(" + v + " + " + nt(b) + ")." }];
-      M.hint = "Let k be " + N + "’s age now. Make a table: now, and in " + nt(b) + " years.";
+      M.ans = P.ask === "both" ? listAns([{ v:k, t:N + " " + vT(k, "n", "years"), lab:[N.toLowerCase()] }, { v:mul(a, k), t:N2 + " " + vT(mul(a, k), "n", "years"), lab:[N2.toLowerCase()] }], cap1(N) + " is " + Be(vT(k, "n", "years")) + " old and " + N2 + " is " + Be(vT(mul(a, k), "n", "years")) + " old.")
+        : { v:k, k:isInt(k) ? "n" : "q", w:"years", say:cap1(N) + " is " + Be(vT(k, "n", "years")) + " old now." };
+      M.sense = "Check in the story: " + N + " is " + Be(chkV(k)) + " and " + N2 + " is " + nt(a) + " × " + chkV(k) + " = " + Be(chkV(mul(a, k))) + ". " + cap1(when) + " they " + (ago ? "were " : "’ll be ") + Be(chkV(add(k, bb))) + " and " + Be(chkV(add(mul(a, k), bb))) + ", and " + chkV(add(mul(a, k), bb)) + " = " + nt(c) + " × " + chkV(add(k, bb)) + " ✓";
+      M.diag = [{ v:mul(a, k), msg:"That’s " + N2 + "’s age. The question asks about " + N + "." }, { v:dvd(sub(mul(c, bb), bb), sub(a, ONE)), msg:"Did you forget to " + (ago ? "take" : "add") + " the " + nt(b) + " years " + (ago ? "from" : "to") + " " + N + " too? Both ages change." }, { v:dvd(sub(bb, mul(c, bb)), sub(c, a)), msg:"Check the brackets: " + nt(c) + " times as old means " + nt(c) + "(" + v + pm + nt(b) + ")." }];
+      M.hint = "Let k be " + N + "’s age now. Make a table: now, and " + when + ".";
       return M;
     }
     var d = P.a, s = P.c, y = "y";
@@ -2520,31 +2577,33 @@
       M.hint = "Let x be the first angle. The angles add up to 180°.";
       return M;
     }
-    var a = P.a, c = P.c, w = "w";
-    if (!a || !c) throw new UserErr("This story needs how the length compares with the width, and the perimeter.");
-    var lenE = f === "times" ? LX(a, ZERO) : LX(ONE, a), L2 = lxAdd(lxMul(lenE, R(2)), LX(R(2), ZERO)), sol2 = solveSteps(L2, LX(ZERO, c), w), wv = sol2.val, lv = lxVal(lenE, wv);
-    if (sgn(wv) <= 0) throw new UserErr("Those numbers don’t make a rectangle. Check them in <b>What the story says</b>.");
+    var a = P.a, c = P.c, w = "w", tm = f === "timesmore" || f === "timesless";
+    if (!a || !c || tm && !P.b) throw new UserErr("This story needs how the length compares with the width, and the perimeter.");
+    var lenE = f === "times" ? LX(a, ZERO) : tm ? LX(a, f === "timesless" ? R(-P.b.n, P.b.d) : P.b) : LX(ONE, a), L2 =lxAdd(lxMul(lenE, R(2)), LX(R(2), ZERO)), sol2 = solveSteps(L2, LX(ZERO, c), w), wv = sol2.val, lv = lxVal(lenE, wv);
+    if (sgn(wv) <= 0 || sgn(lv) <= 0) throw new UserErr("Those numbers don’t make a rectangle. Check them in <b>What the story says</b>.");
     var lenT = lxT(lenE, w), wEq2 = "2(" + lenT + ") + 2" + w + " = " + nt(c);
     if (f === "times") wEq2 = "2(" + lenT + ") + 2" + w + " = " + nt(c);
     M.unit = u;
-    M.known = [{ q:f === "times" ? nt(a) + " times" : nt(a) + " " + u, w:f === "times" ? "the length, compared with the width" : "how much longer the length is than the width" }, { q:nt(c) + " " + u, w:"the perimeter — all the way around" }];
+    var relW = f === "times" ? kw(a) + " the width" : tm ? nt(P.b) + " " + u + (f === "timesmore" ? " more" : " less") + " than " + kw(a) + " the width" : nt(a) + " " + u + " more than the width";
+    var lenC = f === "times" ? nt(a) + " × " + chkV(wv) : tm ? nt(a) + " × " + chkV(wv) + (f === "timesmore" ? " + " : " − ") + nt(P.b) : chkV(wv) + " + " + nt(a);
+    M.known = [{ q:f === "times" || tm ? nt(a) + " times" : nt(a) + " " + u, w:f === "times" || tm ? "the length, compared with the width" : "how much longer the length is than the width" }].concat(tm ? [{ q:nt(P.b) + " " + u, w:(f === "timesmore" ? "added to" : "taken from") + " that" }] : []).concat([{ q:nt(c) + " " + u, w:"the perimeter — all the way around" }]);
     M.ask = P.ask === "width" ? "the width" : P.ask === "both" ? "the length and the width" : "the length";
     M.idea = algIdea("The length is described using the width, so call the width " + w + ". The perimeter is all four sides added: two lengths and two widths. That gives the equation.",
       "The perimeter has <em>two</em> lengths and <em>two</em> widths. " + lenT + " + " + w + " = " + nt(c) + " is only half the way around.");
-    M.eqn = eqnStep([[w, "the width, in " + u]], [["the width", w], ["the length is " + (f === "times" ? kw(a) + " the width" : nt(a) + " " + u + " more than the width"), lenT], ["the perimeter: two lengths and two widths", "2(" + lenT + ") + 2" + w], ["is " + nt(c) + " " + u, "= " + nt(c)]], wEq2, [w]);
+    M.eqn = eqnStep([[w, "the width, in " + u]], [["the width", w], ["the length is " + relW, lenT], ["the perimeter: two lengths and two widths", "2(" + lenT + ") + 2" + w], ["is " + nt(c) + " " + u, "= " + nt(c)]], wEq2, [w]);
     M.fig = { svg:rectSVG(toN(lv), toN(wv), lenT, w, "Rectangle with length " + lenT + " and width " + w), lead:"The rectangle with its sides written in terms of " + w + ". Going all the way around: " + lenT + ", " + w + ", " + lenT + ", " + w + "." };
     var lin2 = lxT(L2, w) + " = " + nt(c), rows2 = [{ o:"=", h:mvH("Multiply out, combine") + vH(lin2, [w]), say:"Multiply out and collect the " + w + "’s: " + Be(lin2) + "." }].concat(stepRows(sol2.steps, [w]));
-    rows2.push({ o:f === "times" ? "×" : "+", h:mvH("The length") + esc((f === "times" ? nt(a) + " × " + chkV(wv) : chkV(wv) + " + " + nt(a)) + " = " + chkV(lv)), say:"Then the length is " + Be(chkV(lv) + " " + u) + "." });
+    rows2.push({ o:f === "times" || tm ? "×" : "+", h:mvH("The length") + esc(lenC + " = " + chkV(lv)), say:"Then the length is " + Be(chkV(lv) + " " + u) + "." });
     rows2[0].h += solveLink(wEq2);
     M.calc = rows2;
     var lI = { v:lv, t:"length " + vT(lv, "n", u), lab:["length", "long", "l"] }, wI = { v:wv, t:"width " + vT(wv, "n", u), lab:["width", "wide", "w"] };
     if (P.ask === "width") M.ans = { v:wv, k:isInt(wv) ? "n" : "q", w:u, say:"The rectangle is " + Be(vT(wv, "n", u)) + " wide." };
     else if (P.ask === "both") M.ans = listAns([lI, wI], "The length is " + Be(vT(lv, "n", u)) + " and the width is " + Be(vT(wv, "n", u)) + ".");
     else M.ans = { v:lv, k:isInt(lv) ? "n" : "q", w:u, say:"The rectangle is " + Be(vT(lv, "n", u)) + " long." };
-    M.sense = "Check in the story: the length " + chkV(lv) + " is " + (f === "times" ? nt(a) + " × " + chkV(wv) : chkV(wv) + " + " + nt(a)) + " ✓, and all the way around " + Be(chkV(lv) + " + " + chkV(wv) + " + " + chkV(lv) + " + " + chkV(wv) + " = " + nt(c)) + " ✓";
+    M.sense = "Check in the story: the length " + chkV(lv) + " is " + lenC + " ✓, and all the way around " + Be(chkV(lv) + " + " + chkV(wv) + " + " + chkV(lv) + " + " + chkV(wv) + " = " + nt(c)) + " ✓";
     M.diag = [{ v:P.ask === "width" ? lv : wv, msg:"That’s the " + (P.ask === "width" ? "length" : "width") + " — the question asks for the " + (P.ask === "width" ? "width" : "length") + "." },
-              { v:dvd(c, R(4)), msg:"That would be a square. This rectangle’s length is " + (f === "times" ? kw(a) : nt(a) + " " + u + " more than") + " its width." },
-              { v:f === "times" ? dvd(c, add(a, ONE)) : dvd(sub(c, a), R(2)), msg:"That uses only one length and one width — the perimeter goes all the way around: two of each." }];
+              { v:dvd(c, R(4)), msg:"That would be a square. This rectangle’s length is " + relW + "." },
+              { v:f === "times" ? dvd(c, add(a, ONE)) : tm ? dvd(sub(c, lenE.b), add(a, ONE)) : dvd(sub(c, a), R(2)), msg:"That uses only one length and one width — the perimeter goes all the way around: two of each." }];
     if (P.ask === "both") M.diag = [];
     M.hint = "Let w be the width. The length is " + lenT + ". Perimeter = 2 × length + 2 × width.";
     return M;
@@ -2644,7 +2703,8 @@
   /* ---- distance, rate and time ---- */
   ALG.motion = function(P, W){
     var f = P.form || "opposite", a = P.a, b = P.b, c = P.c, s = W.s || "mph", u = W.u || "miles", M = {};
-    if (!a || !b || !c) throw new UserErr("This story needs both speeds and " + (f === "roundtrip" ? "the total time" : f === "catchup" ? "the head start" : "the distance apart") + ".");
+    if (!a || !b || !c) throw new UserErr("This story needs both speeds and " + (f === "roundtrip" ? "the total time" : f === "catchup" || f === "lead" ? "the head start" : f === "toward" ? "the distance between them" : "the distance apart") + ".");
+    var tw2 = f === "toward";
     var T1 = W.T1 || "first", T2 = W.T2 || "second", v, L, Rr, wEq, sol, val, rows, tbl;
     if (f === "roundtrip"){
       v = "d"; L = LX(add(dvd(ONE, a), dvd(ONE, b)), ZERO); Rr = LX(ZERO, c); wEq = v + "/" + nt(a) + " + " + v + "/" + nt(b) + " = " + nt(c);
@@ -2676,15 +2736,26 @@
       M.eqn = eqnStep([[v, "the " + T2 + "’s time, in hours"]], [["the " + T1 + "’s distance: " + nt(a) + " " + s + " for " + v + " + " + nt(c) + " hours", nt(a) + "(" + v + " + " + nt(c) + ")"], ["the " + T2 + "’s distance", coefT(b, v)], ["catches up: the distances are equal", "="]], wEq, [v]);
       tbl = tableSVG(["", "rate", "time", "distance"], [[T1, nt(a), v + " + " + nt(c), nt(a) + "(" + v + " + " + nt(c) + ")"], [T2, nt(b), v, coefT(b, v)]], -1, "Distance, rate and time table");
       M.fig = { svg:tbl + motionSVG("catchup", T1 + ": " + nt(a) + "(" + v + " + " + nt(c) + ")", T2 + ": " + nt(b) + v, "they meet here", "Catching up"), lead:"A d = r · t table, then the two trips: they end at the same place, so the distances are equal." };
+    } else if (f === "lead"){
+      L = LX(b, ZERO); Rr = LX(a, c); wEq = coefT(b, v) + " = " + lxT(Rr, v);
+      M.known = [{ q:nt(a) + " " + s, w:"the " + T1 + "’s speed — it’s ahead" }, { q:nt(c) + " " + u, w:"how far ahead the " + T1 + " is" }, { q:nt(b) + " " + s, w:"the " + T2 + "’s speed" }];
+      M.ask = "how many hours until the " + T2 + " catches up";
+      M.idea = algIdea("Both go for the same time — call it " + v + " hours. When the " + T2 + " catches up they’re at the same place: the " + T2 + " has gone the " + nt(c) + " " + u + " gap <em>plus</em> everything the " + T1 + " went.",
+        "The gap shrinks by the <em>difference</em> of the speeds each hour, " + nt(b) + " − " + nt(a) + ", not the sum.");
+      M.eqn = eqnStep([[v, "the time until it catches up, in hours"]], [["the " + T2 + "’s distance", coefT(b, v)], ["the " + T1 + "’s lead plus its distance", nt(c) + " + " + coefT(a, v)], ["catches up: the same place", "="]], wEq, [v]);
+      tbl = tableSVG(["", "rate", "time", "distance"], [[T1, nt(a), v, nt(c) + " + " + coefT(a, v)], [T2, nt(b), v, coefT(b, v)]], -1, "Distance, rate and time table");
+      M.fig = { svg:tbl + motionSVG("lead", T1 + ": " + coefT(a, v), T2 + ": " + coefT(b, v), "they meet here", "Catching up from behind", nt(c) + " " + u + " ahead"), lead:"A d = r · t table, then the two trips: the " + T1 + " starts " + nt(c) + " " + u + " ahead, and they end at the same place." };
     } else {
       L = LX(add(a, b), ZERO); Rr = LX(ZERO, c); wEq = coefT(a, v) + " + " + coefT(b, v) + " = " + nt(c);
-      M.known = [{ q:nt(a) + " " + s, w:"one speed" }, { q:nt(b) + " " + s, w:"the other speed" }, { q:nt(c) + " " + u, w:"how far apart they will be" }];
-      M.ask = "how many hours until they are " + nt(c) + " " + u + " apart";
-      M.idea = algIdea("They go opposite ways for the same time — call it " + v + " hours. Each distance is rate × time, and the two distances together make the gap of " + nt(c) + " " + u + ".",
-        "Going opposite ways, the gap grows by <em>both</em> speeds each hour: add them. (Subtract them only when one is catching up with the other.)");
-      M.eqn = eqnStep([[v, "the time, in hours"]], [["one goes " + nt(a) + " " + s + " for " + v + " hours", coefT(a, v)], ["the other goes " + nt(b) + " " + s, coefT(b, v)], ["together they are " + nt(c) + " " + u + " apart", "… = " + nt(c)]], wEq, [v]);
-      tbl = tableSVG(["", "rate", "time", "distance"], [["one", nt(a), v, coefT(a, v)], ["other", nt(b), v, coefT(b, v)], ["apart", "", "", nt(c)]], 2, "Distance, rate and time table");
-      M.fig = { svg:tbl + motionSVG("opposite", coefT(a, v) + " " + u, coefT(b, v) + " " + u, nt(c) + " " + u + " apart", "Opposite directions"), lead:"A d = r · t table, then the trips: from the same start, one each way; the two distances make the gap." };
+      M.known = [{ q:nt(a) + " " + s, w:"one speed" }, { q:nt(b) + " " + s, w:"the other speed" }, { q:nt(c) + " " + u, w:tw2 ? "how far apart they start" : "how far apart they will be" }];
+      M.ask = tw2 ? "how many hours until they meet" : "how many hours until they are " + nt(c) + " " + u + " apart";
+      M.idea = algIdea(tw2 ? "They head toward each other for the same time — call it " + v + " hours. Each distance is rate × time, and when they meet the two distances together cover the " + nt(c) + " " + u + " between them."
+        : "They go opposite ways for the same time — call it " + v + " hours. Each distance is rate × time, and the two distances together make the gap of " + nt(c) + " " + u + ".",
+        tw2 ? "Heading toward each other, the gap shrinks by <em>both</em> speeds each hour: add them." : "Going opposite ways, the gap grows by <em>both</em> speeds each hour: add them. (Subtract them only when one is catching up with the other.)");
+      M.eqn = eqnStep([[v, "the time, in hours"]], [["one goes " + nt(a) + " " + s + " for " + v + " hours", coefT(a, v)], ["the other goes " + nt(b) + " " + s, coefT(b, v)], [tw2 ? "together they cover the " + nt(c) + " " + u : "together they are " + nt(c) + " " + u + " apart", "… = " + nt(c)]], wEq, [v]);
+      tbl = tableSVG(["", "rate", "time", "distance"], [["one", nt(a), v, coefT(a, v)], ["other", nt(b), v, coefT(b, v)], [tw2 ? "between" : "apart", "", "", nt(c)]], 2, "Distance, rate and time table");
+      M.fig = tw2 ? { svg:tbl + motionSVG("toward", coefT(a, v) + " " + u, coefT(b, v) + " " + u, nt(c) + " " + u + " between them", "Toward each other"), lead:"A d = r · t table, then the trips: from the two ends toward each other; the two distances make the whole " + nt(c) + " " + u + "." }
+        : { svg:tbl + motionSVG("opposite", coefT(a, v) + " " + u, coefT(b, v) + " " + u, nt(c) + " " + u + " apart", "Opposite directions"), lead:"A d = r · t table, then the trips: from the same start, one each way; the two distances make the gap." };
     }
     sol = solveSteps(L, Rr, v); val = sol.val;
     if (sgn(val) <= 0) throw new UserErr("Those speeds never give a meeting — check them in <b>What the story says</b>.");
@@ -2693,12 +2764,150 @@
     rows[0].h += solveLink(wEq);
     M.calc = rows;
     M.unit = "hours";
-    M.ans = { v:val, k:isInt(val) ? "n" : "q", w:"hours", say:(f === "catchup" ? "The " + T2 + " catches up after " : "They are " + nt(c) + " " + u + " apart after ") + Be(vT(val, "n", "hours")) + "." };
+    M.ans = { v:val, k:isInt(val) ? "n" : "q", w:"hours", say:(f === "catchup" || f === "lead" ? "The " + T2 + " catches up after " : tw2 ? "They meet after " : "They are " + nt(c) + " " + u + " apart after ") + Be(vT(val, "n", "hours")) + "." };
+    if (f === "lead"){
+      M.sense = "Check in the story: the " + T2 + " goes " + nt(b) + " × " + chkV(val) + " = " + Be(chkV(mul(b, val)) + " " + u) + " and the " + T1 + " is at " + nt(c) + " + " + nt(a) + " × " + chkV(val) + " = " + Be(chkV(add(c, mul(a, val))) + " " + u) + " — the same place ✓";
+      M.diag = [{ v:dvd(c, add(a, b)), msg:"Catching up, the gap shrinks by the <i>difference</i> of the speeds each hour, not the sum." }, { v:mul(b, val), msg:"That’s how far the " + T2 + " goes. The question asks how long." }, { v:dvd(c, b), msg:"The " + T1 + " keeps moving too: the gap shrinks by only " + nt(sub(b, a)) + " " + u + " each hour." }];
+      M.hint = "Let t be the time. " + coefT(b, "t") + " = " + nt(c) + " + " + coefT(a, "t") + ".";
+      return M;
+    }
     M.sense = f === "catchup" ? "Check in the story: the " + T1 + " goes " + nt(a) + " × " + chkV(add(val, c)) + " = " + Be(chkV(mul(a, add(val, c))) + " " + u) + " and the " + T2 + " goes " + nt(b) + " × " + chkV(val) + " = " + Be(chkV(mul(b, val)) + " " + u) + " — the same ✓"
-      : "Check in the story: " + nt(a) + " × " + chkV(val) + " + " + nt(b) + " × " + chkV(val) + " = " + Be(chkV(mul(add(a, b), val)) + " " + u) + " apart ✓";
+      : "Check in the story: " + nt(a) + " × " + chkV(val) + " + " + nt(b) + " × " + chkV(val) + " = " + Be(chkV(mul(add(a, b), val)) + " " + u) + (tw2 ? " — the whole distance between them ✓" : " apart ✓");
     M.diag = f === "catchup" ? [{ v:dvd(mul(a, c), add(a, b)), msg:"Catching up, the gap shrinks by the <i>difference</i> of the speeds each hour, not the sum." }, { v:add(val, c), msg:"That’s the " + T1 + "’s time. The question asks how long after the " + T2 + " leaves." }]
-      : (eqR(a, b) ? [] : [{ v:dvd(c, absR(sub(a, b))), msg:"Going opposite ways, the gap grows by <i>both</i> speeds: add them, don’t subtract." }]).concat([{ v:dvd(c, a), msg:"Both are moving, so the gap grows by " + nt(a) + " + " + nt(b) + " every hour." }]);
-    M.hint = f === "catchup" ? "Let t be the " + T2 + "’s time. The " + T1 + "’s time is t + " + nt(c) + ". Set the distances equal." : "Let t be the time. Distance apart = " + nt(a) + "t + " + nt(b) + "t.";
+      : (eqR(a, b) ? [] : [{ v:dvd(c, absR(sub(a, b))), msg:tw2 ? "Heading toward each other, the gap shrinks by <i>both</i> speeds: add them, don’t subtract." : "Going opposite ways, the gap grows by <i>both</i> speeds: add them, don’t subtract." }]).concat([{ v:dvd(c, a), msg:"Both are moving, so the gap " + (tw2 ? "shrinks" : "grows") + " by " + nt(a) + " + " + nt(b) + " every hour." }]);
+    M.hint = f === "catchup" ? "Let t be the " + T2 + "’s time. The " + T1 + "’s time is t + " + nt(c) + ". Set the distances equal." : "Let t be the time. " + (tw2 ? "When they meet, " + nt(a) + "t + " + nt(b) + "t = " + nt(c) + "." : "Distance apart = " + nt(a) + "t + " + nt(b) + "t.");
+    return M;
+  };
+
+  /* ---- working together ---- */
+  ALG.work = function(P, W){
+    var f = P.form || "together", a = P.a, b = P.b, c = P.c, tu = W.tu || "hours", t1 = singular(tu), N = W.N || "one", N2 = W.N2 || "the other", M = { unit:tu }, v, wEq, rows, val;
+    var hm = function(x){ return tu === "hours" && !isInt(x) && isInt(mul(x, R60)) ? ", or " + durT(mul(x, R60)) : ""; };
+    if (f === "alone"){
+      if (!a || !c) throw new UserErr("This story needs one time alone and the time together.");
+      if (cmpR(c, a) >= 0) throw new UserErr("Together has to be quicker than alone. Check the times in <b>What the story says</b>.");
+      v = "x"; var left = sub(ONE, dvd(c, a)); val = dvd(c, left);
+      wEq = nt(c) + "/" + nt(a) + " + " + nt(c) + "/x = 1";
+      M.known = [{ q:nt(a) + " " + tu, w:N + ", working alone" }, { q:nt(c) + " " + tu, w:"both, working together" }];
+      M.ask = "how long " + N2 + " would take alone";
+      M.idea = algIdea("Think in parts of the job. In " + nt(c) + " " + tu + " " + N + " does " + nt(c) + "/" + nt(a) + " of it; " + N2 + ", who would take x " + tu + " alone, does " + nt(c) + "/x. Together they finish one whole job.",
+        "Don’t subtract the times: it’s the parts of the job done that add up, not the times.");
+      M.eqn = eqnStep([[v, N2 + "’s time alone, in " + tu]], [[N + "’s part in " + nt(c) + " " + tu, nt(c) + "/" + nt(a)], [N2 + "’s part", nt(c) + "/x"], ["together: one whole job", "… = 1"]], wEq, [v]);
+      rows = [{ o:"−", h:mvH("− " + nt(c) + "/" + nt(a) + " on both sides") + vH(nt(c) + "/x = " + nt(left), [v]), say:"Take " + nt(c) + "/" + nt(a) + " away from both sides: " + Be(nt(c) + "/x = " + nt(left)) + "." },
+              { o:"÷", h:mvH("x = " + nt(c) + " ÷ " + nt(left)) + vH("x = " + chkV(val), [v]), say:"So " + Be("x = " + nt(c) + " ÷ " + nt(left) + " = " + chkV(val)) + "." }];
+      M.ans = { v:val, k:isInt(val) ? "n" : "q", w:tu, say:cap1(N2) + " would take " + Be(vT(val, "n", tu)) + hm(val) + " alone." };
+      M.sense = "Check in the story: in " + nt(c) + " " + tu + " " + N + " does " + Be(nt(dvd(c, a))) + " of the job and " + N2 + " does " + Be(nt(dvd(c, val))) + "; together that’s " + Be("1 whole job") + " ✓";
+      M.diag = [{ v:sub(a, c), msg:"Subtracting the times doesn’t work. Add the <i>parts of the job</i>: " + wEq + "." }, { v:dvd(mul(a, c), add(a, c)), msg:"That treats " + nt(c) + " " + tu + " as " + N2 + "’s time alone. It’s the time <i>together</i>." }];
+      M.hint = "Let x be " + N2 + "’s time alone. In " + nt(c) + " " + tu + " the parts are " + nt(c) + "/" + nt(a) + " and " + nt(c) + "/x; they add up to 1.";
+    } else {
+      if (!a || !b) throw new UserErr("This story needs how long each one takes alone.");
+      v = "t"; var rate = add(dvd(ONE, a), dvd(ONE, b)), sol = solveSteps(LX(rate, ZERO), LX(ZERO, ONE), v, { clear:true }); val = sol.val;
+      wEq = "t/" + nt(a) + " + t/" + nt(b) + " = 1";
+      M.known = [{ q:nt(a) + " " + tu, w:N + ", working alone" }, { q:nt(b) + " " + tu, w:N2 + ", working alone" }];
+      M.ask = "how long the job takes them together";
+      M.idea = algIdea("Think in parts of the job. In one " + t1 + " " + N + " does 1/" + nt(a) + " of it and " + N2 + " does 1/" + nt(b) + ". In t " + tu + " they do t/" + nt(a) + " and t/" + nt(b) + " — and together that’s the whole job, 1.",
+        "Don’t add or average the times: two workers are faster than either one alone, so the answer is less than " + nt(cmpR(a, b) < 0 ? a : b) + " " + tu + ".");
+      M.eqn = eqnStep([[v, "the time together, in " + tu]], [[N + "’s part in t " + tu, "t/" + nt(a)], [N2 + "’s part", "t/" + nt(b)], ["together: one whole job", "… = 1"]], wEq, [v]);
+      rows = stepRows(sol.steps, [v]);
+      M.ans = { v:val, k:isInt(val) ? "n" : "q", w:tu, say:"Together they take " + Be(vT(val, "n", tu)) + hm(val) + "." };
+      M.sense = "Check in the story: in " + chkV(val) + " " + tu + " " + N + " does " + Be(nt(dvd(val, a))) + " of the job and " + N2 + " does " + Be(nt(dvd(val, b))) + "; together that’s " + Be("1 whole job") + " ✓";
+      M.diag = [{ v:add(a, b), msg:"Adding the times makes it slower than either one alone — but two workers are faster." }, { v:dvd(add(a, b), R(2)), msg:"That’s the average of the times. Together they beat even the faster one." },
+                { v:rate, msg:"That’s the part of the job they do together in one " + t1 + ". The whole job takes 1 ÷ " + nt(rate) + "." }, { v:absR(sub(a, b)), msg:"Subtracting the times doesn’t work: add the parts of the job." }];
+      M.hint = "Let t be the time together. In t " + tu + ": t/" + nt(a) + " + t/" + nt(b) + " = 1 whole job.";
+      b = b || ZERO;
+    }
+    var o = f === "alone" ? val : b, T = f === "alone" ? c : val;
+    M.fig = { svg:tableSVG(["", "alone", "part in " + nt(T) + " " + t1 + (eqR(T, ONE) ? "" : "s")], [[N, nt(a) + " " + t1 + "s", nt(dvd(T, a))], [N2, f === "alone" ? "x" : nt(o) + " " + t1 + "s", nt(dvd(T, o))], ["together", "", "1"]], 2, "Parts of the job table")
+        + barsSVG({ rows:[{ segs:[sg(dvd(T, a), N, "k"), sg(dvd(T, o), N2, "b")] }], tops:[{ row:0, from:0, to:1, lab:"1 whole job in " + chkV(T) + " " + tu }] }, "Bar: the two parts make one whole job"),
+      lead:"Each one does a part of the job; the parts make one whole job." };
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    return M;
+  };
+
+  /* ---- mixtures, and money split between two interest rates: x of one, the rest of the other ---- */
+  function mixModel(P, W, inv){
+    var pct = inv || P.form !== "price", a = P.a, b = P.b, c = P.c, d = P.d, M = {}, v = "x";
+    if (!a || !b || !c || !d) throw new UserErr(inv ? "This story needs both rates, the total invested and the interest earned." : "This story needs both " + (pct ? "percents" : "prices") + ", how much mix to make, and its " + (pct ? "percent." : "price."));
+    var kT = function(k){ return pct ? nt(dvd(k, H100)) : nt(k); }, k1 = pct ? dvd(a, H100) : a, k2 = pct ? dvd(b, H100) : b, rhs = inv ? d : mul(pct ? dvd(d, H100) : d, c);
+    var L = LX(sub(k1, k2), mul(k2, c)), sol = solveSteps(L, LX(ZERO, rhs), v), x = sol.val, y = sub(c, x);
+    if (sgn(x) < 0 || sgn(y) < 0) throw new UserErr("Those numbers don’t work — one amount comes out below zero. Check them in <b>What the story says</b>.");
+    var u = inv ? "dollars" : W.u || "units", it = W.it || (pct ? "solution" : "mix"), lab = function(k){ return inv ? nt(k) + "%" : pct ? nt(k) + "% " + it : usd(k) + " " + it; };
+    var amt = function(z){ return inv ? usd(z) : chkV(z) + " " + u; }, rT = inv ? nt(d) : kT(d) + "(" + nt(c) + ")";
+    var wEq = kT(a) + "x + " + kT(b) + "(" + nt(c) + " − x) = " + rT, part = inv ? "the interest" : pct ? "the " + (W.it ? it.split(" ")[0] : "pure part") : "the cost";
+    M.unit = u;
+    M.known = inv ? [{ q:usd(c), w:"the total invested" }, { q:nt(a) + "% and " + nt(b) + "%", w:"the two yearly rates" }, { q:usd(d), w:"the interest from both in one year" }]
+      : [{ q:lab(a) + " and " + lab(b), w:"the two things mixed" }, { q:nt(c) + " " + u, w:"how much mix to make" }, { q:lab(d), w:"what the mix has to be" }];
+    M.ask = inv ? "how much is invested at each rate" : "how much of each to use";
+    M.idea = algIdea("There are two amounts, but together they make " + amt(c) + ". So call the " + (inv ? "money at " + nt(a) + "%" : lab(a)) + " x: the rest, " + nt(c) + " − x, is " + (inv ? "at " + nt(b) + "%" : "the " + lab(b)) + ". Each part brings its own share of " + part + ", and the shares add up to " + part + " of the whole.",
+      "Don’t split " + amt(c) + " in half or average the " + (inv ? "rates" : pct ? "percents" : "prices") + " — that only works if the mix is exactly halfway.");
+    M.eqn = eqnStep([[v, inv ? "the dollars invested at " + nt(a) + "%" : "the " + u + " of " + lab(a)]], [["the rest", nt(c) + " − x"], [part + " from the first", kT(a) + "x"], [part + " from the rest", kT(b) + "(" + nt(c) + " − x)"], [inv ? "together " + usd(d) : part + " in " + nt(c) + " " + u + " of " + lab(d), "= " + rT]], wEq, [v]);
+    M.fig = { svg:tableSVG(["", inv ? "invested" : u, inv ? "rate" : pct ? "part" : "price", part.replace(/^the /, "")], [[lab(a), "x", kT(a), kT(a) + "x"], [lab(b), nt(c) + " − x", kT(b), kT(b) + "(" + nt(c) + " − x)"], ["in all", nt(c), inv ? "" : kT(d), nt(rhs)]], 2, "Mixture table"),
+      lead:"A table: one row for each part, one for the whole. The last column adds up." };
+    var lin = lxT(L, v) + " = " + nt(rhs), rows = [{ o:"=", h:mvH("Multiply out, combine") + vH(lin, [v]), say:"Multiply out and collect the x’s: " + Be(lin) + "." }].concat(stepRows(sol.steps, [v]));
+    rows.push({ o:"−", h:mvH("The rest") + esc(nt(c) + " − " + chkV(x) + " = " + chkV(y)), say:"Then the rest is " + Be(nt(c) + " − " + chkV(x) + " = " + chkV(y)) + "." });
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    var items = [{ v:x, t:amt(x) + (inv ? " at " + nt(a) + "%" : " of " + lab(a)), lab:[nt(a) + "%", "first"] }, { v:y, t:amt(y) + (inv ? " at " + nt(b) + "%" : " of " + lab(b)), lab:[nt(b) + "%", "second"] }];
+    M.ans = listAns(items, (inv ? "Invest " : "Use ") + Be(items[0].t) + " and " + Be(items[1].t) + ".");
+    M.sense = "Check in the story: " + Be(chkV(x) + " + " + chkV(y) + " = " + nt(c)) + " ✓, and " + Be(kT(a) + " × " + chkV(x) + " + " + kT(b) + " × " + chkV(y) + " = " + chkV(add(mul(k1, x), mul(k2, y)))) + " ✓";
+    M.diag = [{ v:dvd(c, R(2)), msg:"Half and half only works if the mix is exactly halfway between. Write the rest as " + nt(c) + " − x." }];
+    M.hint = "Let x be the first amount; the rest is " + nt(c) + " − x. " + wEq + ".";
+    return M;
+  }
+  ALG.mixture = function(P, W){ return mixModel(P, W, false); };
+  ALG.interest = function(P, W){ return mixModel(P, W, true); };
+
+  /* ---- a fixed amount plus so much each: an equation, or an inequality (at most / at least) ---- */
+  function linModel(P, W, ineq){
+    var a = P.a || ZERO, b = P.b, c = P.c, unit = W.unit || "items", u1 = W.per || singular(unit), v = "n", money = W.money !== false, M = { unit:unit };
+    if (!b || !c) throw new UserErr("This story needs the amount for each one and the total.");
+    var q = function(x){ return money ? usd(x) : nt(x); }, ex = dvd(sub(c, a), b), sym = ineq === "most" ? "≤" : ineq === "least" ? "≥" : "=";
+    if (sgn(ex) <= 0) throw new UserErr("The fixed amount is already the whole total — check the numbers in <b>What the story says</b>.");
+    var n = ineq === "most" ? floorR(ex) : ineq === "least" ? (isInt(ex) ? ex : add(floorR(ex), ONE)) : ex;
+    if (ineq && !sgn(n)) throw new UserErr("Not even one fits — check the numbers in <b>What the story says</b>.");
+    var lhs = (sgn(a) ? nt(a) + " + " : "") + coefT(b, v), wEq = lhs + " " + sym + " " + nt(c), tot = function(k){ return q(add(a, mul(b, k))); };
+    M.known = [{ q:q(a), w:"once, however many " + unit }, { q:q(b), w:"for each " + u1 }, { q:q(c), w:ineq === "most" ? "the most it can be" : ineq === "least" ? "the least it has to reach" : "the total" }];
+    M.ask = (ineq === "most" ? "the greatest number of " : ineq === "least" ? "the smallest number of " : "how many ") + unit;
+    M.idea = algIdea("The total is the fixed " + q(a) + " plus " + q(b) + " for each " + u1 + ". Call the number of " + unit + " n: the total is " + lhs + (ineq === "most" ? ", and “at most” means it can’t go over " + q(c) + ": an inequality, ≤." : ineq === "least" ? ", and “at least” means it has to reach " + q(c) + " or more: an inequality, ≥." : ", and that equals " + q(c) + "."),
+      ineq ? "Solve it like an equation, then think about whole " + unit + ": " + (ineq === "most" ? "round down — rounding up would go over." : "round up — rounding down would fall short.") : "Take away the fixed " + q(a) + " first: it’s paid once, not for every " + u1 + ".", ineq ? "letter → inequality → solve → whole number" : null);
+    M.eqn = eqnStep([[v, "the number of " + unit]], [["the fixed amount", nt(a)], ["plus " + q(b) + " for each " + u1, "+ " + coefT(b, v)], [(ineq === "most" ? "at most " : ineq === "least" ? "at least " : "is ") + q(c), sym + " " + nt(c)]], wEq, [v]);
+    var sol = solveSteps(LX(b, a), LX(ZERO, c), v), rows = stepRows(sol.steps, [v]).map(function(r){ r.h = r.h.replace(" = ", " " + sym + " "); r.say = r.say.replace(/ = /g, " " + sym + " "); return r; });
+    if (ineq) rows.push({ o:"≈", h:mvH(isInt(ex) ? "Already whole" : ineq === "most" ? "Round down" : "Round up") + vH(v + " = " + nt(n), [v]), say:(isInt(ex) ? "That’s a whole number: " : ineq === "most" ? "Only whole " + unit + " count, and going over isn’t allowed: round down, " : "Only whole " + unit + " count, and falling short isn’t enough: round up, ") + Be(v + " = " + nt(n)) + "." });
+    rows[0].h += solveLink(wEq.replace(/[≤≥]/, "="));
+    M.calc = rows;
+    var nn = isInt(n) ? Number(n.n) : 0;
+    M.fig = { svg:barsSVG({ rows:[{ segs:(sgn(a) ? [sg(a, q(a), "d")] : []).concat(nn && nn <= 12 ? [sg(b, q(b), "q", null, nn)] : [sg(mul(b, n), coefT(b, v), "q")]) }], tops:[{ row:0, from:0, to:sgn(a) ? 1 : 0, lab:(ineq ? sym + " " : "= ") + q(c) }] }, "Bar: the fixed amount, then the same amount for each"),
+      lead:"The fixed amount, then one box for each " + u1 + ": " + (nn && nn <= 12 ? nn + " boxes" : nt(n) + " of them") + "." };
+    M.ans = { v:n, k:isInt(n) ? "n" : "q", w:unit, say:(ineq === "most" ? "The greatest number is " : ineq === "least" ? "The smallest number is " : "It’s ") + Be(vT(n, "n", unit)) + "." };
+    M.sense = "Check in the story: " + Be(q(a) + " + " + q(b) + " × " + chkV(n) + " = " + tot(n)) + (ineq === "most" ? ", not over " + q(c) + " ✓ — one more would be " + tot(add(n, ONE)) + ", too much" : ineq === "least" ? ", at least " + q(c) + " ✓ — one fewer would be " + tot(sub(n, ONE)) + ", not enough" : " ✓");
+    M.diag = (ineq ? [{ v:ineq === "most" ? add(n, ONE) : sub(n, ONE), msg:ineq === "most" ? "That goes over: " + tot(add(n, ONE)) + " is more than " + q(c) + ". Round down." : "That falls short: " + tot(sub(n, ONE)) + " is less than " + q(c) + ". Round up." }] : [])
+      .concat([{ v:ineq ? (ineq === "most" ? floorR(dvd(c, b)) : add(floorR(dvd(sub(c, ONE), b)), ONE)) : dvd(c, b), msg:"Don’t forget the fixed " + q(a) + " — take it away first." }, { v:dvd(add(c, a), b), msg:"Take the fixed " + q(a) + " away from " + q(c) + ", don’t add it." }, { v:sub(c, a), msg:"Nearly: that’s the amount for the " + unit + ". Divide it by " + q(b) + "." }])
+      .concat(ineq && !isInt(ex) ? [{ v:ex, msg:"Only whole " + unit + " count: round " + (ineq === "most" ? "down." : "up.") }] : []);
+    M.hint = "Let n be the number of " + unit + ": " + wEq + ". Take away " + nt(a) + ", then divide by " + nt(b) + (ineq ? ", then round." : ".");
+    return M;
+  }
+  ALG.linear = function(P, W){ return linModel(P, W, null); };
+  ALG.inequality = function(P, W){ return linModel(P, W, P.form === "least" ? "least" : "most"); };
+
+  /* ---- a proportion: a is to b as c is to x ---- */
+  ALG.proportion = function(P, W){
+    var a = P.a, b = P.b, c = P.c, u1 = W.u1 || "units", u2 = W.u2 || "units", v = "x", M = { unit:u2 };
+    if (!a || !b || !c) throw new UserErr("This story needs two amounts that go together, and the new amount.");
+    var bc = mul(b, c), x = dvd(bc, a), wEq = nt(a) + "/" + nt(b) + " = " + nt(c) + "/x";
+    M.known = [{ q:nt(a) + " " + u1 + " for " + nt(b) + " " + u2, w:"two amounts that go together" }, { q:nt(c) + " " + u1, w:"the new amount" }];
+    M.ask = "how many " + u2 + " go with " + nt(c) + " " + u1;
+    M.idea = algIdea("The two amounts grow together, so their ratio stays the same: " + u1 + " to " + u2 + " is " + nt(a) + " to " + nt(b) + ", and it’s also " + nt(c) + " to x. Two equal ratios make a proportion.",
+      "Keep the units in the same places — " + u1 + " on top on both sides. And it’s multiplying, not adding: " + nt(sub(c, a)) + " more " + u1 + " doesn’t mean " + nt(sub(c, a)) + " more " + u2 + ".");
+    M.eqn = eqnStep([[v, "the " + u2 + " for " + nt(c) + " " + u1]], [[nt(a) + " " + u1 + " for " + nt(b) + " " + u2, nt(a) + "/" + nt(b)], ["the same ratio", "="], [nt(c) + " " + u1 + " for x " + u2, nt(c) + "/x"]], wEq, [v]);
+    M.fig = { svg:tableSVG(["", u1, u2], [["given", nt(a), nt(b)], ["new", nt(c), "x"]], 1, "Ratio table"), lead:"A ratio table: both rows have the same ratio of " + u1 + " to " + u2 + "." };
+    var sol = solveSteps(LX(a, ZERO), LX(ZERO, bc), v), rows = [{ o:"×", h:mvH("Cross-multiply") + vH(nt(a) + "x = " + nt(b) + " × " + nt(c) + " = " + nt(bc), [v]), say:"Cross-multiply: " + Be(nt(a) + "x = " + nt(b) + " × " + nt(c) + " = " + nt(bc)) + "." }].concat(stepRows(sol.steps, [v]));
+    rows[0].h += solveLink(wEq);
+    M.calc = rows;
+    M.ans = { v:x, k:isInt(x) ? "n" : "q", w:u2, say:"That’s " + Be(vT(x, "n", u2)) + " for " + nt(c) + " " + u1 + "." };
+    M.sense = "Check in the story: " + nt(c) + " " + u1 + " is " + nt(dvd(c, a)) + " times " + nt(a) + ", and " + Be(chkV(x)) + " is " + nt(dvd(c, a)) + " times " + nt(b) + " ✓";
+    M.diag = [{ v:add(b, sub(c, a)), msg:"That adds the difference. In a proportion both amounts are multiplied by the same number." }, { v:dvd(mul(a, c), b), msg:"One ratio is upside down: keep " + u1 + " on top on both sides." }];
+    M.hint = "Write " + nt(a) + "/" + nt(b) + " = " + nt(c) + "/x and cross-multiply.";
     return M;
   };
 
@@ -2748,14 +2957,16 @@
     if (type === "remainder") return c.kind === kind;
     return true;
   }
-  var ALGCTX = { plans:function(c){ return c.plans; }, motion:function(c){ return c.mv; }, percentback:function(c){ return c.pb; } };
+  var ALGCTX = { plans:function(c){ return c.plans; }, motion:function(c){ return c.mv; }, percentback:function(c){ return c.pb; }, work:function(c){ return c.wk; },
+                 mixture:function(c, P){ return c.mx && !!c.price === (P.form === "price"); }, interest:function(c){ return c.iv; }, linear:function(c){ return c.fe; },
+                 inequality:function(c, P){ return c.iq === (P.form === "least" ? "least" : "most"); }, proportion:function(c){ return c.pr; } };
   function ctxOf(P){
     var T = TY[P.type];
     if (!T || !T.ctxs) return null;
     if (P.type === "algebra"){
-      var fit = ALGCTX[P.kind] || (P.kind === "twounknown" ? function(c){ return P.form === "coins" ? c.coins : P.form === "tickets" ? c.tk : false; } : P.kind === "perimeter" && P.form !== "tri" ? function(c){ return !!c.u && !c.mv; } : null);
+      var fit = ALGCTX[P.kind] || (P.kind === "twounknown" ? function(c){ return P.form === "coins" ? c.coins : P.form === "tickets" ? c.tk : false; } : P.kind === "perimeter" && P.form !== "tri" ? function(c){ return !!c.u && !c.mv && !c.mx; } : null);
       if (!fit) return null;
-      var hits = T.ctxs.filter(fit);
+      var hits = T.ctxs.filter(function(c){ return fit(c, P); });
       return hits.filter(function(c){ return c.id === P.ctx; })[0] || hits[0] || null;
     }
     var hit = T.ctxs.filter(function(c){ return c.id === P.ctx && ctxFits(P.type, P.kind, c); })[0];
@@ -3000,6 +3211,8 @@
   var MINUSV = /\b(gave|gives|give|ate|eats|eat|lost|loses|lose|spent|spends|spend|sold|sells|sell|used|uses|use|took away|takes away|took|takes|broke|breaks|popped|pops|donated|donates|threw away|flew away|left|leave|leaves|got off|get off|went home|drank|drinks|mailed|sent|sends|traded|trades|returned|returns|removed|removes|shared|gave away|gives away|fell|fall|falls|melted|ran away|swam away|cut off)\b/;
   var NAMESTOP = /^(The|A|An|There|Then|How|What|When|Where|Which|Who|Why|Each|Every|After|Before|If|She|He|They|It|Her|His|Their|This|That|These|Those|In|On|At|For|From|With|By|Now|Later|Next|Last|First|Some|All|One|Two|Three|Mr|Mrs|Ms|Dr|Miss|Today|Yesterday|Tomorrow|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|Altogether|Together|Also|But|And|So|Is|Are|Was|Were|Do|Does|Did|Can|Could|Will|Would|Find|Use|Write|Show|Round|About|Her|Its|Our|We|You|I|Him|Them|Both|Half|Twice|If|Only|Still|Than|To|Of)$/;
 
+  // "28 books were donated", "his grandmother sends him 18 more": something arrives — read it as received
+  function plusPassive(s){ return s.replace(/\b(?:was|were|been|is|are|get|gets|got) (?:donated|delivered|sent|mailed|added|handed)\b|\b(?:sends?|sent|mails?|mailed|hands?|handed|brings?|brought) (?:him|her|them|me|us)\b/g, "received"); }
   function cleanStory(s){
     s = String(s == null ? "" : s);
     s = s.replace(/[½⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅛⅜⅝⅞]/g, function(c){ return " " + VULGAR[c]; });
@@ -3025,7 +3238,7 @@
       if (nx && nx !== " ") continue;
       if (ch === "."){
         var before = D.slice(Math.max(0, i - 4), i + 1), after = D.slice(i + 1).replace(/^\s+/, "");
-        if (/\b[ap]\.\s?m\.$/i.test(before) && /^[a-z]/.test(after)) continue;
+        if (/\b[ap]\.\s?m\.$/i.test(before) && /^[a-z]/.test(after) && !/^(?:what|how|when|which|who|where|why|find)\b/.test(after)) continue;
         if (/\b(Mr|Mrs|Ms|Dr|St)\.$/.test(before)) continue;
       }
       out.push({ i:st, end:i + 1 }); st = i + 1;
@@ -3057,7 +3270,7 @@
           var lw = s.toLowerCase();
           if (lw === "one"){
             var pre = L.slice(Math.max(0, t.i - 12), t.i), post = L.slice(t.end, t.end + 10);
-            if (/\b(each|every|no|any|which|this|that|the|some|another|only)\s$/.test(pre) || /^\s(of|another|more than|by one)\b/.test(post) || /^\s?'s/.test(post)) continue;
+            if (/\b(each|every|no|any|which|this|that|the|some|another|only)\s$/.test(pre) || /^\s(of|another|more than|by one)\b/.test(post) || /^\s?'s/.test(post) || /\bat\s$/.test(pre) && /^\s(time|go)\b/.test(post)) continue;
           }
           var wv = wordNum(lw); if (wv === undefined) continue;
           t.k = "n"; t.v = R(wv); if (lw === "twice") t.twice = true;
@@ -3069,6 +3282,11 @@
     var out = [];
     for (var j = 0; j < toks.length; j++){
       var tk = toks[j];
+      // "3 dozen eggs" is 36 eggs
+      if (tk.k === "n" && !tk.twice && toks[j + 1] && /^dozen$/i.test(toks[j + 1].raw) && /^\s+$/.test(D.slice(tk.end, toks[j + 1].i))){ tk.dz = tk.v; tk.v = mul(tk.v, R(12)); tk.end = toks[j + 1].end; tk.raw = D.slice(tk.i, tk.end); j++; out.push(tk); continue; }
+      // "twenty-five cents", "twenty percent": number words with money or percent
+      var wm = tk.k === "n" && !/^\d/.test(tk.raw) ? /^\s*(cents?|dollars?|percent|per cent)\b/i.exec(D.slice(tk.end)) : null;
+      if (wm){ tk.end += wm[0].length; tk.raw = D.slice(tk.i, tk.end); if (/^per\s?cent$/i.test(wm[1])) tk.k = "%"; else if (/cent/i.test(wm[1])) { tk.k = "$"; tk.v = dvd(tk.v, H100); } else tk.k = "$"; out.push(tk); continue; }
       if (tk.k === "n" && !tk.twice){
         var aft = D.slice(tk.end), dm = /^\s*(hours?|hrs?|h)\b(?:,?\s*(?:and\s*)?(\d+)\s*(minutes?|mins?)\b)?/i.exec(aft), mm = /^\s*(minutes?|mins?)\b/i.exec(aft);
         if (dm){
@@ -3086,9 +3304,16 @@
       var lo = m2.index, hi = lo + m2[0].length;
       if (out.some(function(x){ return x.i < hi && x.end > lo; })) continue;
       var mins = /half an/i.test(m2[0]) ? 30 : /and a half/i.test(m2[0]) ? 90 : 60;
-      out.push({ i:lo, end:hi, raw:m2[0], k:"dur", v:R(mins), num:R(mins / 60), tu:"hours" });
+      out.push({ i:lo, end:hi, raw:m2[0], k:"dur", v:R(mins), num:R(mins, 60), tu:"hours" });
     }
     out.sort(function(x, y){ return x.i - y.i; });
+    // "two hours thirty-nine minutes": one length of time
+    for (var di = out.length - 2; di >= 0; di--){
+      var d1 = out[di], d2 = out[di + 1];
+      if (d1.k === "dur" && d1.tu === "hours" && d2.k === "dur" && d2.tu === "minutes" && /^\s*,?\s*(?:and\s+)?$/.test(D.slice(d1.end, d2.i))){
+        d1.v = add(d1.v, d2.v); d1.tu = "mixed"; d1.end = d2.end; d1.raw = D.slice(d1.i, d1.end); out.splice(di + 1, 1);
+      }
+    }
     // what each number counts: the words right after it, up to a little word
     out.forEach(function(t){
       var after = D.slice(t.end), wm = /^\s*((?:[A-Za-z][A-Za-z'-]*\s*){1,4})/.exec(after), words = [];
@@ -3106,10 +3331,13 @@
     while ((m = re.exec(D))){
       var nm = m[1] ? m[1] + ". " + m[2] : m[2];
       if (!m[1] && NAMESTOP.test(m[2])) continue;
+      // a product, place or vehicle name isn't a person: "the ProSeal Gasket", "the Autonomous Express Truck", "Ana Lee" (one person)
+      var pre = D.slice(Math.max(0, m.index - 60), m.index), pw = /(^|[^.?!:\s]\s+)([A-Z][A-Za-z'-]*)\s+$/.exec(pre);
+      if (!m[1] && (/\b(?:the|a|an|this|that|its|our|their|his|her|my|your|of)\s+(?:[A-Z][\w'-]*\s+)*$/i.test(pre) || pw && pw[1] && !NAMESTOP.test(pw[2]))) continue;
       if (!m[1] && /^(Each|Every|How)$/.test(m[2])) continue;
       // at the start of a sentence, a capital word followed by an ordinary noun ("Soccer practice", "Water bottles") isn't a person
       var startS = m.index === 0 || /[.?!]\s*$/.test(D.slice(Math.max(0, m.index - 3), m.index));
-      var nx = /^\s+([a-z]+)/.exec(D.slice(m.index + m[0].length, m.index + m[0].length + 20));
+      var nx = /^\s+([a-z]+)/.exec(D.slice(m.index + m[0].length, m.index + m[0].length + 60));
       if (!m[1] && startS && nx && !/(s|ed)$/.test(nx[1]) && !/^(and|or|had|has|have|is|was|were|are|will|can|could|would|did|does|do|gave|got|ran|read|ate|put|took|made|found|won|lost|drew|swam|rode|flew|saw|went|sold|spent|bought|paid|left|kept|grew|threw|caught|brought|built|cut|wrote|sent|sat|stood|met|let|set|hit|won|then|also|still|wants|needs|likes)$/.test(nx[1])) continue;
       if (out.indexOf(nm) < 0) out.push(nm);
     }
@@ -3123,8 +3351,10 @@
   }
   function sentOf(sents, t){ for (var i = 0; i < sents.length; i++) if (t.i >= sents[i].i && t.i < sents[i].end) return i; return sents.length - 1; }
   function analyze(raw){
-    var D = cleanStory(raw);
-    var A = { D:D, L:D.toLowerCase(), sents:sentencesOf(D), toks:tokensOf(D), names:namesIn(D) };
+    // words in brackets with no numbers ("Sophia (Marketing Lead)") are blanked out for reading (same length, so
+    // positions still line up); the story is still shown as it was typed
+    var D0 = cleanStory(raw), D = D0.replace(/\(([^()]*)\)/g, function(m, x){ return /\d/.test(x) ? m : new Array(m.length + 1).join(" "); });
+    var A = { D:D, D0:D0, L:D.toLowerCase(), sents:sentencesOf(D), toks:tokensOf(D), names:namesIn(D) };
     var qi = -1;
     A.sents.forEach(function(s, i){ if (D.slice(s.i, s.end).indexOf("?") >= 0) qi = i; });
     if (qi < 0) A.sents.forEach(function(s, i){ if (/^(how|what|when|find|which|who|about how|work out|calculate)\b/i.test(D.slice(s.i, s.end))) qi = i; });
@@ -3136,12 +3366,25 @@
     A.NQ = A.L.slice(0, A.q[0]) + " " + A.L.slice(A.q[1]);
     A.toks.forEach(function(t){ t.s = sentOf(A.sents, t); t.inQ = t.s === qi; });
     // numbers the story doesn't need: ages, grades, temperatures, room and bus numbers, years
+    var ageS = /\byears? (older|younger)\b|\b(times|twice) as old\b|\bas old as\b/.test(A.L);    // an age story: its ages are what it's about
     A.toks.forEach(function(t){
       if (t.k !== "n") return;
       if (/^\s*days?\s+(?:left\s+)?(?:until|till|before|to go)\b/.test(t.after)) { t.x0 = true; t.what0 = "how long until something else"; }
+      else if (ageS && (/^years?\b/.test(t.unit) || /^\s*-?years?[\s-]old\b/.test(t.after))) return;
       else if ((/^(years?|year-old|grade|graders?|degrees?|°)/.test(t.unit) && !/^years? (older|younger)\b/.test(t.unit) && !(/^(degrees?|°)/.test(t.unit) && (/^\s*(?:degrees?|°)\s*(more|less|greater|smaller|bigger|than)\b/.test(t.after) || /\bangle/.test(A.L.slice(Math.max(0, t.i - 80), t.end + 80))))) || /^\s*-?years?[\s-]old\b/.test(t.after)) { t.x0 = true; t.what0 = /grade/.test(t.unit) ? "a grade" : /degree|°/.test(t.unit) ? "a temperature" : "an age"; }
-      else if (/\b(grade|room|page|bus|number|no\.|#|chapter|level|aged?|route|channel|floor|apartment|lane|locker|seat|gate|track|row)\s*$/.test(t.before) && !/^\s*(of|in|more|times)\b/.test(t.after)) { t.x0 = true; t.what0 = "a name or label, not an amount"; }
+      else if (/\b(grade|room|page|bus|number|no\.|#|chapter|level|aged?|route|channel|floor|apartment|lane|locker|seat|gate|track|row|warehouse|dock|bay|terminal|building|aisle|platform|zone|sector|hangar|pier|berth|depot|suite|ward|exit|highway|interstate|model|version|phase|station|plant)\s*$/.test(t.before) && !/^\s*(of|in|more|times)\b/.test(t.after)) { t.x0 = true; t.what0 = "a name or label, not an amount"; }
       else if (isInt(t.v) && t.v.n >= 1900n && t.v.n <= 2099n && /\b(in|since|year)\s*$/.test(t.before) && !t.unit) { t.x0 = true; t.what0 = "a year"; }
+    });
+    // "The building has 3 floors." in a story about something else: one number, about a thing the story never mentions
+    // again, with no word saying it joins in — it isn't needed
+    if (!/\b(altogether|in all|in total|combined|all together)\b/.test(A.Q)) A.toks.forEach(function(t){
+      if (t.k !== "n" || t.x0 || t.inQ || !t.head || t.twice || A.toks.some(function(u){ return u !== t && u.s === t.s; })) return;
+      var s = A.sents[t.s], st = A.L.slice(s.i, s.end), w = singular(t.head).replace(/[^a-z]/g, "");
+      if (!w || /^(?:mm|cm|m|km|in|inch|inches|ft|foot|feet|yds?|yards?|mi|miles?|meters?|metres?|kilometers?|centimeters?|pounds?|lbs?|kg|grams?|g|ounces?|oz|liters?|gallons?|cups?|degrees?|points?|dollars?|cents?|hours?|minutes?|seconds?|days?|weeks?|months?|years?|mph)$/.test(t.unit.split(" ")[0])) return;
+      if (/\b(more|less|fewer|than|each|every|per|times|twice|half|of|left|rest|apiece|another|again|total|altogether|in all|same|number|consecutive|perimeter|area|label)\b/.test(st) || PLUSV.test(st) || MINUSV.test(st)) return;
+      if (new RegExp("\\b" + w + "(?:e?s)?\\b").test(A.L.slice(0, s.i) + " " + A.L.slice(s.end))) return;
+      if (t.s === 0 || A.toks.filter(function(u){ return u !== t && !u.x0 && u.k !== "t"; }).length < 2) return;     // the first sentence sets the story up
+      t.x0 = true; t.what0 = "about something the question doesn’t ask about";
     });
     A.use = A.toks.filter(function(t){ return !t.x0; });
     // a sentence that only holds numbers the story doesn't need says nothing about what happens: blank it out
@@ -3154,6 +3397,18 @@
         A.NQ = A.L.slice(0, A.q[0]) + " " + A.L.slice(A.q[1]);
       }
     });
+    // the question with its setup inside it: "How many beads does Felix have now if he had 45 and won 10 more?" or
+    // "If 5 apples cost $45, how much do 13 cost?" — the "if" part tells the story
+    var im = /^(?:if|when|given that|suppose)\s[^?]*?,\s*(?=(?:how|what|find|which)\b)/.exec(A.Q) || /(?:,\s*|\s)(?:if|when|given that|after|since)\s/.exec(A.Q);
+    if (im && A.toks.every(function(t){ return t.inQ || t.x0; })){
+      var c0 = A.q[0] + im.index, c1 = im.index === 0 ? A.q[0] + im[0].length : A.q[1];
+      if (A.toks.some(function(t){ return !t.x0 && t.i >= c0 && t.i < c1; })){
+        A.NQ = A.L.slice(0, A.q[0]) + " " + A.L.slice(c0, c1) + " " + A.L.slice(A.q[1]);
+        A.Q = im.index === 0 ? A.L.slice(c1, A.q[1]) : A.L.slice(A.q[0], c0) + "?";
+        A.toks.forEach(function(t){ if (t.i >= c0 && t.i < c1) t.inQ = false; });
+        A.cut = c0;
+      }
+    }
     // the thing asked about: "How many red marbles …" → red marbles
     var qm = /\bhow (?:many|much)\s+(?:more\s+|fewer\s+|less\s+|times\s+)?((?:[a-z][a-z'-]*\s*){1,3})/.exec(A.Q);
     A.qn = "";
@@ -3173,7 +3428,7 @@
   var ALLQ = /\b(altogether|in all|total|together|combined|both|in total|all together)\b/;
   function sorted(ts){ return ts.slice().sort(function(x, y){ return cmpR(x.v, y.v); }); }
   function base(type, A, extra){
-    var P = { type:type, text:A.D, rw:{}, rd:{ D:A.D, toks:A.toks, q:A.q } };
+    var P = { type:type, text:A.D0 || A.D, rw:{}, rd:{ D:A.D0 || A.D, toks:A.toks, q:A.q } };
     if (A.names[0]) P.name = A.names[0];
     if (A.names[1]) P.name2 = A.names[1];
     for (var k in extra) P[k] = extra[k];
@@ -3223,7 +3478,9 @@
     fraction:function(A){
       var f = A.use.filter(function(t){ return t.k === "f" && t.fn; })[0], o = A.use.filter(function(t){ return t !== f && (t.k === "$" || t.k === "n"); })[0];
       if (!f || !o) return null;
-      var wholeK = o.i > f.i && (/\b(that is|that's|which is|this is|it is|is|was|=)\s*\$?$/.test(o.before) || /^(that|this|which|it)\b/.test(A.L.slice(A.sents[o.s].i, A.sents[o.s].end)))
+      // "6 students are in the band. That is 1/3 of the sixth graders." — the number is the part, and the whole is asked
+      var fS = A.L.slice(A.sents[f.s].i, f.i), partFirst = o.i < f.i && /^\s*of\b/.test(f.after) && (/^(?:that|this|which|it|these|they)\s+(?:is|was|are|were|makes?|equals?)\s+(?:only\s+|just\s+|exactly\s+)?$/.test(fS) || /,\s*(?:which|that) (?:is|was|are|were)\s*$/.test(A.L.slice(o.end, f.i)));
+      var wholeK = partFirst || o.i > f.i && (/\b(that is|that's|which is|this is|it is|is|was|=)\s*\$?$/.test(o.before) || /^(that|this|which|it)\b/.test(A.L.slice(A.sents[o.s].i, A.sents[o.s].end)))
         || /\b(whole|in all|altogether|to start|at first|in the (class|book|bag|box|jar|school|group)|how long was|how much .* (have|had|did))\b/.test(A.Q) && o.i > f.i;
       var rest = /\b(not|n't|left|remain|remaining|rest|others|still|other)\b/.test(A.Q);
       var P = base("fraction", A, { kind:wholeK ? "whole" : rest ? "rest" : "part", fn:f.fn, fd:f.fd });
@@ -3269,10 +3526,13 @@
       }
       if (!f || !rest.length) return null;
       var r = rest[0], fs = A.sents[f.synthetic ? sentOf(A.sents, { i:f.i }) : f.s], fsT = A.D.slice(fs.i, fs.end), that = /^(that|this|which|it)\b/i.test(fsT) || /\b(that|which) is\s*$/i.test(A.D.slice(fs.i, f.i));
-      var asM = /\bas\s+(?:many|much|long|tall|far|big|heavy|old|wide|high|fast)\s+(?:\w+\s+)?as\s+([A-Z][a-z]+(?:'s)?)/.exec(fsT), obj = asM ? asM[1].replace(/'s$/, "") : null;
+      var asM = /\bas\s+(?:many|much|long|tall|far|big|heavy|old|wide|high|fast)\s+(?:\w+\s+)?as\s+((?:(?:Mr|Mrs|Ms|Dr|Miss)\.\s+)?[A-Z][a-z]+(?:'s)?)/.exec(fsT), obj = asM ? asM[1].replace(/'s$/, "") : null;
       var subj = that ? ownerBefore(A.D, A.sents, r, A.names) : (A.names.filter(function(n){ return fsT.indexOf(n) >= 0 && n !== obj; })[0] || null);
       var holder = ownerBefore(A.D, A.sents, r, A.names);
       var objHolds = that ? false : (holder && obj ? holder === obj : true);
+      // no capital names ("leo has 3 times as many stamps as isabella. leo has 9 stamps."): the same first word owns both
+      var fw0 = /^\s*([a-z]+)/i.exec(fsT), rw0 = /^\s*([a-z]+)/i.exec(A.D.slice(A.sents[r.s].i, A.sents[r.s].end));
+      if (!A.names.length && !that && fw0 && rw0 && A.sents[r.s] !== fs && fw0[1].toLowerCase() === rw0[1].toLowerCase() && !/^(the|a|an|it|he|she|they|there)$/i.test(fw0[1])) objHolds = false;
       var P = base(total ? "twostep" : "times", A, {});
       if (total){ if (!objHolds) return null; P.kind = "timestotal"; P.a = r.v; P.b = f.v; P.name = obj || holder || A.names[0]; P.name2 = subj || A.names.filter(function(n){ return n !== P.name; })[0]; }
       else if (objHolds){ P.a = r.v; P.b = f.v; P.name = obj || holder || P.name; P.name2 = subj || A.names.filter(function(n){ return n !== P.name; })[0]; }
@@ -3282,8 +3542,15 @@
       return P;
     },
     compare:function(A, total){
-      var ns = A.use.filter(function(t){ return t.k === "n" || t.k === "$"; });
+      var ns = A.use.filter(function(t){ return t.k === "n" || t.k === "$"; }), hq = /\b(hours|minutes)\b/.exec(A.Q);
+      // "logged 131 hours … 120 hours. How many more hours?": lengths of time compared as numbers of hours (or minutes)
+      if (ns.length < 2 && hq && !A.use.some(function(t){ return t.k === "t"; })) ns = A.use.filter(function(t){ return t.k === "n" || t.k === "$" || t.k === "dur"; }).map(function(t){
+        if (t.k !== "dur") return t;
+        var o = {}; for (var k in t) o[k] = t[k];
+        o.k = "n"; o.v = hq[1] === "minutes" ? t.v : dvd(t.v, R60); o.unit = hq[1]; o.head = hq[1]; o.after = t.after.replace(/^\s*(?:hours?|minutes?)/, ""); return o;
+      });
       if (ns.length < 2) return null;
+      if (ns.filter(function(t){ return !t.inQ; }).length === 2) ns = ns.filter(function(t){ return !t.inQ; });      // "the difference between the two choirs?" — the two numbers are in the story
       var mz = measureOf(A, ns), it = mz ? "" : itemOf(A, ns), rw = { it:it, measure:!!mz, u:mz ? UNIT_SHORT[mz.u] || mz.u : "" };
       if (!total && (/\bhow (many|much) (more|fewer|less|taller|shorter|longer|older|younger|heavier|lighter|farther|further|higher|lower|bigger|smaller|greater)\b/.test(A.Q) || /\bdifference\b/.test(A.Q))){
         var two = sorted(ns.slice(0, 2)), P0 = base("compare", A, { a:two[0].v, b:two[1].v, rw:rw });
@@ -3295,7 +3562,7 @@
       var rel = ns.filter(function(t){ return relWord(A, t); })[0];
       if (!rel) return null;
       var dir = relWord(A, rel), r = ns.filter(function(t){ return t !== rel; })[0], rs = A.D.slice(A.sents[rel.s].i, A.sents[rel.s].end);
-      var thanM = /\bthan\s+(?:the\s+)?([A-Z][a-z]+)/.exec(A.D.slice(rel.end, A.sents[rel.s].end)), obj = thanM ? thanM[1] : null;
+      var thanM = /\bthan\s+(?:the\s+)?((?:(?:Mr|Mrs|Ms|Dr|Miss)\.\s+)?[A-Z][a-z]+)/.exec(A.D.slice(rel.end, A.sents[rel.s].end)), obj = thanM ? thanM[1] : null;
       var that = /^(that|this|which|it)\b/i.test(rs) || /\b(that|which) is\s*$/i.test(A.D.slice(A.sents[rel.s].i, rel.i));
       var holder = ownerBefore(A.D, A.sents, r, A.names), subj = that ? holder : ownerBefore(A.D, A.sents, rel, A.names);
       var subjHolds = that || (holder && subj && holder === subj);
@@ -3353,7 +3620,10 @@
                   function(t){ return /\b(one|a)\s+(?:[a-z]+\s+){0,2}(holds?|seats?|fits?|carries|can hold|can seat|costs?|needs?|uses?)\s*\$?$/.test(t.before); }];
       var sizeT = null;
       cues.forEach(function(cf){ if (!sizeT) sizeT = ns.filter(cf)[0] || null; });
-      if (!sizeT) sizeT = sorted(ns)[0];
+      if (!sizeT){
+        if (!/\b(need|needs|needed|full|whole|complete|make|fill|pack|cut|form|buy|get)\b/.test(A.Q)) return null;     // "353 boxes are shipped out — how many remain?" isn't about groups
+        sizeT = sorted(ns)[0];
+      }
       var tot = ns.filter(function(t){ return t !== sizeT; })[0];
       if (!isInt(tot.v) || !isInt(sizeT.v) || sgn(sizeT.v) <= 0) return null;
       var kind = /\beach\b/.test(A.Q) && /\bleft ?over\b|\bremain|\bleft\b/.test(A.Q) ? "both" : /\bleft ?over\b|\bremain|\bleft\b/.test(A.Q) ? "left" : /\b(need|needs|needed|does it take|will it take|required|so that|so everyone|to (carry|hold|fit|pack|seat|take) (all|every))\b/.test(A.Q) ? "up" : "down";
@@ -3375,8 +3645,16 @@
         if (P.rw.it && !/s$/.test(P.rw.it.split(" ")[0]) && !/ of /.test(P.rw.it)) P.rw.it = plural(P.rw.it);
         return P;
       }
+      // so much per hour, for so many hours: "travels at 58 miles per hour. How far in 6 hours?" — equal groups
+      var rq = A.use.filter(function(t){ return (t.k === "n" || t.k === "$") && !t.inQ && /^\s*(?:(?:[a-z]+\s+){0,2}?(?:per|an?|each|every)\s+(hour|minute)\b|(mph|km\/h|kph)\b)/.test(t.after); }), dq = ds.filter(function(t){ return t.inQ; });
+      if (rq.length === 1 && dq.length === 1 && ns.length + ms.length === 1 && /\bhow (?:far|many|much)\b/.test(A.Q)){
+        var rm0 = /^\s*(?:((?:[a-z]+\s+){0,2}?)(?:per|an?|each|every)\s+(hour|minute)\b|(mph|km\/h|kph)\b)/.exec(rq[0].after), hr = rm0[3] || rm0[2] === "hour";
+        var Pg = base("groups", A, { kind:rq[0].k === "$" ? "money" : "count", a:hr ? dq[0].num && dq[0].tu === "hours" ? dq[0].num : dvd(dq[0].v, R60) : dq[0].v, b:rq[0].v });
+        Pg.rw = { g:hr ? "hours" : "minutes", it:rm0[3] ? (rm0[3] === "mph" ? "miles" : "kilometers") : (rm0[1] || "").trim() || (rq[0].k === "$" ? "" : "things"), pr:"in" };
+        return Pg;
+      }
       // per hour / per minute: an amount in a length of time
-      var tq = ds.filter(function(t){ return !t.inQ; })[0], amt = ns.filter(function(t){ return !t.inQ; })[0];
+      var tq = ds.filter(function(t){ return !t.inQ; })[0], amt = ns.filter(function(t){ return !t.inQ; })[0] || ms.filter(function(t){ return !t.inQ; })[0];
       if (tq && amt){
         var tu = tq.tu === "minutes" ? "minutes" : "hours", per = base("rate", A, { kind:"per", a:tu === "minutes" ? tq.num : tq.num || dvd(tq.v, R60), b:amt.v });
         var nq = ds.filter(function(t){ return t.inQ; })[0] || ns.filter(function(t){ return t.inQ; })[0];
@@ -3392,7 +3670,12 @@
     },
     groups:function(A){
       var ns = A.use.filter(function(t){ return t.k === "n" || t.k === "$"; });
-      if (ns.length !== 2) return null;
+      if (ns.length === 1 && ns[0].dz && /\bhow many\b/.test(A.Q)){            // "How many eggs are in 9 dozen?"
+        var Pd = base("groups", A, { kind:"count", a:ns[0].dz, b:R(12) });
+        Pd.rw = { g:"dozens", it:A.qn || "things", pr:"in" };
+        return Pd;
+      }
+      if (ns.length !== 2 || /\b(left|remain|remaining|still)\b/.test(A.Q) && !/\b(each|every|per|apiece|equally|evenly)\b/.test(A.L)) return null;
       var em = /\b(?:each|every|per)\s+([a-z]+)/.exec(A.Q);
       if (em && !ALLQ.test(A.Q)){
         var en = singular(em[1]), gT = ns.filter(function(t){ return t.k === "n" && t.unit && t.unit.split(" ").some(function(w){ return singular(w) === en; }); })[0];
@@ -3433,7 +3716,7 @@
       var contT = ns.filter(function(t){ return CONT.test(t.head) || /^(days?|weeks?|months?|years?)$/.test(t.head) && /\b(for|in|over)\s*$/.test(t.before); })[0];
       // the size of each group, strongest cue first ("9 in each box" beats "a baker has 72")
       var eachCues = [function(t){ return /^\s*(?:[a-z]+\s+){0,2}(in|on|per|for)\s+(each|every|a|one)\b/.test(t.after) || /^\s*(?:[a-z]+\s+){0,2}(each|apiece|a day|a week|per day|every day|each day)\b/.test(t.after); },
-                      function(t){ return /\b(each|every)\s+(?:[a-z]+\s+){0,2}(has|holds|had|held|gets|got|contains|with|of|is|needs)\s*$/.test(t.before) || /\b(groups?|teams?|bags?|boxes|packs?|rows?|sets?|piles?|stacks?|bundles?|bunches|cartons?|trays?|plates?|jars?) of\s*$/.test(t.before); },
+                      function(t){ return /\b(each|every)\s+(?:[a-z]+\s+){0,2}(has|holds|had|held|gets|got|contains|with|of|is|needs|seats|fits|carries|takes|can hold|can seat)\s*$/.test(t.before) || /\b(groups?|teams?|bags?|boxes|packs?|rows?|sets?|piles?|stacks?|bundles?|bunches|cartons?|trays?|plates?|jars?) of\s*$/.test(t.before); },
                       function(t){ return /\b(a|one)\s+(?:[a-z]+\s+){0,1}(holds|contains|has room for)\s*$/.test(t.before); }];
       var eachT = null;
       eachCues.forEach(function(cf){ if (!eachT) eachT = ns.filter(function(t){ return t !== contT && cf(t); })[0] || null; });
@@ -3446,7 +3729,7 @@
       var P = base("groups", A, { kind:"count" });
       P.rw = { g:gw, it:it || "things", pr:/\b(on)\s+(each|every)\b/.test(A.L) ? "on" : "in" };
       var qEach = /\b(in each|on each|each \w+ get|each get|per|does each|did each|will each|for each|each (friend|person|student|child|kid|team|group|bag|box|plate))\b/.test(A.Q);
-      var qGroups = A.qn && (CONT.test(A.qn.split(" ").pop()) || A.qn === gw);
+      var qGroups = A.qn && (CONT.test(A.qn.split(" ").pop()) || A.qn === gw) && !(eachT.unit && singular(eachT.unit.split(" ")[0]) === singular(A.qn.split(" ").pop()));
       if (qEach){ P.a = contT.v; P.c = eachT.v; return P; }
       if (qGroups && !/\bin all|altogether|total\b/.test(A.Q)){ P.b = eachT.v; P.c = contT.v; P.rw.g = A.qn.split(" ").pop(); return P; }
       P.a = contT.v; P.b = eachT.v; return P;
@@ -3479,11 +3762,22 @@
       }
       if (ns.length !== 3 || /\b(at first|to start|at the start|in the beginning|before|originally|to begin with)\b/.test(A.Q)) return null;
       var ops = "", vp = "got", vm = "gave away";
+      // "9 boxes … shared by 4 students … 11 crayons in each": two different kinds of groups aren't added and taken away
+      var hds = ns.filter(function(t){ return CONT.test(t.head); }).map(function(t){ return singular(t.head); });
+      if (hds.length >= 2 && hds.some(function(h){ return h !== hds[0]; })) return null;
+      // a number about a different thing from the rest and from the question ("… 45 more apples. The building has 3 floors.")
+      var qh = singular((A.qn || "").split(" ").pop() || ""), hd = function(t){ return t.head && STOPW.indexOf(t.head) < 0 && !/^(more|them|left)$/.test(t.head) ? singular(t.head) : ""; };
+      if (qh && ns.some(function(t){ var h = hd(t); return h && h !== qh && !ns.some(function(u){ return u !== t && hd(u) === h; }) && ns.filter(function(u){ return hd(u) === qh; }).length >= 1; })) return null;
       for (var k = 1; k < 3; k++){
         var clause = A.L.slice(Math.max(ns[k - 1].end, A.sents[ns[k].s].i), ns[k].end + 22);
         clause = clause.replace(/^\s*(?:[a-z]+\s+)?(more|of them)\b/, "");
+        // "15 got off and 14 got on": the verb right after a number is that number's own
+        var own = /^\s*(?:(?:passengers?|people|of them|more|students?|kids?|children)\s+)?(got off|got on|get off|get on|left|joined|arrived|came|went home|flew away|ran away|were added|were sold|broke|popped)\b/.exec(A.L.slice(ns[k].end, ns[k].end + 30));
+        if (own) clause = own[0];
+        clause = plusPassive(clause);
         var mv = MINUSV.exec(clause), pv = PLUSV.exec(clause);
-        var minus = mv && (!pv || mv.index <= pv.index) && !/\bgave (her|him|them|me|us)\b/.test(clause);
+        if (!mv && !pv && !ALLQ.test(A.Q)) return null;            // no word says what happened to this number
+        var minus = mv && (!pv || mv.index <= pv.index) && !/\b(gave|sent|sends|gives) (her|him|them|me|us)\b/.test(clause);
         ops += minus ? "-" : "+";
         if (minus) vm = mv[1]; else if (pv && pv[1] !== "more" && pv[1] !== "another") vp = pv[1];
       }
@@ -3495,19 +3789,22 @@
       var ns = A.use.filter(function(t){ return t.k === "n" || t.k === "$"; });
       if (ns.length !== 2) return null;
       var resT = ns.filter(function(t){
-        var s = A.sents[t.s], pre = A.L.slice(s.i, t.i);
-        return /\b(now|still|in the end|at the end|ends? up|ended up|left with|after that|remain)\b/.test(pre) || /^\s*(?:[a-z]+\s+){0,2}?(left|remaining|now)\b/.test(t.after);
+        var s = A.sents[t.s], pre = A.L.slice(t.s === A.qi && !t.inQ && A.cut ? A.cut : s.i, t.i);
+        return /\b(now|still|in the end|at the end|ends? up|ended up|left with|after that|remain)\b/.test(pre) || /^\s*(?:[a-z]+\s+){0,2}?(left|remaining|now)\b/.test(t.after)
+          || /\b(?:some|a few|several)(?: more)?\b[^.?!]*,\s*(?:[a-z]+\s+){0,2}?(?:has|have|had|is|are|was|were)\s*$/.test(pre);    // "After a friend gave him some more, he has 51"
       })[0];
       var startQ = /\b(at first|to start( with)?|at the start|in the beginning|at the beginning|before|originally|to begin with|start(ed)? (out )?with|in the first place|had at first)\b/.test(A.Q);
-      var sep = MINUSV.test(A.NQ) || /\b(left|remain|remaining)\b/.test(A.Q) && !PLUSV.test(A.NQ);
-      var moreJoin = /\b(\d+|some|a few|several)\s+more\b/.test(A.NQ) && !/\bmore\s+(?:[a-z]+\s+)?than\b/.test(A.NQ);
+      var NQ = plusPassive(A.NQ);
+      var sep = MINUSV.test(NQ) || /\b(left|remain|remaining)\b/.test(A.Q) && !PLUSV.test(NQ);
+      var moreJoin = (/\b(some|a few|several)\s+more\b/.test(NQ) || ns.some(function(t){ return !t.inQ && /^\s*more\b/.test(t.after); })) && !/\bmore\s+(?:[a-z]+\s+)?than\b/.test(NQ);
       if (moreJoin) sep = false;
-      var join = (PLUSV.test(A.NQ) || moreJoin) && !sep;
-      if (/\b(left|remain|remaining)\b/.test(A.Q) && MINUSV.test(A.NQ)) sep = true;
+      var join = (PLUSV.test(NQ) || moreJoin) && !sep;
+      if (/\b(left|remain|remaining)\b/.test(A.Q) && MINUSV.test(NQ)) sep = true;
+      if (ALLQ.test(A.Q) && MINUSV.test(A.Q) && !/\b(left|remain|remaining)\b/.test(A.Q)) sep = join = false;     // "sold 48 muffins and 36 bagels — how many did it sell in all?"
       var rest = /\b(the rest|the others|the remaining|others are|rest are)\b/.test(A.L);
       var it = itemOf(A, ns), type = rest && !join ? "parts" : sep ? "separate" : join ? "join" : "parts";
       var P = base(type, A, {});
-      var V = (MINUSV.exec(A.NQ) || [])[1], Vp = (PLUSV.exec(A.NQ) || [])[1];
+      var V = (MINUSV.exec(NQ) || [])[1], Vp = (PLUSV.exec(NQ) || [])[1];
       if (type === "parts"){
         var srt = sorted(ns), mod = function(t){ var w = (t.unit || "").split(" "); return w.length > 1 ? w[0] : ""; };
         var qmod = A.qn && A.qn.split(" ").length > 1 ? A.qn.split(" ")[0] : "";
@@ -3588,16 +3885,19 @@
     }
     if ((m = /^(\d[\d.\/]*) times (.+)$/.exec(s))){ k = pzNum(m[1]); A2 = sub2(m[2]); if (!k || !A2) return null; return out(lxMul(A2.lx, k), nt(k) + par(A2), true, s); }
     if ((m = /^(\d+\/\d+) of (.+)$/.exec(s))){ k = pzNum(m[1]); A2 = sub2(m[2]); if (!k || !A2) return null; return out(lxMul(A2.lx, k), nt(k) + par(A2), true, s); }
+    // "its double", "its triple", "half of it": the same number, doubled
+    if ((m = /^(?:its|the number's) (double|triple|half|square root)$/.exec(s)) && m[1] !== "square root"){ k = { "double":R(2), triple:R(3), half:R(1, 2) }[m[1]]; return out(LX(k, ZERO), isInt(k) ? nt(k) + v : v + "/2", true, s); }
     return null;
   }
   // "think of a number, double it and add 5: the answer is 23" — a list of steps done to the number
   function pzSequence(s, v, pcs){
-    var m = /(?:think of|thinking of|picks?|chooses?|takes?|start with|starts? with) (?:a|some) number[,.]?\s*(.*)$/.exec(s);
+    var m = /(?:think of|thinks of|thought of|thinking of|picks?|picked|chooses?|chose|takes?|start with|starts? with) (?:a|some) number[,.]?\s*(.*)$/.exec(s);
     if (!m) return null;
     var rest = m[1].replace(/\b(what|which|find)\b.*$/, ""), fre = /(?:,|\.|and|then)?\s*(?:to get|you get|i get|we get|they get|he gets|she gets|gets?|the answer is|the result is|ends? up with|it (?:is|equals|makes|gives)|equals|makes|is|gives)\s+(\$?\d+(?:\.\d+)?(?:\/\d+)?)/g, fin = null, fm;
     while ((fm = fre.exec(rest))) fin = fm;
     if (!fin) return null;
-    var c = pzNum(fin[1]), ops = rest.slice(0, fin.index).split(/,|\.|\band then\b|\bthen\b|\band\b/).map(function(x){ return x.trim().replace(/^(?:if|when|first|next|last|finally)\s+/, "").replace(/^(?:i|you|he|she|they|we)\s+/, "").trim(); }).filter(Boolean);
+    var c = pzNum(fin[1]), ops = rest.slice(0, fin.index).split(/,|\.|\band then\b|\bthen\b|\band\b/).map(function(x){ return x.trim().replace(/^(?:if|when|first|next|last|finally)\s+/, "").replace(/^(?:i|you|he|she|they|we)\s+/, "").trim(); })
+      .filter(function(x){ return x && /\d|doubl|tripl|halve|multipl|divide|add|subtract|plus|minus|times|take/.test(x); });       // a sentence about something else isn't a step
     if (!c || !ops.length) return null;
     var lx = LX(ONE, ZERO), w = v, atom = true;
     pcs.push(["a number", v, lx]);
@@ -3617,8 +3917,14 @@
     return { L:lx, R:LX(ZERO, c), w:w + " = " + nt(c) };
   }
   // a number puzzle, as an equation
+  var PZFR = { half:2, halves:2, third:3, thirds:3, quarter:4, quarters:4, fourth:4, fourths:4, fifth:5, fifths:5, sixth:6, sixths:6, eighth:8, eighths:8, tenth:10, tenths:10 };
   function readPuzzle(D){
-    var t = numify(D.toLowerCase()).replace(/[“”"]/g, ""), v = "n", pcs = [];
+    // fraction words as fractions: "three fourths of a number" → 3/4 of a number
+    var t0 = D.toLowerCase().replace(/\b(a|one|two|three|four|five|seven|nine)[\s-](halves|half|thirds?|quarters?|fourths?|fifths?|sixths?|eighths?|tenths?)\s+of\b/g, function(m, n, d){ return (n === "a" ? 1 : NUMW[n]) + "/" + PZFR[d] + " of"; });
+    // "if you multiply a number by 5 and add 10, you get 40" → think of a number, multiply it by 5 …
+    t0 = t0.replace(/\b(?:if|when)\s+(?:you|i|we|he|she|they)\s+(multiply|divide|double|triple|halve)\s+(?:a|some) number\b/, "think of a number, $1 it")
+      .replace(/\b(?:if|when)\s+(?:you|i|we|he|she|they)\s+(add|subtract)\s+(\S+)\s+(?:to|from)\s+(?:a|some) number\b/, "think of a number, $1 $2");
+    var t = numify(t0).replace(/[“”"]/g, "").replace(/\b(?:exactly|just|only)\s+(?=\$?\d)/g, ""), v = "n", pcs = [];
     // passive steps ("if a number is doubled and then 5 is added, the result is 23") → think-of-a-number steps
     if (/\b(?:if|when)\s+(?:a|some) number is (?:doubled|tripled|halved|multiplied|divided|increased|decreased)/.test(t)){
       t = t.replace(/\b(?:if|when)\s+(?:a|some) number is\s+/, "think of a number, ")
@@ -3658,7 +3964,11 @@
     if (eqR(Rr.a, ONE) && !sgn(L.b) && isInt(L.a) && sgn(Rr.b) > 0) return { form:"sides", a:L.a, b:Rr.b };
     return { form:"gen", a:L.a, b:L.b, c:Rr.a, d:Rr.b };
   }
-  var ALGCUE = /\b(a|the|some|one) number\b|\bthink of a number\b|\bthinking of a number\b|\bconsecutive\b|\byears? (older|younger)\b|\btimes as old\b|\btwice as old\b|\bperimeter\b|\b(angles?) of a triangle\b|\btriangle\b.*\bangle\b|\b(cost|costs|charge|charges|pay|be|have|cost them) the same\b|\bsame (amount|cost|price|total)\b|\bhow many of each\b|\bopposite directions\b|\bcatch(es)? up\b|\bround trip\b|\b(original|regular) (price|amount|cost|salary|pay)\b|\bbefore the (raise|discount|sale|increase|cut)\b|\b(dimes|quarters|nickels|pennies)\b|\btwo numbers\b/;
+  var ALGCUE = /\b(a|the|some|one) number\b|\bthink(?:s|ing)? of a number\b|\bthought of a number\b|\bconsecutive\b|\byears? (older|younger)\b|\btimes as old\b|\btwice as old\b|\bperimeter\b|\b(angles?) of a triangle\b|\btriangle\b.*\bangle\b|\bhow many of each\b|\bopposite directions\b|\bcatch(es)? up\b|\bround trip\b|\b(original|regular) (price|amount|cost|salary|pay)\b|\bbefore the (raise|discount|sale|increase|cut)\b|\b(dimes|quarters|nickels|pennies)\b|\btwo numbers\b/;
+  // "cost the same", "be exactly the same", "the totals are equal"
+  var SAMEQ = /\b(?:cost|costs|charge|charges|pay|be|have|cost them|earn|earned|spend|spent|total|save|saved)\s+(?:exactly\s+|just\s+)?the same\b|\bsame (?:amount|cost|price|total|bill)\b|\b(?:costs?|totals?|bills?|prices?|amounts?)\s+(?:are|is|will be|would be|be)\s+(?:exactly\s+)?(?:equal|the same)\b|\bequal\b/;
+  // a story with one of these is an equation story: if it can't be read as one, the page asks instead of guessing
+  var ALGSTRONG = /\b(?:a|the|some|my) number\b(?!\s+of\b)|\bthink(?:s|ing)? of a number\b|\bthought of a number\b|\bconsecutive\b|\b(?:times|twice) as old\b|\bangles? of (?:a|the) triangle\b|\btriangle\b[^.]*\bangles?\b|\b(?:mixture|solution)\b[^.]*%|%[^.]*\b(?:solution|mixture)\b|\banimals?\b[^.?!]*\b(?:\d+|[a-z]+(?:-[a-z]+)?)\s+(?:legs|feet)\b|\bheads\b[^.?!]*\blegs\b/;
   // two movers going opposite ways: "opposite direction(s)", "away from each other", or "eastbound … westbound" (and the
   // like) when the story asks how far apart — compass words alone could be a trip there and back
   function oppositeWays(L){
@@ -3670,33 +3980,144 @@
   // so "pass the ball" or "pass a test" doesn't count)
   function catchingUp(L){
     return /\bcatch(?:es|ing)? up\b|\bcatch(?:es)? (?:him|her|them|it|the (?:first|other|slower))\b|\bovertak(?:e|es|ing|en)\b/.test(L) ||
-      /\bpass(?:es|ing)?\b/.test(L) && /\blater\b/.test(L);
+      /\b(?:pass|passes|passing|reach|reaches)\b/.test(L) && /\blater\b/.test(L);
+  }
+  // two movers heading for each other from a distance apart: "toward each other", "… apart … when will they meet?"
+  function towardEach(L){
+    return /\btowards? (?:each other|one another)\b/.test(L) || /\bapart\b/.test(L) && /\b(?:meet|meets|meeting|pass each other|cross paths)\b/.test(L) && !oppositeWays(L);
+  }
+  // a lead in distance, not time: "30 miles ahead of", "a 20-mile head start"
+  function leadMiles(L){ return /\b\d+(?:\.\d+)?[\s-]?(?:miles?|mi|km|kilometers?)\s+(?:ahead|head start|lead)\b|\bhead start of \d+(?:\.\d+)?\s*(?:miles?|km|kilometers?)\b/.test(L); }
+  // working together: two times for the whole job alone, and a question about both at once (or one alone)
+  var WORKQ = /\b(?:together|both|at the same time|combined|working with|with (?:his|her|their) help|if they work)\b/, ALONE = /\b(?:alone|by (?:him|her|it|them)sel(?:f|ves)|on (?:his|her|its|their) own)\b/;
+  function workTimes(A){ return A.use.filter(function(t){ return t.k === "dur" || t.k === "n" && /^(days?|weeks?)\b/.test(t.unit); }); }
+  function workCue(A){
+    return workTimes(A).length >= 2 && !A.use.some(function(t){ return t.k === "t" || t.k === "$" || t.k === "%"; }) && /\bhow (?:long|many (?:hours|minutes|days|weeks))\b|\bhow much time\b/.test(A.Q)
+      && (WORKQ.test(A.Q) && /\b(?:can|could|takes?|took|needs?|would take|alone)\b/.test(A.NQ) || ALONE.test(A.Q) && WORKQ.test(A.NQ));
+  }
+  function pcs(A){ return A.use.filter(function(t, i, all){ return t.k === "%" && !all.some(function(u, j){ return j < i && u.k === "%" && eqR(u.v, t.v); }); }); }    // each percent once
+  function mixCue(A){
+    var ms = A.use.filter(function(t){ return t.k === "$" && /^\s*(?:per|a|an|each|for each)\s+(?:pound|lb|kilogram|kg|ounce|oz|liter|litre|gallon|bag|pint|quart|cup)\b/.test(t.after); });
+    return /\b(?:mix|mixed|mixes|mixing|mixture|combine[sd]?|blend(?:ed|s)?)\b/.test(A.L) && /\bhow (?:many|much)\b/.test(A.Q) && (pcs(A).length >= 3 || ms.length >= 3);
+  }
+  function interestCue(A){ return pcs(A).length === 2 && A.use.filter(function(t){ return t.k === "$"; }).length >= 2 && /\b(?:interest|invest(?:s|ed|ing|ment|ments)?|accounts?|bonds?|deposit(?:s|ed)?)\b/.test(A.L); }
+  // a fixed amount plus so much each: "$3 plus $2 per mile", "a $25 fee and $10 a month", "has $60, buys a $15 game and packs at $4 each"
+  var EACHW = /^\s*(?:(?:(?!and\b|but\b|plus\b|while\b)[a-z-]+\s+){0,2}?(?:each|apiece|a piece|per|for each|every)|an?(?=\s+[a-z]))\s*([a-z]*)/;
+  function feeRead(A){
+    var ns = A.use.filter(function(t){ return (t.k === "$" || t.k === "n") && !t.twice; });
+    if (ns.length !== 3 || A.use.some(function(t){ return t.k === "%" || t.k === "t" || t.k === "f" || t.twice; }) || /\b(?:a|the|some) number\b(?!\s+of\b)/.test(A.L)) return null;
+    var rt = ns.filter(function(t){ return !t.inQ && (EACHW.test(t.after) && !/^\s*(?:[a-z-]+\s+){0,2}?an?\s+(?:fee|total|bill|budget|goal|limit)\b/.test(t.after) || /\b(?:each|per|every)\s+(?:[a-z]+\s+){1,2}(?:costs?|is|weighs?|earns?|pays?|for)\s*\$?$/.test(t.before)); });
+    // what one "each" counts: "per mile" → mile; "pairs of socks that cost $4 each" → pairs, socks
+    var qw = A.Q.replace(/[?.!,]/g, " ").split(/\s+/).map(singular);
+    var candOf = function(r){
+      var em = EACHW.exec(r.after), cand = [];
+      if (em && em[1] && STOPW.indexOf(em[1]) < 0) cand.push(em[1]);
+      else (/((?:[a-z-]+\s+){1,4})(?:that|which|at|for)?\s*(?:costs?|cost|weighs?|is|are)?\s*\$?$/.exec(r.before) || ["", ""])[1].trim().split(/\s+/).forEach(function(w){ if (w && STOPW.indexOf(w) < 0) cand.push(w); });
+      return { em:em, cand:cand, hit:cand.filter(function(w){ return qw.indexOf(singular(w)) >= 0; })[0] };
+    };
+    var hits = rt.filter(function(t){ return candOf(t).hit; });
+    var r = hits.length === 1 ? hits[0] : rt.length === 1 ? rt[0] : null;      // "$40 a month plus $6 for each gigabyte … how many gigabytes": the one asked about
+    if (!r) return null;
+    var rest = sorted(ns.filter(function(t){ return t !== r; }));
+    if (rest[0].inQ) return null;
+    var co = candOf(r), em = co.em, hit = co.hit;
+    var longQ = /\bhow (?:long|far)\b|\bhow many (?:hours|minutes|months|weeks|days|years|miles|visits)\b|\bfor how many\b/.test(A.Q);
+    var supQ = /\b(?:maximum|greatest|largest|most|fewest|least|smallest|minimum) number of ([a-z]+)/.exec(A.Q);    // "the maximum number of units"
+    if (!hit && !longQ && !supQ) return null;
+    var unit = hit ? plural(singular(hit)) : supQ ? supQ[1] : (/\bhow many ([a-z]+)/.exec(A.Q) || [])[1] || (em && em[1] ? plural(em[1]) : "times");
+    if (unit === "far") unit = "miles";
+    var a = rest[0], c = rest[1], money = r.k === "$" || c.k === "$";
+    var most = /\b(?:at most|no more than|not more than|maximum|greatest|largest|most|up to|can afford|afford|or less|or fewer|not exceed|without going over|budget|limit|capacity)\b/.test(A.L) || /\bhow many\b[^?]*\b(?:can|could)\b/.test(A.Q);
+    var least = /\b(?:at least|no less than|not less than|minimum|fewest|least|smallest|or more)\b/.test(A.L);
+    var n = dvd(sub(c.v, a.v), r.v);
+    if (sgn(n) <= 0) return null;
+    var kind = least ? "least" : most && (!isInt(n) || /\b(?:at most|no more than|not more than|maximum|greatest|largest|most|up to|afford|or less|or fewer|exceed|budget|limit|capacity)\b/.test(A.L)) ? "most" : null;
+    return { a:a.v, b:r.v, c:c.v, unit:unit, money:money, ineq:kind, per:hit && em && em[1] && STOPW.indexOf(em[1]) < 0 ? em[1] : singular(unit) };
+  }
+  // a proportion: two amounts that go together, and a new amount of one of them
+  function propRead(A){
+    if (A.use.some(function(t){ return t.k !== "n"; })) return null;
+    var ns = A.use, s = ns.filter(function(t){ return !t.inQ; }), q = ns.filter(function(t){ return t.inQ; });
+    if (ns.length !== 3 || s.length !== 2 || q.length !== 1 || s[0].s !== s[1].s) return null;
+    var u = function(t){ return singular((t.unit || "").split(" ")[0] || ""); }, uq = u(q[0]);
+    var i = u(s[0]) === uq ? 0 : u(s[1]) === uq ? 1 : -1;
+    if (i < 0 || !uq || u(s[0]) === u(s[1])) return null;
+    var other = s[1 - i], ow = (other.unit || "").split(" ")[0];
+    if (!ow || !new RegExp("\\bhow (?:many|much|far|long)\\b[^?]*\\b" + singular(ow) + "s?\\b").test(A.Q) && !(/^(miles?|km|kilometers?|meters?|feet)$/.test(ow) && /\bhow far\b/.test(A.Q))) return null;
+    var full = function(t){ var w = (t.unit || "").split(" "); return w.length > 1 && /^(of|square)$/.test(w[0]) ? w.slice(0, 2).join(" ") : w[0]; };
+    return { a:s[i].v, b:other.v, c:q[0].v, u1:full(s[i]) || "units", u2:/^square$/.test(ow) ? (other.unit || "").split(" ").slice(0, 2).join(" ") : ow };
+  }
+  // a rectangle's length told with its width, and the distance around: "10 m longer than it is wide, and the fence around it …"
+  function PERIMQ(L){
+    return /\bperimeter\b|\bfenc|\baround\b|\bborder\b|\btrim\b|\bframe\b|\bedging\b/.test(L) && /\b(?:length|long|longer)\b/.test(L)
+      && /\b(?:longer|wider|narrower|shorter) than (?:it is )?(?:wide|long)\b|\b(?:more|less) than (?:twice |\w+ times )?(?:the|its) width\b|\b(?:twice|times) (?:as long as|the width|its width)\b|\bwidth is\b/.test(L);
+  }
+  // two prices each, a count and a total: "Premium seats cost $23 each and standard seats $5 each. 280 sold for $4442."
+  function ticketCue(A){
+    var ms = A.use.filter(function(t){ return t.k === "$"; });
+    return ms.length >= 3 && A.use.some(function(t){ return t.k === "n"; }) && /\bhow many\b/.test(A.Q) && ms.filter(function(t){ return /^\s*(?:each|apiece|a piece|per|a (?:ticket|seat|pass))\b/.test(t.after) || /\bcosts?\s*$/.test(t.before); }).length >= 2;
+  }
+  // two speeds and a trip: there and back, opposite ways, toward each other, catching up — or a time to find
+  function motionCue(A){
+    var L = A.L, sp = A.use.filter(function(t){ return /^\s*(mph|km\/h|kph|miles? (per|an|a) hour|kilometers? (per|an|a) hour)/.test(t.after); }).length;
+    return sp >= 2 && (oppositeWays(L) || catchingUp(L) || towardEach(L) || /\b(round trip|back|home|returns?|whole trip)\b/.test(L) || /\bhow (?:long|many (?:hours|minutes))\b|\bwhen\b|\bmeet\b|\bapart\b|\bcatch\b|\bovertake\b/.test(A.Q));
+  }
+  function algCue(A){
+    var L = A.L;
+    if (ticketCue(A) || motionCue(A)) return true;
+    return ALGCUE.test(L) || ALGSTRONG.test(L) || oppositeWays(L) || catchingUp(L) || towardEach(L) || leadMiles(numify(L)) || SAMEQ.test(L) && /\b(?:per|a|an|each|every)\s+[a-z]+\b/.test(L)
+      || workCue(A) || mixCue(A) || interestCue(A) || !!feeRead(A) || !!propRead(A) || PERIMQ(L);
   }
   var COINV = { pennies:1, penny:1, nickels:5, nickel:5, dimes:10, dime:10, quarters:25, quarter:25 };
   ASSIGN.algebra = function(A){
-    var L = A.L, Q = A.Q, ns = A.use.filter(function(t){ return (t.k === "n" || t.k === "$") && !/^\s*(?:of the )?(numbers?|integers?)\b/.test(t.after); }), ms = A.use.filter(function(t){ return t.k === "$"; });
+    var L = A.L, LN = numify(L).replace(/\b(?:exactly|just|only)\s+(?=\d)/g, ""), Q = A.Q, ns = A.use.filter(function(t){ return (t.k === "n" || t.k === "$") && !/^\s*(?:of the )?(numbers?|integers?)\b/.test(t.after); }), ms = A.use.filter(function(t){ return t.k === "$"; });
     var P = function(kind, form, extra){ var o = base("algebra", A, { kind:kind, form:form }); for (var k in extra) o[k] = extra[k]; return o; };
     var speed = function(t){ return /^\s*(mph|km\/h|kph|kilometers? (per|an|a) hour|km (per|an|a) hour|miles? (per|an|a) hour|meters? (per|a) second|feet (per|a) second)/.test(t.after); };
+    var tokOf = function(v, list){ return (list || ns).filter(function(t){ return eqR(t.v, R(v)); })[0]; };
+    var KW = function(w, d){ return /twice|double/.test(w) ? R(2) : /triple/.test(w) ? R(3) : /half/.test(w) ? R(1, 2) : R(+d); };
+    var pc = pcs(A);
+    // mixtures: two strengths (or prices) mixed to make an amount of a third
+    if (mixCue(A)){
+      var pct = pc.length >= 3, ks = pct ? pc : ms.filter(function(t){ return /^\s*(?:per|a|an|each|for each)\s+[a-z]+/.test(t.after); });
+      var amtT = A.use.filter(function(t){ return t.k === "n" && /^(liters?|litres?|gallons?|ml|milliliters?|pounds?|lbs?|kilograms?|kg|grams?|ounces?|oz|cups?|quarts?|pints?|tons?)\b/.test(t.unit); })[0];
+      if (ks.length < 3 || !amtT) return null;
+      // the mix to make is the one next to its amount ("20 mL of a 22% solution"); the other two are what's mixed
+      var kf = ks.filter(function(t){ return t.i > amtT.i && t.s === amtT.s && /^\s*(?:[a-z]+\s+){0,3}$/.test(A.L.slice(amtT.end, t.i)); })[0] || ks[ks.length - 1], kk = ks.filter(function(t){ return t !== kf; }), k1 = kk[0], k2 = kk[1];
+      if (cmpR(kf.v, k1.v) === 0 || cmpR(kf.v, k2.v) === 0 || (cmpR(kf.v, k1.v) > 0) === (cmpR(kf.v, k2.v) > 0)) return null;
+      var mxu = amtT.unit.split(" ")[0], mxw = pct ? (/\b(acid|salt|alcohol|sugar|juice|bleach|antifreeze|copper|gold|silver|milk|fat|vinegar)\b/.exec(L) || ["", ""])[1] : (/\b(candy|coffee|nuts|tea|seeds?|granola|cereal|beans|peanuts|cashews|raisins|trail mix|soil|grain)\b/.exec(L) || ["", "mix"])[1];
+      var mp = P("mixture", pct ? "percent" : "price", { a:k1.v, b:k2.v, c:amtT.v, d:kf.v });
+      mp.rw = { u:plural(singular(mxu)), it:mxw };
+      return mp;
+    }
+    // money split between two interest rates
+    if (interestCue(A)){
+      var srt$ = sorted(ms), totT = srt$[srt$.length - 1], incT = ms.filter(function(t){ return t !== totT; }).slice(-1)[0];
+      if (!incT || pc.length !== 2) return null;
+      return P("interest", "split", { a:pc[0].v, b:pc[1].v, c:totT.v, d:incT.v });
+    }
     // percent change backwards
-    var pc = A.use.filter(function(t){ return t.k === "%"; })[0];
-    if (pc && (/\b(original|regular|before|used to|at first|to start)\b/.test(Q) || /\bafter (a|an|the)\b/.test(L) && /\bwhat (was|were|did)\b/.test(Q))){
-      var amt = ns.filter(function(t){ return t !== pc; }).slice(-1)[0];
+    var pc0 = pc[0];
+    if (pc0 && (/\b(original|regular|before|used to|at first|to start)\b/.test(Q) || /\bafter (a|an|the)\b/.test(L) && /\bwhat (was|were|did)\b/.test(Q))){
+      var amt = ns.filter(function(t){ return t !== pc0; }).slice(-1)[0];
       if (!amt) return null;
-      var up = /\b(raise|increase|increased|more|went up|goes up|rose|grew|markup|marked up|higher)\b/.test(L) && !/\b(discount|off|sale|cut|decrease|decreased|less|reduced|lower|dropped|fell)\b/.test(L);
-      var pb = P("percentback", up ? "raise" : "off", { p:pc.v, c:amt.v });
+      var up = /\b(raise|increase|increased|more|went up|goes up|rose|grew|markup|marked up|higher)\b/.test(L) && !/\b(discount|off|sale|cut|decrease|decreased|less|reduced|lower|dropped|fell|down)\b/.test(L);
+      var pb = P("percentback", up ? "raise" : "off", { p:pc0.v, c:amt.v });
       var im = /\b(?:a|an|the)\s+((?:[a-z-]+\s){0,2}?[a-z-]+)\s+(?:costs?|is|sells for|now costs)\b/.exec(A.L);
       pb.rw = /\b(earn|earns|earned|pay|paid|wage|salary|makes)\b/.test(L) && !/\bprice\b/.test(Q) ? { wage:true } : { i1:im ? im[1] : "it" };
       return pb;
     }
     // consecutive numbers
     if (/\bconsecutive\b/.test(L)){
-      var cw = /\b(two|three|four|five|six|2|3|4|5|6)\s+consecutive\b/.exec(L), cnt = cw ? (NUMW[cw[1]] || +cw[1]) : 2;
-      var sumT = ns.filter(function(t){ return !(cw && t.i <= A.L.indexOf(cw[0]) + cw[1].length && t.end >= A.L.indexOf(cw[0])); }).slice(-1)[0];
+      // how many: "three consecutive …", or a count in the same sentence ("labels three crates with consecutive integers")
+      var ci = L.indexOf("consecutive"), cs0 = A.sents[sentOf(A.sents, { i:ci })], cw = /\b(two|three|four|five|six|2|3|4|5|6)\s+consecutive\b/.exec(L);
+      var cntT = cw ? ns.filter(function(t){ return t.i <= ci && t.end >= ci - cw[1].length - 2; })[0] : ns.filter(function(t){ return t.i >= cs0.i && t.i < ci && isInt(t.v) && t.v.n >= 2n && t.v.n <= 6n && /^\s*(?:[a-z-]+\s+){0,2}?(?:[a-z]+)\b/.test(t.after) && !/^\s*(?:more|less|times)\b/.test(t.after); })[0];
+      var cnt = cw ? (NUMW[cw[1]] || +cw[1]) : cntT ? Number(cntT.v.n) : 2;
+      var sumT = ns.filter(function(t){ return t !== cntT; }).slice(-1)[0];
       if (!sumT) return null;
       return P("consecutive", /\beven\b/.test(L) ? "even" : /\bodd\b/.test(L) ? "odd" : "all", { a:R(cnt), c:sumT.v });
     }
-    // two numbers: a sum and a difference
-    if (/\btwo numbers\b/.test(L) && ns.length >= 2){
+    // two numbers: a sum and a difference ("their difference is 12", "one number is 8 more than the other")
+    if (/\btwo numbers\b|\bone number is\b[^.]*\b(?:more|greater|larger|bigger|less|smaller) than\b/.test(L) && ns.length >= 2){
       var sT = ns.filter(function(t){ return /\b(sum|add up to|adds up to|total|together)\b/.test(A.L.slice(Math.max(0, t.i - 30), t.i)) || /\b(add up to|adds up to|sum)\b/.test(A.L.slice(A.sents[t.s].i, t.i)); })[0];
       var dT = ns.filter(function(t){ return t !== sT && (/\b(difference|differ by|more than|bigger than|larger than|greater than)\b/.test(A.L.slice(A.sents[t.s].i, A.sents[t.s].end))); })[0];
       if (!sT) sT = ns.filter(function(t){ return t !== dT; })[0];
@@ -3716,80 +4137,106 @@
       cp.rw = { coins:true, k1:o2[0], k2:o2[1], v1:COINV[o2[0]], v2:COINV[o2[1]] };
       return cp;
     }
-    // two prices, a count and a total: how many of each
-    if (ms.length >= 3 && /\bhow many\b/.test(Q) && (/\bof each\b|\beach kind\b|\beach type\b/.test(Q) || /\band how many\b/.test(Q))){
+    // two prices, a count and a total: how many of each (or of one kind)
+    if (ms.length >= 3 && /\bhow many\b/.test(Q)){
       var tot = sorted(ms)[ms.length - 1], prices = ms.filter(function(t){ return t !== tot; }).slice(0, 2), cnt2 = ns.filter(function(t){ return t.k === "n"; })[0];
-      if (!cnt2 || prices.length < 2) return null;
       var nm = function(t){ var m1 = /\b([a-z-]+)\s+(?:tickets?|pizzas?|seats?|shirts?|books?|plants?|passes|cups?)?\s*(?:cost|costs|are|were|is|for)\s*\$?\s*$/.exec(t.before), m2 = /^\s*(?:each\s+)?(?:for|per)\s+(?:each\s+|an?\s+)?([a-z-]+)/.exec(t.after); return m1 ? m1[1] : m2 ? m2[1] : ""; };
       var k1 = nm(prices[0]) || "first", k2 = nm(prices[1]) || "second";
-      var tp = P("twounknown", "tickets", { a:prices[0].v, b:prices[1].v, c:cnt2.v, d:tot.v });
-      tp.rw = { k1:k1, k2:k2, it:cnt2.unit || (/^\s*([a-z-]+)/.exec(cnt2.after) || [])[1] || itemOf(A) || "items", sold:"were sold" };
-      return tp;
+      var askOne = k1 !== "first" && new RegExp("\\bhow many " + k1 + "\\b").test(Q) || k2 !== "second" && new RegExp("\\bhow many " + k2 + "\\b").test(Q);
+      if (cnt2 && prices.length === 2 && (/\bof each\b|\beach kind\b|\beach type\b|\band how many\b/.test(Q) || askOne) && cmpR(prices[0].v, prices[1].v)){
+        var yy = dvd(sub(tot.v, mul(prices[0].v, cnt2.v)), sub(prices[1].v, prices[0].v)), xx = sub(cnt2.v, yy);
+        if (!isInt(yy) || !isInt(xx) || sgn(yy) < 0 || sgn(xx) < 0) return null;
+        var tp = P("twounknown", "tickets", { a:prices[0].v, b:prices[1].v, c:cnt2.v, d:tot.v });
+        tp.rw = { k1:k1, k2:k2, it:cnt2.unit || (/^\s*([a-z-]+)/.exec(cnt2.after) || [])[1] || itemOf(A) || "items", sold:"were sold" };
+        return tp;
+      }
     }
     // ages
     var older = ns.filter(function(t){ return /^\s*years?\s+(older|younger)\b/.test(t.after); })[0];
-    if (older && /\b(together|sum|total|add up|adds up|combined|altogether)\b/.test(L)){
+    if (older && /\b(together|sum|total|totals?|add up|adds up|combined|altogether)\b/.test(L)){
       var sT2 = ns.filter(function(t){ return t !== older; }).slice(-1)[0];
       if (!sT2) return null;
       var oS = A.D.slice(A.sents[older.s].i, A.sents[older.s].end), subj = (A.names.filter(function(n){ return oS.indexOf(n) >= 0 && oS.indexOf(n) < older.i - A.sents[older.s].i; })[0]) || A.names[0];
-      var thanN = (/\bthan\s+([A-Z][a-z]+)/.exec(A.D.slice(older.end, A.sents[older.s].end)) || [])[1] || A.names.filter(function(n){ return n !== subj; })[0];
+      var thanN = (/\bthan\s+((?:(?:Mr|Mrs|Ms|Dr|Miss)\.\s+)?[A-Z][a-z]+)/.exec(A.D.slice(older.end, A.sents[older.s].end)) || [])[1] || A.names.filter(function(n){ return n !== subj; })[0];
       var isY = /^\s*years?\s+younger/.test(older.after), oldN = isY ? thanN : subj, youN = isY ? subj : thanN;
       var ap = P("age", "sum", { a:older.v, c:sT2.v });
       if (youN) ap.name = youN; if (oldN) ap.name2 = oldN;
       var qn = A.names.filter(function(n){ return A.D.slice(A.q[0], A.q[1]).indexOf(n) >= 0; });
-      ap.ask = qn.length === 1 && !/\beach\b|\bboth\b|\btheir ages\b/.test(Q) ? (qn[0] === oldN ? "older" : "younger") : "both";
+      var qOld = /\b(older|oldest)\b/.test(Q) ? "older" : /\b(younger|youngest)\b/.test(Q) ? "younger" : null;
+      ap.ask = qn.length === 1 && !/\beach\b|\bboth\b|\btheir ages\b/.test(Q) ? (qn[0] === oldN ? "older" : "younger") : qn.length ? "both" : qOld || "both";
+      if (/\b(father|mother|dad|mom|parent|grandfather|grandmother|aunt|uncle)\b/.test(Q) && !qn.length) ap.ask = isY ? "younger" : "older";
+      if (/\b(son|daughter|child|kid|brother|sister|nephew|niece)\b/.test(Q) && !qn.length && !/\b(father|mother|dad|mom|parent)\b/.test(Q)) ap.ask = isY ? "older" : "younger";
       return ap;
     }
-    if (/\b(times as old|twice as old)\b/.test(L) && /\bin\s+\d+\s+years?\b/.test(L)){
-      var tt = /\b(\d+|twice)\s*(?:times)?\s*as old as\b/g, fm = [], mt;
-      while ((mt = tt.exec(L))) fm.push(mt[1] === "twice" ? R(2) : R(+mt[1]));
-      var yrs = /\bin\s+(\d+)\s+years?\b/.exec(L);
-      if (fm.length < 2 || !yrs) return null;
-      var s0 = A.sents[0] ? A.D.slice(A.sents[0].i, A.sents[0].end) : "", bigN = A.names.filter(function(n){ return s0.indexOf(n) === 0 || s0.indexOf(n) < s0.indexOf("as old"); })[0], smN = (/\bas old as\s+([A-Z][a-z]+)/.exec(A.D) || [])[1];
-      var tp2 = P("age", "times", { a:fm[0], b:R(+yrs[1]), c:fm[1] });
+    // times as old: now, and in so many years (or so many years ago)
+    var yrs = /\bin\s+(\d+)\s+years?\b/.exec(LN), ago = /\b(\d+)\s+years?\s+(?:ago|earlier|before)\b/.exec(LN);
+    if (/\b(times as old|twice as old)\b/.test(LN) && (yrs || ago)){
+      var tt = /\b(\d+|twice)\s*(?:times)?\s*as old as\b/g, fm = [], mt, LS = A.sents.map(function(s){ return numify(L.slice(s.i, s.end)); });
+      LS.forEach(function(sx){ var mm0; tt.lastIndex = 0; while ((mm0 = tt.exec(sx))) fm.push({ k:mm0[1] === "twice" ? R(2) : R(+mm0[1]), then:(yrs ? new RegExp("\\bin\\s+" + yrs[1] + "\\s+years?\\b") : /\byears?\s+(?:ago|earlier|before)\b/).test(sx) }); });
+      void mt;
+      var nowF = fm.filter(function(x){ return !x.then; })[0], thenF = fm.filter(function(x){ return x.then; })[0];
+      if (!nowF || !thenF || eqR(nowF.k, thenF.k)) return null;
+      var s0 = A.sents[0] ? A.D.slice(A.sents[0].i, A.sents[0].end) : "", bigN = A.names.filter(function(n){ return s0.indexOf(n) === 0 || s0.indexOf(n) < s0.indexOf("as old"); })[0], smN = (/\bas old as\s+((?:(?:Mr|Mrs|Ms|Dr|Miss)\.\s+)?[A-Z][a-z]+)/.exec(A.D) || [])[1];
+      var tp2 = P("age", yrs ? "times" : "ago", { a:nowF.k, b:R(+(yrs || ago)[1]), c:thenF.k });
+      if (/\b(they|each|both|their ages)\b/.test(Q)) tp2.ask = "both";
       if (smN) tp2.name = smN; if (bigN && bigN !== smN) tp2.name2 = bigN;
       return tp2;
     }
-    // perimeter of a rectangle, angles of a triangle
-    if (/\bperimeter\b/.test(L) && /\b(length|long)\b/.test(L) && /\b(width|wide)\b/.test(L)){
-      var perT = ns.filter(function(t){ return /\bperimeter\b/.test(A.L.slice(A.sents[t.s].i, t.i)) || /\bperimeter\b/.test(A.L.slice(Math.max(0, t.i - 25), t.i)); })[0], other = ns.filter(function(t){ return t !== perT; })[0];
-      var timesM = /\b(?:length|it)(?: of (?:a|the) (?:[a-z]+ )?[a-z]+)? is (twice|double|triple|(\d+) times)\b(?: (?:as long as|its| the))?/.exec(L) || /\b(twice|(\d+) times) as long as\b/.exec(L) || /\bwidth is half\b/.exec(L);
-      if (!perT || (!other && !timesM)) return null;
-      var mu = measureOf(A, [perT].concat(other ? [other] : []));
-      var ask = /\b(length and (the )?width|width and (the )?length|dimensions|both)\b/.test(Q) ? "both" : /\b(width|wide)\b/.test(Q) ? "width" : "length";
-      var pp;
-      if (timesM){ var k3 = /half/.test(timesM[0]) ? R(2) : /twice|double/.test(timesM[1]) ? R(2) : /triple/.test(timesM[1]) ? R(3) : R(+timesM[2]); pp = P("perimeter", "times", { a:k3, c:perT.v }); }
-      else pp = P("perimeter", "more", { a:other.v, c:perT.v });
-      pp.ask = ask; pp.rw = { u:mu ? UNIT_SHORT[mu.u] || mu.u : "units" };
-      return pp;
+    // perimeter of a rectangle: the length described with the width, and the distance around
+    var perW = /\bperimeter\b|\bfenc(?:e|es|ed|ing)\b|\ball the way around\b|\baround (?:the|it|its)\b|\bborder\b|\btrim\b|\bframe\b|\bedging\b/;
+    if (perW.test(L) && /\b(width|wide|wider|narrower)\b/.test(L) && /\b(length|long|longer)\b/.test(L)){
+      var U = "(?:\\s*(?:[a-z]+\\s+)?)", rel = null, mm;
+      if ((mm = new RegExp("\\b(\\d+(?:\\.\\d+)?)" + U + "(more|longer|greater|less|shorter)\\s+than\\s+(twice|double|triple|(\\d+)\\s+times)\\s+(?:the|its)\\s+width\\b").exec(LN))) rel = { f:/more|longer|greater/.test(mm[2]) ? "timesmore" : "timesless", a:KW(mm[3], mm[4]), b:R(+mm[1]), v:[+mm[1]] };
+      else if ((mm = /\b(?:length|it)\b[^.]*?\b(?:is|measures)\s+(twice|double|triple|(\d+)\s+times)\s+(?:as long as\s+)?(?:the|its)\s+width\b|\b(twice|(\d+)\s+times)\s+as long as (?:it is )?wide\b/.exec(LN))) rel = { f:"times", a:KW(mm[1] || mm[3], mm[2] || mm[4]), v:[] };
+      else if (/\bwidth is half (?:of )?(?:the|its) length\b/.test(LN)) rel = { f:"times", a:R(2), v:[] };
+      else if ((mm = new RegExp("\\b(\\d+(?:\\.\\d+)?)" + U + "(?:more|longer|greater)\\s+than\\s+(?:the|its)\\s+width\\b|\\b(\\d+(?:\\.\\d+)?)" + U + "longer than (?:it is )?wide\\b|\\bwidth is (\\d+(?:\\.\\d+)?)" + U + "(?:less|shorter|narrower) than (?:the|its) length\\b|\\b(\\d+(?:\\.\\d+)?)" + U + "(?:narrower|shorter) than (?:it is )?long\\b").exec(LN))) { var dv = +(mm[1] || mm[2] || mm[3] || mm[4]); rel = { f:"more", a:R(dv), v:[dv] }; }
+      if (rel){
+        var relT = rel.v.length ? tokOf(rel.v[0]) : null, perT = ns.filter(function(t){ return t !== relT && perW.test(A.L.slice(A.sents[t.s].i, A.sents[t.s].end)); }).slice(-1)[0] || ns.filter(function(t){ return t !== relT; }).slice(-1)[0];
+        if (!perT) return null;
+        var mu = measureOf(A, [perT].concat(relT ? [relT] : [])) || (/\b(meters?|metres?|feet|foot|yards?|inches|cm|centimeters?|m|ft|yd|in)\b/.exec(A.L.slice(A.sents[perT.s].i, A.sents[perT.s].end)) ? { u:/\b(meters?|metres?|feet|foot|yards?|inches|cm|centimeters?|m|ft|yd|in)\b/.exec(A.L.slice(A.sents[perT.s].i, A.sents[perT.s].end))[1] } : null);
+        var ask = /\b(length and (the )?width|width and (the )?length|dimensions|both|each side)\b/.test(Q) ? "both" : /\b(width|wide)\b/.test(Q) ? "width" : "length";
+        var pp = P("perimeter", rel.f, { a:rel.a, c:perT.v });
+        if (rel.b) pp.b = rel.b;
+        pp.ask = ask; pp.rw = { u:mu ? UNIT_SHORT[mu.u] || mu.u : "units" };
+        return pp;
+      }
     }
     if (/\btriangle\b/.test(L) && /\bangle/.test(L)){
-      var kT = /\bsecond (?:angle )?is (twice|double|triple|(\d+) times)\b/.exec(L), dT2 = ns.filter(function(t){ return /^\s*(?:degrees?|°)?\s*(more|less|greater|smaller|bigger) than\b/.test(t.after) || /^\s*°/.test(t.after) && /\b(more|less) than\b/.test(t.after); })[0];
+      var kT = /\bsecond (?:angle )?(?:of (?:a|the|this) triangle )?(?:is|measures|has a measure of)\s+(twice|double|triple|(\d+) times)\b/.exec(LN), dT2 = ns.filter(function(t){ return /^\s*(?:degrees?|°)?\s*(more|less|greater|smaller|bigger|larger) than\b/.test(t.after) || /^\s*°/.test(t.after) && /\b(more|less) than\b/.test(t.after); })[0];
       if (!kT || !dT2) return null;
       var neg = /^\s*(?:degrees?|°)?\s*(less|smaller) than/.test(dT2.after);
-      return P("perimeter", "tri", { a:/twice|double/.test(kT[1]) ? R(2) : /triple/.test(kT[1]) ? R(3) : R(+kT[2]), b:neg ? R(-dT2.v.n, dT2.v.d) : dT2.v });
+      return P("perimeter", "tri", { a:KW(kT[1], kT[2]), b:neg ? R(-dT2.v.n, dT2.v.d) : dT2.v });
     }
     // distance, rate and time
     var sp = ns.filter(speed);
-    // going opposite ways: "opposite direction(s)", "eastbound … westbound", "one heads north and the other south", "away from each other"
-    var opposite = oppositeWays(L);
-    var catchUp = catchingUp(L);
-    if (sp.length >= 2 && (opposite || catchUp || /\b(round trip|back|home|returns?)\b/.test(L))){
-      var su = /km|kilomet/.test(sp[0].after) ? { s:"km/h", u:"kilometers" } : { s:"mph", u:"miles" };
+    var opposite = oppositeWays(L), catchUp = catchingUp(L), toward = towardEach(L), lead = leadMiles(LN);
+    if (sp.length >= 2 && (opposite || catchUp || toward || lead || /\b(round trip|back|home|returns?)\b/.test(L))){
+      if (/\bwhat time\b/.test(Q)) return null;                     // a clock time to find: ask
+      var su =/km|kilomet/.test(sp[0].after) ? { s:"km/h", u:"kilometers" } : { s:"mph", u:"miles" };
       // the vehicles, in the order the story names them ("the Autonomous Express Truck", "a courier motorcycle")
-      var nouns = (A.L.match(/\b(train|truck|car|bus|cyclist|runner|plane|jet|boat|ship|bike|bicycle|motorcycle|scooter|van|jogger|walker|hiker|swimmer|drone)s?\b/g) || [])
+      var nouns = (A.L.match(/\b(train|truck|car|bus|cyclist|runner|plane|jet|boat|ship|bike|bicycle|motorcycle|scooter|van|jogger|walker|hiker|swimmer|drone|ferry|sedan|rail)s?\b/g) || [])
         .map(function(w){ return w.replace(/s$/, ""); }).filter(function(w, i, all){ return all.indexOf(w) === i; });
-      if (catchUp){
-        var head = A.use.filter(function(t){ return t.k === "dur" && /^\s*later\b/.test(t.after); })[0] || ns.filter(function(t){ return !speed(t) && /^\s*hours?\s+later\b/.test(t.after); })[0];
-        if (!head) return null;
-        var mp = P("motion", "catchup", { a:sp[0].v, b:sp[1].v, c:head.k === "dur" ? dvd(head.v, R60) : head.v });
-        mp.rw = { s:su.s, u:su.u, T1:nouns[0] || "first", T2:nouns[1] || nouns[0] || "second" };
-        return mp;
+      var far = function(t){ return !speed(t) && t.k === "n"; };
+      if (lead){
+        var lt = ns.filter(function(t){ return far(t) && /^\s*-?\s*(?:miles?|mi|km|kilometers?)\s+(?:ahead|head start|lead)\b/.test(t.after) || far(t) && /\bhead start of\s*$/.test(t.before); })[0];
+        if (!lt) return null;
+        var sl = sorted(sp.slice(0, 2)), lp = P("motion", "lead", { a:sl[0].v, b:sl[1].v, c:lt.v });
+        var aheadFirst = cmpR(sp[0].v, sp[1].v) <= 0;
+        lp.rw = { s:su.s, u:su.u, T1:(aheadFirst ? nouns[0] : nouns[1]) || "first", T2:(aheadFirst ? nouns[1] : nouns[0]) || "second" };
+        return lp;
       }
-      if (opposite){
-        var apart = ns.filter(function(t){ return !speed(t) && /^\s*(?:miles?|km|kilometers?)?\s*apart\b/.test(t.after); })[0] || ns.filter(function(t){ return !speed(t); })[0];
+      if (catchUp && !toward){
+        var head = A.use.filter(function(t){ return t.k === "dur" && (/^\s*(?:later|after)\b/.test(t.after) || /^\s*(?:-|\s)?\s*head start\b/.test(t.after) || /\bhead start of\s*$/.test(t.before)); })[0]
+          || ns.filter(function(t){ return !speed(t) && /^\s*hours?\s+(?:later|after|head start)\b/.test(t.after); })[0];
+        if (!head) return null;
+        var mp2 = P("motion", "catchup", { a:sp[0].v, b:sp[1].v, c:head.k === "dur" ? dvd(head.v, R60) : head.v });
+        mp2.rw = { s:su.s, u:su.u, T1:nouns[0] || "first", T2:nouns[1] || nouns[0] || "second" };
+        return mp2;
+      }
+      if (toward || opposite){
+        var apart = ns.filter(function(t){ return far(t) && /^\s*(?:miles?|km|kilometers?)?\s*(?:apart|away from each other)\b/.test(t.after); })[0] || ns.filter(function(t){ return far(t) && /^(miles?|km|kilometers?)\b/.test(t.unit); })[0] || ns.filter(far)[0];
         if (!apart) return null;
-        var op2 = P("motion", "opposite", { a:sp[0].v, b:sp[1].v, c:apart.v });
+        var op2 = P("motion", toward ? "toward" : "opposite", { a:sp[0].v, b:sp[1].v, c:apart.v });
         op2.rw = { s:su.s, u:su.u, T1:nouns[0] || "train", T2:nouns[1] || nouns[0] || "train" };
         return op2;
       }
@@ -3799,31 +4246,57 @@
       rp.rw = { s:su.s, u:su.u };
       return rp;
     }
-    // two plans that end up the same
-    if (/\b(cost|costs|charge|charges|pay|be|have|cost them) the same\b|\bsame (amount|cost|price|total)\b|\bequal\b/.test(L)){
-      var plans = [], cur = null;
-      A.sents.forEach(function(s, si){
-        if (si === A.qi) return;
-        var ts = ns.filter(function(t){ return t.s === si; });
-        if (!ts.length) return;
-        var pl = { fix:ZERO, rate:null, unit:"" };
-        ts.forEach(function(t){
-          var rm = /^\s*(?:a|an|per|each|every|for each)\s+([a-z]+)/.exec(t.after);
-          if (rm && !/^(day|time)$/.test("")){ pl.rate = t.v; pl.unit = rm[1]; } else pl.fix = add(pl.fix, t.v);
-        });
-        if (pl.rate) plans.push(pl);
-        void cur;
-      });
-      if (plans.length !== 2) return null;
-      var pu = plural(plans[0].unit), pp2 = P("plans", "plans", { a:plans[0].fix, b:plans[0].rate, c:plans[1].fix, d:plans[1].rate });
-      var nmA = /^([A-Z][a-z]+(?:\s[A-Z])?)\b/.exec(A.D.slice(A.sents[0].i)) ;
-      pp2.rw = { unit:pu === "visites" ? "visits" : pu, per:"a " + plans[0].unit, A:"Plan A", B:"Plan B" };
-      var heads = A.sents.filter(function(s, si){ return si !== A.qi && ns.some(function(t){ return t.s === si; }); }).map(function(s){ var m3 = /^(?:the\s+)?([A-Z][A-Za-z]*(?:\s+[A-Z0-9][A-Za-z]*)?|[A-Za-z]+\s+[A-Z])\b/.exec(A.D.slice(s.i, s.end)); return m3 ? m3[1] : null; });
-      if (heads[0] && heads[1] && heads[0] !== heads[1]){ pp2.rw.A = heads[0]; pp2.rw.B = heads[1]; }
-      if (/\bsaves?\b|\bsaving\b/.test(L)) pp2.rw.saving = true;
-      void nmA;
-      return pp2;
+    if (sp.length >= 2 && /\bhow (?:long|many (?:hours|minutes))\b|\bwhen\b|\bmeet\b|\bapart\b|\bcatch\b/.test(Q)) return null;    // two speeds and a time to find: only an equation will do
+    // working together
+    if (workCue(A)){
+      var wts = workTimes(A), alone = ALONE.test(Q);
+      var tv2 = function(t){ return t.k === "dur" ? (t.tu === "minutes" ? t.v : dvd(t.v, R60)) : t.v; };
+      var wu = wts[0].k === "dur" ? (wts.every(function(t){ return t.tu === "minutes"; }) ? "minutes" : "hours") : plural(singular(wts[0].unit.split(" ")[0]));
+      if (wu === "minutes") tv2 = function(t){ return t.v; };
+      var wP;
+      if (alone){
+        var tg = wts.filter(function(t){ return WORKQ.test(A.L.slice(A.sents[t.s].i, A.sents[t.s].end)); })[0] || wts[wts.length - 1], one = wts.filter(function(t){ return t !== tg; })[0];
+        if (!tg || !one) return null;
+        wP = P("work", "alone", { a:tv2(one), c:tv2(tg) });
+      } else wP = P("work", "together", { a:tv2(wts[0]), b:tv2(wts[1]) });
+      var jm = /\b(?:can|could|to)\s+((?:[a-z]+\s+){0,1}(?:paint|mow|clean|fill|empty|wash|build|type|rake|shovel|plow|pick|process|sort|pack|load|unload|assemble|edit|harvest|weed|stack|print|cook|bake|frost|decorate|install|fix|repair|finish|complete|do|drain|deliver|write|code|inspect|scan)[a-z]*(?:\s+(?:the|a|an|this|that|all the|their|his|her)\s+[a-z]+(?:\s+[a-z]+)?)?)/.exec(L);
+      wP.rw = { tu:wu, job:jm ? jm[1].replace(/\s+(in|by|alone)$/, "") : "do the job" };
+      return wP;
     }
+    // two plans that end up the same
+    if (SAMEQ.test(L)){
+      var plans = [], cur = null, RT = /^\s*(?:a|an|per|each|every|for each)\s+([a-z]+)/;
+      // "$20 a month plus $0.10 per text … how many texts": only the amount per thing asked about grows; the rest is fixed
+      var askU = (/\bhow many ([a-z]+)/.exec(Q) || [])[1], useU = askU && ns.some(function(t){ var m0 = RT.exec(t.after); return m0 && singular(m0[1]) === singular(askU); });
+      var rateOf = function(t){ var m0 = RT.exec(t.after); return m0 && (!useU || singular(m0[1]) === singular(askU)) ? m0 : null; };
+      ns.filter(function(t){ return t.s !== A.qi; }).forEach(function(t){
+        var rm = rateOf(t), sx = A.sents[t.s];
+        var laterRate = ns.some(function(u){ return u.s === t.s && u.i > t.i && rateOf(u); });
+        if (!cur || cur.rate && (rm || laterRate || cur.s !== t.s)){ cur = { fix:ZERO, rate:null, unit:"", s:t.s }; plans.push(cur); }
+        if (rm && !cur.rate){ cur.rate = t.v; cur.unit = rm[1]; } else cur.fix = add(cur.fix, t.v);
+        void sx;
+      });
+      plans = plans.filter(function(p){ return p.rate; });
+      if (plans.length === 2 && singular(plans[0].unit) === singular(plans[1].unit)){
+        var pu = plural(plans[0].unit), pp2 = P("plans", "plans", { a:plans[0].fix, b:plans[0].rate, c:plans[1].fix, d:plans[1].rate });
+        pp2.rw = { unit:pu === "visites" ? "visits" : pu, per:"a " + plans[0].unit, A:"Plan A", B:"Plan B" };
+        var heads = A.sents.filter(function(s, si){ return si !== A.qi && ns.some(function(t){ return t.s === si; }); }).map(function(s){ var m3 = /^(?:the\s+)?([A-Z][A-Za-z]*(?:\s+[A-Z0-9][A-Za-z]*)?|[A-Za-z]+\s+[A-Z])\b/.exec(A.D.slice(s.i, s.end)); return m3 ? m3[1] : null; });
+        if (heads[0] && heads[1] && heads[0] !== heads[1]){ pp2.rw.A = heads[0]; pp2.rw.B = heads[1]; }
+        if (/\bsaves?\b|\bsaving\b/.test(L)) pp2.rw.saving = true;
+        return pp2;
+      }
+      if (!/\bnumber\b/.test(L)) return null;
+    }
+    // a fixed amount plus so much each: an equation, or an inequality ("at most", "at least")
+    var fr = feeRead(A);
+    if (fr){
+      var fp = P(fr.ineq ? "inequality" : "linear", fr.ineq || "fee", { a:fr.a, b:fr.b, c:fr.c });
+      fp.rw = { unit:fr.unit, per:fr.per, money:fr.money };
+      return fp;
+    }
+    // a proportion: "3 cups of flour make 12 cookies — how many cups for 20 cookies?"
+    var pr = propRead(A);
+    if (pr){ var pq = P("proportion", "prop", { a:pr.a, b:pr.b, c:pr.c }); pq.rw = { u1:pr.u1, u2:pr.u2 }; return pq; }
     // number puzzles
     if (/\bnumber\b/.test(L)){
       var pz = readPuzzle(A.D);
@@ -3839,10 +4312,11 @@
   function classify(A){
     var u = A.use, cnt = function(k){ return u.filter(function(t){ return t.k === k; }).length; }, nums = u.filter(function(t){ return t.k === "n" || t.k === "$"; }).length;
     var Q = A.Q, L = A.L, tries = [];
-    if (ALGCUE.test(L) || oppositeWays(L) || catchingUp(L)) tries.push("algebra");
-    if (cnt("t") >= 1 && cnt("t") + cnt("dur") >= 2 && /\b(what time|when|how long|how many (minutes|hours)|how much time)\b/.test(Q)) tries.push("time");
+    var alg = algCue(A);
+    if (alg) tries.push("algebra");
+    if (cnt("t") >= 1 && cnt("t") + cnt("dur") >= 2 && /\b(what time|when|how long|how many (minutes|hours)|how much time|(?:latest|earliest) time)\b/.test(Q)) tries.push("time");
     if (cnt("%")) tries.push("percent");
-    if (u.some(function(t){ return t.k === "f" && t.fn && (/^\s*of\b/.test(t.after) || /\bof (?:the |all )?\d+\b[^.?!]*,?\s*$/.test(t.before)); })) tries.push("fraction");
+    if (u.some(function(t){ return t.k === "f" && t.fn && (/^\s*of\b/.test(t.after) || /^\s*(?:full|filled|done|finished|complete|painted|gone)\b/.test(t.after) || /\bof (?:the |all )?\d+\b[^.?!]*,?\s*$/.test(t.before)); })) tries.push("fraction");
     if (/\bchange\b/.test(Q) && cnt("$") >= 2) tries.push("money");
     var timesCue = u.some(function(t){ return t.twice || /^\s*times\s+(as|more)\b/.test(t.after); }) || /\b(double|triple)\b/.test(L) || /\bhow many times\b/.test(Q);
     if (timesCue) tries.push(ALLQ.test(Q) && !/\bhow many times\b/.test(Q) ? "timestotal" : "times");
@@ -3850,7 +4324,7 @@
     if (cmpCue) tries.push(ALLQ.test(Q) && !/\bhow (many|much) (more|fewer|less)\b/.test(Q) ? "comparetotal" : "compare");
     if (/\barea\b/.test(L) || (/\blong\b/.test(L) && /\bwide\b/.test(L)) || (/\brows?\b/.test(L) && /\b(in each row|each row|per row|rows of|rows with|equal rows|in rows|columns?)\b/.test(L))) tries.push("array");
     if (nums >= 3 || (nums === 3 && /\bshare/.test(L))) tries.push("twostep");
-    var remCue = /\b(need|needs|needed|does it take|will it take|required)\b/.test(Q) || /\bleft ?over\b|\bremain/.test(Q) || /\bhow many (whole|full|complete)\b/.test(Q) || /\bhow many .* (can|could) .* (make|fill|buy|get|pack|build|form|bake|sew|cut)\b/.test(Q) || /\b(can|could) (?:\w+ )?be (made|filled|packed|bought|cut|built|formed)\b/.test(Q);
+    var remCue = /\b(need|needs|needed|does it take|will it take|required)\b/.test(Q) || /\bleft ?over\b|\bremain|\bleft (?:without|out)\b/.test(Q) || /\bhow many (whole|full|complete)\b/.test(Q) || /\bhow many .* (can|could) .* (make|fill|buy|get|pack|build|form|bake|sew|cut)\b/.test(Q) || /\b(can|could) (?:\w+ )?be (made|filled|packed|bought|cut|built|formed)\b/.test(Q);
     var two = u.filter(function(t){ return t.k === "n" || t.k === "$"; });
     if (remCue && two.length === 2 && isInt(two[0].v) && isInt(two[1].v)){
       var big = sorted(two)[1].v, sm = sorted(two)[0].v, smT = sorted(two)[0];
@@ -3859,26 +4333,32 @@
       if (sm.n > 0n && big.n % sm.n !== 0n && !asksSize) tries.push("remainder");
     }
     var unitAsk = /\bhow much (does|do|would|will|did|is) (one|1|each|a|an|it)\b|\b(cost|price) of (one|1|each|a|an)\b|\bfor (one|1)\b|\bin (one|1|an?) (hour|minute)\b|\bper (hour|minute)\b|\beach (hour|minute)\b|\bat (the|that|this) same (price|rate|speed)|\bsteady\b|\bsame rate\b/.test(Q + " " + L);
-    if (unitAsk || (cnt("dur") && /\bhow (far|many|much)\b/.test(Q))) tries.push("rate");
-    if (/\beach\b|\bevery\b|\bequal(ly)?\b|\bshare[sd]?\b|\bsplit\b|\bdivide[sd]?\b|\bper\b|\bapiece\b|\b(bags|boxes|packs|groups|teams|plates|baskets|jars|shelves|cartons|trays|cases|packages|bundles|sets|bunches|piles|stacks|vases) of\b/.test(L)
-      || ((/\b\d+\s+[a-z]+\s+(in|on)\s+(a|one|each|every)\s+[a-z]+/.test(A.NQ) || /\b(a|one)\s+[a-z]+\s+(holds|has|contains|fits|carries)\s+\d+/.test(A.NQ)) && /\b(in|on|for)\s+\d+\s+[a-z]+/.test(Q)) || /\b\d+\s+[a-z]+\s+(a|per|each|every) (day|week|month)\b/.test(L)) tries.push("groups");
+    // "If 5 apples cost $45, how much do 13 apples cost?": a price for some, asked for another number of them
+    var priceN = cnt("$") === 1 && nums === 3 && u.filter(function(t){ return t.k === "$" && !t.inQ; }).length === 1 && u.filter(function(t){ return t.k === "n" && t.inQ; }).length === 1 && /\bhow much\b/.test(Q);
+    if (unitAsk || priceN || (cnt("dur") && /\bhow (far|many|much)\b/.test(Q))) tries.push("rate");
+    if (/\beach\b|\bevery\b|\bequal(ly)?\b|\bshare[sd]?\b|\bsplit\b|\bdivide[sd]?\b|\bper\b|\bapiece\b|\b(bags|boxes|packs|groups|teams|plates|baskets|jars|shelves|cartons|trays|cases|packages|bundles|sets|bunches|piles|stacks|vases) of (?!the\b|an?\b|this\b|that\b|their\b|his\b|her\b)/.test(L)
+      || u.some(function(t){ return t.dz; }) || ((/\b\d+\s+[a-z]+\s+(in|on)\s+(a|one|each|every)\s+[a-z]+/.test(A.NQ) || /\b(a|one)\s+[a-z]+\s+(holds|has|contains|fits|carries)\s+\d+/.test(A.NQ)) && /\b(in|on|for)\s+\d+\s+[a-z]+/.test(Q)) || /\b\d+\s+[a-z]+\s+(a|per|each|every) (day|week|month)\b/.test(L)) tries.push("groups");
     if (remCue && tries.indexOf("remainder") < 0 && two.length === 2) tries.push("groups");
     tries.push("additive");
+    // an equation story that can't be read as one, or two speeds and a time to find: ask, don't guess
+    var strong = alg && (ALGSTRONG.test(L) || workCue(A) || mixCue(A) || interestCue(A) || towardEach(L) || leadMiles(numify(L)) || oppositeWays(L) || catchingUp(L) && /\blater\b|\bhead start\b/.test(L) || motionCue(A));
     for (var i = 0; i < tries.length; i++){
       var t = tries[i], P = null;
+      if (strong && t !== "algebra") break;
       try {
         if (t === "timestotal") P = ASSIGN.times(A, true);
         else if (t === "comparetotal") P = ASSIGN.compare(A, true);
         else P = ASSIGN[t](A);
       } catch (e){ P = null; }
       if (P){ P.how = t; return P; }
+      if (t === "comparetotal" || t === "timestotal") strong = true;         // "… 9 fewer than … together" it can't read: ask, don't just add the two numbers
     }
     return null;
   }
   // a story problem's question asks for an amount: "how many …", "what is the total …", "what time …", "find …".
   // "What is the weather?", "Who am I?" or "Which color is better?" don't, so there's nothing to work out.
   var AMOUNTQ = new RegExp("\\bhow (many|much|far|long|old|tall|short|heavy|high|wide|deep|big|fast|often|thick)\\b"
-    + "|\\bwhat (is|was|are|were|will be|would be|'s)\\s+(the\\s+|his\\s+|her\\s+|their\\s+|its\\s+|my\\s+|your\\s+|our\\s+)?(\\w+\\s+){0,2}?(total|area|perimeter|cost|costs|price|difference|sum|product|quotient|amount|number|length|width|height|depth|distance|time|change|average|mean|value|weight|speed|rate|share|discount|tax|tip|answer|remainder|result|volume|score|balance|age|fraction|percent|percentage)\\b"
+    + "|\\bwhat (is|was|are|were|will be|would be|'s)\\s+(the\\s+|his\\s+|her\\s+|their\\s+|its\\s+|my\\s+|your\\s+|our\\s+)?([\\w'’]+\\s+){0,2}?(total|area|perimeter|cost|costs|price|difference|sum|product|quotient|amount|number|length|width|height|depth|distance|time|change|average|mean|value|weight|speed|rate|share|discount|tax|tip|answer|remainder|result|volume|score|balance|age|fraction|percent|percentage|largest|smallest|greatest|biggest|least|middle|label|dimensions|maximum|minimum|fewest|most|population|salary|wage|pay|rent|fare|fee|bill|size|measures?|angles?|mass|earnings|income)\\b"
     + "|\\bwhat (time|fraction|percent|percentage|part|portion|number|amount|is \\$?\\d|is \\d|is the \\d)"
     + "|\\bwhat's\\s+(the\\s+)?(\\w+\\s+)?(total|area|cost|price|difference|sum|time|change)\\b"
     + "|\\b(find|calculate|work out|figure out|compute|determine|estimate)\\b|\\bhow much more\\b|\\bhow many more\\b");
@@ -3915,7 +4395,7 @@
       t.what = t.x0 ? t.what0 : "the story doesn’t need it for this question";
     });
     P.extras = A.toks.filter(function(t){ return t.extra; }).map(function(t){ return { raw:t.raw, what:t.what }; });
-    P.rd = { D:A.D, toks:A.toks, q:A.q };
+    P.rd = { D:A.D0 || A.D, toks:A.toks, q:A.q };
   }
   // numbers in the order they appear, for when someone picks a different kind than the one read
   function orderAssign(A, type, kind){
@@ -4211,7 +4691,7 @@
       return P;
     },
     algebra:function(o, z){
-      var kind = mixOf(o.algebraKind, ["number", "consecutive", "age", "perimeter", "plans", "twounknown", "motion", "percentback"]);
+      var kind = mixOf(o.algebraKind, ["number", "consecutive", "age", "perimeter", "plans", "twounknown", "motion", "percentback", "work", "mixture", "interest", "linear", "inequality", "proportion"]);
       var forms = TY.algebra.forms(kind).map(function(f){ return f[0]; }).filter(function(f){ return f !== "gen"; });
       var form = o.algebraForm && forms.indexOf(o.algebraForm) >= 0 ? o.algebraForm : pickOf(forms), P = { type:"algebra", kind:kind, form:form }, big = z.max > 20, t, n, k, b;
       if (kind === "number"){
@@ -4228,9 +4708,13 @@
         if (form === "times"){
           for (t = 0; t < 400; t++){ var k0 = rint(2, 14), aa = rint(3, 5), cc = rint(2, aa - 1), bb = k0 * (aa - cc) / (cc - 1); if (bb % 1 === 0 && bb >= 1 && bb <= 30){ P.a = RN(aa); P.b = RN(bb); P.c = RN(cc); break; } }
           if (!P.a){ P.a = RN(3); P.b = RN(6); P.c = RN(2); }
+        } else if (form === "ago"){
+          for (t = 0; t < 400; t++){ var k1 = rint(4, 30), a1 = rint(2, 4), c1 = rint(a1 + 1, 5), b1 = k1 * (c1 - a1) / (c1 - 1); if (b1 % 1 === 0 && b1 >= 1 && b1 < k1){ P.a = RN(a1); P.b = RN(b1); P.c = RN(c1); break; } }
+          if (!P.a){ P.a = RN(3); P.b = RN(6); P.c = RN(5); }
         } else { var y = rint(4, 30), dd = rint(2, 12); P.a = RN(dd); P.c = RN(2 * y + dd); P.ask = pickOf(["both", "older", "younger"]); }
       } else if (kind === "perimeter"){
         if (form === "tri"){ for (t = 0; t < 200; t++){ var ka = rint(2, 3), db = 5 * rint(1, 8), xv = (180 - db) / (ka + 2); if (xv % 1 === 0){ P.a = RN(ka); P.b = RN(db); break; } } if (!P.a){ P.a = RN(2); P.b = RN(20); } }
+        else if (form === "timesmore" || form === "timesless"){ var w2 = rint(3, big ? 25 : 12), k2 = rint(2, 3), b2 = rint(1, Math.min(9, (k2 - 1) * w2 - 1)), l2 = form === "timesmore" ? k2 * w2 + b2 : k2 * w2 - b2; P.a = RN(k2); P.b = RN(b2); P.c = RN(2 * l2 + 2 * w2); P.ask = pickOf(["length", "width", "both"]); }
         else { var wv = rint(2, big ? 25 : 12), av = form === "times" ? rint(2, 4) : rint(1, 10); P.a = RN(av); P.c = RN(form === "times" ? 2 * av * wv + 2 * wv : 4 * wv + 2 * av); P.ask = pickOf(["length", "width", "both"]); }
       } else if (kind === "plans"){
         n = rint(2, 12); var rb = rint(2, 10), rd = rb + rint(1, 5), cB = Math.random() < 0.5 ? 0 : rint(1, 20);
@@ -4241,9 +4725,24 @@
         else if (form === "coins"){ var cx = ctxPick("algebra", null, function(c){ return c.coins; }); P.ctx = cx.id; P.c = RN(xx + yy); P.d = R(cx.v1 * xx + cx.v2 * yy, 100); }
         else { var pa = rint(6, 15), pb2 = rint(3, pa - 1); P.a = RN(pa); P.b = RN(pb2); P.c = RN(xx + yy); P.d = RN(pa * xx + pb2 * yy); }
       } else if (kind === "motion"){
-        if (form === "opposite"){ var sa = 5 * rint(6, 14), sb = 5 * rint(6, 16), tt = rint(2, 6); P.a = RN(sa); P.b = RN(sb); P.c = RN((sa + sb) * tt); }
+        if (form === "opposite" || form === "toward"){ var sa = 5 * rint(6, 14), sb = 5 * rint(6, 16), tt = rint(2, 6); P.a = RN(sa); P.b = RN(sb); P.c = RN((sa + sb) * tt); }
+        else if (form === "lead"){ var l1 = 5 * rint(6, 10), l2 = l1 + 5 * rint(1, 6); P.a = RN(l1); P.b = RN(l2); P.c = RN((l2 - l1) * rint(1, 5)); }
         else if (form === "catchup"){ for (t = 0; t < 400; t++){ var s1 = 5 * rint(6, 10), s2 = s1 + 5 * rint(2, 6), hh = rint(1, 4), tq = s1 * hh / (s2 - s1); if (tq % 1 === 0){ P.a = RN(s1); P.b = RN(s2); P.c = RN(hh); break; } } if (!P.a){ P.a = RN(40); P.b = RN(60); P.c = RN(2); } }
         else { var r1 = 10 * rint(3, 7), r2 = 10 * rint(2, 6); if (r2 === r1) r2 += 10; var lc = r1 * r2 / gcdN(r1, r2), dist = lc * rint(1, Math.max(1, Math.floor(600 / lc))); P.a = RN(r1); P.b = RN(r2); P.c = R(dist * (r1 + r2), r1 * r2); }
+      } else if (kind === "work"){
+        var wp = pickOf([[3, 6], [4, 12], [6, 12], [10, 15], [12, 24], [20, 30], [4, 6], [12, 6], [15, 30], [10, 40]]);
+        P.a = RN(wp[0]); if (form === "alone") P.c = R(wp[0] * wp[1], wp[0] + wp[1]); else P.b = RN(wp[1]);
+      } else if (kind === "mixture" || kind === "interest"){
+        var iv = kind === "interest", pr = form === "price";
+        for (t = 0; t < 400; t++){
+          var lo = iv ? rint(2, 5) : pr ? rint(2, 6) : pickOf([10, 15, 20, 25, 30, 40]), hi = lo + (iv ? rint(1, 3) : pr ? rint(1, 5) : 5 * rint(2, 10)), tot = iv ? 1000 * rint(2, 20) : 10 * rint(1, 6), xq = iv ? 500 * rint(1, tot / 500 - 1) : rint(1, tot - 1);
+          var dq = R(lo * xq + hi * (tot - xq), iv ? 100 : tot);
+          if (iv || pr ? isCents(dq) : isInt(dq)){ P.a = RN(lo); P.b = RN(hi); P.c = RN(tot); P.d = dq; break; }
+        }
+      } else if (kind === "linear" || kind === "inequality"){
+        var fa = rint(2, 30), fb = rint(2, 12), fn = rint(2, 15); P.a = RN(fa); P.b = RN(fb); P.c = RN(fa + fb * fn + (kind === "inequality" ? rint(1, fb - 1) : 0));
+      } else if (kind === "proportion"){
+        var pa1 = rint(2, 6), pk = rint(2, 6); P.a = RN(pa1); P.b = RN(pa1 * pk); P.c = RN(rint(2, 20));
       } else {
         var pp = pickOf([10, 20, 25, 30, 40, 50, 15, 5]);
         if (form === "raise"){ var xw = rint(10, 40); P.p = RN(pp); P.c = R(xw * (100 + pp), 100); }
@@ -4252,7 +4751,8 @@
       if (!P.ctx){ var cx2 = ctxOf(P); if (cx2) P.ctx = (kind === "percentback" ? ctxPick("algebra", null, function(c){ return c.pb; }) : cx2) .id; }
       if (kind === "plans"){ P.ctx = ctxPick("algebra", null, function(c){ return c.plans; }).id; }
       if (kind === "motion"){ P.ctx = ctxPick("algebra", null, function(c){ return c.mv; }).id; }
-      if (kind === "perimeter" && form !== "tri"){ P.ctx = ctxPick("algebra", null, function(c){ return !!c.u && !c.mv; }).id; }
+      if (/^(work|mixture|interest|linear|inequality|proportion)$/.test(kind)) P.ctx = ctxPick("algebra", null, function(c){ return ALGCTX[kind](c, P); }).id;
+      if (kind === "perimeter" && form !== "tri"){ P.ctx = ctxPick("algebra", null, function(c){ return !!c.u && !c.mv && !c.mx; }).id; }
       if (kind === "twounknown" && form === "tickets"){ P.ctx = ctxPick("algebra", null, function(c){ return c.tk; }).id; }
       return P;
     },
@@ -4345,7 +4845,8 @@
       values:vl([["up", "Round up (vans needed)"], ["down", "Ignore it (full boxes)"], ["left", "It’s the answer (how many left over)"], ["both", "Each share and the leftover (6 R 1)"], ["mix", "Any of them"]]) },
     { key:"algebraKind", modes:["algebra"], label:"What kind of algebra story", type:"choice", "default":"mix",
       values:vl([["number", "Number puzzles (5 more than twice a number …)"], ["consecutive", "Consecutive numbers"], ["age", "Ages"], ["perimeter", "Perimeter and triangle angles"],
-                 ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (tickets, coins, two numbers)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"], ["mix", "Any of them"]]) },
+                 ["plans", "Two plans that cost the same"], ["twounknown", "Two unknowns (tickets, coins, two numbers)"], ["motion", "Distance, rate and time"], ["percentback", "Percent change backwards"],
+                 ["work", "Working together"], ["mixture", "Mixtures"], ["interest", "Money at two interest rates"], ["linear", "A fixed amount plus so much each"], ["inequality", "At most, at least (inequalities)"], ["proportion", "Proportions"], ["mix", "Any of them"]]) },
     { key:"extra", modes:["any", "addsub", "compare", "groups", "array", "times", "rate", "money", "time", "fraction", "percent", "twostep", "remainder"], label:"Add a number the story doesn’t need", type:"toggle", "default":false, values:TOG }
   ];
   function optOf(o, key){
