@@ -12,11 +12,12 @@
     "factors.html":["The Factor Tree","c-fac"], "integers.html":["The Number Line","c-int"],
     "pemdas.html":["The Order Stack","c-ord"], "algebra.html":["The Balance Scale","c-alg"],
     "geometry.html":["The Shape Shop","c-geo"], "glossary.html":["the Word List","c-ink"], "ratios.html":["The Ratio Table","c-rat"],
-    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"], "graphing.html":["The Graph Paper","c-gra"], "exponents.html":["The Power Tower","c-exp"], "probability.html":["The Chance Spinner","c-pro"], "trigonometry.html":["The Unit Circle","c-tri"], "calculus.html":["The Rate Machine","c-cal"],
+    "lines.html":["The Slope Grid","c-lin"], "stats.html":["The Dot Plot","c-sta"], "graphing.html":["The Graph Paper","c-gra"], "exponents.html":["The Power Tower","c-exp"], "probability.html":["The Chance Spinner","c-pro"], "counting.html":["The Counting Tree","c-cnt"], "trigonometry.html":["The Unit Circle","c-tri"], "calculus.html":["The Rate Machine","c-cal"],
     "number-sense.html":["The Place Value Chart","c-num"], "quadratics.html":["The Area Box","c-qua"],
     "logarithms.html":["The Log Ladder","c-log"], "sequences.html":["The Number Staircase","c-seq"],
     "wordproblems.html":["The Story Problem","c-wrd"], "flashcards.html":["The Flash Cards","c-fla"],
-    "reference.html":["the reference sheets","c-ink"], "daily.html":["the problem of the day","c-day"], "scratch.html":["The Scratch Paper","c-scr"]
+    "reference.html":["the reference sheets","c-ink"], "daily.html":["the problem of the day","c-day"], "scratch.html":["The Scratch Paper","c-scr"],
+    "aviation.html":["The Flight Computer","c-avi"]
   };
   function go(page, params, what, alt){ return { page:page, params:params, what:what || "", alt:alt || null }; }
   function qp(s){ return "q=" + encodeURIComponent(s); }
@@ -344,6 +345,31 @@
     // "what is a logarithm", "define place value": the Word List (below), not the helper
     var asksWord = /^\s*(?:what\s+(?:is|are|does)|define|definition|meaning)\b/i.test(s) && !/\d/.test(s);
     var story = isStory(s, low);
+    // counting (counting.html): nCr / nPr / factorials, and "in how many ways…", arrangements, codes, outfits, handshakes, games,
+    // diagonals; a chance worked out by counting (a committee chosen at random, a lottery) too — other probability stays with the
+    // Chance Spinner. A point like P(1, 2) next to another point ("from P(1, 2) to Q(4, 6)") isn't P(n, r).
+    var countFormula = (/\b\d+\s*[cp]\s*\d+\b|\b[cp]\s*\(\s*\d+\s*,\s*\d+\s*\)|\bn\s*[cp]\s*r\b|\b\d+\s+choose\s+\d+\b|\bbinom\s*\(|\d\s*!(?!=)|\bfactorial\b|[₀-₉]+\s*[CP]\s*[₀-₉]+/i.test(s))
+      && (!/[=<>]/.test(s) || /\bn\s*=\s*\d+[^=<>]*\br\s*=\s*\d+\s*$|\bn\s*=\s*\d+\s*(?:,|and)\s*r\s*=\s*\d+/i.test(s)) && !/\b[a-z]\s*\(\s*[−-]?\d+\s*,\s*[−-]?\d+\s*\)[^.?]*\b(?:to|and)\s+[a-z]\s*\(/i.test(s);
+    var countWords = /\bin\s+how\s+many\s+(?:different\s+|distinct\s+)?(?:ways|orders)\b|\bhow\s+many\s+(?:different\s+|distinct\s+|possible\s+|distinguishable\s+)?(?:ways|arrangements|combinations|permutations|outfits|handshakes|diagonals|line-ups|lineups|seatings|subsets)\b|\bshak(?:e|es|ing)\s+hands\b|\bhandshakes?\b|\bround[-\s]robin\b|\bnumber\s+of\s+(?:different\s+|distinct\s+)?(?:ways|arrangements|combinations|permutations|diagonals|handshakes|subsets)\b|\bpermutations?\b|\btaken\s+\d+\s+at\s+a\s+time\b|\barrangements?\s+of\s+the\s+(?:letters|word)\b|\bletters\s+(?:of|in)\s+(?:the\s+word\s+)?\w+[^.?]*\barrange|\b(?:arrange|arranged)\b[^.?]*\bletters\b|\bplays?\s+(?:each|every)\s+other\s+(?:team|player)\b|\bsends?\b[^.?]*\b(?:each|every)\s+other\b|\bhow\s+many\s+(?:different\s+)?(?:committees|teams|subsets|hands|license\s+plates|plates|codes|passwords|pins)\s+(?:have|has|contain|include)\b|\bhow\s+many\s+(?:different\s+)?[\w-]+\s+(?:with|consisting\s+of)\s+(?:one|1|a)\s+\w+\s*(?:,|and)\s+(?:one|1|a)\b|\bsequences\s+of\s+heads\b/i.test(s) ||
+      /\bhow\s+many\s+(?:different\s+|distinct\s+|possible\s+|unique\s+)?(?:\d+[-\s](?:digit|letter|character|person|member|card|topping|scoop)\s+)?(?:numbers|codes|passwords|words|initials|zip\s+codes|pins|license\s+plates|plates|committees|teams|groups|outcomes|answer\s+keys|necklaces|bracelets|triangles|quadrilaterals|lines|line\s+segments|chords|games|cards|dinners|lunches|meals|sandwiches|pizzas|outfits|tickets|subsets|arrangements|hands|choices)\b[^.?]*\b(?:can\s+(?:be|you|she|he|they|we)\s+(?:made|formed|drawn|chosen|selected|created|written|arranged|played|dealt|ordered|make|form|choose|pick|order)|are\s+(?:possible|there|played|sent)|possible|is\s+it\s+possible|does\s+(?:the|a|an)\s+\w+\s+have)\b/i.test(s);
+    var countChance = /\bprobability\b|\bchances?\b|\bodds\b/.test(low) && (/\bcommittee\b|\bteam\s+of\s+\d+\b|\b(?:chosen|selected|picked)\s+at\s+random\s+from\s+\d+\s+[a-z]+\s+and\s+\d+\s+[a-z]+/.test(low) || /\blotter(?:y|ies)\b/.test(low));
+    if (!asksWord && (countFormula || countWords && !/\bprobability\b|\bchances?\b|\bodds\b/.test(low) || countChance))
+      return go("counting.html", qp(s), "counting");
+    // aviation, the Flight Computer: wind triangle, runway winds, time/speed/fuel in knots and nautical miles, pressure and
+    // density altitude, true airspeed, headings with variation and deviation, descent, weight and balance, turns, glide,
+    // and aviation units (knots, nm, inHg, hPa, gallons of avgas or Jet A); plain unit changes stay with the Measuring Tape
+    if (!asksWord && !story && (
+        /\bwinds?\b/.test(low) && /\b(?:course|tc|crs)\b/.test(low) && /\b(?:tas|ktas|airspeed|air\s+speed)\b/.test(low) ||
+        /\b(?:runway|rwy)\s*\d|\bcrosswind\b|\b(?:head|tail)wind\s+components?\b/.test(low) ||
+        /\b(?:pressure|density)\s+altitude\b|\baltimeter\s+(?:setting\s+)?\d|\b(?:kias|kcas|ktas)\b|\btrue\s+air\s*speed\b/.test(low) ||
+        /\b(?:tc|th|mh|ch)\s*\d{1,3}\b.*\b(?:variation|deviation)\b|\b(?:variation|deviation)\s+\d+(?:\.\d+)?\s*°?\s*(?:e|w|east|west)\b/.test(low) ||
+        /\bdescen\w*\b.*\b(?:knots?|kts?|kt)\b|\btop\s+of\s+descent\b|\d\s*fpm\b/.test(low) ||
+        /\bweight\s+and\s+balance\b|\bcenter\s+of\s+gravity\b|\bcg\s+limits?\b|\d\s*(?:lbs?|gal)?\s*@\s*\d+(?:\.\d+)?\s*,/.test(low) ||
+        /\bstandard[-\s]*rate\s+turn\b|\bturn\s+radius\b|\bglide\s+ratio\b|\bdegrees?\s+of\s+bank\b|\d\s*°\s*bank\b/.test(low) ||
+        /\d\s*(?:nm|nautical\s+miles?)\b.*\b(?:knots?|kts?|kt)\b|\b(?:knots?|kts?|kt)\s+for\s+\d|\bgph\b|\bfuel\b.*\bgal(?:lons)?\s*(?:\/|per|an?)\s*h(?:ou)?r\b/.test(low) ||
+        /^\s*-?\d[\d,.]*\s*(?:knots?|kts?|kt|nm|nautical\s+miles?|inhg|in\s*hg|hpa|millibars?|mb)\s+(?:to|in|into)\s+\S/.test(low) ||
+        /\d\s*(?:gal(?:lons)?|lbs?|pounds?)\s+(?:of\s+)?(?:avgas|jet\s*a|100\s*ll)\b/.test(low)))
+      return go("aviation.html", qp(s), "aviation");
     // unit conversions: a measure to another unit ("5 ft 7 in to inches", "3.2 km to m", "60 mph to ft/s", "98.6 F to C",
     // "how many cups in a gallon"); "convert 7/4 to a decimal" stays with the fractions, below
     var UNIT = "(?:in(?:ch(?:es)?)?|ft|feet|foot|yd|yards?|mi|miles?|mm|cm|km|m|meters?|metres?|millimeters?|centimeters?|kilometers?|millimetres?|centimetres?|kilometres?|kgs|kms|kilos?|dm|decimeters?|decimetres?|hrs|mins|deg(?:rees?)?\\s*[fck]\\b|fluid\\s+(?:ounces?|oz)|mg|g|kg|grams?|milligrams?|kilograms?|oz|ounces?|lbs?|pounds?|tons?|tsp|tbsp|teaspoons?|tablespoons?|cups?|pt|pints?|qt|quarts?|gal|gallons?|ml|l|liters?|litres?|milliliters?|fl\\.?\\s*oz|sec(?:onds?)?|s|min(?:utes?)?|h|hr|hours?|days?|weeks?|years?|yr|°\\s*[fck]|[fck]|degrees?\\s+(?:fahrenheit|celsius)|fahrenheit|celsius|kelvin|mph|km\\/h|kph|ft\\/s|m\\/s|acres?|hectares?|ha|(?:square|sq\\.?|cubic|cu\\.?)\\s+(?:inch(?:es)?|feet|foot|yards?|miles?|meters?|centimeters?|ft|in|yd|mi|m|cm|mm|km)|(?:ft|in|yd|mi|m|cm|mm|km)\\s*(?:\\^\\s*[23]|[²³])|(?:feet|foot|inch(?:es)?|yards?|miles?|meters?|metres?|centimeters?|cm|m|ft|in)\\s+(?:squared|cubed))";

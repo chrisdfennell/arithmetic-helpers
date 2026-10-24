@@ -164,6 +164,8 @@
   .c.x{background:var(--no-bg);color:var(--no)}
   .c.s{background:repeating-linear-gradient(135deg,var(--surface-2) 0 3px,transparent 3px 6px);color:var(--ink-3)}
   .c.n{color:var(--ink-3);font-weight:400}
+  .c small{font-size:9.5px;font-weight:600;vertical-align:super;line-height:0;margin-left:1px;opacity:.85}
+  .badge.late{background:var(--warm-bg);color:var(--warm);margin-left:6px}
   .heat tfoot th,.heat tfoot td{font-family:var(--f-mono);font-size:12px;color:var(--ink-2);height:24px;font-variant-numeric:tabular-nums}
   .heat tfoot tr:first-child > *{border-top:1px solid var(--rule);padding-top:4px}
   .heat tfoot .rh{font-family:var(--f-body);font-size:12px;font-weight:500;color:var(--ink-3)}
@@ -258,14 +260,15 @@
   <section class="panel" id="empty" aria-labelledby="howHead">
     <div class="panel-head"><h2 id="howHead">How it works</h2></div>
     <div class="how">
-      <div><b>1</b><span><a href="sets.html">Make a practice set</a> and send your class the link.</span></div>
+      <div><b>1</b><span><a href="sets.html">Make a practice set</a> or <a href="sets.html?assignment">an assignment</a> and send your class the link.</span></div>
       <div><b>2</b><span>At the end, each student types their name, copies their result line and sends it to you.</span></div>
       <div><b>3</b><span>Paste all the lines above. Each one is checked, so a changed score shows up.</span></div>
     </div>
     <div class="blk example">
       <span class="lbl">A result line looks like this</span>
       <code id="exLine"></code>
-      <span class="msg">✓ right first time · ~ right after more tries or a hint · ✗ not right, or looked at the work · – skipped</span>
+      <span class="msg">✓ right first time · ~ right after more tries or a hint · ✗ not right, or looked at the work · – skipped.
+        Lines from an assignment also say how many tries each problem took.</span>
       <div class="actions"><button type="button" class="ghost" id="exBtn">Show me with an example class</button></div>
     </div>
   </section>
@@ -291,8 +294,8 @@
   var TOPICS = [
     ["addition.html","Addition"], ["subtraction.html","Subtraction"], ["multiplication.html","Multiplication"], ["division.html","Division"],
     ["fractions.html","Fractions"], ["percents.html","Percents"], ["factors.html","Factors & primes"], ["integers.html","Integers"],
-    ["ratios.html","Ratios & rates"], ["unit-conversions.html","Unit conversions"], ["money-math.html","Money math"], ["pemdas.html","Order of operations"], ["algebra.html","Algebra"], ["lines.html","Lines & slope"],
-    ["geometry.html","Geometry"], ["stats.html","Statistics"], ["probability.html","Probability"], ["trigonometry.html","Trigonometry"], ["calculus.html","Calculus"], ["number-sense.html","Number sense"], ["quadratics.html","Quadratics & polynomials"], ["logarithms.html","Logarithms"], ["sequences.html","Sequences & series"], ["functions.html","Functions"], ["radicals.html","Radicals & rational expressions"], ["complex-numbers.html","Complex numbers"], ["college-statistics.html","College statistics"], ["matrices-and-vectors.html","Matrices & vectors"], ["exponents.html","Exponents"], ["graphing.html","Graphing"], ["scratch.html","By hand"], ["wordproblems.html","Story problems"], ["flashcards.html","Flash cards"]
+    ["ratios.html","Ratios & rates"], ["unit-conversions.html","Unit conversions"], ["money-math.html","Money math"], ["aviation.html","Aviation"], ["pemdas.html","Order of operations"], ["algebra.html","Algebra"], ["lines.html","Lines & slope"],
+    ["geometry.html","Geometry"], ["stats.html","Statistics"], ["probability.html","Probability"], ["counting.html","Counting"], ["trigonometry.html","Trigonometry"], ["calculus.html","Calculus"], ["number-sense.html","Number sense"], ["quadratics.html","Quadratics & polynomials"], ["logarithms.html","Logarithms"], ["sequences.html","Sequences & series"], ["functions.html","Functions"], ["radicals.html","Radicals & rational expressions"], ["complex-numbers.html","Complex numbers"], ["college-statistics.html","College statistics"], ["matrices-and-vectors.html","Matrices & vectors"], ["exponents.html","Exponents"], ["graphing.html","Graphing"], ["scratch.html","By hand"], ["wordproblems.html","Story problems"], ["flashcards.html","Flash cards"]
   ];
   function topic(page){
     if (!/\.html$/.test(page)) page += ".html";
@@ -348,7 +351,9 @@
       var probs = o.p.filter(function(p){ return Array.isArray(p) && typeof p[0] === "string" && topic(p[0]); })
                      .slice(0, 100).map(function(p){ return { page:topic(p[0])[0], params:cleanParams(p[1]) }; });
       if (!probs.length) throw new Error("no problems");
-      return { title:String(o.t || "Practice set").slice(0, 60) || "Practice set", probs:probs };
+      var a = o.a && typeof o.a === "object" ? o.a : null;      // an assignment (sets.html?assignment): its due date, its options
+      return { title:String(o.t || "Practice set").slice(0, 60) || "Practice set", probs:probs,
+               asg:a ? { due:/^\d{4}-\d\d-\d\d$/.test(String(a.d || "")) ? String(a.d) : "", steps:a.s !== 0, retries:a.r !== 0 } : null };
     });
   }
   function probLink(p){ return U(p.page, (p.params ? p.params + "&" : "") + "practice=check"); }
@@ -368,7 +373,10 @@
      Marks, one per problem: ✓ right first time, ~ right after more tries or a hint, ✗ looked at the work or tried and
      not right, – skipped without trying. "set" is hid(the set's code, 6). The check code is cyrb53 over every field,
      the name and the marks too (marks hashed as letters y a x s, so ✓ typed as v or ✗ as x still checks out).
-     Neither the title nor the name can hold " · " (it becomes "-"), so the fields split cleanly. */
+     Neither the title nor the name can hold " · " (it becomes "-"), so the fields split cleanly.
+     v3 (assignments): v2 with the tries after the marks, how many times each problem was checked (0 for none, at most 99):
+                [Name · ]Title · … · 2 skipped · 1✓ 2~ 3✗ 4– · tries 1 3 1 0 · 2026-10-21 11:17 · set DLMILC · check YG1AE4
+                Its check code is checkV3: the tries (joined by ",") are hashed too. */
   var MK = { y:"✓", a:"~", x:"✗", s:"–" };
   var MK_IN = { "✓":"y", "✔":"y", "√":"y", "v":"y", "V":"y", "y":"y", "Y":"y", "+":"y",
                 "~":"a", "∼":"a", "～":"a", "≈":"a", "˜":"a",
@@ -380,13 +388,25 @@
   function checkV2(name, title, first, total, solved, skipped, marks, when, setId){
     return hid(["v2", name, title, first, total, solved, skipped, marks, when, setId].join("|"), 6, 7919);
   }
+  function checkV3(name, title, first, total, solved, skipped, marks, tries, when, setId){
+    return hid(["v3", name, title, first, total, solved, skipped, marks, tries.join(","), when, setId].join("|"), 6, 7919);
+  }
   function cleanField(s){ return String(s || "").replace(/[\u0000-\u001f\u007f]/g, " ").replace(/·/g, "-").replace(/\s+/g, " ").trim(); }
-  function lineFor(o){            // o: { name, title, first, n, solved, skipped, marks:"yaxs…", when, set }
+  function lineFor(o){            // o: { name, title, first, n, solved, skipped, marks:"yaxs…", when, set[, tries:[1, 3, 0, …] (v3)] }
     var name = cleanField(o.name).slice(0, 40), title = cleanField(o.title) || "Practice set";
     var mk = o.marks.split("").map(function(c, k){ return (k + 1) + MK[c]; }).join(" ");
+    var tr = o.tries ? o.tries.map(function(t){ return Math.max(0, Math.min(99, t | 0)); }) : null;
     return (name ? name + " · " : "") + title + " · " + o.first + " of " + o.n + " right first time · " + o.solved + " of " + o.n
-      + " right in the end · " + o.skipped + " skipped · " + mk + " · " + o.when + " · set " + o.set
-      + " · check " + checkV2(name, title, o.first, o.n, o.solved, o.skipped, o.marks, o.when, o.set);
+      + " right in the end · " + o.skipped + " skipped · " + mk + (tr ? " · tries " + tr.join(" ") : "") + " · " + o.when + " · set " + o.set
+      + " · check " + (tr ? checkV3(name, title, o.first, o.n, o.solved, o.skipped, o.marks, tr, o.when, o.set)
+                          : checkV2(name, title, o.first, o.n, o.solved, o.skipped, o.marks, o.when, o.set));
+  }
+  // "1 3 0 2" → [1, 3, 0, 2] when there are n of them, else null
+  function readTries(s, n){
+    var t = String(s).trim();
+    if (!/^\d{1,2}(?: \d{1,2})*$/.test(t)) return null;
+    var a = t.split(" ").map(Number);
+    return a.length === n ? a : null;
   }
   var CORE = /(\d+) of (\d+) right first time · (\d+) of (\d+) right in the end · (\d+) skipped · (?:(.*?) · )?(\d{4}-\d\d-\d\d \d\d:\d\d) · set ([0-9A-Za-z]{6}) · check ([0-9A-Za-z]{6})(?![0-9A-Za-z])/;
   function readMarks(s, n){
@@ -414,23 +434,29 @@
   function readTry(t){
     var m = CORE.exec(t);
     if (!m) return null;
-    var r = { ver:m[6] === undefined ? 1 : 2, name:"", title:"", first:+m[1], n:+m[2], solved:+m[3], skipped:+m[5], marks:null,
+    var mid = m[6], ti = mid === undefined ? -1 : mid.lastIndexOf(" · tries ");
+    var r = { ver:mid === undefined ? 1 : ti >= 0 ? 3 : 2, name:"", title:"", first:+m[1], n:+m[2], solved:+m[3], skipped:+m[5], marks:null, tries:null,
               when:m[7], set:m[8].toUpperCase(), check:m[9].toUpperCase(), status:"bad", why:"" };
     if (+m[4] !== r.n || !r.n || r.first > r.n || r.solved > r.n || r.skipped > r.n){ r.status = "unk"; r.why = "the numbers don’t add up"; }
-    if (r.ver === 2){
-      r.marks = readMarks(m[6], r.n);
+    if (r.ver >= 2){
+      r.marks = readMarks(ti >= 0 ? mid.slice(0, ti) : mid, r.n);
       if (r.marks === null){ r.status = "unk"; r.why = "the problem-by-problem marks can’t be read"; }
+    }
+    if (r.ver === 3){
+      r.tries = readTries(mid.slice(ti + 9), r.n);
+      if (r.tries === null){ r.status = "unk"; r.why = "the tries can’t be read"; }
     }
     var pre = t.slice(0, m.index).replace(/\s*·\s*$/, ""), f = pre ? pre.split(" · ") : [""], L = f.length;
     var titleF = f[L - 1], nameF = L >= 2 ? f[L - 2] : null, cands = [];
-    if (r.ver === 2 && nameF !== null) wordTails(nameF).forEach(function(nm){ cands.push([nm, titleF]); });
+    if (r.ver >= 2 && nameF !== null) wordTails(nameF).forEach(function(nm){ cands.push([nm, titleF]); });
     wordTails(titleF).forEach(function(tt){ cands.push(["", tt]); });
     if (r.status !== "unk") for (var i = 0; i < cands.length; i++){
-      var c = r.ver === 2 ? checkV2(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.when, r.set)
+      var c = r.ver === 3 ? checkV3(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.tries, r.when, r.set)
+            : r.ver === 2 ? checkV2(cands[i][0], cands[i][1], r.first, r.n, r.solved, r.skipped, r.marks, r.when, r.set)
                           : checkV1(cands[i][1], r.first, r.n, r.solved, r.skipped, r.when, r.set);
       if (c === r.check){ r.name = cands[i][0]; r.title = cands[i][1]; r.status = "ok"; return r; }
     }
-    r.name = r.ver === 2 && nameF !== null ? unBullet(nameF) : "";
+    r.name = r.ver >= 2 && nameF !== null ? unBullet(nameF) : "";
     r.title = unBullet(titleF);
     return r;
   }
@@ -576,7 +602,8 @@
   }
   // the very same line pasted twice (every field alike), not a second go
   function same(a, b){
-    return ["name", "title", "first", "n", "solved", "skipped", "marks", "when", "set", "check"].every(function(k){ return a[k] === b[k]; });
+    return ["name", "title", "first", "n", "solved", "skipped", "marks", "when", "set", "check"].every(function(k){ return a[k] === b[k]; })
+      && String(a.tries) === String(b.tries);
   }
 
   function read(){
@@ -633,6 +660,7 @@
       else if (k === "solved"){ x = a.r.solved / a.r.n; y = b.r.solved / b.r.n; }
       else if (k === "skipped"){ x = a.r.skipped; y = b.r.skipped; }
       else if (k === "when"){ x = a.r.when; y = b.r.when; }
+      else if (k === "tries"){ x = totalTries(a.r); y = totalTries(b.r); }
       else { x = RANK[a.r.status]; y = RANK[b.r.status]; }
       if (x < y) return -d;
       if (x > y) return d;
@@ -640,6 +668,17 @@
     });
   }
 
+  // v3 lines (assignments) say how many times each problem was checked
+  function totalTries(r){ return r.tries ? r.tries.reduce(function(a, b){ return a + b; }, 0) : -1; }
+  function lateOf(r, K){
+    var due = K && K.set.asg && K.set.asg.due;
+    return !!due && r.when > due + " 23:59";
+  }
+  function dueText(d){
+    var m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(d || "");
+    if (!m) return "";
+    try { return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric", year:"numeric" }); } catch (e){ return d; }
+  }
   function render(){
     var out = $("out"), groups = STATE.groups;
     $("csvBtn").disabled = $("printBtn").disabled = !groups.length;
@@ -688,9 +727,11 @@
     var c = { ok:0, bad:0, unk:0 };
     S.forEach(function(s){ c[s.r.status]++; });
     var old = S.length - marked.length;
+    var withTries = S.filter(function(s){ return s.r.tries && s.r.tries.length === n; }), A = K && K.set.asg;
 
     html += '<header class="sethead"><div class="print-only eyebrow">Class results · printed ' + esc(new Date().toLocaleDateString()) + "</div>"
-      + "<h2>" + esc(g.title) + "</h2><p>" + plural(n, "problem") + ' · <span class="set-id">set ' + esc(g.id) + "</span> · "
+      + "<h2>" + esc(g.title) + "</h2><p>" + (A || withTries.length ? "Assignment · " : "") + plural(n, "problem") + ' · <span class="set-id">set ' + esc(g.id) + "</span> · "
+      + (A && A.due ? "due " + esc(dueText(A.due)) + " · " : "")
       + (K ? (K.from === "device" ? "the problems come from the set you made on this device" : "the problems come from the set link")
            : '<span class="no-print">paste this set’s link above to see each problem’s text</span>')
       + "</p></header>";
@@ -705,8 +746,8 @@
       + "</div>";
 
     // the class table
-    var cols = [["name", "Student", ""], ["first", "Right first time", "num"], ["solved", "Right in the end", "num"], ["skipped", "Skipped", "num"],
-                ["when", "Finished", ""], ["check", "Check", ""]];
+    var cols = [["name", "Student", ""], ["first", "Right first time", "num"], ["solved", "Right in the end", "num"], ["skipped", "Skipped", "num"]]
+      .concat(withTries.length ? [["tries", "Tries", "num"]] : []).concat([["when", "Finished", ""], ["check", "Check", ""]]);
     html += '<section class="panel" aria-labelledby="clsHead"><div class="panel-head"><h2 id="clsHead">The class</h2><span class="sort-hint">sort by any column</span></div>'
       + '<div class="scroll" tabindex="0" role="region" aria-label="The class, scrolls sideways"><table class="cls"><thead><tr>'
       + cols.map(function(col){
@@ -723,7 +764,8 @@
             + '<td class="num"><span class="meter">' + r.first + " / " + r.n + '<i aria-hidden="true"><b style="width:' + Math.round(100 * r.first / r.n) + '%"></b></i></span></td>'
             + '<td class="num">' + r.solved + " / " + r.n + "</td>"
             + '<td class="num">' + r.skipped + "</td>"
-            + "<td>" + esc(r.when) + "</td>"
+            + (withTries.length ? '<td class="num" title="' + esc(r.tries ? "Checks on each problem: " + r.tries.join(", ") : "This line doesn’t count tries") + '">' + (r.tries ? totalTries(r) : "–") + "</td>" : "")
+            + "<td>" + esc(r.when) + (lateOf(r, K) ? '<span class="badge late" title="Finished after the due date">late</span>' : "") + "</td>"
             + '<td><span class="badge ' + ck[0] + '" title="' + esc(r.status === "unk" ? "Can’t be checked: " + r.why
                 : r.status === "bad" ? "The check code doesn’t match: the line was changed after it was made" : "The line is just as it was made") + '">' + ck[1] + "</span>"
             + (r.ver === 1 ? '<span class="old" title="Made before practice sets recorded each problem">older line</span>' : "") + "</td></tr>";
@@ -741,6 +783,7 @@
         var t = { y:0, a:0, x:0, s:0, all:0 };
         marked.forEach(function(s){ t[s.r.marks.charAt(k)]++; t.all++; });
         t.k = k; t.rate = t.y / t.all;
+        t.tries = withTries.length ? withTries.reduce(function(a, s){ return a + s.r.tries[k]; }, 0) / withTries.length : 0;
         col.push(t);
       }
       var hard = col.filter(function(t){ return t.rate < 1; }).sort(function(a, b){ return a.rate - b.rate || (b.x + b.s) - (a.x + a.s) || a.k - b.k; });
@@ -757,11 +800,12 @@
             return '<th scope="col"' + cls + ' title="' + esc(label) + '">' + (p ? '<a href="' + esc(probLink(p)) + '" target="_blank" rel="noopener" aria-label="' + esc(label + " (opens it)") + '">' + (t.k + 1) + "</a>" : (t.k + 1)) + "</th>";
           }).join("") + "</tr></thead><tbody>"
         + S.map(function(s){
-            var m = s.r.marks && s.r.marks.length === n ? s.r.marks : "";
+            var m = s.r.marks && s.r.marks.length === n ? s.r.marks : "", tr = s.r.tries && s.r.tries.length === n ? s.r.tries : null;
             var cells = "";
             for (var k = 0; k < n; k++){
-              var ch = m ? m.charAt(k) : "";
-              cells += ch ? '<td class="c ' + ch + '" title="' + esc(s.label + " · problem " + (k + 1) + ": " + MEANS[ch]) + '">' + MK[ch] + "</td>"
+              var ch = m ? m.charAt(k) : "", tk = tr ? tr[k] : -1;
+              cells += ch ? '<td class="c ' + ch + '" title="' + esc(s.label + " · problem " + (k + 1) + ": " + MEANS[ch] + (tk >= 0 ? " · " + plural(tk, "try", "tries") : "")) + '">'
+                            + MK[ch] + (tk > 1 ? "<small>" + tk + "</small>" : "") + "</td>"
                           : '<td class="c n" title="' + esc(s.label + ": no problem-by-problem record (older line)") + '">·</td>';
             }
             return '<tr><th scope="row" class="rh" title="' + esc(s.label) + '">' + esc(s.label) + "</th>" + cells + "</tr>";
@@ -770,6 +814,8 @@
             return "<td" + (worst.indexOf(t.k) >= 0 ? ' class="hard"' : "") + ' title="' + esc("Problem " + (t.k + 1) + ": " + t.y + " of " + t.all + " right first time") + '">' + t.y + "</td>"; }).join("") + "</tr>"
         + '<tr><th scope="row" class="rh">Not right or skipped</th>' + col.map(function(t){
             return '<td title="' + esc("Problem " + (t.k + 1) + ": " + t.x + " not right, " + t.s + " skipped") + '">' + (t.x + t.s) + "</td>"; }).join("") + "</tr>"
+        + (withTries.length ? '<tr><th scope="row" class="rh">Tries, on average</th>' + col.map(function(t){
+            return '<td title="' + esc("Problem " + (t.k + 1) + ": " + one(t.tries) + " checks on average, from " + plural(withTries.length, "line") + " that count them") + '">' + one(t.tries) + "</td>"; }).join("") + "</tr>" : "")
         + "</tfoot></table></div>"
         + (old ? '<div class="blk"><span class="msg">' + plural(old, "line is", "lines are") + " from before practice sets recorded each problem; "
             + (old === 1 ? "it’s" : "they’re") + " left out of the counts below the map.</span></div>" : "")
@@ -783,6 +829,7 @@
             return '<li><span class="k">' + (t.k + 1) + ".</span>"
               + '<span class="q' + (p ? "" : " plain") + '">' + esc(p ? textOf(p.page, p.params) : "Problem " + (t.k + 1)) + "</span>"
               + '<span class="d">' + t.y + " of " + t.all + " right first time" + (t.a ? " · " + t.a + " ~" : "") + (t.x ? " · " + t.x + " ✗" : "") + (t.s ? " · " + t.s + " skipped" : "")
+              + (withTries.length ? " · " + one(t.tries) + (one(t.tries) === "1" ? " try" : " tries") + " on average" : "")
               + (p ? " · " + esc(topic(p.page)[1]) : "") + "</span>"
               + '<span class="stack" aria-hidden="true">' + ["y", "a", "x", "s"].map(function(m){ return t[m] ? '<i class="' + m + '" style="flex:' + t[m] + '"></i>' : ""; }).join("") + "</span>"
               + (p ? '<span class="act"><a class="small-link" href="' + esc(probLink(p)) + '" target="_blank" rel="noopener">Open it ↗</a></span>' : "")
@@ -801,7 +848,7 @@
             var bits = [];
             if (by.x.length) bits.push("not right: " + by.x.join(", "));
             if (by.s.length) bits.push("skipped: " + by.s.join(", "));
-            if (by.a.length) bits.push("needed more tries: " + by.a.join(", "));
+            if (by.a.length) bits.push("needed more tries: " + by.a.map(function(k){ return r.tries ? k + " (" + r.tries[k - 1] + ")" : k; }).join(", "));
             return '<li><span class="k">' + pctTxt(r.first / r.n) + "</span>"
               + '<span class="q plain' + (s.name ? "" : " noname") + '">' + esc(s.label) + "</span>"
               + '<span class="d">' + r.first + " of " + r.n + " right first time · " + r.solved + " in the end" + (r.status === "bad" ? " · <b>line edited</b>" : "") + "</span>"
@@ -871,12 +918,17 @@
     STATE.groups.forEach(function(g){ most = Math.max(most, g.n); });
     var head = ["set", "set title", "student", "right first time", "problems", "right in the end", "skipped", "finished", "check", "times sent"];
     for (var k = 1; k <= most; k++) head.push("p" + k);
+    var anyTries = STATE.groups.some(function(g){ return g.recs.some(function(r){ return r.tries; }); });
+    if (anyTries){ head.push("tries"); for (var k2 = 1; k2 <= most; k2++) head.push("p" + k2 + " tries"); }
+    head.push("late");
     var rows = [head];
     STATE.groups.forEach(function(g){
       sorted(g.students).forEach(function(s){
         var r = s.r, row = [g.id, g.title, s.label, r.first, r.n, r.solved, r.skipped, r.when,
           { ok:"verified", bad:"edited", unk:"unknown" }[r.status] + (r.ver === 1 ? " (older line)" : ""), s.earlier.length + 1];
         for (var k = 0; k < most; k++) row.push(r.marks && k < r.marks.length ? MK[r.marks.charAt(k)] : "");
+        if (anyTries){ row.push(r.tries ? totalTries(r) : ""); for (var k2 = 0; k2 < most; k2++) row.push(r.tries && k2 < r.tries.length ? r.tries[k2] : ""); }
+        row.push(lateOf(r, setOf(g)) ? "late" : "");
         rows.push(row);
       });
     });

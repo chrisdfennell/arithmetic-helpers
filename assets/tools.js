@@ -498,7 +498,8 @@
     "functions.html":"x f( ) ^ √ / − + = , |", "radicals.html":"√ ∛ x ^ / ( ) − + =",
     "complex-numbers.html":"i ^ √ / ( ) − + ° π", "college-statistics.html":", . = < > ± % ( )",
     "matrices-and-vectors.html":"[ ] , ; < > − / ( ) |",
-    "unit-conversions.html":"/ . ° ′ ″ , ²", "money-math.html":"$ % . , / ( )"
+    "unit-conversions.html":"/ . ° ′ ″ , ²", "money-math.html":"$ % . , / ( )",
+    "counting.html":"! C( P( ( ) , × ÷ ^ n", "aviation.html":"° @ , . / : E W"
   };
   var padEl = null, padFor = null, padHide = null;
   function padWanted(){
@@ -761,6 +762,25 @@
     setTimeout(safe(check), 1500);
   }
 
+  /* ===================== Photo of the problem: photo.js, next to this file ===================== */
+  // a camera button by the problem box on the helper pages and by the home page's search box: a photo, a picture or a
+  // pasted screenshot is read on this device and typed into the box. photo.js adds the button, and downloads the reading
+  // engine (Tesseract.js, from jsDelivr) only when a picture is first read. Not when framed or embedded.
+  // This block starts itself, so main() has no line for it.
+  (function(){
+    var loadPhoto = safe(function(){
+      if (window.HelperPhoto || passive || !window.Promise || !window.URL || !URL.createObjectURL) return;
+      var path = window.HelperSite ? window.HelperSite.path(page) : location.pathname;
+      if (!/(^|\/)helpers\//.test(path) && !document.getElementById("askIn")) return;   // the helpers, and the home page
+      var src = SELF;
+      if (!src){ var s = document.querySelector('script[src$="tools.js"], script[src*="tools.js?"]'); src = s ? s.src : "tools.js"; }
+      var sc = document.createElement("script");
+      sc.src = src.replace(/tools\.js([?#].*)?$/, "photo.js"); sc.async = true;
+      document.head.appendChild(sc);
+    });
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", loadPhoto); else loadPhoto();
+  })();
+
   /* ===================== start ===================== */
   var main = safe(function(){
     var st = document.createElement("style"); st.textContent = CSS; document.head.appendChild(st);
@@ -776,9 +796,13 @@
     if (!document.querySelector(".page")) return;   // the home page: settings only
     addReadButton();
     addReportButton();
+    // ---- assignments: assets/assign.js adds the "Add to assignment" button beside Copy link on the helper pages ----
+    if (!window.HelperAssign){ var asg = document.createElement("script"); asg.src = U("assign.js"); asg.async = true; document.head.appendChild(asg); }
     watchNotices();
     watchAddress();
     watchByHand();
+    // Common Core line under the heading (assets/standards.js adds it, hides it in embeds and print)
+    if (!window.HelperStandards){ var stdS = document.createElement("script"); stdS.src = U("standards.js"); stdS.async = true; document.head.appendChild(stdS); }
     // the bar is drawn by nav.js; wait for it briefly
     var tries = 0;
     (function waitBar(){

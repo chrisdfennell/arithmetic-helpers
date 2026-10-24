@@ -53,6 +53,7 @@
   }
 
   *{box-sizing:border-box}
+  [hidden]{display:none !important}
   body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;
     -webkit-font-smoothing:antialiased}
   .page{max-width:1240px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
@@ -122,6 +123,9 @@
   @media (max-width:640px){.sheet{padding:26px 20px;aspect-ratio:auto}}
   .sh-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;border-bottom:2px solid #111;padding-bottom:8px;margin-bottom:14px;flex-wrap:wrap}
   .sh-title{font-family:var(--f-display);font-stretch:112%;font-weight:800;font-size:24px;line-height:1.1;margin:0}
+  .sh-ver{display:inline-block;font-family:var(--f-mono);font-size:13px;font-weight:700;letter-spacing:.06em;color:#111;border:2px solid #111;
+    border-radius:6px;padding:1px 8px;margin-left:10px;vertical-align:4px;white-space:nowrap}
+  .sh-head{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 0}
   .sh-lines{display:flex;gap:18px;font-size:13px;color:#333;flex-wrap:wrap}
   .sh-lines span{display:inline-flex;gap:6px;align-items:flex-end}
   .sh-lines i{display:inline-block;border-bottom:1px solid #333;width:150px;height:1em}
@@ -156,6 +160,8 @@
   .setbox textarea{width:100%;font-family:var(--f-mono);font-size:12px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);
     border-radius:8px;padding:7px 10px;resize:vertical;word-break:break-all}
   a.ghost{text-decoration:none;display:inline-flex;align-items:center}
+  .setbox select{align-self:flex-start}
+  .ver-note{font-size:12.5px;color:var(--ink-3)}
 
   @media print{
     @page{size:letter;margin:12mm 12mm 14mm}
@@ -208,6 +214,14 @@
         </div>
       </div>
       <div class="blk">
+        <div class="field"><span class="lbl">Versions</span><div class="modes" id="verT" role="group" aria-label="How many versions"></div></div>
+        <span class="ver-note" id="verNote">One version. With 2–4, each version (A, B, C, D) has the same kinds of problems in the same order, with different numbers.</span>
+        <div class="row" id="verOpts" hidden>
+          <button type="button" class="tog" id="shufT">Shuffle the order in B–D</button>
+          <div class="field" id="keysAtWrap"><span class="lbl">Answer keys</span><div class="modes" id="keysAtT"></div></div>
+        </div>
+      </div>
+      <div class="blk">
         <span class="lbl">Sections</span>
         <div id="secs" style="display:flex;flex-direction:column;gap:10px"></div>
         <button type="button" class="ghost" id="addSec">+ Add a section</button>
@@ -217,17 +231,29 @@
           <button type="button" class="go" id="newBtn">New numbers</button>
           <button type="button" class="ghost" id="printBtn">Print</button>
           <button type="button" class="ghost" id="setBtn">Practice link</button>
+          <button type="button" class="ghost" id="wsBtn" title="A link that opens this worksheet again, every version with the same numbers">Worksheet link</button>
         </div>
         <div class="sec-msg" id="status" role="status" aria-live="polite"></div>
         <div class="setbox" id="setBox" hidden>
           <span class="lbl">Practice it online</span>
           <span class="sec-msg">The same problems, one at a time, with Check my answer and a score at the end.</span>
+          <label class="field" id="setVerWrap" hidden><span class="lbl">Which version</span><select id="setVer"></select></label>
           <textarea id="setOut" readonly rows="3" aria-label="Practice link"></textarea>
           <div class="actions">
             <button type="button" class="go" id="setCopy">Copy link</button>
             <button type="button" class="ghost" id="setQR" aria-haspopup="dialog" hidden title="Show the link as a QR code, for the projector">QR code</button>
             <a class="ghost" id="setOpen" href="#" target="_blank" rel="noopener">Open it</a>
             <span class="sec-msg" id="setMsg" role="status" aria-live="polite"></span>
+          </div>
+        </div>
+        <div class="setbox" id="wsBox" hidden>
+          <span class="lbl">This worksheet, as a link</span>
+          <span class="sec-msg" id="wsInfo">Opens this worksheet again — every version with the same numbers and the same answer keys. Keep it, or send it to a colleague.</span>
+          <textarea id="wsOut" readonly rows="3" aria-label="Worksheet link"></textarea>
+          <div class="actions">
+            <button type="button" class="go" id="wsCopy">Copy link</button>
+            <button type="button" class="ghost" id="wsQR" aria-haspopup="dialog" hidden title="Show the worksheet link as a QR code">QR code</button>
+            <span class="sec-msg" id="wsMsg" role="status" aria-live="polite"></span>
           </div>
         </div>
       </div>
@@ -238,6 +264,20 @@
 </div>
 
 <script>
+/* worksheets.html — the Worksheet Maker. Each section asks a helper, in a hidden frame, for problems (helper:options,
+   helper:make), and the sheets are drawn from what comes back.
+   Versions (1–4, A–D): every version has the same sections, kinds, counts and options, in the same order, with different
+   numbers. The numbers come from seeds: before each helper:make this page gives the helper's frame (same site) a seeded
+   Math.random, so a section's seed and the version letter always make the same problems.
+     section seed (sec.seed, a 32-bit number)  →  version v's problems: seedFor(sec, v)
+   "New numbers" (or ↻ on a section) picks new seeds. With Mix, the mixed order comes from S.mixSeed; with Shuffle, versions
+   B–D each get their own order (A keeps the order the helpers made).
+   The worksheet link, worksheets.html?ws=<code>, opens the same worksheet again: the code is
+     "z" + base64url(deflate-raw(JSON)) when the browser can compress it (shorter), or "j" + base64url(JSON), with
+     JSON = { v:1, t:title, f:[name, key, mix, qr, shuffle] (0/1), c:columns, sp:"sm|md|lg", n:versions, ka:"end|each",
+              ms:mixSeed, s:[[page without .html, count, options, seed], …] }
+   It's reproducible as long as the helpers make problems the same way (the same site version).
+   Saved on this device: localStorage["worksheet-maker"] = { s:S, probs:version A's problems (as before), vprobs:[version][section], theme }. */
 (function(){
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
@@ -250,21 +290,56 @@
     ["multiplication.html","Multiplication","The Product Ladder"], ["division.html","Division","The Division House"],
     ["fractions.html","Fractions","The Fraction Bar"], ["percents.html","Percents","The Hundred Grid"],
     ["factors.html","Factors & primes","The Factor Tree"], ["integers.html","Integers","The Number Line"],
-    ["ratios.html","Ratios & rates","The Ratio Table"], ["unit-conversions.html","Unit conversions","The Measuring Tape"], ["money-math.html","Money math","The Money Jar"], ["pemdas.html","Order of operations","The Order Stack"],
+    ["ratios.html","Ratios & rates","The Ratio Table"], ["unit-conversions.html","Unit conversions","The Measuring Tape"], ["money-math.html","Money math","The Money Jar"], ["aviation.html","Aviation","The Flight Computer"], ["pemdas.html","Order of operations","The Order Stack"],
     ["algebra.html","Algebra","The Balance Scale"], ["lines.html","Lines & slope","The Slope Grid"],
     ["geometry.html","Geometry","The Shape Shop"], ["stats.html","Statistics","The Dot Plot"],
-    ["probability.html","Probability","The Chance Spinner"], ["trigonometry.html","Trigonometry","The Unit Circle"], ["calculus.html","Calculus","The Rate Machine"], ["number-sense.html","Number sense","The Place Value Chart"], ["quadratics.html","Quadratics & polynomials","The Area Box"], ["logarithms.html","Logarithms","The Log Ladder"], ["sequences.html","Sequences & series","The Number Staircase"], ["functions.html","Functions","The Function Machine"], ["radicals.html","Radicals & rational expressions","The Root Cellar"], ["complex-numbers.html","Complex numbers","The Complex Plane"], ["college-statistics.html","College statistics","The Bell Curve"], ["matrices-and-vectors.html","Matrices & vectors","The Matrix Grid"], ["exponents.html","Exponents","The Power Tower"], ["graphing.html","Graphing","The Graph Paper"], ["scratch.html","By hand","The Scratch Paper"], ["wordproblems.html","Story problems","The Story Problem"], ["flashcards.html","Flash cards","The Flash Cards"]
+    ["probability.html","Probability","The Chance Spinner"], ["counting.html","Counting","The Counting Tree"], ["trigonometry.html","Trigonometry","The Unit Circle"], ["calculus.html","Calculus","The Rate Machine"], ["number-sense.html","Number sense","The Place Value Chart"], ["quadratics.html","Quadratics & polynomials","The Area Box"], ["logarithms.html","Logarithms","The Log Ladder"], ["sequences.html","Sequences & series","The Number Staircase"], ["functions.html","Functions","The Function Machine"], ["radicals.html","Radicals & rational expressions","The Root Cellar"], ["complex-numbers.html","Complex numbers","The Complex Plane"], ["college-statistics.html","College statistics","The Bell Curve"], ["matrices-and-vectors.html","Matrices & vectors","The Matrix Grid"], ["exponents.html","Exponents","The Power Tower"], ["graphing.html","Graphing","The Graph Paper"], ["scratch.html","By hand","The Scratch Paper"], ["wordproblems.html","Story problems","The Story Problem"], ["flashcards.html","Flash cards","The Flash Cards"]
   ];
   function topic(page){ for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i][0] === page) return TOPICS[i]; return TOPICS[0]; }
+  function known(page){ for (var i = 0; i < TOPICS.length; i++) if (TOPICS[i][0] === page) return true; return false; }
+  var LETTERS = "ABCD";
+
+  /* ===================== seeds ===================== */
+  function newSeed(){
+    try { var a = new Uint32Array(1); crypto.getRandomValues(a); return a[0]; } catch (e){ return Math.floor(Math.random() * 4294967296); }
+  }
+  // cyrb53, as the practice sets use it
+  function hash(str, seed){
+    var h1 = 0xdeadbeef ^ (seed || 0), h2 = 0x41c6ce57 ^ (seed || 0);
+    for (var i = 0, ch; i < str.length; i++){ ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+  }
+  function seed32(str){ return hash(str) % 4294967296 >>> 0; }
+  function rng(a){                // mulberry32: a seeded stand-in for Math.random
+    a = a >>> 0;
+    return function(){
+      a = (a + 0x6D2B79F5) | 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  // version A uses the section's seed as it is, so a one-version worksheet and version A are the same problems
+  function seedFor(sec, v){ return v ? seed32(sec.seed + ":v" + v) : sec.seed >>> 0; }
+  function seededShuffle(list, seed){
+    var a = list.slice(), r = rng(seed);
+    for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
 
   var S = { title:"Math practice", name:true, key:true, mix:false, qr:false, cols:2, space:"md",
-            secs:[ { page:"addition.html", count:6, opts:{} }, { page:"pemdas.html", count:4, opts:{} } ] };
-  var PROBS = [];          // one list per section: [{text, html, params, answer, answerHtml}]
+            versions:1, shuffle:false, keysAt:"end", mixSeed:newSeed(),
+            secs:[ { page:"addition.html", count:6, opts:{}, seed:newSeed() }, { page:"pemdas.html", count:4, opts:{}, seed:newSeed() } ] };
+  var VP = [[]];           // VP[version][section] = [{text, html, params, answer, answerHtml}]
+  var TOK = [];            // the newest request for each section, so a slow old answer can't overwrite a newer one
   var SCHEMA = {};         // page -> options schema
 
   /* ===================== talking to the helpers ===================== */
-  // each helper runs in a hidden iframe and answers postMessage requests
-  var frames = {}, waiting = {}, seq = 0;
+  // each helper runs in a hidden iframe and answers postMessage requests; a page's requests go one at a time,
+  // so each helper:make runs with its own seeded Math.random
+  var frames = {}, waiting = {}, queues = {}, seq = 0;
   window.addEventListener("message", function(e){
     var d = e.data;
     if (!d || typeof d !== "object" || !d.id || !waiting[d.id]) return;
@@ -285,15 +360,23 @@
     });
     return frames[page];
   }
-  function ask(page, msg, want){
-    return frame(page).then(function(f){
-      return new Promise(function(ok, bad){
-        var id = "w" + (++seq) + "-" + Date.now();
-        msg.id = id;
-        waiting[id] = { want:want, ok:ok, timer:setTimeout(function(){ delete waiting[id]; bad(new Error("timeout")); }, 10000) };
-        f.contentWindow.postMessage(msg, "*");
+  function ask(page, msg, want, seed){
+    function run(){
+      return frame(page).then(function(f){
+        return new Promise(function(ok, bad){
+          var id = "w" + (++seq) + "-" + Date.now(), win = f.contentWindow, orig = null;
+          msg.id = id;
+          if (seed !== undefined){ try { orig = win.Math.random; win.Math.random = rng(seed); } catch (e){ orig = null; } }
+          function restore(){ if (orig) try { win.Math.random = orig; } catch (e){} }
+          waiting[id] = { want:want, ok:function(d){ restore(); ok(d); },
+                          timer:setTimeout(function(){ delete waiting[id]; restore(); bad(new Error("timeout")); }, 10000) };
+          win.postMessage(msg, "*");
+        });
       });
-    });
+    }
+    var p = (queues[page] || Promise.resolve()).then(run, run);
+    queues[page] = p.then(null, function(){});
+    return p;
   }
   function schemaFor(page){
     if (SCHEMA[page]) return Promise.resolve(SCHEMA[page]);
@@ -301,10 +384,12 @@
       SCHEMA[page] = d.options || []; return SCHEMA[page];
     });
   }
-  function make(i){
-    var sec = S.secs[i];
-    return ask(sec.page, { type:"helper:make", count:sec.count, options:sec.opts }, "helper:made").then(function(d){
-      PROBS[i] = (d.problems || []).slice(0, sec.count);
+  function make(i, v){
+    var sec = S.secs[i], tok = TOK[i];
+    return ask(sec.page, { type:"helper:make", count:sec.count, options:JSON.parse(JSON.stringify(sec.opts)) }, "helper:made", seedFor(sec, v)).then(function(d){
+      if (TOK[i] !== tok || S.secs[i] !== sec) return;          // the section changed while this was being made
+      if (!VP[v]) VP[v] = [];
+      VP[v][i] = (d.problems || []).slice(0, sec.count);
     });
   }
 
@@ -323,8 +408,15 @@
     $("nameT").setAttribute("aria-pressed", String(S.name));
     $("keyT").setAttribute("aria-pressed", String(S.key));
     $("mixT").setAttribute("aria-pressed", String(S.mix));
+    $("shufT").setAttribute("aria-pressed", String(S.shuffle));
+    $("verOpts").hidden = S.versions < 2;
+    $("keysAtWrap").hidden = !S.key;
+    $("verNote").textContent = S.versions < 2
+      ? "One version. With 2–4, each version (A, B, C, D) has the same kinds of problems in the same order, with different numbers."
+      : S.versions + " versions, " + LETTERS.slice(0, S.versions).split("").join(", ") + ": the same kinds of problems in the same order, with different numbers"
+        + (S.key ? ", each with its own answer key." : ".");
   }
-  [["nameT","name"],["keyT","key"],["mixT","mix"]].forEach(function(p){
+  [["nameT","name"],["keyT","key"],["mixT","mix"],["shufT","shuffle"]].forEach(function(p){
     $(p[0]).addEventListener("click", function(){ S[p[1]] = !S[p[1]]; paintToggles(); draw(); save(); });
   });
   $("titleIn").addEventListener("input", function(){ S.title = $("titleIn").value; draw(); save(); });
@@ -352,10 +444,10 @@
         var n = Math.max(1, Math.min(40, parseInt(e.target.value, 10) || 1));
         e.target.value = n; sec.count = n; regen(i); save();
       });
-      box.querySelector('[data-act="new"]').addEventListener("click", function(){ regen(i); });
+      box.querySelector('[data-act="new"]').addEventListener("click", function(){ sec.seed = newSeed(); regen(i); });
       var del = box.querySelector('[data-act="del"]');
       if (del) del.addEventListener("click", function(){
-        S.secs.splice(i, 1); PROBS.splice(i, 1); buildSecs(); draw(); save();
+        S.secs.splice(i, 1); VP.forEach(function(list){ if (list) list.splice(i, 1); }); TOK.splice(i, 1); buildSecs(); draw(); save();
       });
       optionsUI(box.querySelector(".opts"), sec, i);
     });
@@ -363,7 +455,7 @@
   function optionsUI(host, sec, i){
     schemaFor(sec.page).then(function(list){
       host.innerHTML = "";
-      if (!list.length){ host.innerHTML = '<span class="sec-msg">No extra options.</span>'; return; }
+      if (!list.length){ host.innerHTML = '<span class="sec-msg">No extra options.</span>'; ensure(i); return; }
       // some helpers have modes, and an option can belong to only some of them
       var modeOpt = list.filter(function(o){ return o.key === "mode"; })[0];
       if (modeOpt && sec.opts.mode === undefined) sec.opts.mode = modeOpt["default"];
@@ -404,28 +496,49 @@
         }
         host.appendChild(wrap);
       });
-      if (!PROBS[i]) regen(i);
+      ensure(i);
     }, function(){
       host.innerHTML = '<span class="sec-msg err">Couldn’t reach ' + esc(topic(sec.page)[2])
         + ". Open this page from the website (not as a saved file) and try again.</span>";
     });
   }
   $("addSec").addEventListener("click", function(){
-    S.secs.push({ page:"multiplication.html", count:6, opts:{} });
+    S.secs.push({ page:"multiplication.html", count:6, opts:{}, seed:newSeed() });
     buildSecs(); save();
   });
 
   /* ===================== making and drawing the sheets ===================== */
-  var busy = 0;
+  var busy = 0, NOTE = "";          // NOTE: what shows once the problems are made (how the worksheet was opened)
   function status(t){ $("status").textContent = t || ""; }
-  function regen(i){
+  function done(){ busy--; if (!busy){ status(NOTE); onIdle(); } }
+  // make the versions of section i that are missing (or all of them)
+  function makeVersions(i, all){
+    var jobs = [];
+    for (var v = 0; v < S.versions; v++) if (all || !VP[v] || !VP[v][i]) jobs.push(v);
+    if (!jobs.length) return Promise.resolve();
     busy++; status("Making problems…");
-    return make(i).then(function(){ busy--; if (!busy) status(""); draw(); save(); },
-      function(){ busy--; PROBS[i] = null; status("Couldn’t make problems for section " + String.fromCharCode(65 + i)
+    return Promise.all(jobs.map(function(v){ return make(i, v); })).then(function(){ done(); draw(); save(); },
+      function(){ done(); status("Couldn’t make problems for section " + String.fromCharCode(65 + i)
         + " — open this page from the website and try again."); draw(); });
   }
-  $("newBtn").addEventListener("click", function(){ S.secs.forEach(function(_, i){ regen(i); }); });
+  function regen(i){
+    var sec = S.secs[i];
+    if (!sec) return Promise.resolve();
+    sec.legacy = false;
+    TOK[i] = (TOK[i] || 0) + 1;
+    VP.forEach(function(list){ if (list) list[i] = null; });
+    return makeVersions(i, true);
+  }
+  function ensure(i){ if (S.secs[i]) makeVersions(i, false); }
+  $("newBtn").addEventListener("click", function(){
+    NOTE = "";
+    S.mixSeed = newSeed();
+    S.secs.forEach(function(sec, i){ sec.seed = newSeed(); regen(i); });
+  });
   $("printBtn").addEventListener("click", function(){ window.print(); });
+  var idleJobs = [];
+  function onIdle(){ var j = idleJobs; idleJobs = []; j.forEach(function(fn){ fn(); }); }
+  function whenIdle(fn){ if (!busy) fn(); else idleJobs.push(fn); }
 
   /* the worksheet's problems as a practice set (sets.html?set=…): same format as sets.html makes —
      "z" + base64url(deflate-raw(JSON)) when the browser can compress and it's shorter, else "j" + base64url(JSON),
@@ -435,9 +548,14 @@
     for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
     return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   }
-  function setCode(title, list){
-    var json = JSON.stringify({ v:1, t:String(title || "Math practice").slice(0, 60),
-      p:list.map(function(x){ return [x[0].replace(/\.html$/, ""), x[1]]; }) });
+  function unb64url(str){
+    str = String(str).replace(/-/g, "+").replace(/_/g, "/");
+    while (str.length % 4) str += "=";
+    var bin = atob(str), out = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function packJSON(json){
     var bytes = new TextEncoder().encode(json), plain = "j" + b64url(bytes);
     try {
       if (typeof CompressionStream !== "function") return Promise.resolve(plain);
@@ -449,151 +567,227 @@
       }, function(){ return plain; });
     } catch (e){ return Promise.resolve(plain); }
   }
-  // the sheet's problems as a practice set: the Practice link button and the QR code on the sheet both use these
-  function practiceList(){
-    return items().filter(function(it){ return it.p && it.p.params; }).slice(0, 100).map(function(it){ return [it.page, it.p.params]; });
+  function unpackJSON(code){
+    return new Promise(function(ok, bad){
+      code = String(code || "");
+      var kind = code.charAt(0), bytes;
+      try { bytes = unb64url(code.slice(1)); } catch (e){ return bad(new Error("not base64")); }
+      if (kind === "j") return ok(bytes);
+      if (kind !== "z" || typeof DecompressionStream !== "function") return bad(new Error("can’t read"));
+      try {
+        var ds = new DecompressionStream("deflate-raw"), w = ds.writable.getWriter();
+        w.write(bytes); w.close();
+        new Response(ds.readable).arrayBuffer().then(function(b){ ok(new Uint8Array(b)); }, function(){ bad(new Error("damaged")); });
+      } catch (e){ bad(e); }
+    }).then(function(bytes){ return JSON.parse(new TextDecoder().decode(bytes)); });
   }
-  function practiceLink(list){
-    return setCode(S.title, list).then(function(code){ return U("practice.html", "set=" + code); });
+  function setCode(title, list){
+    return packJSON(JSON.stringify({ v:1, t:String(title || "Math practice").slice(0, 60),
+      p:list.map(function(x){ return [x[0].replace(/\.html$/, ""), x[1]]; }) }));
   }
-  $("setBtn").addEventListener("click", function(){
-    var list = practiceList();
-    if (!list.length){ status("Make some problems first."); return; }
-    practiceLink(list).then(function(url){
-      $("setOut").value = url; $("setOpen").href = url; $("setMsg").textContent = list.length + " problems";
+  function vTitle(v){ return (S.title || "Math practice") + (S.versions > 1 ? " (version " + LETTERS.charAt(v) + ")" : ""); }
+  // a version's problems as a practice set: the Practice link button and the QR code on the sheet both use these
+  function practiceList(v){
+    return items(v || 0).filter(function(it){ return it.p && it.p.params; }).slice(0, 100).map(function(it){ return [it.page, it.p.params]; });
+  }
+  function practiceLink(list, v){
+    return setCode(vTitle(v || 0), list).then(function(code){ return U("practice.html", "set=" + code); });
+  }
+  function paintSetVer(){
+    var sel = $("setVer"), cur = Math.min(Number(sel.value) || 0, S.versions - 1);
+    $("setVerWrap").hidden = S.versions < 2;
+    sel.innerHTML = LETTERS.slice(0, S.versions).split("").map(function(L, v){ return '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">Version " + L + "</option>"; }).join("");
+    return cur;
+  }
+  function showSetLink(){
+    var v = paintSetVer(), list = practiceList(v);
+    if (!list.length){ status("Make some problems first."); $("setBox").hidden = true; return; }
+    practiceLink(list, v).then(function(url){
+      $("setOut").value = url; $("setOpen").href = url; $("setMsg").textContent = list.length + " problems" + (S.versions > 1 ? " · version " + LETTERS.charAt(v) : "");
       $("setOut").setAttribute("data-n", String(list.length));
+      $("setOut").setAttribute("data-v", String(v));
       $("setBox").hidden = false;
       try { $("setOut").focus(); $("setOut").select(); } catch (e){}
     });
-  });
-  $("setCopy").addEventListener("click", function(){
-    var url = $("setOut").value, msg = $("setMsg");
+  }
+  $("setBtn").addEventListener("click", showSetLink);
+  $("setVer").addEventListener("change", showSetLink);
+  function copyFrom(box, msg){
+    var url = box.value;
     function old(){
       var ok = false;
-      try { $("setOut").select(); ok = document.execCommand("copy"); } catch (e){ ok = false; }
+      try { box.select(); ok = document.execCommand("copy"); } catch (e){ ok = false; }
       msg.textContent = ok ? "Link copied ✓" : "Couldn’t copy — select it and copy it yourself";
     }
     try {
       if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url).then(function(){ msg.textContent = "Link copied ✓"; }, old); return; }
     } catch (e){}
     old();
-  });
+  }
+  $("setCopy").addEventListener("click", function(){ copyFrom($("setOut"), $("setMsg")); });
   $("setQR").addEventListener("click", function(){
     if (!window.HelperQR || !$("setOut").value) return;
-    var n = +$("setOut").getAttribute("data-n") || 0;
+    var n = +$("setOut").getAttribute("data-n") || 0, v = +$("setOut").getAttribute("data-v") || 0;
     window.HelperQR.show($("setOut").value, {
-      title:S.title || "Math practice", sub:n + " problem" + (n === 1 ? "" : "s") + " · scan to practice them on screen",
+      title:vTitle(v), sub:n + " problem" + (n === 1 ? "" : "s") + " · scan to practice them on screen",
       filename:"worksheet-practice-qr.svg", tooLongHint:"Use fewer problems, or copy the link and send it instead."
     });
   });
 
-  /* the small QR code in the sheet's header: the practice-set link for the same problems, printed black on white.
+  /* ===================== the worksheet link (worksheets.html?ws=…) ===================== */
+  function wsJSON(){
+    return JSON.stringify({ v:1, t:String(S.title || "").slice(0, 80), f:[S.name, S.key, S.mix, S.qr, S.shuffle].map(function(b){ return b ? 1 : 0; }),
+      c:S.cols, sp:S.space, n:S.versions, ka:S.keysAt, ms:S.mixSeed >>> 0,
+      s:S.secs.map(function(sec){ return [sec.page.replace(/\.html$/, ""), sec.count, sec.opts, sec.seed >>> 0]; }) });
+  }
+  function readWS(o){
+    if (!o || o.v !== 1 || !Array.isArray(o.s)) throw new Error("not a worksheet");
+    var secs = o.s.filter(function(x){ return Array.isArray(x) && typeof x[0] === "string" && known(x[0].replace(/\.html$/, "") + ".html"); }).slice(0, 12).map(function(x){
+      return { page:x[0].replace(/\.html$/, "") + ".html", count:Math.max(1, Math.min(40, x[1] | 0 || 6)), opts:x[2] && typeof x[2] === "object" ? x[2] : {},
+               seed:(Number(x[3]) >>> 0) };
+    });
+    if (!secs.length) throw new Error("no sections");
+    var f = Array.isArray(o.f) ? o.f : [];
+    return { title:String(o.t || "Math practice").slice(0, 80), name:f[0] !== 0, key:f[1] !== 0, mix:f[2] === 1, qr:f[3] === 1, shuffle:f[4] === 1,
+             cols:[1, 2, 3].indexOf(o.c) >= 0 ? o.c : 2, space:SPACE[o.sp] ? o.sp : "md", versions:Math.max(1, Math.min(4, o.n | 0 || 1)),
+             keysAt:o.ka === "each" ? "each" : "end", mixSeed:(Number(o.ms) >>> 0), secs:secs };
+  }
+  function wsLink(){ return packJSON(wsJSON()).then(function(code){ return U("worksheet.html", "ws=" + code); }); }
+  $("wsBtn").addEventListener("click", function(){
+    if (S.secs.some(function(sec){ return sec.legacy; })){
+      status("This worksheet was made before worksheets could be reopened from a link. Press New numbers (or ↻ on a section) to get numbers a link can bring back.");
+      return;
+    }
+    whenIdle(function(){
+      wsLink().then(function(url){
+        $("wsOut").value = url; $("wsBox").hidden = false; $("wsMsg").textContent = url.length + " characters";
+        try { $("wsOut").focus(); $("wsOut").select(); } catch (e){}
+      });
+    });
+  });
+  $("wsCopy").addEventListener("click", function(){ copyFrom($("wsOut"), $("wsMsg")); });
+  $("wsQR").addEventListener("click", function(){
+    if (!window.HelperQR || !$("wsOut").value) return;
+    window.HelperQR.show($("wsOut").value, {
+      title:S.title || "Math practice", sub:(S.versions > 1 ? S.versions + " versions · " : "") + "opens this worksheet with the same numbers",
+      filename:"worksheet-qr.svg", tooLongHint:"Copy the link and send it instead."
+    });
+  });
+
+  /* the small QR code in each sheet's header: the practice-set link for that version's problems, printed black on white.
      It's drawn after the sheet (making the link is async); the newest drawing wins. */
   var qrSeq = 0;
   function fillQR(){
-    var my = ++qrSeq, box = $("shQR");
+    var my = ++qrSeq, boxes = [].slice.call(document.querySelectorAll(".sh-qr-c"));
     $("qrMsg").textContent = "";
-    if (!box || !window.HelperQR) return;
-    var sheet = box.parentNode.parentNode;
-    function drop(){ if (box.parentNode){ box.parentNode.remove(); sheet.classList.remove("has-qr"); } }
-    var list = practiceList();
-    if (!list.length){ drop(); return; }
-    practiceLink(list).then(function(url){
-      if (my !== qrSeq || !document.body.contains(box)) return;
-      var ecc = "M", v = window.HelperQR.version(url, ecc);
-      if (!v){ ecc = "L"; v = window.HelperQR.version(url, ecc); }
-      if (!v){
-        drop();
-        $("qrMsg").textContent = "Too many problems for a QR code (the link has " + url.length + " characters), so the sheet prints without one.";
-        return;
-      }
-      var mods = v * 4 + 17 + 8, mm = Math.max(18, Math.min(36, mods * 0.28));   // about 0.28 mm a module, 1.8–3.6 cm across
-      // the first problems start about 50px (mixed) or 75px (under a section heading) below the top of a one-line header
-      var extra = Math.max(0, Math.ceil(mm * 96 / 25.4 + 6 - (S.mix ? 50 : 75)));
-      sheet.style.setProperty("--qrw", mm.toFixed(1) + "mm");
-      sheet.style.setProperty("--qrx", extra + "px");
-      box.style.width = mm.toFixed(1) + "mm";
-      box.innerHTML = window.HelperQR.svg(url, { ecc:ecc, label:"QR code: practice these problems on screen" });
-      if (mm / mods < 0.25) $("qrMsg").textContent = "That’s a lot of problems for one QR code: it prints small and dense. Fewer problems make it easier to scan.";
-    }, function(){ if (my === qrSeq) drop(); });
+    if (!boxes.length || !window.HelperQR) return;
+    boxes.forEach(function(box){
+      var v = Number(box.getAttribute("data-v")) || 0, sheet = box.parentNode.parentNode;
+      function drop(){ if (box.parentNode){ box.parentNode.remove(); sheet.classList.remove("has-qr"); } }
+      var list = practiceList(v);
+      if (!list.length){ drop(); return; }
+      practiceLink(list, v).then(function(url){
+        if (my !== qrSeq || !document.body.contains(box)) return;
+        var ecc = "M", ver = window.HelperQR.version(url, ecc);
+        if (!ver){ ecc = "L"; ver = window.HelperQR.version(url, ecc); }
+        if (!ver){
+          drop();
+          $("qrMsg").textContent = "Too many problems for a QR code (the link has " + url.length + " characters), so the sheet prints without one.";
+          return;
+        }
+        var mods = ver * 4 + 17 + 8, mm = Math.max(18, Math.min(36, mods * 0.28));   // about 0.28 mm a module, 1.8–3.6 cm across
+        // the first problems start about 50px (mixed) or 75px (under a section heading) below the top of a one-line header
+        var extra = Math.max(0, Math.ceil(mm * 96 / 25.4 + 6 - (S.mix ? 50 : 75)));
+        sheet.style.setProperty("--qrw", mm.toFixed(1) + "mm");
+        sheet.style.setProperty("--qrx", extra + "px");
+        box.style.width = mm.toFixed(1) + "mm";
+        box.innerHTML = window.HelperQR.svg(url, { ecc:ecc, label:"QR code: practice these problems on screen" + (S.versions > 1 ? " (version " + LETTERS.charAt(v) + ")" : "") });
+        if (mm / mods < 0.25) $("qrMsg").textContent = "That’s a lot of problems for one QR code: it prints small and dense. Fewer problems make it easier to scan.";
+      }, function(){ if (my === qrSeq) drop(); });
+    });
   }
   function qrReady(){
     if (!window.HelperQR) return;
-    $("qrWrap").hidden = false; $("setQR").hidden = false;
-    if (S.qr && !$("shQR")) draw();
+    $("qrWrap").hidden = false; $("setQR").hidden = false; $("wsQR").hidden = false;
+    if (S.qr && !document.querySelector(".sh-qr-c")) draw();
   }
   $("qrT").addEventListener("change", function(){ S.qr = $("qrT").checked; draw(); save(); });
   document.addEventListener("DOMContentLoaded", qrReady);
   window.addEventListener("load", qrReady);
 
-  function shuffled(list){
-    var a = list.slice();
-    for (var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
-    return a;
-  }
-  var mixOrder = null;
-  function items(){
-    var all = [];
+  // version v's problems, in order: the sections in turn (B–D each shuffled, with Shuffle), or all of them mixed
+  function items(v){
+    v = v || 0;
+    var all = [], list = VP[v] || [];
     S.secs.forEach(function(sec, i){
-      (PROBS[i] || []).forEach(function(p){ all.push({ sec:i, page:sec.page, p:p }); });
+      var probs = list[i] || [], idx = probs.map(function(_, k){ return k; });
+      if (S.shuffle && v > 0 && !S.mix) idx = seededShuffle(idx, seed32(sec.seed + ":order:" + v));
+      idx.forEach(function(k){ all.push({ sec:i, page:sec.page, p:probs[k] }); });
     });
-    if (S.mix){
-      if (!mixOrder || mixOrder.length !== all.length) mixOrder = shuffled(all.map(function(_, k){ return k; }));
-      all = mixOrder.map(function(k){ return all[k]; });
-    } else mixOrder = null;
+    if (S.mix) all = seededShuffle(all.map(function(_, k){ return k; }), seed32(S.mixSeed + ":mix:" + (S.shuffle ? v : 0))).map(function(k){ return all[k]; });
     return all;
   }
   var SPACE = { sm:"18px", md:"64px", lg:"130px" };
   function draw(){
-    var list = items(), host = $("preview");
+    var host = $("preview"), V = S.versions, lists = [];
+    for (var v = 0; v < V; v++) lists.push(items(v));
     if ($("setBox")) $("setBox").hidden = true;
-    if (!list.length){
+    if ($("wsBox")) $("wsBox").hidden = true;
+    paintSetVer();
+    if (!lists[0].length){
       host.innerHTML = '<p class="preview-note">Your worksheet will show up here.</p><div class="sheet grow"><div class="empty">'
         + (busy ? "Making problems…" : "Add a section to get started.") + "</div></div>";
       fillQR();
       return;
     }
-    var title = esc(S.title || "Math practice");
-    var withQR = S.qr && window.HelperQR;
-    var head = (withQR ? '<div class="sh-qr"><span>Practice<br>on screen:<br>scan me</span><span class="sh-qr-c" id="shQR" style="width:18mm"></span></div>' : "")
-      + '<div class="sh-top"><h2 class="sh-title">' + title + "</h2>"
-      + (S.name ? '<div class="sh-lines"><span>Name <i></i></span><span>Date <i class="short"></i></span></div>' : "")
-      + "</div>";
-    var cols = "grid-template-columns:repeat(" + S.cols + ",minmax(0,1fr))";
-    var body = "", n = 0, lastSec = -1;
-    if (S.mix){
-      body += '<div class="probs" style="' + cols + '">';
-      list.forEach(function(it){ body += probHTML(++n, it.p, true); });
-      body += "</div>";
-    } else {
-      list.forEach(function(it){
-        if (it.sec !== lastSec){
-          if (lastSec !== -1) body += "</div></div>";
-          var t = topic(it.page);
-          body += '<div class="sh-block"><div class="sh-sec">' + String.fromCharCode(65 + it.sec) + ". " + esc(t[1]) + "</div>"
-                + '<div class="probs" style="' + cols + '">';
-          lastSec = it.sec;
-        }
-        body += probHTML(++n, it.p, true);
-      });
-      body += "</div></div>";
-    }
-    var html = '<p class="preview-note">This is what prints. The answer key prints on its own page.</p>'
-      + '<div class="sheet grow' + (withQR ? " has-qr" : "") + '">' + head + body + footer() + "</div>";
-    if (S.key){
-      var key = "", m = 0;
-      list.forEach(function(it){
-        m++;
-        key += '<div class="prob"><span class="n">' + m + '.</span><span class="q">'
-          + '<span class="a">' + (it.p.answerHtml || esc(it.p.answer || "")) + "</span>"
-          + (it.p.params ? '<a class="steps" href="' + esc(U(it.page, it.p.params)) + '" target="_blank" rel="noopener">see the steps →</a>' : "")
-          + "</span></div>";
-      });
-      html += '<div class="sheet grow key"><div class="sh-top"><h2 class="sh-title">Answer key</h2>'
-        + '<div class="sh-lines"><span>' + title + "</span></div></div>"
-        + '<div class="probs" style="grid-template-columns:repeat(' + Math.min(3, S.cols + 1) + ',minmax(0,1fr))">' + key + "</div>"
-        + footer() + "</div>";
-    }
+    var title = esc(S.title || "Math practice"), withQR = S.qr && window.HelperQR, keys = [];
+    var html = '<p class="preview-note">This is what prints'
+      + (V > 1 ? ": " + V + " versions, each starting on a new page. " + (S.key ? (S.keysAt === "end" ? "The answer keys print together at the end." : "Each answer key prints after its version.") : "")
+               : ". The answer key prints on its own page.") + "</p>";
+    lists.forEach(function(list, v){
+      var letter = V > 1 ? LETTERS.charAt(v) : "", tag = letter ? '<span class="sh-ver">Version ' + letter + "</span>" : "";
+      if (!list.length){ html += '<div class="sheet grow"><div class="empty">' + (busy ? "Making version " + letter + "…" : "No problems in version " + letter + " yet.") + "</div></div>"; return; }
+      var head = (withQR ? '<div class="sh-qr"><span>Practice<br>on screen:<br>scan me</span><span class="sh-qr-c" data-v="' + v + '" style="width:18mm"></span></div>' : "")
+        + '<div class="sh-top"><h2 class="sh-title">' + title + tag + "</h2>"
+        + (S.name ? '<div class="sh-lines"><span>Name <i></i></span><span>Date <i class="short"></i></span></div>' : "")
+        + "</div>";
+      var cols = "grid-template-columns:repeat(" + S.cols + ",minmax(0,1fr))";
+      var body = "", n = 0, lastSec = -1;
+      if (S.mix){
+        body += '<div class="probs" style="' + cols + '">';
+        list.forEach(function(it){ body += probHTML(++n, it.p, true); });
+        body += "</div>";
+      } else {
+        list.forEach(function(it){
+          if (it.sec !== lastSec){
+            if (lastSec !== -1) body += "</div></div>";
+            var t = topic(it.page);
+            body += '<div class="sh-block"><div class="sh-sec">' + String.fromCharCode(65 + it.sec) + ". " + esc(t[1]) + "</div>"
+                  + '<div class="probs" style="' + cols + '">';
+            lastSec = it.sec;
+          }
+          body += probHTML(++n, it.p, true);
+        });
+        body += "</div></div>";
+      }
+      html += '<div class="sheet grow' + (withQR ? " has-qr" : "") + '" data-version="' + (letter || "A") + '">' + head + body + footer() + "</div>";
+      if (S.key){
+        var key = "", m = 0;
+        list.forEach(function(it){
+          m++;
+          key += '<div class="prob"><span class="n">' + m + '.</span><span class="q">'
+            + '<span class="a">' + (it.p.answerHtml || esc(it.p.answer || "")) + "</span>"
+            + (it.p.params ? '<a class="steps" href="' + esc(U(it.page, it.p.params)) + '" target="_blank" rel="noopener">see the steps →</a>' : "")
+            + "</span></div>";
+        });
+        var k = '<div class="sheet grow key" data-key="' + (letter || "A") + '"><div class="sh-top"><h2 class="sh-title">Answer key' + tag + "</h2>"
+          + '<div class="sh-lines"><span>' + title + "</span></div></div>"
+          + '<div class="probs" style="grid-template-columns:repeat(' + Math.min(3, S.cols + 1) + ',minmax(0,1fr))">' + key + "</div>"
+          + footer() + "</div>";
+        if (V > 1 && S.keysAt === "end") keys.push(k); else html += k;
+      }
+    });
+    html += keys.join("");
     host.innerHTML = html;
     fillQR();
   }
@@ -607,7 +801,7 @@
 
   /* ===================== settings ===================== */
   function save(){
-    try { localStorage.setItem("worksheet-maker", JSON.stringify({ s:S, probs:PROBS,
+    try { localStorage.setItem("worksheet-maker", JSON.stringify({ s:S, probs:VP[0] || [], vprobs:VP,
       theme:document.documentElement.getAttribute("data-theme") || "" })); } catch (e){}
   }
   function load(){
@@ -617,15 +811,27 @@
       if (v.theme) document.documentElement.setAttribute("data-theme", v.theme);
       var s = v.s || {};
       if (typeof s.title === "string") S.title = s.title;
-      ["name","key","mix","qr"].forEach(function(k){ if (typeof s[k] === "boolean") S[k] = s[k]; });
+      ["name","key","mix","qr","shuffle"].forEach(function(k){ if (typeof s[k] === "boolean") S[k] = s[k]; });
       if ([1,2,3].indexOf(s.cols) >= 0) S.cols = s.cols;
       if (SPACE[s.space]) S.space = s.space;
+      if ([1,2,3,4].indexOf(s.versions) >= 0) S.versions = s.versions;
+      if (s.keysAt === "each" || s.keysAt === "end") S.keysAt = s.keysAt;
+      if (typeof s.mixSeed === "number") S.mixSeed = s.mixSeed >>> 0;
       if (Array.isArray(s.secs) && s.secs.length){
-        S.secs = s.secs.filter(function(x){ return x && topic(x.page)[0] === x.page; }).map(function(x){
-          return { page:x.page, count:Math.max(1, Math.min(40, x.count | 0 || 6)), opts:x.opts && typeof x.opts === "object" ? x.opts : {} };
+        var kept = s.secs.filter(function(x){ return x && known(x.page); });
+        S.secs = kept.map(function(x){
+          return { page:x.page, count:Math.max(1, Math.min(40, x.count | 0 || 6)), opts:x.opts && typeof x.opts === "object" ? x.opts : {},
+                   seed:typeof x.seed === "number" ? x.seed >>> 0 : newSeed(), legacy:typeof x.seed !== "number" || !!x.legacy };
         });
-        if (!S.secs.length) S.secs = [{ page:"addition.html", count:6, opts:{} }];
-        if (Array.isArray(v.probs) && v.probs.length === S.secs.length) PROBS = v.probs;
+        if (!S.secs.length) S.secs = [{ page:"addition.html", count:6, opts:{}, seed:newSeed() }];
+        var okList = function(a){ return Array.isArray(a) && a.length === S.secs.length; };
+        if (kept.length === s.secs.length && Array.isArray(v.vprobs) && v.vprobs.length && okList(v.vprobs[0])){
+          VP = v.vprobs.slice(0, S.versions).map(function(a){ return okList(a) ? a : []; });
+        } else if (kept.length === s.secs.length && okList(v.probs)){
+          VP = [v.probs];                     // saved before versions: these are version A
+        } else S.secs.forEach(function(sec){ sec.legacy = false; });
+        // a section with no saved problems has nothing to keep: it gets seeded numbers
+        S.secs.forEach(function(sec, i){ if (!VP[0] || !VP[0][i]) sec.legacy = false; });
       }
     } catch (e){}
   }
@@ -640,14 +846,45 @@
     document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark"); paint(); save();
   });
 
+  function setVersions(n){
+    S.versions = n;
+    VP.length = Math.min(VP.length, n);
+    for (var i = 0; i < S.secs.length; i++) if (SCHEMA[S.secs[i].page]) ensure(i);   // the others are made when their options load
+  }
+  function start(){
+    $("titleIn").value = S.title;
+    $("qrT").checked = S.qr;
+    paintToggles(); paint();
+    segs($("colsT"), [1, 2, 3], function(v){ return v + (v === 1 ? " column" : ""); }, function(){ return S.cols; }, function(v){ S.cols = v; });
+    segs($("spaceT"), ["sm", "md", "lg"], function(v){ return { sm:"A little", md:"Some", lg:"Lots" }[v]; },
+         function(){ return S.space; }, function(v){ S.space = v; });
+    segs($("verT"), [1, 2, 3, 4], function(v){ return v === 1 ? "1" : v + " (A–" + LETTERS.charAt(v - 1) + ")"; },
+         function(){ return S.versions; }, function(v){ setVersions(v); paintToggles(); });
+    segs($("keysAtT"), ["end", "each"], function(v){ return v === "end" ? "Together at the end" : "After each version"; },
+         function(){ return S.keysAt; }, function(v){ S.keysAt = v; });
+    buildSecs();
+    draw();
+  }
   load();
-  $("titleIn").value = S.title;
-  $("qrT").checked = S.qr;
-  paintToggles(); paint();
-  segs($("colsT"), [1, 2, 3], function(v){ return v + (v === 1 ? " column" : ""); }, function(){ return S.cols; }, function(v){ S.cols = v; });
-  segs($("spaceT"), ["sm", "md", "lg"], function(v){ return { sm:"A little", md:"Some", lg:"Lots" }[v]; },
-       function(){ return S.space; }, function(v){ S.space = v; });
-  buildSecs();
-  draw();
+  var wsm = /[?&]ws=([^&#]+)/.exec(location.search);
+  if (wsm){
+    var wsCode = "";
+    try { wsCode = decodeURIComponent(wsm[1]); } catch (e){ wsCode = wsm[1]; }
+    unpackJSON(wsCode).then(readWS).then(function(o){
+      Object.keys(o).forEach(function(k){ S[k] = o[k]; });
+      VP = [[]]; TOK = [];
+      start();
+      NOTE = "Opened from a worksheet link" + (S.versions > 1 ? ": " + S.versions + " versions" : "") + ", with the same numbers.";
+      if (!busy) status(NOTE);
+      // the link has done its job: from here on this is the worksheet on this device
+      try { history.replaceState(history.state, "", location.href.replace(/([?&])ws=[^&#]*&?/, "$1").replace(/[?&](#|$)/, "$1")); } catch (e){}
+      save();
+    }, function(){
+      start();
+      status("That worksheet link can’t be read — it may have been cut off when it was copied.");
+    });
+  } else start();
+  window.__worksheet = { state:function(){ return S; }, versions:function(){ return VP; }, items:items, busy:function(){ return busy; },
+    wsLink:wsLink, practiceLink:function(v){ return practiceLink(practiceList(v), v); } };
 })();
 </script>

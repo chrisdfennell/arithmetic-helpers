@@ -33,22 +33,24 @@
     division:"helpers/division", fractions:"helpers/fractions", percents:"helpers/percents", factors:"helpers/factors-and-primes",
     integers:"helpers/negative-numbers", ratios:"helpers/ratios", exponents:"helpers/exponents", pemdas:"helpers/order-of-operations",
     algebra:"helpers/algebra", lines:"helpers/lines-and-slope", graphing:"helpers/graphing", geometry:"helpers/geometry",
-    stats:"helpers/statistics", probability:"helpers/probability", wordproblems:"helpers/story-problems",
+    stats:"helpers/statistics", probability:"helpers/probability", counting:"helpers/counting", wordproblems:"helpers/story-problems",
     scratch:"helpers/scratch-paper", trigonometry:"helpers/trigonometry", calculus:"helpers/calculus",
     "number-sense":"helpers/number-sense", quadratics:"helpers/quadratics", logarithms:"helpers/logarithms", sequences:"helpers/sequences",
-    "unit-conversions":"helpers/unit-conversions", "money-math":"helpers/money-math",
+    "unit-conversions":"helpers/unit-conversions", "money-math":"helpers/money-math", aviation:"helpers/aviation",
     functions:"helpers/functions", radicals:"helpers/radicals", "complex-numbers":"helpers/complex-numbers",
     "college-statistics":"helpers/college-statistics", "matrices-and-vectors":"helpers/matrices-and-vectors",
     practice:"practice/sets", worksheet:"practice/worksheets", flashcards:"practice/flash-cards", daily:"practice/problem-of-the-day",
     progress:"practice/progress", results:"practice/class-results",
-    reference:"reference/sheets", glossary:"reference/definitions",
+    reference:"reference/sheets", glossary:"reference/definitions", standards:"reference/standards",
     about:"info/about", privacy:"info/privacy", help:"info/help",
     tests:"tests/self-test"
   };
   var FILES = { "404.html":"404.html", "sw.js":"sw.js" };
-  ["site.js", "nav.js", "tools.js", "tutor.js", "search.js", "progress.js", "glossary.js", "qr.js", "manifest.webmanifest"].forEach(function(a){ FILES[a] = "assets/" + a; });
+  ["site.js", "nav.js", "tools.js", "tutor.js", "search.js", "progress.js", "glossary.js", "qr.js", "standards.js", "manifest.webmanifest"].forEach(function(a){ FILES[a] = "assets/" + a; });
+  FILES["assign.js"] = "assets/assign.js";                     // the "Add to assignment" button (tools.js loads it)
+  FILES["photo.js"] = "assets/photo.js";                       // Photo of the problem (tools.js loads it)
   ["icon.svg", "icon-192.png", "icon-512.png", "icon-maskable-512.png", "apple-touch-icon.png", "favicon.svg", "og.png"].forEach(function(i){ FILES["icons/" + i] = "assets/icons/" + i; });
-  var FOLDERS = ["helpers", "practice", "reference", "info", "tests"];
+  var FOLDERS = ["helpers", "practice", "reference", "info", "learn", "tests"];
   var ALIAS = {};                                               // a page's own file name → its short name
   Object.keys(PAGES).forEach(function(k){ ALIAS[k] = k; if (PAGES[k]) ALIAS[PAGES[k].split("/")[1]] = k; });
   var has = function(o, k){ return Object.prototype.hasOwnProperty.call(o, k); };
@@ -66,7 +68,7 @@
     }
     if (src) return src.replace(/assets\/site\.js(?:[?#].*)?$/, "");
     var here = LOC.href.split(/[?#]/)[0].replace(/[^\/]*$/, "");
-    return /\/(helpers|practice|reference|tests|assets)\/$/.test(here) ? here.replace(/[^\/]+\/$/, "") : here;
+    return /\/(helpers|practice|reference|info|learn|tests|assets)\/$/.test(here) ? here.replace(/[^\/]+\/$/, "") : here;
   }
   var ROOT = findRoot();
 
@@ -74,6 +76,8 @@
   function shortName(name){
     var raw = String(name || "").split(/[?#]/)[0];
     if (raw.indexOf(ROOT) === 0) raw = raw.slice(ROOT.length);
+    // the lessons (learn/…) have no short names; some share a helper's file name (learn/unit-conversions.html) or "index"
+    if (/(?:^|\/)learn\/[^\/]*$/i.test(raw)) return "";
     var n = raw.replace(/^.*\//, "").toLowerCase().replace(/\.html$/, "");
     if (n === "") return raw === "" || (raw.charAt(0) === "/" && ROOT.indexOf(raw) >= 0) ? "index" : "";
     return has(ALIAS, n) ? ALIAS[n] : "";

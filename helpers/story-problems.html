@@ -6601,7 +6601,7 @@
         ? go("college-statistics.html", "The Bell Curve", "a binomial probability", "It uses the binomial tab: the number of tries, the chance each time, and how many successes.")
         : go("probability.html", "The Chance Spinner", "a probability problem");
     if (/\bin how many (?:different )?ways\b|\bhow many (?:different )?(?:ways|handshakes|arrangements|combinations|permutations|outfits|codes|passwords)\b|\bshakes? hands?\b/.test(L))
-      return go(null, null, "a counting problem (combinations and arrangements)", "None of the helpers does counting problems yet. Try listing a small case by hand first — 2 or 3 people — and look for the pattern.");
+      return go("counting.html", "The Counting Tree", "a counting problem (combinations and arrangements)", "It multiplies the choices, arranges things where order matters (nPr), chooses groups where it doesn’t (nCr), and counts handshakes, games and diagonals — with a tree or a picture for each step.");
     if (/\bangles? of (?:elevation|depression)\b|\btransit\b/.test(L)) return go("trigonometry.html", "The Unit Circle", "a right-triangle trigonometry problem", "Its right-triangle tab works with an angle and a side.");
     if (/\b(?:geometric|arithmetic) (?:sequence|series|progression)\b/.test(L)) return go("sequences.html", "The Number Staircase", "a sequence problem");
     var opt = /\bmaximi[sz]e\b|\bminimi[sz]e\b|\b(?:maximum|largest|greatest|minimum|smallest) (?:possible )?(?:volume|area|profit|revenue|surface area)\b/.test(A.Q);

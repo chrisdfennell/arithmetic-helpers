@@ -102,14 +102,14 @@ jobs:
           python3 - <<'PY'
           import subprocess, glob
           base = "https://showthesteps.org/"
-          pages = ["index.html"] + sorted(p.replace("\\", "/") for p in glob.glob("helpers/*.html") + glob.glob("practice/*.html") + glob.glob("reference/*.html") + glob.glob("info/*.html"))
+          pages = ["index.html"] + sorted(p.replace("\\", "/") for p in glob.glob("helpers/*.html") + glob.glob("practice/*.html") + glob.glob("reference/*.html") + glob.glob("info/*.html") + glob.glob("learn/*.html"))
           rows = []
           for f in pages:
               if f.split("/")[-1].startswith("_"):
                   continue
               day = subprocess.run(["git", "log", "-1", "--format=%cs", "--", f], capture_output=True, text=True).stdout.strip()
-              url = base if f == "index.html" else base + f[:-len(".html")]
-              pri = "1.0" if f == "index.html" else "0.8" if f.startswith("helpers/") else "0.6"
+              url = base if f == "index.html" else base + "learn/" if f == "learn/index.html" else base + f[:-len(".html")]
+              pri = "1.0" if f == "index.html" else "0.8" if f.startswith(("helpers/", "learn/")) else "0.6"
               rows.append("  <url><loc>%s</loc>%s<priority>%s</priority></url>" % (url, "<lastmod>%s</lastmod>" % day if day else "", pri))
           with open("_site/sitemap.xml", "w", encoding="utf-8") as out:
               out.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(rows) + "\n</urlset>\n")

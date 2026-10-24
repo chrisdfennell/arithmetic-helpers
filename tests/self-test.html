@@ -273,6 +273,8 @@
     { page:"trigonometry.html", name:"The Unit Circle" }, { page:"calculus.html", name:"The Rate Machine" },
     { page:"money-math.html", name:"The Money Jar" },
     { page:"unit-conversions.html", name:"The Measuring Tape" },
+    { page:"aviation.html", name:"The Flight Computer" },
+    { page:"counting.html", name:"The Counting Tree" },
     { page:"number-sense.html", name:"The Place Value Chart" }, { page:"quadratics.html", name:"The Area Box" },
     { page:"logarithms.html", name:"The Log Ladder" }, { page:"sequences.html", name:"The Number Staircase" },
     { page:"functions.html", name:"The Function Machine" }, { page:"radicals.html", name:"The Root Cellar" }, { page:"complex-numbers.html", name:"The Complex Plane" },
@@ -287,6 +289,45 @@
 
   /* problems with known answers: open the link, and every value must show in the answer */
   var KNOWN = {
+    "counting.html":[ ["mode=comb&kind=ncr&n=10&r=3&ctx=committee",["120"]], ["mode=perm&kind=npr&n=10&r=3&roles=president,vice-president,secretary",["720"]],
+                      ["mode=perm&kind=word&w=MISSISSIPPI",["34650"]], ["mode=pairs&kind=hand&n=n&t=2",["~n(n − 1)"]], ["mode=comb&kind=range&n=10&lo=0&hi=3&ctx=vote",["176"]],
+                      ["mode=fact&kind=prob&a=6&b=4&r=3&ask=exact&k=3&na=boys&nb=girls",["1/30"]],
+                      ["q=" + encodeURIComponent("C(10,3)"),["120"]], ["q=" + encodeURIComponent("8P3"),["336"]], ["q=" + encodeURIComponent("10!/(3!7!)"),["120"]],
+                      ["q=" + encodeURIComponent("5!"),["120"]], ["q=" + encodeURIComponent("10 choose 3"),["120"]],
+                      ["q=" + encodeURIComponent("3 shirts, 4 pants and 2 pairs of shoes. How many outfits?"),["24"]],
+                      ["q=" + encodeURIComponent("How many 4-digit PINs are possible if no digit can be repeated?"),["5040"]],
+                      ["q=" + encodeURIComponent("How many license plates can be made with 3 letters followed by 3 digits?"),["17576000"]],
+                      ["q=" + encodeURIComponent("In how many ways can 10 candidates fill president, vice-president and secretary?"),["720"]],
+                      ["q=" + encodeURIComponent("How many distinguishable arrangements of the letters in MISSISSIPPI are there?"),["34650"]],
+                      ["q=" + encodeURIComponent("In how many ways can 6 people sit around a round table?"),["120"]],
+                      ["q=" + encodeURIComponent("A committee of 3 is chosen from 6 boys and 4 girls. In how many ways if it must have at least one girl?"),["100"]],
+                      ["q=" + encodeURIComponent("A committee of 4 is to be selected from 6 men and 5 women. How many committees have exactly 2 men and 2 women?"),["150"]],
+                      ["q=" + encodeURIComponent("Ten candidates are running for president, vice-president, and secretary in the students government. You may vote for as many as 3 candidates. In how many ways can you vote for 3 or fewer candidates?"),["176"]],
+                      ["q=" + encodeURIComponent("During a fundraising for cancer at a gala, everybody shakes hands with everyone else in the room before the event and after the event is finished. If n people attended the gala, how many different handshakes occur?"),["~n(n − 1)"]],
+                      ["q=" + encodeURIComponent("How many handshakes if 12 people each shake hands once?"),["66"]],
+                      ["q=" + encodeURIComponent("How many diagonals does an octagon have?"),["20"]],
+                      ["q=" + encodeURIComponent("In a league of 8 teams, each team plays every other team twice. How many games?"),["56"]],
+                      ["q=" + encodeURIComponent("A committee of 3 is chosen at random from 6 boys and 4 girls. What is the probability that all 3 are girls?"),["1/30"]] ],
+    "aviation.html":[ ["mode=wind&tc=360&tas=110&wd=270&ws=15",["352","109","8"]], ["mode=wind&tc=90&tas=120&wd=40&ws=20",["83","106","7"]],
+                      ["q=" + encodeURIComponent("course 225, TAS 95, wind 180/25"),["214","76","11"]], ["mode=wind&tc=150&tas=140&wd=300&ws=30",["156","165","6"]],
+                      ["q=" + encodeURIComponent("crosswind runway 27 wind 310 at 20"),["15","13"]], ["mode=runway&rwy=09&wd=60&ws=15",["13","8"]],
+                      ["mode=runway&rwy=36&wd=330&ws=18&g=28",["16","9","14"]], ["mode=runway&rwy=22&wd=50&ws=10",["10","2","~from the left"]],
+                      ["q=" + encodeURIComponent("240 nm at 120 knots"),["2","~2 h 00 min"]], ["mode=trip&task=time&d=240&s=144",["1","40"]],
+                      ["q=" + encodeURIComponent("120 knots for 1 h 30 min"),["180"]], ["q=" + encodeURIComponent("180 nm in 1:30"),["120"]],
+                      ["q=" + encodeURIComponent("fuel for 2 h 30 min at 9.5 gph with 30 min reserve"),["28.5","23.75","4.75"]], ["mode=trip&task=fuel&d=300&s=125&gph=8&res=45",["25.2"]],
+                      ["q=" + encodeURIComponent("pressure altitude elevation 5000 altimeter 29.82"),["5100"]], ["q=" + encodeURIComponent("density altitude 5000 ft 30 C"),["8000","5000","5"]],
+                      ["mode=altitude&task=da&elev=3500&set=30.12&oat=25",["5292","3300","8.4"]], ["q=" + encodeURIComponent("TAS for 120 KIAS at 6000 ft"),["134"]],
+                      ["mode=altitude&task=tas&pa=8000&oat=0&cas=130",["147"]], ["mode=altitude&task=pa&elev=1200&set=1003",["1501"]],
+                      ["q=" + encodeURIComponent("TC 090 variation 10 E deviation 2 W"),["82","80"]], ["mode=headings&from=th&h=352&var=12W&dev=3E",["1","4"]],
+                      ["mode=headings&from=ch&h=45&var=10W&dev=2E",["37","47"]], ["mode=headings&from=tc&h=180&wca=6R&var=15W&dev=2E",["199","201","186"]],
+                      ["q=" + encodeURIComponent("descend from 9500 to 2500 at 120 knots 500 fpm"),["28","14","2.4"]], ["mode=descent&task=dist&from=8500&to=3000&gs=140&nm=20",["642"]],
+                      ["mode=descent&task=angle&from=11500&to=1500&gs=150&ang=3",["31.4","796"]], ["mode=descent&task=rule&from=7500&to=2000&gs=110",["16.5","550"]],
+                      ["q=" + encodeURIComponent("empty 1500 @ 38, pilot 170 @ 37, passenger 150 @ 37, fuel 40 gal @ 48, baggage 50 @ 95, limits 35 to 47.3, max 2550"),["40.34","2110"]],
+                      ["mode=weight&items=Empty:1650:39.2,Front:340:37,Rear:160:73,Fuel:48gal:48&fwd=35&aft=47.3",["42.15","2438"]],
+                      ["q=" + encodeURIComponent("standard-rate turn at 120 knots"),["19","18.2","3868"]], ["mode=turns&task=radius&tas=120&bank=30",["2208"]],
+                      ["q=" + encodeURIComponent("glide ratio 9 from 6000 ft"),["8.9"]], ["q=" + encodeURIComponent("120 knots to mph"),["138.09"]],
+                      ["mode=units&v=29.92&from=inhg&to=hpa",["1013.21"]], ["mode=units&v=15&from=c&to=f",["59"]],
+                      ["mode=units&v=40&from=gal&to=lb&fuel=avgas",["240"]], ["mode=units&v=300&from=lb&to=gal&fuel=jet",["44.78"]] ],
     "money-math.html":[ ["mode=compound&task=amount&p=5000&r=4&n=12&t=10",["7454.16","2454.16"]], ["q=" + encodeURIComponent("$1000 at 5% compounded continuously for 3 years"),["1161.83","161.83"]],
                         ["mode=compound&task=apy&r=4&n=12",["4.07"]], ["mode=save&task=fv&pmt=200&r=5&t=20",["82206.73","34206.73"]],
                         ["mode=save&task=goal&goal=10000&r=4&t=5",["150.84"]], ["q=" + encodeURIComponent("$20000 car loan 6% 5 years monthly payment"),["386.66","3199.60"]],
@@ -935,6 +976,25 @@
 
   /* Check my answer: [link, what to type, expected verdict] */
   var CHECKS = {
+    "counting.html":[ ["mode=comb&kind=ncr&n=10&r=3&ctx=committee",["120"],"right"], ["mode=comb&kind=ncr&n=10&r=3&ctx=committee",["720"],"wrong"],
+                      ["mode=comb&kind=ncr&n=10&r=3&ctx=committee",["C(10,3)"],"simplify"], ["mode=perm&kind=word&w=MISSISSIPPI",["34,650"],"right"],
+                      ["mode=perm&kind=word&w=MISSISSIPPI",["39916800"],"wrong"], ["mode=pairs&kind=hand&n=n&t=2",["n(n-1)"],"right"],
+                      ["mode=pairs&kind=hand&n=n&t=2",["n^2 - n"],"right"], ["mode=pairs&kind=hand&n=n&t=2",["n(n-1)/2"],"wrong"],
+                      ["mode=fact&kind=prob&a=6&b=4&r=3&ask=exact&k=3&na=boys&nb=girls",["4/120"],"simplify"], ["mode=fact&kind=prob&a=6&b=4&r=3&ask=exact&k=3&na=boys&nb=girls",["0.0333"],"right"],
+                      ["mode=comb&kind=range&n=10&lo=0&hi=3&ctx=vote",["175"],"wrong"], ["mode=perm&kind=circle&n=6",["720"],"wrong"] ],
+    "aviation.html":[ ["mode=wind&tc=360&tas=110&wd=270&ws=15",["352","109"],"right"], ["mode=wind&tc=360&tas=110&wd=270&ws=15",["008","109"],"wrong"],
+                      ["mode=runway&rwy=27&wd=310&ws=20",["15","13 R"],"right"], ["mode=runway&rwy=27&wd=310&ws=20",["15","13 L"],"wrong"],
+                      ["mode=runway&rwy=22&wd=50&ws=10",["10 tail","2"],"right"], ["mode=runway&rwy=22&wd=50&ws=10",["10","2"],"wrong"],
+                      ["mode=trip&task=time&d=240&s=144",["1:40"],"right"], ["mode=trip&task=time&d=240&s=144",["1:67"],"wrong"],
+                      ["mode=trip&task=fuel&t=150&gph=9.5&res=30",["28.5"],"right"], ["mode=trip&task=fuel&t=150&gph=9.5&res=30",["23.75"],"wrong"],
+                      ["mode=altitude&task=pa&elev=5000&set=29.82",["5100"],"right"], ["mode=altitude&task=pa&elev=5000&set=29.82",["4900"],"wrong"],
+                      ["mode=altitude&task=da&pa=5000&oat=30",["8000"],"right"], ["mode=altitude&task=da&pa=5000&oat=30",["6800"],"wrong"],
+                      ["mode=headings&from=tc&h=90&var=10E&dev=2W",["080","082"],"right"], ["mode=headings&from=tc&h=90&var=10E&dev=2W",["100","098"],"wrong"],
+                      ["mode=descent&task=rate&from=9500&to=2500&gs=120&fpm=500",["28","14"],"right"],
+                      ["mode=weight&items=Empty:1500:38,Pilot:170:37,Fuel:40gal:48&fwd=35&aft=47.3",["1910","39.17"],"right"],
+                      ["mode=weight&items=Empty:1500:38,Pilot:170:37,Fuel:40gal:48&fwd=35&aft=47.3",["1910","41"],"wrong"],
+                      ["mode=turns&task=std&tas=120",["19","3868"],"right"], ["mode=turns&task=glide&ratio=9&alt=6000",["10.2"],"wrong"],
+                      ["mode=units&v=120&from=kt&to=mph",["138.09"],"right"], ["mode=units&v=120&from=kt&to=mph",["104.28"],"wrong"] ],
     "money-math.html":[ ["mode=compound&task=amount&p=5000&r=4&n=12&t=10",["$7,454.16","$2,454.16"],"right"], ["mode=compound&task=amount&p=5000&r=4&n=12&t=10",["7000","2000"],"wrong"],
                         ["mode=compound&task=apy&r=4&n=12",["4.07%"],"right"], ["mode=compound&task=apy&r=4&n=12",["4%"],"wrong"],
                         ["mode=loan&amt=20000&r=6&t=5&kind=car",["386.66","3199.60"],"right"], ["mode=loan&amt=20000&r=6&t=5&kind=car",["386.66","23199.60"],"wrong"],
@@ -2527,7 +2587,140 @@
   }
   function monNums(t){ return (String(t).replace(/[−–]/g, "-").replace(/\$/g, "").replace(/(\d),(?=\d{3}(?!\d))/g, "$1").match(/-?\d+(?:\.\d+)?/g) || []); }
 
+  /* The Counting Tree: every count worked out here a second way, from the problem's own params */
+  function cntC(n, r){ n = BigInt(n); r = BigInt(r); if (r < 0n || r > n) return 0n; var c = 1n; for (var i = 1n; i <= r; i++) c = c * (n - r + i) / i; return c; }
+  function cntP(n, r){ var p = 1n; for (var i = 0n; i < BigInt(r); i++) p *= BigInt(n) - i; return p; }
+  function cntF(n){ var f = 1n; for (var i = 2n; i <= BigInt(n); i++) f *= i; return f; }
+  function cntGroups(o){                       // groups of r from a and b, by listing how many come from b
+    var a = +o.a, b = +o.b, r = +o.r, k = o.k === undefined ? null : +o.k, f = 0n;
+    for (var j = 0; j <= r; j++){
+      var ok = o.ask === "exact" ? j === k : o.ask === "least" ? j >= k : o.ask === "most" ? j <= k : (j >= 1 && r - j >= 1);
+      if (ok) f += cntC(b, j) * cntC(a, r - j);
+    }
+    return f;
+  }
+  function cntExpr(e){                         // the formulas the maker writes: a!/(b!c!), P(n,r)/r!, C(a,b)C(c,d)
+    var m;
+    if ((m = /^(\d+)!\/\((\d+)!(\d+)!\)$/.exec(e))) return R(cntF(m[1]), cntF(m[2]) * cntF(m[3]));
+    if ((m = /^P\((\d+),(\d+)\)\/(\d+)!$/.exec(e))) return R(cntP(m[1], m[2]), cntF(m[3]));
+    if ((m = /^C\((\d+),(\d+)\)C\((\d+),(\d+)\)$/.exec(e))) return R(cntC(m[1], m[2]) * cntC(m[3], m[4]));
+    return null;
+  }
+  // aviation.html: re-work a made problem from its link; every number the page's answer should show, as text
+  function aviR(x, k){ var p = Math.pow(10, k || 0), a = Math.round(Number((Math.abs(x) * p).toFixed(6))) / p; return x < 0 && a !== 0 ? -a : a; }
+  function aviWork(o){
+    var D = Math.PI / 180, n = function(k){ return Number(o[k]); }, s = function(x, k){ return String(aviR(x, k)); };
+    var r180 = function(a){ a = ((a % 360) + 360) % 360; return a > 180 ? a - 360 : a; }, hd = function(a){ var h = ((aviR(a, 0) % 360) + 360) % 360; return String(h === 0 ? 360 : h); };
+    if (o.mode === "wind"){
+      var rel = r180(n("wd") - n("tc")), wca = Math.asin(n("ws") * Math.sin(rel * D) / n("tas")) / D;
+      return [hd(n("tc") + aviR(wca, 0)), s(n("tas") * Math.cos(wca * D) - n("ws") * Math.cos(rel * D), 0), s(Math.abs(wca), 0)];
+    }
+    if (o.mode === "runway"){
+      var rr = r180(n("wd") - parseInt(o.rwy, 10) * 10), out = [s(Math.abs(n("ws") * Math.cos(rr * D)), 0), s(Math.abs(n("ws") * Math.sin(rr * D)), 0)];
+      if (o.g) out.push(s(Math.abs(n("g") * Math.sin(rr * D)), 0));
+      return out;
+    }
+    if (o.mode === "trip"){
+      if (o.task === "time"){ var m = aviR(n("d") / n("s") * 60, 0); return [String(Math.floor(m / 60)), String(m % 60)].filter(function(x, i){ return i === 1 || x !== "0"; }); }
+      if (o.task === "dist") return [s(n("s") * n("t") / 60, 1)];
+      if (o.task === "speed") return [s(n("d") / (n("t") / 60), 0)];
+      var t = o.t !== undefined ? n("t") : n("d") / n("s") * 60;
+      return [s(n("gph") * (t + (o.res ? n("res") : 0)) / 60, 1)];
+    }
+    if (o.mode === "altitude"){
+      var set = o.set === undefined ? 29.92 : n("set") > 100 ? n("set") / 33.8639 : n("set");
+      var pa = o.pa !== undefined ? n("pa") : aviR(n("elev") + (29.92 - set) * 1000, 0);
+      var oat = o.oatf !== undefined ? (n("oatf") - 32) * 5 / 9 : o.oat !== undefined ? n("oat") : null, isa = 15 - 2 * pa / 1000;
+      if (o.task === "pa") return [s(pa, 0)];
+      if (o.task === "da") return [s(pa + 120 * (oat - isa), 0)];
+      if (oat === null) return [s(n("cas") * (1 + 0.02 * pa / 1000), 0)];
+      var sig = Math.pow(1 - 6.8756e-6 * pa, 5.2559) / ((oat + 273.15) / 288.15);
+      return [s(n("cas") / Math.sqrt(sig), 0)];
+    }
+    if (o.mode === "headings"){
+      var ew = function(v){ return v === undefined ? null : (/e$/i.test(v) ? 1 : -1) * parseFloat(v); };
+      var va = ew(o["var"]), dv = ew(o.dev), wc = o.wca === undefined ? null : (/l$/i.test(o.wca) ? -1 : 1) * parseFloat(o.wca), h = n("h"), res = [];
+      var down = o.from === "tc" || o.from === "th" || (o.from === "mh" && va === null && dv !== null);
+      if (down){
+        if (o.from === "tc"){ h = Number(hd(h + (wc || 0))); if (wc) res.push(String(h)); }
+        if (o.from !== "mh"){ h = Number(hd(h - va)); res.push(String(h)); }
+        if (dv !== null){ h = Number(hd(h - dv)); res.push(String(h)); }
+      } else {
+        if (o.from === "ch"){ h = Number(hd(h + dv)); res.push(String(h)); }
+        if (va !== null){ h = Number(hd(h + va)); res.push(String(h)); if (wc !== null) res.push(hd(h - wc)); }
+      }
+      return res;
+    }
+    if (o.mode === "descent"){
+      var lose = n("from") - n("to"), gs = n("gs"), FT = 6076.12;
+      if (o.task === "rate") return [s(gs / 60 * lose / n("fpm"), 1), s(lose / n("fpm"), 1)];
+      if (o.task === "dist") return [s(lose / (n("nm") / (gs / 60)), 0)];
+      if (o.task === "angle"){ var tn = Math.tan(n("ang") * D); return [s(lose / tn / FT, 1), s(gs / 60 * FT * tn, 0)]; }
+      return [s(3 * lose / 1000, 1), s(5 * gs, 0)];
+    }
+    if (o.mode === "weight"){
+      var W = 0, Mo = 0;
+      String(o.items).split(",").forEach(function(it){ var p = it.split(":"), w = parseFloat(p[1]), lb = /jet/i.test(p[1]) ? w * 6.7 : /gal/i.test(p[1]) ? w * 6 : w; W += lb; Mo += lb * Number(p[2]); });
+      return [s(Mo / W, 2), s(W, 2)];
+    }
+    if (o.mode === "turns"){
+      if (o.task === "glide") return [s(n("ratio") * n("alt") / 6076.12, 1)];
+      var V = n("tas") * 6076.12 / 3600;
+      if (o.task === "std") return [s(n("tas") / 10 + 7, 0), s(V / (3 * D), 0)];
+      return [s(V * V / (32.174 * Math.tan(n("bank") * D)), 0)];
+    }
+    if (o.mode === "units"){
+      var F = { kt:1852 / 3600, mph:1609.344 / 3600, kmh:1 / 3.6, fpm:0.3048 / 60, mps:1, nm:1852, sm:1609.344, km:1000, ft:0.3048, m:1, inhg:33.8639, hpa:1, gal:3.785411784, l:1, lb:0.45359237, kg:1 };
+      var v = n("v"), dens = o.fuel === "jet" ? 6.7 : 6, vol = { gal:1, l:1 }, mass = { lb:1, kg:1 };
+      if (o.from === "c") return [s(v * 9 / 5 + 32, 2)];
+      if (o.from === "f") return [s((v - 32) * 5 / 9, 2)];
+      if (vol[o.from] && mass[o.to]) return [s(v * F[o.from] / F.gal * dens * F.lb / F[o.to], 2)];
+      if (mass[o.from] && vol[o.to]) return [s(v * F[o.from] / F.lb / dens * F.gal / F[o.to], 2)];
+      return [s(v * F[o.from] / F[o.to], 2)];
+    }
+    throw new Error("unknown mode " + o.mode);
+  }
   var ORACLE = {
+    "counting.html":function(p, a, ansText){
+      var o = P(p), k = o.kind, v = null, i;
+      switch (k){
+        case "stages":
+          if (o.ch){ v = 1n; o.ch.split(",").forEach(function(x){ v *= BigInt(x); }); } else v = BigInt(o.n) ** BigInt(o.k);
+          break;
+        case "code":                           // no repeats: P(size, places) for each kind; a number can't start with 0: take those away
+          var places = o.pat ? o.pat.split("") : [], size = { L:26, D:10, A:36 }, rep = o.rep !== "0", cnt = {}, start0 = 0n;
+          if (!o.pat){ for (i = 0; i < +o.k; i++) places.push("S"); size.S = +o.n; }
+          places.forEach(function(t){ cnt[t] = (cnt[t] || 0) + 1; });
+          v = 1n; Object.keys(cnt).forEach(function(t){ v *= rep ? BigInt(size[t]) ** BigInt(cnt[t]) : cntP(size[t], cnt[t]); });
+          if (o.lead === "1"){                 // the codes that start with 0
+            var t0 = places[0], rest = 1n; Object.keys(cnt).forEach(function(t){ var c2 = t === t0 ? cnt[t] - 1 : cnt[t], s2 = t === t0 && !rep ? size[t] - 1 : size[t]; rest *= rep ? BigInt(s2) ** BigInt(c2) : cntP(s2, c2); });
+            v -= rest;
+          }
+          break;
+        case "npr": v = cntP(o.n, o.r || o.n); break;
+        case "word":
+          var w = String(o.w).toUpperCase(), seen = {};
+          if (o.r) v = cntP(w.length, o.r);
+          else { v = cntF(w.length); w.split("").forEach(function(c){ seen[c] = (seen[c] || 0) + 1; }); Object.keys(seen).forEach(function(c){ v /= cntF(seen[c]); }); }
+          break;
+        case "circle": v = cntF(+o.n - 1) / (o.flip === "1" ? 2n : 1n); break;
+        case "ncr": v = cntC(o.n, o.r); break;
+        case "groups": v = cntGroups(o); break;
+        case "range": v = 0n; for (i = +o.lo; i <= +o.hi; i++) v += cntC(o.n, i); break;
+        case "multi": v = cntC(+o.n + +o.r - 1, +o.n - 1); break;
+        case "hand": case "games": case "lines": v = BigInt(o.n) * BigInt(+o.n - 1) / 2n * BigInt(o.t || 1); break;
+        case "send": v = BigInt(o.n) * BigInt(+o.n - 1); break;
+        case "diag": v = BigInt(o.n) * BigInt(+o.n - 3) / 2n; break;
+        case "tri": v = cntC(o.n, o.k || 3); break;
+        case "fact": v = cntF(o.n); break;
+        case "ratio": return need(a, [X(R(cntF(o.a), cntF(o.b)))]);
+        case "expr": var ev = cntExpr(String(o.e)); return ev ? need(a, [X(ev)]) : { skip:true };
+        case "prob": return need(a, [X(R(cntGroups(o), cntC(+o.a + +o.b, o.r)))]);
+        default: return { skip:true };
+      }
+      return need(a, [X(R(v))]);
+    },
+    "aviation.html":function(p, a){ return need(a, aviWork(P(p)).map(function(v){ return X(v); })); },
     "money-math.html":function(p, a, ansText){
       var o = P(p), want, got, t = String(ansText);
       try { want = monWork(o); } catch (e){ return { ok:false, msg:"couldn’t re-work it (" + e.message + ")" }; }
