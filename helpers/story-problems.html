@@ -4522,6 +4522,58 @@
         hint:"Write one equation for each resource, then eliminate one letter at a time." };
     } });
 
+  // a binomial probability: n tries, the same chance p each time, and at least / at most / exactly k successes
+  function chooseR(n, k){ var r = ONE; for (var i = 1; i <= k; i++) r = dvd(mul(r, R(n - k + i)), R(i)); return r; }
+  EQ("binom", { label:"The chance of k out of n (binomial)",
+    fields:[["a", "How many tries", "n"], ["b", "Chance each time", "%"], ["c", "How many successes", "n"]],
+    read:function(X){
+      var L = X.L, Q = X.Q;
+      if (!/\bprobability\b|\bchances?\b/.test(Q)) return null;
+      var pm = L.match(/(\d+(?:\.\d+)?)\s*(?:%|percent)/g) || [];
+      if (pm.length !== 1) return null;
+      var p = nv(pm[0].replace(/\s*(?:%|percent)/, ""));
+      var cm = /\b(at least|at most|exactly|more than|fewer than|less than|no more than|no fewer than|no less than)\s+(\d+)\b/.exec(Q), all = !cm && /\ball (?:of )?(?:them|the|\d+)\b/.test(Q), none = !cm && /\bnone\b|\bno\s+[a-z]+\s+(?:will|have|has|is|are)\b/.test(Q);
+      if (!cm && !all && !none) return null;
+      // the number of tries: the one whole number that isn't the percent or the k ("rents 4 cars", "flips a coin 10 times")
+      var ns = (L.replace(/\d+(?:\.\d+)?\s*(?:%|percent)/g, " ").match(/\b\d+\b/g) || []).map(Number), k = cm ? +cm[2] : null;
+      var rest = ns.slice(); if (k !== null){ var ix = rest.lastIndexOf(k); if (ix >= 0) rest.splice(ix, 1); }
+      rest = rest.filter(function(x, i, a){ return a.indexOf(x) === i; });
+      if (rest.length !== 1) return null;
+      var n = rest[0]; if (n < 1 || n > 30 || k !== null && k > n) return null;
+      var op = cm ? cm[1] : all ? "exactly" : "exactly";
+      return { a:R(n), b:p, c:R(all ? n : none ? 0 : k), ask:op.replace(/\s+/g, "") };
+    },
+    build:function(P){
+      var n = Number(P.a.n), p = dvd(P.b, H100), q = sub(ONE, p), k = Number(P.c.n), op = P.ask || "exactly";
+      if (!P.a || !P.b) throw new UserErr("This story needs the number of tries and the chance each time.");
+      var ks = [], j;
+      for (j = 0; j <= n; j++){
+        var ok = op === "atleast" || op === "nofewerthan" || op === "nolessthan" ? j >= k : op === "atmost" || op === "nomorethan" ? j <= k : op === "morethan" ? j > k : op === "fewerthan" || op === "lessthan" ? j < k : j === k;
+        if (ok) ks.push(j);
+      }
+      if (!ks.length) throw new UserErr("No number of successes fits that.");
+      var opT = { atleast:"at least", atmost:"at most", exactly:"exactly", morethan:"more than", fewerthan:"fewer than", lessthan:"fewer than", nomorethan:"at most", nofewerthan:"at least", nolessthan:"at least" }[op] || "exactly";
+      // the complement is shorter when it leaves out fewer cases
+      var useC = ks.length > (n + 1) / 2 + 0.5, cs = [];
+      if (useC) for (j = 0; j <= n; j++) if (ks.indexOf(j) < 0) cs.push(j);
+      var term = function(j){ return mul(mul(chooseR(n, j), powR(p, j)), powR(q, n - j)); };
+      var rows = [{ o:"✓", h:mvH(opT + " " + k + " of " + n) + esc((useC ? "1 − P(" + cs.join(" or ") + ")" : "P(" + ks.join(" or ") + ")")), say:Be(cap1(opT) + " " + k) + " out of " + n + " means " + andList(ks.map(String)) + (useC ? "; it’s quicker to take away the other cases (" + andList(cs.map(String)) + ") from 1." : ".") }];
+      (useC ? cs : ks).forEach(function(j){
+        rows.push({ o:"×", h:mvH("P(" + j + ")") + esc("C(" + n + "," + j + ") × " + dv(p) + "^" + j + " × " + dv(q) + "^" + (n - j) + " = " + nt(chooseR(n, j)) + " × " + trimZ(fixed(powR(p, j), 6)) + " × " + trimZ(fixed(powR(q, n - j), 6)) + " ≈ " + trimZ(fixed(term(j), 6))), say:"Exactly " + j + ": the number of ways to choose which " + j + " (" + nt(chooseR(n, j)) + ") × " + dv(p) + "^" + j + " × " + dv(q) + "^" + (n - j) + " ≈ " + Be(trimZ(fixed(term(j), 6))) + "." });
+      });
+      var sum = (useC ? cs : ks).reduce(function(a, j){ return add(a, term(j)); }, ZERO), tot = useC ? sub(ONE, sum) : sum;
+      rows.push({ o:useC ? "−" : "+", h:mvH(useC ? "Take it from 1" : "Add them") + esc((useC ? "1 − " + trimZ(fixed(sum, 6)) : (useC ? cs : ks).map(function(j){ return trimZ(fixed(term(j), 6)); }).join(" + ")) + " ≈ " + trimZ(fixed(tot, 4))), say:"So the probability is about " + Be(trimZ(fixed(tot, 4))) + "." });
+      return { calc:rows, x:roundK(tot, 4), idea2:"Binomial",
+        known:[kn(String(n), "tries (each one is yes or no)"), kn(nt(P.b) + "% = " + dv(p), "the chance of a yes each time"), kn(opT + " " + k, "how many yeses we want")], ask:"the probability of " + opT + " " + k + " out of " + n,
+        idea:"Each of the " + n + " is a yes-or-no try with the same chance, " + dv(p) + ", and they don’t affect each other: a binomial probability. The chance of exactly j yeses is C(" + n + ", j) × " + dv(p) + "^j × " + dv(q) + "^(" + n + " − j) — the number of ways to pick which ones, times the chances.",
+        trap:"“At least " + k + "” includes " + k + " itself and everything above it — and each count needs the C(n, j) ways, not just the powers.",
+        fig:function(){ return { svg:tableSVG(["successes", "ways", "probability"], (useC ? cs : ks).map(function(j){ return [String(j), nt(chooseR(n, j)), trimZ(fixed(term(j), 6))]; }), 1, "The cases that count"), lead:"One row for each number of yeses that " + (useC ? "doesn’t count (taken away from 1)" : "counts") + ": how many ways it can happen, and its probability." }; },
+        ans:function(v){ return { v:v, k:"n", w:"", say:"The probability is about " + Be(trimZ(fixed(v, 4))) + " (" + trimZ(fixed(mul(v, H100), 2)) + "%)." }; },
+        sense:function(v){ return "Check: it’s between 0 and 1 ✓, and " + (cmpR(p, R(1, 2)) > 0 && /least|more/.test(opT) ? "with a " + dv(p) + " chance each time, getting " + opT + " " + k + " should be likely ✓" : "the cases add up to the answer ✓"); },
+        diag:function(v){ return [{ v:roundK(term(k), 4), msg:"That’s the chance of exactly " + k + ". “" + cap1(opT) + " " + k + "” includes more cases — add them." }, { v:roundK(mul(powR(p, k), powR(q, n - k)), 4), msg:"Each case also needs the number of ways it can happen: C(" + n + ", " + k + ") = " + nt(chooseR(n, k)) + "." }]; },
+        hint:"Add C(" + n + ", j) × " + dv(p) + "^j × " + dv(q) + "^(" + n + " − j) for each j that counts." };
+    } });
+
   // what's left after amounts are taken from a total given later: "sold 248 Monday and 327 Tuesday; baked 700 in all"
   var TAKEV = /\b(?:sold|sells|used|uses|ate|eats|eaten|gave away|gives away|spent|spends|lost|loses|gave|gives|took|takes|shipped|delivered|served|donated|broke|picked)\b/;
   EQ("partsleft", { label:"A total, some taken away: how many are left",
