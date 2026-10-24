@@ -4468,6 +4468,60 @@
         hint:dv(r1) + " × " + nt(A) + " + " + dv(r2) + "x = " + nt(I) + "." };
     } });
 
+  // three products, each needing so much of three resources, and how much of each resource there is: three equations
+  // ("Cake A takes the decorator 9 hours, the baker 6 hours … there are 398 decorator hours available …")
+  function eq3T(E, vs){ var s = ""; for (var i = 0; i < 3; i++){ var c = E[i]; if (!sgn(c)) continue; s += s ? sgnT(c) + coefT(absR(c), vs[i]) : coefT(c, vs[i]); } return (s || "0") + " = " + nt(E[3]); }
+  EQ("sys3", { label:"Three products sharing three resources",
+    fields:[],
+    read:function(X){
+      var L = X.L.replace(/\bhour\b/g, "hours"), items = [], re = /\b(cake|product|type|item|model|kind|batch|recipe|job|style|design|shirt|chair|table|toy|box)\s+([a-c1-3])\s+(?:takes|needs|requires|uses|calls for)\s+([^.]*)/g, m;
+      while ((m = re.exec(L))){
+        var pr = [], pm, pre = /(?:the\s+)?([a-z][a-z ]*?)\s+(\d+(?:\.\d+)?)\s+(hours|minutes|units|pounds|cups|ounces|grams|kg|yards|feet|meters|liters)/g;
+        while ((pm = pre.exec(m[3]))) pr.push([pm[1].replace(/^(?:and|the)\s+/, "").replace(/^(?:and|the)\s+/, "").trim(), nv(pm[2]), pm[3]]);
+        if (pr.length === 3) items.push({ name:cap1(m[1]) + " " + m[2].toUpperCase(), use:pr });
+      }
+      var av = [], are = /(\d+(?:\.\d+)?)\s+([a-z][a-z ]*?)\s+(hours|minutes|units|pounds|cups|ounces|grams|kg|yards|feet|meters|liters)\s+(?:are\s+|is\s+)?available/g;
+      while ((m = are.exec(L))) av.push([m[2].replace(/^(?:and|the)\s+/, "").trim(), nv(m[1])]);
+      if (items.length !== 3 || av.length !== 3 || !/\bhow many\b/.test(X.Q)) return null;
+      var res = av.map(function(a){ return a[0]; }), E = [];
+      for (var j = 0; j < 3; j++){
+        var row = items.map(function(it){ var u = it.use.filter(function(p){ return p[0] === res[j]; })[0]; return u ? u[1] : null; });
+        if (row.some(function(x){ return !x; })) return null;
+        E.push(row.concat([av[j][1]]));
+      }
+      return { rw:{ E:E, items:items.map(function(it){ return it.name; }), res:res, u:items[0].use[0][2] } };
+    },
+    build:function(P, W){
+      var E = W.E, it = W.items || ["first", "second", "third"], res = W.res || ["first", "second", "third"], u = W.u || "hours";
+      if (!E) throw new UserErr("This story needs what each product uses and how much of each there is.");
+      var vs = it.map(function(n){ return n.slice(-1).toLowerCase(); });
+      if (vs[0] === vs[1] || vs[1] === vs[2] || vs[0] === vs[2] || !vs.every(function(v){ return /^[a-z]$/.test(v); })) vs = ["x", "y", "z"];
+      // the equation to eliminate with: the one whose first letter has the smallest number (1 is easiest)
+      var p = [0, 1, 2].filter(function(i){ return sgn(E[i][0]); }).sort(function(i, j){ return cmpR(absR(E[i][0]), absR(E[j][0])); })[0];
+      if (p === undefined) throw new UserErr("Those three facts don’t pin down the first product.");
+      var others = [0, 1, 2].filter(function(i){ return i !== p; }), rows = [], two = [];
+      others.forEach(function(i){
+        var k = dvd(E[i][0], E[p][0]), e = [ZERO, sub(E[i][1], mul(k, E[p][1])), sub(E[i][2], mul(k, E[p][2])), sub(E[i][3], mul(k, E[p][3]))];
+        two.push([e[1], e[2], e[3]]);
+        rows.push({ o:"−", h:mvH(res[i] + " − " + dv(k) + " × " + res[p]) + vH(eq3T(e, vs), vs), say:"Take " + dv(k) + " times the " + res[p] + " equation from the " + res[i] + " one, so the " + vs[0] + "’s cancel: " + Be(eq3T(e, vs)) + "." });
+      });
+      var er = elimRows(two, [vs[1], vs[2]]), y = er.vals[0], z = er.vals[1];
+      rows = rows.concat(er.rows);
+      var x = dvd(sub(sub(E[p][3], mul(E[p][1], y)), mul(E[p][2], z)), E[p][0]);
+      rows.push({ o:"=", h:mvH("Back into the " + res[p] + " equation") + vH(vs[0] + " = " + dv(x), [vs[0]]), say:"Put " + vs[1] + " = " + dv(y) + " and " + vs[2] + " = " + dv(z) + " into the " + res[p] + " equation: " + Be(vs[0] + " = " + dv(x)) + "." });
+      var vals = [x, y, z], link = window.HelperSite ? window.HelperSite.url("matrices-and-vectors.html", "q=" + encodeURIComponent(E.map(function(e){ return eq3T(e, ["x", "y", "z"]).replace(/−/g, "-"); }).join("; "))) : null;
+      if (link) rows[0].h += '<span class="golink"><a href="' + esc(link) + '"' + (EMBED ? ' target="_blank" rel="noopener"' : "") + ">Solve it on the Matrix Grid →</a></span>";
+      return { calc:rows, x:vals, idea2:"System of 3",
+        known:res.map(function(r, j){ return kn(nt(E[j][3]) + " " + r + " " + u, it.map(function(n, i){ return n + " " + nt(E[j][i]); }).join(", ")); }), ask:"how many of each",
+        idea:"Call how many of each you make " + andList(vs.map(function(v, i){ return v + " (" + it[i] + ")"; })) + ". Each of " + andList(res) + " gives one equation — the " + u + " all three products use add up to the " + u + " available — so there are three equations: " + E.map(function(e){ return eq3T(e, vs); }).join("; ") + ". Use one equation to get rid of " + vs[0] + ", then solve the two that are left.",
+        trap:"Each row is one resource (" + res.join(", ") + "), and each column is one product — keep the numbers in the right places.",
+        fig:function(){ return { svg:tableSVG([""].concat(it).concat(["available"]), res.map(function(r, j){ return [r].concat(E[j].slice(0, 3).map(nt)).concat([nt(E[j][3])]); }), 1, "What each product uses"), lead:"A table: one row for each resource, one column for each product. Each row makes one equation, with the " + u + " available on the right: " + E.map(function(e){ return nt(e[3]); }).join(", ") + "." }; },
+        ans:function(v){ if (v.some(function(t){ return !isInt(t) || sgn(t) < 0; })) throw new UserErr("Those numbers don’t give whole numbers of each — check them.");
+          return listAns(v.map(function(t, i){ return one(t, nt(t) + " of " + it[i], [it[i].toLowerCase(), vs[i]]); }), "That’s " + andList(v.map(function(t, i){ return Be(nt(t) + " of " + it[i]); })) + "."); },
+        sense:function(v){ return "Check: " + E.map(function(e, j){ return res[j] + " " + e.slice(0, 3).map(function(c, i){ return nt(c) + " × " + nt(v[i]); }).join(" + ") + " = " + nt(e[3]); }).join("; ") + " ✓"; },
+        hint:"Write one equation for each resource, then eliminate one letter at a time." };
+    } });
+
   // what's left after amounts are taken from a total given later: "sold 248 Monday and 327 Tuesday; baked 700 in all"
   var TAKEV = /\b(?:sold|sells|used|uses|ate|eats|eaten|gave away|gives away|spent|spends|lost|loses|gave|gives|took|takes|shipped|delivered|served|donated|broke|picked)\b/;
   EQ("partsleft", { label:"A total, some taken away: how many are left",
