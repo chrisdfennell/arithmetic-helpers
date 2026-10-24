@@ -1,0 +1,4 @@
+# Commits that only changed the layout of the code; GitHub's blame view skips them
+# (locally: git config blame.ignoreRevsFile .git-blame-ignore-revs)
+# Format the code: one statement per line, 2-space indent, CSS one property per line
+781bd9c1161afc5f57cd7284916726265529fa73

@@ -615,14 +615,16 @@
       b.addEventListener("click", function() {
         b.remove();
         maker.click();
-        setTimeout(function() { var box = answerBox(); if (box) box.focus(); }, 120);
+        setTimeout(function() { var box = answerBox(msg); if (box) box.focus(); }, 120);
       });
       msg.parentNode.insertBefore(b, msg.nextSibling);
     }), 60);
   }
 
-  function answerBox() {
-    var live = document.querySelector("[aria-live]");
+  // the answer box beside the Check my answer verdict (not the first [aria-live] on the page: the camera's status line
+  // and #statusLine come before it)
+  function answerBox(live) {
+    live = live || document.querySelector("[aria-live]:not(.ht-cam-status):not(#statusLine)");
     var box = live && (live.closest("form, section, .ckbox, .try, .check") || live.parentNode);
     if (!box) return null;
     return [].filter.call(box.querySelectorAll("input"), function(i) { return i.offsetParent !== null && !i.readOnly; })[0] || null;
