@@ -2187,8 +2187,10 @@
   function lxMul(p, k){ return LX(mul(p.a, k), mul(p.b, k)); }
   function lxVal(p, x){ return add(mul(p.a, x), p.b); }
   function blcmB(a, b){ return a / bgcd(a, b) * b; }
+  var COEFDEC = false;                           // money stories: 0.25m, not m/4 (set while their model is built)
   function coefT(a, v){
     if (eqR(a, ONE)) return v;
+    if (COEFDEC && !isInt(a) && termDec(a) !== null) return nt(a) + v;
     if (eqR(a, R(-1))) return "−" + v;
     if (!isInt(a) && absR(a).n === 1n && a.d <= 12n) return (sgn(a) < 0 ? "−" : "") + v + "/" + a.d;
     return nt(a) + v;
@@ -2223,7 +2225,7 @@
       st.push({ lab:(sgn(m) > 0 ? "− " + nt(m) : "+ " + nt(absR(m))) + " on both sides", why:(sgn(m) > 0 ? "take " + nt(m) + " away from" : "add " + nt(absR(m)) + " to") + " both sides, to undo the " + (sgn(m) > 0 ? "+ " : "− ") + nt(absR(m)), l:lhs, r:rhs });
     }
     if (!eqR(lhs.a, ONE)){
-      var c = lhs.a, byRecip = !isInt(c) && c.n === 1n, lab = byRecip ? "× " + bs(c.d) + " on both sides" : "÷ " + (sgn(c) < 0 ? "(" + nt(c) + ")" : nt(c)) + " on both sides";
+      var c = lhs.a, byRecip = !isInt(c) && c.n === 1n && !(COEFDEC && termDec(c) !== null), lab = byRecip ? "× " + bs(c.d) + " on both sides" : "÷ " + (sgn(c) < 0 ? "(" + nt(c) + ")" : nt(c)) + " on both sides";
       rhs = LX(ZERO, dvd(rhs.b, c)); lhs = LX(ONE, ZERO);
       st.push({ lab:lab, why:byRecip ? "multiply both sides by " + bs(c.d) + " to undo the ÷ " + bs(c.d) : "divide both sides by " + nt(c) + " to undo the × " + nt(c), l:lhs, r:rhs });
     }
@@ -2906,7 +2908,7 @@
 
   /* ---- a fixed amount plus so much each: an equation, or an inequality (at most / at least) ---- */
   function linModel(P, W, ineq){
-    var a = P.a || ZERO, b = P.b, c = P.c, unit = W.unit || "items", u1 = W.per || singular(unit), v = "n", money = W.money !== false, M = { unit:unit };
+    var a = P.a || ZERO, b = P.b, c = P.c, unit = W.unit || "items", u1 = W.per || singular(unit), v = W.v || "n", money = W.money !== false, M = { unit:unit };
     if (!b || !c) throw new UserErr("This story needs the amount for each one and the total.");
     var q = function(x){ return money ? usd(x) : nt(x); }, ex = dvd(sub(c, a), b), sym = ineq === "most" ? "≤" : ineq === "least" ? "≥" : "=";
     if (sgn(ex) <= 0) throw new UserErr("The fixed amount is already the whole total — check the numbers in <b>What the story says</b>.");
@@ -2915,7 +2917,7 @@
     var lhs = (sgn(a) ? nt(a) + " + " : "") + coefT(b, v), wEq = lhs + " " + sym + " " + nt(c), tot = function(k){ return q(add(a, mul(b, k))); };
     M.known = [{ q:q(a), w:"once, however many " + unit }, { q:q(b), w:"for each " + u1 }, { q:q(c), w:ineq === "most" ? "the most it can be" : ineq === "least" ? "the least it has to reach" : "the total" }];
     M.ask = (ineq === "most" ? "the greatest number of " : ineq === "least" ? "the smallest number of " : "how many ") + unit;
-    M.idea = algIdea("The total is the fixed " + q(a) + " plus " + q(b) + " for each " + u1 + ". Call the number of " + unit + " n: the total is " + lhs + (ineq === "most" ? ", and “at most” means it can’t go over " + q(c) + ": an inequality, ≤." : ineq === "least" ? ", and “at least” means it has to reach " + q(c) + " or more: an inequality, ≥." : ", and that equals " + q(c) + "."),
+    M.idea = algIdea("The total is the fixed " + q(a) + " plus " + q(b) + " for each " + u1 + ". Call the number of " + unit + " " + v + ": the total is " + lhs + (ineq === "most" ? ", and “at most” means it can’t go over " + q(c) + ": an inequality, ≤." : ineq === "least" ? ", and “at least” means it has to reach " + q(c) + " or more: an inequality, ≥." : ", and that equals " + q(c) + "."),
       ineq ? "Solve it like an equation, then think about whole " + unit + ": " + (ineq === "most" ? "round down — rounding up would go over." : "round up — rounding down would fall short.") : "Take away the fixed " + q(a) + " first: it’s paid once, not for every " + u1 + ".", ineq ? "letter → inequality → solve → whole number" : null);
     M.eqn = eqnStep([[v, "the number of " + unit]], [["the fixed amount", nt(a)], ["plus " + q(b) + " for each " + u1, "+ " + coefT(b, v)], [(ineq === "most" ? "at most " : ineq === "least" ? "at least " : "is ") + q(c), sym + " " + nt(c)]], wEq, [v]);
     var sol = solveSteps(LX(b, a), LX(ZERO, c), v), rows = stepRows(sol.steps, [v]).map(function(r){ r.h = r.h.replace(" = ", " " + sym + " "); r.say = r.say.replace(/ = /g, " " + sym + " "); return r; });
@@ -2930,11 +2932,12 @@
     M.diag = (ineq ? [{ v:ineq === "most" ? add(n, ONE) : sub(n, ONE), msg:ineq === "most" ? "That goes over: " + tot(add(n, ONE)) + " is more than " + q(c) + ". Round down." : "That falls short: " + tot(sub(n, ONE)) + " is less than " + q(c) + ". Round up." }] : [])
       .concat([{ v:ineq ? (ineq === "most" ? floorR(dvd(c, b)) : add(floorR(dvd(sub(c, ONE), b)), ONE)) : dvd(c, b), msg:"Don’t forget the fixed " + q(a) + " — take it away first." }, { v:dvd(add(c, a), b), msg:"Take the fixed " + q(a) + " away from " + q(c) + ", don’t add it." }, { v:sub(c, a), msg:"Nearly: that’s the amount for the " + unit + ". Divide it by " + q(b) + "." }])
       .concat(ineq && !isInt(ex) ? [{ v:ex, msg:"Only whole " + unit + " count: round " + (ineq === "most" ? "down." : "up.") }] : []);
-    M.hint = "Let n be the number of " + unit + ": " + wEq + ". Take away " + nt(a) + ", then divide by " + nt(b) + (ineq ? ", then round." : ".");
+    M.hint = "Let " + v + " be the number of " + unit + ": " + wEq + ". Take away " + nt(a) + ", then divide by " + nt(b) + (ineq ? ", then round." : ".");
     return M;
   }
-  ALG.linear = function(P, W){ return linModel(P, W, null); };
-  ALG.inequality = function(P, W){ return linModel(P, W, P.form === "least" ? "least" : "most"); };
+  function decMoney(f){ return function(P, W){ var was = COEFDEC; COEFDEC = W.money !== false; try { return f(P, W); } finally { COEFDEC = was; } }; }
+  ALG.linear = decMoney(function(P, W){ return linModel(P, W, null); });
+  ALG.inequality = decMoney(function(P, W){ return linModel(P, W, P.form === "least" ? "least" : "most"); });
 
   /* ---- a proportion: a is to b as c is to x ---- */
   ALG.proportion = function(P, W){
@@ -5485,6 +5488,8 @@
     var ageS = /\byears? (older|younger)\b|\b(times|twice) as old\b|\bas old as\b/.test(A.L);    // an age story: its ages are what it's about
     A.toks.forEach(function(t){
       if (t.k !== "n") return;
+      // a homework list's numbers: "… is $21.20. 1. Write an equation … 2. How many minutes …"
+      if (/(?:^|[\n.?!:])\s*$/.test(D.slice(Math.max(0, t.i - 4), t.i)) && /^[.)]\s+[A-Z]/.test(D.slice(t.end, t.end + 4)) && isInt(t.v) && t.v.n < 30n) { t.x0 = true; t.what0 = "the number of a question in the list"; return; }
       if (/^\s*days?\s+(?:left\s+)?(?:until|till|before|to go)\b/.test(t.after)) { t.x0 = true; t.what0 = "how long until something else"; }
       else if (ageS && (/^years?\b/.test(t.unit) || /^\s*-?years?[\s-]old\b/.test(t.after))) return;
       else if ((/^(years?|year-old|grade|graders?|degrees?|°)/.test(t.unit) && !/^years? (older|younger)\b/.test(t.unit) && !(/^(degrees?|°)/.test(t.unit) && (/^\s*(?:degrees?|°)\s*(more|less|greater|smaller|bigger|than)\b/.test(t.after) || /\bangle/.test(A.L.slice(Math.max(0, t.i - 80), t.end + 80))))) || /^\s*-?years?[\s-]old\b/.test(t.after)) { t.x0 = true; t.what0 = /grade/.test(t.unit) ? "a grade" : /degree|°/.test(t.unit) ? "a temperature" : "an age"; }
@@ -6459,10 +6464,12 @@
         var rm = rateOf(t), sx = A.sents[t.s];
         var laterRate = ns.some(function(u){ return u.s === t.s && u.i > t.i && rateOf(u); });
         if (!cur || cur.rate && (rm || laterRate || cur.s !== t.s)){ cur = { fix:ZERO, rate:null, unit:"", s:t.s }; plans.push(cur); }
-        if (rm && !cur.rate){ cur.rate = t.v; cur.unit = rm[1]; } else cur.fix = add(cur.fix, t.v);
+        if (rm && !cur.rate){ cur.rate = t.v; cur.unit = rm[1]; } else { cur.fix = add(cur.fix, t.v); cur.fx = (cur.fx || []).concat([t.v]); }
         void sx;
       });
       plans = plans.filter(function(p){ return p.rate; });
+      // "You have $60 and your sister has $120. You save $7 a week and she saves $5": both starts came first, in one sentence
+      if (plans.length === 2 && plans[0].fx && plans[0].fx.length === 2 && !plans[1].fx){ plans[1].fix = plans[0].fx[1]; plans[0].fix = plans[0].fx[0]; plans[1].fx = [plans[1].fix]; plans[0].fx = [plans[0].fix]; }
       if (plans.length === 2 && singular(plans[0].unit) === singular(plans[1].unit)){
         var pu = plural(plans[0].unit), pp2 = P("plans", "plans", { a:plans[0].fix, b:plans[0].rate, c:plans[1].fix, d:plans[1].rate });
         pp2.rw = { unit:pu === "visites" ? "visits" : pu, per:"a " + plans[0].unit, A:"Plan A", B:"Plan B" };
@@ -6478,6 +6485,9 @@
     if (fr){
       var fp = P(fr.ineq ? "inequality" : "linear", fr.ineq || "fee", { a:fr.a, b:fr.b, c:fr.c });
       fp.rw = { unit:fr.unit, per:fr.per, money:fr.money };
+      // the story's own letter: "the bill for m minutes", "let h be the number of hours"
+      var ltr = /\blet\s+([a-z])\s+(?:be|represent|stand for|equal|=)/.exec(L) || /\b(?:for|of|in|after)\s+([b-hj-z])\s+(?:minutes|hours|months|days|weeks|years|miles|visits|texts|gigabytes|tickets|items|rides|sessions|classes|songs|cars|people)\b/.exec(L);
+      if (ltr) fp.rw.v = ltr[1];
       return fp;
     }
     // a proportion: "3 cups of flour make 12 cookies — how many cups for 20 cookies?"
@@ -6518,7 +6528,7 @@
       var asksSize = A.qn && smT.unit && smT.unit.split(" ").pop() === A.qn.split(" ").pop() && !/\bleft ?over\b|\bremain/.test(Q);
       if (sm.n > 0n && big.n % sm.n !== 0n && !asksSize) tries.push("remainder");
     }
-    var unitAsk = /\bhow much (does|do|would|will|did|is) (one|1|each|a|an|it)\b|\b(cost|price) of (one|1|each|a|an)\b|\bfor (one|1)\b|\bin (one|1|an?) (hour|minute)\b|\bper (hour|minute)\b|\beach (hour|minute)\b|\bat (the|that|this) same (price|rate|speed)|\bsteady\b|\bsame rate\b/.test(Q + " " + L);
+    var unitAsk = /\bunit (?:rate|price|cost)\b|\b(?:price|cost|rate)\s+(?:per|for each|for one|of one)\b|\bhow much (does|do|would|will|did|is) (one|1|each|a|an|it)\b|\b(cost|price) of (one|1|each|a|an)\b|\bfor (one|1)\b|\bin (one|1|an?) (hour|minute)\b|\bper (hour|minute)\b|\beach (hour|minute)\b|\bat (the|that|this) same (price|rate|speed)|\bsteady\b|\bsame rate\b/.test(Q + " " + L);
     // "If 5 apples cost $45, how much do 13 apples cost?": a price for some, asked for another number of them
     var priceN = cnt("$") === 1 && nums === 3 && u.filter(function(t){ return t.k === "$" && !t.inQ; }).length === 1 && u.filter(function(t){ return t.k === "n" && t.inQ; }).length === 1 && /\bhow much\b/.test(Q);
     if (unitAsk || priceN || (cnt("dur") && /\bhow (far|many|much)\b/.test(Q))) tries.push("rate");
