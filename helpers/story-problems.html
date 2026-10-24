@@ -4543,7 +4543,8 @@
       if (keys.some(function(k){ return rel[k].base !== base; }) || rel[base]) return null;
       var lx = /\blet\s+([a-z])\s+(?:represent|be|stand for|equal)\s+(?:the\s+)?(?:number of\s+)?([a-z']+)/.exec(L), v = lx && catK(lx[2]) === base ? lx[1] : "x";
       var cats = [base].concat(keys);
-      var pr = {}; re = /([a-z']+)\s+(?:[a-z]+\s+)?(?:cost|costs|are|were|sell for|sold for|is|was)\s+\$\s*(\d+(?:\.\d+)?)/g;
+      // "adult tickets cost $5", "and cupcakes cost $3" (the word before "tickets", or before the verb — never "and")
+      var pr = {}; re = /([a-z']+)\s+(?:(?:tickets?|passes?|meals?|items?|seats?)\s+)?(?:cost|costs|are|were|sell for|sold for|is|was)\s+\$\s*(\d+(?:\.\d+)?)/g;
       while ((m = re.exec(L))){ var ck = catK(m[1]); if (cats.indexOf(ck) >= 0 && !pr[ck]) pr[ck] = nv(m[2]); }
       var money = cats.every(function(c){ return pr[c]; }), tot = null;
       if (money){
@@ -4555,17 +4556,20 @@
         if (!tc) return null; tot = nv(tc[1] || tc[2]);
       }
       if (!/\bhow many\b/.test(X.Q)) return null;
-      var it = (/\b(?:adult|child(?:ren)?|senior|student)(?:'s)?\s+([a-z]+)/.exec(L) || ["", "tickets"])[1];
-      return { rw:{ v:v, cats:cats, rel:rel, pr:money ? pr : null, tot:tot, it:it } };
+      // "adult tickets": the groups are kinds of tickets; "cookies than brownies": the groups are the things themselves
+      var itm = new RegExp("\\b(?:" + cats.map(function(c){ return c.replace(/[^a-z]/g, ""); }).join("|") + "|children)[a-z']*\\s+(tickets|passes|meals|seats|memberships|shirts)\\b").exec(L), names = {};
+      (L.match(/[a-z']+/g) || []).forEach(function(w){ var k = catK(w); if (cats.indexOf(k) >= 0 && !names[k] && /s$/.test(w.replace(/'s$/, ""))) names[k] = w.replace(/'s$/, ""); });
+      return { rw:{ v:v, cats:cats, rel:rel, pr:money ? pr : null, tot:tot, it:itm ? itm[1] : null, names:names } };
     },
     build:function(P, W){
-      var v = W.v || "x", cats = W.cats, rel = W.rel, pr = W.pr, T = W.tot, it = W.it || "items";
+      var v = W.v || "x", cats = W.cats, rel = W.rel, pr = W.pr, T = W.tot, it = W.it || null, names = W.names || {};
       if (!cats || !T) throw new UserErr("This story needs how the groups are tied together and the total.");
-      var nm = function(c){ return (c === "child" ? "children’s" : c) + " " + it; };
+      var nm = function(c){ return W.it ? (c === "child" ? "children’s" : c) + " " + W.it : names[c] || plural(c); };
+      if (!it) it = "items";
       var ex = function(c){ if (c === cats[0]) return LX(ONE, ZERO); var r = rel[c]; return LX(r.k, r.c); };
       var exT = function(c){ return lxT(ex(c), v); };
       var L = cats.reduce(function(acc, c){ return lxAdd(acc, pr ? lxMul(ex(c), pr[c]) : ex(c)); }, LX(ZERO, ZERO));
-      var lhs = cats.map(function(c){ var e = exT(c), plain = e === v; return pr ? (plain ? coefT(pr[c], v) : nt(pr[c]) + "(" + e + ")") : (plain || /^[\d.\/]*[a-z]$/.test(e) ? e : "(" + e + ")"); }).join(" + ");
+      var lhs = cats.map(function(c){ var e = exT(c), plain = e === v; return pr ? (plain ? coefT(pr[c], v) : (eqR(pr[c], ONE) ? "" : nt(pr[c])) + "(" + e + ")") :(plain || /^[\d.\/]*[a-z]$/.test(e) ? e : "(" + e + ")"); }).join(" + ");
       var wEq = lhs + " = " + nt(T);
       return { v:v, let:"the number of " + nm(cats[0]),
         known:cats.slice(1).map(function(c){ var r = rel[c]; return eqR(r.k, ONE) ? kn(sgn(r.c) > 0 ? nt(r.c) + " more" : nt(absR(r.c)) + " fewer", nm(c) + " than " + nm(cats[0])) : kn(nt(r.k) + " times as many", nm(c) + " as " + nm(cats[0])); })
