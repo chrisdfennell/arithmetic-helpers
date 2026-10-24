@@ -4215,19 +4215,24 @@
 
     function funOk(v) { return typeof v === "number" && isFinite(v); }
     var FUN_XS = [0.7, 1.3, 2.9, -1.1, 3.7, -2.3, 0.45, 5.2, -0.35, 1.85, -3.3, -4.6, 7.4, -0.9, -6.2, 9.6, 12.3, -11.7];
+    // further out, only for a function defined on too few of those (√(−x − 6) is defined only for x ≤ −6): far points
+    // everywhere would lose precision (e^−30 − 2 and back)
+    var FUN_FAR = [-8.3, 15.4, -14.6, 19.1, -18.7, 24.2, -23.9, 31.5, -30.8];
     // do g and h agree wherever h is defined (at least 3 points)? letters: the other letters get values too
-    function funSame(g, h, letters) {
+    function funSame(g, h, letters, far) {
       var used = 0,
-        bad = null;
-      FUN_XS.forEach(function(xv, i) {
+        bad = null,
+        XS = far ? FUN_FAR : FUN_XS;
+      XS.forEach(function(xv, i) {
         var e = { x: xv };
-        (letters || []).forEach(function(l, k) { if (l !== "x") e[l] = FUN_XS[(i + 3 * k + 1) % FUN_XS.length] * 0.8; });
+        (letters || []).forEach(function(l, k) { if (l !== "x") e[l] = XS[(i + 3 * k + 1) % XS.length] * 0.8; });
         var w = h(e);
         if (!funOk(w) || Math.abs(w) > 1e9) return;
         var u = g(e);
         used++;
         if (!funOk(u) || Math.abs(u - w) > 1e-7 * (1 + Math.abs(w))) bad = bad || { x: xv, u: u, w: w };
       });
+      if (used < 3 && !far) return funSame(g, h, letters, true);
       return used < 3 ? { ok: false, msg: "too few test points" } : bad ? { ok: false, msg: "at x = " + bad.x + " the answer gives " + bad.u + ", expected " + bad.w } : { ok: true };
     }
     // a set the way the page writes it: "(−∞, 2) ∪ (2, ∞)", "[3, ∞)", "{1, 3, 5}", "∅", or as data-s: "(-inf, 2) U (2, inf)"
@@ -4273,29 +4278,31 @@
       for (var k = 0; k < vals.length; k++)
         if (vals[k] !== null && !funIn(R, vals[k]) && !funEnds(R).some(function(e) { return Math.abs(e - vals[k]) < 1e-6 * (1 + Math.abs(e)); })) return "f(" + xs[k] + ") = " + vals[k] + " isn’t in the range";
       var reach = function(t) {
-        var best = -1,
-          bd = Infinity;
+        var near = [];
         for (var j = 0; j < vals.length; j++) {
           if (vals[j] === null) continue;
           if (Math.abs(vals[j] - t) < 1e-9 * (1 + Math.abs(t))) return true;
           if (j + 1 < vals.length && vals[j + 1] !== null && (vals[j] - t) * (vals[j + 1] - t) <= 0 && Math.abs(vals[j] - vals[j + 1]) < 1) return true;
-          if (Math.abs(vals[j] - t) < bd) {
-            bd = Math.abs(vals[j] - t);
-            best = j;
+          near.push(j);
+        }
+        if (!near.length) return false;
+        // home in near the closest samples (a turning point, or an end of the domain); a piecewise function can have its
+        // closest sample at one piece's end while the value is reached somewhere else, so try the six closest
+        near.sort(function(a, b) { return Math.abs(vals[a] - t) - Math.abs(vals[b] - t); });
+        var g = function(v) { var y = f({ x: v }); return funIn(D, v) && funOk(y) ? Math.abs(y - t) : Infinity; };
+        for (var c = 0; c < Math.min(6, near.length); c++) {
+          var best = near[c],
+            lo = xs[Math.max(0, best - 1)],
+            hi = xs[Math.min(xs.length - 1, best + 1)];
+          for (var it = 0; it < 120; it++) {
+            var m1 = lo + (hi - lo) / 3,
+              m2 = hi - (hi - lo) / 3;
+            if (g(m1) < g(m2)) hi = m2;
+            else lo = m1;
           }
+          if (Math.min(g(lo), g(hi), g((lo + hi) / 2)) < 1e-6 * (1 + Math.abs(t))) return true;
         }
-        if (best < 0) return false;
-        // home in near the closest sample (a turning point, or an end of the domain)
-        var lo = xs[Math.max(0, best - 1)],
-          hi = xs[Math.min(xs.length - 1, best + 1)],
-          g = function(v) { var y = f({ x: v }); return funIn(D, v) && funOk(y) ? Math.abs(y - t) : Infinity; };
-        for (var it = 0; it < 120; it++) {
-          var m1 = lo + (hi - lo) / 3,
-            m2 = hi - (hi - lo) / 3;
-          if (g(m1) < g(m2)) hi = m2;
-          else lo = m1;
-        }
-        return Math.min(g(lo), g(hi), g((lo + hi) / 2)) < 1e-6 * (1 + Math.abs(t));
+        return false;
       };
       for (var q = 0; q < R.length; q++) {
         var iv = R[q],
