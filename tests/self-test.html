@@ -4471,6 +4471,8 @@
         var inp = [].filter.call(d.querySelectorAll(".page input[type=text], .page input:not([type])"), function(i){ return i.offsetParent && !i.closest(".maker, .sitenav, .ht-search"); })[0];
         if (!inp){ fail(T.page, "loads", "no answer box on " + link, link); score(T.page, "load", 0, 1); drop(fr); return; }
         inp.focus();
+        // a window without the focus (a background tab, headless Chrome) moves the focus but sends no focusin: send it, as a real tap would
+        if (!d.hasFocus()) inp.dispatchEvent(new FocusEvent("focusin", { bubbles:true }));
         return settle(100).then(function(){
           var pad = d.querySelector(".ht-pad");
           if (!pad || pad.hidden){ fail(T.page, "loads", "the math keys didn’t come up", link); score(T.page, "load", 0, 1); drop(fr); return; }
