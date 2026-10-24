@@ -4522,6 +4522,66 @@
         hint:"Write one equation for each resource, then eliminate one letter at a time." };
     } });
 
+  // several groups tied to one of them, with a price for each and a total: "10 more adult tickets than children's, twice as
+  // many senior as children's; adult $5, children's $2, senior $3; $700 in all" → x, x + 10, 2x
+  var CATN = { children:"child", child:"child", kids:"kid", kid:"kid", adults:"adult", adult:"adult", seniors:"senior", senior:"senior", students:"student", student:"student", teachers:"teacher", teacher:"teacher", members:"member", member:"member", parents:"parent", parent:"parent", girls:"girl", boys:"boy" };
+  function catK(w){ w = String(w || "").replace(/(?:'s|’s|s')$/, ""); return CATN[w] || singular(w); }
+  EQ("linked", { label:"Groups tied to one of them, with prices and a total",
+    fields:[],
+    read:function(X){
+      var L = X.L.replace(/[’]/g, "'"), rel = {}, m, re;
+      re = /(\d+(?:\.\d+)?)\s+(more|fewer|less)\s+([a-z']+)\s+(?:[a-z]+\s+)?than\s+(?:the\s+)?([a-z']+)/g;
+      while ((m = re.exec(L))) rel[catK(m[3])] = { base:catK(m[4]), k:ONE, c:/more/.test(m[2]) ? nv(m[1]) : negR(nv(m[1])) };
+      re = new RegExp(TIMESX + "\\s+as many\\s+([a-z']+)\\s+(?:[a-z]+\\s+)?as\\s+(?:the\\s+)?([a-z']+)", "g");
+      while ((m = re.exec(L))) rel[catK(m[m.length - 2])] = { base:catK(m[m.length - 1]), k:timesV(m[1]), c:ZERO };
+      var keys = Object.keys(rel); if (!keys.length) return null;
+      var base = rel[keys[0]].base;
+      if (keys.some(function(k){ return rel[k].base !== base; }) || rel[base]) return null;
+      var lx = /\blet\s+([a-z])\s+(?:represent|be|stand for|equal)\s+(?:the\s+)?(?:number of\s+)?([a-z']+)/.exec(L), v = lx && catK(lx[2]) === base ? lx[1] : "x";
+      var cats = [base].concat(keys);
+      var pr = {}; re = /([a-z']+)\s+(?:[a-z]+\s+)?(?:cost|costs|are|were|sell for|sold for|is|was)\s+\$\s*(\d+(?:\.\d+)?)/g;
+      while ((m = re.exec(L))){ var ck = catK(m[1]); if (cats.indexOf(ck) >= 0 && !pr[ck]) pr[ck] = nv(m[2]); }
+      var money = cats.every(function(c){ return pr[c]; }), tot = null;
+      if (money){
+        var all$ = (L.match(/\$\s*\d+(?:\.\d+)?/g) || []).map(function(x){ return nv(x.replace(/[$\s]/g, "")); }), used = cats.map(function(c){ return pr[c]; });
+        var others = all$.filter(function(x){ return !used.some(function(u){ return eqR(u, x); }); });
+        if (others.length !== 1) return null; tot = others[0];
+      } else {
+        var tc = /(?:sold|made|has|bought|there (?:are|were))\s+(\d+)\s+[a-z]+\s+(?:in all|altogether|in total|total)|(?:a total of|total of)\s+(\d+)/.exec(L);
+        if (!tc) return null; tot = nv(tc[1] || tc[2]);
+      }
+      if (!/\bhow many\b/.test(X.Q)) return null;
+      var it = (/\b(?:adult|child(?:ren)?|senior|student)(?:'s)?\s+([a-z]+)/.exec(L) || ["", "tickets"])[1];
+      return { rw:{ v:v, cats:cats, rel:rel, pr:money ? pr : null, tot:tot, it:it } };
+    },
+    build:function(P, W){
+      var v = W.v || "x", cats = W.cats, rel = W.rel, pr = W.pr, T = W.tot, it = W.it || "items";
+      if (!cats || !T) throw new UserErr("This story needs how the groups are tied together and the total.");
+      var nm = function(c){ return (c === "child" ? "children’s" : c) + " " + it; };
+      var ex = function(c){ if (c === cats[0]) return LX(ONE, ZERO); var r = rel[c]; return LX(r.k, r.c); };
+      var exT = function(c){ return lxT(ex(c), v); };
+      var L = cats.reduce(function(acc, c){ return lxAdd(acc, pr ? lxMul(ex(c), pr[c]) : ex(c)); }, LX(ZERO, ZERO));
+      var lhs = cats.map(function(c){ var e = exT(c), plain = e === v || /^[\d.\/]*[a-z]$/.test(e); return pr ? (plain ? coefT(mul(pr[c], ex(c).a), v) : nt(pr[c]) + "(" + e + ")") : (plain ? e : "(" + e + ")"); }).join(" + ");
+      var wEq = lhs + " = " + nt(T);
+      return { v:v, let:"the number of " + nm(cats[0]),
+        known:cats.slice(1).map(function(c){ var r = rel[c]; return eqR(r.k, ONE) ? kn(sgn(r.c) > 0 ? nt(r.c) + " more" : nt(absR(r.c)) + " fewer", nm(c) + " than " + nm(cats[0])) : kn(nt(r.k) + " times as many", nm(c) + " as " + nm(cats[0])); })
+          .concat(pr ? cats.map(function(c){ return kn(usd(pr[c]), "each of the " + nm(c)); }) : []).concat([kn(pr ? usd(T) : nt(T), pr ? "made in all" : "in all")]),
+        ask:"how many of each",
+        idea:"Everything is tied to the " + nm(cats[0]) + ", so call that number " + v + " and write each of the others with " + v + ": " + cats.slice(1).map(function(c){ return nm(c) + " = " + exT(c); }).join(", ") + ". " + (pr ? "Each group’s money is its price times how many, and the money adds up to " + usd(T) + "." : "Together they make " + nt(T) + "."),
+        trap:"“10 more adult tickets than children’s” is " + v + " + 10, and “twice as many” is 2" + v + " — they are numbers of tickets, not the answer. Multiply each by its own price.",
+        pieces:cats.map(function(c){ return [nm(c), exT(c)]; }).concat(pr ? [["the money adds up to " + usd(T), wEq]] : [["together they make " + nt(T), wEq]]),
+        wEq:wEq, L:L, R:LX(ZERO, T),
+        pre:[{ o:"=", h:mvH("Multiply out, combine") + vH(lxT(L, v) + " = " + nt(T), [v]), say:"Multiply out the brackets and collect the " + v + "’s: " + Be(lxT(L, v) + " = " + nt(T)) + "." }],
+        then:function(x){ return [{ o:"+", h:mvH("Each group") + esc(cats.map(function(c){ return nm(c) + ": " + exT(c).replace(new RegExp("\\b" + v + "\\b", "g"), "(" + dv(x) + ")") + " = " + dv(lxVal(ex(c), x)); }).join("; ")), say:"Put " + v + " = " + dv(x) + " into each expression: " + cats.map(function(c){ return Be(dv(lxVal(ex(c), x)) + " " + nm(c)); }).join(", ") + "." }]; },
+        fig:function(x){ return { svg:tableSVG(pr ? ["", "how many", "price", "money"] : ["", "how many"], cats.map(function(c){ return pr ? [nm(c), exT(c), usd(pr[c]), nt(pr[c]) + "(" + exT(c) + ")"] : [nm(c), exT(c)]; }).concat([pr ? ["in all", "", "", usd(T)] : ["in all", nt(T)]]), 1, "Table of the groups"), lead:"One row for each group, all written with " + v + ". The last column adds up to " + (pr ? usd(T) : nt(T)) + "." }; },
+        ans:function(x){ var vals = cats.map(function(c){ return lxVal(ex(c), x); });
+          if (vals.some(function(t){ return !isInt(t) || sgn(t) < 0; })) throw new UserErr("Those numbers don’t give whole numbers of " + it + " — check them in <b>What the story says</b>.");
+          return listAns(cats.map(function(c, i){ return one(vals[i], nt(vals[i]) + " " + nm(c), [c, nm(c)]); }), "There were " + andList(cats.map(function(c, i){ return Be(nt(vals[i]) + " " + nm(c)); })) + " (" + v + " = " + nt(x) + ")."); },
+        sense:function(x){ return "Check: " + (pr ? cats.map(function(c){ return nt(lxVal(ex(c), x)) + " × " + usd(pr[c]); }).join(" + ") + " = " + Be(usd(cats.reduce(function(a, c){ return add(a, mul(lxVal(ex(c), x), pr[c])); }, ZERO))) : cats.map(function(c){ return nt(lxVal(ex(c), x)); }).join(" + ") + " = " + Be(nt(T))) + " ✓"; },
+        diag:function(x){ return cats.slice(1).map(function(c){ var r = rel[c]; return { v:eqR(r.k, ONE) ? absR(r.c) : r.k, msg:"That number is how the " + nm(c) + " are tied to the " + nm(cats[0]) + ", not how many were sold. Write " + nm(c) + " = " + exT(c) + " and solve the equation." }; }); },
+        hint:"Let " + v + " be the " + nm(cats[0]) + ": " + cats.slice(1).map(function(c){ return nm(c) + " = " + exT(c); }).join(", ") + "; then " + wEq + "." };
+    } });
+
   // a binomial probability: n tries, the same chance p each time, and at least / at most / exactly k successes
   function chooseR(n, k){ var r = ONE; for (var i = 1; i <= k; i++) r = dvd(mul(r, R(n - k + i)), R(i)); return r; }
   EQ("binom", { label:"The chance of k out of n (binomial)",
