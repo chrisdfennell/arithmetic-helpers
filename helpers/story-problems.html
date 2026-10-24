@@ -237,6 +237,10 @@
     font-size:clamp(23px,4.4vw,32px);color:var(--ink);line-height:1.1;display:flex;align-items:baseline;
     flex-wrap:wrap;gap:.1em .35ch;min-width:0}
   .answer .v > span{display:inline-flex;align-items:center}
+  /* the equation and expressions a story asked for: their own lines under the answer, in ordinary text */
+  .answer .pair.extra{flex-basis:100%}
+  .answer .v2{font-family:var(--f-mono);font-weight:600;font-size:clamp(16px,2.6vw,19px);color:var(--ink);line-height:1.45}
+  .answer .v2 i{font-family:var(--f-body);font-style:italic}
   .answer .v .word{font-family:var(--f-display);font-stretch:110%;font-weight:700;font-size:.72em}
   .answer .v .apx{font-size:.55em;color:var(--ink-2)}
   .answer .facts{display:flex;flex-direction:column;gap:2px;margin-left:auto;min-width:0;max-width:62ch}
@@ -5303,8 +5307,8 @@
     var opWord = M.idea.tag === "Add" ? "add (+)" : M.idea.tag === "Subtract" ? "subtract (−)" : M.idea.tag === "Multiply" ? "multiply (×)" : M.idea.tag === "Divide" ? "divide (÷)" : esc(M.idea.tag) + " (" + esc(M.idea.sym) + ")";
     return {
       ctx:c, P:P, W:W, M:M,
-      band:{ pairs:[{ k:"Answer", v:ansHtml(A) }].concat(askEq || askEx ? [{ k:"Equation", v:M.eqn.eqH }] : [])        // the answer stays first: .answer .v is what gets checked
-               .concat(exprs.length ? [{ k:"Expressions", v:exprs.map(function(pc){ return esc(pc[0]) + ": " + vH(pc[1], M.eqn.vs); }).join("<br>") }] : []), facts:[M.ans.say, "The operation: " + B(opWord) + " — " + esc(plainOf(M.idea.eq.replace(/<[^>]+>/g, "")).replace(/\?/g, "?"))] },
+      band:{ pairs:[{ k:"Answer", v:ansHtml(A) }].concat(askEq || askEx ? [{ k:"Equation", v:M.eqn.eqH, x:true }] : [])        // the answer stays first: .answer .v is what gets checked
+               .concat(exprs.length ? [{ k:"Expressions", v:exprs.map(function(pc){ return esc(pc[0]) + " = " + vH(pc[1], M.eqn.vs); }).join("<br>"), x:true }] : []), facts:[M.ans.say, "The operation: " + B(opWord) + " — " + esc(plainOf(M.idea.eq.replace(/<[^>]+>/g, "")).replace(/\?/g, "?"))] },
       closer:"<b>Answer:</b> " + M.ans.say + ' <span class="ok">✓</span> ' + (M.eqn ? "The same steps as every story problem, with one more in the middle: read it, say what’s asked, list what you know, choose, <b>write an equation</b>, draw it, solve it like a balance, then answer in a sentence and check it in the story."
         : "The same seven steps work on every story problem: read it, say what’s asked, list what you know, pick the operation and say why, draw it, solve, then answer in a sentence and check."),
       fields:[field], hint:M.hint,
@@ -7231,7 +7235,7 @@
     if (old) old.parentNode.removeChild(old);
     var el = document.createElement("div");
     el.className = "answer";
-    el.innerHTML = pairs.map(function(p){ return '<div class="pair"><span class="k">' + esc(p.k) + '</span><span class="v">' + p.v + "</span></div>"; }).join("")
+    el.innerHTML = pairs.map(function(p){ return '<div class="pair' + (p.x ? " extra" : "") + '"><span class="k">' + esc(p.k) + '</span><span class="' + (p.x ? "v2" : "v") + '">' + p.v + "</span></div>"; }).join("")
       + '<div class="facts">' + facts.map(function(f){ return '<div class="fact">' + f + "</div>"; }).join("") + "</div>";
     $("board").parentNode.insertBefore(el, $("board"));
   }
